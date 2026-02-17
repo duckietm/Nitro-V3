@@ -1,11 +1,11 @@
 import { GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
-import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp, FaDotCircle, FaSearchPlus, FaSearchMinus, FaUndo } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp } from 'react-icons/fa';
 import { SendMessageComposer } from '../../../api';
 import { Base, Button, Column, ColumnProps, Flex, Grid } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
-import { FloorplanEditor } from '../common/FloorplanEditor';
+import { FloorplanEditor } from '@nitrots/nitro-renderer';
 
 export const FloorplanCanvasView: FC<ColumnProps> = props =>
 {
@@ -58,7 +58,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
             return newValue;
         });
         
-        FloorplanEditor.instance.doorLocation = ( parser.x, parser.y );
+        FloorplanEditor.instance.doorLocation = { x: parser.x, y: parser.y };
 
         setEntryTileReceived(true);
     });
@@ -94,7 +94,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         {
             case 'pointerout':
             case 'pointerup':
-                FloorplanEditor.instance.onPointerRelease();
+                FloorplanEditor.instance.onPointerRelease(event);
                 break;
             case 'pointerdown':
                 FloorplanEditor.instance.onPointerDown(event);
@@ -104,20 +104,6 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
                 break;
         }
     }
-
-    const handleZoomIn = () => {
-        FloorplanEditor.instance.zoomIn();
-    };
-
-    const handleZoomOut = () => {
-        FloorplanEditor.instance.zoomOut();
-    };
-	
-    const handleResetZoom = () => {
-        FloorplanEditor.instance._zoomLevel = 1.0; // Reset to default zoom
-        FloorplanEditor.instance.adjustCanvasSize();
-        FloorplanEditor.instance.renderTiles();
-    };
 
     useEffect(() =>
     {
@@ -183,19 +169,28 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
     return (
         <Column gap={ gap } { ...rest }>
             <Grid overflow="hidden" gap={ 1 }>
-                <Column overflow="hidden" size={ isSmallScreen() ? 10 : 12 } gap={ 1 }>
-                    <Flex justifyContent="left" gap={ 1 }>
-                        <Button shrink onClick={ handleZoomIn }>
-                            <FaSearchPlus className="fa-icon" />
-                        </Button>
-                        <Button shrink onClick={ handleResetZoom }>
-                            <FaDotCircle className="fa-icon" />
-                        </Button>
-                        <Button shrink onClick={ handleZoomOut }>
-                            <FaSearchMinus className="fa-icon" />
+                <Column center size={ 1 } className="d-md-none">
+                    <Button className="d-md-none" onClick={ event => onClickArrowButton('left') }>
+                        <FaArrowLeft className="fa-icon" />
+                    </Button>
+                </Column>
+                <Column overflow="hidden" size={ isSmallScreen() ? 10: 12 } gap={ 1 }>
+                    <Flex justifyContent="center" className="d-md-none">
+                        <Button shrink onClick={ event => onClickArrowButton('up') }>
+                            <FaArrowUp className="fa-icon" />
                         </Button>
                     </Flex>
                     <Base overflow="auto" innerRef={ elementRef } />
+                    <Flex justifyContent="center" className="d-md-none">
+                        <Button shrink onClick={ event => onClickArrowButton('down') }>
+                            <FaArrowDown className="fa-icon" />
+                        </Button>
+                    </Flex>
+                </Column>
+                <Column center size={ 1 } className="d-md-none">
+                    <Button className="d-md-none" onClick={ event => onClickArrowButton('right') }>
+                        <FaArrowRight className="fa-icon" />
+                    </Button>
                 </Column>
             </Grid>
             { children }

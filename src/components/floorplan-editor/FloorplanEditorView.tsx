@@ -4,10 +4,10 @@ import { LocalizeText, SendMessageComposer } from '../../api';
 import { Button, ButtonGroup, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
 import { FloorplanEditorContextProvider } from './FloorplanEditorContext';
-import { FloorplanEditor } from './common/FloorplanEditor';
-import { IFloorplanSettings } from './common/IFloorplanSettings';
-import { IVisualizationSettings } from './common/IVisualizationSettings';
-import { convertNumbersForSaving, convertSettingToNumber } from './common/Utils';
+import { FloorplanEditor } from '@nitrots/nitro-renderer';
+import { IFloorplanSettings } from '@nitrots/nitro-renderer';
+import { IVisualizationSettings } from '@nitrots/nitro-renderer';
+import { convertNumbersForSaving, convertSettingToNumber } from '@nitrots/nitro-renderer';
 import { FloorplanCanvasView } from './views/FloorplanCanvasView';
 import { FloorplanImportExportView } from './views/FloorplanImportExportView';
 import { FloorplanOptionsView } from './views/FloorplanOptionsView';
@@ -48,13 +48,13 @@ export const FloorplanEditorView: FC<{}> = props =>
     const revertChanges = () =>
     {
         setVisualizationSettings({ wallHeight: originalFloorplanSettings.wallHeight, thicknessWall: originalFloorplanSettings.thicknessWall, thicknessFloor: originalFloorplanSettings.thicknessFloor, entryPointDir: originalFloorplanSettings.entryPointDir });
-
+        
         FloorplanEditor.instance.doorLocation = { x: originalFloorplanSettings.entryPoint[0], y: originalFloorplanSettings.entryPoint[1] };
         FloorplanEditor.instance.setTilemap(originalFloorplanSettings.tilemap, originalFloorplanSettings.reservedTiles);
         FloorplanEditor.instance.renderTiles();
-    };
+    }
 
-	useNitroEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, event => setIsVisible(false));
+    useNitroEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, event => setIsVisible(false));
 
     useMessageEvent<FloorHeightMapEvent>(FloorHeightMapEvent, event =>
     {
