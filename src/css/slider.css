@@ -6,15 +6,15 @@
 
     .track {
         height: 3px;
-        border-radius: $border-radius;
+        border-radius: .25rem;
         overflow: hidden;
 
         &.track-0 {
-            background-color: $primary;
+            background-color: #1e7295;
         }
 
         &.track-1 {
-            background-color: $muted;
+            background-color: #b6bec5;
         }
     }
 

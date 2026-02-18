@@ -1,8 +1,8 @@
 import { FC, useState } from 'react';
-import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp, FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import ReactSlider from 'react-slider';
 import { LocalizeText } from '../../../api';
-import { Column, Flex, LayoutGridItem, Text } from '../../../common';
+import { Button, Column, Flex, LayoutGridItem, Text } from '../../../common';
 import { COLORMAP, FloorAction } from '@nitrots/nitro-renderer';
 import { FloorplanEditor } from '@nitrots/nitro-renderer';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
@@ -13,8 +13,16 @@ const MAX_WALL_HEIGHT: number = 16;
 const MIN_FLOOR_HEIGHT: number = 0;
 const MAX_FLOOR_HEIGHT: number = 26;
 
-export const FloorplanOptionsView: FC<{}> = props =>
+type ScrollDirection = 'up' | 'down' | 'left' | 'right';
+
+interface FloorplanOptionsViewProps
 {
+    onCanvasScroll?(direction: ScrollDirection): void;
+}
+
+export const FloorplanOptionsView: FC<FloorplanOptionsViewProps> = props =>
+{
+    const { onCanvasScroll = () => {} } = props;
     const { visualizationSettings = null, setVisualizationSettings = null } = useFloorplanEditorContext();
     const [ floorAction, setFloorAction ] = useState(FloorAction.SET);
     const [ floorHeight, setFloorHeight ] = useState(0);
@@ -26,7 +34,6 @@ export const FloorplanOptionsView: FC<{}> = props =>
 
         FloorplanEditor.instance.actionSettings.currentAction = action;
     }
-
 
     const toggleSquareSelectMode = () =>
     {
@@ -168,24 +175,6 @@ export const FloorplanOptionsView: FC<{}> = props =>
                         <FaCaretRight className="cursor-pointer fa-icon" onClick={ increaseWallHeight } />
                     </Flex>
                 </Column>
-            </Flex>
-            <Flex gap={ 1 }>
-                <Column size={ 6 }>
-                    <Text bold>{ LocalizeText('floor.plan.editor.tile.height') }: { floorHeight }</Text>
-                    <ReactSlider
-                        className="nitro-slider"
-                        min={ MIN_FLOOR_HEIGHT }
-                        max={ MAX_FLOOR_HEIGHT }
-                        step={ 1 }
-                        value={ floorHeight }
-                        onChange={ event => onFloorHeightChange(event) }
-                        renderThumb={ (props, state) =>
-                        {
-                            const { key, style, ...rest } = (props as Record<string, any>);
-
-                            return <div key={ key } style={ { backgroundColor: `#${ COLORMAP[state.valueNow.toString(33)] }`, ...style } } { ...rest }>{ state.valueNow }</div>;
-                        } } />
-                </Column>
                 <Column size={ 6 }>
                     <Text bold>{ LocalizeText('floor.plan.editor.room.options') }</Text>
                     <Flex className="align-items-center">
@@ -201,6 +190,47 @@ export const FloorplanOptionsView: FC<{}> = props =>
                             <option value={ 2 }>{ LocalizeText('navigator.roomsettings.floor_thickness.normal') }</option>
                             <option value={ 3 }>{ LocalizeText('navigator.roomsettings.floor_thickness.thick') }</option>
                         </select>
+                    </Flex>
+                </Column>
+            </Flex>
+            <Flex gap={ 2 } alignItems="center" justifyContent="between">
+                <Column size={ 6 }>
+                    <Text bold>{ LocalizeText('floor.plan.editor.tile.height') }: { floorHeight }</Text>
+                    <div style={ { width: '100%', maxWidth: 240 } }>
+                        <ReactSlider
+                            className="nitro-slider"
+                            min={ MIN_FLOOR_HEIGHT }
+                            max={ MAX_FLOOR_HEIGHT }
+                            step={ 1 }
+                            value={ floorHeight }
+                            onChange={ event => onFloorHeightChange(event) }
+                            renderThumb={ (props, state) =>
+                            {
+                                const { key, style, ...rest } = (props as Record<string, any>);
+
+                                return <div key={ key } style={ { backgroundColor: `#${ COLORMAP[state.valueNow.toString(33)] }`, ...style } } { ...rest }>{ state.valueNow }</div>;
+                            } } />
+                    </div>
+                </Column>
+                <Column gap={ 1 }>
+                    <Flex justifyContent="center">
+                        <Button shrink onClick={ event => onCanvasScroll('up') }>
+                            <FaArrowUp className="fa-icon" />
+                        </Button>
+                    </Flex>
+                    <Flex alignItems="center" justifyContent="center" gap={ 1 }>
+                        <Button shrink onClick={ event => onCanvasScroll('left') }>
+                            <FaArrowLeft className="fa-icon" />
+                        </Button>
+                        <div style={ { width: 28 } } />
+                        <Button shrink onClick={ event => onCanvasScroll('right') }>
+                            <FaArrowRight className="fa-icon" />
+                        </Button>
+                    </Flex>
+                    <Flex justifyContent="center">
+                        <Button shrink onClick={ event => onCanvasScroll('down') }>
+                            <FaArrowDown className="fa-icon" />
+                        </Button>
                     </Flex>
                 </Column>
             </Flex>

@@ -1,15 +1,21 @@
 import { GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
-import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp } from 'react-icons/fa';
 import { SendMessageComposer } from '../../../api';
-import { Base, Button, Column, ColumnProps, Flex, Grid } from '../../../common';
+import { Base, Column, ColumnProps } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
 import { FloorplanEditor } from '@nitrots/nitro-renderer';
 
-export const FloorplanCanvasView: FC<ColumnProps> = props =>
+type ScrollDirection = 'up' | 'down' | 'left' | 'right';
+
+interface FloorplanCanvasViewProps extends ColumnProps
 {
-    const { gap = 1, children = null, ...rest } = props;
+    setScrollHandler(handler: ((direction: ScrollDirection) => void) | null): void;
+}
+
+export const FloorplanCanvasView: FC<FloorplanCanvasViewProps> = props =>
+{
+    const { gap = 1, children = null, setScrollHandler = null, ...rest } = props;
     const [ occupiedTilesReceived , setOccupiedTilesReceived ] = useState(false);
     const [ entryTileReceived, setEntryTileReceived ] = useState(false);
     const { originalFloorplanSettings = null, setOriginalFloorplanSettings = null, setVisualizationSettings = null } = useFloorplanEditorContext();
@@ -63,7 +69,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         setEntryTileReceived(true);
     });
 
-    const onClickArrowButton = (scrollDirection: string) =>
+    const onClickArrowButton = (scrollDirection: ScrollDirection) =>
     {
         const element = elementRef.current;
 
@@ -164,35 +170,18 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         }
     }, []);
 
-    const isSmallScreen = () => window.innerWidth < 768;
+    useEffect(() =>
+    {
+        if(!setScrollHandler) return;
+
+        setScrollHandler(() => onClickArrowButton);
+
+        return () => setScrollHandler(null);
+    }, [ setScrollHandler ]);
 
     return (
         <Column gap={ gap } { ...rest }>
-            <Grid overflow="hidden" gap={ 1 }>
-                <Column center size={ 1 } className="d-md-none">
-                    <Button className="d-md-none" onClick={ event => onClickArrowButton('left') }>
-                        <FaArrowLeft className="fa-icon" />
-                    </Button>
-                </Column>
-                <Column overflow="hidden" size={ isSmallScreen() ? 10: 12 } gap={ 1 }>
-                    <Flex justifyContent="center" className="d-md-none">
-                        <Button shrink onClick={ event => onClickArrowButton('up') }>
-                            <FaArrowUp className="fa-icon" />
-                        </Button>
-                    </Flex>
-                    <Base overflow="auto" innerRef={ elementRef } />
-                    <Flex justifyContent="center" className="d-md-none">
-                        <Button shrink onClick={ event => onClickArrowButton('down') }>
-                            <FaArrowDown className="fa-icon" />
-                        </Button>
-                    </Flex>
-                </Column>
-                <Column center size={ 1 } className="d-md-none">
-                    <Button className="d-md-none" onClick={ event => onClickArrowButton('right') }>
-                        <FaArrowRight className="fa-icon" />
-                    </Button>
-                </Column>
-            </Grid>
+            <Base overflow="auto" innerRef={ elementRef } />
             { children }
         </Column>
     );

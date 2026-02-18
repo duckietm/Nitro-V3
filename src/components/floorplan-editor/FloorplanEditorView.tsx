@@ -12,6 +12,9 @@ import { FloorplanCanvasView } from './views/FloorplanCanvasView';
 import { FloorplanImportExportView } from './views/FloorplanImportExportView';
 import { FloorplanOptionsView } from './views/FloorplanOptionsView';
 
+
+type ScrollDirection = 'up' | 'down' | 'left' | 'right';
+
 export const FloorplanEditorView: FC<{}> = props =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
@@ -31,6 +34,7 @@ export const FloorplanEditorView: FC<{}> = props =>
         thicknessWall: 1,
         thicknessFloor: 1
     });
+    const [ canvasScrollHandler, setCanvasScrollHandler ] = useState<((direction: ScrollDirection) => void) | null>(null);
 
     const saveFloorChanges = () =>
     {
@@ -141,8 +145,8 @@ export const FloorplanEditorView: FC<{}> = props =>
                 <NitroCardView uniqueKey="floorpan-editor" className="nitro-floorplan-editor" theme="primary-slim">
                     <NitroCardHeaderView headerText={ LocalizeText('floor.plan.editor.title') } onCloseClick={ () => setIsVisible(false) } />
                     <NitroCardContentView overflow="hidden">
-                        <FloorplanOptionsView />
-                        <FloorplanCanvasView overflow="hidden" />
+                        <FloorplanOptionsView onCanvasScroll={ direction => canvasScrollHandler && canvasScrollHandler(direction) } />
+                        <FloorplanCanvasView overflow="hidden" setScrollHandler={ setCanvasScrollHandler } />
                         <Flex justifyContent="between">
                             <Button onClick={ revertChanges }>{ LocalizeText('floor.plan.editor.reload') }</Button>
                             <ButtonGroup>
