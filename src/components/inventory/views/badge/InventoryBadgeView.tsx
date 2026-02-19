@@ -1,7 +1,9 @@
+import { DeleteBadgeMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { LocalizeBadgeName, LocalizeText, UnseenItemCategory } from '../../../../api';
+import { FaTrashAlt } from 'react-icons/fa';
+import { LocalizeBadgeName, LocalizeText, SendMessageComposer, UnseenItemCategory } from '../../../../api';
 import { LayoutBadgeImageView } from '../../../../common';
-import { useInventoryBadges, useInventoryUnseenTracker } from '../../../../hooks';
+import { useInventoryBadges, useInventoryUnseenTracker, useNotification } from '../../../../hooks';
 import { InfiniteGrid, NitroButton } from '../../../../layout';
 import { InventoryBadgeItemView } from './InventoryBadgeItemView';
 
@@ -11,8 +13,23 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = props =
     const [ isVisible, setIsVisible ] = useState(false);
     const { badgeCodes = [], activeBadgeCodes = [], selectedBadgeCode = null, isWearingBadge = null, canWearBadges = null, toggleBadge = null, getBadgeId = null, activate = null, deactivate = null } = useInventoryBadges();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
+    const { showConfirm = null } = useNotification();
 
     const displayCodes = (filteredBadgeCodes !== null ? filteredBadgeCodes : badgeCodes);
+
+    const attemptDeleteBadge = () =>
+    {
+        if(!selectedBadgeCode) return;
+
+        showConfirm(
+            LocalizeText('inventory.delete.confirm_delete.info', [ 'furniname', 'amount' ], [ LocalizeBadgeName(selectedBadgeCode), '1' ]),
+            () => SendMessageComposer(new DeleteBadgeMessageComposer(selectedBadgeCode)),
+            null,
+            null,
+            null,
+            LocalizeText('inventory.delete.confirm_delete.title')
+        );
+    };
 
     useEffect(() =>
     {
@@ -61,11 +78,17 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = props =
                             <LayoutBadgeImageView shrink badgeCode={ selectedBadgeCode } />
                             <span className="text-sm truncate grow">{ LocalizeBadgeName(selectedBadgeCode) }</span>
                         </div>
-                        <NitroButton
-                            disabled={ !isWearingBadge(selectedBadgeCode) && !canWearBadges() }
-                            onClick={ event => toggleBadge(selectedBadgeCode) }>
-                            { LocalizeText(isWearingBadge(selectedBadgeCode) ? 'inventory.badges.clearbadge' : 'inventory.badges.wearbadge') }
-                        </NitroButton>
+                        <div className="flex items-center gap-2">
+                            <NitroButton
+                                className="grow"
+                                disabled={ !isWearingBadge(selectedBadgeCode) && !canWearBadges() }
+                                onClick={ event => toggleBadge(selectedBadgeCode) }>
+                                { LocalizeText(isWearingBadge(selectedBadgeCode) ? 'inventory.badges.clearbadge' : 'inventory.badges.wearbadge') }
+                            </NitroButton>
+                            <NitroButton className="!bg-danger hover:!bg-danger/80 p-1" onClick={ attemptDeleteBadge }>
+                                <FaTrashAlt className="fa-icon" />
+                            </NitroButton>
+                        </div>
                     </div> }
             </div>
         </div>
