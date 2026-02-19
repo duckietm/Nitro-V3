@@ -5,11 +5,14 @@ import { useInventoryBadges, useInventoryUnseenTracker } from '../../../../hooks
 import { InfiniteGrid, NitroButton } from '../../../../layout';
 import { InventoryBadgeItemView } from './InventoryBadgeItemView';
 
-export const InventoryBadgeView: FC<{}> = props =>
+export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = props =>
 {
+    const { filteredBadgeCodes = null } = props;
     const [ isVisible, setIsVisible ] = useState(false);
     const { badgeCodes = [], activeBadgeCodes = [], selectedBadgeCode = null, isWearingBadge = null, canWearBadges = null, toggleBadge = null, getBadgeId = null, activate = null, deactivate = null } = useInventoryBadges();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
+
+    const displayCodes = (filteredBadgeCodes !== null ? filteredBadgeCodes : badgeCodes);
 
     useEffect(() =>
     {
@@ -41,7 +44,7 @@ export const InventoryBadgeView: FC<{}> = props =>
                     columnCount={ 5 }
                     estimateSize={ 50 }
                     itemRender={ item => <InventoryBadgeItemView badgeCode={ item } /> }
-                    items={ badgeCodes.filter(code => !isWearingBadge(code)) } />
+                    items={ displayCodes.filter(code => !isWearingBadge(code)) } />
             </div>
             <div className="flex flex-col justify-between col-span-5 overflow-auto">
                 <div className="flex flex-col gap-2 overflow-hidden">
@@ -54,7 +57,7 @@ export const InventoryBadgeView: FC<{}> = props =>
                 </div>
                 { !!selectedBadgeCode &&
                     <div className="flex flex-col gap-2">
-                        <div className="items-center gap-2">
+                        <div className="flex items-center gap-2">
                             <LayoutBadgeImageView shrink badgeCode={ selectedBadgeCode } />
                             <span className="text-sm truncate grow">{ LocalizeBadgeName(selectedBadgeCode) }</span>
                         </div>

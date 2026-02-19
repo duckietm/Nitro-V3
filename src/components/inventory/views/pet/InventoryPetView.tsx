@@ -1,8 +1,9 @@
-import { GetRoomEngine, IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
+import { DeletePetMessageComposer, GetRoomEngine, IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { IPetItem, LocalizeText, UnseenItemCategory, attemptPetPlacement } from '../../../../api';
+import { FaTrashAlt } from 'react-icons/fa';
+import { IPetItem, LocalizeText, SendMessageComposer, UnseenItemCategory, attemptPetPlacement } from '../../../../api';
 import { LayoutRoomPreviewerView } from '../../../../common';
-import { useInventoryPets, useInventoryUnseenTracker } from '../../../../hooks';
+import { useInventoryPets, useInventoryUnseenTracker, useNotification } from '../../../../hooks';
 import { InfiniteGrid, NitroButton } from '../../../../layout';
 import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
 import { InventoryPetItemView } from './InventoryPetItemView';
@@ -16,6 +17,21 @@ export const InventoryPetView: FC<{
     const [ isVisible, setIsVisible ] = useState(false);
     const { petItems = null, selectedPet = null, activate = null, deactivate = null } = useInventoryPets();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
+    const { showConfirm = null } = useNotification();
+
+    const attemptDeletePet = () =>
+    {
+        if(!selectedPet?.petData) return;
+
+        showConfirm(
+            LocalizeText('inventory.delete.confirm_delete.info', [ 'furniname', 'amount' ], [ selectedPet.petData.name, '1' ]),
+            () => SendMessageComposer(new DeletePetMessageComposer(selectedPet.petData.id)),
+            null,
+            null,
+            null,
+            LocalizeText('inventory.delete.confirm_delete.title')
+        );
+    };
 
     useEffect(() =>
     {
@@ -74,6 +90,12 @@ export const InventoryPetView: FC<{
             <div className="flex flex-col col-span-5">
                 <div className="relative flex flex-col">
                     <LayoutRoomPreviewerView height={ 140 } roomPreviewer={ roomPreviewer } />
+                    { selectedPet &&
+                        <NitroButton
+                            className="!bg-danger hover:!bg-danger/80 absolute bottom-2 end-2 p-1"
+                            onClick={ attemptDeletePet }>
+                            <FaTrashAlt className="fa-icon" />
+                        </NitroButton> }
                 </div>
                 { selectedPet && selectedPet.petData &&
                         <div className="flex flex-col justify-between gap-2 grow">

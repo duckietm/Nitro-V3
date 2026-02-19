@@ -1,14 +1,14 @@
 import { InfiniteGrid } from '@layout/InfiniteGrid';
 import { GetRoomEngine, GetSessionDataManager, IRoomSession, RoomObjectVariable, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
+import { FaTrashAlt } from 'react-icons/fa';
 import { DispatchUiEvent, FurniCategory, GroupItem, LocalizeText, UnseenItemCategory, attemptItemPlacement } from '../../../../api';
 import { LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomPreviewerView } from '../../../../common';
-import { CatalogPostMarketplaceOfferEvent } from '../../../../events';
+import { CatalogPostMarketplaceOfferEvent, DeleteItemConfirmEvent } from '../../../../events';
 import { useInventoryFurni, useInventoryUnseenTracker } from '../../../../hooks';
 import { NitroButton } from '../../../../layout';
 import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
 import { InventoryFurnitureItemView } from './InventoryFurnitureItemView';
-import { InventoryFurnitureSearchView } from './InventoryFurnitureSearchView';
 
 const attemptPlaceMarketplaceOffer = (groupItem: GroupItem) =>
 {
@@ -21,14 +21,23 @@ const attemptPlaceMarketplaceOffer = (groupItem: GroupItem) =>
     DispatchUiEvent(new CatalogPostMarketplaceOfferEvent(item));
 };
 
+const attemptDeleteItem = (groupItem: GroupItem) =>
+{
+    const item = groupItem.getLastItem();
+
+    if(!item) return;
+
+    DispatchUiEvent(new DeleteItemConfirmEvent(item, groupItem.getTotalCount()));
+};
+
 export const InventoryFurnitureView: FC<{
     roomSession: IRoomSession;
     roomPreviewer: RoomPreviewer;
+    filteredGroupItems: GroupItem[];
 }> = props =>
 {
-    const { roomSession = null, roomPreviewer = null } = props;
+    const { roomSession = null, roomPreviewer = null, filteredGroupItems = [] } = props;
     const [ isVisible, setIsVisible ] = useState(false);
-    const [ filteredGroupItems, setFilteredGroupItems ] = useState<GroupItem[]>([]);
     const { groupItems = [], selectedItem = null, activate = null, deactivate = null } = useInventoryFurni();
     const { resetItems = null } = useInventoryUnseenTracker();
 
@@ -112,7 +121,6 @@ export const InventoryFurnitureView: FC<{
     return (
         <div className="grid h-full grid-cols-12 gap-2">
             <div className="flex flex-col col-span-7 gap-1 overflow-hidden">
-                <InventoryFurnitureSearchView groupItems={ groupItems } setGroupItems={ setFilteredGroupItems } />
                 <InfiniteGrid<GroupItem>
                     columnCount={ 6 }
                     itemRender={ item => <InventoryFurnitureItemView groupItem={ item } /> }
@@ -121,25 +129,33 @@ export const InventoryFurnitureView: FC<{
             <div className="flex flex-col col-span-5">
                 <div className="relative flex flex-col">
                     <LayoutRoomPreviewerView height={ 140 } roomPreviewer={ roomPreviewer } />
+                    { selectedItem &&
+                        <NitroButton
+                            className="!bg-danger hover:!bg-danger/80 absolute bottom-2 end-2 p-1"
+                            onClick={ () => attemptDeleteItem(selectedItem) }>
+                            <FaTrashAlt className="fa-icon" />
+                        </NitroButton> }
                     { selectedItem && selectedItem.stuffData.isUnique &&
-                            <LayoutLimitedEditionCompactPlateView className="top-2 end-2" position="absolute" uniqueNumber={ selectedItem.stuffData.uniqueNumber } uniqueSeries={ selectedItem.stuffData.uniqueSeries } /> }
+                        <LayoutLimitedEditionCompactPlateView className="top-2 end-2" position="absolute" uniqueNumber={ selectedItem.stuffData.uniqueNumber } uniqueSeries={ selectedItem.stuffData.uniqueSeries } /> }
                     { (selectedItem && selectedItem.stuffData.rarityLevel > -1) &&
-                            <LayoutRarityLevelView className="top-2 end-2" level={ selectedItem.stuffData.rarityLevel } position="absolute" /> }
+                        <LayoutRarityLevelView className="top-2 end-2" level={ selectedItem.stuffData.rarityLevel } position="absolute" /> }
                 </div>
                 { selectedItem &&
-                        <div className="flex flex-col justify-between gap-2 grow">
-                            <span className="text-sm truncate grow">{ selectedItem.name }</span>
-                            <div className="flex flex-col gap-1">
-                                { !!roomSession &&
-                                    <NitroButton onClick={ event => attemptItemPlacement(selectedItem) }>
-                                        { LocalizeText('inventory.furni.placetoroom') }
-                                    </NitroButton> }
-                                { (selectedItem && selectedItem.isSellable) &&
-                                    <NitroButton onClick={ event => attemptPlaceMarketplaceOffer(selectedItem) }>
-                                        { LocalizeText('inventory.marketplace.sell') }
-                                    </NitroButton> }
-                            </div>
-                        </div> }
+                    <div className="flex flex-col justify-between gap-2 grow">
+                        <span className="text-sm truncate grow">{ selectedItem.name }</span>
+                        { selectedItem.description &&
+                            <span className="text-xs truncate">{ selectedItem.description }</span> }
+                        <div className="flex flex-col gap-1">
+                            { !!roomSession &&
+                                <NitroButton onClick={ event => attemptItemPlacement(selectedItem) }>
+                                    { LocalizeText('inventory.furni.placetoroom') }
+                                </NitroButton> }
+                            { selectedItem.isSellable &&
+                                <NitroButton onClick={ event => attemptPlaceMarketplaceOffer(selectedItem) }>
+                                    { LocalizeText('inventory.marketplace.sell') }
+                                </NitroButton> }
+                        </div>
+                    </div> }
             </div>
         </div>
     );

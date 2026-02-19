@@ -19,6 +19,8 @@ import './css/hotelview/HotelView.css';
 
 import './css/icons/icons.css';
 
+import './css/inventory/Inventory.css';
+
 import './css/layout/LayoutTrophy.css';
 
 import './css/loading/loading.css';
