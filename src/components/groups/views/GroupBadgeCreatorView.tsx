@@ -29,6 +29,46 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
         if(property === 'key') setSelectedIndex(-1);
     };
 
+    const getSymbolNames = (item: { id: number, images: string[] }) =>
+    {
+        if(!item || !item.images || !item.images.length) return [];
+
+        return item.images
+            .filter(value => !!value && !!value.length)
+            .map(value => value.replace('.png', '').replace('.gif', '').toLowerCase());
+    };
+
+    const isAlphaNumericSymbol = (name: string) =>
+    {
+        return /(^|_)symbol_[a-z0-9]$/i.test(name) || /(^|_)symbol_[a-z0-9]_part[12]$/i.test(name);
+    };
+
+    const getAvailableSymbols = () =>
+    {
+        const symbols = groupCustomize.badgeSymbols || [];
+
+        if(selectedIndex < 0) return symbols;
+
+        switch(selectedIndex)
+        {
+            case 1:
+                return symbols.filter(item => getSymbolNames(item).some(name => name.includes('_part1')));
+            case 2:
+                return symbols.filter(item => getSymbolNames(item).some(name => name.includes('_part2')));
+            case 3:
+                return symbols.filter(item => getSymbolNames(item).some(name => isAlphaNumericSymbol(name)));
+            case 4:
+                return symbols.filter(item =>
+                {
+                    const names = getSymbolNames(item);
+
+                    return !names.some(name => name.includes('_part1') || name.includes('_part2') || isAlphaNumericSymbol(name));
+                });
+            default:
+                return symbols;
+        }
+    };
+
     if(!badgeParts || !badgeParts.length) return null;
 
     return (
@@ -69,7 +109,7 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
                                 <FaTimes className="fa-icon" />
                             </Flex>
                         </Column> }
-                    { ((badgeParts[selectedIndex].type === GroupBadgePart.BASE) ? groupCustomize.badgeBases : groupCustomize.badgeSymbols).map((item, index) =>
+                    { ((badgeParts[selectedIndex].type === GroupBadgePart.BASE) ? groupCustomize.badgeBases : getAvailableSymbols()).map((item, index) =>
                     {
                         return (
                             <Column key={ index } center pointer className="bg-muted rounded p-1" onClick={ event => setPartProperty(selectedIndex, 'key', item.id) }>
