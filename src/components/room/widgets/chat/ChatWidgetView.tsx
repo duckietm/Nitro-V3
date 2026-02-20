@@ -155,7 +155,7 @@ export const ChatWidgetView: FC<{}> = props =>
     }, [ getScrollSpeed, removeHiddenChats, setChatMessages ]);
 
     return (
-        <div ref={ elementRef } className="absolute flex justify-center items-center w-full top-0 min-h-[1px] z-[var(--chat-zindex)] bg-transparent roundehidden shadow-none pointer-events-none">
+        <div ref={ elementRef } className="absolute flex justify-center items-center w-full top-0 min-h-px z-(--chat-zindex) bg-transparent roundehidden shadow-none pointer-events-none">
             { chatMessages.map(chat => <ChatWidgetMessageView key={ chat.id } bubbleWidth={ chatSettings.weight } chat={ chat } makeRoom={ makeRoom } />) }
         </div>
     );

@@ -66,7 +66,7 @@ export const DiskInventoryView: FC<DiskInventoryViewProps> = props =>
 
                     return (
                         <LayoutGridItem key={ index } classNames={ [ 'text-black' ] } itemActive={ (selectedItem === index) } onClick={ () => setSelectedItem(prev => prev === index ? -1 : index) }>
-                            <div className="flex-shrink-0 disk-image mb-n2" style={ { backgroundColor: GetDiskColor(songInfo?.songData) } }>
+                            <div className="shrink-0 disk-image mb-n2" style={ { backgroundColor: GetDiskColor(songInfo?.songData) } }>
                             </div>
                             <Text fullWidth truncate className="text-center">{ songInfo?.name }</Text>
                             { (selectedItem === index) &&

@@ -17,7 +17,7 @@ export const FurnitureExchangeCreditView: FC<{}> = props =>
                     <div className="flex flex-col items-center justify-conent-center">
                         <div className="exchange-image" />
                     </div>
-                    <div className="flex flex-col justify-between overflow-hidden !flex-grow">
+                    <div className="flex flex-col justify-between overflow-hidden grow!">
                         <Column gap={ 1 } overflow="auto">
                             <Text fontWeight="bold">{ LocalizeText('creditfurni.description', [ 'credits' ], [ value.toString() ]) }</Text>
                             <Text>{ LocalizeText('creditfurni.prompt') }</Text>

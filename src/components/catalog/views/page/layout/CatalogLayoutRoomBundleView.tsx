@@ -27,8 +27,8 @@ export const CatalogLayoutRoomBundleView: FC<CatalogLayoutProps> = props =>
                         <Text center small overflow="auto">{ page.localization.getText(1) }</Text> }
                     <Column grow gap={ 0 } overflow="hidden" position="relative">
                         { !!page.localization.getImage(1) &&
-                            <img alt="" className="!flex-grow" src={ page.localization.getImage(1) } /> }
-                        <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-0 start-0" position="absolute" />
+                            <img alt="" className="grow!" src={ page.localization.getImage(1) } /> }
+                        <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-0 inset-s-0" position="absolute" />
                         <CatalogSimplePriceWidgetView />
                     </Column>
                     <div className="flex flex-col gap-1">

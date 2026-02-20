@@ -1,11 +1,11 @@
+@import 'tailwindcss';
+
+@config "../../tailwind.config.js";
+
 @font-face {
     font-family: Ubuntu;
     src: url("@/assets/webfonts/Ubuntu-C.ttf");
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 html,
 body {
@@ -175,35 +175,35 @@ body {
     }
 
     .avatar-image {
-        @apply pointer-events-none relative h-[130px] w-[90px] bg-[center_-8px] bg-no-repeat;
+        @apply pointer-events-none relative h-[130px] w-[90px] bg-position-[center_-8px] bg-no-repeat;
     }
 
     .ubuntu-close-button {
-        @apply inline-block h-[20px] w-[19px] bg-transparent bg-[0px_0px] bg-no-repeat outline-0;
+        @apply inline-block h-[20px] w-[19px] bg-transparent bg-position-[0px_0px] bg-no-repeat outline-0;
         background-image: url("@/assets/images/ui/ubuntu-close-buttons.png");
 
         &:hover {
-            @apply bg-[-38px];
+            @apply bg-position-[-38px];
         }
 
         &:active {
-            @apply bg-[-19px];
+            @apply bg-position-[-19px];
         }
     }
 }
 
 .unique-item {
     .unique-bg-override {
-        @apply z-[2] bg-center bg-no-repeat;
+        @apply z-2 bg-center bg-no-repeat;
     }
 
     &:before {
-        @apply absolute z-[1] size-full bg-center bg-no-repeat [content:""];
+        @apply absolute z-1 size-full bg-center bg-no-repeat [content:""];
         background-image: url("@/assets/images/unique/grid-bg.png");
     }
 
     &:after {
-        @apply absolute bottom-0 z-[4] size-full bg-center bg-no-repeat [content:""];
+        @apply absolute bottom-0 z-4 size-full bg-center bg-no-repeat [content:""];
         background-image: url("@/assets/images/unique/grid-bg-glass.png");
     }
 
@@ -215,7 +215,7 @@ body {
 
     .unique-item-counter {
         background-image: url("@/assets/images/unique/grid-count-bg.png");
-        @apply bottom-[1px] z-[3] mx-auto my-0 flex h-[9px] w-full items-center justify-center bg-center bg-no-repeat;
+        @apply bottom-px z-3 mx-auto my-0 flex h-[9px] w-full items-center justify-center bg-center bg-no-repeat;
     }
 }
 

@@ -131,14 +131,14 @@ export const InventoryFurnitureView: FC<{
                     <LayoutRoomPreviewerView height={ 140 } roomPreviewer={ roomPreviewer } />
                     { selectedItem &&
                         <NitroButton
-                            className="!bg-danger hover:!bg-danger/80 absolute bottom-2 end-2 p-1"
+                            className="bg-danger! hover:bg-danger/80! absolute bottom-2 inset-e-2 p-1"
                             onClick={ () => attemptDeleteItem(selectedItem) }>
                             <FaTrashAlt className="fa-icon" />
                         </NitroButton> }
                     { selectedItem && selectedItem.stuffData.isUnique &&
-                        <LayoutLimitedEditionCompactPlateView className="top-2 end-2" position="absolute" uniqueNumber={ selectedItem.stuffData.uniqueNumber } uniqueSeries={ selectedItem.stuffData.uniqueSeries } /> }
+                        <LayoutLimitedEditionCompactPlateView className="top-2 inset-e-2" position="absolute" uniqueNumber={ selectedItem.stuffData.uniqueNumber } uniqueSeries={ selectedItem.stuffData.uniqueSeries } /> }
                     { (selectedItem && selectedItem.stuffData.rarityLevel > -1) &&
-                        <LayoutRarityLevelView className="top-2 end-2" level={ selectedItem.stuffData.rarityLevel } position="absolute" /> }
+                        <LayoutRarityLevelView className="top-2 inset-e-2" level={ selectedItem.stuffData.rarityLevel } position="absolute" /> }
                 </div>
                 { selectedItem &&
                     <div className="flex flex-col justify-between gap-2 grow">

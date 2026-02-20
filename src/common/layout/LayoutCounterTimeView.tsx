@@ -24,7 +24,7 @@ export const LayoutCounterTimeView: FC<LayoutCounterTimeViewProps> = props =>
     }, [ classNames ]);
 
     return (
-        <div className="flex gap-1 top-2 end-2">
+        <div className="flex gap-1 top-2 inset-e-2">
             <Base classNames={ getClassNames } { ...rest }>
                 <div>{ day != '00' ? day : hour }{ day != '00' ? LocalizeText('countdown_clock_unit_days') : LocalizeText('countdown_clock_unit_hours') }</div>
             </Base>

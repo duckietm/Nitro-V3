@@ -27,7 +27,7 @@ export const LayoutGridItem: FC<LayoutGridItemProps> = props =>
         const newClassNames: string[] = [ 'layout-grid-item', 'border', 'border-2', 'border-muted', 'rounded' ];
 
 
-        if(itemActive) newClassNames.push('!bg-[#ececec] !border-[#fff]');
+        if(itemActive) newClassNames.push('bg-[#ececec]! border-[#fff]!');
 
         if(itemUniqueSoldout || (itemUniqueNumber > 0)) newClassNames.push('unique-item');
 

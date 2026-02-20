@@ -69,7 +69,7 @@ export const AchievementsView: FC<{}> = (props) =>
                         className="bg-[url('@/assets/images/achievements/back-arrow.png')] bg-center no-repeat w-[33px] h-[34px]"
                         onClick={(event) => setSelectedCategoryCode(null)}
                     />
-                    <Column className="!flex-grow" gap={0}>
+                    <Column className="grow!" gap={0}>
                         <Text
                             className="text-small"
                             fontSize={4}
@@ -110,7 +110,7 @@ export const AchievementsView: FC<{}> = (props) =>
                             setSelectedCategoryCode={setSelectedCategoryCode}
                         />
                         <div
-                            className="flex flex-col justify-end flex-grow gap-1"
+                            className="flex flex-col justify-end grow gap-1"
                         >
                             <Text center small>
                                 {LocalizeText(

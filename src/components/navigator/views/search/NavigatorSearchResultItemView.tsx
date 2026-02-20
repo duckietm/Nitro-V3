@@ -83,16 +83,16 @@ export const NavigatorSearchResultItemView: FC<NavigatorSearchResultItemViewProp
     if(thumbnail) return (
         <Column pointer alignItems="center" className="navigator-item p-1 bg-light rounded-3 small mb-1 flex-col border border-muted" gap={ 0 } overflow="hidden" onClick={ visitRoom } { ...rest }>
             <LayoutRoomThumbnailView className="flex flex-col items-center justify-end mb-1" customUrl={ roomData.officialRoomPicRef } roomId={ roomData.roomId }>
-                { roomData.habboGroupId > 0 && <LayoutBadgeImageView badgeCode={ roomData.groupBadgeCode } className={ 'absolute top-0 start-0 m-1' } isGroup={ true } /> }
+                { roomData.habboGroupId > 0 && <LayoutBadgeImageView badgeCode={ roomData.groupBadgeCode } className={ 'absolute top-0 inset-s-0 m-1' } isGroup={ true } /> }
                 <Flex center className={ 'inline-block px-[.65em] py-[.35em] text-[.75em] font-bold leading-none text-[#fff] text-center whitespace-nowrap align-baseline rounded-[.25rem] p-1 absolute m-1 ' + getUserCounterColor() } gap={ 1 }>
                     <FaUser className="fa-icon" />
                     { roomData.userCount }
                 </Flex>
                 { (roomData.doorMode !== RoomDataParser.OPEN_STATE) &&
-                    <i className={ ('absolute end-0 mb-1 me-1 icon icon-navigator-room-' + ((roomData.doorMode === RoomDataParser.DOORBELL_STATE) ? 'locked' : (roomData.doorMode === RoomDataParser.PASSWORD_STATE) ? 'password' : (roomData.doorMode === RoomDataParser.INVISIBLE_STATE) ? 'invisible' : '')) } /> }
+                    <i className={ ('absolute inset-e-0 mb-1 me-1 icon icon-navigator-room-' + ((roomData.doorMode === RoomDataParser.DOORBELL_STATE) ? 'locked' : (roomData.doorMode === RoomDataParser.PASSWORD_STATE) ? 'password' : (roomData.doorMode === RoomDataParser.INVISIBLE_STATE) ? 'invisible' : '')) } /> }
             </LayoutRoomThumbnailView>
             <Flex className="w-full">
-                <Text truncate className="!flex-grow">{ roomData.roomName }</Text>
+                <Text truncate className="grow!">{ roomData.roomName }</Text>
                 <Flex reverse alignItems="center" gap={ 1 }>
                     <NavigatorSearchResultItemInfoView roomData={ roomData } />
                 </Flex>

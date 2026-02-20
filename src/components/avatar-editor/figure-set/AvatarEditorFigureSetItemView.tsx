@@ -48,9 +48,9 @@ export const AvatarEditorFigureSetItemView: FC<{
 
     return (
         <InfiniteGrid.Item itemActive={ isSelected } itemImage={ (partItem.isClear ? undefined : assetUrl) } style={ { flex: '1', backgroundPosition: (setType === AvatarFigurePartType.HEAD) ? 'center -35px' : 'center' } } { ...rest }>
-            { !partItem.isClear && isHC && <LayoutCurrencyIcon className="absolute end-1 bottom-1" type="hc" /> }
+            { !partItem.isClear && isHC && <LayoutCurrencyIcon className="absolute inset-e-1 bottom-1" type="hc" /> }
             { partItem.isClear && <AvatarEditorIcon icon="clear" /> }
-            { !partItem.isClear && partItem.partSet.isSellable && <AvatarEditorIcon className="end-1 bottom-1 absolute" icon="sellable" /> }
+            { !partItem.isClear && partItem.partSet.isSellable && <AvatarEditorIcon className="inset-e-1 bottom-1 absolute" icon="sellable" /> }
         </InfiniteGrid.Item>
     );
 };

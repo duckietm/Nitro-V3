@@ -75,9 +75,9 @@ export const ContextMenuView: FC<ContextMenuViewProps> = ({
 
   const getClassNames = useMemo(() => {
     const classes = [
-      '!p-[2px]',
+      'p-[2px]!',
       'bg-[#1c323f]',
-      'border-[2px]',
+      'border-2',
       'border-[solid]',
       'border-[rgba(255,255,255,.5)]',
       'rounded-[.25rem]',

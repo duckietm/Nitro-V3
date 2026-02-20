@@ -131,7 +131,7 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = props => {
                                             </div> }
                                     </Column>
                                     <Column alignItems="center" gap={ 1 }>
-										<i className={ classNames('flex-shrink-0 nitro-icon icon-house-small cursor-pointer', ((navigatorData.homeRoomId !== navigatorData.enteredGuestRoom.roomId) && 'gray')) } onClick={ () => processAction('set_home_room') } />
+										<i className={ classNames('shrink-0 nitro-icon icon-house-small cursor-pointer', ((navigatorData.homeRoomId !== navigatorData.enteredGuestRoom.roomId) && 'gray')) } onClick={ () => processAction('set_home_room') } />
                                         { hasPermission('settings') &&
                                             <i className="cursor-pointer nitro-icon icon-cog" title={ LocalizeText('navigator.room.popup.info.room.settings') } onClick={ event => processAction('open_room_settings') } /> }
                                         <FaLink className="cursor-pointer fa-icon" title={ LocalizeText('navigator.embed.caption') } onClick={ event => processAction('toggle_room_link') } />

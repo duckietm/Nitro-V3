@@ -110,7 +110,7 @@ export const GroupTabColorsView: FC<GroupTabColorsViewProps> = props =>
                 <AutoGrid columnCount={ 7 } columnMinHeight={ 16 } columnMinWidth={ 16 } gap={ 1 }>
                     { groupData.groupColors && groupCustomize.groupColorsA && groupCustomize.groupColorsA.map((item, index) =>
                     {
-                        return <div key={ index } className={ classNames('relative rounded-[.25rem] w-[16px] h-[16px] bg-[#fff] border-[2px] border-[solid] border-[#fff] [box-shadow:inset_3px_3px_#0000001a] [box-shadow:inset_2px_2px_#0003] cursor-pointer', ((groupData.groupColors[0] === item.id) && 'bg-primary [box-shadow:none]')) } style={ { backgroundColor: '#' + item.color } } onClick={ () => selectColor(0, item.id) }></div>;
+                        return <div key={ index } className={ classNames('relative rounded-[.25rem] w-[16px] h-[16px] bg-[#fff] border-2 border-[solid] border-[#fff] [box-shadow:inset_3px_3px_#0000001a] [box-shadow:inset_2px_2px_#0003] cursor-pointer', ((groupData.groupColors[0] === item.id) && 'bg-primary [box-shadow:none]')) } style={ { backgroundColor: '#' + item.color } } onClick={ () => selectColor(0, item.id) }></div>;
                     }) }
                 </AutoGrid>
             </Column>
@@ -119,7 +119,7 @@ export const GroupTabColorsView: FC<GroupTabColorsViewProps> = props =>
                 <AutoGrid columnCount={ 7 } columnMinHeight={ 16 } columnMinWidth={ 16 } gap={ 1 }>
                     { groupData.groupColors && groupCustomize.groupColorsB && groupCustomize.groupColorsB.map((item, index) =>
                     {
-                        return <div key={ index } className={ classNames('relative rounded-[.25rem] w-[16px] h-[16px] bg-[#fff] border-[2px] border-[solid] border-[#fff] [box-shadow:inset_3px_3px_#0000001a] [box-shadow:inset_2px_2px_#0003] cursor-pointer', ((groupData.groupColors[1] === item.id) && 'bg-primary [box-shadow:none]')) } style={ { backgroundColor: '#' + item.color } } onClick={ () => selectColor(1, item.id) }></div>;
+                        return <div key={ index } className={ classNames('relative rounded-[.25rem] w-[16px] h-[16px] bg-[#fff] border-2 border-[solid] border-[#fff] [box-shadow:inset_3px_3px_#0000001a] [box-shadow:inset_2px_2px_#0003] cursor-pointer', ((groupData.groupColors[1] === item.id) && 'bg-primary [box-shadow:none]')) } style={ { backgroundColor: '#' + item.color } } onClick={ () => selectColor(1, item.id) }></div>;
                     }) }
                 </AutoGrid>
             </Column>

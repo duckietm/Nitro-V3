@@ -38,9 +38,9 @@ export const CatalogLayoutBadgeDisplayView: FC<CatalogLayoutProps> = props =>
                             <div className="relative overflow-hidden">
                                 <CatalogViewProductWidgetView />
                             </div>
-                            <Column className="!flex-grow" gap={ 1 }>
+                            <Column className="grow!" gap={ 1 }>
                                 <CatalogLimitedItemWidgetView />
-                                <Text truncate className="!flex-grow">{ currentOffer.localizationName }</Text>
+                                <Text truncate className="grow!">{ currentOffer.localizationName }</Text>
                                 <div className="flex justify-end">
                                     <CatalogTotalPriceWidget alignItems="end" />
                                 </div>

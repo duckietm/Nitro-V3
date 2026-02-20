@@ -90,7 +90,7 @@ export const FurnitureMannequinView: FC<{}> = props =>
                         <div className="relative mannequin-preview">
                             <LayoutAvatarImageView direction={ 2 } figure={ renderedFigure } position="absolute" />
                             { (clubLevel > 0) &&
-                                <LayoutCurrencyIcon className="absolute end-2 bottom-2" type="hc" /> }
+                                <LayoutCurrencyIcon className="absolute inset-e-2 bottom-2" type="hc" /> }
                         </div>
                     </div>
                     <Column grow justifyContent="between" overflow="auto">
@@ -132,7 +132,7 @@ export const FurnitureMannequinView: FC<{}> = props =>
                                 </Button>
                             </> }
                         { (mode === MODE_NO_CLUB) &&
-                            <div className="flex justify-center items-center !flex-grow">
+                            <div className="flex justify-center items-center grow!">
                                 <Text>{ LocalizeText('mannequin.widget.clubnotification') }</Text>
                             </div> }
                         { (mode === MODE_WRONG_GENDER) &&

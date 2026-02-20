@@ -73,7 +73,7 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props => {
                     <Flex pointer alignItems="center" className={ classNames('rounded p-1', (selectedItem === row) && 'bg-muted') } onClick={ () => setSelectedItem(row) }>
                         { pickallFurni && (
                             <input 
-                                className="flex-shrink-0 mx-1 form-check-input" 
+                                className="shrink-0 mx-1 form-check-input" 
                                 type="checkbox" 
                                 checked={ isChecked(row.id) } 
                                 onChange={ () => checkedId(row.id) }

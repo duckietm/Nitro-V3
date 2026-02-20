@@ -22,7 +22,7 @@ export const HelpIndexView: FC<{}> = props =>
 
     return (
         <>
-            <div className="flex flex-col justify-center alignp-items-enter !flex-grow gap-1">
+            <div className="flex flex-col justify-center alignp-items-enter grow! gap-1">
                 <Text fontSize={ 3 }>{ LocalizeText('help.main.frame.title') }</Text>
                 <Text>{ LocalizeText('help.main.self.description') }</Text>
             </div>

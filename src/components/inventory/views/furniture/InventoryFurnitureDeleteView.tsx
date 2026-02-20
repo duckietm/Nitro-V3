@@ -84,7 +84,7 @@ export const InventoryFurnitureDeleteView: FC<{}> = props =>
                                 className="cursor-pointer text-black fa-icon shrink-0"
                                 onClick={ () => updateAmount((amount - 1).toString()) } />
                             <NitroInput
-                                className="quantity-input text-center !py-0.5"
+                                className="quantity-input text-center py-0.5!"
                                 type="number"
                                 min={ 1 }
                                 max={ maxAmount }
@@ -98,7 +98,7 @@ export const InventoryFurnitureDeleteView: FC<{}> = props =>
                             </NitroButton>
                         </div>
                         <NitroButton
-                            className="!bg-danger hover:!bg-danger/80 w-full"
+                            className="bg-danger! hover:bg-danger/80! w-full"
                             disabled={ amount > maxAmount }
                             onClick={ deleteItem }>
                             { LocalizeText('inventory.delete.confirm_delete.button') }

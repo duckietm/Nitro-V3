@@ -33,7 +33,7 @@ export const CatalogLayouGuildForumView: FC<CatalogLayoutProps> = props =>
                         <>
                             <Column grow gap={ 1 }>
                                 <Text truncate>{ currentOffer.localizationName }</Text>
-                                <div className="!flex-grow">
+                                <div className="grow!">
                                     <CatalogGuildSelectorWidgetView />
                                 </div>
                                 <div className="flex justify-end">

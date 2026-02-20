@@ -189,7 +189,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                             return (
                                 <LayoutGridItem key={ index } className={ !count ? 'opacity-0-5 ' : '' } itemActive={ (groupItem === item) } itemCount={ count } itemImage={ item.iconUrl } itemUniqueNumber={ item.stuffData.uniqueNumber } onClick={ event => (count && setGroupItem(item)) } onDoubleClick={ event => attemptItemOffer(1) }>
                                     { ((count > 0) && (groupItem === item)) &&
-                                        <Button className="trade-button bottom-1 end-1" position="absolute" variant="success" onClick={ event => attemptItemOffer(1) }>
+                                        <Button className="trade-button bottom-1 inset-e-1" position="absolute" variant="success" onClick={ event => attemptItemOffer(1) }>
                                             <FaChevronRight className="fa-icon" />
                                         </Button>
                                     }
@@ -229,7 +229,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                                 return (
                                     <LayoutGridItem key={ i } itemActive={ (ownGroupItem === item) } itemCount={ item.getTotalCount() } itemImage={ item.iconUrl } itemUniqueNumber={ item.stuffData.uniqueNumber } onClick={ event => setOwnGroupItem(item) } onDoubleClick={ event => removeItem(item) }>
                                         { (ownGroupItem === item) &&
-                                            <Button className="trade-button bottom-1 start-1" position="absolute" variant="danger" onClick={ event => removeItem(item) }>
+                                            <Button className="trade-button bottom-1 inset-s-1" position="absolute" variant="danger" onClick={ event => removeItem(item) }>
                                                 <FaChevronLeft className="fa-icon" />
                                             </Button> }
                                     </LayoutGridItem>
@@ -260,7 +260,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                         </div>
                     </Column>
                 </Grid>
-                <div className="flex !flex-grow justify-between">
+                <div className="flex grow! justify-between">
                     <Button variant="danger" onClick={ cancelTrade }>{ LocalizeText('generic.cancel') }</Button>
                     { (tradeState === TradeState.TRADING_STATE_READY) &&
                         <Button disabled={ (!ownUser.itemCount && !otherUser.itemCount) } variant="secondary" onClick={ progressTrade }>{ LocalizeText('inventory.trading.accept') }</Button> }

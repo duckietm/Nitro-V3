@@ -14,11 +14,11 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[] }> = props =>
 
     return (
         <div ref={ elementRef } className="flex items-center       ">
-            <Button className="z-[2] cursor-pointer" disabled={ (indexOffset <= 0) } variant="black" onClick={ event => setIndexOffset(indexOffset - 1) }>
+            <Button className="z-2 cursor-pointer" disabled={ (indexOffset <= 0) } variant="black" onClick={ event => setIndexOffset(indexOffset - 1) }>
                 <FaChevronLeft className="fa-icon" />
             </Button>
             { Array.from(Array(MAX_DISPLAY_COUNT), (e, i) => <FriendBarItemView key={ i } friend={ (onlineFriends[indexOffset + i] || null) } />) }
-            <Button className="z-[2] cursor-pointer" disabled={ !((onlineFriends.length > MAX_DISPLAY_COUNT) && ((indexOffset + MAX_DISPLAY_COUNT) <= (onlineFriends.length - 1))) } variant="black" onClick={ event => setIndexOffset(indexOffset + 1) }>
+            <Button className="z-2 cursor-pointer" disabled={ !((onlineFriends.length > MAX_DISPLAY_COUNT) && ((indexOffset + MAX_DISPLAY_COUNT) <= (onlineFriends.length - 1))) } variant="black" onClick={ event => setIndexOffset(indexOffset + 1) }>
                 <FaChevronRight className="fa-icon" />
             </Button>
         </div>

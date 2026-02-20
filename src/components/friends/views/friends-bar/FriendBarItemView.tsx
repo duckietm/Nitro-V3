@@ -33,7 +33,7 @@ export const FriendBarItemView: FC<{ friend: MessengerFriend }> = props =>
     if(!friend)
     {
         return (
-            <Button className="border w-[130px] mx-[3px] my-[0] z-0 relative pl-[37px] text-left friend-bar-search" justifyContent="start" size="md">
+            <Button className="border w-[130px] mx-[3px] my-0 z-0 relative pl-[37px] text-left friend-bar-search" justifyContent="start" size="md">
                 <div className="absolute -top-[3px] left-[5px] w-[31px] h-[34px] bg-[url('@/assets/images/toolbar/friend-search.png')]" />
                 <div className="truncate">{ LocalizeText('friend.bar.find.title') }</div>
             </Button>
@@ -41,7 +41,7 @@ export const FriendBarItemView: FC<{ friend: MessengerFriend }> = props =>
     }
 
     return (
-        <Button className={ ' block w-[130px] mx-[3px] my-[0] z-0 relative pl-[37px] text-left' + (isVisible ? 'mb-[21px]' : '') } justifyContent="start" size="md" variant={ 'success' } onClick={ event => setVisible(prevValue => !prevValue) }>
+        <Button className={ ' block w-[130px] mx-[3px] my-0 z-0 relative pl-[37px] text-left' + (isVisible ? 'mb-[21px]' : '') } justifyContent="start" size="md" variant={ 'success' } onClick={ event => setVisible(prevValue => !prevValue) }>
             <div className={ `friend-bar-item-head absolute ${ friend.id > 0 ? '-top-[30px] -left-[30px]' : '-top-[5px] -left-[3.5px]' }` }>
                 { (friend.id > 0) && <LayoutAvatarImageView direction={ 2 } figure={ friend.figure } headOnly={ true } /> }
                 { (friend.id <= 0) && <LayoutBadgeImageView badgeCode={ friend.figure } isGroup={ true } /> }

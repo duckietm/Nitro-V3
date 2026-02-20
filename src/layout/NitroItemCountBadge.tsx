@@ -2,7 +2,7 @@ import { DetailedHTMLProps, forwardRef, HTMLAttributes, PropsWithChildren } from
 import { classNames } from './classNames';
 
 const classes = {
-    base: 'text-[white] font-bold leading-none text-[9.5px] absolute right-0 top-0    py-0.5 px-[3px] z-[1] rounded border',
+    base: 'text-[white] font-bold leading-none text-[9.5px] absolute right-0 top-0    py-0.5 px-[3px] z-1 rounded border',
     themes: {
         'primary': 'border-black bg-red-700'
     }

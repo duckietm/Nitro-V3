@@ -102,7 +102,7 @@ const MonsterplantStats: FC<{
             {LocalizeText('infostand.pet.text.growth')}
           </Text>
           <LayoutCounterTimeView
-            className="top-2 end-2"
+            className="top-2 inset-e-2"
             day={ConvertSeconds(remainingGrowTime).split(':')[0]}
             hour={ConvertSeconds(remainingGrowTime).split(':')[1]}
             minutes={ConvertSeconds(remainingGrowTime).split(':')[2]}
@@ -114,7 +114,7 @@ const MonsterplantStats: FC<{
         <Text small truncate variant="white">
           {LocalizeText('infostand.pet.text.raritylevel', ['level'], [LocalizeText(`infostand.pet.raritylevel.${avatarInfo.rarityLevel}`)])}
         </Text>
-        <LayoutRarityLevelView className="top-2 end-2" level={avatarInfo.rarityLevel} />
+        <LayoutRarityLevelView className="top-2 inset-e-2" level={avatarInfo.rarityLevel} />
       </Column>
       <hr className="m-0" />
     </div>

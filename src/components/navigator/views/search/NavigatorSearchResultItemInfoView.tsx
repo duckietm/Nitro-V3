@@ -48,7 +48,7 @@ export const NavigatorSearchResultItemInfoView: FC<{
 
             <Popover
                 ref={ elementRef } // if you'd like a ref to your popover's child, you can grab one here
-                containerClassName="max-w-[276px] not-italic font-normal leading-normal text-left no-underline [text-shadow:none] normal-case tracking-[normal] [word-break:normal] [word-spacing:normal] whitespace-normal text-[.7875rem] [word-wrap:break-word] bg-[#dfdfdf] bg-clip-padding border-[1px] border-[solid] border-[#283F5D] rounded-[.25rem] [box-shadow:0_2px_#00000073] z-[1070]"
+                containerClassName="max-w-[276px] not-italic font-normal leading-normal text-left no-underline text-shadow-none normal-case tracking-[normal] [word-break:normal] [word-spacing:normal] whitespace-normal text-[.7875rem] [word-wrap:break-word] bg-[#dfdfdf] bg-clip-padding border border-[solid] border-[#283F5D] rounded-[.25rem] [box-shadow:0_2px_#00000073] z-1070"
                 content={ ({ position, childRect, popoverRect }) => (
                     <ArrowContainer // if you'd like an arrow, you can import the ArrowContainer!
                         arrowColor={ 'black' }
@@ -63,12 +63,12 @@ export const NavigatorSearchResultItemInfoView: FC<{
                             <Flex gap={ 2 } overflow="hidden">
                                 <LayoutRoomThumbnailView className="flex flex-col items-center mb-1 justify-content-end" customUrl={ roomData.officialRoomPicRef } roomId={ roomData.roomId }>
                                     { roomData.habboGroupId > 0 && (
-                                        <LayoutBadgeImageView badgeCode={ roomData.groupBadgeCode } className={ 'absolute top-0 start-0 m-1 ' } isGroup={ true } />) }
+                                        <LayoutBadgeImageView badgeCode={ roomData.groupBadgeCode } className={ 'absolute top-0 inset-s-0 m-1 ' } isGroup={ true } />) }
                                     { roomData.doorMode !== RoomDataParser.OPEN_STATE && (
-                                        <i className={ 'absolute end-0 mb-1 me-1 icon icon-navigator-room-' + (roomData.doorMode === RoomDataParser.DOORBELL_STATE ? 'locked' : roomData.doorMode === RoomDataParser.PASSWORD_STATE ? 'password' : roomData.doorMode === RoomDataParser.INVISIBLE_STATE ? 'invisible' : '') } />) }
+                                        <i className={ 'absolute inset-e-0 mb-1 me-1 icon icon-navigator-room-' + (roomData.doorMode === RoomDataParser.DOORBELL_STATE ? 'locked' : roomData.doorMode === RoomDataParser.PASSWORD_STATE ? 'password' : roomData.doorMode === RoomDataParser.INVISIBLE_STATE ? 'invisible' : '') } />) }
                                 </LayoutRoomThumbnailView>
                                 <div className="flex flex-col gap-1">
-                                    <Text bold truncate className="flex-grow-1" style={ { maxHeight: 13 } }>
+                                    <Text bold truncate className="grow" style={ { maxHeight: 13 } }>
                                         { roomData.roomName }
                                     </Text>
                                     <div className="flex gap-2">
@@ -80,10 +80,10 @@ export const NavigatorSearchResultItemInfoView: FC<{
                                             <Text italics>{ roomData.ownerName }</Text>
                                         </div>
                                     </div>
-                                    <Text className="flex-grow-1">
+                                    <Text className="grow">
                                         { roomData.description }
                                     </Text>
-                                    <Flex className={ 'badge p-1 absolute m-1 bottom-0 end-0 m-2 ' + getUserCounterColor() } gap={ 1 }>
+                                    <Flex className={ 'badge p-1 absolute m-1 bottom-0 inset-e-0 m-2 ' + getUserCounterColor() } gap={ 1 }>
                                         <FaUser className="fa-icon" />
                                         { roomData.userCount }
                                     </Flex>

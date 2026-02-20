@@ -126,7 +126,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
 
   return (
     <>
-      <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,28,32,0.95)] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] rounded">
+      <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,28,32,0.95)] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded">
         <Column className="h-full p-[8px] overflow-auto" gap={1} overflow="visible">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
@@ -136,13 +136,13 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
               </div>
               <FaTimes className="cursor-pointer fa-icon" onClick={onClose} />
             </div>
-            <hr className="m-0 bg-[#0003] border-[0] opacity-[0.5] h-px" />
+            <hr className="m-0 bg-[#0003] border-0 opacity-[0.5] h-px" />
           </div>
           <div className="flex flex-col gap-1">
             <div className="flex gap-1">
               <Column
                 fullWidth
-                className={`flex items-center w-full max-w-[68px] rounded-[0.25rem] profile-background ${infostandBackgroundClass}`}
+                className={`flex items-center w-full max-w-[68px] rounded-sm profile-background ${infostandBackgroundClass}`}
                 onClick={handleProfileClick}
               >
                 <Base position="absolute" className={`profile-stand ${infostandStandClass}`} />
@@ -185,7 +185,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                 </Flex>
               </Column>
             </div>
-            <hr className="m-0 bg-[#0003] border-[0] opacity-[0.5] h-px" />
+            <hr className="m-0 bg-[#0003] border-0 opacity-[0.5] h-px" />
           </div>
           <div className="flex flex-col gap-1">
             <Flex alignItems="center" className="bg-light-dark rounded py-1 px-2">
@@ -206,7 +206,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                     {isEditingMotto && (
                       <input
                         autoFocus={true}
-                        className="w-full h-full text-[12px] p-0 outline-[0] border-[0] text-[#fff] relative bg-transparent resize-none focus:italic border-transparent focus:border-transparent focus:ring-0"
+                        className="w-full h-full text-[12px] p-0 outline-0 border-0 text-[#fff] relative bg-transparent resize-none focus:italic border-transparent focus:border-transparent focus:ring-0"
                         maxLength={GetConfigurationValue<number>('motto.max.length', 38)}
                         type="text"
                         value={motto}
@@ -219,7 +219,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                 </Flex>
               )}
             </Flex>
-            <hr className="m-0 bg-[#0003] border-[0] opacity-[0.5] h-px" />
+            <hr className="m-0 bg-[#0003] border-0 opacity-[0.5] h-px" />
           </div>
           <div className="flex flex-col gap-1">
             <Text small wrap variant="white">
@@ -227,7 +227,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
             </Text>
             {avatarInfo.carryItem > 0 && (
               <>
-                <hr className="m-0 bg-[#0003] border-[0] opacity-[0.5] h-px" />
+                <hr className="m-0 bg-[#0003] border-0 opacity-[0.5] h-px" />
                 <Text small wrap variant="white">
                   {LocalizeText('infostand.text.handitem', ['item'], [LocalizeText('handitem' + avatarInfo.carryItem)])}
                 </Text>

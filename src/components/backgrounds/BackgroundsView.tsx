@@ -82,7 +82,7 @@ export const BackgroundsView: FC<BackgroundsViewProps> = ({
             className={item.selectable ? '' : 'non-selectable'}
         >
             <Base className={`profile-${type} ${type}-${item.id}`} />
-            {item.isHcOnly && <LayoutCurrencyIcon position="absolute" className="top-1 end-1" type="hc" />}
+            {item.isHcOnly && <LayoutCurrencyIcon position="absolute" className="top-1 inset-e-1" type="hc" />}
         </Flex>
     ), [handleSelection]);
 

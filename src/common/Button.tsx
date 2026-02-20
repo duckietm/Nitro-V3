@@ -19,7 +19,7 @@ export const Button: FC<ButtonProps> = props =>
 
         // fucked up method i know (i dont have a clue what im doing because im a ninja)
 
-        const newClassNames: string[] = [ 'pointer-events-auto inline-block font-normal leading-normal text-[#fff] text-center no-underline align-middle cursor-pointer select-none border-[1px] border-[solid] border-[transparent] px-[.75rem] py-[.375rem] text-[.9rem] rounded-[.25rem] [transition:color_.15s_ease-in-out,_background-color_.15s_ease-in-out,_border-color_.15s_ease-in-out,_box-shadow_.15s_ease-in-out]' ];
+        const newClassNames: string[] = [ 'pointer-events-auto inline-block font-normal leading-normal text-[#fff] text-center no-underline align-middle cursor-pointer select-none border border-[solid] border-transparent px-[.75rem] py-[.375rem] text-[.9rem] rounded-[.25rem] [transition:color_.15s_ease-in-out,background-color_.15s_ease-in-out,border-color_.15s_ease-in-out,box-shadow_.15s_ease-in-out]' ];
 
         if(variant)
         {
@@ -40,7 +40,7 @@ export const Button: FC<ButtonProps> = props =>
                 newClassNames.push('text-white  bg-[#000] border-[#000] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white  hover:bg-[#000] hover:border-[#000]');
 
             if(variant == 'secondary')
-                newClassNames.push('text-white  bg-[#185d79] border-[#185d79] [box-shadow:inset_0_2px_#ffffff26,_inset_0_-2px_#0000001a,_0_1px_#0000001a]  hover:text-white hover:bg-[#144f67] hover:border-[#134a61]');
+                newClassNames.push('text-white  bg-[#185d79] border-[#185d79] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a]  hover:text-white hover:bg-[#144f67] hover:border-[#134a61]');
 
             if(variant == 'dark')
                 newClassNames.push('text-white bg-dark [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#18181bfb] hover:border-[#161619fb]');
@@ -54,7 +54,7 @@ export const Button: FC<ButtonProps> = props =>
         {
             if(size == 'sm')
             {
-                newClassNames.push('!px-[.5rem] !py-[.25rem] !text-[.7875rem] !rounded-[.2rem] !min-h-[28px]');
+                newClassNames.push('px-[.5rem]! py-[.25rem]! text-[.7875rem]! rounded-[.2rem]! min-h-[28px]!');
             }
         }
 

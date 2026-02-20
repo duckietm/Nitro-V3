@@ -31,7 +31,7 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
         <Grid>
             <Column overflow="hidden" size={ 7 }>
                 <CatalogItemGridWidgetView />
-                <textarea className="!flex-grow form-control w-full" defaultValue={ trophyText || '' } onChange={ event => setTrophyText(event.target.value) } />
+                <textarea className="grow! form-control w-full" defaultValue={ trophyText || '' } onChange={ event => setTrophyText(event.target.value) } />
             </Column>
             <Column center={ !currentOffer } overflow="hidden" size={ 5 }>
                 { !currentOffer &&

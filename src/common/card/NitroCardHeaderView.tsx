@@ -28,7 +28,7 @@ export const NitroCardHeaderView: FC<NitroCardHeaderViewProps> = props =>
             <Flex center fullWidth>
                 <span className="text-xl text-white drop-shadow-lg">{ headerText }</span>
                 { isGalleryPhoto &&
-                    <Base className="end-4 nitro-card-header-report-camera" position="absolute" onClick={ onReportPhoto }>
+                    <Base className="inset-e-4 nitro-card-header-report-camera" position="absolute" onClick={ onReportPhoto }>
                         <FaFlag className="fa-icon" />
                     </Base>
                 }

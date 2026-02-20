@@ -92,7 +92,7 @@ export const InventoryPetView: FC<{
                     <LayoutRoomPreviewerView height={ 140 } roomPreviewer={ roomPreviewer } />
                     { selectedPet &&
                         <NitroButton
-                            className="!bg-danger hover:!bg-danger/80 absolute bottom-2 end-2 p-1"
+                            className="bg-danger! hover:bg-danger/80! absolute bottom-2 inset-e-2 p-1"
                             onClick={ attemptDeletePet }>
                             <FaTrashAlt className="fa-icon" />
                         </NitroButton> }

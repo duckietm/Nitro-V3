@@ -86,7 +86,7 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = props =
                                 { LocalizeText(isWearingBadge(selectedBadgeCode) ? 'inventory.badges.clearbadge' : 'inventory.badges.wearbadge') }
                             </NitroButton>
                             { !isWearingBadge(selectedBadgeCode) &&
-                                <NitroButton className="!bg-danger hover:!bg-danger/80 p-1" onClick={ attemptDeleteBadge }>
+                                <NitroButton className="bg-danger! hover:bg-danger/80! p-1" onClick={ attemptDeleteBadge }>
                                     <FaTrashAlt className="fa-icon" />
                                 </NitroButton> }
                         </div>

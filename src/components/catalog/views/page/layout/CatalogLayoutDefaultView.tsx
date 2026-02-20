@@ -38,7 +38,7 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
                                 { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
                                     <>
                                         <CatalogViewProductWidgetView />
-                                        <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 end-1" />
+                                        <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 inset-e-1" />
                                     </> }
                                 { (currentOffer.product.productType === ProductTypeEnum.BADGE) && <CatalogAddOnBadgeWidgetView className="scale-2" /> }
                             </Flex>

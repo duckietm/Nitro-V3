@@ -124,16 +124,16 @@ export const ModToolsView: FC<{}> = props =>
                     <NitroCardHeaderView headerText={ 'Mod Tools' } onCloseClick={ event => setIsVisible(false) } />
                     <NitroCardContentView className="text-black" gap={ 1 }>
                         <Button className="relative" disabled={ (currentRoomId <= 0) } gap={ 1 } onClick={ event => CreateLinkEvent(`mod-tools/toggle-room-info/${ currentRoomId }`) }>
-                            <div className="nitro-icon icon-small-room absolute start-1" /> Room Tool
+                            <div className="nitro-icon icon-small-room absolute inset-s-1" /> Room Tool
                         </Button>
                         <Button className="relative" disabled={ (currentRoomId <= 0) } gap={ 1 } innerRef={ elementRef } onClick={ event => CreateLinkEvent(`mod-tools/toggle-room-chatlog/${ currentRoomId }`) }>
-                            <div className="nitro-icon icon-chat-history absolute start-1" /> Chatlog Tool
+                            <div className="nitro-icon icon-chat-history absolute inset-s-1" /> Chatlog Tool
                         </Button>
                         <Button className="relative" disabled={ !selectedUser } gap={ 1 } onClick={ () => CreateLinkEvent(`mod-tools/toggle-user-info/${ selectedUser.userId }`) }>
-                            <div className="nitro-icon icon-user absolute start-1" /> User: { selectedUser ? selectedUser.username : '' }
+                            <div className="nitro-icon icon-user absolute inset-s-1" /> User: { selectedUser ? selectedUser.username : '' }
                         </Button>
                         <Button className="relative" gap={ 1 } onClick={ () => setIsTicketsVisible(prevValue => !prevValue) }>
-                            <div className="nitro-icon icon-tickets absolute start-1" /> Report Tool
+                            <div className="nitro-icon icon-tickets absolute inset-s-1" /> Report Tool
                         </Button>
                     </NitroCardContentView>
                 </NitroCardView> }

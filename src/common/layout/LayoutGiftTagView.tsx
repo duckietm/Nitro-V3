@@ -20,14 +20,14 @@ export const LayoutGiftTagView: FC<LayoutGiftTagViewProps> = props =>
 
     return (
         <Flex className="nitro-gift-card text-black" overflow="hidden">
-            <div className="flex items-center justify-center gift-face flex-shrink-0">
+            <div className="flex items-center justify-center gift-face shrink-0">
                 { !userName && <div className="gift-incognito"></div> }
                 { figure && <div className="gift-avatar">
                     <LayoutAvatarImageView direction={ 2 } figure={ figure } headOnly={ true } />
                 </div> }
             </div>
             <Flex className="w-full pt-4 pb-4 pe-4 ps-3" overflow="hidden">
-                <Column className="!flex-grow" justifyContent="between" overflow="auto">
+                <Column className="grow!" justifyContent="between" overflow="auto">
                     { !editable &&
                         <Text textBreak className="gift-message">{ message }</Text> }
                     { editable && (onChange !== null) &&

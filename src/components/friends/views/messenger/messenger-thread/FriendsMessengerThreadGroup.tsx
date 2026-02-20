@@ -33,12 +33,12 @@ export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread, group: M
                             <Base className="w-full text-break">
                                 { (chat.type === MessengerThreadChat.SECURITY_NOTIFICATION) &&
                                     <Flex alignItems="center" className="bg-light rounded mb-2 px-2 py-1 small text-muted" gap={ 2 }>
-                                        <Base className="nitro-friends-spritesheet icon-warning flex-shrink-0" />
+                                        <Base className="nitro-friends-spritesheet icon-warning shrink-0" />
                                         <Base>{ chat.message }</Base>
                                     </Flex> }
                                 { (chat.type === MessengerThreadChat.ROOM_INVITE) &&
                                     <Flex alignItems="center" className="bg-light rounded mb-2 px-2 py-1 small text-black" gap={ 2 }>
-                                        <Base className="messenger-notification-icon flex-shrink-0" />
+                                        <Base className="messenger-notification-icon shrink-0" />
                                         <Base>{ (LocalizeText('messenger.invitation') + ' ') }{ chat.message }</Base>
                                     </Flex> }
                             </Base>

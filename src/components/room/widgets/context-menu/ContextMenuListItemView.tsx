@@ -19,7 +19,7 @@ export const ContextMenuListItemView: FC<ContextMenuListItemViewProps> = props =
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'relative mb-[2px] p-[3px] overflow-hidden', 'h-[24px] max-h-[24px] p-[3px] bg-[repeating-linear-gradient(#131e25,_#131e25_50%,_#0d171d_50%,_#0d171d_100%)] cursor-pointer' ];
+        const newClassNames: string[] = [ 'relative mb-[2px] p-[3px] overflow-hidden', 'h-[24px] max-h-[24px] p-[3px] bg-[repeating-linear-gradient(#131e25,#131e25_50%,#0d171d_50%,#0d171d_100%)] cursor-pointer' ];
 
         if(disabled) newClassNames.push('disabled');
 

@@ -25,12 +25,12 @@ export const Grid: FC<GridProps> = props =>
 
 
         if(inline) newClassNames.push('inline-grid');
-        else newClassNames.push('grid grid-rows-[repeat(var(--bs-rows,_1),_1fr)] grid-cols-[repeat(var(--bs-columns,_12),_1fr)]');
+        else newClassNames.push('grid grid-rows-[repeat(var(--bs-rows,1),1fr)] grid-cols-[repeat(var(--bs-columns,12),1fr)]');
 
         if(gap) newClassNames.push('gap-' + gap);
         else if(gap === 0) newClassNames.push('gap-0');
 
-        if(maxContent) newClassNames.push('[flex-basis:max-content]');
+        if(maxContent) newClassNames.push('basis-[max-content]');
 
         if(alignSelf) newClassNames.push('self-' + alignSelf);
 

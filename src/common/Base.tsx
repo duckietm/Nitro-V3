@@ -37,9 +37,9 @@ export const Base: FC<BaseProps<HTMLDivElement>> = props =>
 
         if(fitV) newClassNames.push('vw-full', 'vh-full');
 
-        if(grow) newClassNames.push('!flex-grow');
+        if(grow) newClassNames.push('grow!');
 
-        if(shrink) newClassNames.push('!flex-shrink-0');
+        if(shrink) newClassNames.push('shrink-0!');
 
         if(overflow) newClassNames.push('overflow-' + overflow);
 

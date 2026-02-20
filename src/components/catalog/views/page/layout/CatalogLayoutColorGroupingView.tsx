@@ -152,15 +152,15 @@ export const CatalogLayoutColorGroupingView: FC<CatalogLayoutColorGroupViewProps
                     <>
                         <div className="relative overflow-hidden">
                             <CatalogViewProductWidgetView />
-                            <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 end-1" position="absolute" />
+                            <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 inset-e-1" position="absolute" />
                             { currentOffer.product.furnitureData.hasIndexedColor &&
-                                <Button className="bottom-1 start-1" position="absolute" onClick={ event => setColorsShowing(prev => !prev) }>
+                                <Button className="bottom-1 inset-s-1" position="absolute" onClick={ event => setColorsShowing(prev => !prev) }>
                                     <FaFillDrip className="fa-icon" />
                                 </Button> }
                         </div>
-                        <Column className="!flex-grow" gap={ 1 }>
+                        <Column className="grow!" gap={ 1 }>
                             <CatalogLimitedItemWidgetView />
-                            <Text truncate className="!flex-grow">{ currentOffer.localizationName }</Text>
+                            <Text truncate className="grow!">{ currentOffer.localizationName }</Text>
                             <div className="flex justify-between">
                                 <div className="flex flex-col gap-1">
                                     <CatalogSpinnerWidgetView />

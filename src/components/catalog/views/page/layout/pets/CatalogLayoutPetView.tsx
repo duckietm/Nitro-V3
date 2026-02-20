@@ -218,9 +218,9 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
                     <>
                         <div className="relative overflow-hidden">
                             <CatalogViewProductWidgetView />
-                            <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 end-1" position="absolute" />
+                            <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 inset-e-1" position="absolute" />
                             { ((petIndex > -1) && (petIndex <= 7)) &&
-                                <Button className="bottom-1 start-1" position="absolute" onClick={ event => setColorsShowing(!colorsShowing) }>
+                                <Button className="bottom-1 inset-s-1" position="absolute" onClick={ event => setColorsShowing(!colorsShowing) }>
                                     <FaFillDrip className="fa-icon" />
                                 </Button> }
                         </div>

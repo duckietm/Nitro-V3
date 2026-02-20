@@ -27,7 +27,7 @@ export const RelationshipsContainerView: FC<RelationshipsContainerViewProps> = p
                 <Flex center className="h-[25px]">
                     <i className={ `nitro-friends-spritesheet icon-${ relationshipName }` } />
                 </Flex>
-                <div className="flex flex-col flex-grow gap-0">
+                <div className="flex flex-col grow gap-0">
                     <div className="flex items-center justify-between bg-white rounded px-2 py-1 h-[25px]">
                         <p className="text-sm underline pointer" onClick={ event => (relationshipInfo && (relationshipInfo.randomFriendId >= 1) && GetUserProfile(relationshipInfo.randomFriendId)) }>
                             { (!relationshipInfo || (relationshipInfo.friendCount === 0)) &&
@@ -40,7 +40,7 @@ export const RelationshipsContainerView: FC<RelationshipsContainerViewProps> = p
                                 <LayoutAvatarImageView direction={ 4 } figure={ relationshipInfo.randomFriendFigure } headOnly={ true } />
                             </div> }
                     </div>
-                    <p className="italics text-sm mt-[2px] ml-[5px] !text-[#939392]">
+                    <p className="italics text-sm mt-[2px] ml-[5px] text-[#939392]!">
                         { (!relationshipInfo || (relationshipInfo.friendCount === 0)) &&
                             LocalizeText('extendedprofile.no.friends.in.this.category') }
                         { (relationshipInfo && (relationshipInfo.friendCount > 1)) &&

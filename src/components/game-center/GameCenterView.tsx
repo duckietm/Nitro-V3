@@ -39,7 +39,7 @@ export const GameCenterView = () =>
 
     if(!isVisible || !games || !accountStatus) return;
 
-    return <Flex className="top-0 bottom-0 start-0 end-0 bg-black" justifyContent="center" position="absolute">
+    return <Flex className="top-0 bottom-0 inset-s-0 inset-e-0 bg-black" justifyContent="center" position="absolute">
         <Flex column className="game-center-main">
             <GameView/>
             <GameListView />

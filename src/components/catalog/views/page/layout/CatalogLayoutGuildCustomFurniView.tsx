@@ -29,11 +29,11 @@ export const CatalogLayouGuildCustomFurniView: FC<CatalogLayoutProps> = props =>
                     <>
                         <div className="relative overflow-hidden">
                             <CatalogViewProductWidgetView />
-                            <CatalogGuildBadgeWidgetView className="bottom-1 end-1" position="absolute" />
+                            <CatalogGuildBadgeWidgetView className="bottom-1 inset-e-1" position="absolute" />
                         </div>
                         <Column grow gap={ 1 }>
                             <Text truncate>{ currentOffer.localizationName }</Text>
-                            <div className="!flex-grow">
+                            <div className="grow!">
                                 <CatalogGuildSelectorWidgetView />
                             </div>
                             <div className="flex justify-end">

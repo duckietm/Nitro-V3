@@ -19,7 +19,7 @@ export const AvatarEditorPaletteSetItem: FC<{
 
     return (
         <InfiniteGrid.Item itemHighlight className="clear-bg" itemActive={ isSelected } itemColor={ ColorConverter.int2rgb(partColor.rgb) } { ...rest }>
-            { isHC && <LayoutCurrencyIcon className="absolute end-1 bottom-1" type="hc" /> }
+            { isHC && <LayoutCurrencyIcon className="absolute inset-e-1 bottom-1" type="hc" /> }
         </InfiniteGrid.Item>
     );
 };

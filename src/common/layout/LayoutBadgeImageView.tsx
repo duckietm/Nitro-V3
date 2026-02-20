@@ -99,7 +99,7 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
     return (
         <Base className="group" classNames={ getClassNames } style={ getStyle } { ...rest }>
             { (showInfo && GetConfigurationValue<boolean>('badge.descriptions.enabled', true)) &&
-                <Base className="hidden group-hover:block  before:absolute before:content-['_'] before:w-[0] before:h-[0] before:!border-l-[10px] before:!border-b-[10px] before:!border-t-[10px] before:top-[10px] before:-right-[10px] before:[border-left-color:white] before:[border-top-color:transparent] before:[border-bottom-color:transparent] z-50 absolute pointer-events-none select-none w-[210px] rounded-[.25rem] bg-[#fff] -left-[220px] text-black py-1 px-2 small">
+                <Base className="hidden group-hover:block  before:absolute before:content-['_'] before:w-0 before:h-0 before:border-l-10! before:border-b-10! before:border-t-10! before:top-[10px] before:-right-[10px] before:border-l-[white] before:border-t-transparent before:border-b-transparent z-50 absolute pointer-events-none select-none w-[210px] rounded-[.25rem] bg-[#fff] -left-[220px] text-black py-1 px-2 small">
                     <div className="font-bold mb-1">{ isGroup ? customTitle : LocalizeBadgeName(badgeCode) }</div>
                     <div>{ isGroup ? LocalizeText('group.badgepopup.body') : LocalizeBadgeDescription(badgeCode) }</div>
                 </Base> }

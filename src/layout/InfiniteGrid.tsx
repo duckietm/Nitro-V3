@@ -161,7 +161,7 @@ const InfiniteGridItem = forwardRef<HTMLDivElement, {
             ) }
             { ...rest }>
             { (itemCount > itemCountMinimum) &&
-                <div className="absolute align-middle rounded bg-red-700 bg-opacity-80 text-white border-black border top-[2px] right-[2px] text-[9.5px] p-[2px] z-[1] leading-[8px]">{ itemCount }</div> }
+                <div className="absolute align-middle rounded bg-red-700 bg-opacity-80 text-white border-black border top-[2px] right-[2px] text-[9.5px] p-[2px] z-1 leading-[8px]">{ itemCount }</div> }
             { (itemUniqueNumber > 0) &&
                 <>
                     <div

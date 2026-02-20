@@ -69,7 +69,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 					<ToolbarMeView setMeExpanded={ setMeExpanded } unseenAchievementCount={ getTotalUnseen } useGuideTool={ useGuideTool } />
 				</motion.div> )}
 			</AnimatePresence>
-            <Flex alignItems="center" className="absolute bottom-[0] left-[0] w-full h-[55px] bg-[rgba(28,_28,_32,_.95)] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] py-1 px-3" gap={ 2 } justifyContent="between">
+            <Flex alignItems="center" className="absolute bottom-0 left-0 w-full h-[55px] bg-[rgba(28,28,32,.95)] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] py-1 px-3" gap={ 2 } justifyContent="between">
                 <Flex alignItems="center" gap={ 2 }>
                     <Flex alignItems="center" gap={ 2 }>
                         <Flex center pointer className={ 'relative w-[50px] h-[45px] overflow-hidden ' + (isMeExpanded ? 'active ' : '') } onClick={ event =>

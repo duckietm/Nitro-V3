@@ -92,7 +92,7 @@ export const GuideToolOngoingView: FC<GuideToolOngoingViewProps> = props =>
                     {
                         return (
                             <Flex key={ index } fullWidth gap={ 2 } justifyContent={ isOwnChat(group.userId) ? 'end' : 'start' }>
-                                <div className="flex-shrink-0 message-avatar">
+                                <div className="shrink-0 message-avatar">
                                     { (!isOwnChat(group.userId)) &&
                                         <LayoutAvatarImageView direction={ 2 } figure={ userFigure } /> }
                                 </div>
@@ -104,7 +104,7 @@ export const GuideToolOngoingView: FC<GuideToolOngoingViewProps> = props =>
                                     { group.messages.map((chat, index) => <div key={ index } className={ classNames(chat.roomId ? 'text-break text-underline' : 'text-break', 'chat.roomId' && 'cursor-pointer') } onClick={ () => chat.roomId ? TryVisitRoom(chat.roomId) : null }>{ chat.message }</div>) }
                                 </div>
                                 { (isOwnChat(group.userId)) &&
-                                    <div className="flex-shrink-0 message-avatar">
+                                    <div className="shrink-0 message-avatar">
                                         <LayoutAvatarImageView direction={ 4 } figure={ GetSessionDataManager().figure } />
                                     </div> }
                             </Flex>

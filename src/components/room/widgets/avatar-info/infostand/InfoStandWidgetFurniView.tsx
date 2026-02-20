@@ -329,34 +329,34 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
     return (
         <Column alignItems="end" gap={ 1 }>
-            <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,_28,_32,_.95)] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] rounded">
+            <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,28,32,.95)] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded">
                 <Column className="h-full p-[8px] overflow-auto" gap={ 1 } overflow="visible">
                     <div className="flex flex-col gap-1">
                         <Flex alignItems="center" gap={ 1 } justifyContent="between">
                             <Text small wrap variant="white">{ avatarInfo.name }</Text>
                             <FaTimes className="cursor-pointer fa-icon" onClick={ onClose } />
                         </Flex>
-                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                        <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                     </div>
                     <div className="flex flex-col gap-1">
                         <Flex gap={ 1 } position="relative">
                             { avatarInfo.stuffData.isUnique &&
-                                <div className="absolute end-0">
+                                <div className="absolute inset-e-0">
                                     <LayoutLimitedEditionCompactPlateView uniqueNumber={ avatarInfo.stuffData.uniqueNumber } uniqueSeries={ avatarInfo.stuffData.uniqueSeries } />
                                 </div> }
                             { (avatarInfo.stuffData.rarityLevel > -1) &&
-                                <div className="absolute end-0">
+                                <div className="absolute inset-e-0">
                                     <LayoutRarityLevelView level={ avatarInfo.stuffData.rarityLevel } />
                                 </div> }
                             <Flex center fullWidth>
                                 <LayoutRoomObjectImageView category={ avatarInfo.category } objectId={ avatarInfo.id } roomId={ roomSession.roomId } />
                             </Flex>
                         </Flex>
-                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                        <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                     </div>
                     <div className="flex flex-col gap-1">
                         <Text fullWidth small textBreak wrap variant="white">{ avatarInfo.description }</Text>
-                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                        <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                     </div>
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1">
@@ -374,7 +374,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     </div>
                     { (isJukeBox || isSongDisk) &&
                         <div className="flex flex-col gap-1">
-                            <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                            <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                             { (songId === -1) &&
                                 <Text small wrap variant="white">
                                     { LocalizeText('infostand.jukebox.text.not.playing') }
@@ -397,12 +397,12 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     <div className="flex flex-col gap-1">
                         { isCrackable &&
                             <>
-                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                                 <Text small wrap variant="white">{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ crackableHits.toString(), crackableTarget.toString() ]) }</Text>
                             </> }
                         { avatarInfo.groupId > 0 &&
                             <>
-                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                                 <Flex pointer alignItems="center" gap={ 2 } onClick={ () => GetGroupInformation(avatarInfo.groupId) }>
                                     <LayoutBadgeImageView badgeCode={ getGroupBadgeCode() } isGroup={ true } />
                                     <Text underline variant="white">{ groupName }</Text>
@@ -410,11 +410,11 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                             </> }
                         { godMode &&
                             <>
-                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                                 { canSeeFurniId && <Text small wrap variant="white">ID: { avatarInfo.id }</Text> }
                                 { (furniKeys.length > 0) &&
                                     <>
-                                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                        <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                                         <div className="flex flex-col gap-1">
                                             { furniKeys.map((key, index) =>
                                             {
@@ -429,7 +429,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                             </> }
                         { (customKeys.length > 0) &&
                             <>
-                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                                 <div className="flex flex-col gap-1">
                                     { customKeys.map((key, index) =>
                                     {

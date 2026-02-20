@@ -46,7 +46,7 @@ export const ChatInputStyleSelectorView: FC<ChatInputStyleSelectorViewProps> = p
         <>
 
             <Popover
-                containerClassName="max-w-[276px] not-italic font-normal leading-normal text-left no-underline [text-shadow:none] normal-case tracking-[normal] [word-break:normal] [word-spacing:normal] whitespace-normal text-[.7875rem] [word-wrap:break-word] bg-[#dfdfdf] bg-clip-padding border-[1px] border-[solid] border-[#283F5D] rounded-[.25rem] [box-shadow:0_2px_#00000073] z-[1070]"
+                containerClassName="max-w-[276px] not-italic font-normal leading-normal text-left no-underline text-shadow-none normal-case tracking-[normal] [word-break:normal] [word-spacing:normal] whitespace-normal text-[.7875rem] [word-wrap:break-word] bg-[#dfdfdf] bg-clip-padding border border-[solid] border-[#283F5D] rounded-[.25rem] [box-shadow:0_2px_#00000073] z-1070"
                 content={ ({ position, childRect, popoverRect }) => (
                     <ArrowContainer // if you'd like an arrow, you can import the ArrowContainer!
                         arrowColor={ 'black' }
@@ -56,7 +56,7 @@ export const ChatInputStyleSelectorView: FC<ChatInputStyleSelectorViewProps> = p
                         popoverRect={ popoverRect }
                         position={ position }
                     >
-                        <NitroCardContentView className="bg-transparent !max-h-[200px]" overflow="hidden">
+                        <NitroCardContentView className="bg-transparent max-h-[200px]!" overflow="hidden">
                             <Grid columnCount={ 3 } overflow="auto">
                                 { chatStyleIds && (chatStyleIds.length > 0) && chatStyleIds.map((styleId) =>
                                 {

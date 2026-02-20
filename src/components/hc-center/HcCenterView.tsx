@@ -137,13 +137,13 @@ export const HcCenterView: FC<{}> = props =>
                         </Button>
                     </Flex>
                 </div>
-                <div className="end-0 p-4 top-0 habbo-avatar absolute">
+                <div className="inset-e-0 p-4 top-0 habbo-avatar absolute">
                     <LayoutAvatarImageView direction={ 4 } figure={ userFigure } scale={ 2 } />
                 </div>
             </Flex>
             <NitroCardContentView>
                 <div className="flex gap-2">
-                    <LayoutBadgeImageView badgeCode={ badgeCode } className="align-self-center flex-shrink-0 me-1" />
+                    <LayoutBadgeImageView badgeCode={ badgeCode } className="align-self-center shrink-0 me-1" />
                     <Column className="streak-info" gap={ 0 } size={ 5 }>
                         <Text>{ LocalizeText('hccenter.status.' + clubStatus) }</Text>
                         <Text dangerouslySetInnerHTML={ { __html: getInfoText() } } />
@@ -157,7 +157,7 @@ export const HcCenterView: FC<{}> = props =>
                             <div>{ LocalizeText('hccenter.special.info') }</div>
                             <div className="btn btn-link text-white p-0 mt-auto align-self-baseline" onClick={ () => CreateLinkEvent('habbopages/' + GetConfigurationValue('hc.center')['payday.habbopage']) }>{ LocalizeText('hccenter.special.infolink') }</div>
                         </Column>
-                        <div className="payday flex-shrink-0 p-2">
+                        <div className="payday shrink-0 p-2">
                             <h5 className="mb-2 ms-2">{ LocalizeText('hccenter.special.time.title') }</h5>
                             <div className="flex flex-row mb-2">
                                 <div className="clock me-2" />

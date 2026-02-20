@@ -98,7 +98,7 @@ export const AvatarEditorView: FC<{}> = props =>
                     </div>
                     <div className="flex flex-col col-span-3 overflow-hidden gap-1">
                         <AvatarEditorFigurePreviewView />
-                        <div className="flex flex-col !flex-grow gap-1">
+                        <div className="flex flex-col grow! gap-1">
                             <div className="relative inline-flex align-middle">
                                 <Button className="flex-auto " variant="secondary" onClick={ event => processAction(AvatarEditorAction.ACTION_RESET) }>
                                     <FaRedo className="fa-icon" />

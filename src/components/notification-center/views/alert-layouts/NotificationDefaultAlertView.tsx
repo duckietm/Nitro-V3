@@ -24,7 +24,7 @@ export const NotificationDefaultAlertView: FC<NotificationDefaultAlertViewProps>
     return (
         <LayoutNotificationAlertView title={ title } onClose={ onClose } { ...rest } type={ hasFrank ? NotificationAlertType.DEFAULT : item.alertType }>
             <Flex fullHeight gap={ hasFrank || (item.imageUrl && !imageFailed) ? 2 : 0 } overflow="auto">
-                { hasFrank && !item.imageUrl && <div className="notification-frank flex-shrink-0" /> }
+                { hasFrank && !item.imageUrl && <div className="notification-frank shrink-0" /> }
                 { item.imageUrl && !imageFailed && <img alt={ item.title } className="align-self-baseline" src={ item.imageUrl } onError={ () =>
                 {
                     setImageFailed(true);

@@ -71,9 +71,9 @@ export const NavigatorRoomCreatorView: FC<{}> = props =>
                         <Text>{ LocalizeText('navigator.createroom.roomnameinfo') }</Text>
                         <NitroInput maxLength={ 60 } placeholder={ LocalizeText('navigator.createroom.roomnameinfo') } type="text" onChange={ event => setName(event.target.value) } />
                     </div>
-                    <div className="flex flex-col !flex-grow gap-1">
+                    <div className="flex flex-col grow! gap-1">
                         <Text>{ LocalizeText('navigator.createroom.roomdescinfo') }</Text>
-                        <textarea className="!flex-grow form-control form-control-sm w-full" maxLength={ 255 } placeholder={ LocalizeText('navigator.createroom.roomdescinfo') } onChange={ event => setDescription(event.target.value) } />
+                        <textarea className="grow! form-control form-control-sm w-full" maxLength={ 255 } placeholder={ LocalizeText('navigator.createroom.roomdescinfo') } onChange={ event => setDescription(event.target.value) } />
                     </div>
                     <div className="flex flex-col gap-1">
                         <Text>{ LocalizeText('navigator.category') }</Text>
@@ -111,7 +111,7 @@ export const NavigatorRoomCreatorView: FC<{}> = props =>
                                     <img alt="" src={ getRoomModelImage(model.name) } />
                                 </Flex>
                                 <Text bold>{ model.tileSize } { LocalizeText('navigator.createroom.tilesize') }</Text>
-                                { !hcDisabled && model.clubLevel > HabboClubLevelEnum.NO_CLUB && <LayoutCurrencyIcon className="top-1 end-1" position="absolute" type="hc" /> }
+                                { !hcDisabled && model.clubLevel > HabboClubLevelEnum.NO_CLUB && <LayoutCurrencyIcon className="top-1 inset-e-1" position="absolute" type="hc" /> }
                             </LayoutGridItem>);
                         })
                     }
