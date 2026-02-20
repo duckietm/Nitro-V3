@@ -1,5 +1,5 @@
 import { DesktopViewEvent, GetGuestRoomResultEvent, GetSessionDataManager, GroupInformationComposer, GroupInformationEvent, GroupInformationParser, GroupRemoveMemberComposer, HabboGroupDeactivatedMessageEvent, RoomEntryInfoMessageEvent } from '@nitrots/nitro-renderer';
-import { FC, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { GetGroupInformation, GetGroupManager, GroupMembershipType, GroupType, LocalizeText, SendMessageComposer, TryJoinGroup } from '../../../api';
 import { Button, Flex, LayoutBadgeImageView, Text } from '../../../common';
@@ -7,21 +7,72 @@ import { useMessageEvent, useNotification } from '../../../hooks';
 
 export const GroupRoomInformationView: FC<{}> = props =>
 {
-    const [ expectedGroupId, setExpectedGroupId ] = useState<number>(0);
+    const expectedGroupIdRef = useRef<number>(0);
+    const requestRetryCountRef = useRef<number>(0);
+    const requestRetryTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
     const [ groupInformation, setGroupInformation ] = useState<GroupInformationParser>(null);
     const [ isOpen, setIsOpen ] = useState<boolean>(true);
     const { showConfirm = null } = useNotification();
 
+    const clearRequestRetryTimeout = () =>
+    {
+        if(!requestRetryTimeoutRef.current) return;
+
+        clearTimeout(requestRetryTimeoutRef.current);
+        requestRetryTimeoutRef.current = null;
+    };
+
+    const scheduleGroupInfoRetry = (groupId: number) =>
+    {
+        if(requestRetryCountRef.current >= 2) return;
+
+        clearRequestRetryTimeout();
+
+        requestRetryTimeoutRef.current = setTimeout(() =>
+        {
+            requestRetryTimeoutRef.current = null;
+
+            if(expectedGroupIdRef.current !== groupId) return;
+            if(groupInformation && (groupInformation.id === groupId)) return;
+
+            requestRetryCountRef.current++;
+            SendMessageComposer(new GroupInformationComposer(groupId, false));
+            scheduleGroupInfoRetry(groupId);
+        }, 700);
+    };
+
+    const requestGroupInformation = (groupId: number) =>
+    {
+        if(groupId <= 0) return;
+
+        requestRetryCountRef.current = 0;
+        clearRequestRetryTimeout();
+
+        SendMessageComposer(new GroupInformationComposer(groupId, false));
+        scheduleGroupInfoRetry(groupId);
+    };
+
+    const resetGroupState = () =>
+    {
+        expectedGroupIdRef.current = 0;
+        requestRetryCountRef.current = 0;
+        clearRequestRetryTimeout();
+        setGroupInformation(null);
+    };
+
+    const setRequestedGroupId = (groupId: number) =>
+    {
+        expectedGroupIdRef.current = groupId;
+    };
+
     useMessageEvent<DesktopViewEvent>(DesktopViewEvent, event =>
     {
-        setExpectedGroupId(0);
-        setGroupInformation(null);
+        resetGroupState();
     });
 
     useMessageEvent<RoomEntryInfoMessageEvent>(RoomEntryInfoMessageEvent, event =>
     {
-        setExpectedGroupId(0);
-        setGroupInformation(null);
+        resetGroupState();
     });
 
     useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event =>
@@ -32,13 +83,12 @@ export const GroupRoomInformationView: FC<{}> = props =>
 
         if(parser.data.habboGroupId > 0)
         {
-            setExpectedGroupId(parser.data.habboGroupId);
-            SendMessageComposer(new GroupInformationComposer(parser.data.habboGroupId, false));
+            setRequestedGroupId(parser.data.habboGroupId);
+            requestGroupInformation(parser.data.habboGroupId);
         }
         else
         {
-            setExpectedGroupId(0);
-            setGroupInformation(null);
+            resetGroupState();
         }
     });
 
@@ -46,20 +96,22 @@ export const GroupRoomInformationView: FC<{}> = props =>
     {
         const parser = event.getParser();
 
-        if(!groupInformation || ((parser.groupId !== groupInformation.id) && (parser.groupId !== expectedGroupId))) return;
+        if(!groupInformation || ((parser.groupId !== groupInformation.id) && (parser.groupId !== expectedGroupIdRef.current))) return;
 
-        setExpectedGroupId(0);
-        setGroupInformation(null);
+        resetGroupState();
     });
 
     useMessageEvent<GroupInformationEvent>(GroupInformationEvent, event =>
     {
         const parser = event.getParser();
 
-        if(parser.id !== expectedGroupId) return;
+        if(parser.id !== expectedGroupIdRef.current) return;
 
+        clearRequestRetryTimeout();
         setGroupInformation(parser);
     });
+
+    useEffect(() => () => clearRequestRetryTimeout(), []);
 
     const leaveGroup = () =>
     {
