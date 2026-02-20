@@ -189,7 +189,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                             return (
                                 <LayoutGridItem key={ index } className={ !count ? 'opacity-0-5 ' : '' } itemActive={ (groupItem === item) } itemCount={ count } itemImage={ item.iconUrl } itemUniqueNumber={ item.stuffData.uniqueNumber } onClick={ event => (count && setGroupItem(item)) } onDoubleClick={ event => attemptItemOffer(1) }>
                                     { ((count > 0) && (groupItem === item)) &&
-                                        <Button className="trade-button bottom-1 inset-e-1" position="absolute" variant="success" onClick={ event => attemptItemOffer(1) }>
+                                        <Button className="bottom-1 inset-e-1 z-[5] min-h-0 text-[8px] px-[2px] py-[1px]" position="absolute" variant="success" onClick={ event => attemptItemOffer(1) }>
                                             <FaChevronRight className="fa-icon" />
                                         </Button>
                                     }
@@ -200,7 +200,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                     <Column alignItems="end" gap={ 1 }>
                         <Grid overflow="hidden">
                             <Column overflow="hidden" size={ 6 }>
-                                <input className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm quantity-input" disabled={ !groupItem } placeholder={ LocalizeText('catalog.bundlewidget.spinner.select.amount') } type="number" value={ quantity } onChange={ event => setQuantity(event.target.valueAsNumber) } />
+                                <input className="w-[49px] min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem] rounded-[.2rem] form-control-sm" disabled={ !groupItem } placeholder={ LocalizeText('catalog.bundlewidget.spinner.select.amount') } type="number" value={ quantity } onChange={ event => setQuantity(event.target.valueAsNumber) } />
                             </Column>
                             <Column overflow="hidden" size={ 6 }>
                                 <Button disabled={ !groupItem } variant="secondary" onClick={ event => changeCount(groupItem.getUnlockedCount()) }>{ LocalizeText('inventory.trading.areoffering') }</Button>
@@ -229,7 +229,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                                 return (
                                     <LayoutGridItem key={ i } itemActive={ (ownGroupItem === item) } itemCount={ item.getTotalCount() } itemImage={ item.iconUrl } itemUniqueNumber={ item.stuffData.uniqueNumber } onClick={ event => setOwnGroupItem(item) } onDoubleClick={ event => removeItem(item) }>
                                         { (ownGroupItem === item) &&
-                                            <Button className="trade-button bottom-1 inset-s-1" position="absolute" variant="danger" onClick={ event => removeItem(item) }>
+                                            <Button className="bottom-1 inset-s-1 z-[5] min-h-0 text-[8px] px-[2px] py-[1px]" position="absolute" variant="danger" onClick={ event => removeItem(item) }>
                                                 <FaChevronLeft className="fa-icon" />
                                             </Button> }
                                     </LayoutGridItem>

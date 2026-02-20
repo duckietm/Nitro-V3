@@ -33,14 +33,14 @@ export const LayoutMiniCameraView: FC<LayoutMiniCameraViewProps> = props => {
 
     return (
         <DraggableWindow handleSelector=".nitro-room-thumbnail-camera">
-            <div className="nitro-room-thumbnail-camera px-2">
+            <div className="nitro-room-thumbnail-camera w-[132px] h-[192px] bg-[url('@/assets/images/room-widgets/thumbnail-widget/thumbnail-camera-spritesheet.png')] px-2">
                 <div
                     style={{
                         position: 'relative',
                         paddingBottom: '192px', // Matches the space needed to position buttons as per the design
                     }}
                 >
-                    <div ref={elementRef} className="camera-frame" />
+                    <div ref={elementRef} className="absolute mt-[30px] ml-[3px] w-[110px] h-[110px]" />
                     <div
                         style={{
                             position: 'absolute',

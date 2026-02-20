@@ -127,7 +127,7 @@ export const InventoryView: FC<{}> = props =>
 
     return (
         <>
-            <NitroCardView className="nitro-inventory" uniqueKey="inventory">
+            <NitroCardView className="w-[528px] h-[420px] min-w-[528px] min-h-[420px]" uniqueKey="inventory">
                 <NitroCardHeaderView
                     headerText={ LocalizeText('inventory.title') }
                     onCloseClick={ onClose } />

@@ -37,7 +37,7 @@ export const FloorplanImportExportView: FC<FloorplanImportExportViewProps> = pro
     }, []);
 
     return (
-        <NitroCardView theme="primary-slim" className="floorplan-import-export">
+        <NitroCardView theme="primary-slim" className="w-[630px] h-[475px]">
             <NitroCardHeaderView headerText={ LocalizeText('floor.plan.editor.import.export') } onCloseClick={ onCloseClick } />
             <NitroCardContentView>
                 <textarea className="h-100" value={ map } onChange={ event => setMap(event.target.value) } />

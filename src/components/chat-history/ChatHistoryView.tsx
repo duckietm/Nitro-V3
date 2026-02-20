@@ -74,9 +74,9 @@ export const ChatHistoryView: FC<{}> = props => {
     if (!isVisible) return null;
 
     return (
-        <NitroCardView className="nitro-chat-history" theme="primary-slim" uniqueKey="chat-history">
+        <NitroCardView className="w-[400px] h-[400px] bg-[#f0f0f0]" theme="primary-slim" uniqueKey="chat-history">
             <NitroCardHeaderView headerText={LocalizeText('room.chathistory.button.text')} onCloseClick={event => setIsVisible(false)} />
-            <NitroCardContentView className="nitro-card-content" gap={2} overflow="hidden" style={{ height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
+            <NitroCardContentView className="h-full bg-[#f0f0f0] bg-[url('@/assets/images/chat/chathistory_background.png')] bg-repeat bg-auto" gap={2} overflow="hidden" style={{ height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
                 <NitroInput placeholder={LocalizeText('generic.search')} type="text" value={searchText} onChange={event => setSearchText(event.target.value)} />
                 <div ref={elementRef} style={{ flex: 1, overflowY: 'auto', background: 'inherit' }}>
                     {filteredChatHistory.map((row, index) => (

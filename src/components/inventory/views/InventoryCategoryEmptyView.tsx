@@ -14,7 +14,7 @@ export const InventoryCategoryEmptyView: FC<InventoryCategoryEmptyViewProps> = p
     return (
         <Grid { ...rest }>
             <Column center overflow="hidden" size={ 5 }>
-                <div className="empty-image" />
+                <div className="w-[129px] h-[181px] bg-[url('@/assets/images/inventory/empty.png')] bg-no-repeat" />
             </Column>
             <Column justifyContent="center" overflow="hidden" size={ 7 }>
                 <Text truncate fontSize={ 5 } fontWeight="bold" overflow="unset">{ title }</Text>

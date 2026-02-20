@@ -84,7 +84,7 @@ export const InventoryFurnitureDeleteView: FC<{}> = props =>
                                 className="cursor-pointer text-black fa-icon shrink-0"
                                 onClick={ () => updateAmount((amount - 1).toString()) } />
                             <NitroInput
-                                className="quantity-input text-center py-0.5!"
+                                className="w-[49px] text-center py-0.5!"
                                 type="number"
                                 min={ 1 }
                                 max={ maxAmount }

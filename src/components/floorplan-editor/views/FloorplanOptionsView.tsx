@@ -171,7 +171,7 @@ export const FloorplanOptionsView: FC<FloorplanOptionsViewProps> = props =>
                     <Text bold>{ LocalizeText('floor.editor.wall.height') }</Text>
                     <Flex alignItems="center" gap={ 1 }>
                         <FaCaretLeft className="cursor-pointer fa-icon" onClick={ decreaseWallHeight } />
-                        <input type="number" className="form-control form-control-sm quantity-input" value={ visualizationSettings.wallHeight } onChange={ event => onWallHeightChange(event.target.valueAsNumber) } />
+                        <input type="number" className="form-control form-control-sm w-[49px]" value={ visualizationSettings.wallHeight } onChange={ event => onWallHeightChange(event.target.valueAsNumber) } />
                         <FaCaretRight className="cursor-pointer fa-icon" onClick={ increaseWallHeight } />
                     </Flex>
                 </Column>
