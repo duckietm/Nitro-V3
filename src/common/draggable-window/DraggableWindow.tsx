@@ -1,5 +1,5 @@
 import { MouseEventType, TouchEventType } from '@nitrots/nitro-renderer';
-import { CSSProperties, FC, Key, MouseEvent as ReactMouseEvent, ReactNode, TouchEvent as ReactTouchEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { CSSProperties, FC, Key, MouseEvent as ReactMouseEvent, ReactNode, TouchEvent as ReactTouchEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { GetLocalStorage, SetLocalStorage, WindowSaveOptions } from '../../api';
 import { DraggableWindowPosition } from './DraggableWindowPosition';
@@ -26,7 +26,7 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
     const [offset, setOffset] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
     const [start, setStart] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
-    const [isPositioned, setIsPositioned] = useState(false); // New state to control visibility
+    const [isPositioned, setIsPositioned] = useState(false);
     const [dragHandler, setDragHandler] = useState<HTMLElement>(null);
     const elementRef = useRef<HTMLDivElement>();
 
@@ -137,7 +137,7 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
         completeDrag();
     }, [completeDrag]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const element = elementRef.current as HTMLElement;
         if (!element) return;
 
@@ -170,25 +170,15 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
         }
 
         const clampedPos = clampPosition(offsetX, offsetY);
-        element.style.left = '0px';
-        element.style.top = '0px';
         setOffset({ x: clampedPos.x, y: clampedPos.y });
         setDelta({ x: 0, y: 0 });
-        setIsPositioned(true); // Mark as positioned after setting initial offset
+        setIsPositioned(true);
 
         return () => {
             const index = CURRENT_WINDOWS.indexOf(element);
             if (index >= 0) CURRENT_WINDOWS.splice(index, 1);
         };
     }, [handleSelector, windowPosition, uniqueKey, disableDrag, offsetLeft, offsetTop, bringToTop]);
-
-    useEffect(() => {
-        const element = elementRef.current as HTMLElement;
-        if (!element || !isPositioned) return;
-
-        element.style.transform = `translate(${offset.x + delta.x}px, ${offset.y + delta.y}px)`;
-        element.style.visibility = 'visible';
-    }, [offset, delta, isPositioned]);
 
     useEffect(() => {
         if (!dragHandler) return;
@@ -227,14 +217,20 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
         const clampedPos = clampPosition(localStorage.offset.x, localStorage.offset.y);
         setDelta({ x: 0, y: 0 });
         setOffset({ x: clampedPos.x, y: clampedPos.y });
-        setIsPositioned(true); // Ensure positioned when loading from storage
+        setIsPositioned(true);
     }, [uniqueKey, clampPosition]);
 
     return createPortal(
         <div
             ref={elementRef}
             className="absolute draggable-window"
-            style={{ ...dragStyle, visibility: isPositioned ? 'visible' : 'hidden' }} // Hide until positioned
+            style={{
+                ...dragStyle,
+                left: 0,
+                top: 0,
+                transform: `translate(${offset.x + delta.x}px, ${offset.y + delta.y}px)`,
+                visibility: isPositioned ? 'visible' : 'hidden'
+            }}
             onMouseDownCapture={onMouseDown}
             onTouchStartCapture={onTouchStart}
         >
