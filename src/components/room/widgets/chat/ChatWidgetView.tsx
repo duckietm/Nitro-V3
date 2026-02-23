@@ -1,14 +1,16 @@
 import { RoomChatSettings } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useRef } from 'react';
 import { ChatBubbleMessage, DoChatsOverlap, GetConfigurationValue } from '../../../../api';
-import { useChatWidget } from '../../../../hooks';
+import { useChatWidget, useChatWindow } from '../../../../hooks';
 import IntervalWebWorker from '../../../../workers/IntervalWebWorker';
 import { WorkerBuilder } from '../../../../workers/WorkerBuilder';
 import { ChatWidgetMessageView } from './ChatWidgetMessageView';
+import { ChatWidgetWindowView } from './ChatWidgetWindowView';
 
 export const ChatWidgetView: FC<{}> = props =>
 {
     const { chatMessages = [], setChatMessages = null, chatSettings = null, getScrollSpeed = 6000 } = useChatWidget();
+    const [ chatWindowEnabled ] = useChatWindow();
     const elementRef = useRef<HTMLDivElement>();
 
     const removeHiddenChats = useCallback(() =>
@@ -156,7 +158,8 @@ export const ChatWidgetView: FC<{}> = props =>
 
     return (
         <div ref={ elementRef } className="absolute flex justify-center items-center w-full top-0 min-h-px z-(--chat-zindex) bg-transparent roundehidden shadow-none pointer-events-none">
-            { chatMessages.map(chat => <ChatWidgetMessageView key={ chat.id } bubbleWidth={ chatSettings.weight } chat={ chat } makeRoom={ makeRoom } />) }
+            { !chatWindowEnabled && chatMessages.map(chat => <ChatWidgetMessageView key={ chat.id } bubbleWidth={ chatSettings.weight } chat={ chat } makeRoom={ makeRoom } />) }
+            { chatWindowEnabled && <ChatWidgetWindowView /> }
         </div>
     );
 };

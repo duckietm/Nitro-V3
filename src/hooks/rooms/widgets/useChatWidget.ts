@@ -5,6 +5,8 @@ import { useMessageEvent, useNitroEvent } from '../../events';
 import { useRoom } from '../useRoom';
 import { useChatHistory } from './../../chat-history';
 
+const CHAT_MESSAGES_MAX = 250;
+
 const useChatWidgetState = () =>
 {
     const [chatMessages, setChatMessages] = useState<ChatBubbleMessage[]>([]);
@@ -146,7 +148,14 @@ const useChatWidgetState = () =>
             imageUrl,
             color);
 
-        setChatMessages(prevValue => [...prevValue, chatMessage]);
+        setChatMessages(prevValue =>
+        {
+            const newValue = [ ...prevValue, chatMessage ];
+
+            if(newValue.length > CHAT_MESSAGES_MAX) newValue.shift();
+
+            return newValue;
+        });
         addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color });
     });
 

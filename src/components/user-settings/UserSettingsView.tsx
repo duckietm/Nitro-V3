@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import { DispatchMainEvent, DispatchUiEvent, LocalizeText, SendMessageComposer } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useMessageEvent } from '../../hooks';
+import { useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useChatWindow, useMessageEvent } from '../../hooks';
 import { classNames } from '../../layout';
 
 export const UserSettingsView: FC<{}> = props =>
@@ -12,6 +12,7 @@ export const UserSettingsView: FC<{}> = props =>
     const [ userSettings, setUserSettings ] = useState<NitroSettingsEvent>(null);
     const [ catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects ] = useCatalogPlaceMultipleItems();
     const [ catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation ] = useCatalogSkipPurchaseConfirmation();
+    const [ chatWindowEnabled, setChatWindowEnabled ] = useChatWindow();
 
     const processAction = (type: string, value?: boolean | number | string) =>
     {
@@ -150,6 +151,10 @@ export const UserSettingsView: FC<{}> = props =>
                     <div className="flex items-center gap-1">
                         <input checked={ catalogSkipPurchaseConfirmation } className="form-check-input" type="checkbox" onChange={ event => setCatalogSkipPurchaseConfirmation(event.target.checked) } />
                         <Text>{ LocalizeText('memenu.settings.other.skip.purchase.confirmation') }</Text>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <input checked={ chatWindowEnabled } className="form-check-input" type="checkbox" onChange={ event => setChatWindowEnabled(event.target.checked) } />
+                        <Text>Enable chat window</Text>
                     </div>
                 </div>
                 <div className="flex flex-col">

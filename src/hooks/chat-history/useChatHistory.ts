@@ -5,7 +5,6 @@ import { ChatEntryType, ChatHistoryCurrentDate, IChatEntry, IRoomHistoryEntry, M
 import { useMessageEvent, useNitroEvent } from '../events';
 import { useLocalStorage } from '../useLocalStorage';
 
-const CHAT_HISTORY_MAX = 1000;
 const ROOM_HISTORY_MAX = 10;
 const MESSENGER_HISTORY_MAX = 1000;
 
@@ -29,11 +28,12 @@ const useChatHistoryState = () =>
 
             newValue.push(entry);
 
-            if(newValue.length > CHAT_HISTORY_MAX) newValue.shift();
 
             return newValue;
         });
     };
+
+    const clearChatHistory = () => setChatHistory([]);
 
     const addRoomHistoryEntry = (entry: IRoomHistoryEntry) =>
     {
@@ -99,7 +99,7 @@ const useChatHistoryState = () =>
         addMessengerEntry({ id: -1, webId: parser.senderId, entityId: -1, name: '', message: parser.messageText, roomId: -1, timestamp: MessengerHistoryCurrentDate(), type: ChatEntryType.TYPE_IM });
     });
 
-    return { addChatEntry, chatHistory, roomHistory, messengerHistory };
+    return { addChatEntry, clearChatHistory, chatHistory, roomHistory, messengerHistory };
 };
 
 export const useChatHistory = () => useBetween(useChatHistoryState);
