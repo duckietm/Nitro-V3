@@ -1,0 +1,2427 @@
+{
+    "image.library.notifications.url": "${image.library.url}notifications/%image%.png",
+    "achievements.images.url": "${image.library.url}Quests/%image%.png",
+    "camera.url": "http://## YOUR HOST ##/camera/photo/",
+    "thumbnails.url": "http://## YOUR HOST ##/camera/photo/temp/thumb/%thumbnail%.png",
+    "url.prefix": "",
+    "habbopages.url": "/gamedata/habbopages/",
+    "group.homepage.url": "${url.prefix}/groups/%groupid%/id",
+    "guide.help.alpha.groupid": 0,
+    "chat.viewer.height.percentage": 0.4,
+    "widget.dimmer.colorwheel": false,
+    "avatar.wardrobe.max.slots": 10,
+    "user.badges.max.slots": 5,
+    "user.tags.enabled": false,
+    "camera.publish.disabled": false,
+    "hc.disabled": false,
+    "badge.descriptions.enabled": true,
+    "motto.max.length": 38,
+    "bot.name.max.length": 15,
+    "pet.package.name.max.length": 15,
+    "wired.action.bot.talk.to.avatar.max.length": 64,
+    "wired.action.bot.talk.max.length": 64,
+    "wired.action.chat.max.length": 100,
+    "wired.action.kick.from.room.max.length": 100,
+    "wired.action.mute.user.max.length": 100,
+    "game.center.enabled": false,
+    "guides.enabled": true,
+    "toolbar.hide.quests": true,
+    "navigator.room.models": [{
+            "clubLevel": 0,
+            "tileSize": 104,
+            "name": "a"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 94,
+            "name": "b"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 36,
+            "name": "c"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 84,
+            "name": "d"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 80,
+            "name": "e"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 80,
+            "name": "f"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 416,
+            "name": "i"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 320,
+            "name": "j"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 448,
+            "name": "k"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 352,
+            "name": "l"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 384,
+            "name": "m"
+        }, {
+            "clubLevel": 0,
+            "tileSize": 372,
+            "name": "n"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 80,
+            "name": "g"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 74,
+            "name": "h"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 416,
+            "name": "o"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 352,
+            "name": "p"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 304,
+            "name": "q"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 336,
+            "name": "r"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 748,
+            "name": "u"
+        }, {
+            "clubLevel": 1,
+            "tileSize": 438,
+            "name": "v"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 540,
+            "name": "t"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 512,
+            "name": "w"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 396,
+            "name": "x"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 440,
+            "name": "y"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 456,
+            "name": "z"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 208,
+            "name": "0"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 1009,
+            "name": "1"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 1044,
+            "name": "2"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 183,
+            "name": "3"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 254,
+            "name": "4"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 1024,
+            "name": "5"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 801,
+            "name": "6"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 354,
+            "name": "7"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 888,
+            "name": "8"
+        }, {
+            "clubLevel": 2,
+            "tileSize": 926,
+            "name": "9"
+        }
+    ],
+    "backgrounds.data": [{
+            "backgroundId": 0,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 1,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 2,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 3,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 4,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 5,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 6,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 7,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 8,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 9,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 10,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 11,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 12,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 13,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 14,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 15,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 16,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 17,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 18,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 19,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 20,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 21,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 22,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 23,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 24,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 25,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 26,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 27,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 28,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 29,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 30,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 31,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 32,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 33,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 34,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 35,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 36,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 37,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 38,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 39,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 40,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 41,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 42,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 43,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 44,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 45,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 46,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 47,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 48,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 49,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 50,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 51,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 52,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 53,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 54,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 55,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 56,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 57,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 58,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 59,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 60,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 61,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 62,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 63,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 64,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 65,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 66,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 67,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 68,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 69,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 70,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 71,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 72,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 73,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 74,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 75,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 76,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 77,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 78,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 79,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 80,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 81,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 82,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 83,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 84,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 85,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 86,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 87,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 88,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 89,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 90,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 91,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 92,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 93,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 94,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 95,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 96,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 97,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 98,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 99,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 100,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 101,
+            "minRank": 2,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 102,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 103,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 104,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 105,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 106,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 107,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 108,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 109,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 110,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 111,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 112,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 113,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 114,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 115,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 116,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 117,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 118,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 119,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 120,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 121,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 122,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 123,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 124,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 125,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 126,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 127,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 128,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 129,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 130,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 131,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 132,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 133,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 134,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 135,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 136,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 137,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 138,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 139,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 140,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 141,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 142,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 143,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 144,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 145,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 146,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 147,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 148,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 149,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 150,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 151,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 152,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 153,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 154,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 155,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 156,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 157,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 158,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 159,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 160,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 161,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 162,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 163,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 164,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 165,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 166,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 167,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 168,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 169,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 170,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 171,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 172,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 173,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 174,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 175,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 176,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 177,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 178,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 179,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 180,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 181,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 182,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 183,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 184,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 185,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 186,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "backgroundId": 187,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }
+    ],
+    "stands.data": [{
+            "standId": 0,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 1,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 2,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 3,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 4,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 5,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 6,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 7,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 8,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 9,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 10,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 11,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 12,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 13,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 14,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 15,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 16,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 17,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 18,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 19,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 20,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "standId": 21,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }
+    ],
+    "overlays.data": [{
+            "overlayId": 0,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 1,
+            "minRank": 0,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 2,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 3,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 4,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 5,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 6,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 7,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "overlayId": 8,
+            "minRank": 0,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }
+    ],
+    "hotelview": {
+        "room.pool": "791",
+        "room.picnic": "2193",
+        "room.rooftop": "",
+        "room.rooftop.pool": "",
+        "room.peaceful": "",
+        "room.infobus": "5956",
+        "room.lobby": "1450",
+        "show.avatar": true,
+        "widgets": {
+            "slot.1.widget": "",
+            "slot.1.conf": {},
+            "slot.2.widget": "",
+            "slot.2.conf": {
+                "image": "",
+                "texts": "",
+                "btnLink": ""
+            },
+            "slot.3.widget": "",
+            "slot.3.conf": {},
+            "slot.4.widget": "",
+            "slot.4.conf": {},
+            "slot.5.widget": "",
+            "slot.5.conf": {},
+            "slot.6.widget": "",
+            "slot.6.conf": {
+                "campaign": ""
+            },
+            "slot.7.widget": "",
+            "slot.7.conf": {}
+        },
+        "images": {
+            "background": "${asset.url}/images/reception/stretch_blue.png",
+            "background.colour": "#8ee0f0",
+            "sun": "${asset.url}/images/reception/sun.png",
+            "drape": "${asset.url}/images/reception/drape.png",
+            "left": "",
+            "right": "",
+            "right.repeat": ""
+        }
+    },
+    "achievements.unseen.ignored": [
+        "ACH_AllTimeHotelPresence"
+    ],
+    "avatareditor.show.clubitems.dimmed": true,
+    "avatareditor.show.clubitems.first": true,
+    "chat.history.max.items": 100,
+    "system.currency.types": [
+        -1,
+        0,
+        5
+    ],
+    "catalog.links": {
+        "hc.buy_hc": "habbo_club",
+        "hc.hc_gifts": "club_gifts",
+        "pets.buy_food": "pet_food",
+        "pets.buy_saddle": "saddles"
+    },
+    "hc.center": {
+        "benefits.info": true,
+        "payday.info": true,
+        "gift.info": true,
+        "benefits.habbopage": "habboclub",
+        "payday.habbopage": "hcpayday"
+    },
+    "respect.options": {
+        "enabled": false,
+        "sound": "sound_respect_received"
+    },
+    "currency.display.number.short": false,
+    "currency.asset.icon.url": "${images.url}/wallet/%type%.png",
+    "catalog.asset.url": "${image.library.url}catalogue",
+    "catalog.asset.image.url": "${catalog.asset.url}/%name%.gif",
+    "catalog.asset.icon.url": "${catalog.asset.url}/icon_%name%.png",
+    "catalog.tab.icons": false,
+    "catalog.headers": false,
+    "chat.input.maxlength": 100,
+    "chat.styles.disabled": [],
+    "chat.styles": [{
+            "styleId": 0,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 1,
+            "minRank": 5,
+            "isSystemStyle": true,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 2,
+            "minRank": 5,
+            "isSystemStyle": true,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 3,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 4,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 5,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 6,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 7,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 8,
+            "minRank": 5,
+            "isSystemStyle": true,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 9,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 10,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 11,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 12,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 13,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 14,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 15,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 16,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 17,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 18,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 19,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 20,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 21,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 22,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 23,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 24,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 25,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 26,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 27,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 28,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 29,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 30,
+            "minRank": 5,
+            "isSystemStyle": true,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 31,
+            "minRank": 5,
+            "isSystemStyle": true,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 32,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 33,
+            "minRank": 5,
+            "isSystemStyle": true,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 34,
+            "minRank": 5,
+            "isSystemStyle": true,
+            "isHcOnly": false,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 35,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 36,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 37,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 38,
+            "minRank": 0,
+            "isSystemStyle": false,
+            "isHcOnly": true,
+            "isAmbassadorOnly": false
+        }, {
+            "styleId": 39,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 40,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 41,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 42,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 43,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 44,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 45,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 46,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 47,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 48,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 49,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 50,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 51,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 52,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }, {
+            "styleId": 53,
+            "minRank": 5,
+            "isSystemStyle": false,
+            "isHcOnly": false,
+            "isAmbassadorOnly": true
+        }
+    ],
+    "camera.available.effects": [{
+            "name": "dark_sepia",
+            "colorMatrix": [
+                0.4,
+                0.4,
+                0.1,
+                0,
+                110,
+                0.3,
+                0.4,
+                0.1,
+                0,
+                30,
+                0.3,
+                0.2,
+                0.1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 0,
+            "enabled": true
+        }, {
+            "name": "increase_saturation",
+            "colorMatrix": [
+                2,
+                -0.5,
+                -0.5,
+                0,
+                0,
+                -0.5,
+                2,
+                -0.5,
+                0,
+                0,
+                -0.5,
+                -0.5,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 0,
+            "enabled": true
+        }, {
+            "name": "increase_contrast",
+            "colorMatrix": [
+                1.5,
+                0,
+                0,
+                0,
+                -50,
+                0,
+                1.5,
+                0,
+                0,
+                -50,
+                0,
+                0,
+                1.5,
+                0,
+                -50,
+                0,
+                0,
+                0,
+                1.5,
+                0
+            ],
+            "minLevel": 0,
+            "enabled": true
+        }, {
+            "name": "shadow_multiply_02",
+            "colorMatrix": [],
+            "minLevel": 0,
+            "blendMode": 2,
+            "enabled": true
+        }, {
+            "name": "color_1",
+            "colorMatrix": [
+                0.393,
+                0.769,
+                0.189,
+                0,
+                0,
+                0.349,
+                0.686,
+                0.168,
+                0,
+                0,
+                0.272,
+                0.534,
+                0.131,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 1,
+            "enabled": true
+        }, {
+            "name": "hue_bright_sat",
+            "colorMatrix": [
+                1,
+                0.6,
+                0.2,
+                0,
+                -50,
+                0.2,
+                1,
+                0.6,
+                0,
+                -50,
+                0.6,
+                0.2,
+                1,
+                0,
+                -50,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 1,
+            "enabled": true
+        }, {
+            "name": "hearts_hardlight_02",
+            "colorMatrix": [],
+            "minLevel": 1,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "texture_overlay",
+            "colorMatrix": [],
+            "minLevel": 1,
+            "blendMode": 4,
+            "enabled": true
+        }, {
+            "name": "pinky_nrm",
+            "colorMatrix": [],
+            "minLevel": 1,
+            "blendMode": 0,
+            "enabled": true
+        }, {
+            "name": "color_2",
+            "colorMatrix": [
+                0.333,
+                0.333,
+                0.333,
+                0,
+                0,
+                0.333,
+                0.333,
+                0.333,
+                0,
+                0,
+                0.333,
+                0.333,
+                0.333,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 2,
+            "enabled": true
+        }, {
+            "name": "night_vision",
+            "colorMatrix": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1.1,
+                0,
+                0,
+                -50,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 2,
+            "enabled": true
+        }, {
+            "name": "stars_hardlight_02",
+            "colorMatrix": [],
+            "minLevel": 2,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "coffee_mpl",
+            "colorMatrix": [],
+            "minLevel": 2,
+            "blendMode": 2,
+            "enabled": true
+        }, {
+            "name": "security_hardlight",
+            "colorMatrix": [],
+            "minLevel": 3,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "bluemood_mpl",
+            "colorMatrix": [],
+            "minLevel": 3,
+            "blendMode": 2,
+            "enabled": true
+        }, {
+            "name": "rusty_mpl",
+            "colorMatrix": [],
+            "minLevel": 3,
+            "blendMode": 2,
+            "enabled": true
+        }, {
+            "name": "decr_conrast",
+            "colorMatrix": [
+                0.5,
+                0,
+                0,
+                0,
+                50,
+                0,
+                0.5,
+                0,
+                0,
+                50,
+                0,
+                0,
+                0.5,
+                0,
+                50,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 4,
+            "enabled": true
+        }, {
+            "name": "green_2",
+            "colorMatrix": [
+                0.5,
+                0.5,
+                0.5,
+                0,
+                0,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                90,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 4,
+            "enabled": true
+        }, {
+            "name": "alien_hrd",
+            "colorMatrix": [],
+            "minLevel": 4,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "color_3",
+            "colorMatrix": [
+                0.609,
+                0.609,
+                0.082,
+                0,
+                0,
+                0.309,
+                0.609,
+                0.082,
+                0,
+                0,
+                0.309,
+                0.609,
+                0.082,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 5,
+            "enabled": true
+        }, {
+            "name": "color_4",
+            "colorMatrix": [
+                0.8,
+                -0.8,
+                1,
+                0,
+                70,
+                0.8,
+                -0.8,
+                1,
+                0,
+                70,
+                0.8,
+                -0.8,
+                1,
+                0,
+                70,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 5,
+            "enabled": true
+        }, {
+            "name": "toxic_hrd",
+            "colorMatrix": [],
+            "minLevel": 5,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "hypersaturated",
+            "colorMatrix": [
+                2,
+                -1,
+                0,
+                0,
+                0,
+                -1,
+                2,
+                0,
+                0,
+                0,
+                0,
+                -1,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 6,
+            "enabled": true
+        }, {
+            "name": "Yellow",
+            "colorMatrix": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 6,
+            "enabled": true
+        }, {
+            "name": "misty_hrd",
+            "colorMatrix": [],
+            "minLevel": 6,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "x_ray",
+            "colorMatrix": [
+                0,
+                1.2,
+                0,
+                0,
+                -100,
+                0,
+                2,
+                0,
+                0,
+                -120,
+                0,
+                2,
+                0,
+                0,
+                -120,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 7,
+            "enabled": true
+        }, {
+            "name": "decrease_saturation",
+            "colorMatrix": [
+                0.7,
+                0.2,
+                0.2,
+                0,
+                0,
+                0.2,
+                0.7,
+                0.2,
+                0,
+                0,
+                0.2,
+                0.2,
+                0.7,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 7,
+            "enabled": true
+        }, {
+            "name": "drops_mpl",
+            "colorMatrix": [],
+            "minLevel": 8,
+            "blendMode": 2,
+            "enabled": true
+        }, {
+            "name": "shiny_hrd",
+            "colorMatrix": [],
+            "minLevel": 9,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "glitter_hrd",
+            "colorMatrix": [],
+            "minLevel": 10,
+            "blendMode": 9,
+            "enabled": true
+        }, {
+            "name": "frame_gold",
+            "colorMatrix": [],
+            "minLevel": 10,
+            "blendMode": 0,
+            "enabled": true
+        }, {
+            "name": "frame_gray_4",
+            "colorMatrix": [],
+            "minLevel": 10,
+            "blendMode": 0,
+            "enabled": true
+        }, {
+            "name": "frame_black_2",
+            "colorMatrix": [],
+            "minLevel": 10,
+            "blendMode": 0,
+            "enabled": true
+        }, {
+            "name": "frame_wood_2",
+            "colorMatrix": [],
+            "minLevel": 10,
+            "blendMode": 0,
+            "enabled": true
+        }, {
+            "name": "finger_nrm",
+            "colorMatrix": [],
+            "minLevel": 10,
+            "blendMode": 0,
+            "enabled": true
+        }, {
+            "name": "color_5",
+            "colorMatrix": [
+                3.309,
+                0.609,
+                1.082,
+                0.2,
+                0,
+                0.309,
+                0.609,
+                0.082,
+                0,
+                0,
+                1.309,
+                0.609,
+                0.082,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 10,
+            "enabled": true
+        }, {
+            "name": "black_white_negative",
+            "colorMatrix": [
+                -0.5,
+                -0.5,
+                -0.5,
+                0,
+                0,
+                -0.5,
+                -0.5,
+                -0.5,
+                0,
+                0,
+                -0.5,
+                -0.5,
+                -0.5,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 10,
+            "enabled": true
+        }, {
+            "name": "blue",
+            "colorMatrix": [
+                0.5,
+                0.5,
+                0.5,
+                0,
+                -255,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                -170,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 10,
+            "enabled": true
+        }, {
+            "name": "red",
+            "colorMatrix": [
+                0.5,
+                0.5,
+                0.5,
+                0,
+                0,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                -170,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                -170,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 10,
+            "enabled": true
+        }, {
+            "name": "green",
+            "colorMatrix": [
+                0.5,
+                0.5,
+                0.5,
+                0,
+                -170,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                0,
+                0.5,
+                0.5,
+                0.5,
+                0,
+                -170,
+                0,
+                0,
+                0,
+                1,
+                0
+            ],
+            "minLevel": 10,
+            "enabled": true
+        }
+    ],
+    "notification": {
+        "notification.admin.transient": {
+            "display": "POP_UP",
+            "image": "${image.library.url}/album1358/frank_wave_001.gif"
+        },
+        "notification.builders_club.membership_expired": {
+            "display": "POP_UP"
+        },
+        "notification.builders_club.membership_expires": {
+            "display": "POP_UP",
+            "image": "${image.library.url}/notifications/builders_club_room_locked_small.png"
+        },
+        "notification.builders_club.membership_extended": {
+            "delivery": "PERSISTENT",
+            "display": "POP_UP"
+        },
+        "notification.builders_club.membership_made": {
+            "delivery": "PERSISTENT",
+            "display": "POP_UP",
+            "image": "${image.library.url}/notifications/builders_club_membership_extended.png"
+        },
+        "notification.builders_club.membership_renewed": {
+            "delivery": "PERSISTENT",
+            "display": "POP_UP",
+            "image": "${image.library.url}/notifications/builders_club_membership_extended.png"
+        },
+        "notification.builders_club.room_locked": {
+            "display": "BUBBLE",
+            "image": "${image.library.url}/notifications/builders_club_room_locked_small.png"
+        },
+        "notification.builders_club.room_unlocked": {
+            "display": "BUBBLE"
+        },
+        "notification.builders_club.visit_denied_for_owner": {
+            "display": "BUBBLE",
+            "image": "${image.library.url}/notifications/builders_club_room_locked_small.png"
+        },
+        "notification.builders_club.visit_denied_for_visitor": {
+            "display": "POP_UP",
+            "image": "${image.library.url}/notifications/builders_club_room_locked.png"
+        },
+        "notification.campaign.credit.donation": {
+            "display": "BUBBLE"
+        },
+        "notification.campaign.product.donation": {
+            "display": "BUBBLE"
+        },
+        "notification.casino.too_many_dice.placement": {
+            "display": "POP_UP"
+        },
+        "notification.casino.too_many_dice": {
+            "display": "POP_UP"
+        },
+        "notification.cfh.created": {
+            "display": "POP_UP",
+            "title": ""
+        },
+        "notification.feed.enabled": false,
+        "notification.floorplan_editor.error": {
+            "display": "POP_UP"
+        },
+        "notification.forums.delivered": {
+            "delivery": "PERSISTENT",
+            "display": "POP_UP"
+        },
+        "notification.forums.forum_settings_updated": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.message.hidden": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.message.restored": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.thread.hidden": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.thread.locked": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.thread.pinned": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.thread.restored": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.thread.unlocked": {
+            "display": "BUBBLE"
+        },
+        "notification.forums.thread.unpinned": {
+            "display": "BUBBLE"
+        },
+        "notification.furni_placement_error": {
+            "display": "BUBBLE"
+        },
+        "notification.gifting.valentine": {
+            "delivery": "PERSISTENT",
+            "display": "BUBBLE",
+            "image": "${image.library.url}/notifications/polaroid_photo.png"
+        },
+        "notification.items.enabled": true,
+        "notification.mute.forbidden.time": {
+            "display": "BUBBLE"
+        },
+        "notification.npc.gift.received": {
+            "display": "BUBBLE",
+            "image": "${image.library.url}/album1584/X1517.gif"
+        }
+    }
+}

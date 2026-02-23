@@ -1,6 +1,6 @@
 import { GetSessionDataManager, RoomObjectType } from '@nitrots/nitro-renderer';
 import { FC, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChatEntryType } from '../../../../api';
+import { ChatEntryType, LocalizeText } from '../../../../api';
 import { DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useChatHistory, useChatWindow } from '../../../../hooks';
 import { useRoom } from '../../../../hooks/rooms';
@@ -96,27 +96,27 @@ export const ChatWidgetWindowView: FC<{}> = () =>
                 <div className="flex items-center gap-2 px-2 py-1 border-b border-black/20 bg-white/40 text-black text-[11px]">
                     <label className="flex items-center gap-1 cursor-pointer select-none">
                         <input checked={ hidePets } type="checkbox" onChange={ event => setHidePets(event.target.checked) } />
-                        <span>hide pets</span>
+                        <span>{ LocalizeText('widget.room.chat.hide_pets') }</span>
                     </label>
                     <label className="flex items-center gap-1 cursor-pointer select-none">
                         <input checked={ hideAvatars } type="checkbox" onChange={ event => setHideAvatars(event.target.checked) } />
-                        <span>hide avatars</span>
+                        <span>{ LocalizeText('widget.room.chat.hide_avatars') }</span>
                     </label>
                     <button className="ml-auto px-1 py-0.5 rounded border border-black/30 bg-white/70 text-[11px] text-black hover:bg-white" onClick={ () => setHideBalloons(value => !value) } type="button">
-                        { hideBalloons ? 'show balloons' : 'hide balloons' }
+                        { hideBalloons ? LocalizeText('widget.room.chat.show_balloon') : LocalizeText('widget.room.chat.hide_balloon') }
                     </button>
                     <button className="px-1 py-0.5 rounded border border-black/30 bg-white/70 text-[11px] text-black hover:bg-white" onClick={ () =>
                     {
                         if(clearChatHistory) clearChatHistory();
                     } } type="button">
-                        clear history
+                        { LocalizeText('widget.room.chat.clear_history') }
                     </button>
                     <div>
                         <input
                             className="h-[20px] px-1 rounded border border-black/30 bg-white/70 text-[11px] text-black"
                             placeholder="Search"
                             type="text"
-                            value={ search }
+                            value={ LocalizeText('navigator.frontpage.staticsearch.8') }
                             onChange={ event => setSearch(event.target.value) } />
                     </div>
                 </div>
