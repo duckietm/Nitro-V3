@@ -5,6 +5,7 @@ export class ChatBubbleUtilities
     public static AVATAR_COLOR_CACHE: Map<string, number> = new Map();
     public static AVATAR_IMAGE_CACHE: Map<string, string> = new Map();
     public static PET_IMAGE_CACHE: Map<string, string> = new Map();
+    private static PET_IMAGE_PENDING_CACHE: Map<string, Promise<string>> = new Map();
 
     private static placeHolderImageUrl: string = '';
 
@@ -49,19 +50,70 @@ export class ChatBubbleUtilities
 
     public static async getPetImage(figure: string, direction: number, _arg_3: boolean, scale: number = 64, posture: string = null)
     {
-        let existing = this.PET_IMAGE_CACHE.get((figure + posture));
+        const cacheKey = `${ figure }-${ posture || 'std' }-${ direction }-${ scale }`;
+        let existing = this.PET_IMAGE_CACHE.get(cacheKey);
 
         if(existing) return existing;
 
-        const figureData = new PetFigureData(figure);
-        const typeId = figureData.typeId;
-        const image = GetRoomEngine().getRoomObjectPetImage(typeId, figureData.paletteId, figureData.color, new Vector3d((direction * 45)), scale, null, false, 0, figureData.customParts, posture);
+        const pending = this.PET_IMAGE_PENDING_CACHE.get(cacheKey);
 
-        if(image)
+        if(pending) return pending;
+
+        const resultPromise = (async () =>
         {
-            existing = await TextureUtils.generateImageUrl(image.data);
+            const figureData = new PetFigureData(figure);
+            const typeId = figureData.typeId;
 
-            this.PET_IMAGE_CACHE.set((figure + posture), existing);
+            const getImageUrl = async (imageResult) =>
+            {
+                if(!imageResult) return null;
+
+                const image = await imageResult.getImage();
+
+                if(image) return image.src;
+                if(imageResult.data) return TextureUtils.generateImageUrl(imageResult.data);
+
+                return null;
+            };
+
+            let listenerResolve = null;
+
+            const listenerPromise = new Promise<string>(resolve =>
+            {
+                listenerResolve = resolve;
+            });
+
+            const imageResult = GetRoomEngine().getRoomObjectPetImage(typeId, figureData.paletteId, figureData.color, new Vector3d((direction * 45)), scale, {
+                imageReady: async result => listenerResolve(await getImageUrl(result)),
+                imageFailed: () => listenerResolve(null)
+            }, false, 0, figureData.customParts, posture);
+
+            let resolvedImage: string = null;
+
+            if(imageResult?.id > 0)
+            {
+                resolvedImage = await Promise.race([
+                    listenerPromise,
+                    new Promise<string>(resolve => setTimeout(() => resolve(null), 2500))
+                ]);
+            }
+
+            if(!resolvedImage) resolvedImage = await getImageUrl(imageResult);
+
+            if(resolvedImage) this.PET_IMAGE_CACHE.set(cacheKey, resolvedImage);
+
+            return resolvedImage;
+        })();
+
+        this.PET_IMAGE_PENDING_CACHE.set(cacheKey, resultPromise);
+
+        try
+        {
+            existing = await resultPromise;
+        }
+        finally
+        {
+            this.PET_IMAGE_PENDING_CACHE.delete(cacheKey);
         }
 
         return existing;

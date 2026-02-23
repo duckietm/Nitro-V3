@@ -34,7 +34,7 @@
         }
 
         &.bubble-0 {
-            border-image-source: url('@/assets/images/chat/chatbubbles/bubble_0_transparent.png');
+            border-image-source: url('@/assets/images/chat/chatbubbles/bubble_0.png');
 
             .pointer {
                 background: url('@/assets/images/chat/chatbubbles/bubble_0_1_33_34_pointer.png');

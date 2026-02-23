@@ -85,7 +85,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
                 style={ { maxWidth: getBubbleWidth } }>
                 <div className="user-container flex items-center justify-center h-full max-h-[24px] overflow-hidden">
                     { chat.imageUrl && chat.imageUrl.length > 0 && (
-                        <div className="user-image absolute top-[-15px] left-[-9.25px] w-[45px] h-[65px] bg-no-repeat bg-center scale-50" style={ { backgroundImage: `url(${ chat.imageUrl })` } } />
+                        <div className="user-image absolute top-[-15px] left-[-9.25px] w-[45px] h-[65px] bg-no-repeat bg-center" style={ { backgroundImage: `url(${ chat.imageUrl })` } } />
                     ) }
                 </div>
                 <div className="chat-content py-[5px] px-[6px] ml-[27px] leading-none min-h-[25px]">
