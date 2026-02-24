@@ -2,12 +2,13 @@
     position: relative;
     width: 100%;
     height: 100%;
+    background: linear-gradient(to bottom, transparent 1185px, #51841E 1185px);
 }
 
 .hotelview-background {
     position: relative;
     margin-left: -400px;
-    margin-top: 240px;
+    margin-top: 0;
     top: 0px;
     left: 0px;
     height: 1185px;
@@ -24,7 +25,7 @@
     height: calc(100% - 55px);
     background: #000;
     color: #000;
-    box-shadow: 0px 55px 0px 0px #83cce8;
+    box-shadow: 0px 55px 0px 0px #51841E;
     z-index: 0; /* Prevent stacking context interference */
 }
 
@@ -34,7 +35,7 @@
     width: 120px;
     height: 164px;
     position: absolute;
-    top: calc(292px + 40px);
+    top: calc(52px + 40px);
     left: calc(1062px - 90px);
     cursor: pointer;
 
@@ -65,7 +66,7 @@
     width: 183px;
     height: 164px;
     position: absolute;
-    top: calc(512px + 40px);
+    top: calc(272px + 40px);
     left: calc(1324px - 200px);
     cursor: pointer;
 
@@ -96,7 +97,7 @@
     width: 73px;
     height: 65px;
     position: absolute;
-    top: calc(837px + 40px);
+    top: calc(597px + 40px);
     left: calc(1264px - 200px);
     cursor: pointer;
 
@@ -106,7 +107,7 @@
         position: absolute;
         background-image: url(@/assets/images/hotelview/arrow_down.png);
         background-repeat: no-repeat;
-        left: 75px;
+        left: 19px;
         top: 0px;
         display: none;
         animation: MoveUpDown 1s linear infinite;
@@ -127,7 +128,7 @@
     width: 575px;
     height: 436px;
     position: absolute;
-    top: calc(480px + 248px);
+    top: calc(240px + 248px);
     left: calc(889px - 412px);
     cursor: pointer;
 
@@ -158,7 +159,7 @@
     width: 181px;
     height: 175px;
     position: absolute;
-    top: calc(332px + 241px);
+    top: calc(92px + 241px);
     left: calc(1690px - 399px);
     cursor: pointer;
     z-index: 5;
@@ -192,7 +193,7 @@
     width: 384px;
     height: 269px;
     position: absolute;
-    top: calc(359px + 240px);
+    top: calc(119px + 240px);
     left: calc(1728px - 400px);
     cursor: pointer;
     z-index: 6;
@@ -248,7 +249,7 @@
     width: 433px;
     height: 361px;
     position: absolute;
-    top: calc(477px + 240px);
+    top: calc(237px + 240px);
     left: calc(1633px - 400px);
     cursor: pointer;
     z-index: 7;
@@ -313,3 +314,90 @@
         left: 28% !important;
     }
 }
+
+/* ─── Time-of-day overrides ────────────────────────────────────────────────
+   The class hotel-{period} is stamped on .nitro-hotel-view by HotelView.tsx.
+   Controlled by timezone.settings in renderer-config.json.
+   Periods: morning (06-09) | day (10-16) | sunset (17-19) | evening (20-23) | night (00-05)
+─────────────────────────────────────────────────────────────────────────── */
+
+/* Morning: orange-tinted building, warm sky */
+.hotel-morning {
+    box-shadow: 0px 55px 0px 0px #E67451;
+}
+.hotel-morning .hotelview-background {
+    background-image: url(@/assets/images/hotelview/hotelview-morning.png);
+}
+
+/* Day: default — no overrides needed, base styles already use day assets */
+
+/* Sunset: warm orange sky + amber-earth ground */
+.hotel-sunset {
+    box-shadow: 0px 55px 0px 0px #D4651A;
+}
+.hotel-sunset .hotelview {
+    background: linear-gradient(to bottom, transparent 1185px, #163635 1185px);
+}
+.hotel-sunset .hotelview-background {
+    background-image: url(@/assets/images/hotelview/hotelview-sunset.png);
+}
+
+/* Evening: night building, dark teal sky + ground */
+.hotel-evening {
+    box-shadow: 0px 55px 0px 0px #163635;
+}
+.hotel-evening .hotelview {
+    background: linear-gradient(to bottom, transparent 1185px, #163635 1185px);
+}
+.hotel-evening .hotelview-background {
+    background-image: url(@/assets/images/hotelview/hotelview-night.png);
+}
+
+/* Night: night building, dark teal sky + ground */
+.hotel-night {
+    box-shadow: 0px 55px 0px 0px #163635;
+}
+.hotel-night .hotelview {
+    background: linear-gradient(to bottom, transparent 1185px, #163635 1185px);
+}
+.hotel-night .hotelview-background {
+    background-image: url(@/assets/images/hotelview/hotelview-night.png);
+}
+
+/* ─── Night / Evening room-widget sprite swaps ─────────────────────────── */
+
+.hotel-evening .nitro-hotel-view-rooftop,
+.hotel-night .nitro-hotel-view-rooftop {
+    background-image: url(@/assets/images/hotelview/night/night-rooftop.png);
+}
+
+.hotel-evening .nitro-hotel-view-rooftop-pool,
+.hotel-night .nitro-hotel-view-rooftop-pool {
+    background-image: url(@/assets/images/hotelview/night/night-rooftop_pool.gif);
+}
+
+.hotel-evening .nitro-hotel-view-picnic,
+.hotel-night .nitro-hotel-view-picnic {
+    background-image: url(@/assets/images/hotelview/night/night-picnic.gif);
+}
+
+.hotel-evening .nitro-hotel-view-infobus,
+.hotel-night .nitro-hotel-view-infobus {
+    background-image: url(@/assets/images/hotelview/night/night-infobus.gif);
+}
+
+.hotel-evening .nitro-hotel-view-pool,
+.hotel-night .nitro-hotel-view-pool {
+    background-image: url(@/assets/images/hotelview/night/night-pool.gif);
+}
+
+.hotel-evening .nitro-hotel-view-lobby,
+.hotel-night .nitro-hotel-view-lobby {
+    background-image: url(@/assets/images/hotelview/night/night-lobby.png);
+}
+
+.hotel-evening .nitro-hotel-view-peaceful,
+.hotel-night .nitro-hotel-view-peaceful {
+    background-image: url(@/assets/images/hotelview/night/night-park.png);
+}
+
