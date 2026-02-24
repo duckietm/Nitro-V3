@@ -26,7 +26,7 @@
     background: #000;
     color: #000;
     box-shadow: 0px 55px 0px 0px #51841E;
-    z-index: 0; /* Prevent stacking context interference */
+    z-index: 0;
 }
 
 .nitro-hotel-view-rooftop {
@@ -204,7 +204,7 @@
         position: absolute;
         top: 10%;
         left: 38%;
-        width: 60%; 
+        width: 60%;
         height: 65%;
         pointer-events: auto;
         z-index: 8;
@@ -336,10 +336,110 @@
     box-shadow: 0px 55px 0px 0px #D4651A;
 }
 .hotel-sunset .hotelview {
-    background: linear-gradient(to bottom, transparent 1185px, #163635 1185px);
+    background: linear-gradient(to bottom, transparent 1185px, #353B31 1185px);
 }
 .hotel-sunset .hotelview-background {
     background-image: url(@/assets/images/hotelview/hotelview-sunset.png);
+}
+
+/* ─── Sunset widget dimming via ::before pseudo-element ─────────────────────
+   We cannot use opacity on the parent because it would also dim the arrow.
+   Instead we hide the original background-image and redraw it at 0.1 opacity
+   on a ::before layer, leaving the arrow child at full opacity.
+─────────────────────────────────────────────────────────────────────────── */
+
+.hotel-sunset .nitro-hotel-view-rooftop,
+.hotel-sunset .nitro-hotel-view-rooftop-pool,
+.hotel-sunset .nitro-hotel-view-lobby,
+.hotel-sunset .nitro-hotel-view-picnic,
+.hotel-sunset .nitro-hotel-view-infobus,
+.hotel-sunset .nitro-hotel-view-peaceful,
+.hotel-sunset .nitro-hotel-view-pool {
+    background-image: none !important;
+}
+
+.hotel-sunset .nitro-hotel-view-rooftop::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(@/assets/images/hotelview/rooftop.gif);
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hotel-sunset .nitro-hotel-view-rooftop-pool::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(@/assets/images/hotelview/rooftop_pool.gif);
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hotel-sunset .nitro-hotel-view-lobby::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(@/assets/images/hotelview/lobby.png);
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hotel-sunset .nitro-hotel-view-picnic::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(@/assets/images/hotelview/picnic.gif);
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hotel-sunset .nitro-hotel-view-infobus::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(@/assets/images/hotelview/infobus.gif);
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hotel-sunset .nitro-hotel-view-peaceful::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(@/assets/images/hotelview/peacefulpark.gif);
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hotel-sunset .nitro-hotel-view-pool::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(@/assets/images/hotelview/pool.gif);
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* Evening: night building, dark teal sky + ground */
@@ -400,4 +500,3 @@
 .hotel-night .nitro-hotel-view-peaceful {
     background-image: url(@/assets/images/hotelview/night/night-park.png);
 }
-
