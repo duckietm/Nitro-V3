@@ -1,88 +1,201 @@
-import { GetSessionDataManager, FurniturePickupAllComposer } from '@nitrots/nitro-renderer';
+import { FurniturePickupAllComposer, GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, RoomObjectItem, SendMessageComposer } from '../../../../api';
+import { LocalizeText, RoomObjectItem, SendMessageComposer, chooserSelectionVisualizer } from '../../../../api';
 import { Button, Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { NitroInput, classNames } from '../../../../layout';
 
 const LIMIT_FURNI_PICKALL = 100;
 
-interface ChooserWidgetViewProps {
+interface ChooserWidgetViewProps
+{
     title: string;
     items: RoomObjectItem[];
     selectItem: (item: RoomObjectItem) => void;
     onClose: () => void;
     pickallFurni?: boolean;
+    type?: 'furni' | 'users';
 }
 
-export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props => {
-    const { title = null, items = [], selectItem = null, onClose = null, pickallFurni = false } = props;
-    const [ selectedItem, setSelectedItem ] = useState<RoomObjectItem>(null);
+export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
+{
+    const { title = null, items = [], selectItem = null, onClose = null, pickallFurni = false, type = 'furni' } = props;
+    const [ selectedItems, setSelectedItems ] = useState<RoomObjectItem[]>([]);
     const [ searchValue, setSearchValue ] = useState('');
     const [ checkAll, setCheckAll ] = useState(false);
     const [ checkedIds, setCheckedIds ] = useState<number[]>([]);
     const canSeeId = GetSessionDataManager().isModerator;
 
-    const checkedId = (id?: number) => {
-        if (id) {
-            if (isChecked(id))
+    const ownerNames = useMemo(() =>
+    {
+        const names = Array.from(new Set(items.map(item => item.ownerName || 'Unknown')));
+        return names.sort();
+    }, [ items ]);
+
+    const [ selectedFilter, setSelectedFilter ] = useState(() =>
+    {
+        if(pickallFurni) return 'all';
+        return ownerNames.length > 0 ? ownerNames[0] : '';
+    });
+
+    useEffect(() =>
+    {
+        if(!pickallFurni && ownerNames.length > 0 && !selectedFilter)
+            setSelectedFilter(ownerNames[0]);
+    }, [ pickallFurni, ownerNames, selectedFilter ]);
+
+    const checkedId = (id?: number) =>
+    {
+        if(id)
+        {
+            if(isChecked(id))
                 setCheckedIds(checkedIds.filter(x => x !== id));
-            else if (checkedIds.length < LIMIT_FURNI_PICKALL)
+            else if(checkedIds.length < LIMIT_FURNI_PICKALL)
                 setCheckedIds([ ...checkedIds, id ]);
-        } else {
+        }
+        else
+        {
             setCheckAll(value => !value);
-            if (!checkAll) {
-                const itemIds = filteredItems.map(x => x.id).slice(0, LIMIT_FURNI_PICKALL);
-                setCheckedIds(itemIds);
-            } else {
+
+            if(!checkAll)
+            {
+                const allItems = filteredItems.slice(0, LIMIT_FURNI_PICKALL);
+                setCheckedIds(allItems.map(x => x.id));
+                setSelectedItems(allItems);
+            }
+            else
+            {
                 setCheckedIds([]);
+                setSelectedItems([]);
+                chooserSelectionVisualizer.clearAll();
             }
         }
     }
 
     const isChecked = (id: number) => checkedIds.includes(id);
 
-    const onClickPickAll = () => {
+    const onClickPickAll = () =>
+    {
         SendMessageComposer(new FurniturePickupAllComposer(...checkedIds));
         setCheckedIds([]);
         setCheckAll(false);
+        chooserSelectionVisualizer.clearAll();
+        setSelectedItems([]);
     }
 
-    const filteredItems = useMemo(() => {
+    const filteredItems = useMemo(() =>
+    {
         const value = searchValue.toLocaleLowerCase();
-        const itemsFilter = items.filter(item => item.name?.toLocaleLowerCase().includes(value));
-        return itemsFilter.sort((a, b) => a.name.localeCompare(b.name));
-    }, [ items, searchValue ]);
 
-    useEffect(() => {
-        if (!selectedItem) return;
-        selectItem(selectedItem);
-    }, [ selectedItem, selectItem ]);
+        return items
+            .filter(item =>
+            {
+                const matchesSearch = item.name?.toLocaleLowerCase().includes(value);
+                const matchesFilter = !pickallFurni
+                    ? (selectedFilter ? item.ownerName === selectedFilter : true)
+                    : (selectedFilter === 'all' || item.ownerName === selectedFilter);
+                return matchesSearch && matchesFilter;
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }, [ items, searchValue, selectedFilter, pickallFurni ]);
+
+    useEffect(() =>
+    {
+        if(selectedItems.length === 0) return;
+
+        selectItem(selectedItems[selectedItems.length - 1]);
+
+        chooserSelectionVisualizer.clearAll();
+        selectedItems.forEach(item =>
+        {
+            if(item.id && item.category)
+                chooserSelectionVisualizer.show(item.id, item.category);
+        });
+    }, [ selectedItems, selectItem ]);
+
+    const toggleItemSelection = (item: RoomObjectItem) =>
+    {
+        setSelectedItems(prev =>
+        {
+            if(prev.some(selected => selected.id === item.id))
+            {
+                chooserSelectionVisualizer.hide(item.id, item.category);
+                return prev.filter(selected => selected.id !== item.id);
+            }
+            else
+            {
+                return [ ...prev, item ];
+            }
+        });
+    };
+
+    const handleClose = () =>
+    {
+        chooserSelectionVisualizer.clearAll();
+        setSelectedItems([]);
+        onClose();
+    };
 
     return (
-        <NitroCardView className="w-[200px] h-[200px]" theme="primary-slim">
-            <NitroCardHeaderView headerText={ title + (pickallFurni ? ` (${filteredItems.length})` : '') } onCloseClick={ onClose } />
-            <NitroCardContentView gap={ 2 } overflow="hidden">
-                <NitroInput placeholder={ LocalizeText('generic.search') } type="text" value={ searchValue } onChange={ event => setSearchValue(event.target.value) } />
+        <NitroCardView className="w-[420px] h-[400px]" theme="primary-slim">
+            <NitroCardHeaderView headerText={ title + ' (' + filteredItems.length + ')' } onCloseClick={ handleClose } />
+            <NitroCardContentView overflow="hidden" gap={ 1 }>
+                <Flex gap={ 2 }>
+                    <NitroInput
+                        type="text"
+                        placeholder={ LocalizeText('generic.search') }
+                        value={ searchValue }
+                        onChange={ event => setSearchValue(event.target.value) }
+                    />
+                    { pickallFurni && (
+                        <select
+                            className="form-control form-control-sm"
+                            value={ selectedFilter }
+                            onChange={ event => setSelectedFilter(event.target.value) }
+                        >
+                            <option value="all">{ LocalizeText('roomsettings.access_rights.anyone') }</option>
+                            { ownerNames.length > 0 ? (
+                                ownerNames.map((value, index) => (
+                                    <option key={ index } value={ value }>{ value }</option>
+                                ))
+                            ) : (
+                                <option disabled>No owners found</option>
+                            )}
+                        </select>
+                    )}
+                </Flex>
                 { pickallFurni && (
                     <Flex gap={ 2 }>
-                        <input className="form-check-input" type="checkbox" checked={ checkAll } onChange={ () => checkedId() } />
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={ checkAll }
+                            onChange={ () => checkedId() }
+                        />
                         <Text>{ LocalizeText('widget.chooser.checkall') }</Text>
                     </Flex>
                 )}
-                <InfiniteScroll rowRender={ row => (
-                    <Flex pointer alignItems="center" className={ classNames('rounded p-1', (selectedItem === row) && 'bg-muted') } onClick={ () => setSelectedItem(row) }>
+                <InfiniteScroll rows={ filteredItems } rowRender={ row => (
+                    <Flex
+                        alignItems="center"
+                        className={ classNames('rounded p-1', selectedItems.some(item => item.id === row.id) && 'bg-muted') }
+                        pointer
+                        onClick={ () => { toggleItemSelection(row); if(pickallFurni) checkedId(row.id); } }
+                    >
                         { pickallFurni && (
-                            <input 
-                                className="shrink-0 mx-1 form-check-input" 
-                                type="checkbox" 
-                                checked={ isChecked(row.id) } 
+                            <input
+                                className="shrink-0 mx-1 form-check-input"
+                                type="checkbox"
+                                checked={ isChecked(row.id) }
                                 onChange={ () => checkedId(row.id) }
-                                onClick={ e => e.stopPropagation() }
+                                onClick={ e => { e.stopPropagation(); toggleItemSelection(row); } }
                             />
                         )}
-                        <Text truncate>{ row.name } { canSeeId && (' - ' + row.id) }</Text>
+                        <Text truncate>
+                            { row.name }{ canSeeId && (' - ' + row.id) }
+                            { type === 'furni' && row.ownerName && row.ownerName !== '-' && ` (Owner: ${row.ownerName})` }
+                        </Text>
                     </Flex>
-                )} rows={ filteredItems } />
+                )} />
                 { pickallFurni && (
                     <Button variant="secondary" onClick={ onClickPickAll } disabled={ !checkedIds.length }>
                         { LocalizeText('widget.chooser.btn.pickall') }

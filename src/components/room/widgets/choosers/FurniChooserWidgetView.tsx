@@ -1,17 +1,21 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
-import { LocalizeText } from '../../../../api';
+import { LocalizeText, chooserSelectionVisualizer } from '../../../../api';
 import { useFurniChooserWidget, useRoom } from '../../../../hooks';
 import { ChooserWidgetView } from './ChooserWidgetView';
 
-export const FurniChooserWidgetView: FC<{}> = props => {
+export const FurniChooserWidgetView: FC<{}> = props =>
+{
     const { items = null, onClose = null, selectItem = null, populateChooser = null } = useFurniChooserWidget();
     const { roomSession = null } = useRoom();
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) => {
+            linkReceived: (url: string) =>
+            {
                 const parts = url.split('/');
+
                 populateChooser();
             },
             eventUrlPrefix: 'furni-chooser/'
@@ -19,12 +23,27 @@ export const FurniChooserWidgetView: FC<{}> = props => {
 
         AddLinkEventTracker(linkTracker);
 
-        return () => RemoveLinkEventTracker(linkTracker);
+        return () =>
+        {
+            chooserSelectionVisualizer.clearAll();
+            RemoveLinkEventTracker(linkTracker);
+        };
     }, [ populateChooser ]);
 
-    if (!items) return null;
+    if(!items) return null;
 
     return (
-        <ChooserWidgetView className="w-[200px] h-[200px]" items={ items } selectItem={ selectItem } title={ LocalizeText('widget.chooser.furni.title') } onClose={ onClose } pickallFurni={ roomSession?.isRoomOwner } />
+        <ChooserWidgetView
+            title={ LocalizeText('widget.chooser.furni.title') }
+            items={ items }
+            selectItem={ selectItem }
+            onClose={ () =>
+            {
+                chooserSelectionVisualizer.clearAll();
+                onClose();
+            }}
+            pickallFurni={ roomSession?.isRoomOwner }
+            type="furni"
+        />
     );
 };

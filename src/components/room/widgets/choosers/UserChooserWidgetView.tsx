@@ -1,6 +1,6 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
-import { LocalizeText } from '../../../../api';
+import { LocalizeText, chooserSelectionVisualizer } from '../../../../api';
 import { useUserChooserWidget } from '../../../../hooks';
 import { ChooserWidgetView } from './ChooserWidgetView';
 
@@ -22,10 +22,27 @@ export const UserChooserWidgetView: FC<{}> = props =>
 
         AddLinkEventTracker(linkTracker);
 
-        return () => RemoveLinkEventTracker(linkTracker);
+        return () =>
+        {
+            chooserSelectionVisualizer.clearAll();
+            RemoveLinkEventTracker(linkTracker);
+        };
     }, [ populateChooser ]);
 
     if(!items) return null;
 
-    return <ChooserWidgetView items={ items } selectItem={ selectItem } title={ LocalizeText('widget.chooser.user.title') } onClose={ onClose } />;
+    return (
+        <ChooserWidgetView
+            title={ LocalizeText('widget.chooser.user.title') }
+            items={ items }
+            selectItem={ selectItem }
+            onClose={ () =>
+            {
+                chooserSelectionVisualizer.clearAll();
+                onClose();
+            }}
+            pickallFurni={ false }
+            type="users"
+        />
+    );
 };

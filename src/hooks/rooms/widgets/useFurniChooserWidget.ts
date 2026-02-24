@@ -4,6 +4,13 @@ import { GetRoomSession, LocalizeText, RoomObjectItem } from '../../../api';
 import { useFurniAddedEvent, useFurniRemovedEvent } from '../engine';
 import { useRoom } from '../useRoom';
 
+const isPetOrBot = (roomObjectType: string): boolean =>
+    roomObjectType.includes('pet_') ||
+    roomObjectType.includes('bot_') ||
+    roomObjectType === 'pet' ||
+    roomObjectType === 'bot' ||
+    roomObjectType.includes('rentableBot');
+
 const useFurniChooserWidgetState = () =>
 {
     const [ items, setItems ] = useState<RoomObjectItem[]>(null);
@@ -22,6 +29,7 @@ const useFurniChooserWidgetState = () =>
         const wallItems = wallObjects.map(roomObject =>
         {
             if(roomObject.id < 0) return null;
+            if(isPetOrBot(roomObject.type)) return null;
 
             let name = roomObject.type;
 
@@ -37,12 +45,18 @@ const useFurniChooserWidgetState = () =>
                 if(furniData && furniData.name.length) name = furniData.name;
             }
 
-            return new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name);
-        });
+            const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+            const ownerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) ||
+                (sessionDataManager.getUserData ? sessionDataManager.getUserData(ownerId)?.name : null) ||
+                `User_${ownerId}`;
+
+            return new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, ownerId, ownerName, 'furniture');
+        }).filter(item => item !== null);
 
         const floorItems = floorObjects.map(roomObject =>
         {
             if(roomObject.id < 0) return null;
+            if(isPetOrBot(roomObject.type)) return null;
 
             let name = roomObject.type;
 
@@ -51,8 +65,13 @@ const useFurniChooserWidgetState = () =>
 
             if(furniData && furniData.name.length) name = furniData.name;
 
-            return new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name);
-        });
+            const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+            const ownerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) ||
+                (sessionDataManager.getUserData ? sessionDataManager.getUserData(ownerId)?.name : null) ||
+                `User_${ownerId}`;
+
+            return new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, ownerId, ownerName, 'furniture');
+        }).filter(item => item !== null);
 
         setItems([ ...wallItems, ...floorItems ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
     };
@@ -64,6 +83,7 @@ const useFurniChooserWidgetState = () =>
         const roomObject = GetRoomEngine().getRoomObject(GetRoomSession().roomId, event.id, event.category);
 
         if(!roomObject) return;
+        if(isPetOrBot(roomObject.type)) return;
 
         let item: RoomObjectItem = null;
 
@@ -84,8 +104,12 @@ const useFurniChooserWidgetState = () =>
                     if(furniData && furniData.name.length) name = furniData.name;
                 }
 
-                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name);
+                const wallOwnerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+                const wallOwnerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) ||
+                    (GetSessionDataManager().getUserData ? GetSessionDataManager().getUserData(wallOwnerId)?.name : null) ||
+                    `User_${wallOwnerId}`;
 
+                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, wallOwnerId, wallOwnerName, 'furniture');
                 break;
             }
             case RoomObjectCategory.FLOOR: {
@@ -96,11 +120,16 @@ const useFurniChooserWidgetState = () =>
 
                 if(furniData && furniData.name.length) name = furniData.name;
 
-                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name);
+                const floorOwnerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+                const floorOwnerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) ||
+                    (GetSessionDataManager().getUserData ? GetSessionDataManager().getUserData(floorOwnerId)?.name : null) ||
+                    `User_${floorOwnerId}`;
+
+                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, floorOwnerId, floorOwnerName, 'furniture');
             }
         }
 
-        setItems(prevValue => [ ...prevValue, item ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
+        if(item) setItems(prevValue => [ ...prevValue, item ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
     });
 
     useFurniRemovedEvent(!!items, event =>

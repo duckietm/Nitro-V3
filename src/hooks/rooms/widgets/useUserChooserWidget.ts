@@ -4,6 +4,17 @@ import { GetRoomSession, RoomObjectItem } from '../../../api';
 import { useUserAddedEvent, useUserRemovedEvent } from '../engine';
 import { useRoom } from '../useRoom';
 
+const resolveUserType = (userType: number): string =>
+{
+    switch(userType)
+    {
+        case 1: return 'Habbo';
+        case 2: return 'Pet';
+        case 3: return 'Bot';
+        default: return '-';
+    }
+}
+
 const useUserChooserWidgetState = () =>
 {
     const [ items, setItems ] = useState<RoomObjectItem[]>(null);
@@ -26,9 +37,12 @@ const useUserChooserWidgetState = () =>
                 const userData = roomSession.userDataManager.getUserDataByIndex(roomObject.id);
 
                 if(!userData) return null;
+                if(userData.type !== 1) return null;
 
-                return new RoomObjectItem(userData.roomIndex, RoomObjectCategory.UNIT, userData.name);
+                const type = resolveUserType(userData.type);
+                return new RoomObjectItem(userData.roomIndex, RoomObjectCategory.UNIT, userData.name, 0, '-', type);
             })
+            .filter(Boolean)
             .sort((a, b) => ((a.name < b.name) ? -1 : 1)));
     };
 
@@ -39,12 +53,15 @@ const useUserChooserWidgetState = () =>
         const userData = GetRoomSession().userDataManager.getUserDataByIndex(event.id);
 
         if(!userData) return;
+        if(userData.type !== 1) return;
+
+        const type = resolveUserType(userData.type);
 
         setItems(prevValue =>
         {
             const newValue = [ ...prevValue ];
 
-            newValue.push(new RoomObjectItem(userData.roomIndex, RoomObjectCategory.UNIT, userData.name));
+            newValue.push(new RoomObjectItem(userData.roomIndex, RoomObjectCategory.UNIT, userData.name, 0, '-', type));
             newValue.sort((a, b) => ((a.name < b.name) ? -1 : 1));
 
             return newValue;

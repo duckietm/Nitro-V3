@@ -1,4 +1,5 @@
 export * from './AvatarInfoFurni';
+export * from './ChooserSelectionVisualizer';
 export * from './AvatarInfoName';
 export * from './AvatarInfoPet';
 export * from './AvatarInfoRentableBot';
