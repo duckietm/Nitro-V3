@@ -23,3 +23,4 @@ export * from './useLocalStorage';
 export * from './useSharedVisibility';
 export * from './wired';
 export * from './useChatWindow';
+export * from './useOnClickChat';

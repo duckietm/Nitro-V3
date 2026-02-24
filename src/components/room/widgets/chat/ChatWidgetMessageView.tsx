@@ -1,6 +1,7 @@
 import { GetRoomEngine, RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatBubbleMessage } from '../../../../api';
+import { useOnClickChat } from '../../../../hooks';
 
 interface ChatWidgetMessageViewProps
 {
@@ -18,6 +19,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
     const [ isVisible, setIsVisible ] = useState(false);
     const [ isReady, setIsReady ] = useState(false);
     const elementRef = useRef<HTMLDivElement>(null);
+    const { onClickChat } = useOnClickChat();
 
     const getBubbleWidth = useMemo(() =>
     {
@@ -90,7 +92,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
                 </div>
                 <div className="chat-content py-[5px] px-[6px] ml-[27px] leading-none min-h-[25px]">
                     <b className="username" dangerouslySetInnerHTML={ { __html: `${ chat.username }: ` } } />
-                    <span className="message" dangerouslySetInnerHTML={ { __html: `${ chat.formattedText }` } } />
+                    <span className="message" dangerouslySetInnerHTML={ { __html: `${ chat.formattedText }` } } onClick={ onClickChat } />
                 </div>
                 <div className="pointer absolute left-[50%] translate-x-[-50%] w-[9px] h-[6px] bottom-[-5px]" />
             </div>

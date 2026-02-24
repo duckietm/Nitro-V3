@@ -1,3 +1,6 @@
+import { GetConfigurationValue } from '../nitro/GetConfigurationValue';
+import { LocalizeText } from './LocalizeText';
+
 const allowedColours: Map<string, string> = new Map();
 
 allowedColours.set('r', 'red');
@@ -43,6 +46,16 @@ export const RoomChatFormatter = (content: string) =>
 
     content = encodeHTML(content);
     //content = (joypixels.shortnameToUnicode(content) as string)
+
+    if(!GetConfigurationValue<boolean>('youtube.publish.disabled', false))
+    {
+        const labelShared = LocalizeText('widget.room.youtube.shared');
+        const labelOpen = LocalizeText('widget.room.youtube.open_video');
+        content = content.replace(
+            /(?:http:\/\/|https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?.*v=|shorts\/)?([a-zA-Z0-9_-]{11})/g,
+            `<div style="margin:2px 0"><strong>&#x1F4FA; ${ labelShared }</strong></div><div><a href="https://youtu.be/$1" target="_blank" style="background-color:red;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;font-size:12px">&#9654; ${ labelOpen }</a></div>`
+        );
+    }
 
     if(content.startsWith('@') && content.indexOf('@', 1) > -1)
     {

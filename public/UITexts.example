@@ -17,5 +17,7 @@
 	"widget.room.chat.hide_avatars": "Verberg avatars",
 	"widget.room.chat.hide_balloon": "Verberg Spreekballon",
 	"widget.room.chat.show_balloon": "Spreekballon",
-	"widget.room.chat.clear_history": "leeg geschiedenis"
+	"widget.room.chat.clear_history": "leeg geschiedenis",
+	"widget.room.youtube.shared": "YouTube word gedeeld",
+	"widget.room.youtube.open_video": "Open de video"
 }

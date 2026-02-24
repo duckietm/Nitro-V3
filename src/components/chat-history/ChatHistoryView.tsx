@@ -2,13 +2,14 @@ import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatEntryType, LocalizeText } from '../../api';
 import { Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useChatHistory } from '../../hooks';
+import { useChatHistory, useOnClickChat } from '../../hooks';
 import { NitroInput } from '../../layout';
 
 export const ChatHistoryView: FC<{}> = props => {
     const [isVisible, setIsVisible] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
     const {chatHistory = []} = useChatHistory();
+    const { onClickChat } = useOnClickChat();
     const elementRef = useRef<HTMLDivElement>(null);
     const isFirstRender = useRef(true);
     const prevChatLength = useRef<number>(0);
@@ -94,7 +95,7 @@ export const ChatHistoryView: FC<{}> = props => {
                                         </div>
                                         <div className="chat-content">
                                             <b className="mr-1 username" dangerouslySetInnerHTML={{__html: `${row.name}: `}} />
-                                            <span className="message" dangerouslySetInnerHTML={{__html: `${row.message}`}} />
+                                            <span className="message" dangerouslySetInnerHTML={{__html: `${row.message}`}} onClick={ onClickChat } />
                                         </div>
                                     </div>
                                 </div>

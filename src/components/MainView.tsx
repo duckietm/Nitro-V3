@@ -27,6 +27,7 @@ import { ToolbarView } from './toolbar/ToolbarView';
 import { UserProfileView } from './user-profile/UserProfileView';
 import { UserSettingsView } from './user-settings/UserSettingsView';
 import { WiredView } from './wired/WiredView';
+import { YoutubeTvView } from './youtube-tv/YoutubeTvView';
 
 export const MainView: FC<{}> = props =>
 {
@@ -114,6 +115,7 @@ export const MainView: FC<{}> = props =>
             <CampaignView />
             <GameCenterView />
             <FloorplanEditorView />
+            <YoutubeTvView />
         </>
     );
 };
