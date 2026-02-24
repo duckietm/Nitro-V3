@@ -1,6 +1,6 @@
-import { CrackableDataType, CreateLinkEvent, GetRoomEngine, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
+import { CrackableDataType, CreateLinkEvent, FurnitureFloorUpdateEvent, GetRoomEngine, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaCrosshairs, FaRulerVertical, FaTimes } from 'react-icons/fa';
 import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
 import { useMessageEvent, useNitroEvent, useRoom } from '../../../../../hooks';
@@ -40,6 +40,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const [ songId, setSongId ] = useState<number>(-1);
     const [ songName, setSongName ] = useState<string>('');
     const [ songCreator, setSongCreator ] = useState<string>('');
+    const [ itemLocation, setItemLocation ] = useState<{ x: number; y: number; z: number }>({ x: -1, y: -1, z: -1 });
 
     useNitroEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
     {
@@ -76,6 +77,10 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         let furniIsJukebox = false;
         let furniIsSongDisk = false;
         let furniSongId = -1;
+
+        const roomObjForLocation = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR);
+        const location = roomObjForLocation?.getLocation();
+        if(location) setItemLocation({ x: location.x, y: location.y, z: location.z });
 
         const isValidController = (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUEST);
 
@@ -203,6 +208,16 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         if(groupName) setGroupName(null);
 
         setGroupName(parser.title);
+    });
+
+    useMessageEvent<FurnitureFloorUpdateEvent>(FurnitureFloorUpdateEvent, event =>
+    {
+        const parser = event.getParser();
+        const item = parser.item;
+
+        if(!avatarInfo || item.itemId !== avatarInfo.id) return;
+
+        setItemLocation({ x: item.x, y: item.y, z: item.z });
     });
 
     useEffect(() =>
@@ -407,6 +422,18 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                     <LayoutBadgeImageView badgeCode={ getGroupBadgeCode() } isGroup={ true } />
                                     <Text underline variant="white">{ groupName }</Text>
                                 </Flex>
+                            </> }
+                        { (itemLocation.x > -1) &&
+                            <>
+                                <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
+                                <div className="flex items-center gap-1">
+                                    <FaCrosshairs className="fa-icon shrink-0" />
+                                    <Text small wrap variant="white">X: { itemLocation.x } · Y: { itemLocation.y }</Text>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <FaRulerVertical className="fa-icon shrink-0" />
+                                    <Text small wrap variant="white">{ LocalizeText('stack.magic.tile.height.label') }: { itemLocation.z < 0.01 ? 0 : itemLocation.z }</Text>
+                                </div>
                             </> }
                         { godMode &&
                             <>
