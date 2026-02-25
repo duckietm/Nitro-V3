@@ -203,9 +203,7 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
 
     return (
         <ContextMenuView category={ RoomObjectCategory.UNIT } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
-            <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) }>
-                { avatarInfo.name }
-            </ContextMenuHeaderView>
+            <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) } dangerouslySetInnerHTML={ { __html: `${ avatarInfo.name }` } }></ContextMenuHeaderView>
             { (mode === MODE_NORMAL) &&
                 <>
                     { canRequestFriend(avatarInfo.webID) &&
