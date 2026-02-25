@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
 import { Text } from '../../../../common';
 import { useChatInputWidget, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
+import { ChatInputEmojiSelectorView } from './ChatInputEmojiSelectorView';
 import { ChatInputStyleSelectorView } from './ChatInputStyleSelectorView';
 
 export const ChatInputView: FC<{}> = props =>
@@ -118,6 +119,13 @@ export const ChatInputView: FC<{}> = props =>
 
         setChatValue(value);
     }, [ setIsTyping, setIsIdle ]);
+
+    const addChatEmoji = useCallback((emoji: string) =>
+    {
+        setChatValue(prev => prev + emoji);
+        setIsTyping(true);
+        inputRef.current?.focus();
+    }, [ setIsTyping, inputRef ]);
 
     const onKeyDownEvent = useCallback((event: KeyboardEvent) =>
     {
@@ -235,13 +243,14 @@ export const ChatInputView: FC<{}> = props =>
 
     return (
         createPortal(
-            <div className="nitro-chat-input-container flex justify-center items-center relative h-10 border-2 border-black bg-gray-200 pr-2.5 w-full overflow-hidden rounded-lg">
-                <div className="items-center input-sizer">
+            <div className="nitro-chat-input-container flex justify-between items-center relative h-10 border-2 border-black bg-gray-200 pr-2.5 w-full overflow-hidden rounded-lg">
+                <div className="flex-1 items-center input-sizer">
                     { !floodBlocked &&
                         <input ref={ inputRef } className="[font-size:inherit] placeholder-[#6c757d] bg-transparent border-none focus:border-current focus:shadow-none focus:ring-0	" maxLength={ maxChatLength } placeholder={ LocalizeText('widgets.chatinput.default') } type="text" value={ chatValue } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
                     { floodBlocked &&
                         <Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
                 </div>
+                <ChatInputEmojiSelectorView addChatEmoji={ addChatEmoji } />
                 <ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
             </div>, document.getElementById('toolbar-chat-input-container'))
     );

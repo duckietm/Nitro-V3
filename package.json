@@ -11,9 +11,13 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.26.9",
+		"@emoji-mart/data": "^1.2.1",
+        "@emoji-mart/react": "^1.1.1",
         "@tanstack/react-virtual": "3.2.0",
         "@types/react-transition-group": "^4.4.10",
         "dompurify": "^3.1.5",
+		"emoji-mart": "^5.6.0",
+		"emoji-toolkit": "10.0.0",
         "framer-motion": "^11.2.12",
         "react": "^19.2.4",
         "react-bootstrap": "^2.10.10",

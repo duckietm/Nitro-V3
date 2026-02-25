@@ -160,3 +160,31 @@
         color: #419AD2;
     }
 }
+
+.nitro-chat-input-container {
+    .input-sizer {
+        display: inline-grid;
+        vertical-align: top;
+        height: 100%;
+        padding: 0 10px;
+
+        &::after,
+        input {
+            width: auto;
+            min-width: 1em;
+            grid-area: 1 / 2;
+            margin: 0;
+            resize: none;
+            background: none;
+            appearance: none;
+            border: none;
+            outline: none;
+        }
+
+        &::after {
+            content: attr(data-value) '  ';
+            visibility: hidden;
+            white-space: pre-wrap;
+        }
+    }
+}
