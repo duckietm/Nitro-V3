@@ -1,8 +1,7 @@
 import { RoomEngineTriggerWidgetEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import ReactSlider from 'react-slider';
 import { ColorUtils, FurnitureDimmerUtilities, GetConfigurationValue, LocalizeText } from '../../../../api';
-import { Button, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../../common';
+import { Button, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Slider, Text } from '../../../../common';
 import { useFurnitureDimmerWidget, useNitroEvent } from '../../../../hooks';
 import { classNames } from '../../../../layout';
 
@@ -63,8 +62,7 @@ export const FurnitureDimmerView: FC<{}> = props =>
                         </div>
                         <div className="flex flex-col gap-1">
                             <Text fontWeight="bold">{ LocalizeText('widget.backgroundcolor.lightness') }</Text>
-                            <ReactSlider
-                                className="nitro-slider"
+                            <Slider
                                 max={ FurnitureDimmerUtilities.MAX_BRIGHTNESS }
                                 min={ FurnitureDimmerUtilities.MIN_BRIGHTNESS }
                                 renderThumb={ (props, state) => <div { ...props }>{ FurnitureDimmerUtilities.scaleBrightness(state.valueNow) }</div> }

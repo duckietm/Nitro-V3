@@ -1,9 +1,8 @@
 import { GetRoomCameraWidgetManager, IRoomCameraWidgetEffect, IRoomCameraWidgetSelectedEffect, NitroLogger, RoomCameraWidgetSelectedEffect } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave, FaSearchMinus, FaSearchPlus, FaTrash } from 'react-icons/fa';
-import ReactSlider from 'react-slider';
 import { CameraEditorTabs, CameraPicture, CameraPictureThumbnail, LocalizeText } from '../../../../api';
-import { Button, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../../common';
+import { Button, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Slider, Text } from '../../../../common';
 import { CameraWidgetEffectListView } from './effect-list';
 
 export interface CameraWidgetEditorViewProps {
@@ -181,8 +180,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => 
                             { selectedEffectName && (
                                 <Column center fullWidth gap={ 1 }>
                                     <Text>{ LocalizeText('camera.effect.name.' + selectedEffectName) }</Text>
-                                    <ReactSlider
-                                        className="nitro-slider"
+                                    <Slider
                                         min={ 0 }
                                         max={ 1 }
                                         step={ 0.01 }

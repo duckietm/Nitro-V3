@@ -1,8 +1,7 @@
 import { WiredActionDefinition } from '@nitrots/nitro-renderer';
 import { FC, PropsWithChildren, useEffect } from 'react';
-import ReactSlider from 'react-slider';
 import { GetWiredTimeLocale, LocalizeText, WiredFurniType } from '../../../../api';
-import { Text } from '../../../../common';
+import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredBaseView } from '../WiredBaseView';
 
@@ -29,8 +28,7 @@ export const WiredActionBaseView: FC<PropsWithChildren<WiredActionBaseViewProps>
             { !!children && <hr className="m-0 bg-dark" /> }
             <div className="flex flex-col">
                 <Text bold>{ LocalizeText('wiredfurni.params.delay', [ 'seconds' ], [ GetWiredTimeLocale(actionDelay) ]) }</Text>
-                <ReactSlider
-                    className={ 'nitro-slider' }
+                <Slider
                     max={ 20 }
                     min={ 0 }
                     value={ actionDelay }

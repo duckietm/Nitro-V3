@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from 'react';
-import ReactSlider from 'react-slider';
 import { FriendlyTime, LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
@@ -21,8 +20,7 @@ export const WiredTriggeExecutePeriodicallyLongView: FC<{}> = props =>
         <WiredTriggerBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save }>
             <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.setlongtime', [ 'time' ], [ FriendlyTime.format(time * 5).toString() ]) }</Text>
-                <ReactSlider
-                    className={ 'nitro-slider' }
+                <Slider
                     max={ 120 }
                     min={ 1 }
                     value={ time }
