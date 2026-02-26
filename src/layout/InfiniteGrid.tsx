@@ -27,7 +27,7 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
                     {
                         if(!item) return <Fragment key={ `${ index }-empty` } />;
 
-                        return <Fragment key={ `${ index }-item` }>{ itemRender(item, index % columnCount) }</Fragment>;
+                        return <Fragment key={ `${ index }-item` }>{ itemRender(item, index) }</Fragment>;
                     }) }
                 </div>
             </div>
@@ -94,14 +94,15 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
                         } }>
                         { Array.from(Array(columnCount)).map((e, i) =>
                         {
-                            const item = items[i + (virtualRow.index * columnCount)];
+                            const index = (i + (virtualRow.index * columnCount));
+                            const item = items[index];
 
                             if(!item) return <Fragment
                                 key={ virtualRow.index + i + 'b' } />;
 
                             return (
                                 <Fragment key={ i }>
-                                    { itemRender(item, i) }
+                                    { itemRender(item, index) }
                                 </Fragment>
                             );
                         }) }
