@@ -24,7 +24,7 @@ export const AvatarEditorPaletteSetView: FC<{
     };
 
     return (
-        <InfiniteGrid<IPartColor> columnCount={ columnCount } itemRender={ (item: IPartColor) =>
+        <InfiniteGrid<IPartColor> columnCount={ columnCount } estimateSize={ 18 } squareItems itemRender={ (item: IPartColor) =>
         {
             if(!item) return null;
 

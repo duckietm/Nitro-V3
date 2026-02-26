@@ -9,12 +9,13 @@ type Props<T> = {
     columnCount: number;
     overscan?: number;
     estimateSize?: number;
+    squareItems?: boolean;
     itemRender?: (item: T, index?: number) => ReactElement;
 }
 
 const InfiniteGridRoot = <T,>(props: Props<T>) =>
 {
-    const { items = [], columnCount = 4, overscan = 5, estimateSize = 45, itemRender = null } = props;
+    const { items = [], columnCount = 4, overscan = 5, estimateSize = 45, squareItems = false, itemRender = null } = props;
     const parentRef = useRef<HTMLDivElement>(null);
 
     const virtualizer = useVirtualizer({
@@ -72,7 +73,7 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
                         className={ `grid grid-cols-${ columnCount } gap-1 absolute top-0 left-0 last:pb-0 w-full` }
                         data-index={ virtualRow.index }
                         style={ {
-                            height: virtualRow.size,
+                            ...(!squareItems && { height: virtualRow.size }),
                             transform: `translateY(${ virtualRow.start }px)`
                         } }>
                         { Array.from(Array(columnCount)).map((e, i) =>
@@ -144,7 +145,9 @@ const InfiniteGridItem = forwardRef<HTMLDivElement, {
             className={ classNames(
                 'flex flex-col items-center justify-center cursor-pointer overflow-hidden relative bg-center bg-no-repeat w-full rounded-md border-2',
                 (itemImage && (!backgroundImageUrl || !backgroundImageUrl.length)) && 'nitro-icon icon-loading',
-                itemActive ? 'border-card-grid-item-active bg-card-grid-item-active' : 'border-card-grid-item-border bg-card-grid-item',
+                itemActive
+                    ? (itemColor ? 'border-card-grid-item-active' : 'border-card-grid-item-active bg-card-grid-item-active')
+                    : (itemColor ? 'border-card-grid-item-border' : 'border-card-grid-item-border bg-card-grid-item'),
                 (itemUniqueSoldout || (itemUniqueNumber > 0)) && 'unique-item',
                 itemUniqueSoldout && 'sold-out',
                 itemUnseen && ' bg-green-500 bg-opacity-40',

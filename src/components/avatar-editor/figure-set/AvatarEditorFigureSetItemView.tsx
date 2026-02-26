@@ -1,6 +1,6 @@
 import { AvatarFigurePartType } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AvatarEditorThumbnailsHelper, GetConfigurationValue, IAvatarEditorCategoryPartItem } from '../../../api';
+import { AvatarEditorThumbnailsHelper, GetClubMemberLevel, GetConfigurationValue, IAvatarEditorCategoryPartItem } from '../../../api';
 import { LayoutCurrencyIcon, LayoutGridItemProps } from '../../../common';
 import { useAvatarEditor } from '../../../hooks';
 import { InfiniteGrid } from '../../../layout';
@@ -17,7 +17,9 @@ export const AvatarEditorFigureSetItemView: FC<{
     const [ assetUrl, setAssetUrl ] = useState<string>('');
     const { selectedColorParts = null, getFigureStringWithFace = null } = useAvatarEditor();
 
-    const isHC = !GetConfigurationValue<boolean>('hc.disabled', false) && ((partItem.partSet?.clubLevel ?? 0) > 0);
+    const clubLevel = partItem.partSet?.clubLevel ?? 0;
+    const isHC = !GetConfigurationValue<boolean>('hc.disabled', false) && (clubLevel > 0);
+    const isLocked = isHC && (GetClubMemberLevel() < clubLevel);
 
     useEffect(() =>
     {
@@ -25,17 +27,19 @@ export const AvatarEditorFigureSetItemView: FC<{
 
         const loadImage = async () =>
         {
-            const isHC = !GetConfigurationValue<boolean>('hc.disabled', false) && ((partItem.partSet?.clubLevel ?? 0) > 0);
+            const partClubLevel = partItem.partSet?.clubLevel ?? 0;
+            const partIsHC = !GetConfigurationValue<boolean>('hc.disabled', false) && (partClubLevel > 0);
+            const partIsLocked = partIsHC && (GetClubMemberLevel() < partClubLevel);
 
             let url: string = null;
 
             if(setType === AvatarFigurePartType.HEAD)
             {
-                url = await AvatarEditorThumbnailsHelper.buildForFace(getFigureStringWithFace(partItem.id), isHC);
+                url = await AvatarEditorThumbnailsHelper.buildForFace(getFigureStringWithFace(partItem.id), partIsLocked);
             }
             else
             {
-                url = await AvatarEditorThumbnailsHelper.build(setType, partItem, partItem.usesColor, selectedColorParts[setType] ?? null, isHC);
+                url = await AvatarEditorThumbnailsHelper.build(setType, partItem, partItem.usesColor, selectedColorParts[setType] ?? null, partIsLocked);
             }
 
             if(url && url.length) setAssetUrl(url);
@@ -47,7 +51,7 @@ export const AvatarEditorFigureSetItemView: FC<{
     if(!partItem) return null;
 
     return (
-        <InfiniteGrid.Item itemActive={ isSelected } itemImage={ (partItem.isClear ? undefined : assetUrl) } style={ { flex: '1', backgroundPosition: (setType === AvatarFigurePartType.HEAD) ? 'center -35px' : 'center' } } { ...rest }>
+        <InfiniteGrid.Item itemActive={ isSelected } itemImage={ (partItem.isClear ? undefined : assetUrl) } className={ `avatar-parts mx-auto${ isSelected ? ' part-selected' : '' }` } style={ { backgroundPosition: (setType === AvatarFigurePartType.HEAD) ? 'center -35px' : 'center' } } { ...rest }>
             { !partItem.isClear && isHC && <LayoutCurrencyIcon className="absolute inset-e-1 bottom-1" type="hc" /> }
             { partItem.isClear && <AvatarEditorIcon icon="clear" /> }
             { !partItem.isClear && partItem.partSet.isSellable && <AvatarEditorIcon className="inset-e-1 bottom-1 absolute" icon="sellable" /> }

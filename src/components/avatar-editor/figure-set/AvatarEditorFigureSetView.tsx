@@ -29,7 +29,7 @@ export const AvatarEditorFigureSetView: FC<{
     };
 
     return (
-        <InfiniteGrid<IAvatarEditorCategoryPartItem> columnCount={ columnCount } itemRender={ (item: IAvatarEditorCategoryPartItem) =>
+        <InfiniteGrid<IAvatarEditorCategoryPartItem> columnCount={ columnCount } estimateSize={ 50 } itemRender={ (item: IAvatarEditorCategoryPartItem) =>
         {
             if(!item) return null;
 

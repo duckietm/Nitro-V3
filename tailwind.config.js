@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 
-const { generateShades } = require('./css-utils/CSSColorUtils');
+const {
+    generateShades
+} = require('./css-utils/CSSColorUtils');
 
 const colors = {
     'toolbar': '#555555',
@@ -58,7 +60,6 @@ const boxShadow = {
     'room-previewer': '-2px -2px rgba(0, 0, 0, 0.4), inset 3px 3px rgba(0, 0, 0, 0.2);'
 };
 
-
 module.exports = {
     theme: {
         extend: {
@@ -71,9 +72,9 @@ module.exports = {
                 '4xl': '2.441rem',
                 '5xl': '3.052rem',
             },
-          
+
             fontFamily: {
-                sans: [ 'Ubuntu' ],
+                sans: ['Ubuntu'],
             },
             colors: generateShades(colors),
             boxShadow,
@@ -83,15 +84,15 @@ module.exports = {
             spacing: {
                 'card-header': '33px',
                 'card-tabs': '33px',
-                'navigator-w': '420px',
-                'navigator-h': '440px',
+                'navigator-w': '480px',
+                'navigator-h': '520px',
                 'inventory-w': '528px',
                 'inventory-h': '320px'
             },
             borderRadius: {
-               
+
                 '3': '0.3rem',
-             
+
             },
             zIndex: {
                 'toolbar': '',
@@ -127,7 +128,9 @@ module.exports = {
         'col-span-9',
         'col-span-10',
         'col-span-11',
-        'col-span-12', 
+        'col-span-12',
+        'grid-cols-13',
+        'grid-cols-14',
         'grid-rows-1',
         'grid-rows-2',
         'grid-rows-3',
@@ -146,8 +149,8 @@ module.exports = {
     darkMode: 'class',
     variants: {
         extend: {
-            divideColor: [ 'group-hover' ],
-            backgroundColor: [ 'group-focus' ],
+            divideColor: ['group-hover'],
+            backgroundColor: ['group-focus'],
         }
     },
     plugins: [

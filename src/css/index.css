@@ -7,6 +7,41 @@
     src: url("@/assets/webfonts/Ubuntu-C.ttf");
 }
 
+@font-face {
+    font-family: Habbo;
+    src: url("@/assets/webfonts/Habbo.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Habbo;
+    src: url("@/assets/webfonts/Habbo-b.ttf");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Habbo;
+    src: url("@/assets/webfonts/Habbo-i.ttf");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: Habbo;
+    src: url("@/assets/webfonts/Habbo-m.ttf");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Habbo;
+    src: url("@/assets/webfonts/Habbo-t.ttf");
+    font-weight: 100;
+    font-style: normal;
+}
+
 html,
 body {
     padding: 0;
@@ -792,4 +827,161 @@ body {
 
 .bg-card-tabs {
     background-color: #185d79; /* Match bg-card-header */
+}
+
+/* ── Avatar Editor ─────────────────────────────────────────────────────── */
+
+.color-picker-frame {
+    border-image-source: url('@/assets/images/avatareditor/color_frame.png');
+    border-image-slice: 6 6 6 6 fill;
+    border-image-width: 6px 6px 6px 6px;
+    width: 14px;
+    height: 21px;
+    border-radius: 4px;
+
+    &.active,
+    &:hover {
+        border-image-source: url('@/assets/images/avatareditor/color_frame_active.png');
+        height: 21px;
+        margin-top: -2px;
+    }
+}
+
+.hc-icon {
+    background-image: url('@/assets/images/avatareditor/hc_icon.png');
+    height: 9px;
+    width: 10px;
+    bottom: 2px;
+    left: 2px;
+}
+
+.avatar-parts {
+    border: none !important;
+    height: 42px;
+    width: 42px;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 2rem !important;
+    overflow: visible !important;
+    background-color: transparent;
+
+    &:hover {
+        box-shadow: 0 0 0 3px #dbdad5 !important;
+        background-color: #cecdc8 !important;
+    }
+
+    &:active,
+    &.part-selected {
+        box-shadow: 0 0 0 3px #c5c3c0 !important;
+        background-color: #b1b1b1 !important;
+    }
+}
+
+.avatar-container {
+    padding: 3px;
+    height: 50px;
+    border-radius: 0.3rem;
+    background-color: #a7a6a2;
+    width: 48px;
+}
+
+.avatar-parts-container {
+    height: 70%;
+}
+
+.avatar-color-palette-container {
+    height: 30%;
+    width: 100% !important;
+}
+
+.dual-palette {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+.avatar-editor-palette-set-view {
+    padding-right: 15px !important;
+    flex-grow: 1;
+}
+
+.action-buttons {
+    gap: 5px;
+}
+
+/* ── Avatar Editor tab icons ───────────────────────────────────────────── */
+
+.avatar-editor-tabs {
+    position: relative;
+
+    .tab {
+        background-position-x: center;
+        background-position-y: center;
+        background-repeat: no-repeat;
+        width: 34px;
+        height: 22px;
+    }
+
+    .hd    { background-image: url('@/assets/images/wardrobe/hd.png'); }
+    .head  { background-image: url('@/assets/images/wardrobe/head.png'); }
+    .torso { background-image: url('@/assets/images/wardrobe/torso.png'); }
+    .legs  { background-image: url('@/assets/images/wardrobe/legs.png'); }
+
+    .tab-wardrobe {
+        width: 40px;
+        height: 28px;
+        background-size: 38px 28px;
+        background-image: url('@/assets/images/wardrobe/wardrobe.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        filter: contrast(1.2) brightness(1.05);
+    }
+}
+
+/* ── Avatar Editor misc ─────────────────────────────────────────────────── */
+
+
+.saved-outfits-title {
+    color: #a7a6a2;
+    font-weight: bold;
+}
+
+.nitro-avatar-editor-wardrobe-container {
+    background-color: #cacaca;
+    border-radius: 0.3rem;
+    border: solid 1px #000;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px 12px 10px 0;
+    overflow-y: auto;
+}
+
+.nitro-avatar-editor-wardrobe-figure-preview {
+    border-image-source: url('@/assets/images/avatareditor/wardrobe_user_bg.png');
+    border-image-slice: 4 4 4 4 fill;
+    border-image-width: 4px 4px 4px 4px;
+    background-color: transparent;
+    overflow: hidden;
+    position: relative;
+
+    .avatar-shadow {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 25px;
+        width: 40px;
+        height: 20px;
+        margin: 0 auto;
+        border-radius: 100%;
+        background-color: rgba(0, 0, 0, 0.20);
+        z-index: 2;
+    }
+
+    .button-container {
+        position: absolute;
+        bottom: 0;
+        z-index: 5;
+        width: 100%;
+    }
 }

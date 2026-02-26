@@ -2,19 +2,18 @@ import { AddLinkEventTracker, AvatarEditorFigureCategory, GetSessionDataManager,
 import { FC, useEffect, useState } from 'react';
 import { FaDice, FaRedo, FaTrash } from 'react-icons/fa';
 import { AvatarEditorAction, LocalizeText, SendMessageComposer } from '../../api';
-import { Button, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
+import { Button, ButtonGroup, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useAvatarEditor } from '../../hooks';
 import { AvatarEditorFigurePreviewView } from './AvatarEditorFigurePreviewView';
 import { AvatarEditorModelView } from './AvatarEditorModelView';
 import { AvatarEditorWardrobeView } from './AvatarEditorWardrobeView';
 
-const DEFAULT_MALE_FIGURE: string = 'hr-100.hd-180-7.ch-215-66.lg-270-79.sh-305-62.ha-1002-70.wa-2007';
-const DEFAULT_FEMALE_FIGURE: string = 'hr-515-33.hd-600-1.ch-635-70.lg-716-66-62.sh-735-68';
-
 export const AvatarEditorView: FC<{}> = props =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
-    const { setIsVisible: setEditorVisibility, avatarModels, activeModelKey, setActiveModelKey, loadAvatarData, getFigureStringWithFace, gender, figureSetIds = [], randomizeCurrentFigure = null, getFigureString = null } = useAvatarEditor();
+    const { setIsVisible: setEditorVisibility, avatarModels, activeModelKey, setActiveModelKey, loadAvatarData, getFigureStringWithFace, gender, randomizeCurrentFigure = null, getFigureString = null } = useAvatarEditor();
+
+    const isWardrobeOpen = (activeModelKey === AvatarEditorFigureCategory.WARDROBE);
 
     const processAction = (action: string) =>
     {
@@ -74,48 +73,53 @@ export const AvatarEditorView: FC<{}> = props =>
     if(!isVisible) return null;
 
     return (
-        <NitroCardView className="w-[620px] h-[374px] nitro-avatar-editor" uniqueKey="avatar-editor">
+        <NitroCardView
+            className={ `nitro-avatar-editor ${ isWardrobeOpen ? 'w-[880px]' : 'w-[620px]' } h-[374px]` }
+            uniqueKey="avatar-editor">
             <NitroCardHeaderView headerText={ LocalizeText('avatareditor.title') } onCloseClick={ event => setIsVisible(false) } />
-            <NitroCardTabsView>
+            <NitroCardTabsView classNames={ ['avatar-editor-tabs'] }>
                 { Object.keys(avatarModels).map(modelKey =>
                 {
                     const isActive = (activeModelKey === modelKey);
+                    const isWardrobe = (modelKey === AvatarEditorFigureCategory.WARDROBE);
 
                     return (
                         <NitroCardTabsItemView key={ modelKey } isActive={ isActive } onClick={ event => setActiveModelKey(modelKey) }>
-                            { LocalizeText(`avatareditor.category.${ modelKey }`) }
+                            <div className={ isWardrobe ? 'tab-wardrobe' : `tab ${ modelKey }` } />
                         </NitroCardTabsItemView>
                     );
                 }) }
             </NitroCardTabsView>
             <NitroCardContentView>
-                <Grid className="grid gap-2 overflow-hidden">
-                    <div className="flex flex-col col-span-9 overflow-hidden">
-                        { ((activeModelKey.length > 0) && (activeModelKey !== AvatarEditorFigureCategory.WARDROBE)) &&
+                <div className="flex gap-2 overflow-hidden h-full">
+                    { /* left: model view or wardrobe */ }
+                    <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+                        { (activeModelKey.length > 0 && !isWardrobeOpen) &&
                             <AvatarEditorModelView categories={ avatarModels[activeModelKey] } name={ activeModelKey } /> }
-                        { (activeModelKey === AvatarEditorFigureCategory.WARDROBE) &&
+                        { isWardrobeOpen &&
                             <AvatarEditorWardrobeView /> }
                     </div>
-                    <div className="flex flex-col col-span-3 overflow-hidden gap-1">
+                    { /* right: preview + actions */ }
+                    <div className="flex flex-col shrink-0 w-[120px] gap-1 overflow-hidden">
                         <AvatarEditorFigurePreviewView />
                         <div className="flex flex-col grow! gap-1">
-                            <div className="relative inline-flex align-middle">
-                                <Button className="flex-auto " variant="secondary" onClick={ event => processAction(AvatarEditorAction.ACTION_RESET) }>
+                            <ButtonGroup className="w-full">
+                                <Button variant="secondary" className="flex-1" onClick={ event => processAction(AvatarEditorAction.ACTION_RESET) }>
                                     <FaRedo className="fa-icon" />
                                 </Button>
-                                <Button className="flex-auto" variant="secondary" onClick={ event => processAction(AvatarEditorAction.ACTION_CLEAR) }>
+                                <Button variant="secondary" className="flex-1" onClick={ event => processAction(AvatarEditorAction.ACTION_CLEAR) }>
                                     <FaTrash className="fa-icon" />
                                 </Button>
-                                <Button className="flex-auto" variant="secondary" onClick={ event => processAction(AvatarEditorAction.ACTION_RANDOMIZE) }>
+                                <Button variant="secondary" className="flex-1" onClick={ event => processAction(AvatarEditorAction.ACTION_RANDOMIZE) }>
                                     <FaDice className="fa-icon" />
                                 </Button>
-                            </div>
+                            </ButtonGroup>
                             <Button className="w-full" variant="success" onClick={ event => processAction(AvatarEditorAction.ACTION_SAVE) }>
                                 { LocalizeText('avatareditor.save') }
                             </Button>
                         </div>
                     </div>
-                </Grid>
+                </div>
             </NitroCardContentView>
         </NitroCardView>
     );

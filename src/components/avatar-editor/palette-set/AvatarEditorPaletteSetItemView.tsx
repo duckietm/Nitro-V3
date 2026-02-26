@@ -1,6 +1,6 @@
 import { ColorConverter, IPartColor } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { GetConfigurationValue } from '../../../api';
+import { GetClubMemberLevel, GetConfigurationValue } from '../../../api';
 import { LayoutCurrencyIcon, LayoutGridItemProps } from '../../../common';
 import { InfiniteGrid } from '../../../layout';
 
@@ -16,9 +16,10 @@ export const AvatarEditorPaletteSetItem: FC<{
     if(!partColor) return null;
 
     const isHC = !GetConfigurationValue<boolean>('hc.disabled', false) && (partColor.clubLevel > 0);
+    const isLocked = isHC && (GetClubMemberLevel() < partColor.clubLevel);
 
     return (
-        <InfiniteGrid.Item itemHighlight className="clear-bg" itemActive={ isSelected } itemColor={ ColorConverter.int2rgb(partColor.rgb) } { ...rest }>
+        <InfiniteGrid.Item itemHighlight className={ `clear-bg aspect-square${ isLocked ? ' opacity-50' : '' }` } itemActive={ isSelected } itemColor={ ColorConverter.int2rgb(partColor.rgb) } { ...rest }>
             { isHC && <LayoutCurrencyIcon className="absolute inset-e-1 bottom-1" type="hc" /> }
         </InfiniteGrid.Item>
     );
