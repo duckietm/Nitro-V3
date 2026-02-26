@@ -26,13 +26,13 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
         switch(bubbleWidth)
         {
             case RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL:
-                return 'w-350';
+                return 'max-w-[350px]';
             case RoomChatSettings.CHAT_BUBBLE_WIDTH_THIN:
-                return 'w-240';
+                return 'max-w-[240px]';
             case RoomChatSettings.CHAT_BUBBLE_WIDTH_WIDE:
-                return 'w-2000';
+                return 'max-w-[2000px]';
             default:
-                return 'w-350';
+                return 'max-w-[350px]';
         }
     }, [ bubbleWidth ]);
 
@@ -83,8 +83,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
             { chat.styleId === 0 && (
                 <div className="absolute -top-px left-px w-[30px] h-[calc(100%-0.5px)] rounded-[7px] z-1" style={ { backgroundColor: chat.color } } />
             ) }
-            <div className={ `chat-bubble bubble-${ chat.styleId } ${ getBubbleWidth } relative z-1 wrap-break-word min-h-[26px] text-[14px] max-w-[350px]` }
-                style={ { maxWidth: getBubbleWidth } }>
+            <div className={ `chat-bubble bubble-${ chat.styleId } ${ getBubbleWidth } relative z-1 wrap-break-word min-h-[26px] text-[14px]` }>
                 <div className="user-container flex items-center justify-center h-full max-h-[24px] overflow-hidden">
                     { chat.imageUrl && chat.imageUrl.length > 0 && (
                         <div className="user-image absolute top-[-15px] left-[-9.25px] w-[45px] h-[65px] bg-no-repeat bg-center" style={ { backgroundImage: `url(${ chat.imageUrl })` } } />
