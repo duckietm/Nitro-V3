@@ -34,7 +34,7 @@ export const AvatarEditorFigureSetView: FC<{
             if(!item) return null;
 
             return (
-                <AvatarEditorFigureSetItemView isSelected={ isPartItemSelected(item) } partItem={ item } setType={ category.setType } width={ `calc(100% / ${ columnCount }` } onClick={ event => selectEditorPart(category.setType, item.partSet?.id ?? -1) } />
+                <AvatarEditorFigureSetItemView isSelected={ isPartItemSelected(item) } partItem={ item } setType={ category.setType } width={ `calc(100% / ${ columnCount })` } onClick={ event => selectEditorPart(category.setType, item.partSet?.id ?? -1) } />
             );
         } } items={ category.partItems } overscan={ columnCount } />
     );

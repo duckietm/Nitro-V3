@@ -1,17 +1,15 @@
-import { ColorConverter, IPartColor } from '@nitrots/nitro-renderer';
+import { IPartColor } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { GetClubMemberLevel, GetConfigurationValue } from '../../../api';
+import { ColorUtils, GetClubMemberLevel, GetConfigurationValue } from '../../../api';
 import { LayoutCurrencyIcon, LayoutGridItemProps } from '../../../common';
 import { InfiniteGrid } from '../../../layout';
 
 export const AvatarEditorPaletteSetItem: FC<{
-    setType: string;
     partColor: IPartColor;
     isSelected: boolean;
-    width?: string;
 } & LayoutGridItemProps> = props =>
 {
-    const { setType = null, partColor = null, isSelected = false, width = '100%', ...rest } = props;
+    const { partColor = null, isSelected = false, style = {}, ...rest } = props;
 
     if(!partColor) return null;
 
@@ -19,7 +17,17 @@ export const AvatarEditorPaletteSetItem: FC<{
     const isLocked = isHC && (GetClubMemberLevel() < partColor.clubLevel);
 
     return (
-        <InfiniteGrid.Item itemHighlight className={ `clear-bg aspect-square${ isLocked ? ' opacity-50' : '' }` } itemActive={ isSelected } itemColor={ ColorConverter.int2rgb(partColor.rgb) } { ...rest }>
+        <InfiniteGrid.Item
+            itemHighlight
+            className={ `clear-bg${ isLocked ? ' opacity-50' : '' }` }
+            itemActive={ isSelected }
+            itemColor={ ColorUtils.makeColorNumberHex(partColor.rgb & 0xFFFFFF) }
+            style={ {
+                aspectRatio: '1 / 1',
+                minHeight: '14px',
+                ...style
+            } }
+            { ...rest }>
             { isHC && <LayoutCurrencyIcon className="absolute inset-e-1 bottom-1" type="hc" /> }
         </InfiniteGrid.Item>
     );

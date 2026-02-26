@@ -18,6 +18,22 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
     const { items = [], columnCount = 4, overscan = 5, estimateSize = 45, squareItems = false, itemRender = null } = props;
     const parentRef = useRef<HTMLDivElement>(null);
 
+    if(squareItems)
+    {
+        return (
+            <div ref={ parentRef } className="overflow-y-auto size-full">
+                <div className={ `grid grid-cols-${ columnCount } gap-1 w-full` }>
+                    { items.map((item, index) =>
+                    {
+                        if(!item) return <Fragment key={ `${ index }-empty` } />;
+
+                        return <Fragment key={ `${ index }-item` }>{ itemRender(item, index % columnCount) }</Fragment>;
+                    }) }
+                </div>
+            </div>
+        );
+    }
+
     const virtualizer = useVirtualizer({
         count: Math.ceil(items.length / columnCount),
         overscan,

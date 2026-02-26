@@ -50,7 +50,6 @@ export const AvatarEditorModelView: FC<{
 
     return (
         <div className="flex flex-col overflow-hidden h-full gap-1">
-            { /* ── Category / gender selector row ── */ }
             <div className="flex items-center px-2 gap-3 shrink-0">
                 { (name === AvatarEditorFigureCategory.GENERIC) &&
                     <>
@@ -85,7 +84,6 @@ export const AvatarEditorModelView: FC<{
                 </button>
             </div>
 
-            { /* ── Colour palette row at bottom ── */ }
             <div className={ `flex shrink-0 overflow-hidden gap-2 ${ maxPaletteCount === 2 ? 'dual-palette' : '' }` } style={ { height: '160px' } }>
                 { (maxPaletteCount >= 1) &&
                     <div className="flex-1 min-w-0 overflow-hidden avatar-editor-palette-set-view">

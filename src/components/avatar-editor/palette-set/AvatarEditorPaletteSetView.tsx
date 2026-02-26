@@ -29,7 +29,7 @@ export const AvatarEditorPaletteSetView: FC<{
             if(!item) return null;
 
             return (
-                <AvatarEditorPaletteSetItem isSelected={ isPartColorSelected(item) } partColor={ item } setType={ category.setType } width={ `calc(100% / ${ columnCount }` } onClick={ event => selectEditorColor(category.setType, paletteIndex, item.id) } />
+                <AvatarEditorPaletteSetItem isSelected={ isPartColorSelected(item) } partColor={ item } onClick={ event => selectEditorColor(category.setType, paletteIndex, item.id) } />
             );
         } } items={ category.colorItems[paletteIndex] } overscan={ columnCount } />
     );
