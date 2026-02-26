@@ -1,8 +1,13 @@
 import { NitroCard } from '@layout/NitroCard';
-import { AddLinkEventTracker, ConvertGlobalRoomIdMessageComposer, HabboWebTools, ILinkEventTracker, LegacyExternalInterface, NavigatorInitComposer, NavigatorSearchComposer, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ConvertGlobalRoomIdMessageComposer, FindNewFriendsMessageComposer, HabboWebTools, ILinkEventTracker, LegacyExternalInterface, NavigatorInitComposer, NavigatorSearchComposer, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
-import { LocalizeText, SendMessageComposer, TryVisitRoom } from '../../api';
+import savesSearchIcon from '../../assets/images/navigator/saves-search/search_save.png';
+import createRoomImg from '../../assets/images/navigator/create_room.png';
+import randomRoomImg from '../../assets/images/navigator/random_room.png';
+import promoteRoomImg from '../../assets/images/navigator/promote_room.png';
+import { CreateLinkEvent, LocalizeText, SendMessageComposer, TryVisitRoom } from '../../api';
+import { Flex, Text } from '../../common';
 import { useNavigator, useNitroEvent } from '../../hooks';
 import { NavigatorDoorStateView } from './views/NavigatorDoorStateView';
 import { NavigatorRoomCreatorView } from './views/NavigatorRoomCreatorView';
@@ -10,6 +15,7 @@ import { NavigatorRoomInfoView } from './views/NavigatorRoomInfoView';
 import { NavigatorRoomLinkView } from './views/NavigatorRoomLinkView';
 import { NavigatorRoomSettingsView } from './views/room-settings/NavigatorRoomSettingsView';
 import { NavigatorSearchResultView } from './views/search/NavigatorSearchResultView';
+import { NavigatorSearchSavesResultView } from './views/search/NavigatorSearchSavesResultView';
 import { NavigatorSearchView } from './views/search/NavigatorSearchView';
 
 export const NavigatorView: FC<{}> = props =>
@@ -19,10 +25,11 @@ export const NavigatorView: FC<{}> = props =>
     const [ isCreatorOpen, setCreatorOpen ] = useState(false);
     const [ isRoomInfoOpen, setRoomInfoOpen ] = useState(false);
     const [ isRoomLinkOpen, setRoomLinkOpen ] = useState(false);
+    const [ isOpenSavesSearches, setIsOpenSavesSearches ] = useState(false);
     const [ isLoading, setIsLoading ] = useState(false);
     const [ needsInit, setNeedsInit ] = useState(true);
     const [ needsSearch, setNeedsSearch ] = useState(false);
-    const { searchResult = null, topLevelContext = null, topLevelContexts = null, navigatorData = null } = useNavigator();
+    const { searchResult = null, topLevelContext = null, topLevelContexts = null, navigatorData = null, navigatorSearches = null } = useNavigator();
     const pendingSearch = useRef<{ value: string, code: string }>(null);
     const elementRef = useRef<HTMLDivElement>();
 
@@ -197,12 +204,18 @@ export const NavigatorView: FC<{}> = props =>
         <>
             { isVisible &&
                 <NitroCard
-                    className="w-navigator-w h-navigator-h min-w-navigator-w min-h-navigator-h"
+                    className={ `${ isOpenSavesSearches ? 'w-[600px] min-w-[600px]' : 'w-navigator-w min-w-navigator-w' } h-navigator-h min-h-navigator-h` }
                     uniqueKey="navigator">
                     <NitroCard.Header
                         headerText={ LocalizeText(isCreatorOpen ? 'navigator.createroom.title' : 'navigator.title') }
                         onCloseClick={ event => setIsVisible(false) } />
                     <NitroCard.Tabs>
+                        <NitroCard.TabItem
+                            isActive={ isOpenSavesSearches }
+                            title={ LocalizeText('navigator.tooltip.left.show.hide') }
+                            onClick={ () => setIsOpenSavesSearches(prev => !prev) }>
+                            <img src={ savesSearchIcon } alt="" style={{ width: 18, height: 18 }} />
+                        </NitroCard.TabItem>
                         { topLevelContexts && (topLevelContexts.length > 0) && topLevelContexts.map((context, index) =>
                         {
                             return (
@@ -222,12 +235,58 @@ export const NavigatorView: FC<{}> = props =>
                     </NitroCard.Tabs>
                     <NitroCard.Content isLoading={ isLoading }>
                         { !isCreatorOpen &&
-                            <>
-                                <NavigatorSearchView sendSearch={ sendSearch } />
-                                <div ref={ elementRef } className="flex flex-col overflow-auto gap-2">
-                                    { (searchResult && searchResult.results.map((result, index) => <NavigatorSearchResultView key={ index } searchResult={ result } />)) }
+                            <div className="flex h-full overflow-hidden gap-2">
+                                { isOpenSavesSearches &&
+                                    <div className="overflow-hidden pr-1 shrink-0">
+                                        <NavigatorSearchSavesResultView searches={ navigatorSearches || [] } />
+                                    </div> }
+                                <div className="flex flex-col w-full overflow-hidden gap-2">
+                                    <NavigatorSearchView sendSearch={ sendSearch } />
+                                    <div ref={ elementRef } className="flex flex-col flex-1 min-h-0 overflow-auto gap-2">
+                                        { (searchResult && searchResult.results.map((result, index) => <NavigatorSearchResultView key={ index } searchResult={ result } />)) }
+                                    </div>
+                                    <Flex className="pt-2 border-t border-muted gap-2">
+                                        <Flex
+                                            pointer
+                                            alignItems="center"
+                                            justifyContent="center"
+                                            className="flex-1 h-[60px] cursor-pointer bg-no-repeat pl-16"
+                                            style={ { backgroundImage: `url(${ createRoomImg })`, backgroundSize: '100% 100%' } }
+                                            onClick={ () => setCreatorOpen(true) }
+                                        >
+                                            <Text variant="white" bold className="text-xs drop-shadow">
+                                                { LocalizeText('navigator.createroom.create') }
+                                            </Text>
+                                        </Flex>
+                                        { (searchResult?.code !== 'myworld_view' && searchResult?.code !== 'roomads_view') &&
+                                            <Flex
+                                                pointer
+                                                alignItems="center"
+                                                justifyContent="center"
+                                                className="flex-1 h-[60px] cursor-pointer bg-no-repeat pl-16"
+                                                style={ { backgroundImage: `url(${ randomRoomImg })`, backgroundSize: '100% 100%' } }
+                                                onClick={ () => SendMessageComposer(new FindNewFriendsMessageComposer()) }
+                                            >
+                                                <Text variant="white" bold className="text-xs drop-shadow">
+                                                    { LocalizeText('navigator.random.room') }
+                                                </Text>
+                                            </Flex> }
+                                        { (searchResult?.code === 'myworld_view' || searchResult?.code === 'roomads_view') &&
+                                            <Flex
+                                                pointer
+                                                alignItems="center"
+                                                justifyContent="center"
+                                                className="flex-1 h-[60px] cursor-pointer bg-no-repeat pl-16"
+                                                style={ { backgroundImage: `url(${ promoteRoomImg })`, backgroundSize: '100% 100%' } }
+                                                onClick={ () => CreateLinkEvent('catalog/open/room_event') }
+                                            >
+                                                <Text variant="white" bold className="text-xs drop-shadow">
+                                                    { LocalizeText('navigator.promote.room') }
+                                                </Text>
+                                            </Flex> }
+                                    </Flex>
                                 </div>
-                            </> }
+                            </div> }
                         { isCreatorOpen && <NavigatorRoomCreatorView /> }
                     </NitroCard.Content>
                 </NitroCard> }

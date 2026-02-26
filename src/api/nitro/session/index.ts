@@ -1,4 +1,5 @@
 export * from './CanManipulateFurniture';
+export * from './GetSessionDataManager';
 export * from './CreateRoomSession';
 export * from './GetCanStandUp';
 export * from './GetCanUseExpression';

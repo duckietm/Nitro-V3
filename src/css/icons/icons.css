@@ -669,3 +669,17 @@
     width: 16px;
     height: 16px;
 }
+
+.nitro-icon.icon-navigator-search-delete {
+    background-image: url("@/assets/images/navigator/saves-search/delete_search.png");
+    width: 18px;
+    height: 18px;
+}
+
+.nitro-icon.icon-navigator-search-delete:hover {
+    background-image: url("@/assets/images/navigator/saves-search/delete_search_hover.png");
+}
+
+.nitro-icon.icon-navigator-search-delete:active {
+    background-image: url("@/assets/images/navigator/saves-search/delete_search_click.png");
+}

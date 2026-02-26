@@ -41,7 +41,7 @@ export const Text: FC<TextProps> = props => {
     } = props;
 
     const getClassNames = useMemo(() => {
-        const newClassNames: string[] = ['inline'];
+        const newClassNames: string[] = [truncate ? 'block' : 'inline'];
 
         if (variant) {
 			if (variant === 'primary') newClassNames.push('text-[#1e7295]');
@@ -54,7 +54,7 @@ export const Text: FC<TextProps> = props => {
 			if (variant == 'danger') newClassNames.push('text-[#a81a12]');
 			if (variant == 'warning') newClassNames.push('text-[#ffc107]');
 		}
-		
+
         if (bold) newClassNames.push('font-bold');
         if (fontWeight) newClassNames.push('font-' + fontWeight);
         if (fontSize) newClassNames.push('fs-' + fontSize);
@@ -62,7 +62,7 @@ export const Text: FC<TextProps> = props => {
         if (align) newClassNames.push('text-' + align);
         if (underline) newClassNames.push('underline');
         if (italics) newClassNames.push('italic');
-        if (truncate) newClassNames.push('text-truncate');
+        if (truncate) newClassNames.push('truncate', 'min-w-0');
         if (center) newClassNames.push('text-center');
         if (textEnd) newClassNames.push('text-end');
         if (small) newClassNames.push('text-sm');
@@ -71,7 +71,7 @@ export const Text: FC<TextProps> = props => {
         if (textBreak) newClassNames.push('text-break');
 
         return newClassNames;
-    }, [variant, fontWeight, fontSize, fontSizeCustom, align, bold, underline, italics, truncate, center, textEnd, small, wrap, noWrap, textBreak]);
+    }, [ variant, fontWeight, fontSize, fontSizeCustom, align, bold, underline, italics, truncate, center, textEnd, small, wrap, noWrap, textBreak ]);
 
     const style = fontSizeCustom ? { '--font-size': `${fontSizeCustom}px` } as React.CSSProperties : undefined;
 

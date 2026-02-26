@@ -19,6 +19,7 @@ export * from './LayoutRarityLevelView';
 export * from './LayoutRoomObjectImageView';
 export * from './LayoutRoomPreviewerView';
 export * from './LayoutRoomThumbnailView';
+export * from './LayoutSearchSavesView';
 export * from './LayoutTrophyView';
 export * from './UserProfileIconView';
 export * from './limited-edition';
