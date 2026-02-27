@@ -7,41 +7,6 @@
     src: url("@/assets/webfonts/Ubuntu-C.ttf");
 }
 
-@font-face {
-    font-family: Habbo;
-    src: url("@/assets/webfonts/Habbo.ttf");
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: Habbo;
-    src: url("@/assets/webfonts/Habbo-b.ttf");
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: Habbo;
-    src: url("@/assets/webfonts/Habbo-i.ttf");
-    font-weight: normal;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: Habbo;
-    src: url("@/assets/webfonts/Habbo-m.ttf");
-    font-weight: 500;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: Habbo;
-    src: url("@/assets/webfonts/Habbo-t.ttf");
-    font-weight: 100;
-    font-style: normal;
-}
-
 html,
 body {
     padding: 0;
