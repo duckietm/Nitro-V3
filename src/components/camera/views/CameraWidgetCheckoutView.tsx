@@ -81,15 +81,17 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
 
     if(!price) return null;
 
+    const displayUrl = pictureUrl || base64Url;
+
     return (
         <NitroCardView className="nitro-camera-checkout" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('camera.confirm_phase.title') } onCloseClick={ event => processAction('close') } />
             <NitroCardContentView>
                 <div className="flex items-center justify-center">
-                    { (pictureUrl && pictureUrl.length) &&
-                        <LayoutImage className="picture-preview border" imageUrl={ pictureUrl } /> }
-                    { (!pictureUrl || !pictureUrl.length) &&
-                        <div className="flex items-center justify-center picture-preview border">
+                    { (displayUrl && displayUrl.length) &&
+                        <LayoutImage className="picture-preview border w-[320px] h-[320px]" imageUrl={ displayUrl } /> }
+                    { (!displayUrl || !displayUrl.length) &&
+                        <div className="flex items-center justify-center picture-preview border w-[320px] h-[320px]">
                             <Text bold>{ LocalizeText('camera.loading') }</Text>
                         </div> }
                 </div>
