@@ -84,7 +84,6 @@ export class AvatarEditorThumbnailsHelper
 
                 if(!hasAsset)
                 {
-                    console.log(`${ AvatarFigurePartType.SCALE }_${ AvatarFigurePartType.STD }_${ part.type }_${ part.id }`);
                     continue;
                 }
 

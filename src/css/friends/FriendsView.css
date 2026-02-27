@@ -1,0 +1,198 @@
+/* ── Friends spritesheet icons ── */
+.nitro-friends-spritesheet {
+    background: url('@/assets/images/friends/friends-spritesheet.png') transparent no-repeat;
+
+    &.icon-friendbar-visit {
+        width: 21px;
+        height: 21px;
+        background-position: -38px -5px;
+    }
+
+    &.icon-heart {
+        width: 16px;
+        height: 14px;
+        background-position: -5px -67px;
+    }
+
+    &.icon-new-message {
+        width: 14px;
+        height: 14px;
+        background-position: -96px -53px;
+    }
+
+    &.icon-none {
+        width: 16px;
+        height: 14px;
+        background-position: -31px -67px;
+    }
+
+    &.icon-profile {
+        width: 21px;
+        height: 21px;
+        background-position: -5px -36px;
+    }
+
+    &.icon-profile-sm {
+        width: 13px;
+        height: 11px;
+        background-position: -51px -91px;
+
+        &:hover {
+            width: 13px;
+            height: 11px;
+            background-position: -74px -91px;
+        }
+    }
+
+    &.icon-smile {
+        width: 16px;
+        height: 14px;
+        background-position: -57px -67px;
+    }
+
+    &.icon-warning {
+        width: 23px;
+        height: 21px;
+        background-position: -5px -5px;
+    }
+
+    &.icon-accept {
+        width: 13px;
+        height: 14px;
+        background-position: -5px -91px;
+    }
+
+    &.icon-add {
+        width: 16px;
+        height: 15px;
+        background-position: -69px -31px;
+    }
+
+    &.icon-bobba {
+        width: 16px;
+        height: 14px;
+        background-position: -96px -5px;
+    }
+
+    &.icon-chat {
+        width: 17px;
+        height: 16px;
+        background-position: -69px -5px;
+    }
+
+    &.icon-deny {
+        width: 13px;
+        height: 14px;
+        background-position: -28px -91px;
+    }
+
+    &.icon-follow {
+        width: 16px;
+        height: 14px;
+        background-position: -96px -29px;
+    }
+
+    &.icon-friendbar-chat {
+        width: 20px;
+        height: 21px;
+        background-position: -36px -36px;
+    }
+}
+
+.messenger-notification-icon {
+    background: url('@/assets/images/friends/messenger_notification_icon.png') transparent no-repeat;
+    width: 25px;
+    height: 25px;
+}
+
+.nitro-friends {
+    width: 250px;
+    height: 300px;
+
+    & .search-input {
+        border: 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
+}
+
+.nitro-friends-room-invite {
+    width: 250px;
+}
+
+.nitro-friends-remove-confirmation {
+    width: 250px;
+}
+
+.friend-bar {
+    & .friend-bar-item {
+        pointer-events: all;
+
+        &.friend-bar-search-item-active {
+            background-color: #b69b83;
+            border: 2px solid #e2c1a3;
+
+            & .search-content {
+                font-size: 12px;
+            }
+        }
+
+        & .friend-bar-item-head {
+            pointer-events: none;
+        }
+    }
+}
+
+.nitro-friends-messenger {
+    & .layout-grid-item {
+        min-height: 50px;
+    }
+
+    & .chat-messages {
+        overflow-y: auto;
+
+        & .message-avatar {
+            position: relative;
+            overflow: hidden;
+            width: 50px;
+            height: 50px;
+
+            & .avatar-image {
+                position: absolute;
+                margin-left: -22px;
+                margin-top: -25px;
+            }
+        }
+
+        & .messages-group-left {
+            position: relative;
+
+            &:before {
+                position: absolute;
+                content: ' ';
+                width: 0;
+                height: 0;
+                border-right: 8px solid #DFDFDF;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                top: 10px;
+                left: -8px;
+            }
+        }
+
+        & .messages-group-right {
+            position: relative;
+
+            &:before {
+                position: absolute;
+                content: ' ';
+                width: 0;
+                height: 0;
+                border-left: 8px solid #DFDFDF;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                top: 10px;
+                right: -8px;
+            }
+        }
+    }
+}
