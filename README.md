@@ -1,4 +1,4 @@
-# v2.2.0 - Cool UI Beta !! Use at Own Risk as it is still in Beta !!
+# v2.2.0 -Nitro V3 !! Use at Own Risk as it is still in Beta !!
 
 ## Prerequisites
 
@@ -11,14 +11,14 @@
 
 -   First you should open terminal and navigate to the folder where you want to clone Nitro and Nitro-Renderer
 -   Clone Nitro (Expl. C:\Github\)
-    -   `git clone https://github.com/duckietm/Nitro-Cool-UI.git` <== For now switch to Dev-RendererV2 
-	-   `git clone https://github.com/duckietm/Nitro-Cool-UI-Renderer.git`
-	-   Install the dependencies for the renderer : cd C:\Github\Nitro-Cool-UI-Renderer
+    -   `git clone https://github.com/duckietm/Nitro-V3.git` <== For now switch to Dev-RendererV2 
+	-   `git clone https://github.com/duckietm/Nitro_Render_V3.git`
+	-   Install the dependencies for the renderer : cd C:\Github\Nitro_Render_V3
     	-   `yarn install`
-	-	Now we will create a Link for the CoolUI : `yarn link` This will give you a link address `yarn link "@nitrots/nitro-renderer"`
-    -   Install the dependencies for Cool UI : cd C:\Github\Nitro-Cool-UI
+	-	Now we will create a Link for the Nitro Renderer : `yarn link` This will give you a link address `yarn link "@nitrots/nitro-renderer"`
+    -   Install the dependencies for Cool UI : cd C:\Github\Nitro-V3
 	-   `yarn install`
-	-   `yarn link "@nitrots/nitro-renderer` <== This will link the renderer in the project
+	-   `yarn link "@nitrots/nitro-renderer"` <== This will link the renderer in the project
 -   Rename a few files
     -   Rename `public/renderer-config.json.example` to `public/renderer-config.json`
     -   Rename `public/ui-config.json.example` to `public/ui-config.json`
