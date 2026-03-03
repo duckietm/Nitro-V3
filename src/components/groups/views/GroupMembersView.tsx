@@ -195,13 +195,13 @@ export const GroupMembersView: FC<{}> = props =>
                     }) }
                 </Grid>
                 <Flex alignItems="center" gap={ 1 } justifyContent="between">
-                    <Button disabled={ (membersData.pageIndex === 0) } onClick={ event => setPageId(prevValue => (prevValue - 1)) }>
+                    <Button disabled={ pageId <= 0 } onClick={ event => setPageId(prevValue => Math.max(0, prevValue - 1)) }>
                         <FaChevronLeft className="fa-icon" />
                     </Button>
                     <Text small>
                         { LocalizeText('group.members.pageinfo', [ 'amount', 'page', 'totalPages' ], [ membersData.totalMembersCount.toString(), (membersData.pageIndex + 1).toString(), totalPages.toString() ]) }
                     </Text>
-                    <Button disabled={ (membersData.pageIndex === (totalPages - 1)) } onClick={ event => setPageId(prevValue => (prevValue + 1)) }>
+                    <Button disabled={ totalPages === 0 || pageId >= totalPages - 1 } onClick={ event => setPageId(prevValue => Math.min(totalPages - 1, prevValue + 1)) }>
                         <FaChevronRight className="fa-icon" />
                     </Button>
                 </Flex>
