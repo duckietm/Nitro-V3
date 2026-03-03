@@ -1,6 +1,6 @@
 import { RoomBannedUsersComposer, RoomDataParser, RoomSettingsDataEvent, SaveRoomSettingsComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
+import { CreateLinkEvent, IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
 import { NavigatorRoomSettingsAccessTabView } from './NavigatorRoomSettingsAccessTabView';
@@ -182,7 +182,7 @@ export const NavigatorRoomSettingsView: FC<{}> = props =>
 
     return (
         <NitroCardView className="nitro-room-settings" uniqueKey="nitro-room-settings">
-            <NitroCardHeaderView headerText={ LocalizeText('navigator.roomsettings') } onCloseClick={ onClose } />
+            <NitroCardHeaderView headerText={ LocalizeText('navigator.roomsettings') } isInfoToHabboPages={ currentTab === TABS[3] } onClickInfoHabboPages={ () => { if(currentTab === TABS[3]) CreateLinkEvent('habbopages/chat/options'); } } onCloseClick={ onClose } />
             <NitroCardTabsView>
                 { TABS.map(tab =>
                 {
