@@ -1,5 +1,6 @@
 import { WiredActionLayoutCode } from '../../../../api';
 import { WiredActionBotChangeFigureView } from './WiredActionBotChangeFigureView';
+import { WiredActionFurniAreaView } from '../selectors/WiredActionFurniAreaView';
 import { WiredActionBotFollowAvatarView } from './WiredActionBotFollowAvatarView';
 import { WiredActionBotGiveHandItemView } from './WiredActionBotGiveHandItemView';
 import { WiredActionBotMoveView } from './WiredActionBotMoveView';
@@ -79,6 +80,8 @@ export const WiredActionLayoutView = (code: number) =>
             return <WiredActionTeleportView />;
         case WiredActionLayoutCode.TOGGLE_FURNI_STATE:
             return <WiredActionToggleFurniStateView />;
+        case WiredActionLayoutCode.FURNI_AREA_SELECTOR:
+            return <WiredActionFurniAreaView />;
     }
 
     return null;

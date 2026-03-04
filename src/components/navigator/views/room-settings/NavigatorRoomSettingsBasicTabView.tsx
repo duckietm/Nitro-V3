@@ -163,8 +163,7 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                 <Text>{ LocalizeText('navigator.roomsettings.allow_walk_through') }</Text>
             </Flex>
             <Text variant="danger" underline bold pointer className="d-flex justify-content-center align-items-center gap-1" onClick={ deleteRoom }>
-                <FaTimes className="fa-icon" />
-                { LocalizeText('navigator.roomsettings.delete') }
+                <FaTimes className="fa-icon" /> { LocalizeText('navigator.roomsettings.delete') } 
             </Text>
         </>
     );

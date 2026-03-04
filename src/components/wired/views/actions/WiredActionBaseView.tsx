@@ -1,5 +1,5 @@
 import { WiredActionDefinition } from '@nitrots/nitro-renderer';
-import { FC, PropsWithChildren, useEffect } from 'react';
+import { CSSProperties, FC, PropsWithChildren, useEffect } from 'react';
 import { GetWiredTimeLocale, LocalizeText, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
@@ -10,11 +10,12 @@ export interface WiredActionBaseViewProps
     hasSpecialInput: boolean;
     requiresFurni: number;
     save: () => void;
+    cardStyle?: CSSProperties;
 }
 
 export const WiredActionBaseView: FC<PropsWithChildren<WiredActionBaseViewProps>> = props =>
 {
-    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, hasSpecialInput = false, children = null } = props;
+    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, hasSpecialInput = false, children = null, cardStyle = undefined } = props;
     const { trigger = null, actionDelay = 0, setActionDelay = null } = useWired();
 
     useEffect(() =>
@@ -23,7 +24,7 @@ export const WiredActionBaseView: FC<PropsWithChildren<WiredActionBaseViewProps>
     }, [ trigger, setActionDelay ]);
 
     return (
-        <WiredBaseView hasSpecialInput={ hasSpecialInput } requiresFurni={ requiresFurni } save={ save } wiredType="action">
+        <WiredBaseView hasSpecialInput={ hasSpecialInput } requiresFurni={ requiresFurni } save={ save } wiredType="action" cardStyle={ cardStyle }>
             { children }
             { !!children && <hr className="m-0 bg-dark" /> }
             <div className="flex flex-col">

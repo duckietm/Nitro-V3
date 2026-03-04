@@ -1,5 +1,5 @@
 import { GetSessionDataManager } from '@nitrots/nitro-renderer';
-import { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { CSSProperties, FC, PropsWithChildren, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType, WiredSelectionVisualizer } from '../../../api';
 import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../common';
 import { useWired } from '../../../hooks';
@@ -12,11 +12,12 @@ export interface WiredBaseViewProps
     hasSpecialInput: boolean;
     save: () => void;
     validate?: () => boolean;
+    cardStyle?: CSSProperties;
 }
 
 export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
 {
-    const { wiredType = '', requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, children = null, hasSpecialInput = false } = props;
+    const { wiredType = '', requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, children = null, hasSpecialInput = false, cardStyle = undefined } = props;
     const [ wiredName, setWiredName ] = useState<string>(null);
     const [ wiredDescription, setWiredDescription ] = useState<string>(null);
     const [ needsSave, setNeedsSave ] = useState<boolean>(false);
@@ -87,7 +88,7 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
     }, [ trigger, hasSpecialInput, requiresFurni, setIntParams, setStringParam, setFurniIds, setAllowsFurni ]);
 
     return (
-        <NitroCardView className="nitro-wired" theme="primary-slim" uniqueKey="nitro-wired">
+        <NitroCardView className="nitro-wired" theme="primary-slim" uniqueKey="nitro-wired" style={ cardStyle }>
             <NitroCardHeaderView headerText={ LocalizeText('wiredfurni.title') } onCloseClick={ onClose } />
             <NitroCardContentView>
                 <div className="flex flex-col gap-1">
