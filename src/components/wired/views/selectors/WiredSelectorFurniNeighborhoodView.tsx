@@ -1,7 +1,8 @@
+import { GetRoomEngine, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useCallback, useEffect, useState } from 'react';
 import { FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 import { MdGridOn } from 'react-icons/md';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { GetRoomSession, LocalizeText, WiredFurniType, WiredSelectionVisualizer } from '../../../../api';
 import { Button, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from '../actions/WiredActionBaseView';
@@ -46,10 +47,11 @@ const tileTop = (rx: number, ry: number) =>
 
 interface GridProps {
     selectedTiles: Tile[];
+    invert: boolean;
     onToggle: (x: number, y: number) => void;
 }
 
-const NeighborhoodGrid: FC<GridProps> = ({ selectedTiles, onToggle }) =>
+const NeighborhoodGrid: FC<GridProps> = ({ selectedTiles, invert, onToggle }) =>
 {
     const tiles: JSX.Element[] = [];
 
@@ -59,19 +61,20 @@ const NeighborhoodGrid: FC<GridProps> = ({ selectedTiles, onToggle }) =>
         {
             const isCenter   = rx === 0 && ry === 0;
             const isSelected = tileIncluded(selectedTiles, rx, ry);
+            const isActive   = invert ? !isSelected : isSelected;
             const left       = tileLeft(rx, ry);
             const top_       = tileTop(rx, ry);
             const zIdx       = rx + ry + GRID_RANGE * 2 + 10;
 
             const bgColor = isCenter
                 ? '#ff9500'
-                : isSelected
+                : isActive
                     ? '#3399ff'
                     : '#2a3042';
 
             const borderColor = isCenter
                 ? '#cc6600'
-                : isSelected
+                : isActive
                     ? '#1166cc'
                     : '#1a2032';
 
@@ -127,7 +130,7 @@ export const WiredSelectorFurniNeighborhoodView: FC<{}> = () =>
     const [ curX, setCurX ] = useState(0);
     const [ curY, setCurY ] = useState(0);
 
-    const { trigger = null, furniIds = [], setIntParams } = useWired();
+    const { trigger = null, furniIds = [], setIntParams, setFurniIds } = useWired();
 
     useEffect(() =>
     {
@@ -156,6 +159,46 @@ export const WiredSelectorFurniNeighborhoodView: FC<{}> = () =>
             setSelectedTiles([]);
         }
     }, [ trigger ]);
+
+    useEffect(() =>
+    {
+        if(sourceType !== SOURCE_FURNI_PICKED || !trigger) return;
+
+        const roomId  = GetRoomSession().roomId;
+        const wiredObj = GetRoomEngine().getRoomObject(roomId, trigger.id, RoomObjectCategory.FLOOR);
+
+        if(!wiredObj) return;
+
+        const wiredPos = wiredObj.getLocation();
+        const tileSet  = new Set(selectedTiles.map(t => `${ t.x },${ t.y }`));
+        const limit    = trigger.maximumItemSelectionCount;
+
+        const allFloorObjects = GetRoomEngine().getRoomObjects(roomId, RoomObjectCategory.FLOOR);
+        const newIds: number[] = [];
+
+        for(const obj of allFloorObjects)
+        {
+            if(newIds.length >= limit) break;
+            if(obj.id < 0 || obj.id === trigger.id) continue;
+
+            const pos  = obj.getLocation();
+            const relX = Math.round(pos.x - wiredPos.x);
+            const relY = Math.round(pos.y - wiredPos.y);
+
+            const isInTiles = tileSet.has(`${ relX },${ relY }`);
+
+            if(invert ? !isInTiles : isInTiles) newIds.push(obj.id);
+        }
+
+        setFurniIds(prevValue =>
+        {
+            if(prevValue && prevValue.length) WiredSelectionVisualizer.clearSelectionShaderFromFurni(prevValue);
+
+            WiredSelectionVisualizer.applySelectionShaderToFurni(newIds);
+
+            return newIds;
+        });
+    }, [ sourceType, selectedTiles, invert, trigger, setFurniIds ]);
 
     const save = useCallback(() =>
     {
@@ -235,7 +278,7 @@ export const WiredSelectorFurniNeighborhoodView: FC<{}> = () =>
     const pickedLimit = trigger?.maximumItemSelectionCount ?? 20;
 
     return (
-        <WiredActionBaseView hasSpecialInput={ true } requiresFurni={ requiresFurni } save={ save } cardStyle={ { width: '480px', height: '750px' } }>
+        <WiredActionBaseView hasSpecialInput={ true } requiresFurni={ requiresFurni } save={ save } hideDelay={ true } cardStyle={ { width: '400px' } }>
             <div className="flex flex-col gap-2">
 
                 <Text bold>{ LocalizeText('wiredfurni.params.neighborhood_selection') }</Text>
@@ -256,7 +299,7 @@ export const WiredSelectorFurniNeighborhoodView: FC<{}> = () =>
                 </div>
 
                 <div className="flex justify-center">
-                    <NeighborhoodGrid selectedTiles={ selectedTiles } onToggle={ toggleTile } />
+                    <NeighborhoodGrid selectedTiles={ selectedTiles } invert={ invert } onToggle={ toggleTile } />
                 </div>
 
                 <div className="flex items-center gap-2">

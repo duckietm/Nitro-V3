@@ -15,6 +15,8 @@ const useWiredState = () =>
     const [ allowsFurni, setAllowsFurni ] = useState<number>(WiredFurniType.STUFF_SELECTION_OPTION_NONE);
     const [ selectByType, setSelectByType ] = useState<boolean>(false);
     const [ invertSelection, setInvertSelection ] = useState<boolean>(false);
+    const [ neighborhoodTiles, setNeighborhoodTiles ] = useState<{ x: number; y: number }[] | null>(null);
+    const [ neighborhoodInvert, setNeighborhoodInvert ] = useState<boolean>(false);
     const { showConfirm = null } = useNotification();
 
     const saveWired = () =>
@@ -206,10 +208,12 @@ const useWiredState = () =>
             setAllowsFurni(WiredFurniType.STUFF_SELECTION_OPTION_NONE);
             setSelectByType(false);
             setInvertSelection(false);
+            setNeighborhoodTiles(null);
+            setNeighborhoodInvert(false);
         };
     }, [ trigger ]);
 
-    return { trigger, setTrigger, intParams, setIntParams, stringParam, setStringParam, furniIds, setFurniIds, actionDelay, setActionDelay, setAllowsFurni, saveWired, selectObjectForWired, setSelectByType, setInvertSelection };
+    return { trigger, setTrigger, intParams, setIntParams, stringParam, setStringParam, furniIds, setFurniIds, actionDelay, setActionDelay, setAllowsFurni, saveWired, selectObjectForWired, setSelectByType, setInvertSelection, setNeighborhoodTiles, setNeighborhoodInvert };
 };
 
 export const useWired = () => useBetween(useWiredState);
