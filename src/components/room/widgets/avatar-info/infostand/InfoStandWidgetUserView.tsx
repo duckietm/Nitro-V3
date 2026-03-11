@@ -142,21 +142,21 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
             <div className="flex gap-1">
               <Column
                 fullWidth
-                className={`flex items-center w-full max-w-[68px] rounded-sm profile-background ${infostandBackgroundClass}`}
+                className={`flex items-center w-full max-w-[68px] rounded-sm relative overflow-hidden profile-background ${infostandBackgroundClass}`}
                 onClick={handleProfileClick}
               >
                 <Base position="absolute" className={`profile-stand ${infostandStandClass}`} />
                 <LayoutAvatarImageView direction={2} figure={avatarInfo.figure} />
                 <Base position="absolute" className={`profile-overlay ${infostandOverlayClass}`} />
-                {avatarInfo.type === AvatarInfoUser.OWN_USER && (
-                  <Base
-                    className="background-edit-icon background-edit-position"
-                    style={{ pointerEvents: 'auto', cursor: 'pointer' }}
-                    onClick={handleEditClick}
-                    aria-label="Edit profile background"
-                  />
-                )}
               </Column>
+              {avatarInfo.type === AvatarInfoUser.OWN_USER && (
+                <Base
+                  className="background-edit-icon background-edit-position"
+                  style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+                  onClick={handleEditClick}
+                  aria-label="Edit profile background"
+                />
+              )}
               <Column grow alignItems="center" gap={0}>
                 <div className="flex gap-1">
                   <div className="flex items-center justify-center relative w-[40px] h-[40px] bg-no-repeat bg-center">
