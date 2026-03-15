@@ -4,27 +4,38 @@ import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
 import { WiredActionBaseView } from './WiredActionBaseView';
+import { WiredSourcesSelector } from '../WiredSourcesSelector';
 
 export const WiredActionMuteUserView: FC<{}> = props =>
 {
     const [ time, setTime ] = useState(-1);
     const [ message, setMessage ] = useState('');
     const { trigger = null, setIntParams = null, setStringParam = null } = useWired();
+    const [ userSource, setUserSource ] = useState<number>(() =>
+    {
+        if(trigger?.intData?.length > 1) return trigger.intData[1];
+        return 0;
+    });
 
     const save = () =>
     {
-        setIntParams([ time ]);
+        setIntParams([ time, userSource ]);
         setStringParam(message);
     };
 
     useEffect(() =>
     {
         setTime((trigger.intData.length > 0) ? trigger.intData[0] : 0);
+        setUserSource((trigger.intData.length > 1) ? trigger.intData[1] : 0);
         setMessage(trigger.stringData);
     }, [ trigger ]);
 
     return (
-        <WiredActionBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save }>
+        <WiredActionBaseView
+            hasSpecialInput={ true }
+            requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE }
+            save={ save }
+            footer={ <WiredSourcesSelector showUsers={ true } userSource={ userSource } onChangeUsers={ setUserSource } /> }>
             <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.length.minutes', [ 'minutes' ], [ time.toString() ]) }</Text>
                 <Slider

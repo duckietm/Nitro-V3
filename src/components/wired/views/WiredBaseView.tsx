@@ -1,5 +1,5 @@
 import { GetSessionDataManager } from '@nitrots/nitro-renderer';
-import { CSSProperties, FC, PropsWithChildren, useEffect, useState } from 'react';
+import { CSSProperties, FC, PropsWithChildren, ReactNode, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType, WiredSelectionVisualizer } from '../../../api';
 import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../common';
 import { useWired } from '../../../hooks';
@@ -13,11 +13,12 @@ export interface WiredBaseViewProps
     save: () => void;
     validate?: () => boolean;
     cardStyle?: CSSProperties;
+    footer?: ReactNode;
 }
 
 export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
 {
-    const { wiredType = '', requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, children = null, hasSpecialInput = false, cardStyle = undefined } = props;
+    const { wiredType = '', requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, children = null, hasSpecialInput = false, cardStyle = undefined, footer = null } = props;
     const [ wiredName, setWiredName ] = useState<string>(null);
     const [ wiredDescription, setWiredDescription ] = useState<string>(null);
     const [ needsSave, setNeedsSave ] = useState<boolean>(false);
@@ -83,9 +84,14 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
                 return [];
             });
         }
+    }, [ trigger, hasSpecialInput, setIntParams, setStringParam, setFurniIds ]);
+
+    useEffect(() =>
+    {
+        if(!trigger) return;
 
         setAllowsFurni(requiresFurni);
-    }, [ trigger, hasSpecialInput, requiresFurni, setIntParams, setStringParam, setFurniIds, setAllowsFurni ]);
+    }, [ trigger, requiresFurni, setAllowsFurni ]);
 
     return (
         <NitroCardView className="nitro-wired" theme="primary-slim" uniqueKey="nitro-wired" style={ cardStyle }>
@@ -104,6 +110,11 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
                     <>
                         <hr className="m-0 bg-dark" />
                         <WiredFurniSelectorView />
+                    </> }
+                { footer &&
+                    <>
+                        <hr className="m-0 bg-dark" />
+                        { footer }
                     </> }
                 <div className="flex items-center gap-1">
                     <Button fullWidth variant="success" onClick={ onSave }>{ LocalizeText('wiredfurni.ready') }</Button>

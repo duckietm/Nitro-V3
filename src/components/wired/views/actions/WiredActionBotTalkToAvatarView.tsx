@@ -4,6 +4,7 @@ import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
 import { WiredActionBaseView } from './WiredActionBaseView';
+import { WiredSourcesSelector } from '../WiredSourcesSelector';
 
 export const WiredActionBotTalkToAvatarView: FC<{}> = props =>
 {
@@ -11,11 +12,16 @@ export const WiredActionBotTalkToAvatarView: FC<{}> = props =>
     const [ message, setMessage ] = useState('');
     const [ talkMode, setTalkMode ] = useState(-1);
     const { trigger = null, setStringParam = null, setIntParams = null } = useWired();
+    const [ userSource, setUserSource ] = useState<number>(() =>
+    {
+        if(trigger?.intData?.length > 1) return trigger.intData[1];
+        return 0;
+    });
 
     const save = () =>
     {
         setStringParam(botName + WIRED_STRING_DELIMETER + message);
-        setIntParams([ talkMode ]);
+        setIntParams([ talkMode, userSource ]);
     };
 
     useEffect(() =>
@@ -26,10 +32,15 @@ export const WiredActionBotTalkToAvatarView: FC<{}> = props =>
         if(data.length > 1) setMessage(data[1].length > 0 ? data[1] : '');
 
         setTalkMode((trigger.intData.length > 0) ? trigger.intData[0] : 0);
+        setUserSource((trigger.intData.length > 1) ? trigger.intData[1] : 0);
     }, [ trigger ]);
 
     return (
-        <WiredActionBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save }>
+        <WiredActionBaseView
+            hasSpecialInput={ true }
+            requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE }
+            save={ save }
+            footer={ <WiredSourcesSelector showUsers={ true } userSource={ userSource } onChangeUsers={ setUserSource } /> }>
             <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.bot.name') }</Text>
                 <NitroInput maxLength={ 32 } type="text" value={ botName } onChange={ event => setBotName(event.target.value) } />

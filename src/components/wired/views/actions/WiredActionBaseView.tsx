@@ -1,5 +1,5 @@
 import { WiredActionDefinition } from '@nitrots/nitro-renderer';
-import { CSSProperties, FC, PropsWithChildren, useEffect } from 'react';
+import { CSSProperties, FC, PropsWithChildren, ReactNode, useEffect } from 'react';
 import { GetWiredTimeLocale, LocalizeText, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
@@ -13,11 +13,12 @@ export interface WiredActionBaseViewProps
     validate?: () => boolean;
     cardStyle?: CSSProperties;
     hideDelay?: boolean;
+    footer?: ReactNode;
 }
 
 export const WiredActionBaseView: FC<PropsWithChildren<WiredActionBaseViewProps>> = props =>
 {
-    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, hasSpecialInput = false, children = null, cardStyle = undefined, hideDelay = false } = props;
+    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, hasSpecialInput = false, children = null, cardStyle = undefined, hideDelay = false, footer = null } = props;
     const { trigger = null, actionDelay = 0, setActionDelay = null } = useWired();
 
     useEffect(() =>
@@ -26,7 +27,7 @@ export const WiredActionBaseView: FC<PropsWithChildren<WiredActionBaseViewProps>
     }, [ trigger, setActionDelay ]);
 
     return (
-        <WiredBaseView hasSpecialInput={ hasSpecialInput } requiresFurni={ requiresFurni } save={ save } validate={ validate } wiredType="action" cardStyle={ cardStyle }>
+        <WiredBaseView hasSpecialInput={ hasSpecialInput } requiresFurni={ requiresFurni } save={ save } validate={ validate } wiredType="action" cardStyle={ cardStyle } footer={ footer }>
             { children }
             { !hideDelay && !!children && <hr className="m-0 bg-dark" /> }
             { !hideDelay && <div className="flex flex-col">

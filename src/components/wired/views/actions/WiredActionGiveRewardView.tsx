@@ -5,6 +5,7 @@ import { Button, Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
 import { WiredActionBaseView } from './WiredActionBaseView';
+import { WiredSourcesSelector } from '../WiredSourcesSelector';
 
 export const WiredActionGiveRewardView: FC<{}> = props =>
 {
@@ -15,6 +16,11 @@ export const WiredActionGiveRewardView: FC<{}> = props =>
     const [ limitationInterval, setLimitationInterval ] = useState(1);
     const [ rewards, setRewards ] = useState<{ isBadge: boolean, itemCode: string, probability: number }[]>([]);
     const { trigger = null, setIntParams = null, setStringParam = null } = useWired();
+    const [ userSource, setUserSource ] = useState<number>(() =>
+    {
+        if(trigger?.intData?.length > 4) return trigger.intData[4];
+        return 0;
+    });
 
     const addReward = () => setRewards(rewards => [ ...rewards, { isBadge: false, itemCode: '', probability: null } ]);
 
@@ -59,7 +65,7 @@ export const WiredActionGiveRewardView: FC<{}> = props =>
         if(stringRewards.length > 0)
         {
             setStringParam(stringRewards.join(';'));
-            setIntParams([ rewardTime, uniqueRewards ? 1 : 0, rewardsLimit, limitationInterval ]);
+            setIntParams([ rewardTime, uniqueRewards ? 1 : 0, rewardsLimit, limitationInterval, userSource ]);
         }
     };
 
@@ -88,11 +94,16 @@ export const WiredActionGiveRewardView: FC<{}> = props =>
         setRewardsLimit((trigger.intData.length > 2) ? trigger.intData[2] : 0);
         setLimitationInterval((trigger.intData.length > 3) ? trigger.intData[3] : 0);
         setLimitEnabled((trigger.intData.length > 3) ? trigger.intData[3] > 0 : false);
+        setUserSource((trigger.intData.length > 4) ? trigger.intData[4] : 0);
         setRewards(readRewards);
     }, [ trigger ]);
 
     return (
-        <WiredActionBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save }>
+        <WiredActionBaseView
+            hasSpecialInput={ true }
+            requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE }
+            save={ save }
+            footer={ <WiredSourcesSelector showUsers={ true } userSource={ userSource } onChangeUsers={ setUserSource } /> }>
             <div className="flex items-center gap-1">
                 <input className="form-check-input" id="limitEnabled" type="checkbox" onChange={ event => setLimitEnabled(event.target.checked) } />
                 <Text>{ LocalizeText('wiredfurni.params.prizelimit', [ 'amount' ], [ limitEnabled ? rewardsLimit.toString() : '' ]) }</Text>

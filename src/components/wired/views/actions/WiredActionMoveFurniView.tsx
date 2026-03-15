@@ -1,8 +1,9 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, WiredFurniType, WiredSelectionVisualizer } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from './WiredActionBaseView';
+import { WiredSourcesSelector } from '../WiredSourcesSelector';
 
 const directionOptions: { value: number, icon: string }[] = [
     {
@@ -41,9 +42,14 @@ export const WiredActionMoveFurniView: FC<{}> = props =>
 {
     const [ movement, setMovement ] = useState(-1);
     const [ rotation, setRotation ] = useState(-1);
-    const { trigger = null, setIntParams = null } = useWired();
+    const { trigger = null, furniIds = [], setFurniIds = null, setIntParams = null } = useWired();
+    const [ furniSource, setFurniSource ] = useState<number>(() =>
+    {
+        if(trigger?.intData?.length > 2) return trigger.intData[2];
+        return (trigger?.selectedItems?.length ?? 0) > 0 ? 100 : 0;
+    });
 
-    const save = () => setIntParams([ movement, rotation ]);
+    const save = () => setIntParams([ movement, rotation, furniSource ]);
 
     useEffect(() =>
     {
@@ -57,10 +63,35 @@ export const WiredActionMoveFurniView: FC<{}> = props =>
             setMovement(-1);
             setRotation(-1);
         }
+
+        if(trigger.intData.length > 2) setFurniSource(trigger.intData[2]);
+        else setFurniSource((trigger.selectedItems?.length ?? 0) > 0 ? 100 : 0);
     }, [ trigger ]);
 
+    const onChangeFurniSource = (next: number) =>
+    {
+        if(furniIds.length && setFurniIds)
+        {
+            setFurniIds(prev =>
+            {
+                if(prev && prev.length) WiredSelectionVisualizer.clearSelectionShaderFromFurni(prev);
+                return [];
+            });
+        }
+
+        setFurniSource(next);
+    };
+
+    const requiresFurni = (furniSource === 100)
+        ? WiredFurniType.STUFF_SELECTION_OPTION_BY_ID_BY_TYPE_OR_FROM_CONTEXT
+        : WiredFurniType.STUFF_SELECTION_OPTION_NONE;
+
     return (
-        <WiredActionBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_BY_ID_BY_TYPE_OR_FROM_CONTEXT } save={ save }>
+        <WiredActionBaseView
+            hasSpecialInput={ true }
+            requiresFurni={ requiresFurni }
+            save={ save }
+            footer={ <WiredSourcesSelector showFurni={ true } furniSource={ furniSource } onChangeFurni={ onChangeFurniSource } /> }>
             <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.movefurni') }</Text>
                 <div className="flex items-center gap-1">

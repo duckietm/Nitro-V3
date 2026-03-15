@@ -4,6 +4,7 @@ import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
 import { WiredActionBaseView } from './WiredActionBaseView';
+import { WiredSourcesSelector } from '../WiredSourcesSelector';
 
 const ALLOWED_HAND_ITEM_IDS: number[] = [ 2, 5, 7, 8, 9, 10, 27 ];
 
@@ -12,21 +13,31 @@ export const WiredActionBotGiveHandItemView: FC<{}> = props =>
     const [ botName, setBotName ] = useState('');
     const [ handItemId, setHandItemId ] = useState(-1);
     const { trigger = null, setStringParam = null, setIntParams = null } = useWired();
+    const [ userSource, setUserSource ] = useState<number>(() =>
+    {
+        if(trigger?.intData?.length > 1) return trigger.intData[1];
+        return 0;
+    });
 
     const save = () =>
     {
         setStringParam(botName);
-        setIntParams([ handItemId ]);
+        setIntParams([ handItemId, userSource ]);
     };
 
     useEffect(() =>
     {
         setBotName(trigger.stringData);
         setHandItemId((trigger.intData.length > 0) ? trigger.intData[0] : 0);
+        setUserSource((trigger.intData.length > 1) ? trigger.intData[1] : 0);
     }, [ trigger ]);
 
     return (
-        <WiredActionBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save }>
+        <WiredActionBaseView
+            hasSpecialInput={ true }
+            requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE }
+            save={ save }
+            footer={ <WiredSourcesSelector showUsers={ true } userSource={ userSource } onChangeUsers={ setUserSource } /> }>
             <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.bot.name') }</Text>
                 <NitroInput maxLength={ 32 } type="text" value={ botName } onChange={ event => setBotName(event.target.value) } />
