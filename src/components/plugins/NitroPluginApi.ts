@@ -1,5 +1,5 @@
-import { GetRoomEngine } from '@nitrots/nitro-renderer';
-import { CreateLinkEvent, GetRoomSession, SendMessageComposer } from '../../api';
+import { FurnitureStackHeightComposer, GetRoomEngine, TextureUtils } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetRoomSession, SendMessageComposer, VisitDesktop } from '../../api';
 
 /**
  * Plugin descriptor registered by external plugin scripts.
@@ -39,6 +39,14 @@ export interface INitroPluginApi
     getRoomSession: () => ReturnType<typeof GetRoomSession>;
     /** Send a message composer to the server */
     sendMessage: typeof SendMessageComposer;
+    /** Send a chat message to the server (processed as command if starts with ':') */
+    sendChat: (text: string, styleId?: number) => void;
+    /** Send stack height update for a furniture item (objectId, heightInCentimeters) */
+    sendStackHeight: (objectId: number, height: number) => void;
+    /** Take a screenshot of the room and download it as PNG */
+    takeScreenshot: () => Promise<void>;
+    /** Leave the room and go to hotel view */
+    visitDesktop: () => void;
     /** Create a draggable floating window and return its container element */
     createWindow: (id: string, title: string, width: number) => HTMLDivElement | null;
     /** Destroy a floating window by id */
@@ -95,6 +103,50 @@ const pluginApi: INitroPluginApi = {
     },
 
     sendMessage: SendMessageComposer,
+
+    sendChat(text: string, styleId: number = 0)
+    {
+        const session = GetRoomSession();
+        if (!session) return;
+        session.sendChatMessage(text, styleId, '');
+    },
+
+    sendStackHeight(objectId: number, height: number)
+    {
+        SendMessageComposer(new FurnitureStackHeightComposer(objectId, height));
+    },
+
+    async takeScreenshot()
+    {
+        try
+        {
+            const session = GetRoomSession();
+            if (!session) return;
+
+            const texture = GetRoomEngine().createTextureFromRoom(session.roomId, 1);
+            if (!texture) return;
+
+            const imageUrl = await TextureUtils.generateImageUrl(texture);
+            if (!imageUrl) return;
+
+            // Download the image
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `room_${session.roomId}_${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        catch (e)
+        {
+            console.warn('[NitroPlugins] Screenshot failed:', e);
+        }
+    },
+
+    visitDesktop()
+    {
+        VisitDesktop();
+    },
 
     createWindow(id: string, title: string, width: number): HTMLDivElement | null
     {

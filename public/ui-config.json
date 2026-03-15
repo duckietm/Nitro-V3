@@ -1,4 +1,7 @@
 {
+    "external.plugins": [
+        "plugins/room-builder.js"
+    ],
     "image.library.notifications.url": "${image.library.url}notifications/%image%.png",
     "achievements.images.url": "${image.library.url}Quests/%image%.png",
     "camera.url": "/swf/usercontent/camera/",
@@ -10,7 +13,8 @@
     "chat.viewer.height.percentage": 0.4,
     "widget.dimmer.colorwheel": false,
     "avatar.wardrobe.max.slots": 10,
-    "user.badges.max.slots": 5,
+    "user.badges.max.slots": 6,
+    "user.badges.group.slot.enabled": false,
     "user.tags.enabled": false,
     "camera.publish.disabled": false,
     "hc.disabled": false,

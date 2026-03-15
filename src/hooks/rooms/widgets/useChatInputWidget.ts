@@ -116,12 +116,22 @@ const useChatInputWidgetState = () =>
 
                     (async () =>
                     {
-                        const image = new Image();
+                        try
+                        {
+                            const imageUrl = await TextureUtils.generateImageUrl(texture);
+                            if (!imageUrl) return;
 
-                        image.src = await TextureUtils.generateImageUrl(texture);
-
-                        const newWindow = window.open('');
-                        newWindow.document.write(image.outerHTML);
+                            const link = document.createElement('a');
+                            link.href = imageUrl;
+                            link.download = `room_${ roomSession.roomId }_${ Date.now() }.png`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                        catch (e)
+                        {
+                            console.warn('[Screenshot] Failed:', e);
+                        }
                     })();
                     return null;
                 case ':pickall':

@@ -24,7 +24,20 @@
       "Bash(git push:*)",
       "Bash(find /e/www/habbo-next/src/app -type f -path *catalog*)",
       "Bash(echo \"EXIT:$?\")",
-      "Bash(find /E/www/habbo-next/src -type f -name *prisma*)"
+      "Bash(find /E/www/habbo-next/src -type f -name *prisma*)",
+      "Bash(node -e \"const mysql = require\\(''mysql2/promise''\\); \\(async\\(\\)=>{const c=await mysql.createConnection\\({host:''localhost'',user:''root'',database:''habbo''}\\); const [r]=await c.query\\(''DESCRIBE items_base''\\); console.log\\(r.map\\(x=>x.Field\\).join\\(''\\\\n''\\)\\); await c.end\\(\\);}\\)\\(\\)\")",
+      "Bash(node -e \"const mysql = require\\(''mysql2/promise''\\); \\(async\\(\\)=>{const c=await mysql.createConnection\\({host:''localhost'',user:''habbo'',password:''habbo'',database:''next''}\\); const [r]=await c.query\\(''DESCRIBE items_base''\\); console.log\\(r.map\\(x=>x.Field\\).join\\(''\\\\n''\\)\\); const [r2]=await c.query\\(''DESCRIBE catalog_items''\\); console.log\\(''---''\\); console.log\\(r2.map\\(x=>x.Field\\).join\\(''\\\\n''\\)\\); await c.end\\(\\);}\\)\\(\\)\")",
+      "Bash(node -e \"const mysql = require\\(''mysql2/promise''\\); \\(async\\(\\)=>{const c=await mysql.createConnection\\({host:''localhost'',user:''habbo'',password:''habbo'',database:''next''}\\); const [r]=await c.query\\(''DESCRIBE items_base''\\); const cols=r.map\\(x=>x.Field\\); console.log\\(''items_base columns:'', JSON.stringify\\(cols\\)\\); const [r2]=await c.query\\(''DESCRIBE catalog_items''\\); const cols2=r2.map\\(x=>x.Field\\); console.log\\(''catalog_items columns:'', JSON.stringify\\(cols2\\)\\); await c.end\\(\\);}\\)\\(\\)\")",
+      "Bash(node -e \":*)",
+      "Bash(npx prisma:*)",
+      "WebFetch(domain:www.habbo.it)",
+      "Bash(grep -r \"slider\\\\|height\\\\|rotation\\\\|state\\\\|speed\" /e/www/habbo-next/public/nitro3/src/components/room/widgets/furniture/*.tsx)",
+      "Bash(grep -r \"processAction\\\\|handleAction\\\\|dispatch\" /e/www/habbo-next/public/nitro3/src/components/room/widgets/furniture/*.tsx)",
+      "Bash(xargs ls:*)",
+      "Bash(find /e/www/habbo-next/public/nitro3/src -type f \\\\\\(-name *Modif* -o -name *Manip* -o -name *Floorplan* -o -name *Builder* \\\\\\))",
+      "Bash(mkdir -p \"E:/www/habbo-next/public/nitro3/src/api/plugins\")",
+      "Bash(mkdir -p \"E:/www/habbo-next/public/nitro3/src/components/plugins/room-builder\")",
+      "Bash(ls \"E:/www/habbo-next/public/nitro3/vite.config\"*)"
     ]
   }
 }

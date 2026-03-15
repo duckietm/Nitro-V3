@@ -5,6 +5,7 @@ import { FC, useEffect, useState } from 'react';
 import { GetConfigurationValue, LocalizeText, SendMessageComposer, SetLocalStorage, TryVisitRoom } from '../../../../api';
 import { Text } from '../../../../common';
 import { useMessageEvent, useNavigator, useRoom } from '../../../../hooks';
+import { getRegisteredPlugins, INitroPlugin, subscribePlugins } from '../../../plugins/NitroPluginApi';
 
 export const RoomToolsWidgetView: FC<{}> = props => {
     const [areBubblesMuted, setAreBubblesMuted] = useState(false);
@@ -15,12 +16,20 @@ export const RoomToolsWidgetView: FC<{}> = props => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenHistory, setIsOpenHistory] = useState<boolean>(false);
     const [roomHistory, setRoomHistory] = useState<{ roomId: number, roomName: string }[]>([]);
+    const [plugins, setPlugins] = useState<INitroPlugin[]>([]);
     const { navigatorData = null } = useNavigator();
     const { roomSession = null } = useRoom();
 
+    // Subscribe to external plugin changes
+    useEffect(() =>
+    {
+        setPlugins(getRegisteredPlugins());
+        return subscribePlugins(() => setPlugins(getRegisteredPlugins()));
+    }, []);
+
     const handleToolClick = (action: string, value?: string) => {
 		if (!roomSession) return;
-		
+
         switch (action) {
             case 'settings':
                 CreateLinkEvent('navigator/toggle-room-info');
@@ -114,12 +123,20 @@ export const RoomToolsWidgetView: FC<{}> = props => {
                 <div className={classNames('cursor-pointer', 'nitro-icon', (!isZoomedIn && 'icon-zoom-less'), (isZoomedIn && 'icon-zoom-more'))} title={LocalizeText('room.zoom.button.text')} onClick={() => handleToolClick('zoom')} />
                 <div className="cursor-pointer nitro-icon icon-chat-history" title={LocalizeText('room.chathistory.button.text')} onClick={() => handleToolClick('chat_history')} />
 				<div className={classNames('cursor-pointer', 'nitro-icon', (areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble'))} title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')} onClick={() => handleToolClick('hiddenbubbles')} />
-                
+
                 {navigatorData.canRate && (
                     <div className="cursor-pointer nitro-icon icon-like-room" title={LocalizeText('room.like.button.text')} onClick={() => handleToolClick('like_room')} />
                 )}
                 <div className="cursor-pointer nitro-icon icon-room-link" title={LocalizeText('navigator.embed.caption')} onClick={() => handleToolClick('toggle_room_link')} />
                 <div className="cursor-pointer nitro-icon icon-room-history-enabled" title={LocalizeText('room.history.button.tooltip')} onClick={() => handleToolClick('room_history')} />
+                {plugins.map(plugin => (
+                    <div
+                        key={plugin.name}
+                        className={`cursor-pointer nitro-icon ${plugin.icon || 'icon-cog'}`}
+                        title={plugin.label}
+                        onClick={() => plugin.onOpen()}
+                    />
+                ))}
             </div>
             <div className="flex flex-col justify-center">
                 <AnimatePresence>
