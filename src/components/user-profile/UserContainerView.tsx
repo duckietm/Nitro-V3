@@ -37,7 +37,7 @@ export const UserContainerView: FC<{
             </div>
             <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-0">
-                    <p className="leading-tight">{ userProfile.username }</p>
+                    <p className="leading-tight font-bold">{ userProfile.username }</p>
                     <p className="text-sm italic leading-tight">{ userProfile.motto }</p>
                 </div>
                 <div className="flex flex-col gap-1">
