@@ -117,23 +117,31 @@ export const ModToolsView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, [ openRoomInfo, closeRoomInfo, toggleRoomInfo, openRoomChatlog, closeRoomChatlog, toggleRoomChatlog, openUserInfo, closeUserInfo, toggleUserInfo, openUserChatlog, closeUserChatlog, toggleUserChatlog ]);
 
+    const isRoomInfoOpen = currentRoomId > 0 && openRooms.includes(currentRoomId);
+    const isRoomChatlogOpen = currentRoomId > 0 && openRoomChatlogs.includes(currentRoomId);
+    const isUserInfoOpen = selectedUser && openUserInfos.includes(selectedUser.userId);
+
     return (
         <>
             { isVisible &&
-                <NitroCardView className="nitro-mod-tools" theme="primary-slim" uniqueKey="mod-tools" windowPosition={ DraggableWindowPosition.TOP_LEFT } >
+                <NitroCardView className="nitro-mod-tools min-w-[200px]" theme="primary-slim" uniqueKey="mod-tools" windowPosition={ DraggableWindowPosition.TOP_LEFT } >
                     <NitroCardHeaderView headerText={ 'Mod Tools' } onCloseClick={ event => setIsVisible(false) } />
-                    <NitroCardContentView className="text-black" gap={ 1 }>
-                        <Button className="relative" disabled={ (currentRoomId <= 0) } gap={ 1 } onClick={ event => CreateLinkEvent(`mod-tools/toggle-room-info/${ currentRoomId }`) }>
-                            <div className="nitro-icon icon-small-room absolute inset-s-1" /> Room Tool
+                    <NitroCardContentView className="text-black" gap={ 2 }>
+                        <Button active={ isRoomInfoOpen } disabled={ (currentRoomId <= 0) } gap={ 2 } justifyContent="start" onClick={ event => CreateLinkEvent(`mod-tools/toggle-room-info/${ currentRoomId }`) }>
+                            <div className="nitro-icon icon-small-room shrink-0" /> Room Tool
                         </Button>
-                        <Button className="relative" disabled={ (currentRoomId <= 0) } gap={ 1 } innerRef={ elementRef } onClick={ event => CreateLinkEvent(`mod-tools/toggle-room-chatlog/${ currentRoomId }`) }>
-                            <div className="nitro-icon icon-chat-history absolute inset-s-1" /> Chatlog Tool
+                        <Button active={ isRoomChatlogOpen } disabled={ (currentRoomId <= 0) } gap={ 2 } innerRef={ elementRef } justifyContent="start" onClick={ event => CreateLinkEvent(`mod-tools/toggle-room-chatlog/${ currentRoomId }`) }>
+                            <div className="nitro-icon icon-chat-history shrink-0" /> Chatlog Tool
                         </Button>
-                        <Button className="relative" disabled={ !selectedUser } gap={ 1 } onClick={ () => CreateLinkEvent(`mod-tools/toggle-user-info/${ selectedUser.userId }`) }>
-                            <div className="nitro-icon icon-user absolute inset-s-1" /> User: { selectedUser ? selectedUser.username : '' }
+                        <Button active={ !!isUserInfoOpen } disabled={ !selectedUser } gap={ 2 } justifyContent="start" onClick={ () => CreateLinkEvent(`mod-tools/toggle-user-info/${ selectedUser.userId }`) }>
+                            <div className="nitro-icon icon-user shrink-0" />
+                            { selectedUser
+                                ? <span className="truncate">{ selectedUser.username }</span>
+                                : <span className="opacity-50 italic">Select a user</span>
+                            }
                         </Button>
-                        <Button className="relative" gap={ 1 } onClick={ () => setIsTicketsVisible(prevValue => !prevValue) }>
-                            <div className="nitro-icon icon-tickets absolute inset-s-1" /> Report Tool
+                        <Button active={ isTicketsVisible } gap={ 2 } justifyContent="start" onClick={ () => setIsTicketsVisible(prevValue => !prevValue) }>
+                            <div className="nitro-icon icon-tickets shrink-0" /> Report Tool
                         </Button>
                     </NitroCardContentView>
                 </NitroCardView> }
