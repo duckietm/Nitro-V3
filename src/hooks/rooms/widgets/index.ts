@@ -1,5 +1,6 @@
 export * from './furniture';
 export * from './useAvatarInfoWidget';
+export * from './useChatCommandSelector';
 export * from './useChatInputWidget';
 export * from './useChatWidget';
 export * from './useDoorbellWidget';

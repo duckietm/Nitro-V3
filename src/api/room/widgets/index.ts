@@ -7,6 +7,7 @@ export * from './AvatarInfoUser';
 export * from './AvatarInfoUtilities';
 export * from './BotSkillsEnum';
 export * from './ChatBubbleMessage';
+export * from './CommandDefinition';
 export * from './ChatBubbleUtilities';
 export * from './ChatMessageTypeEnum';
 export * from './DimmerFurnitureWidgetPresetItem';

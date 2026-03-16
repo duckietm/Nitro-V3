@@ -3,7 +3,8 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
 import { Text } from '../../../../common';
-import { useChatInputWidget, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
+import { useChatCommandSelector, useChatInputWidget, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
+import { ChatInputCommandSelectorView } from './ChatInputCommandSelectorView';
 import { ChatInputEmojiSelectorView } from './ChatInputEmojiSelectorView';
 import { ChatInputStyleSelectorView } from './ChatInputStyleSelectorView';
 
@@ -14,6 +15,7 @@ export const ChatInputView: FC<{}> = props =>
     const { selectedUsername = '', floodBlocked = false, floodBlockedSeconds = 0, setIsTyping = null, setIsIdle = null, sendChat = null } = useChatInputWidget();
     const { roomSession = null } = useRoom();
     const inputRef = useRef<HTMLInputElement>();
+    const { isVisible: commandSelectorVisible, filteredCommands, selectedIndex, setSelectedIndex, moveUp, moveDown, selectCurrent, close: closeCommandSelector } = useChatCommandSelector(chatValue);
 
     const chatModeIdWhisper = useMemo(() => LocalizeText('widgets.chatinput.mode.whisper'), []);
     const chatModeIdShout = useMemo(() => LocalizeText('widgets.chatinput.mode.shout'), []);
@@ -133,6 +135,40 @@ export const ChatInputView: FC<{}> = props =>
 
         if(document.activeElement !== inputRef.current) setInputFocus();
 
+        if(commandSelectorVisible)
+        {
+            switch(event.key)
+            {
+                case 'ArrowUp':
+                    event.preventDefault();
+                    moveUp();
+                    return;
+                case 'ArrowDown':
+                    event.preventDefault();
+                    moveDown();
+                    return;
+                case 'Tab':
+                    event.preventDefault();
+                    // fall through
+                case 'NumpadEnter':
+                case 'Enter': {
+                    const selected = selectCurrent();
+
+                    if(selected)
+                    {
+                        event.preventDefault();
+                        setChatValue(':' + selected.key + ' ');
+                        return;
+                    }
+                    break;
+                }
+                case 'Escape':
+                    event.preventDefault();
+                    closeCommandSelector();
+                    return;
+            }
+        }
+
         const value = (event.target as HTMLInputElement).value;
 
         switch(event.key)
@@ -158,7 +194,7 @@ export const ChatInputView: FC<{}> = props =>
                 return;
         }
 
-    }, [ floodBlocked, inputRef, chatModeIdWhisper, anotherInputHasFocus, setInputFocus, checkSpecialKeywordForInput, sendChatValue ]);
+    }, [ floodBlocked, inputRef, chatModeIdWhisper, anotherInputHasFocus, setInputFocus, checkSpecialKeywordForInput, sendChatValue, commandSelectorVisible, moveUp, moveDown, selectCurrent, closeCommandSelector ]);
 
     useUiEvent<RoomWidgetUpdateChatInputContentEvent>(RoomWidgetUpdateChatInputContentEvent.CHAT_INPUT_CONTENT, event =>
     {
@@ -243,7 +279,14 @@ export const ChatInputView: FC<{}> = props =>
 
     return (
         createPortal(
-            <div className="nitro-chat-input-container flex justify-between items-center relative h-10 border-2 border-black bg-gray-200 pr-2.5 w-full overflow-hidden rounded-lg">
+            <div className="nitro-chat-input-container flex justify-between items-center relative h-10 border-2 border-black bg-gray-200 pr-2.5 w-full overflow-visible rounded-lg">
+                { commandSelectorVisible &&
+                    <ChatInputCommandSelectorView
+                        commands={ filteredCommands }
+                        selectedIndex={ selectedIndex }
+                        onSelect={ (cmd) => { setChatValue(':' + cmd.key + ' '); inputRef.current?.focus(); } }
+                        onHover={ setSelectedIndex }
+                    /> }
                 <div className="flex-1 items-center input-sizer">
                     { !floodBlocked &&
                         <input ref={ inputRef } className="[font-size:inherit] placeholder-[#6c757d] bg-transparent border-none focus:border-current focus:shadow-none focus:ring-0	" maxLength={ maxChatLength } placeholder={ LocalizeText('widgets.chatinput.default') } type="text" value={ chatValue } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
