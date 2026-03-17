@@ -6,4 +6,5 @@ export class UnseenItemCategory
     public static BADGE: number = 4;
     public static BOT: number = 5;
     public static GAMES: number = 6;
+    public static PREFIX: number = 7;
 }

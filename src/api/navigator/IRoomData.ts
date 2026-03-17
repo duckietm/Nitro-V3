@@ -11,6 +11,7 @@ export interface IRoomData
     tags: string[];
     tradeState: number;
     allowWalkthrough: boolean;
+    allowUnderpass: boolean;
     lockState: number;
     password: string;
     allowPets: boolean;

@@ -148,6 +148,11 @@ const useChatWidgetState = () =>
             imageUrl,
             color);
 
+        chatMessage.prefixText = event.prefixText || '';
+        chatMessage.prefixColor = event.prefixColor || '';
+        chatMessage.prefixIcon = event.prefixIcon || '';
+        chatMessage.prefixEffect = event.prefixEffect || '';
+
         setChatMessages(prevValue =>
         {
             const newValue = [ ...prevValue, chatMessage ];

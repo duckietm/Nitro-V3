@@ -39,6 +39,7 @@ export const NavigatorRoomSettingsView: FC<{}> = props =>
             tags: data.tags,
             tradeState: data.tradeMode,
             allowWalkthrough: data.allowWalkThrough,
+            allowUnderpass: data.allowUnderpass,
             lockState: data.doorMode,
             password: null,
             allowPets: data.allowPets,
@@ -97,6 +98,9 @@ export const NavigatorRoomSettingsView: FC<{}> = props =>
                     break;
                 case 'allow_walkthrough':
                     newValue.allowWalkthrough = Boolean(value);
+                    break;
+                case 'allow_underpass':
+                    newValue.allowUnderpass = Boolean(value);
                     break;
                 case 'allow_pets':
                     newValue.allowPets = Boolean(value);
@@ -171,7 +175,8 @@ export const NavigatorRoomSettingsView: FC<{}> = props =>
                     newValue.chatSettings.weight,
                     newValue.chatSettings.speed,
                     newValue.chatSettings.distance,
-                    newValue.chatSettings.protection
+                    newValue.chatSettings.protection,
+                    newValue.allowUnderpass
                 ));
 
             return newValue;

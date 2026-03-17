@@ -2,7 +2,7 @@ import { AddLinkEventTracker, BadgePointLimitsEvent, GetLocalizationManager, Get
 import { FC, useEffect, useState } from 'react';
 import { GroupItem, LocalizeText, UnseenItemCategory, isObjectMoverRequested, setObjectMoverRequested } from '../../api';
 import { NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
-import { useInventoryBadges, useInventoryFurni, useInventoryTrade, useInventoryUnseenTracker, useMessageEvent, useNitroEvent } from '../../hooks';
+import { useInventoryBadges, useInventoryFurni, useInventoryPrefixes, useInventoryTrade, useInventoryUnseenTracker, useMessageEvent, useNitroEvent } from '../../hooks';
 import { InventoryCategoryFilterView } from './views/InventoryCategoryFilterView';
 import { InventoryBadgeView } from './views/badge/InventoryBadgeView';
 import { InventoryBotView } from './views/bot/InventoryBotView';
@@ -10,13 +10,15 @@ import { InventoryFurnitureDeleteView } from './views/furniture/InventoryFurnitu
 import { InventoryFurnitureView } from './views/furniture/InventoryFurnitureView';
 import { InventoryTradeView } from './views/furniture/InventoryTradeView';
 import { InventoryPetView } from './views/pet/InventoryPetView';
+import { InventoryPrefixView } from './views/prefix/InventoryPrefixView';
 
 const TAB_FURNITURE: string = 'inventory.furni';
 const TAB_BOTS: string = 'inventory.bots';
 const TAB_PETS: string = 'inventory.furni.tab.pets';
 const TAB_BADGES: string = 'inventory.badges';
-const TABS = [ TAB_FURNITURE, TAB_PETS, TAB_BADGES, TAB_BOTS ];
-const UNSEEN_CATEGORIES = [ UnseenItemCategory.FURNI, UnseenItemCategory.PET, UnseenItemCategory.BADGE, UnseenItemCategory.BOT ];
+const TAB_PREFIXES: string = 'inventory.prefixes';
+const TABS = [ TAB_FURNITURE, TAB_PETS, TAB_BADGES, TAB_PREFIXES, TAB_BOTS ];
+const UNSEEN_CATEGORIES = [ UnseenItemCategory.FURNI, UnseenItemCategory.PET, UnseenItemCategory.BADGE, UnseenItemCategory.PREFIX, UnseenItemCategory.BOT ];
 
 export const InventoryView: FC<{}> = props =>
 {
@@ -165,6 +167,8 @@ export const InventoryView: FC<{}> = props =>
                                     <InventoryPetView roomPreviewer={ roomPreviewer } roomSession={ roomSession } /> }
                                 { (currentTab === TAB_BADGES) &&
                                     <InventoryBadgeView filteredBadgeCodes={ filteredBadgeCodes } /> }
+                                { (currentTab === TAB_PREFIXES) &&
+                                    <InventoryPrefixView /> }
                                 { (currentTab === TAB_BOTS) &&
                                     <InventoryBotView roomPreviewer={ roomPreviewer } roomSession={ roomSession } /> }
                             </div>

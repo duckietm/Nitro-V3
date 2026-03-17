@@ -1,0 +1,442 @@
+import { PurchasePrefixComposer } from '@nitrots/nitro-renderer';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { SendMessageComposer, PRESET_PREFIX_EFFECTS, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../../api';
+import { CatalogLayoutProps } from './CatalogLayout.types';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
+
+const PRESET_COLORS: string[] = [
+    '#FF0000', '#FF6600', '#FFCC00', '#33CC00', '#00CCFF',
+    '#0066FF', '#9933FF', '#FF33CC', '#FFFFFF', '#CCCCCC',
+    '#999999', '#333333', '#FF9999', '#99FF99', '#9999FF',
+    '#FFD700', '#FF4500', '#00CED1', '#8A2BE2', '#DC143C'
+];
+
+export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
+{
+    const { page = null, hideNavigation = null } = props;
+
+    useEffect(() =>
+    {
+        hideNavigation();
+    }, [ page, hideNavigation ]);
+
+    const [ prefixText, setPrefixText ] = useState('');
+    const [ colorMode, setColorMode ] = useState<'single' | 'perLetter'>('single');
+    const [ singleColor, setSingleColor ] = useState('#FFFFFF');
+    const [ letterColors, setLetterColors ] = useState<Record<number, string>>({});
+    const [ selectedLetterIndex, setSelectedLetterIndex ] = useState<number | null>(null);
+    const [ customColorInput, setCustomColorInput ] = useState('#FFFFFF');
+    const [ selectedIcon, setSelectedIcon ] = useState('');
+    const [ showIconPicker, setShowIconPicker ] = useState(false);
+    const [ selectedEffect, setSelectedEffect ] = useState('');
+    const [ purchased, setPurchased ] = useState(false);
+
+    const colorString = useMemo(() =>
+    {
+        if(colorMode === 'single') return singleColor;
+
+        if(!prefixText.length) return singleColor;
+
+        return [ ...prefixText ].map((_, i) => letterColors[i] || singleColor).join(',');
+    }, [ colorMode, singleColor, letterColors, prefixText ]);
+
+    const previewColors = useMemo(() =>
+    {
+        return parsePrefixColors(prefixText || '...', colorString || '#FFFFFF');
+    }, [ prefixText, colorString ]);
+
+    const isValid = useMemo(() =>
+    {
+        if(!prefixText.trim().length || prefixText.trim().length > 15) return false;
+
+        if(colorMode === 'single') return /^#[0-9A-Fa-f]{6}$/.test(singleColor);
+
+        const colors = colorString.split(',');
+        return colors.every(c => /^#[0-9A-Fa-f]{6}$/.test(c));
+    }, [ prefixText, colorMode, singleColor, colorString ]);
+
+    const handlePurchase = () =>
+    {
+        if(!isValid) return;
+
+        SendMessageComposer(new PurchasePrefixComposer(prefixText.trim(), colorString, selectedIcon, selectedEffect));
+        setPurchased(true);
+        setTimeout(() => setPurchased(false), 2000);
+    };
+
+    const handleColorSelect = (color: string) =>
+    {
+        if(colorMode === 'single')
+        {
+            setSingleColor(color);
+            setCustomColorInput(color);
+        }
+        else if(selectedLetterIndex !== null)
+        {
+            setLetterColors(prev => ({ ...prev, [selectedLetterIndex]: color }));
+            setCustomColorInput(color);
+
+            // Auto-avanza alla lettera successiva
+            if(selectedLetterIndex < prefixText.length - 1)
+            {
+                const nextIdx = selectedLetterIndex + 1;
+                setSelectedLetterIndex(nextIdx);
+                setCustomColorInput(letterColors[nextIdx] || singleColor);
+            }
+        }
+    };
+
+    const handleCustomColorChange = (value: string) =>
+    {
+        setCustomColorInput(value);
+        if(/^#[0-9A-Fa-f]{6}$/.test(value))
+        {
+            if(colorMode === 'single')
+            {
+                setSingleColor(value);
+            }
+            else if(selectedLetterIndex !== null)
+            {
+                setLetterColors(prev => ({ ...prev, [selectedLetterIndex]: value }));
+            }
+        }
+    };
+
+    const handleTextChange = (newText: string) =>
+    {
+        setPrefixText(newText);
+        if(selectedLetterIndex !== null && selectedLetterIndex >= newText.length)
+        {
+            setSelectedLetterIndex(newText.length > 0 ? newText.length - 1 : null);
+        }
+    };
+
+    const applyColorToAll = () =>
+    {
+        if(!prefixText.length) return;
+
+        const newColors: Record<number, string> = {};
+        [ ...prefixText ].forEach((_, i) => { newColors[i] = customColorInput; });
+        setLetterColors(newColors);
+    };
+
+    const hasMultiColor = colorMode === 'perLetter' && previewColors.length > 1 && new Set(previewColors).size > 1;
+
+    const currentActiveColor = colorMode === 'single'
+        ? singleColor
+        : (selectedLetterIndex !== null ? (letterColors[selectedLetterIndex] || singleColor) : singleColor);
+
+    const effectStyle = getPrefixEffectStyle(selectedEffect, previewColors[0] || '#FFFFFF');
+
+    return (
+        <div className="flex flex-col gap-2 h-full overflow-auto p-1">
+            <style>{ PREFIX_EFFECT_KEYFRAMES }</style>
+
+            { /* Header */ }
+            { page.localization.getImage(0) &&
+                <img alt="" className="w-full rounded" src={ page.localization.getImage(0) } /> }
+            { page.localization.getText(0) &&
+                <div className="text-sm mb-1" dangerouslySetInnerHTML={ { __html: page.localization.getText(0) } } /> }
+
+            { /* Live Preview */ }
+            <div className="relative flex items-center justify-center p-4 rounded-lg min-h-[56px]"
+                style={ {
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 8px rgba(0,0,0,0.3)'
+                } }>
+                <div className="absolute inset-0 rounded-lg opacity-20"
+                    style={ { background: 'radial-gradient(ellipse at center, rgba(100,149,237,0.3) 0%, transparent 70%)' } } />
+                <span className="relative text-xl font-bold tracking-wide" style={ effectStyle }>
+                    { selectedIcon && <span className="mr-1">{ selectedIcon }</span> }
+                    <span style={ hasMultiColor ? effectStyle : { ...effectStyle, color: previewColors[0] || '#FFFFFF' } }>
+                        {'{'}
+                        { hasMultiColor
+                            ? [ ...(prefixText || '...') ].map((char, i) => (
+                                <span key={ i } style={ { color: previewColors[i] || previewColors[previewColors.length - 1], ...getPrefixEffectStyle(selectedEffect, previewColors[i]) } }>{ char }</span>
+                            ))
+                            : (prefixText || '...')
+                        }
+                        {'}'}
+                    </span>
+                </span>
+                <span className="relative ml-2 text-white/80 text-lg font-medium">Username</span>
+            </div>
+
+            { /* Text + Icon Row */ }
+            <div className="flex gap-2">
+                <div className="flex flex-col gap-0.5 flex-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Testo</label>
+                    <div className="relative">
+                        <input
+                            className="w-full px-3 py-1.5 rounded-md text-sm focus:outline-none transition-all"
+                            maxLength={ 15 }
+                            placeholder="Inserisci il testo..."
+                            style={ {
+                                background: 'rgba(0,0,0,0.15)',
+                                border: '1px solid rgba(0,0,0,0.15)',
+                                color: 'inherit'
+                            } }
+                            type="text"
+                            value={ prefixText }
+                            onChange={ e => handleTextChange(e.target.value) } />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] opacity-30 font-mono">
+                            { prefixText.length }/15
+                        </span>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-0.5 relative">
+                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Icona</label>
+                    <div className="flex gap-1">
+                        <button
+                            className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-md text-sm transition-all min-w-[70px]"
+                            style={ {
+                                background: selectedIcon ? 'rgba(59,130,246,0.15)' : 'rgba(0,0,0,0.15)',
+                                border: selectedIcon ? '1px solid rgba(59,130,246,0.3)' : '1px solid rgba(0,0,0,0.15)'
+                            } }
+                            onClick={ () => setShowIconPicker(!showIconPicker) }>
+                            { selectedIcon
+                                ? <><span className="text-base">{ selectedIcon }</span><span className="text-[10px] opacity-40">▼</span></>
+                                : <span className="opacity-40 text-xs">Emoji ▼</span>
+                            }
+                        </button>
+                        { selectedIcon &&
+                            <button
+                                className="flex items-center justify-center px-1.5 rounded-md text-xs transition-all"
+                                style={ { background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)' } }
+                                title="Rimuovi icona"
+                                onClick={ () => setSelectedIcon('') }>
+                                ✕
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            { /* Emoji Picker (emoji-mart) - fixed overlay */ }
+            { showIconPicker && (
+                <>
+                    <div className="fixed inset-0" style={ { zIndex: 999, background: 'rgba(0,0,0,0.5)' } } onClick={ () => setShowIconPicker(false) } />
+                    <div className="fixed rounded-xl overflow-hidden" style={ { zIndex: 1000, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' } }>
+                        <Picker
+                            data={ data }
+                            locale="it"
+                            onEmojiSelect={ (emoji: { native: string }) => { setSelectedIcon(emoji.native); setShowIconPicker(false); } }
+                            theme="dark"
+                            previewPosition="none"
+                            skinTonePosition="search"
+                            perLine={ 8 }
+                            maxFrequentRows={ 2 }
+                            emojiSize={ 22 }
+                            emojiButtonSize={ 30 }
+                            dynamicWidth={ false }
+                            set="native"
+                        />
+                    </div>
+                </>
+            ) }
+
+            { /* Effect Selector */ }
+            <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Effetto</label>
+                <div className="flex flex-wrap gap-1">
+                    { PRESET_PREFIX_EFFECTS.map(fx => (
+                        <button
+                            key={ fx.id }
+                            className="px-2 py-1 rounded-md text-[11px] font-semibold transition-all"
+                            style={ {
+                                background: selectedEffect === fx.id ? 'rgba(59,130,246,0.25)' : 'rgba(0,0,0,0.1)',
+                                border: selectedEffect === fx.id ? '1px solid rgba(59,130,246,0.4)' : '1px solid rgba(0,0,0,0.1)',
+                                opacity: selectedEffect === fx.id ? 1 : 0.7
+                            } }
+                            onClick={ () => setSelectedEffect(fx.id) }>
+                            <span className="mr-0.5">{ fx.icon }</span> { fx.label }
+                        </button>
+                    )) }
+                </div>
+            </div>
+
+            { /* Color Mode Toggle */ }
+            <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Colore</label>
+                <div className="flex rounded-md overflow-hidden" style={ { border: '1px solid rgba(0,0,0,0.15)' } }>
+                    <button
+                        className="flex-1 px-2 py-1.5 text-xs font-bold transition-all"
+                        style={ {
+                            background: colorMode === 'single' ? 'rgba(59,130,246,0.25)' : 'rgba(0,0,0,0.1)',
+                            borderRight: '1px solid rgba(0,0,0,0.1)',
+                            opacity: colorMode === 'single' ? 1 : 0.6
+                        } }
+                        onClick={ () => { setColorMode('single'); setSelectedLetterIndex(null); } }>
+                        🎨 Unico
+                    </button>
+                    <button
+                        className="flex-1 px-2 py-1.5 text-xs font-bold transition-all"
+                        style={ {
+                            background: colorMode === 'perLetter' ? 'rgba(59,130,246,0.25)' : 'rgba(0,0,0,0.1)',
+                            opacity: colorMode === 'perLetter' ? 1 : 0.6
+                        } }
+                        onClick={ () => { setColorMode('perLetter'); if(prefixText.length > 0) setSelectedLetterIndex(0); } }>
+                        🌈 Per Lettera
+                    </button>
+                </div>
+            </div>
+
+            { /* Per-Letter Selector */ }
+            { colorMode === 'perLetter' && prefixText.length > 0 && (
+                <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                        <span className="text-[10px] opacity-50">
+                            Seleziona una lettera, poi scegli il colore. Avanza automaticamente.
+                        </span>
+                        <button
+                            className="text-[10px] px-1.5 py-0.5 rounded transition-all"
+                            style={ {
+                                background: 'rgba(0,0,0,0.1)',
+                                border: '1px solid rgba(0,0,0,0.1)'
+                            } }
+                            title="Applica colore corrente a tutte le lettere"
+                            onClick={ applyColorToAll }>
+                            Applica a tutte
+                        </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1 p-2 rounded-lg"
+                        style={ {
+                            background: 'rgba(0,0,0,0.12)',
+                            border: '1px solid rgba(0,0,0,0.1)'
+                        } }>
+                        { [ ...prefixText ].map((char, i) =>
+                        {
+                            const charColor = letterColors[i] || singleColor;
+                            const isSelected = selectedLetterIndex === i;
+                            return (
+                                <div
+                                    key={ i }
+                                    className="relative flex items-center justify-center cursor-pointer transition-all"
+                                    style={ {
+                                        width: '28px',
+                                        height: '34px',
+                                        borderRadius: '6px',
+                                        background: isSelected
+                                            ? 'rgba(59,130,246,0.2)'
+                                            : 'rgba(0,0,0,0.12)',
+                                        border: isSelected
+                                            ? '2px solid rgba(59,130,246,0.6)'
+                                            : '1px solid rgba(0,0,0,0.08)',
+                                        transform: isSelected ? 'scale(1.15)' : 'scale(1)',
+                                        zIndex: isSelected ? 10 : 1,
+                                        boxShadow: isSelected ? '0 0 8px rgba(59,130,246,0.3)' : 'none'
+                                    } }
+                                    onClick={ () => { setSelectedLetterIndex(i); setCustomColorInput(charColor); } }>
+                                    <span className="text-sm font-black" style={ { color: charColor } }>
+                                        { char }
+                                    </span>
+                                    <div
+                                        className="absolute bottom-0.5 left-1/2 -translate-x-1/2 rounded-full"
+                                        style={ {
+                                            width: '14px',
+                                            height: '3px',
+                                            backgroundColor: charColor,
+                                            boxShadow: `0 0 4px ${ charColor }`
+                                        } } />
+                                </div>
+                            );
+                        }) }
+                    </div>
+                </div>
+            ) }
+
+            { /* Color Palette */ }
+            <div className="flex flex-col gap-1">
+                { colorMode === 'perLetter' && selectedLetterIndex !== null &&
+                    <span className="text-[10px] opacity-50 italic">
+                        Lettera selezionata: &quot;{ prefixText[selectedLetterIndex] || '' }&quot;
+                    </span>
+                }
+                <div className="grid grid-cols-10 gap-[3px]">
+                    { PRESET_COLORS.map((color, idx) =>
+                    {
+                        const isActive = currentActiveColor === color;
+                        return (
+                            <div
+                                key={ idx }
+                                className="cursor-pointer transition-all"
+                                style={ {
+                                    width: '100%',
+                                    aspectRatio: '1',
+                                    borderRadius: '5px',
+                                    backgroundColor: color,
+                                    border: isActive ? '2px solid #fff' : '1px solid rgba(0,0,0,0.15)',
+                                    boxShadow: isActive ? `0 0 6px ${ color }, 0 0 0 1px rgba(0,0,0,0.2)` : 'inset 0 1px 0 rgba(255,255,255,0.2)',
+                                    transform: isActive ? 'scale(1.2)' : 'scale(1)',
+                                    zIndex: isActive ? 5 : 1
+                                } }
+                                onClick={ () => handleColorSelect(color) } />
+                        );
+                    }) }
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                    <label
+                        className="relative cursor-pointer"
+                        style={ {
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '6px',
+                            backgroundColor: customColorInput,
+                            border: '2px solid rgba(0,0,0,0.2)',
+                            boxShadow: `0 0 6px ${ customColorInput }40, inset 0 1px 0 rgba(255,255,255,0.3)`
+                        } }>
+                        <input
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            style={ { width: '100%', height: '100%' } }
+                            type="color"
+                            value={ customColorInput }
+                            onChange={ e => handleColorSelect(e.target.value) } />
+                    </label>
+                    <input
+                        className="flex-1 px-2 py-0.5 text-xs font-mono focus:outline-none transition-all"
+                        maxLength={ 7 }
+                        placeholder="#FFFFFF"
+                        style={ {
+                            background: 'rgba(0,0,0,0.15)',
+                            border: '1px solid rgba(0,0,0,0.1)',
+                            color: 'inherit',
+                            maxWidth: '80px',
+                            borderRadius: '5px'
+                        } }
+                        type="text"
+                        value={ customColorInput }
+                        onChange={ e => handleCustomColorChange(e.target.value) } />
+                </div>
+            </div>
+
+            { /* Purchase Footer */ }
+            <div className="flex items-center justify-between mt-auto pt-2"
+                style={ { borderTop: '1px solid rgba(0,0,0,0.1)' } }>
+                <div className="flex items-center gap-1">
+                    <span className="text-xs opacity-60">Prezzo:</span>
+                    <span className="text-sm font-bold">5 Crediti</span>
+                </div>
+                <button
+                    className="px-5 py-1.5 rounded-md text-sm font-bold transition-all"
+                    disabled={ !isValid || purchased }
+                    style={ {
+                        background: !isValid
+                            ? 'rgba(0,0,0,0.1)'
+                            : purchased
+                                ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+                                : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: !isValid ? 'rgba(0,0,0,0.3)' : '#fff',
+                        cursor: !isValid ? 'not-allowed' : 'pointer',
+                        border: !isValid ? '1px solid rgba(0,0,0,0.1)' : 'none',
+                        boxShadow: isValid && !purchased ? '0 2px 8px rgba(59,130,246,0.3)' : 'none',
+                        borderRadius: '6px'
+                    } }
+                    onClick={ handlePurchase }>
+                    { purchased ? '✓ Acquistato!' : 'Acquista' }
+                </button>
+            </div>
+        </div>
+    );
+};

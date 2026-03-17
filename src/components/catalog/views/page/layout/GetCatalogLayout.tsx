@@ -2,6 +2,7 @@ import { ICatalogPage } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 import { CatalogLayoutBadgeDisplayView } from './CatalogLayoutBadgeDisplayView';
 import { CatalogLayoutColorGroupingView } from './CatalogLayoutColorGroupingView';
+import { CatalogLayoutCustomPrefixView } from './CatalogLayoutCustomPrefixView';
 import { CatalogLayoutDefaultView } from './CatalogLayoutDefaultView';
 import { CatalogLayouGuildCustomFurniView } from './CatalogLayoutGuildCustomFurniView';
 import { CatalogLayouGuildForumView } from './CatalogLayoutGuildForumView';
@@ -72,6 +73,8 @@ export const GetCatalogLayout = (page: ICatalogPage, hideNavigation: () => void)
             return <CatalogLayoutColorGroupingView { ...layoutProps } />;
         case 'soundmachine':
             return <CatalogLayoutSoundMachineView { ...layoutProps } />;
+        case 'custom_prefix':
+            return <CatalogLayoutCustomPrefixView { ...layoutProps } />;
         case 'bots':
         case 'default_3x3':
         default:

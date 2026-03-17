@@ -7,6 +7,10 @@ export class ChatBubbleMessage
     public height: number = 0;
     public elementRef: HTMLDivElement = null;
     public skipMovement: boolean = false;
+    public prefixText: string = '';
+    public prefixColor: string = '';
+    public prefixIcon: string = '';
+    public prefixEffect: string = '';
 
     private _top: number = 0;
     private _left: number = 0;

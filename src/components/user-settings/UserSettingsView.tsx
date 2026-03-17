@@ -1,6 +1,6 @@
-import { AddLinkEventTracker, ILinkEventTracker, NitroSettingsEvent, RemoveLinkEventTracker, UserSettingsCameraFollowComposer, UserSettingsEvent, UserSettingsOldChatComposer, UserSettingsRoomInvitesComposer, UserSettingsSoundComposer } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, CreateLinkEvent, ILinkEventTracker, NitroSettingsEvent, RemoveLinkEventTracker, UserSettingsCameraFollowComposer, UserSettingsEvent, UserSettingsOldChatComposer, UserSettingsRoomInvitesComposer, UserSettingsSoundComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
+import { FaPalette, FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import { DispatchMainEvent, DispatchUiEvent, LocalizeText, SendMessageComposer } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useChatWindow, useMessageEvent } from '../../hooks';
@@ -187,6 +187,13 @@ export const UserSettingsView: FC<{}> = props =>
                         </div>
                     </div>
                 </div>
+                <button
+                    className="w-full mt-2 py-2 rounded cursor-pointer text-white font-bold flex items-center justify-center gap-2 bg-primary hover:brightness-110"
+                    onClick={ () => CreateLinkEvent('interface-settings/toggle') }
+                >
+                    <FaPalette size={ 14 } />
+                    Interfaccia
+                </button>
             </NitroCardContentView>
         </NitroCardView>
     );
