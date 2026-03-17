@@ -1,5 +1,7 @@
 import { WiredActionLayoutCode } from '../../../../api';
 import { WiredActionBotChangeFigureView } from './WiredActionBotChangeFigureView';
+import { WiredActionFreezeView } from './WiredActionFreezeView';
+import { WiredActionFurniToFurniView } from './WiredActionFurniToFurniView';
 import { WiredActionSendSignalView } from './WiredActionSendSignalView';
 import { WiredActionFurniAreaView } from '../selectors/WiredActionFurniAreaView';
 import { WiredSelectorFurniNeighborhoodView } from '../selectors/WiredSelectorFurniNeighborhoodView';
@@ -30,6 +32,7 @@ import { WiredActionResetView } from './WiredActionResetView';
 import { WiredActionSetFurniStateToView } from './WiredActionSetFurniStateToView';
 import { WiredActionTeleportView } from './WiredActionTeleportView';
 import { WiredActionToggleFurniStateView } from './WiredActionToggleFurniStateView';
+import { WiredActionUnfreezeView } from './WiredActionUnfreezeView';
 
 export const WiredActionLayoutView = (code: number) =>
 {
@@ -57,6 +60,12 @@ export const WiredActionLayoutView = (code: number) =>
             return <WiredActionChatView />;
         case WiredActionLayoutCode.FLEE:
             return <WiredActionFleeView />;
+        case WiredActionLayoutCode.FREEZE:
+            return <WiredActionFreezeView />;
+        case WiredActionLayoutCode.FURNI_TO_USER:
+            return <WiredActionTeleportView />;
+        case WiredActionLayoutCode.FURNI_TO_FURNI:
+            return <WiredActionFurniToFurniView />;
         case WiredActionLayoutCode.GIVE_REWARD:
             return <WiredActionGiveRewardView />;
         case WiredActionLayoutCode.GIVE_SCORE:
@@ -85,6 +94,10 @@ export const WiredActionLayoutView = (code: number) =>
             return <WiredActionTeleportView />;
         case WiredActionLayoutCode.TOGGLE_FURNI_STATE:
             return <WiredActionToggleFurniStateView />;
+        case WiredActionLayoutCode.UNFREEZE:
+            return <WiredActionUnfreezeView />;
+        case WiredActionLayoutCode.USER_TO_FURNI:
+            return <WiredActionTeleportView />;
         case WiredActionLayoutCode.FURNI_AREA_SELECTOR:
             return <WiredActionFurniAreaView />;
         case WiredActionLayoutCode.FURNI_NEIGHBORHOOD_SELECTOR:

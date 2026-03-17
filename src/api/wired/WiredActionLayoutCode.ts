@@ -32,4 +32,9 @@ export class WiredActionLayoutCode
     public static USERS_AREA_SELECTOR: number = 31;
     public static USERS_NEIGHBORHOOD_SELECTOR: number = 32;
     public static SEND_SIGNAL: number = 33;
+    public static FREEZE: number = 34;
+    public static UNFREEZE: number = 35;
+    public static FURNI_TO_USER: number = 36;
+    public static USER_TO_FURNI: number = 37;
+    public static FURNI_TO_FURNI: number = 38;
 }

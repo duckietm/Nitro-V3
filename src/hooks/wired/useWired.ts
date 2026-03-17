@@ -166,6 +166,7 @@ const useWiredState = () =>
     {
         const parser = event.getParser();
 
+        WiredSelectionVisualizer.clearAllSelectionShaders();
         setTrigger(null);
     });
 
@@ -206,6 +207,7 @@ const useWiredState = () =>
 
         return () =>
         {
+            WiredSelectionVisualizer.clearAllSelectionShaders();
             setIntParams([]);
             setStringParam('');
             setActionDelay(0);
