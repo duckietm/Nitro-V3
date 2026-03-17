@@ -1,5 +1,5 @@
 import { BadgeReceivedEvent, BadgesEvent, RequestBadgesComposer, SetActivatedBadgesComposer } from '@nitrots/nitro-renderer';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { GetConfigurationValue, SendMessageComposer, UnseenItemCategory } from '../../api';
 import { useMessageEvent } from '../events';
@@ -17,8 +17,17 @@ const useInventoryBadgesState = () =>
     const { isUnseen = null, resetCategory = null } = useInventoryUnseenTracker();
 
     const maxBadgeCount = GetConfigurationValue<number>('user.badges.max.slots', 5);
+    const localChangeRef = useRef(false);
     const isWearingBadge = (badgeCode: string) => (activeBadgeCodes.indexOf(badgeCode) >= 0);
     const canWearBadges = () => (activeBadgeCodes.length < maxBadgeCount);
+
+    const sendActiveBadges = (badges: string[]) =>
+    {
+        localChangeRef.current = true;
+        const composer = new SetActivatedBadgesComposer();
+        for(let i = 0; i < maxBadgeCount; i++) composer.addActivatedBadge(badges[i] ?? '');
+        SendMessageComposer(composer);
+    };
 
     const toggleBadge = (badgeCode: string) =>
     {
@@ -30,7 +39,7 @@ const useInventoryBadgesState = () =>
 
             if(index === -1)
             {
-                if(!canWearBadges()) return prevValue;
+                if(newValue.length >= maxBadgeCount) return prevValue;
 
                 newValue.push(badgeCode);
             }
@@ -39,11 +48,7 @@ const useInventoryBadgesState = () =>
                 newValue.splice(index, 1);
             }
 
-            const composer = new SetActivatedBadgesComposer();
-
-            for(let i = 0; i < maxBadgeCount; i++) composer.addActivatedBadge(newValue[i] ?? '');
-
-            SendMessageComposer(composer);
+            sendActiveBadges(newValue);
 
             return newValue;
         });
@@ -77,7 +82,16 @@ const useInventoryBadgesState = () =>
             return newValue;
         });
 
-        setActiveBadgeCodes(parser.getActiveBadgeCodes());
+        // Skip overwriting activeBadgeCodes if we recently made a local change
+        if(localChangeRef.current)
+        {
+            localChangeRef.current = false;
+        }
+        else
+        {
+            setActiveBadgeCodes(parser.getActiveBadgeCodes());
+        }
+
         setBadgeCodes(allBadgeCodes);
     });
 
@@ -141,7 +155,83 @@ const useInventoryBadgesState = () =>
         setNeedsUpdate(false);
     }, [ isVisible, needsUpdate ]);
 
-    return { badgeCodes, activeBadgeCodes, selectedBadgeCode, setSelectedBadgeCode, isWearingBadge, canWearBadges, toggleBadge, getBadgeId, activate, deactivate };
+    const setBadgeAtSlot = (badgeCode: string, slotIndex: number) =>
+    {
+        setActiveBadgeCodes(prevValue =>
+        {
+            // Build a fixed-size array of maxBadgeCount slots
+            const slots: (string | null)[] = Array.from({ length: maxBadgeCount }, (_, i) => prevValue[i] ?? null);
+
+            // Remove badge if already in another slot
+            const existingIndex = slots.indexOf(badgeCode);
+            if(existingIndex >= 0) slots[existingIndex] = null;
+
+            // Place badge at target slot
+            slots[slotIndex] = badgeCode;
+
+            // Compact: remove nulls, keep order
+            const result = slots.filter(Boolean) as string[];
+
+            sendActiveBadges(result);
+            return result;
+        });
+    };
+
+    const removeBadge = (badgeCode: string) =>
+    {
+        setActiveBadgeCodes(prevValue =>
+        {
+            const result = prevValue.filter(code => code !== badgeCode);
+
+            sendActiveBadges(result);
+            return result;
+        });
+    };
+
+    const reorderBadges = (fromIndex: number, toIndex: number) =>
+    {
+        setActiveBadgeCodes(prevValue =>
+        {
+            if(fromIndex === toIndex) return prevValue;
+            if(fromIndex >= prevValue.length) return prevValue;
+
+            const newValue = [ ...prevValue ];
+            const [ moved ] = newValue.splice(fromIndex, 1);
+            newValue.splice(toIndex, 0, moved);
+
+            sendActiveBadges(newValue);
+            return newValue;
+        });
+    };
+
+    const swapBadges = (fromIndex: number, toIndex: number) =>
+    {
+        setActiveBadgeCodes(prevValue =>
+        {
+            if(fromIndex === toIndex) return prevValue;
+
+            // Build fixed-size array so swap works even with empty slots
+            const slots: (string | null)[] = Array.from({ length: maxBadgeCount }, (_, i) => prevValue[i] ?? null);
+
+            // Swap the two slots
+            const temp = slots[fromIndex];
+            slots[fromIndex] = slots[toIndex];
+            slots[toIndex] = temp;
+
+            // Compact: remove nulls, keep order
+            const result = slots.filter(Boolean) as string[];
+
+            sendActiveBadges(result);
+            return result;
+        });
+    };
+
+    const requestBadges = () =>
+    {
+        SendMessageComposer(new RequestBadgesComposer());
+    };
+
+    return { badgeCodes, activeBadgeCodes, selectedBadgeCode, setSelectedBadgeCode, isWearingBadge, canWearBadges, toggleBadge, getBadgeId, setBadgeAtSlot, removeBadge, reorderBadges, swapBadges, requestBadges, activate, deactivate };
 };
 
 export const useInventoryBadges = () => useBetween(useInventoryBadgesState);

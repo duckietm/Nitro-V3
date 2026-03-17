@@ -4,6 +4,7 @@ import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { AvatarInfoUser, CloneObject, GetConfigurationValue, GetGroupInformation, GetUserProfile, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Base, Column, Flex, LayoutAvatarImageView, LayoutBadgeImageView, Text, UserProfileIconView } from '../../../../../common';
 import { useMessageEvent, useNitroEvent, useRoom } from '../../../../../hooks';
+import { InfoStandBadgeSlotView } from './InfoStandBadgeSlotView';
 import { InfoStandWidgetUserRelationshipsView } from './InfoStandWidgetUserRelationshipsView';
 import { InfoStandWidgetUserTagsView } from './InfoStandWidgetUserTagsView';
 import { BackgroundsView } from '../../../../backgrounds/BackgroundsView';
@@ -158,31 +159,43 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                 />
               )}
               <Column grow alignItems="center" gap={0}>
-                <div className="flex gap-1">
-                  <div className="flex items-center justify-center relative w-[40px] h-[40px] bg-no-repeat bg-center">
-                    {avatarInfo.badges[0] && <LayoutBadgeImageView badgeCode={avatarInfo.badges[0]} showInfo={true} />}
-                  </div>
-                  <Flex center className="relative w-[40px] h-[40px] bg-no-repeat bg-center" pointer={avatarInfo.groupId > 0} onClick={event => GetGroupInformation(avatarInfo.groupId)}>
-                    {avatarInfo.groupId > 0 &&
-                      <LayoutBadgeImageView badgeCode={avatarInfo.groupBadgeId} customTitle={avatarInfo.groupName} isGroup={true} showInfo={true} />}
-                  </Flex>
-                </div>
-                <Flex center gap={1}>
-                  <div className="flex items-center justify-center relative w-[40px] h-[40px] bg-no-repeat bg-center">
-                    {avatarInfo.badges[1] && <LayoutBadgeImageView badgeCode={avatarInfo.badges[1]} showInfo={true} />}
-                  </div>
-                  <div className="flex items-center justify-center relative w-[40px] h-[40px] bg-no-repeat bg-center">
-                    {avatarInfo.badges[2] && <LayoutBadgeImageView badgeCode={avatarInfo.badges[2]} showInfo={true} />}
-                  </div>
-                </Flex>
-                <Flex center gap={1}>
-                  <div className="flex items-center justify-center relative w-[40px] h-[40px] bg-no-repeat bg-center">
-                    {avatarInfo.badges[3] && <LayoutBadgeImageView badgeCode={avatarInfo.badges[3]} showInfo={true} />}
-                  </div>
-                  <div className="flex items-center justify-center relative w-[40px] h-[40px] bg-no-repeat bg-center">
-                    {avatarInfo.badges[4] && <LayoutBadgeImageView badgeCode={avatarInfo.badges[4]} showInfo={true} />}
-                  </div>
-                </Flex>
+                { GetConfigurationValue<boolean>('user.badges.group.slot.enabled', true)
+                  ? (
+                    <>
+                      <div className="flex gap-1">
+                        <InfoStandBadgeSlotView slotIndex={0} badgeCode={avatarInfo.badges[0]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                        <Flex center className="relative w-[40px] h-[40px] bg-no-repeat bg-center" pointer={avatarInfo.groupId > 0} onClick={event => GetGroupInformation(avatarInfo.groupId)}>
+                          {avatarInfo.groupId > 0 &&
+                            <LayoutBadgeImageView badgeCode={avatarInfo.groupBadgeId} customTitle={avatarInfo.groupName} isGroup={true} showInfo={true} />}
+                        </Flex>
+                      </div>
+                      <Flex center gap={1}>
+                        <InfoStandBadgeSlotView slotIndex={1} badgeCode={avatarInfo.badges[1]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                        <InfoStandBadgeSlotView slotIndex={2} badgeCode={avatarInfo.badges[2]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                      </Flex>
+                      <Flex center gap={1}>
+                        <InfoStandBadgeSlotView slotIndex={3} badgeCode={avatarInfo.badges[3]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                        <InfoStandBadgeSlotView slotIndex={4} badgeCode={avatarInfo.badges[4]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                      </Flex>
+                    </>
+                  )
+                  : (
+                    <>
+                      <Flex center gap={1}>
+                        <InfoStandBadgeSlotView slotIndex={0} badgeCode={avatarInfo.badges[0]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                        <InfoStandBadgeSlotView slotIndex={1} badgeCode={avatarInfo.badges[1]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                      </Flex>
+                      <Flex center gap={1}>
+                        <InfoStandBadgeSlotView slotIndex={2} badgeCode={avatarInfo.badges[2]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                        <InfoStandBadgeSlotView slotIndex={3} badgeCode={avatarInfo.badges[3]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                      </Flex>
+                      <Flex center gap={1}>
+                        <InfoStandBadgeSlotView slotIndex={4} badgeCode={avatarInfo.badges[4]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                        <InfoStandBadgeSlotView slotIndex={5} badgeCode={avatarInfo.badges[5]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                      </Flex>
+                    </>
+                  )
+                }
               </Column>
             </div>
             <hr className="m-0 bg-[#0003] border-0 opacity-[0.5] h-px" />

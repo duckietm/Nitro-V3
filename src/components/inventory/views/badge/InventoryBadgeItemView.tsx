@@ -11,8 +11,22 @@ export const InventoryBadgeItemView: FC<PropsWithChildren<{ badgeCode: string }>
     const { isUnseen = null } = useInventoryUnseenTracker();
     const unseen = isUnseen(UnseenItemCategory.BADGE, getBadgeId(badgeCode));
 
+    const onDragStart = (event: React.DragEvent<HTMLDivElement>) =>
+    {
+        event.dataTransfer.setData('badgeCode', badgeCode);
+        event.dataTransfer.setData('source', 'inventory');
+        event.dataTransfer.effectAllowed = 'move';
+    };
+
     return (
-        <InfiniteGrid.Item itemActive={ (selectedBadgeCode === badgeCode) } itemUnseen={ unseen } onDoubleClick={ event => toggleBadge(selectedBadgeCode) } onMouseDown={ event => setSelectedBadgeCode(badgeCode) } { ...rest }>
+        <InfiniteGrid.Item
+            draggable
+            itemActive={ (selectedBadgeCode === badgeCode) }
+            itemUnseen={ unseen }
+            onDoubleClick={ event => toggleBadge(selectedBadgeCode) }
+            onDragStart={ onDragStart }
+            onMouseDown={ event => setSelectedBadgeCode(badgeCode) }
+            { ...rest }>
             <LayoutBadgeImageView badgeCode={ badgeCode } />
             { children }
         </InfiniteGrid.Item>
