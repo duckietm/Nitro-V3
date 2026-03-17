@@ -69,47 +69,52 @@ export const ModToolsRoomView: FC<ModToolsRoomViewProps> = props =>
     }, [ roomId, infoRequested, setInfoRequested ]);
 
     return (
-        <NitroCardView className="nitro-mod-tools-room" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
-            <NitroCardHeaderView headerText={ 'Room Info' + (name ? ': ' + name : '') } onCloseClick={ event => onCloseClick() } />
-            <NitroCardContentView className="text-black">
+        <NitroCardView className="nitro-mod-tools-room min-w-[280px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+            <NitroCardHeaderView headerText={ 'Room Info' } onCloseClick={ event => onCloseClick() } />
+            <NitroCardContentView className="text-black" gap={ 2 }>
+                { name &&
+                    <div className="bg-muted rounded px-2 py-1.5 text-center">
+                        <Text bold truncate>{ name }</Text>
+                    </div>
+                }
                 <div className="flex gap-2">
-                    <Column grow gap={ 1 } justifyContent="center">
-                        <div className="items-center gap-2">
-                            <Text bold align="end" className="col-span-7">Room Owner:</Text>
-                            <Text pointer truncate underline>{ ownerName }</Text>
+                    <Column grow gap={ 1 }>
+                        <div className="flex items-center gap-1">
+                            <Text bold className="opacity-60 shrink-0">Owner:</Text>
+                            <Text bold pointer truncate underline onClick={ () => CreateLinkEvent(`mod-tools/open-user-info/${ ownerId }`) }>{ ownerName }</Text>
                         </div>
-                        <div className="items-center gap-2">
-                            <Text bold align="end" className="col-span-7">Users in room:</Text>
+                        <div className="flex items-center gap-1">
+                            <Text bold className="opacity-60 shrink-0">Users in room:</Text>
                             <Text>{ usersInRoom }</Text>
                         </div>
-                        <div className="items-center gap-2">
-                            <Text bold align="end" className="col-span-7">Owner in room:</Text>
-                            <Text>{ ownerInRoom ? 'Yes' : 'No' }</Text>
+                        <div className="flex items-center gap-1">
+                            <Text bold className="opacity-60 shrink-0">Owner here:</Text>
+                            <Text className={ ownerInRoom ? 'text-green-700' : 'text-red-700' }>{ ownerInRoom ? 'Yes' : 'No' }</Text>
                         </div>
                     </Column>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 shrink-0">
                         <Button onClick={ event => TryVisitRoom(roomId) }>Visit Room</Button>
                         <Button onClick={ event => CreateLinkEvent(`mod-tools/open-room-chatlog/${ roomId }`) }>Chatlog</Button>
                     </div>
                 </div>
                 <Column className="bg-muted rounded p-2" gap={ 1 }>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                         <input checked={ kickUsers } className="form-check-input" type="checkbox" onChange={ event => setKickUsers(event.target.checked) } />
                         <Text small>Kick everyone out</Text>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                         <input checked={ lockRoom } className="form-check-input" type="checkbox" onChange={ event => setLockRoom(event.target.checked) } />
                         <Text small>Enable the doorbell</Text>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                         <input checked={ changeRoomName } className="form-check-input" type="checkbox" onChange={ event => setChangeRoomName(event.target.checked) } />
                         <Text small>Change room name</Text>
                     </div>
                 </Column>
-                <textarea className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem]" placeholder="Type a mandatory message to the users in this text box..." value={ message } onChange={ event => setMessage(event.target.value) }></textarea>
-                <div className="flex justify-between">
-                    <Button variant="danger" onClick={ event => handleClick('send_message') }>Send Caution</Button>
-                    <Button onClick={ event => handleClick('alert_only') }>Send Alert only</Button>
+                <textarea className="min-h-[60px] px-2 py-1.5 rounded text-sm border border-black/10" placeholder="Type a mandatory message..." value={ message } onChange={ event => setMessage(event.target.value) }></textarea>
+                <div className="flex gap-2">
+                    <Button className="grow" variant="danger" onClick={ event => handleClick('send_message') }>Send Caution</Button>
+                    <Button className="grow" onClick={ event => handleClick('alert_only') }>Send Alert</Button>
                 </div>
             </NitroCardContentView>
         </NitroCardView>
