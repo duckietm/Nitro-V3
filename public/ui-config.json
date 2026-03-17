@@ -2,6 +2,8 @@
     "external.plugins": [
         "plugins/room-builder.js"
     ],
+    "ui.header.images.count": 30,
+    "ui.header.images.url": "https://image.webbo.city/image/headerImage/image{id}.gif",
     "image.library.notifications.url": "${image.library.url}notifications/%image%.png",
     "achievements.images.url": "${image.library.url}Quests/%image%.png",
     "camera.url": "/swf/usercontent/camera/",
