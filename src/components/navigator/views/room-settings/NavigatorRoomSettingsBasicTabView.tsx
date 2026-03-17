@@ -162,6 +162,11 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                 <input className="form-check-input" type="checkbox" checked={ roomData.allowWalkthrough } onChange={ event => handleChange('allow_walkthrough', event.target.checked) } />
                 <Text>{ LocalizeText('navigator.roomsettings.allow_walk_through') }</Text>
             </Flex>
+            <Flex alignItems="center" gap={ 1 }>
+                <Base className="col-3" />
+                <input className="form-check-input" type="checkbox" checked={ roomData.allowUnderpass } onChange={ event => handleChange('allow_underpass', event.target.checked) } />
+                <Text>{ LocalizeText('navigator.roomsettings.allow_underpass') }</Text>
+            </Flex>
             <Text variant="danger" underline bold pointer className="d-flex justify-content-center align-items-center gap-1" onClick={ deleteRoom }>
                 <FaTimes className="fa-icon" /> { LocalizeText('navigator.roomsettings.delete') } 
             </Text>
