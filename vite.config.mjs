@@ -16,7 +16,7 @@ export default defineConfig({
         chunkSizeWarningLimit: 200000,
         rollupOptions: {
             output: {
-                assetFileNames: 'src/assets/[name].[ext]',
+                assetFileNames: 'src/assets/[name]-[hash].[ext]',
                 manualChunks: id =>
                 {
                     if(id.includes('node_modules'))
