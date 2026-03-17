@@ -15,4 +15,10 @@ export class WiredTriggerLayout
     public static BOT_REACHED_STUFF: number = 13;
     public static BOT_REACHED_AVATAR: number = 14;
     public static RECEIVE_SIGNAL: number = 15;
+    public static AVATAR_LEAVES_ROOM: number = 16;
+    public static EXECUTE_PERIODICALLY_SHORT: number = 17;
+    public static CLICK_FURNI: number = 18;
+    public static CLICK_TILE: number = 19;
+    public static CLICK_USER: number = 20;
+    public static USER_PERFORMS_ACTION: number = 21;
 }
