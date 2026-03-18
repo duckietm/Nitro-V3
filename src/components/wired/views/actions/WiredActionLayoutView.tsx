@@ -1,5 +1,6 @@
 import { WiredActionLayoutCode } from '../../../../api';
 import { WiredActionBotChangeFigureView } from './WiredActionBotChangeFigureView';
+import { WiredActionSetAltitudeView } from './WiredActionSetAltitudeView';
 import { WiredActionSendSignalView } from './WiredActionSendSignalView';
 import { WiredActionFurniAreaView } from '../selectors/WiredActionFurniAreaView';
 import { WiredSelectorFurniNeighborhoodView } from '../selectors/WiredSelectorFurniNeighborhoodView';
@@ -26,6 +27,7 @@ import { WiredActionMoveAndRotateFurniView } from './WiredActionMoveAndRotateFur
 import { WiredActionMoveFurniToView } from './WiredActionMoveFurniToView';
 import { WiredActionMoveFurniView } from './WiredActionMoveFurniView';
 import { WiredActionMuteUserView } from './WiredActionMuteUserView';
+import { WiredActionRelativeMoveView } from './WiredActionRelativeMoveView';
 import { WiredActionResetView } from './WiredActionResetView';
 import { WiredActionSetFurniStateToView } from './WiredActionSetFurniStateToView';
 import { WiredActionTeleportView } from './WiredActionTeleportView';
@@ -57,6 +59,8 @@ export const WiredActionLayoutView = (code: number) =>
             return <WiredActionChatView />;
         case WiredActionLayoutCode.FLEE:
             return <WiredActionFleeView />;
+        case WiredActionLayoutCode.SET_ALTITUDE:
+            return <WiredActionSetAltitudeView />;
         case WiredActionLayoutCode.GIVE_REWARD:
             return <WiredActionGiveRewardView />;
         case WiredActionLayoutCode.GIVE_SCORE:
@@ -77,6 +81,8 @@ export const WiredActionLayoutView = (code: number) =>
             return <WiredActionMoveFurniToView />;
         case WiredActionLayoutCode.MUTE_USER:
             return <WiredActionMuteUserView />;
+        case WiredActionLayoutCode.RELATIVE_MOVE:
+            return <WiredActionRelativeMoveView />;
         case WiredActionLayoutCode.RESET:
             return <WiredActionResetView />;
         case WiredActionLayoutCode.SET_FURNI_STATE:

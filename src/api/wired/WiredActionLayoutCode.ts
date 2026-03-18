@@ -32,4 +32,6 @@ export class WiredActionLayoutCode
     public static USERS_AREA_SELECTOR: number = 31;
     public static USERS_NEIGHBORHOOD_SELECTOR: number = 32;
     public static SEND_SIGNAL: number = 33;
+    public static SET_ALTITUDE: number = 39;
+    public static RELATIVE_MOVE: number = 40;
 }

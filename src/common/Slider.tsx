@@ -11,11 +11,25 @@ export interface SliderProps extends ReactSliderProps
 
 export const Slider: FC<SliderProps> = props =>
 {
-    const { disabledButton, max, min, value, onChange, ...rest } = props;
+    const { disabledButton, max, min, step, value, onChange, ...rest } = props;
+    const currentValue = Array.isArray(value) ? value[0] : ((typeof value === 'number') ? value : 0);
+    const minimum = (typeof min === 'number') ? min : 0;
+    const maximum = (typeof max === 'number') ? max : 0;
+    const buttonStep = ((typeof step === 'number') && (step > 0)) ? step : 1;
+
+    const roundToStep = (nextValue: number) =>
+    {
+        if(typeof buttonStep !== 'number') return nextValue;
+
+        const decimalStep = buttonStep.toString();
+        const precision = decimalStep.includes('.') ? (decimalStep.length - decimalStep.indexOf('.') - 1) : 0;
+
+        return parseFloat(nextValue.toFixed(precision));
+    };
 
     return <Flex fullWidth gap={ 1 }>
-        { !disabledButton && <Button disabled={ min >= value } onClick={ () => onChange(min < value ? value - 1 : min, 0) }><FaAngleLeft /></Button> }
-        <ReactSlider className={ 'nitro-slider' } max={ max } min={ min } value={ value } onChange={ onChange } { ...rest } />
-        { !disabledButton && <Button disabled={ max <= value } onClick={ () => onChange(max > value ? value + 1 : max, 0) }><FaAngleRight /></Button> }
+        { !disabledButton && <Button disabled={ minimum >= currentValue } onClick={ () => onChange(roundToStep(minimum < currentValue ? currentValue - buttonStep : minimum), 0) }><FaAngleLeft /></Button> }
+        <ReactSlider className={ 'nitro-slider' } max={ max } min={ min } step={ step } value={ value } onChange={ onChange } { ...rest } />
+        { !disabledButton && <Button disabled={ maximum <= currentValue } onClick={ () => onChange(roundToStep(maximum > currentValue ? currentValue + buttonStep : maximum), 0) }><FaAngleRight /></Button> }
     </Flex>;
 }
