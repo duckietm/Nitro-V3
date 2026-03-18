@@ -12,20 +12,16 @@ export interface ButtonProps extends FlexProps
 
 export const Button: FC<ButtonProps> = props =>
 {
-    const { variant = 'primary', size = 'sm', active = false, disabled = false, classNames = [], ...rest } = props;
+    const { variant = 'primary', size = 'sm', active = false, disabled = false, classNames = [], style = {}, ...rest } = props;
 
     const getClassNames = useMemo(() =>
     {
-
-        // fucked up method i know (i dont have a clue what im doing because im a ninja)
-
         const newClassNames: string[] = [ 'pointer-events-auto inline-block font-normal leading-normal text-[#fff] text-center no-underline align-middle cursor-pointer select-none border border-[solid] border-transparent px-[.75rem] py-[.375rem] text-[.9rem] rounded-[.25rem] [transition:color_.15s_ease-in-out,background-color_.15s_ease-in-out,border-color_.15s_ease-in-out,box-shadow_.15s_ease-in-out]' ];
 
         if(variant)
         {
-
             if(variant == 'primary')
-                newClassNames.push('text-white bg-[#1e7295] border-[#1e7295] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#1a617f] hover:border-[#185b77]');
+                newClassNames.push('text-white [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white');
 
             if(variant == 'success')
                 newClassNames.push('text-white  bg-[#00800b] border-[#00800b] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white  hover:bg-[#006d09] hover:border-[#006609]');
@@ -43,11 +39,10 @@ export const Button: FC<ButtonProps> = props =>
                 newClassNames.push('text-white  bg-[#185d79] border-[#185d79] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a]  hover:text-white hover:bg-[#144f67] hover:border-[#134a61]');
 
             if(variant == 'dark')
-                newClassNames.push('text-white bg-dark [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#18181bfb] hover:border-[#161619fb]');
-				
-			if(variant == 'gray')
-				newClassNames.push('text-white bg-[#1e7295] border-[#1e7295] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#1a617f] hover:border-[#185b77]');
+                newClassNames.push('text-white [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white');
 
+			if(variant == 'gray')
+				newClassNames.push('text-white [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white');
         }
 
         if(size)
@@ -67,5 +62,28 @@ export const Button: FC<ButtonProps> = props =>
         return newClassNames;
     }, [ variant, size, active, disabled, classNames ]);
 
-    return <Flex center classNames={ getClassNames } { ...rest } />;
+    const getStyle = useMemo(() =>
+    {
+        if(variant === 'primary' || variant === 'gray')
+        {
+            return {
+                backgroundColor: 'var(--ui-btn-primary-bg, #1e7295)',
+                borderColor: 'var(--ui-btn-primary-border, #1e7295)',
+                ...style
+            };
+        }
+
+        if(variant === 'dark')
+        {
+            return {
+                backgroundColor: 'var(--ui-dark-bg, rgba(28, 28, 32, .98))',
+                borderColor: 'var(--ui-dark-border, rgba(28, 28, 32, .98))',
+                ...style
+            };
+        }
+
+        return style;
+    }, [ variant, style ]);
+
+    return <Flex center classNames={ getClassNames } style={ getStyle } { ...rest } />;
 };
