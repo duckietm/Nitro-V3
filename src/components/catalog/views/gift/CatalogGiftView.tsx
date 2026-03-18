@@ -7,6 +7,8 @@ import { CatalogEvent, CatalogInitGiftEvent, CatalogPurchasedEvent } from '../..
 import { useCatalog, useFriends, useMessageEvent, useUiEvent } from '../../../../hooks';
 import { classNames } from '../../../../layout';
 
+let isBuyingGift = false;
+
 export const CatalogGiftView: FC<{}> = props =>
 {
     const [ isVisible, setIsVisible ] = useState<boolean>(false);
@@ -32,6 +34,7 @@ export const CatalogGiftView: FC<{}> = props =>
 
     const onClose = useCallback(() =>
     {
+        isBuyingGift = false;
         setIsVisible(false);
         setPageId(0);
         setOfferId(0);
@@ -122,6 +125,10 @@ export const CatalogGiftView: FC<{}> = props =>
                     return;
                 }
 
+                if(isBuyingGift) return;
+
+                isBuyingGift = true;
+
                 SendMessageComposer(new PurchaseFromCatalogAsGiftComposer(pageId, offerId, extraData, receiverName, message, colourId, selectedBoxIndex, selectedRibbonIndex, showMyFace));
                 return;
         }
@@ -136,6 +143,7 @@ export const CatalogGiftView: FC<{}> = props =>
         switch(event.type)
         {
             case CatalogPurchasedEvent.PURCHASE_SUCCESS:
+                isBuyingGift = false;
                 onClose();
                 return;
             case CatalogEvent.INIT_GIFT:

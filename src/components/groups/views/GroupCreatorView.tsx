@@ -15,6 +15,8 @@ interface GroupCreatorViewProps
 
 const TABS: number[] = [ 1, 2, 3, 4 ];
 
+let isBuyingGroup = false;
+
 export const GroupCreatorView: FC<GroupCreatorViewProps> = props =>
 {
     const { onClose = null } = props;
@@ -34,7 +36,10 @@ export const GroupCreatorView: FC<GroupCreatorViewProps> = props =>
 
     const buyGroup = () =>
     {
-        if(!groupData) return;
+        if(!groupData || isBuyingGroup) return;
+
+        isBuyingGroup = true;
+        setTimeout(() => isBuyingGroup = false, 5000);
 
         const badge = [];
 

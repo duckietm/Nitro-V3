@@ -6,6 +6,9 @@ import { Button, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, Text } from '..
 import { useNavigator } from '../../../hooks';
 import { NitroInput } from '../../../layout';
 
+let isCreatingRoom = false;
+let createRoomTimeout: ReturnType<typeof setTimeout> = null;
+
 export const NavigatorRoomCreatorView: FC<{}> = props =>
 {
     const [ maxVisitorsList, setMaxVisitorsList ] = useState<number[]>(null);
@@ -16,6 +19,7 @@ export const NavigatorRoomCreatorView: FC<{}> = props =>
     const [ tradesSetting, setTradesSetting ] = useState<number>(0);
     const [ roomModels, setRoomModels ] = useState<IRoomModel[]>([]);
     const [ selectedModelName, setSelectedModelName ] = useState<string>('');
+    const [ isCreating, setIsCreating ] = useState<boolean>(isCreatingRoom);
     const { categories = null } = useNavigator();
 
     const hcDisabled = GetConfigurationValue<boolean>('hc.disabled', false);
@@ -31,7 +35,19 @@ export const NavigatorRoomCreatorView: FC<{}> = props =>
 
     const createRoom = () =>
     {
+        if(isCreatingRoom) return;
+
+        isCreatingRoom = true;
+        setIsCreating(true);
+
         SendMessageComposer(new CreateFlatMessageComposer(name, description, 'model_' + selectedModelName, Number(category), Number(visitorsCount), tradesSetting));
+
+        if(createRoomTimeout) clearTimeout(createRoomTimeout);
+        createRoomTimeout = setTimeout(() =>
+        {
+            isCreatingRoom = false;
+            setIsCreating(false);
+        }, 5000);
     };
 
     useEffect(() =>
@@ -117,7 +133,7 @@ export const NavigatorRoomCreatorView: FC<{}> = props =>
                     }
                 </div>
             </Grid>
-            <Button fullWidth disabled={ (!name || (name.length < 3)) } variant={ (!name || (name.length < 3)) ? 'danger' : 'success' } onClick={ createRoom }>{ LocalizeText('navigator.createroom.create') }</Button>
+            <Button fullWidth disabled={ isCreating || !name || (name.length < 3) } variant={ (isCreating || !name || (name.length < 3)) ? 'danger' : 'success' } onClick={ createRoom }>{ LocalizeText('navigator.createroom.create') }</Button>
         </div>
     );
 };

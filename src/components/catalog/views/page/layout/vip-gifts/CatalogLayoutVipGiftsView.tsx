@@ -6,6 +6,8 @@ import { useCatalog, useNotification, usePurse } from '../../../../../../hooks';
 import { CatalogLayoutProps } from '../CatalogLayout.types';
 import { VipGiftItem } from './VipGiftItemView';
 
+let isSelectingGift = false;
+
 export const CatalogLayoutVipGiftsView: FC<CatalogLayoutProps> = props =>
 {
     const { purse = null } = usePurse();
@@ -30,6 +32,10 @@ export const CatalogLayoutVipGiftsView: FC<CatalogLayoutProps> = props =>
     {
         showConfirm(LocalizeText('catalog.club_gift.confirm'), () =>
         {
+            if(isSelectingGift) return;
+
+            isSelectingGift = true;
+
             SendMessageComposer(new SelectClubGiftComposer(localizationId));
 
             setCatalogOptions(prevValue =>
@@ -38,6 +44,8 @@ export const CatalogLayoutVipGiftsView: FC<CatalogLayoutProps> = props =>
 
                 return { ...prevValue };
             });
+
+            setTimeout(() => isSelectingGift = false, 5000);
         }, null);
     }, [ setCatalogOptions, showConfirm ]);
 

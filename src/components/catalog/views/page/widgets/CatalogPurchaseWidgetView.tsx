@@ -11,6 +11,8 @@ interface CatalogPurchaseWidgetViewProps
     purchaseCallback?: () => void;
 }
 
+let isPurchasingCatalogItem = false;
+
 export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = props =>
 {
     const { noGiftOption = false, purchaseCallback = null } = props;
@@ -25,15 +27,19 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
         switch(event.type)
         {
             case CatalogPurchasedEvent.PURCHASE_SUCCESS:
+                isPurchasingCatalogItem = false;
                 setPurchaseState(CatalogPurchaseState.NONE);
                 return;
             case CatalogPurchaseFailureEvent.PURCHASE_FAILED:
+                isPurchasingCatalogItem = false;
                 setPurchaseState(CatalogPurchaseState.FAILED);
                 return;
             case CatalogPurchaseNotAllowedEvent.NOT_ALLOWED:
+                isPurchasingCatalogItem = false;
                 setPurchaseState(CatalogPurchaseState.FAILED);
                 return;
             case CatalogPurchaseSoldOutEvent.SOLD_OUT:
+                isPurchasingCatalogItem = false;
                 setPurchaseState(CatalogPurchaseState.SOLD_OUT);
                 return;
         }
@@ -62,7 +68,7 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
 
     const purchase = (isGift: boolean = false) =>
     {
-        if(!currentOffer) return;
+        if(!currentOffer || isPurchasingCatalogItem) return;
 
         if(GetClubMemberLevel() < currentOffer.clubLevel)
         {
@@ -78,6 +84,7 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
             return;
         }
 
+        isPurchasingCatalogItem = true;
         setPurchaseState(CatalogPurchaseState.PURCHASE);
 
         if(purchaseCallback)

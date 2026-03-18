@@ -6,6 +6,8 @@ import { useCatalog, useMessageEvent, useNavigator, useRoomPromote } from '../..
 import { NitroInput } from '../../../../../layout';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
+let isPurchasingAd = false;
+
 export const CatalogLayoutRoomAdsView: FC<CatalogLayoutProps> = props =>
 {
     const { page = null } = props;
@@ -45,6 +47,10 @@ export const CatalogLayoutRoomAdsView: FC<CatalogLayoutProps> = props =>
 
     const purchaseAd = () =>
     {
+        if(isPurchasingAd) return;
+
+        isPurchasingAd = true;
+
         const pageId = page.pageId;
         const offerId = page.offers.length >= 1 ? page.offers[0].offerId : -1;
         const flatId = roomId;

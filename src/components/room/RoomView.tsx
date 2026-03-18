@@ -43,10 +43,11 @@ export const RoomView: FC<{}> = (props) =>
         <AnimatePresence>
             {
 				<motion.div
+                    className="w-full h-full"
                     initial={ { opacity: 0 }}
                     animate={ { opacity: 1 }}
                     exit={ { opacity: 0 }}>
-                    <div ref={ elementRef } className="w-100 h-100">
+                    <div ref={ elementRef } className="w-full h-full">
                         { roomSession instanceof RoomSession &&
                             <>
                                 <RoomWidgetsView />

@@ -1,7 +1,7 @@
 import { ColorConverter, GetRenderer, GetRoomEngine, GetStage, IRoomSession, NitroAdjustmentFilter, NitroSprite, NitroTexture, RoomBackgroundColorEvent, RoomEngineEvent, RoomEngineObjectEvent, RoomGeometry, RoomId, RoomObjectCategory, RoomObjectHSLColorEnabledEvent, RoomObjectOperationType, RoomSessionEvent, RoomVariableEnum, Vector3d } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
-import { CanManipulateFurniture, DispatchUiEvent, GetRoomSession, InitializeRoomInstanceRenderingCanvas, IsFurnitureSelectionDisabled, ProcessRoomObjectOperation, RoomWidgetUpdateBackgroundColorPreviewEvent, RoomWidgetUpdateRoomObjectEvent, SetActiveRoomId, StartRoomSession } from '../../api';
+import { CanManipulateFurniture, DispatchUiEvent, GetRoomSession, IsFurnitureSelectionDisabled, ProcessRoomObjectOperation, RoomWidgetUpdateBackgroundColorPreviewEvent, RoomWidgetUpdateRoomObjectEvent, SetActiveRoomId, StartRoomSession } from '../../api';
 import { useNitroEvent, useUiEvent } from '../events';
 
 const useRoomState = () =>
@@ -253,15 +253,20 @@ const useRoomState = () =>
 
         const resize = (event: UIEvent) =>
         {
-            const width = Math.floor(window.innerWidth);
-            const height = Math.floor(window.innerHeight);
+            const newWidth = Math.floor(window.innerWidth);
+            const newHeight = Math.floor(window.innerHeight);
 
-            renderer.resize(width, height, window.devicePixelRatio);
+            const offsetX = canvas.screenOffsetX - (newWidth - canvas.width) / 2;
+            const offsetY = canvas.screenOffsetY - (newHeight - canvas.height) / 2;
 
-            background.width = width;
-            background.height = height;
+            renderer.resize(newWidth, newHeight, window.devicePixelRatio);
 
-            InitializeRoomInstanceRenderingCanvas(width, height, 1);
+            background.width = newWidth;
+            background.height = newHeight;
+
+            canvas.initialize(newWidth, newHeight);
+            canvas.screenOffsetX = ~~offsetX;
+            canvas.screenOffsetY = ~~offsetY;
         };
 
         window.addEventListener('resize', resize);

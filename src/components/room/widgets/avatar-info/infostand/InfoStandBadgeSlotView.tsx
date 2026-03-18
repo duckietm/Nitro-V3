@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
+import { LocalizeText } from '../../../../../api';
 import { LayoutBadgeImageView } from '../../../../../common';
 import { useInventoryBadges } from '../../../../../hooks';
 
@@ -49,13 +50,13 @@ const BadgeMiniPicker: FC<{
             <input
                 autoFocus
                 className="w-full text-xs text-white bg-white/10 border border-white/20 rounded px-2 py-1 mb-2 outline-none focus:border-white/40"
-                placeholder="Cerca badge..."
+                placeholder={ LocalizeText('catalog.search') }
                 type="text"
                 value={ search }
                 onChange={ e => setSearch(e.target.value) }
             />
             { badgeCodes.length === 0
-                ? <span className="text-xs text-white/40 text-center py-2 block">Caricamento...</span>
+                ? <span className="text-xs text-white/40 text-center py-2 block">{ LocalizeText('generic.loading') }</span>
                 : (
                     <div className="grid grid-cols-4 gap-1 max-h-[160px] overflow-y-auto">
                         { filtered.slice(0, 40).map(code => (
@@ -67,7 +68,7 @@ const BadgeMiniPicker: FC<{
                             </div>
                         )) }
                         { filtered.length === 0 && (
-                            <span className="text-xs text-white/40 col-span-4 text-center py-2">Nessun badge</span>
+                            <span className="text-xs text-white/40 col-span-4 text-center py-2">{ LocalizeText('generic.no_results_found') }</span>
                         ) }
                     </div>
                 ) }
@@ -81,8 +82,6 @@ export const InfoStandBadgeSlotView: FC<InfoStandBadgeSlotProps> = ({ slotIndex,
     const [ isDragOver, setIsDragOver ] = useState(false);
     const [ showPicker, setShowPicker ] = useState(false);
 
-    // For own user: use hook data if loaded, otherwise fall back to props (avatarInfo)
-    // For other users: always use props
     const hookBadge = activeBadgeCodes.length > 0 ? (activeBadgeCodes[slotIndex] ?? null) : null;
     const badgeCode = isOwnUser ? (hookBadge ?? badgeCodeFromProps ?? null) : (badgeCodeFromProps ?? null);
 
@@ -117,14 +116,12 @@ export const InfoStandBadgeSlotView: FC<InfoStandBadgeSlotProps> = ({ slotIndex,
 
         if(sourceSlotStr !== '')
         {
-            // Dragged from another infostand slot -> always swap (works with empty slots too)
             const sourceSlot = parseInt(sourceSlotStr);
 
             if(sourceSlot !== slotIndex) swapBadges(sourceSlot, slotIndex);
         }
         else
         {
-            // Dragged from inventory or external -> place at this slot
             setBadgeAtSlot(droppedBadgeCode, slotIndex);
         }
     }, [ isOwnUser, slotIndex, swapBadges, setBadgeAtSlot ]);

@@ -83,27 +83,36 @@ export const HotelView: FC<{}> = props =>
 
         if(!container) return;
 
-        const viewportWidth  = window.innerWidth;
-        const viewportHeight = window.innerHeight - 55;
-
-        const lobbyEl = container.querySelector<HTMLElement>('.nitro-hotel-view-lobby');
-
-        if(lobbyEl)
+        const centerView = () =>
         {
-            const containerRect = container.getBoundingClientRect();
-            const lobbyRect     = lobbyEl.getBoundingClientRect();
+            const viewportWidth  = window.innerWidth;
+            const viewportHeight = window.innerHeight - 55;
 
-            const lobbyCenterX = (lobbyRect.left - containerRect.left) + container.scrollLeft + lobbyRect.width  / 2;
-            const lobbyCenterY = (lobbyRect.top  - containerRect.top)  + container.scrollTop  + lobbyRect.height / 2;
+            const lobbyEl = container.querySelector<HTMLElement>('.nitro-hotel-view-lobby');
 
-            container.scrollLeft = Math.max(0, lobbyCenterX - viewportWidth  / 2);
-            container.scrollTop  = Math.max(0, lobbyCenterY - viewportHeight / 2);
-        }
-        else
-        {
-            container.scrollLeft = Math.max(0, (2600 - viewportWidth)  / 2);
-            container.scrollTop  = Math.max(0, (1425 - viewportHeight) / 2);
-        }
+            if(lobbyEl)
+            {
+                const containerRect = container.getBoundingClientRect();
+                const lobbyRect     = lobbyEl.getBoundingClientRect();
+
+                const lobbyCenterX = (lobbyRect.left - containerRect.left) + container.scrollLeft + lobbyRect.width  / 2;
+                const lobbyCenterY = (lobbyRect.top  - containerRect.top)  + container.scrollTop  + lobbyRect.height / 2;
+
+                container.scrollLeft = Math.max(0, lobbyCenterX - viewportWidth  / 2);
+                container.scrollTop  = Math.max(0, lobbyCenterY - viewportHeight / 2);
+            }
+            else
+            {
+                container.scrollLeft = Math.max(0, (2600 - viewportWidth)  / 2);
+                container.scrollTop  = Math.max(0, (1425 - viewportHeight) / 2);
+            }
+        };
+
+        centerView();
+
+        window.addEventListener('resize', centerView);
+
+        return () => window.removeEventListener('resize', centerView);
     }, []);
 
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) =>
