@@ -2,15 +2,13 @@ import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '
 import { FC, useEffect, useState } from 'react';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsView, NitroCardTabsItemView, NitroCardView } from '../../common';
 import { InterfaceColorTabView } from './InterfaceColorTabView';
-import { InterfaceImageTabView } from './InterfaceImageTabView';
 import { InterfaceProfileTabView } from './InterfaceProfileTabView';
 
-const TABS = [ 'color', 'image', 'profile' ] as const;
+const TABS = [ 'color', 'profile' ] as const;
 type TabType = typeof TABS[number];
 
 const TAB_LABELS: Record<TabType, string> = {
     color: 'Colore',
-    image: 'Immagine finestre',
     profile: 'Sfondo profilo'
 };
 
@@ -69,7 +67,6 @@ export const InterfaceSettingsView: FC<{}> = () =>
             </NitroCardTabsView>
             <NitroCardContentView>
                 { currentTab === 'color' && <InterfaceColorTabView /> }
-                { currentTab === 'image' && <InterfaceImageTabView /> }
                 { currentTab === 'profile' && <InterfaceProfileTabView /> }
             </NitroCardContentView>
         </NitroCardView>
