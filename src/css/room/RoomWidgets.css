@@ -4,7 +4,7 @@
     left: 15px;
 
     .nitro-room-tools {
-        background: #212131;
+        background: var(--ui-dark-bg, #212131);
         box-shadow: inset 0px 5px lighten(rgba(#000, .6), 2.5), inset 0 -4px darken(rgba(#000, .6), 4);
         border-top-right-radius: .25rem;
         border-bottom-right-radius: .25rem;
@@ -54,7 +54,7 @@
     }
 
     .nitro-room-history {
-        background: #212131;
+        background: var(--ui-dark-bg, #212131);
         box-shadow: inset 0px 5px lighten(rgba(#000, .6), 2.5), inset 0 -4px darken(rgba(#000, .6), 4);
         transition: all .2s ease;
         width: 150px;
@@ -63,7 +63,7 @@
     }
 
     .nitro-room-tools-info {
-        background: #212131;
+        background: var(--ui-dark-bg, #212131);
         box-shadow: inset 0px 5px lighten(rgba(#000, .6), 2.5), inset 0 -4px darken(rgba(#000, .6), 4);
         transition: all .2s ease;
         max-width: 250px;

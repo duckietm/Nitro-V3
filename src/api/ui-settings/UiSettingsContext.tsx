@@ -123,19 +123,34 @@ export const UiSettingsProvider: FC<PropsWithChildren> = ({ children }) =>
 
     const isCustomActive = settings.colorMode !== 'default';
 
+    const ALL_CSS_VARS = [
+        '--ui-accent-color', '--ui-accent-dark',
+        '--ui-ctx-bg', '--ui-ctx-header-bg', '--ui-ctx-item-bg1', '--ui-ctx-item-bg2',
+        '--ui-btn-primary-bg', '--ui-btn-primary-border',
+        '--ui-dark-bg', '--ui-dark-border'
+    ];
+
     useEffect(() =>
     {
         const root = document.documentElement;
 
         if(settings.colorMode === 'color')
         {
-            root.style.setProperty('--ui-accent-color', settings.headerColor);
-            root.style.setProperty('--ui-accent-dark', darkenColor(settings.headerColor, 30));
+            const c = settings.headerColor;
+            root.style.setProperty('--ui-accent-color', c);
+            root.style.setProperty('--ui-accent-dark', darkenColor(c, 30));
+            root.style.setProperty('--ui-ctx-bg', darkenColor(c, 50));
+            root.style.setProperty('--ui-ctx-header-bg', darkenColor(c, 20));
+            root.style.setProperty('--ui-ctx-item-bg1', darkenColor(c, 60));
+            root.style.setProperty('--ui-ctx-item-bg2', darkenColor(c, 70));
+            root.style.setProperty('--ui-btn-primary-bg', c);
+            root.style.setProperty('--ui-btn-primary-border', darkenColor(c, 20));
+            root.style.setProperty('--ui-dark-bg', darkenColor(c, 55));
+            root.style.setProperty('--ui-dark-border', darkenColor(c, 60));
         }
         else
         {
-            root.style.removeProperty('--ui-accent-color');
-            root.style.removeProperty('--ui-accent-dark');
+            ALL_CSS_VARS.forEach(v => root.style.removeProperty(v));
         }
     }, [ settings ]);
 
