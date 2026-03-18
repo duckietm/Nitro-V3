@@ -123,9 +123,10 @@ const useChatWidgetState = () =>
                 text = LocalizeText('widget.chatbubble.handitem', ['username', 'handitem'], [username, LocalizeText(('handitem' + event.extraParam))]);
                 break;
             case RoomSessionChatEvent.CHAT_TYPE_MUTE_REMAINING: {
-                const hours = ((event.extraParam > 0) ? Math.floor((event.extraParam / 3600)) : 0).toString();
-                const minutes = ((event.extraParam > 0) ? Math.floor((event.extraParam % 3600) / 60) : 0).toString();
-                const seconds = (event.extraParam % 60).toString();
+                const remainingSeconds = Math.max(0, event.extraParam);
+                const hours = Math.floor(remainingSeconds / 3600).toString();
+                const minutes = Math.floor((remainingSeconds % 3600) / 60).toString();
+                const seconds = (remainingSeconds % 60).toString();
 
                 text = LocalizeText('widget.chatbubble.mutetime', ['hours', 'minutes', 'seconds'], [hours, minutes, seconds]);
                 break;
