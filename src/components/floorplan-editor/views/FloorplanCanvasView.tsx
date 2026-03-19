@@ -1,25 +1,25 @@
 import { GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
+import { FaPlus, FaMinus } from 'react-icons/fa';
 import { SendMessageComposer } from '../../../api';
 import { Base, Column, ColumnProps } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
 import { FloorplanEditor } from '@nitrots/nitro-renderer';
 
-type ScrollDirection = 'up' | 'down' | 'left' | 'right';
-
 interface FloorplanCanvasViewProps extends ColumnProps
 {
-    setScrollHandler(handler: ((direction: ScrollDirection) => void) | null): void;
 }
 
 export const FloorplanCanvasView: FC<FloorplanCanvasViewProps> = props =>
 {
-    const { gap = 1, children = null, setScrollHandler = null, ...rest } = props;
-    const [ occupiedTilesReceived , setOccupiedTilesReceived ] = useState(false);
+    const { gap = 1, children = null, ...rest } = props;
+    const [ occupiedTilesReceived, setOccupiedTilesReceived ] = useState(false);
     const [ entryTileReceived, setEntryTileReceived ] = useState(false);
+    const [ zoomLevel, setZoomLevel ] = useState(1.0);
     const { originalFloorplanSettings = null, setOriginalFloorplanSettings = null, setVisualizationSettings = null } = useFloorplanEditorContext();
     const elementRef = useRef<HTMLDivElement>(null);
+    const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
     useMessageEvent<RoomOccupiedTilesMessageEvent>(RoomOccupiedTilesMessageEvent, event =>
     {
@@ -37,7 +37,7 @@ export const FloorplanCanvasView: FC<FloorplanCanvasViewProps> = props =>
         });
 
         setOccupiedTilesReceived(true);
-        
+
         elementRef.current.scrollTo((FloorplanEditor.instance.renderer.canvas.width / 3), 0);
     });
 
@@ -63,39 +63,16 @@ export const FloorplanCanvasView: FC<FloorplanCanvasViewProps> = props =>
 
             return newValue;
         });
-        
+
         FloorplanEditor.instance.doorLocation = { x: parser.x, y: parser.y };
 
         setEntryTileReceived(true);
     });
 
-    const onClickArrowButton = (scrollDirection: ScrollDirection) =>
-    {
-        const element = elementRef.current;
-
-        if(!element) return;
-
-        switch(scrollDirection)
-        {
-            case 'up':
-                element.scrollBy({ top: -10 });
-                break;
-            case 'down':
-                element.scrollBy({ top: 10 });
-                break;
-            case 'left':
-                element.scrollBy({ left: -10 });
-                break;
-            case 'right':
-                element.scrollBy({ left: 10 });
-                break;
-        }
-    }
-
     const onPointerEvent = (event: PointerEvent) =>
     {
         event.preventDefault();
-        
+
         switch(event.type)
         {
             case 'pointerout':
@@ -109,7 +86,10 @@ export const FloorplanCanvasView: FC<FloorplanCanvasViewProps> = props =>
                 FloorplanEditor.instance.onPointerMove(event);
                 break;
         }
-    }
+    };
+
+    const zoomIn = () => setZoomLevel(prev => Math.min(prev + 0.25, 2.0));
+    const zoomOut = () => setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
 
     useEffect(() =>
     {
@@ -124,15 +104,15 @@ export const FloorplanCanvasView: FC<FloorplanCanvasViewProps> = props =>
                     thicknessWall: originalFloorplanSettings.thicknessWall,
                     thicknessFloor: originalFloorplanSettings.thicknessFloor,
                     entryPointDir: prevValue.entryPointDir
-                }
+                };
             });
-        }
+        };
     }, [ originalFloorplanSettings.thicknessFloor, originalFloorplanSettings.thicknessWall, originalFloorplanSettings.wallHeight, setVisualizationSettings ]);
 
     useEffect(() =>
     {
         if(!entryTileReceived || !occupiedTilesReceived) return;
-        
+
         FloorplanEditor.instance.renderTiles();
     }, [ entryTileReceived, occupiedTilesReceived ]);
 
@@ -144,45 +124,56 @@ export const FloorplanCanvasView: FC<FloorplanCanvasViewProps> = props =>
         const currentElement = elementRef.current;
 
         if(!currentElement) return;
-                
-        currentElement.appendChild(FloorplanEditor.instance.renderer.canvas);
+
+        const wrapper = canvasWrapperRef.current;
+
+        if(wrapper) wrapper.appendChild(FloorplanEditor.instance.renderer.canvas);
 
         currentElement.addEventListener('pointerup', onPointerEvent);
-
         currentElement.addEventListener('pointerout', onPointerEvent);
-
         currentElement.addEventListener('pointerdown', onPointerEvent);
-
         currentElement.addEventListener('pointermove', onPointerEvent);
 
-        return () => 
+        return () =>
         {
             if(currentElement)
             {
                 currentElement.removeEventListener('pointerup', onPointerEvent);
-
                 currentElement.removeEventListener('pointerout', onPointerEvent);
-
                 currentElement.removeEventListener('pointerdown', onPointerEvent);
-
                 currentElement.removeEventListener('pointermove', onPointerEvent);
             }
-        }
+        };
     }, []);
 
-    useEffect(() =>
-    {
-        if(!setScrollHandler) return;
-
-        setScrollHandler(() => onClickArrowButton);
-
-        return () => setScrollHandler(null);
-    }, [ setScrollHandler ]);
-
     return (
-        <Column gap={ gap } { ...rest }>
-            <Base overflow="auto" innerRef={ elementRef } />
+        <Column gap={ gap } { ...rest } className="relative flex-1">
+            <Base overflow="auto" innerRef={ elementRef } className="flex-1">
+                <div
+                    ref={ canvasWrapperRef }
+                    style={ {
+                        transform: `scale(${ zoomLevel })`,
+                        transformOrigin: '0 0'
+                    } }
+                />
+            </Base>
+            <div className="absolute top-2 right-2 flex flex-col gap-1 z-10">
+                <button
+                    className="w-[28px] h-[28px] flex items-center justify-center rounded bg-[#1e7295] text-white border border-transparent shadow cursor-pointer hover:brightness-110"
+                    onClick={ zoomIn }
+                    title="Zoom in"
+                >
+                    <FaPlus size={ 10 } />
+                </button>
+                <button
+                    className="w-[28px] h-[28px] flex items-center justify-center rounded bg-[#1e7295] text-white border border-transparent shadow cursor-pointer hover:brightness-110"
+                    onClick={ zoomOut }
+                    title="Zoom out"
+                >
+                    <FaMinus size={ 10 } />
+                </button>
+            </div>
             { children }
         </Column>
     );
-}
+};
