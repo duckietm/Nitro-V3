@@ -59,8 +59,8 @@
 
 .alertView_nitro-coolui-logo {
 	width: 150px;
-	height: 78px;
+	height: 73px;
 	position: relative;
-	background-image: url("@/assets/images/notifications/coolui.png");
+	background-image: url("@/assets/images/notifications/nitro_v3.png");
 	background-repeat: no-repeat;
 }

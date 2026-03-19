@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, GetCommunication, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GetCommunication, GetRoomSessionManager, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
 import { useNitroEvent } from '../hooks';
@@ -30,6 +30,7 @@ import { UserProfileView } from './user-profile/UserProfileView';
 import { InterfaceSettingsView } from './interface-settings/InterfaceSettingsView';
 import { UserSettingsView } from './user-settings/UserSettingsView';
 import { WiredView } from './wired/WiredView';
+import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
 import { YoutubeTvView } from './youtube-tv/YoutubeTvView';
 
 export const MainView: FC<{}> = props =>
@@ -43,6 +44,8 @@ export const MainView: FC<{}> = props =>
     useEffect(() =>
     {
         setIsReady(true);
+
+        GetRoomSessionManager().tryRestoreSession();
 
         GetCommunication().connection.ready();
     }, []);
@@ -88,7 +91,6 @@ export const MainView: FC<{}> = props =>
             <AnimatePresence>
                 { landingViewVisible &&
                     <motion.div
-                        className="w-full h-full"
                         initial={ { opacity: 0 }}
                         animate={ { opacity: 1 }}
                         exit={ { opacity: 0 }}>
@@ -97,6 +99,7 @@ export const MainView: FC<{}> = props =>
             </AnimatePresence>
             <ToolbarView isInRoom={ !landingViewVisible } />
             <ModToolsView />
+            <WiredCreatorToolsView />
             <RoomView />
             <ChatHistoryView />
             <WiredView />

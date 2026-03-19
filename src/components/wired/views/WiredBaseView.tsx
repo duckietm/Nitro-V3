@@ -24,7 +24,11 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
     const [ needsSave, setNeedsSave ] = useState<boolean>(false);
     const { trigger = null, setTrigger = null, setIntParams = null, setStringParam = null, setFurniIds = null, setAllowsFurni = null, saveWired = null } = useWired();
 
-    const onClose = () => setTrigger(null);
+    const onClose = () =>
+    {
+        WiredSelectionVisualizer.clearAllSelectionShaders();
+        setTrigger(null);
+    };
 
     const onSave = () =>
     {
@@ -47,6 +51,8 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
     useEffect(() =>
     {
         if(!trigger) return;
+
+        WiredSelectionVisualizer.clearAllSelectionShaders();
 
         const spriteId = (trigger.spriteId || -1);
         const furniData = GetSessionDataManager().getFloorItemData(spriteId);
