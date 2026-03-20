@@ -1,4 +1,5 @@
 import { PurchasePrefixComposer } from '@nitrots/nitro-renderer';
+import { createPortal } from 'react-dom';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { SendMessageComposer, PRESET_PREFIX_EFFECTS, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
@@ -31,6 +32,32 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
     const [ showIconPicker, setShowIconPicker ] = useState(false);
     const [ selectedEffect, setSelectedEffect ] = useState('');
     const [ purchased, setPurchased ] = useState(false);
+    const pickerContainerRef = useRef<HTMLDivElement>(null);
+
+    // Inject style into emoji-mart Shadow DOM to remove backdrop-filter blur
+    useEffect(() =>
+    {
+        if(!showIconPicker) return;
+
+        const timer = setTimeout(() =>
+        {
+            const container = pickerContainerRef.current;
+            if(!container) return;
+
+            const emPicker = container.querySelector('em-emoji-picker');
+            if(!emPicker?.shadowRoot) return;
+
+            const existing = emPicker.shadowRoot.querySelector('#no-blur-fix');
+            if(existing) return;
+
+            const style = document.createElement('style');
+            style.id = 'no-blur-fix';
+            style.textContent = `.sticky { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-color: rgb(var(--em-rgb-background)) !important; } .menu { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-color: rgb(var(--em-rgb-background)) !important; }`;
+            emPicker.shadowRoot.appendChild(style);
+        }, 50);
+
+        return () => clearTimeout(timer);
+    }, [ showIconPicker ]);
 
     const colorString = useMemo(() =>
     {
@@ -214,11 +241,11 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                 </div>
             </div>
 
-            { /* Emoji Picker (emoji-mart) - fixed overlay */ }
-            { showIconPicker && (
+            { /* Emoji Picker (emoji-mart) - portaled to body, no backdrop */ }
+            { showIconPicker && createPortal(
                 <>
-                    <div className="fixed inset-0" style={ { zIndex: 999, background: 'rgba(0,0,0,0.5)' } } onClick={ () => setShowIconPicker(false) } />
-                    <div className="fixed rounded-xl overflow-hidden" style={ { zIndex: 1000, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' } }>
+                    <div className="fixed inset-0" style={ { zIndex: 9998 } } onClick={ () => setShowIconPicker(false) } />
+                    <div ref={ pickerContainerRef } className="fixed rounded-xl overflow-hidden" style={ { zIndex: 9999, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#2b2f35' } }>
                         <Picker
                             data={ data }
                             locale="it"
@@ -234,7 +261,8 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             set="native"
                         />
                     </div>
-                </>
+                </>,
+                document.body
             ) }
 
             { /* Effect Selector */ }
