@@ -4,6 +4,8 @@ import { FriendlyTime, GetConfigurationValue, LocalizeText, SendMessageComposer 
 import { Button, Column, Flex, LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { usePurse } from '../../../../hooks';
 
+let isBuyingOffer = false;
+
 export const OfferWindowView = (props: { offer: TargetedOfferData, setOpen: Dispatch<SetStateAction<boolean>> }) =>
 {
     const { offer = null, setOpen = null } = props;
@@ -37,8 +39,14 @@ export const OfferWindowView = (props: { offer: TargetedOfferData, setOpen: Disp
 
     const buyOffer = () =>
     {
+        if(isBuyingOffer) return;
+
+        isBuyingOffer = true;
+
         SendMessageComposer(new PurchaseTargetedOfferComposer(offer.id, amount));
         SendMessageComposer(new GetTargetedOfferComposer());
+
+        setTimeout(() => isBuyingOffer = false, 5000);
     };
 
     if(!offer) return;

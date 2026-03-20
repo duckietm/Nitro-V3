@@ -1,5 +1,5 @@
 import { CancelMarketplaceOfferMessageComposer, GetMarketplaceOwnOffersMessageComposer, MarketplaceCancelOfferResultEvent, MarketplaceOwnOffersEvent, RedeemMarketplaceOfferCreditsMessageComposer } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LocalizeText, MarketplaceOfferData, MarketPlaceOfferState, NotificationAlertType, SendMessageComposer } from '../../../../../../api';
 import { Button, Column, Text } from '../../../../../../common';
 import { useMessageEvent, useNotification } from '../../../../../../hooks';
@@ -11,6 +11,8 @@ export const CatalogLayoutMarketplaceOwnItemsView: FC<CatalogLayoutProps> = prop
     const [ creditsWaiting, setCreditsWaiting ] = useState(0);
     const [ offers, setOffers ] = useState<MarketplaceOfferData[]>([]);
     const { simpleAlert = null } = useNotification();
+    const isRedeemingRef = useRef<boolean>(false);
+    const pendingCancelsRef = useRef<Set<number>>(new Set());
 
     useMessageEvent<MarketplaceOwnOffersEvent>(MarketplaceOwnOffersEvent, event =>
     {
@@ -54,6 +56,10 @@ export const CatalogLayoutMarketplaceOwnItemsView: FC<CatalogLayoutProps> = prop
 
     const redeemSoldOffers = useCallback(() =>
     {
+        if(isRedeemingRef.current) return;
+
+        isRedeemingRef.current = true;
+
         setOffers(prevValue =>
         {
             const idsToDelete = soldOffers.map(value => value.offerId);
@@ -62,11 +68,19 @@ export const CatalogLayoutMarketplaceOwnItemsView: FC<CatalogLayoutProps> = prop
         });
 
         SendMessageComposer(new RedeemMarketplaceOfferCreditsMessageComposer());
+
+        setTimeout(() => isRedeemingRef.current = false, 3000);
     }, [ soldOffers ]);
 
     const takeItemBack = (offerData: MarketplaceOfferData) =>
     {
+        if(pendingCancelsRef.current.has(offerData.offerId)) return;
+
+        pendingCancelsRef.current.add(offerData.offerId);
+
         SendMessageComposer(new CancelMarketplaceOfferMessageComposer(offerData.offerId));
+
+        setTimeout(() => pendingCancelsRef.current.delete(offerData.offerId), 2000);
     };
 
     useEffect(() =>

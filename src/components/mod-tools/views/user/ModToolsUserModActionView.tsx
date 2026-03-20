@@ -1,5 +1,5 @@
 import { CallForHelpTopicData, DefaultSanctionMessageComposer, ModAlertMessageComposer, ModBanMessageComposer, ModKickMessageComposer, ModMessageMessageComposer, ModMuteMessageComposer, ModTradingLockMessageComposer } from '@nitrots/nitro-renderer';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo, useRef, useState } from 'react';
 import { ISelectedUser, LocalizeText, ModActionDefinition, NotificationAlertType, SendMessageComposer } from '../../../../api';
 import { Button, DraggableWindowPosition, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useModTools, useNotification } from '../../../../hooks';
@@ -33,6 +33,7 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
     const [ message, setMessage ] = useState<string>('');
     const { cfhCategories = null, settings = null } = useModTools();
     const { simpleAlert = null } = useNotification();
+    const isSendingRef = useRef<boolean>(false);
 
     const topics = useMemo(() =>
     {
@@ -53,6 +54,8 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
 
     const sendDefaultSanction = () =>
     {
+        if(isSendingRef.current) return;
+
         let errorMessage: string = null;
 
         const category = topics[selectedTopic];
@@ -63,6 +66,8 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
 
         const messageOrDefault = (message.trim().length === 0) ? LocalizeText(`help.cfh.topic.${ category.id }`) : message;
 
+        isSendingRef.current = true;
+
         SendMessageComposer(new DefaultSanctionMessageComposer(user.userId, selectedTopic, messageOrDefault));
 
         onCloseClick();
@@ -70,6 +75,8 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
 
     const sendSanction = () =>
     {
+        if(isSendingRef.current) return;
+
         let errorMessage: string = null;
 
         const category = topics[selectedTopic];
@@ -144,6 +151,8 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
                 break;
             }
         }
+
+        isSendingRef.current = true;
 
         onCloseClick();
     };

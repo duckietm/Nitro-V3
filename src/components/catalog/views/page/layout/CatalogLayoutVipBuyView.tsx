@@ -1,5 +1,5 @@
 import { ClubOfferData, GetClubOffersMessageComposer, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CatalogPurchaseState, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { AutoGrid, Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogPurchaseFailureEvent, CatalogPurchasedEvent } from '../../../../../events';
@@ -13,15 +13,18 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
     const { currentPage = null, catalogOptions = null } = useCatalog();
     const { purse = null, getCurrencyAmount = null } = usePurse();
     const { clubOffers = null } = catalogOptions;
+    const isPurchasingRef = useRef<boolean>(false);
 
     const onCatalogEvent = useCallback((event: CatalogEvent) =>
     {
         switch(event.type)
         {
             case CatalogPurchasedEvent.PURCHASE_SUCCESS:
+                isPurchasingRef.current = false;
                 setPurchaseState(CatalogPurchaseState.NONE);
                 return;
             case CatalogPurchaseFailureEvent.PURCHASE_FAILED:
+                isPurchasingRef.current = false;
                 setPurchaseState(CatalogPurchaseState.FAILED);
                 return;
         }
@@ -83,8 +86,9 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
 
     const purchaseSubscription = useCallback(() =>
     {
-        if(!pendingOffer) return;
+        if(!pendingOffer || isPurchasingRef.current) return;
 
+        isPurchasingRef.current = true;
         setPurchaseState(CatalogPurchaseState.PURCHASE);
         SendMessageComposer(new PurchaseFromCatalogComposer(currentPage.pageId, pendingOffer.offerId, null, 1));
     }, [ pendingOffer, currentPage ]);

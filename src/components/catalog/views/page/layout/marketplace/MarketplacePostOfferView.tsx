@@ -6,6 +6,8 @@ import { CatalogPostMarketplaceOfferEvent } from '../../../../../../events';
 import { useCatalog, useMessageEvent, useNotification, useUiEvent } from '../../../../../../hooks';
 import { NitroInput } from '../../../../../../layout';
 
+let isPostingMarketplaceOffer = false;
+
 export const MarketplacePostOfferView: FC<{}> = props =>
 {
     const [ item, setItem ] = useState<FurnitureItem>(null);
@@ -65,10 +67,15 @@ export const MarketplacePostOfferView: FC<{}> = props =>
 
     const postItem = () =>
     {
-        if(!item || (askingPrice < marketplaceConfiguration.minimumPrice)) return;
+        if(!item || (askingPrice < marketplaceConfiguration.minimumPrice) || isPostingMarketplaceOffer) return;
 
         showConfirm(LocalizeText('inventory.marketplace.confirm_offer.info', [ 'furniname', 'price' ], [ getFurniTitle, askingPrice.toString() ]), () =>
         {
+            if(isPostingMarketplaceOffer) return;
+
+            isPostingMarketplaceOffer = true;
+            setTimeout(() => isPostingMarketplaceOffer = false, 5000);
+
             SendMessageComposer(new MakeOfferMessageComposer(askingPrice, item.isWallItem ? 2 : 1, item.id));
             setItem(null);
         },

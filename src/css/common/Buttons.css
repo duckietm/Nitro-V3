@@ -24,8 +24,8 @@ input[type=number] {
 
 .btn-primary {
   color: #fff;
-  background-color: var(--ui-btn-primary-bg, #3c6d82);
-  border: 2px solid var(--ui-btn-primary-border, #1a617f);
+  background-color: #3c6d82;
+  border: 2px solid #1a617f;
   padding: 0.25rem 0.5rem;
   font-size: .7875rem;
   border-radius: 0.5rem;
@@ -33,7 +33,7 @@ input[type=number] {
 }
 
 .btn-primary:hover {
-  border: 2px solid var(--ui-btn-primary-border, #1a617f);
+  border: 2px solid #1a617f;
   box-shadow: none!important;
 }
 
@@ -81,16 +81,16 @@ input[type=number] {
 
 .btn-dark {
   color: #fff;
-  background-color: var(--ui-dark-bg, #212131);
-  border: 2px solid var(--ui-dark-border, #1c1c2a);
+  background-color: #212131;
+  border: 2px solid #1c1c2a;
   box-shadow: none!important;
   border-radius: 8px;
   padding: 4px 11px 4px 11px;
 }
 
 .btn-dark:hover{
-  background-color: var(--ui-dark-bg, #212131);
-  border: 2px solid var(--ui-dark-border, #1c1c2a);
+  background-color: #212131;
+  border: 2px solid #1c1c2a;
   box-shadow: none!important;
   border-radius: 8px;
   padding: 4px 11px 4px 11px;

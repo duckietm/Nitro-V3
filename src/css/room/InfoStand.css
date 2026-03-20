@@ -27,7 +27,7 @@
   width: clamp(160px, 20vw, 190px); /* Responsive width */
   z-index: 30;
   pointer-events: auto;
-  background: var(--ui-dark-bg, #212131);
+  background: #212131;
   box-shadow: inset 0 5px rgba(38, 38, 57, 0.6), inset 0 -4px rgba(25, 25, 37, 0.6);
   border-radius: 0.5rem;
   padding: 10px;

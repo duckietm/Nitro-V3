@@ -60,7 +60,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
     return (
         <DraggableWindow uniqueKey="nitro-camera-capture">
             <Column center className="relative" gap={ 0 }>
-                { selectedPicture && <img alt="" className="absolute top-[37px] left-[10px] w-[320px] h-[320px]" src={ selectedPicture.imageUrl } /> }
+                { selectedPicture && <img alt="" className="absolute top-[37px] left-[10px] w-[325px] h-[325px]" src={ selectedPicture.imageUrl } /> }
                 <div className="relative w-[340px] h-[462px] bg-[url('@/assets/images/room-widgets/camera-widget/camera-spritesheet.png')] bg-position-[-1px_-1px] drag-handler">
                     <div className="absolute top-[8px] right-[8px] rounded-[.25rem] [box-shadow:0_0_0_1.5px_#fff] border-2 border-[solid] border-[#921911] bg-[repeating-linear-gradient(rgb(245,80,65),rgb(245,80,65)_50%,rgb(194,48,39)_50%,rgb(194,48,39)_100%)] cursor-pointer leading-none px-[3px] py-px" onClick={ onClose }>
                         <FaTimes className="fa-icon" />

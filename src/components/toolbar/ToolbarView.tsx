@@ -69,38 +69,38 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 					<ToolbarMeView setMeExpanded={ setMeExpanded } unseenAchievementCount={ getTotalUnseen } useGuideTool={ useGuideTool } />
 				</motion.div> )}
 			</AnimatePresence>
-            <Flex alignItems="center" className="absolute bottom-0 left-0 w-full h-[55px] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] py-1 px-3" gap={ 2 } style={ { backgroundColor: 'var(--ui-dark-bg, rgba(28,28,32,.95))' } }>
-                <Flex alignItems="center" gap={ 2 } className="flex-shrink-0">
-                    <Flex center pointer className={ 'relative w-[50px] h-[45px] overflow-hidden ' + (isMeExpanded ? 'active ' : '') } onClick={ event =>
-                    {
-                        setMeExpanded(!isMeExpanded);
-                        event.stopPropagation();
-                    } }>
-                        <LayoutAvatarImageView className="-ml-[5px] mt-[25px]" direction={ 2 } figure={ userFigure } position="absolute" />
-                        { (getTotalUnseen > 0) &&
-                            <LayoutItemCountView count={ getTotalUnseen } /> }
+            <Flex alignItems="center" className="absolute bottom-0 left-0 w-full h-[55px] bg-[rgba(28,28,32,.95)] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] py-1 px-3" gap={ 2 } justifyContent="between">
+                <Flex alignItems="center" gap={ 2 }>
+                    <Flex alignItems="center" gap={ 2 }>
+                        <Flex center pointer className={ 'relative w-[50px] h-[45px] overflow-hidden ' + (isMeExpanded ? 'active ' : '') } onClick={ event =>
+                        {
+                            setMeExpanded(!isMeExpanded);
+                            event.stopPropagation();
+                        } }>
+                            <LayoutAvatarImageView className="-ml-[5px] mt-[25px]" direction={ 2 } figure={ userFigure } position="absolute" />
+                            { (getTotalUnseen > 0) &&
+                                <LayoutItemCountView count={ getTotalUnseen } /> }
+                        </Flex>
+                        { isInRoom &&
+                            <ToolbarItemView icon="habbo" onClick={ event => VisitDesktop() } /> }
+                        { !isInRoom &&
+                            <ToolbarItemView icon="house" onClick={ event => CreateLinkEvent('navigator/goto/home') } /> }
+                        <ToolbarItemView icon="rooms" onClick={ event => CreateLinkEvent('navigator/toggle') } />
+                        { GetConfigurationValue('game.center.enabled') &&
+                            <ToolbarItemView icon="game" onClick={ event => CreateLinkEvent('games/toggle') } /> }
+                        <ToolbarItemView icon="catalog" onClick={ event => CreateLinkEvent('catalog/toggle') } />
+                        <ToolbarItemView icon="inventory" onClick={ event => CreateLinkEvent('inventory/toggle') }>
+                            { (getFullCount > 0) &&
+                                <LayoutItemCountView count={ getFullCount } /> }
+                        </ToolbarItemView>
+                        { isInRoom &&
+                            <ToolbarItemView icon="camera" onClick={ event => CreateLinkEvent('camera/toggle') } /> }
+                        { isMod &&
+                            <ToolbarItemView icon="modtools" onClick={ event => CreateLinkEvent('mod-tools/toggle') } /> }
                     </Flex>
-                    { isInRoom &&
-                        <ToolbarItemView icon="habbo" onClick={ event => VisitDesktop() } /> }
-                    { !isInRoom &&
-                        <ToolbarItemView icon="house" onClick={ event => CreateLinkEvent('navigator/goto/home') } /> }
-                    <ToolbarItemView icon="rooms" onClick={ event => CreateLinkEvent('navigator/toggle') } />
-                    { GetConfigurationValue('game.center.enabled') &&
-                        <ToolbarItemView icon="game" onClick={ event => CreateLinkEvent('games/toggle') } /> }
-                    <ToolbarItemView icon="catalog" onClick={ event => CreateLinkEvent('catalog/toggle') } />
-                    <ToolbarItemView icon="inventory" onClick={ event => CreateLinkEvent('inventory/toggle') }>
-                        { (getFullCount > 0) &&
-                            <LayoutItemCountView count={ getFullCount } /> }
-                    </ToolbarItemView>
-                    { isInRoom &&
-                        <ToolbarItemView icon="camera" onClick={ event => CreateLinkEvent('camera/toggle') } /> }
-                    { isMod &&
-                        <ToolbarItemView icon="modtools" onClick={ event => CreateLinkEvent('mod-tools/toggle') } /> }
-                    { isMod &&
-                        <ToolbarItemView icon="catalog" onClick={ event => CreateLinkEvent('furni-editor/toggle') } /> }
+                    <Flex alignItems="center" id="toolbar-chat-input-container" />
                 </Flex>
-                <Flex alignItems="center" justifyContent="center" className="flex-1 min-w-0 max-w-[600px] mx-auto" id="toolbar-chat-input-container" />
-                <Flex alignItems="center" gap={ 2 } className="flex-shrink-0">
+                <Flex alignItems="center" gap={ 2 }>
                     <Flex gap={ 2 }>
                         <ToolbarItemView icon="friendall" onClick={ event => CreateLinkEvent('friends/toggle') }>
                             { (requests.length > 0) &&

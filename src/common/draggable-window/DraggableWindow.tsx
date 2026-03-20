@@ -8,6 +8,7 @@ const CURRENT_WINDOWS: HTMLElement[] = [];
 const POS_MEMORY: Map<Key, { x: number, y: number }> = new Map();
 const BOUNDS_THRESHOLD_TOP: number = 0;
 const BOUNDS_THRESHOLD_LEFT: number = 0;
+const DRAG_OUTSIDE_PERCENT: number = 0.80;
 
 export interface DraggableWindowProps {
     uniqueKey?: Key;
@@ -80,8 +81,11 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        const clampedX = Math.max(BOUNDS_THRESHOLD_LEFT, Math.min(newX, viewportWidth - windowWidth));
-        const clampedY = Math.max(BOUNDS_THRESHOLD_TOP, Math.min(newY, viewportHeight - windowHeight));
+        const maxOutX = windowWidth * DRAG_OUTSIDE_PERCENT;
+        const maxOutY = windowHeight * DRAG_OUTSIDE_PERCENT;
+
+        const clampedX = Math.max(-maxOutX, Math.min(newX, viewportWidth - windowWidth + maxOutX));
+        const clampedY = Math.max(-maxOutY, Math.min(newY, viewportHeight - windowHeight + maxOutY));
 
         return { x: clampedX, y: clampedY };
     }, []);

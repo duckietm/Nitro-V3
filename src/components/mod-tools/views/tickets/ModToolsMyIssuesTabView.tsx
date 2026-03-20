@@ -1,5 +1,5 @@
 import { IssueMessageData, ReleaseIssuesMessageComposer } from '@nitrots/nitro-renderer';
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import { SendMessageComposer } from '../../../../api';
 import { Button, Column, Grid } from '../../../../common';
 
@@ -12,6 +12,17 @@ interface ModToolsMyIssuesTabViewProps
 export const ModToolsMyIssuesTabView: FC<ModToolsMyIssuesTabViewProps> = props =>
 {
     const { myIssues = null, handleIssue = null } = props;
+    const pendingReleasesRef = useRef<Set<number>>(new Set());
+
+    const releaseIssue = (issueId: number) =>
+    {
+        if(pendingReleasesRef.current.has(issueId)) return;
+
+        pendingReleasesRef.current.add(issueId);
+        SendMessageComposer(new ReleaseIssuesMessageComposer([ issueId ]));
+
+        setTimeout(() => pendingReleasesRef.current.delete(issueId), 2000);
+    };
 
     return (
         <Column gap={ 0 } overflow="hidden">
@@ -36,7 +47,7 @@ export const ModToolsMyIssuesTabView: FC<ModToolsMyIssuesTabViewProps> = props =
                                 <Button variant="primary" onClick={ event => handleIssue(issue.issueId) }>Handle</Button>
                             </div>
                             <div className="col-span-2">
-                                <Button variant="danger" onClick={ event => SendMessageComposer(new ReleaseIssuesMessageComposer([ issue.issueId ])) }>Release</Button>
+                                <Button variant="danger" onClick={ () => releaseIssue(issue.issueId) }>Release</Button>
                             </div>
                         </Grid>
                     );

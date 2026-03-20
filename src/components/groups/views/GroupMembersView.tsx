@@ -1,5 +1,5 @@
 import { AddLinkEventTracker, GetSessionDataManager, GroupAdminGiveComposer, GroupAdminTakeComposer, GroupConfirmMemberRemoveEvent, GroupConfirmRemoveMemberComposer, GroupMemberParser, GroupMembersComposer, GroupMembersEvent, GroupMembershipAcceptComposer, GroupMembershipDeclineComposer, GroupMembersParser, GroupRank, GroupRemoveMemberComposer, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { GetUserProfile, LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Column, Flex, Grid, LayoutAvatarImageView, LayoutBadgeImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../common';
@@ -16,6 +16,7 @@ export const GroupMembersView: FC<{}> = props =>
     const [ searchQuery, setSearchQuery ] = useState<string>('');
     const [ removingMemberName, setRemovingMemberName ] = useState<string>(null);
     const { showConfirm = null } = useNotification();
+    const pendingActionsRef = useRef<Set<string>>(new Set());
 
     const getRankDescription = (member: GroupMemberParser) =>
     {
@@ -42,6 +43,11 @@ export const GroupMembersView: FC<{}> = props =>
     {
         if(!membersData.admin || (member.rank === GroupRank.OWNER)) return;
 
+        const key = `admin_${member.id}`;
+        if(pendingActionsRef.current.has(key)) return;
+        pendingActionsRef.current.add(key);
+        setTimeout(() => pendingActionsRef.current.delete(key), 2000);
+
         if(member.rank !== GroupRank.ADMIN) SendMessageComposer(new GroupAdminGiveComposer(membersData.groupId, member.id));
         else SendMessageComposer(new GroupAdminTakeComposer(membersData.groupId, member.id));
 
@@ -52,6 +58,11 @@ export const GroupMembersView: FC<{}> = props =>
     {
         if(!membersData.admin || (member.rank !== GroupRank.REQUESTED)) return;
 
+        const key = `accept_${member.id}`;
+        if(pendingActionsRef.current.has(key)) return;
+        pendingActionsRef.current.add(key);
+        setTimeout(() => pendingActionsRef.current.delete(key), 2000);
+
         SendMessageComposer(new GroupMembershipAcceptComposer(membersData.groupId, member.id));
 
         refreshMembers();
@@ -60,6 +71,11 @@ export const GroupMembersView: FC<{}> = props =>
     const removeMemberOrDeclineMembership = (member: GroupMemberParser) =>
     {
         if(!membersData.admin) return;
+
+        const key = `remove_${member.id}`;
+        if(pendingActionsRef.current.has(key)) return;
+        pendingActionsRef.current.add(key);
+        setTimeout(() => pendingActionsRef.current.delete(key), 2000);
 
         if(member.rank === GroupRank.REQUESTED)
         {

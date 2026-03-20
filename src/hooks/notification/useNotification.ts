@@ -1,4 +1,4 @@
-import { AchievementNotificationMessageEvent, ActivityPointNotificationMessageEvent, ClubGiftNotificationEvent, ClubGiftSelectedEvent, ConnectionErrorEvent, GetLocalizationManager, GetRoomEngine, GetSessionDataManager, HabboBroadcastMessageEvent, HotelClosedAndOpensEvent, HotelClosesAndWillOpenAtEvent, HotelWillCloseInMinutesEvent, InfoFeedEnableMessageEvent, MaintenanceStatusMessageEvent, ModeratorCautionEvent, ModeratorMessageEvent, MOTDNotificationEvent, NotificationDialogMessageEvent, PetLevelNotificationEvent, PetReceivedMessageEvent, RespectReceivedEvent, RoomEnterEffect, RoomEnterEvent, SimpleAlertMessageEvent, UserBannedMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
+import { AchievementNotificationMessageEvent, ActivityPointNotificationMessageEvent, ClubGiftNotificationEvent, ClubGiftSelectedEvent, ConnectionErrorEvent, GetLocalizationManager, GetRoomEngine, GetSessionDataManager, HabboBroadcastMessageEvent, HotelClosedAndOpensEvent, HotelClosesAndWillOpenAtEvent, HotelWillCloseInMinutesEvent, InfoFeedEnableMessageEvent, MaintenanceStatusMessageEvent, ModeratorCautionEvent, ModeratorMessageEvent, MOTDNotificationEvent, NotificationDialogMessageEvent, PetLevelNotificationEvent, PetReceivedMessageEvent, RespectReceivedEvent, RoomEnterEffect, RoomEnterEvent, SimpleAlertMessageEvent, UserBannedMessageEvent, Vector3d, WiredRewardResultMessageEvent } from '@nitrots/nitro-renderer';
 import { useCallback, useState } from 'react';
 import { useBetween } from 'use-between';
 import { GetConfigurationValue, LocalizeBadgeName, LocalizeText, NotificationAlertItem, NotificationAlertType, NotificationBubbleItem, NotificationBubbleType, NotificationConfirmItem, PlaySound, ProductImageUtility, TradingNotificationType } from '../../api';
@@ -395,6 +395,28 @@ const useNotificationState = () =>
         const parser = event.getParser();
 
         simpleAlert(LocalizeText(parser.alertMessage), NotificationAlertType.DEFAULT, null, null, LocalizeText(parser.titleMessage ? parser.titleMessage : 'notifications.broadcast.title'));
+    });
+
+    useMessageEvent<WiredRewardResultMessageEvent>(WiredRewardResultMessageEvent, event =>
+    {
+        const parser = event.getParser();
+
+        switch(parser.reason)
+        {
+            case WiredRewardResultMessageEvent.PRODUCT_DONATED_CODE:
+            case WiredRewardResultMessageEvent.BADGE_DONATED_CODE:
+                simpleAlert(LocalizeText('wiredfurni.rewardsuccess.body'), NotificationAlertType.DEFAULT, null, null, LocalizeText('wiredfurni.rewardsuccess.title'));
+                return;
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 8:
+                simpleAlert(LocalizeText(`wiredfurni.rewardfailed.reason.${ parser.reason }`), NotificationAlertType.DEFAULT, null, null, LocalizeText('wiredfurni.rewardfailed.title'));
+                return;
+        }
     });
 
     const onRoomEnterEvent = useCallback(() =>

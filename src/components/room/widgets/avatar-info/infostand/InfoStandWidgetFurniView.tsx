@@ -220,8 +220,8 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
                 canUse = true;
                 isCrackable = true;
-                crackableHits = stuffData?.hits ?? 0;
-                crackableTarget = stuffData?.target ?? 0;
+                crackableHits = stuffData.hits;
+                crackableTarget = stuffData.target;
             }
 
             else if(avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX)
@@ -458,7 +458,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
     return (
         <Column alignItems="end" gap={ 1 }>
-            <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded" style={ { backgroundColor: 'var(--ui-dark-bg, rgba(28,28,32,.95))' } }>
+            <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,28,32,.95)] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded">
                 <Column className="h-full p-[8px] overflow-auto" gap={ 1 } overflow="visible">
                     <div className="flex flex-col gap-1">
                         <Flex alignItems="center" gap={ 1 } justifyContent="between">
@@ -527,7 +527,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                         { isCrackable &&
                             <>
                                 <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
-                                <Text small wrap variant="white">{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ (crackableHits ?? 0).toString(), (crackableTarget ?? 0).toString() ]) }</Text>
+                                <Text small wrap variant="white">{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ crackableHits.toString(), crackableTarget.toString() ]) }</Text>
                             </> }
                         { avatarInfo.groupId > 0 &&
                             <>
@@ -552,40 +552,13 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                         { godMode &&
                             <>
                                 <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
-                                { canSeeFurniId &&
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-[#7ec8e3]">
-                                                <path fillRule="evenodd" d="M4.93 1.31a41.401 41.401 0 0 1 10.14 0C16.194 1.45 17 2.414 17 3.517V18.25a.75.75 0 0 1-1.075.676l-2.8-1.344-2.8 1.344a.75.75 0 0 1-.65 0l-2.8-1.344-2.8 1.344A.75.75 0 0 1 3 18.25V3.517c0-1.103.806-2.068 1.93-2.207Z" clipRule="evenodd" />
-                                            </svg>
-                                            <Text small wrap variant="white">ID: { avatarInfo.id }</Text>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-[#7ec8e3]">
-                                                <path d="M5.127 3.502 5.25 3.5h9.5c.041 0 .082 0 .123.002A2.251 2.251 0 0 0 12.75 2h-5.5a2.25 2.25 0 0 0-2.123 1.502ZM1 10.25A2.25 2.25 0 0 1 3.25 8h13.5A2.25 2.25 0 0 1 19 10.25v5.5A2.25 2.25 0 0 1 16.75 18H3.25A2.25 2.25 0 0 1 1 15.75v-5.5ZM3.25 6.5c-.04 0-.082 0-.123.002A2.25 2.25 0 0 1 5.25 5h9.5c.98 0 1.814.627 2.123 1.502a3.819 3.819 0 0 0-.123-.002H3.25Z" />
-                                            </svg>
-                                            <Text small wrap variant="white">Sprite: { (() => { const ro = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR); return ro?.model?.getValue(RoomObjectVariable.FURNITURE_TYPE_ID) ?? '?'; })() }</Text>
-                                        </div>
-                                    </div> }
+                                { canSeeFurniId && <Text small wrap variant="white">ID: { avatarInfo.id }</Text> }
                                 { (!avatarInfo.isWallItem && canMove) &&
                                     <>
                                         <button
                                             className="w-full text-white text-xs bg-[#2a2a3a] hover:bg-[#3a3a4a] border border-[#ffffff33] rounded px-2 py-1 cursor-pointer transition-colors"
                                             onClick={ () => setDropdownOpen(!dropdownOpen) }>
                                             { dropdownOpen ? `${LocalizeText('widget.furni.present.close')} Buildtools` : `${LocalizeText('navigator.roomsettings.doormode.open')} Buildtools` }
-                                        </button>
-                                        <button
-                                            className="w-full text-white text-xs bg-[#1e7295] hover:bg-[#1a617f] border border-[#ffffff33] rounded px-2 py-1 cursor-pointer transition-colors"
-                                            onClick={ () =>
-                                            {
-                                                const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR);
-                                                const typeId = roomObject?.model?.getValue(RoomObjectVariable.FURNITURE_TYPE_ID);
-
-                                                CreateLinkEvent('furni-editor/show');
-
-                                                if(typeId) window.dispatchEvent(new CustomEvent('furni-editor:open', { detail: { spriteId: typeId } }));
-                                            } }>
-                                            Edit Furni
                                         </button>
                                         { dropdownOpen &&
                                             <div className="flex gap-[4px] w-full">

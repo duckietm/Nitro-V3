@@ -45,8 +45,7 @@ const BadgeMiniPicker: FC<{
     return (
         <div
             ref={ ref }
-            className="absolute right-[calc(100%+8px)] top-0 z-50 border border-white/20 rounded-md p-2 shadow-lg min-w-[160px]"
-            style={ { backgroundColor: 'var(--ui-dark-bg, rgba(28,28,32,0.97))' } }
+            className="absolute right-[calc(100%+8px)] top-0 z-50 bg-[rgba(28,28,32,0.97)] border border-white/20 rounded-md p-2 shadow-lg min-w-[160px]"
             onClick={ e => e.stopPropagation() }>
             <input
                 autoFocus

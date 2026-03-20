@@ -16,45 +16,66 @@ export const USER_SOURCES = [
     { value: 201, label: 'wiredfurni.params.sources.users.201' }
 ];
 
+export interface WiredSourceOption
+{
+    value: number;
+    label: string;
+}
+
 interface WiredSourcesSelectorProps
 {
     showFurni?: boolean;
     showUsers?: boolean;
     furniSource?: number;
     userSource?: number;
+    furniTitle?: string;
+    usersTitle?: string;
+    furniSources?: WiredSourceOption[];
+    userSources?: WiredSourceOption[];
     onChangeFurni?: (source: number) => void;
     onChangeUsers?: (source: number) => void;
 }
 
 export const WiredSourcesSelector: FC<WiredSourcesSelectorProps> = props =>
 {
-    const { showFurni = false, showUsers = false, furniSource = 0, userSource = 0, onChangeFurni = null, onChangeUsers = null } = props;
+    const {
+        showFurni = false,
+        showUsers = false,
+        furniSource = 0,
+        userSource = 0,
+        furniTitle = 'wiredfurni.params.sources.furni.title',
+        usersTitle = 'wiredfurni.params.sources.users.title',
+        furniSources = FURNI_SOURCES,
+        userSources = USER_SOURCES,
+        onChangeFurni = null,
+        onChangeUsers = null
+    } = props;
 
-    const furniIndex = Math.max(0, FURNI_SOURCES.findIndex(s => s.value === furniSource));
-    const userIndex = Math.max(0, USER_SOURCES.findIndex(s => s.value === userSource));
+    const furniIndex = Math.max(0, furniSources.findIndex(s => s.value === furniSource));
+    const userIndex = Math.max(0, userSources.findIndex(s => s.value === userSource));
 
     const prevFurni = () =>
     {
-        const next = (furniIndex - 1 + FURNI_SOURCES.length) % FURNI_SOURCES.length;
-        onChangeFurni && onChangeFurni(FURNI_SOURCES[next].value);
+        const next = (furniIndex - 1 + furniSources.length) % furniSources.length;
+        onChangeFurni && onChangeFurni(furniSources[next].value);
     };
 
     const nextFurni = () =>
     {
-        const next = (furniIndex + 1) % FURNI_SOURCES.length;
-        onChangeFurni && onChangeFurni(FURNI_SOURCES[next].value);
+        const next = (furniIndex + 1) % furniSources.length;
+        onChangeFurni && onChangeFurni(furniSources[next].value);
     };
 
     const prevUsers = () =>
     {
-        const next = (userIndex - 1 + USER_SOURCES.length) % USER_SOURCES.length;
-        onChangeUsers && onChangeUsers(USER_SOURCES[next].value);
+        const next = (userIndex - 1 + userSources.length) % userSources.length;
+        onChangeUsers && onChangeUsers(userSources[next].value);
     };
 
     const nextUsers = () =>
     {
-        const next = (userIndex + 1) % USER_SOURCES.length;
-        onChangeUsers && onChangeUsers(USER_SOURCES[next].value);
+        const next = (userIndex + 1) % userSources.length;
+        onChangeUsers && onChangeUsers(userSources[next].value);
     };
 
     if(!showFurni && !showUsers) return null;
@@ -63,11 +84,11 @@ export const WiredSourcesSelector: FC<WiredSourcesSelectorProps> = props =>
         <div className="flex flex-col gap-2">
             { showFurni &&
                 <>
-                    <Text bold>{ LocalizeText('wiredfurni.params.sources.furni.title') }</Text>
+                    <Text bold>{ LocalizeText(furniTitle) }</Text>
                     <div className="flex items-center gap-2">
                         <Button variant="primary" className="px-2 py-1" onClick={ prevFurni }><FaChevronLeft /></Button>
                         <div className="flex flex-1 items-center justify-center">
-                            <Text small>{ LocalizeText(FURNI_SOURCES[furniIndex].label) }</Text>
+                            <Text small>{ LocalizeText(furniSources[furniIndex].label) }</Text>
                         </div>
                         <Button variant="primary" className="px-2 py-1" onClick={ nextFurni }><FaChevronRight /></Button>
                     </div>
@@ -77,11 +98,11 @@ export const WiredSourcesSelector: FC<WiredSourcesSelectorProps> = props =>
 
             { showUsers &&
                 <>
-                    <Text bold>{ LocalizeText('wiredfurni.params.sources.users.title') }</Text>
+                    <Text bold>{ LocalizeText(usersTitle) }</Text>
                     <div className="flex items-center gap-2">
                         <Button variant="primary" className="px-2 py-1" onClick={ prevUsers }><FaChevronLeft /></Button>
                         <div className="flex flex-1 items-center justify-center">
-                            <Text small>{ LocalizeText(USER_SOURCES[userIndex].label) }</Text>
+                            <Text small>{ LocalizeText(userSources[userIndex].label) }</Text>
                         </div>
                         <Button variant="primary" className="px-2 py-1" onClick={ nextUsers }><FaChevronRight /></Button>
                     </div>
@@ -89,4 +110,3 @@ export const WiredSourcesSelector: FC<WiredSourcesSelectorProps> = props =>
         </div>
     );
 };
-

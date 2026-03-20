@@ -1,5 +1,5 @@
 import { BuyMarketplaceOfferMessageComposer, GetMarketplaceOffersMessageComposer, MarketplaceBuyOfferResultEvent, MarketPlaceOffersEvent } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { IMarketplaceSearchOptions, LocalizeText, MarketplaceOfferData, MarketplaceSearchType, NotificationAlertType, SendMessageComposer } from '../../../../../../api';
 import { Button, Column, Text } from '../../../../../../common';
 import { useMessageEvent, useNotification, usePurse } from '../../../../../../hooks';
@@ -23,6 +23,7 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
     const [ lastSearch, setLastSearch ] = useState<IMarketplaceSearchOptions>({ minPrice: -1, maxPrice: -1, query: '', type: 3 });
     const { getCurrencyAmount = null } = usePurse();
     const { simpleAlert = null, showConfirm = null } = useNotification();
+    const isBuyingRef = useRef<boolean>(false);
 
     const requestOffers = useCallback((options: IMarketplaceSearchOptions) =>
     {
@@ -56,6 +57,9 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
 
         showConfirm(LocalizeText('catalog.marketplace.confirm_header'), () =>
         {
+            if(isBuyingRef.current) return;
+
+            isBuyingRef.current = true;
             SendMessageComposer(new BuyMarketplaceOfferMessageComposer(offerId));
         },
         null, null, null, LocalizeText('catalog.marketplace.confirm_title'));
@@ -82,6 +86,8 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
     useMessageEvent<MarketplaceBuyOfferResultEvent>(MarketplaceBuyOfferResultEvent, event =>
     {
         const parser = event.getParser();
+
+        isBuyingRef.current = false;
 
         if(!parser) return;
 

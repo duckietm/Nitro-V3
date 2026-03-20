@@ -67,11 +67,20 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
         {
             if(event.badgeId !== badgeCode) return;
 
-            const element = await TextureUtils.generateImage(new NitroSprite(event.image));
-			
-			console.log ('boe');
+            if(isGroup)
+            {
+                const element = await TextureUtils.generateImage(new NitroSprite(event.image));
 
-            element.onload = () => setImageElement(element);
+                element.onload = () => setImageElement(element);
+            }
+            else
+            {
+                const badgeUrl = GetConfigurationValue<string>('badge.asset.url').replace('%badgename%', badgeCode.toString());
+                const img = new Image();
+
+                img.onload = () => setImageElement(img);
+                img.src = badgeUrl;
+            }
 
             didSetBadge = true;
 
@@ -84,13 +93,23 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
 
         if(texture && !didSetBadge)
         {
-            (async () =>
+            if(isGroup)
             {
-                const element = await TextureUtils.generateImage(new NitroSprite(texture));
-				
+                (async () =>
+                {
+                    const element = await TextureUtils.generateImage(new NitroSprite(texture));
 
-                element.onload = () => setImageElement(element);
-            })();
+                    element.onload = () => setImageElement(element);
+                })();
+            }
+            else
+            {
+                const badgeUrl = GetConfigurationValue<string>('badge.asset.url').replace('%badgename%', badgeCode.toString());
+                const img = new Image();
+
+                img.onload = () => setImageElement(img);
+                img.src = badgeUrl;
+            }
         }
 
         return () => GetEventDispatcher().removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);

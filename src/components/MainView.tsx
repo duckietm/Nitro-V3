@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, GetCommunication, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GetCommunication, GetRoomSessionManager, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
 import { useNitroEvent } from '../hooks';
@@ -9,7 +9,6 @@ import { CampaignView } from './campaign/CampaignView';
 import { CatalogView } from './catalog/CatalogView';
 import { ChatHistoryView } from './chat-history/ChatHistoryView';
 import { FloorplanEditorView } from './floorplan-editor/FloorplanEditorView';
-import { FurniEditorView } from './furni-editor/FurniEditorView';
 import { FriendsView } from './friends/FriendsView';
 import { GameCenterView } from './game-center/GameCenterView';
 import { GroupsView } from './groups/GroupsView';
@@ -22,14 +21,13 @@ import { ModToolsView } from './mod-tools/ModToolsView';
 import { NavigatorView } from './navigator/NavigatorView';
 import { NitrobubbleHiddenView } from './nitrobubblehidden/NitrobubbleHiddenView';
 import { NitropediaView } from './nitropedia/NitropediaView';
-import { ExternalPluginLoader } from './plugins/ExternalPluginLoader';
 import { RightSideView } from './right-side/RightSideView';
 import { RoomView } from './room/RoomView';
 import { ToolbarView } from './toolbar/ToolbarView';
 import { UserProfileView } from './user-profile/UserProfileView';
-import { InterfaceSettingsView } from './interface-settings/InterfaceSettingsView';
 import { UserSettingsView } from './user-settings/UserSettingsView';
 import { WiredView } from './wired/WiredView';
+import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
 import { YoutubeTvView } from './youtube-tv/YoutubeTvView';
 
 export const MainView: FC<{}> = props =>
@@ -43,6 +41,8 @@ export const MainView: FC<{}> = props =>
     useEffect(() =>
     {
         setIsReady(true);
+
+        GetRoomSessionManager().tryRestoreSession();
 
         GetCommunication().connection.ready();
     }, []);
@@ -88,7 +88,6 @@ export const MainView: FC<{}> = props =>
             <AnimatePresence>
                 { landingViewVisible &&
                     <motion.div
-                        className="w-full h-full"
                         initial={ { opacity: 0 }}
                         animate={ { opacity: 1 }}
                         exit={ { opacity: 0 }}>
@@ -97,6 +96,7 @@ export const MainView: FC<{}> = props =>
             </AnimatePresence>
             <ToolbarView isInRoom={ !landingViewVisible } />
             <ModToolsView />
+            <WiredCreatorToolsView />
             <RoomView />
             <ChatHistoryView />
             <WiredView />
@@ -109,7 +109,6 @@ export const MainView: FC<{}> = props =>
             <FriendsView />
             <RightSideView />
             <UserSettingsView />
-            <InterfaceSettingsView />
             <UserProfileView />
             <GroupsView />
             <CameraWidgetView />
@@ -120,9 +119,7 @@ export const MainView: FC<{}> = props =>
             <CampaignView />
             <GameCenterView />
             <FloorplanEditorView />
-            <FurniEditorView />
             <YoutubeTvView />
-            <ExternalPluginLoader />
         </>
     );
 };

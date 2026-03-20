@@ -22,7 +22,7 @@
 			pointer-events: all;
         }
         .borderhccontent{
-            background-color: var(--ui-dark-bg, #212131);
+            background-color: #212131;
             border-radius: 0.5rem!important;
             border: 2px solid #383853;
             height: calc(100% - 3px);
@@ -46,7 +46,7 @@
     }
 
     .nitro-purse-seasonal-currency {
-        background-color: var(--ui-dark-bg, #212131);
+        background-color: #212131;
 		background: linear-gradient(to right, #5f5f8d, transparent);
 		height: 30px;
         margin-bottom: 4px;

@@ -1,5 +1,5 @@
 import { FlatControllerAddedEvent, FlatControllerRemovedEvent, FlatControllersEvent, RemoveAllRightsMessageComposer, RoomGiveRightsComposer, RoomTakeRightsComposer, RoomUsersWithRightsComposer } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, Text, UserProfileIconView } from '../../../../common';
 import { useFriends, useMessageEvent } from '../../../../hooks';
@@ -18,6 +18,17 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
     const { roomData = null } = props;
     const [ usersWithRights, setUsersWithRights ] = useState<Map<number, string>>(new Map());
     const { onlineFriends = [], offlineFriends = [] } = useFriends();
+    const pendingActionsRef = useRef<Set<string>>(new Set());
+
+    const guardedSend = (key: string, composer: any) =>
+    {
+        if(pendingActionsRef.current.has(key)) return;
+
+        pendingActionsRef.current.add(key);
+        SendMessageComposer(composer);
+
+        setTimeout(() => pendingActionsRef.current.delete(key), 2000);
+    };
 
     const allFriendsRaw = [ ...onlineFriends, ...offlineFriends ];
 
@@ -115,7 +126,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                                     <Text
                                         pointer
                                         grow
-                                        onClick={ () => SendMessageComposer(new RoomTakeRightsComposer(id)) }>
+                                        onClick={ () => guardedSend(`take_${id}`, new RoomTakeRightsComposer(id)) }>
                                         { name }
                                     </Text>
                                 </Flex>
@@ -127,7 +138,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                 <Button
                     variant="danger"
                     disabled={ !filteredUsersWithRights.size }
-                    onClick={ () => roomData && SendMessageComposer(new RemoveAllRightsMessageComposer(roomData.roomId)) }>
+                    onClick={ () => roomData && guardedSend('removeAll', new RemoveAllRightsMessageComposer(roomData.roomId)) }>
                     { LocalizeText('navigator.flatctrls.clear') }
                 </Button>
             </Column>
@@ -154,7 +165,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                                     <Text
                                         pointer
                                         grow
-                                        onClick={ () => SendMessageComposer(new RoomGiveRightsComposer(friend.id)) }>
+                                        onClick={ () => guardedSend(`give_${friend.id}`, new RoomGiveRightsComposer(friend.id)) }>
                                         { friend.name }
                                     </Text>
                                 </Flex>

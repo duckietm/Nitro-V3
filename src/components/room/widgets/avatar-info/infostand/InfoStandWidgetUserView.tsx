@@ -1,4 +1,4 @@
-import { CreateLinkEvent, GetSessionDataManager, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomSessionFavoriteGroupUpdateEvent, RoomSessionUserBadgesEvent, RoomSessionUserFigureUpdateEvent, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomSessionFavoriteGroupUpdateEvent, RoomSessionUserBadgesEvent, RoomSessionUserFigureUpdateEvent, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, FocusEvent, KeyboardEvent, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { AvatarInfoUser, CloneObject, GetConfigurationValue, GetGroupInformation, GetUserProfile, LocalizeText, SendMessageComposer } from '../../../../../api';
@@ -7,6 +7,7 @@ import { useMessageEvent, useNitroEvent, useRoom } from '../../../../../hooks';
 import { InfoStandBadgeSlotView } from './InfoStandBadgeSlotView';
 import { InfoStandWidgetUserRelationshipsView } from './InfoStandWidgetUserRelationshipsView';
 import { InfoStandWidgetUserTagsView } from './InfoStandWidgetUserTagsView';
+import { BackgroundsView } from '../../../../backgrounds/BackgroundsView';
 
 interface InfoStandWidgetUserViewProps {
   avatarInfo: AvatarInfoUser;
@@ -31,7 +32,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
 
   const handleProfileClick = useCallback(() => { GetUserProfile(avatarInfo.webID); }, [avatarInfo.webID]);
 
-  const handleEditClick = useCallback((event: React.MouseEvent) => { event.stopPropagation(); CreateLinkEvent('interface-settings/profile'); }, []);
+  const handleEditClick = useCallback((event: React.MouseEvent) => { event.stopPropagation(); setIsVisible(prev => !prev); }, []);
 
   const saveMotto = (motto: string) => {
     if (!isEditingMotto || motto.length > GetConfigurationValue<number>('motto.max.length', 38) || !roomSession) return;
@@ -126,7 +127,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
 
   return (
     <>
-      <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded" style={ { backgroundColor: 'var(--ui-dark-bg, rgba(28,28,32,0.95))' } }>
+      <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,28,32,0.95)] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded">
         <Column className="h-full p-[8px] overflow-auto" gap={1} overflow="visible">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
@@ -256,6 +257,19 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
           )}
         </Column>
       </Column>
+      {isVisible && avatarInfo.type === AvatarInfoUser.OWN_USER && (
+        <div className="backgrounds-view-container">
+          <BackgroundsView
+            setIsVisible={setIsVisible}
+            selectedBackground={backgroundId}
+            setSelectedBackground={setBackgroundId}
+            selectedStand={standId}
+            setSelectedStand={setStandId}
+            selectedOverlay={overlayId}
+            setSelectedOverlay={setOverlayId}
+          />
+        </div>
+      )}
     </>
   );
 };
