@@ -77,7 +77,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             setLetterColors(prev => ({ ...prev, [selectedLetterIndex]: color }));
             setCustomColorInput(color);
 
-            // Auto-avanza alla lettera successiva
+            // Auto-advance to next letter
             if(selectedLetterIndex < prefixText.length - 1)
             {
                 const nextIdx = selectedLetterIndex + 1;
@@ -167,12 +167,12 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             { /* Text + Icon Row */ }
             <div className="flex gap-2">
                 <div className="flex flex-col gap-0.5 flex-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Testo</label>
+                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Text</label>
                     <div className="relative">
                         <input
                             className="w-full px-3 py-1.5 rounded-md text-sm focus:outline-none transition-all"
                             maxLength={ 15 }
-                            placeholder="Inserisci il testo..."
+                            placeholder="Enter text..."
                             style={ {
                                 background: 'rgba(0,0,0,0.15)',
                                 border: '1px solid rgba(0,0,0,0.15)',
@@ -187,7 +187,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                     </div>
                 </div>
                 <div className="flex flex-col gap-0.5 relative">
-                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Icona</label>
+                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Icon</label>
                     <div className="flex gap-1">
                         <button
                             className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-md text-sm transition-all min-w-[70px]"
@@ -205,7 +205,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             <button
                                 className="flex items-center justify-center px-1.5 rounded-md text-xs transition-all"
                                 style={ { background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)' } }
-                                title="Rimuovi icona"
+                                title="Remove icon"
                                 onClick={ () => setSelectedIcon('') }>
                                 ✕
                             </button>
@@ -221,7 +221,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                     <div className="fixed rounded-xl overflow-hidden" style={ { zIndex: 1000, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' } }>
                         <Picker
                             data={ data }
-                            locale="it"
+                            locale="en"
                             onEmojiSelect={ (emoji: { native: string }) => { setSelectedIcon(emoji.native); setShowIconPicker(false); } }
                             theme="dark"
                             previewPosition="none"
@@ -239,7 +239,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
 
             { /* Effect Selector */ }
             <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Effetto</label>
+                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Effect</label>
                 <div className="flex flex-wrap gap-1">
                     { PRESET_PREFIX_EFFECTS.map(fx => (
                         <button
@@ -259,7 +259,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
 
             { /* Color Mode Toggle */ }
             <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Colore</label>
+                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Color</label>
                 <div className="flex rounded-md overflow-hidden" style={ { border: '1px solid rgba(0,0,0,0.15)' } }>
                     <button
                         className="flex-1 px-2 py-1.5 text-xs font-bold transition-all"
@@ -269,7 +269,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             opacity: colorMode === 'single' ? 1 : 0.6
                         } }
                         onClick={ () => { setColorMode('single'); setSelectedLetterIndex(null); } }>
-                        🎨 Unico
+                        🎨 Single
                     </button>
                     <button
                         className="flex-1 px-2 py-1.5 text-xs font-bold transition-all"
@@ -278,7 +278,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             opacity: colorMode === 'perLetter' ? 1 : 0.6
                         } }
                         onClick={ () => { setColorMode('perLetter'); if(prefixText.length > 0) setSelectedLetterIndex(0); } }>
-                        🌈 Per Lettera
+                        🌈 Per Letter
                     </button>
                 </div>
             </div>
@@ -288,7 +288,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                 <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
                         <span className="text-[10px] opacity-50">
-                            Seleziona una lettera, poi scegli il colore. Avanza automaticamente.
+                            Select a letter, then choose a color. Auto-advances.
                         </span>
                         <button
                             className="text-[10px] px-1.5 py-0.5 rounded transition-all"
@@ -296,9 +296,9 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                                 background: 'rgba(0,0,0,0.1)',
                                 border: '1px solid rgba(0,0,0,0.1)'
                             } }
-                            title="Applica colore corrente a tutte le lettere"
+                            title="Apply current color to all letters"
                             onClick={ applyColorToAll }>
-                            Applica a tutte
+                            Apply to all
                         </button>
                     </div>
                     <div className="flex flex-wrap gap-1 p-2 rounded-lg"
@@ -351,7 +351,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             <div className="flex flex-col gap-1">
                 { colorMode === 'perLetter' && selectedLetterIndex !== null &&
                     <span className="text-[10px] opacity-50 italic">
-                        Lettera selezionata: &quot;{ prefixText[selectedLetterIndex] || '' }&quot;
+                        Selected letter: &quot;{ prefixText[selectedLetterIndex] || '' }&quot;
                     </span>
                 }
                 <div className="grid grid-cols-10 gap-[3px]">
@@ -415,8 +415,8 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             <div className="flex items-center justify-between mt-auto pt-2"
                 style={ { borderTop: '1px solid rgba(0,0,0,0.1)' } }>
                 <div className="flex items-center gap-1">
-                    <span className="text-xs opacity-60">Prezzo:</span>
-                    <span className="text-sm font-bold">5 Crediti</span>
+                    <span className="text-xs opacity-60">Price:</span>
+                    <span className="text-sm font-bold">5 Credits</span>
                 </div>
                 <button
                     className="px-5 py-1.5 rounded-md text-sm font-bold transition-all"
@@ -434,7 +434,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                         borderRadius: '6px'
                     } }
                     onClick={ handlePurchase }>
-                    { purchased ? '✓ Acquistato!' : 'Acquista' }
+                    { purchased ? '✓ Purchased!' : 'Purchase' }
                 </button>
             </div>
         </div>

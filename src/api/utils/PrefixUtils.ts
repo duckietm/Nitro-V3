@@ -1,10 +1,10 @@
 export const PRESET_PREFIX_EFFECTS: { id: string; label: string; icon: string }[] = [
-    { id: '', label: 'Nessuno', icon: '—' },
-    { id: 'glow', label: 'Bagliore', icon: '✨' },
-    { id: 'shadow', label: 'Ombra', icon: '🌑' },
-    { id: 'italic', label: 'Corsivo', icon: '𝑰' },
-    { id: 'outline', label: 'Contorno', icon: '🔲' },
-    { id: 'pulse', label: 'Pulsante', icon: '💫' },
+    { id: '', label: 'None', icon: '—' },
+    { id: 'glow', label: 'Glow', icon: '✨' },
+    { id: 'shadow', label: 'Shadow', icon: '🌑' },
+    { id: 'italic', label: 'Italic', icon: '𝑰' },
+    { id: 'outline', label: 'Outline', icon: '🔲' },
+    { id: 'pulse', label: 'Pulse', icon: '💫' },
     { id: 'bold-glow', label: 'Neon', icon: '💡' },
 ];
 
