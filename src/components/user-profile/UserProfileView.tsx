@@ -1,4 +1,7 @@
-import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, NavigatorSearchComposer, NavigatorSearchEvent, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomDataParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory, RoomObjectType } from '@nitrots/api';
+import { ExtendedProfileChangedMessageEvent, NavigatorSearchComposer, NavigatorSearchEvent, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomDataParser, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/communication';
+import { RoomEngineObjectEvent } from '@nitrots/events';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useState } from 'react';
 import { CreateRoomSession, GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
 import { Flex, Text } from '../../common';

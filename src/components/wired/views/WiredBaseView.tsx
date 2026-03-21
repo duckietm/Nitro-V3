@@ -1,4 +1,4 @@
-import { GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager } from '@nitrots/session';
 import { CSSProperties, FC, PropsWithChildren, ReactNode, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType, WiredSelectionVisualizer } from '../../../api';
 import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../common';

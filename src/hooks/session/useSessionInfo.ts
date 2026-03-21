@@ -1,4 +1,5 @@
-import { FigureUpdateEvent, GetSessionDataManager, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent, UserSettingsEvent } from '@nitrots/nitro-renderer';
+import { FigureUpdateEvent, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent, UserSettingsEvent } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer } from '../../api';

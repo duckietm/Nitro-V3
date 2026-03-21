@@ -1,4 +1,4 @@
-import { GetRoomEngine } from '@nitrots/nitro-renderer';
+import { GetRoomEngine } from '@nitrots/room';
 import { FC } from 'react';
 import { LocalizeText } from '../../../../api';
 import { Button, Column, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

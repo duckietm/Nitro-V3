@@ -1,4 +1,5 @@
-import { GetRenderer, RoomSession } from '@nitrots/nitro-renderer';
+import { RoomSession } from '@nitrots/session';
+import { GetRenderer } from '@nitrots/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useRef } from 'react';
 import { DispatchMouseEvent, DispatchTouchEvent } from '../../api';

@@ -1,4 +1,4 @@
-import { MouseEventType, TouchEventType } from '@nitrots/nitro-renderer';
+import { MouseEventType, TouchEventType } from '@nitrots/api';
 import { CSSProperties, FC, Key, MouseEvent as ReactMouseEvent, ReactNode, TouchEvent as ReactTouchEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { GetLocalStorage, SetLocalStorage, WindowSaveOptions } from '../../api';

@@ -1,4 +1,5 @@
-import { GetProductOfferComposer, IFurnitureData } from '@nitrots/nitro-renderer';
+import { IFurnitureData } from '@nitrots/api';
+import { GetProductOfferComposer } from '@nitrots/communication';
 import { GetProductDataForLocalization, SendMessageComposer } from '../nitro';
 import { ICatalogPage } from './ICatalogPage';
 import { IProduct } from './IProduct';

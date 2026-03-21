@@ -1,4 +1,4 @@
-import { FriendRequestData } from '@nitrots/nitro-renderer';
+import { FriendRequestData } from '@nitrots/communication';
 
 export class MessengerRequest
 {

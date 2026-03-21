@@ -1,4 +1,5 @@
-import { IObjectData, NitroEvent } from '@nitrots/nitro-renderer';
+import { IObjectData } from '@nitrots/api';
+import { NitroEvent } from '@nitrots/events';
 import { CatalogWidgetEvent } from './CatalogWidgetEvent';
 
 export class CatalogSetRoomPreviewerStuffDataEvent extends NitroEvent

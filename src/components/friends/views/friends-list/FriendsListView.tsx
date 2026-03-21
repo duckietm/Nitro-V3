@@ -1,4 +1,6 @@
-import { AddLinkEventTracker, ILinkEventTracker, RemoveFriendComposer, RemoveLinkEventTracker, SendRoomInviteComposer } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { RemoveFriendComposer, SendRoomInviteComposer } from '@nitrots/communication';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { LocalizeText, MessengerFriend, SendMessageComposer } from '../../../../api';
 import { Button, Flex, NitroCardAccordionSetView, NitroCardAccordionView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';

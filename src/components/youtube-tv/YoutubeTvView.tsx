@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { GetConfigurationValue } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';

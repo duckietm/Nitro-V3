@@ -1,4 +1,4 @@
-import { ConditionDefinition, TriggerDefinition, WiredActionDefinition } from '@nitrots/nitro-renderer';
+import { ConditionDefinition, TriggerDefinition, WiredActionDefinition } from '@nitrots/communication';
 import { FC } from 'react';
 import { useWired } from '../../hooks';
 import { WiredActionLayoutView } from './views/actions/WiredActionLayoutView';

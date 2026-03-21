@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from 'react';
-import { COLORMAP, HEIGHT_SCHEME, FloorplanEditor } from '@nitrots/nitro-renderer';
+import { COLORMAP, HEIGHT_SCHEME, FloorplanEditor } from '@nitrots/room';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
 
 const colormap = COLORMAP as Record<string, string>;

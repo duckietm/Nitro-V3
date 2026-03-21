@@ -1,4 +1,5 @@
-import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useEffect, useState } from 'react';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsView, NitroCardTabsItemView, NitroCardView } from '../../common';
 import { InterfaceColorTabView } from './InterfaceColorTabView';

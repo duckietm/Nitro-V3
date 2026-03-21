@@ -1,4 +1,5 @@
-import { RelationshipStatusEnum, RelationshipStatusInfo } from '@nitrots/nitro-renderer';
+import { RelationshipStatusEnum } from '@nitrots/api';
+import { RelationshipStatusInfo } from '@nitrots/communication';
 import { FC } from 'react';
 import { GetUserProfile, LocalizeText } from '../../../../../api';
 import { Flex, Text } from '../../../../../common';

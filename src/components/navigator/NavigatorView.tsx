@@ -1,5 +1,8 @@
 import { NitroCard } from '@layout/NitroCard';
-import { AddLinkEventTracker, ConvertGlobalRoomIdMessageComposer, FindNewFriendsMessageComposer, HabboWebTools, ILinkEventTracker, LegacyExternalInterface, NavigatorInitComposer, NavigatorSearchComposer, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { ConvertGlobalRoomIdMessageComposer, FindNewFriendsMessageComposer, NavigatorInitComposer, NavigatorSearchComposer } from '@nitrots/communication';
+import { RoomSessionEvent } from '@nitrots/events';
+import { AddLinkEventTracker, HabboWebTools, LegacyExternalInterface, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import savesSearchIcon from '../../assets/images/navigator/saves-search/search_save.png';

@@ -1,4 +1,5 @@
-import { IEventDispatcher, NitroEvent } from '@nitrots/nitro-renderer';
+import { IEventDispatcher } from '@nitrots/api';
+import { NitroEvent } from '@nitrots/events';
 import { useEffect } from 'react';
 
 export const useEventDispatcher = <T extends NitroEvent>(type: string | string[], eventDispatcher: IEventDispatcher, handler: (event: T) => void, enabled: boolean = true) =>

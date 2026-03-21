@@ -1,4 +1,4 @@
-import { NitroEvent } from '@nitrots/nitro-renderer';
+import { NitroEvent } from '@nitrots/events';
 import { UI_EVENT_DISPATCHER } from '../../api';
 import { useEventDispatcher } from './useEventDispatcher';
 

@@ -1,4 +1,4 @@
-import { CallForHelpDisabledNotifyMessageEvent, CallForHelpPendingCallsDeletedMessageEvent, CallForHelpPendingCallsMessageEvent, CallForHelpReplyMessageEvent, CallForHelpResultMessageEvent, DeletePendingCallsForHelpMessageComposer, GetPendingCallsForHelpMessageComposer, IssueCloseNotificationMessageEvent, SanctionStatusEvent, SanctionStatusMessageParser } from '@nitrots/nitro-renderer';
+import { CallForHelpDisabledNotifyMessageEvent, CallForHelpPendingCallsDeletedMessageEvent, CallForHelpPendingCallsMessageEvent, CallForHelpReplyMessageEvent, CallForHelpResultMessageEvent, DeletePendingCallsForHelpMessageComposer, GetPendingCallsForHelpMessageComposer, IssueCloseNotificationMessageEvent, SanctionStatusEvent, SanctionStatusMessageParser } from '@nitrots/communication';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { CallForHelpResult, GetCloseReasonKey, IHelpReport, LocalizeText, NotificationAlertType, ReportState, ReportType, SendMessageComposer } from '../../api';

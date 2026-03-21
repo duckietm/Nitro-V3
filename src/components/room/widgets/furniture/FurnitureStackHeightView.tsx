@@ -1,4 +1,4 @@
-import { FurnitureStackHeightComposer } from '@nitrots/nitro-renderer';
+import { FurnitureStackHeightComposer } from '@nitrots/communication';
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView, Slider, Text } from '../../../../common';

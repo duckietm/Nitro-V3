@@ -1,4 +1,6 @@
-import { CreateLinkEvent, PetRespectComposer, PetType, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomUnitGiveHandItemPetComposer } from '@nitrots/nitro-renderer';
+import { PetType, RoomObjectCategory, RoomObjectType, RoomObjectVariable } from '@nitrots/api';
+import { PetRespectComposer, RoomUnitGiveHandItemPetComposer } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { AvatarInfoPet, GetConfigurationValue, GetOwnRoomObject, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { useRoom, useSessionInfo } from '../../../../../hooks';

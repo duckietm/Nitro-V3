@@ -1,4 +1,5 @@
-import { AchievementData, GetLocalizationManager } from '@nitrots/nitro-renderer';
+import { AchievementData } from '@nitrots/communication';
+import { GetLocalizationManager } from '@nitrots/localization';
 import { GetConfigurationValue } from '../nitro';
 import { IAchievementCategory } from './IAchievementCategory';
 

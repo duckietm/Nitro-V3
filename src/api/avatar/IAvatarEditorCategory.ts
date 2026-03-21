@@ -1,4 +1,4 @@
-import { IPartColor } from '@nitrots/nitro-renderer';
+import { IPartColor } from '@nitrots/api';
 import { IAvatarEditorCategoryPartItem } from './IAvatarEditorCategoryPartItem';
 
 export interface IAvatarEditorCategory

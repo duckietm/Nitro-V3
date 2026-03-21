@@ -1,4 +1,6 @@
-import { GetSessionDataManager, PetRespectComposer, PetType, RoomControllerLevel, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomUnitGiveHandItemPetComposer } from '@nitrots/nitro-renderer';
+import { PetType, RoomControllerLevel, RoomObjectCategory, RoomObjectType, RoomObjectVariable } from '@nitrots/api';
+import { PetRespectComposer, RoomUnitGiveHandItemPetComposer } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { AvatarInfoPet, GetOwnRoomObject, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { useRoom, useSessionInfo } from '../../../../../hooks';

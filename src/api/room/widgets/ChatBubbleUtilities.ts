@@ -1,4 +1,7 @@
-import { AvatarFigurePartType, AvatarScaleType, AvatarSetType, GetAvatarRenderManager, GetRoomEngine, PetFigureData, TextureUtils, Vector3d } from '@nitrots/nitro-renderer';
+import { AvatarFigurePartType, AvatarScaleType, AvatarSetType, PetFigureData } from '@nitrots/api';
+import { GetAvatarRenderManager } from '@nitrots/avatar';
+import { GetRoomEngine } from '@nitrots/room';
+import { TextureUtils, Vector3d } from '@nitrots/utils';
 
 export class ChatBubbleUtilities
 {

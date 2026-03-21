@@ -1,4 +1,7 @@
-import { CreateLinkEvent, Dispose, DropBounce, EaseOut, GetSessionDataManager, JumpBy, Motions, NitroToolbarAnimateIconEvent, PerkAllowancesMessageEvent, PerkEnum, Queue, Wait } from '@nitrots/nitro-renderer';
+import { PerkAllowancesMessageEvent, PerkEnum } from '@nitrots/communication';
+import { NitroToolbarAnimateIconEvent } from '@nitrots/events';
+import { GetSessionDataManager } from '@nitrots/session';
+import { CreateLinkEvent, Dispose, DropBounce, EaseOut, JumpBy, Motions, Queue, Wait } from '@nitrots/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useState } from 'react';
 import { GetConfigurationValue, MessengerIconState, OpenMessengerChat, VisitDesktop } from '../../api';

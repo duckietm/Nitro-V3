@@ -1,1 +1,1 @@
-export { CreateLinkEvent } from '@nitrots/nitro-renderer';
+export { CreateLinkEvent } from '@nitrots/utils';

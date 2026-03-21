@@ -1,9 +1,5 @@
-import
-{
-    CreateLinkEvent,
-    GroupDeleteComposer,
-    GroupSaveInformationComposer,
-} from '@nitrots/nitro-renderer';
+import { GroupDeleteComposer, GroupSaveInformationComposer } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import
 {
     Dispatch,

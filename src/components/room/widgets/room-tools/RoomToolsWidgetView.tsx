@@ -1,4 +1,6 @@
-import { CreateLinkEvent, GetGuestRoomResultEvent, GetRoomEngine, NavigatorSearchComposer, RateFlatMessageComposer } from '@nitrots/nitro-renderer';
+import { GetGuestRoomResultEvent, NavigatorSearchComposer, RateFlatMessageComposer } from '@nitrots/communication';
+import { GetRoomEngine } from '@nitrots/room';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { classNames } from '../../../../layout';
 import { FC, useEffect, useState } from 'react';

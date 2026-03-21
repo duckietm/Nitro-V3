@@ -1,4 +1,4 @@
-import { ModMessageMessageComposer } from '@nitrots/nitro-renderer';
+import { ModMessageMessageComposer } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { ISelectedUser, SendMessageComposer } from '../../../../api';
 import { Button, DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

@@ -1,4 +1,5 @@
-import { MouseEventType, NitroSoundEvent } from '@nitrots/nitro-renderer';
+import { MouseEventType } from '@nitrots/api';
+import { NitroSoundEvent } from '@nitrots/events';
 import { DispatchMainEvent } from '../events';
 
 let canPlaySound = false;

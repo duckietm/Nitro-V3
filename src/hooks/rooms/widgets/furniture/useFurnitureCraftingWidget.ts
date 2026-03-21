@@ -1,4 +1,7 @@
-import { CraftableProductsEvent, CraftComposer, CraftingRecipeEvent, CraftingRecipeIngredientParser, CraftingRecipesAvailableEvent, CraftingResultEvent, GetCraftableProductsComposer, GetCraftingRecipeComposer, GetRoomContentLoader, GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomWidgetEnum } from '@nitrots/nitro-renderer';
+import { RoomWidgetEnum } from '@nitrots/api';
+import { CraftableProductsEvent, CraftComposer, CraftingRecipeEvent, CraftingRecipeIngredientParser, CraftingRecipesAvailableEvent, CraftingResultEvent, GetCraftableProductsComposer, GetCraftingRecipeComposer } from '@nitrots/communication';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomContentLoader, GetRoomEngine } from '@nitrots/room';
 import { useEffect, useState } from 'react';
 import { ICraftingIngredient, ICraftingRecipe, LocalizeText, SendMessageComposer } from '../../../../api';
 import { useMessageEvent, useNitroEvent } from '../../../events';

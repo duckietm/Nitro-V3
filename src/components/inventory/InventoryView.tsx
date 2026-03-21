@@ -1,4 +1,9 @@
-import { AddLinkEventTracker, BadgePointLimitsEvent, GetLocalizationManager, GetRoomEngine, ILinkEventTracker, IRoomSession, RemoveLinkEventTracker, RoomEngineObjectEvent, RoomEngineObjectPlacedEvent, RoomPreviewer, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker, IRoomSession } from '@nitrots/api';
+import { BadgePointLimitsEvent } from '@nitrots/communication';
+import { RoomEngineObjectEvent, RoomEngineObjectPlacedEvent, RoomSessionEvent } from '@nitrots/events';
+import { GetLocalizationManager } from '@nitrots/localization';
+import { GetRoomEngine, RoomPreviewer } from '@nitrots/room';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useEffect, useState } from 'react';
 import { GroupItem, LocalizeText, UnseenItemCategory, isObjectMoverRequested, setObjectMoverRequested } from '../../api';
 import { NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';

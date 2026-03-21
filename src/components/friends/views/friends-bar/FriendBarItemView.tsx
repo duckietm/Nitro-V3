@@ -1,4 +1,5 @@
-import { FindNewFriendsMessageComposer, MouseEventType } from '@nitrots/nitro-renderer';
+import { MouseEventType } from '@nitrots/api';
+import { FindNewFriendsMessageComposer } from '@nitrots/communication';
 import { FC, useEffect, useRef, useState } from 'react';
 import { GetUserProfile, LocalizeText, MessengerFriend, OpenMessengerChat, SendMessageComposer } from '../../../../api';
 import { Button, LayoutAvatarImageView, LayoutBadgeImageView } from '../../../../common';

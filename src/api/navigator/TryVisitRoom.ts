@@ -1,4 +1,4 @@
-import { GetGuestRoomMessageComposer } from '@nitrots/nitro-renderer';
+import { GetGuestRoomMessageComposer } from '@nitrots/communication';
 import { SendMessageComposer } from '../nitro';
 
 export function TryVisitRoom(roomId: number): void

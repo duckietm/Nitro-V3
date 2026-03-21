@@ -1,4 +1,9 @@
-import { ControlYoutubeDisplayPlaybackMessageComposer, GetRoomEngine, GetSessionDataManager, GetYoutubeDisplayStatusMessageComposer, RoomEngineTriggerWidgetEvent, RoomId, SecurityLevel, SetYoutubeDisplayPlaylistMessageComposer, YoutubeControlVideoMessageEvent, YoutubeDisplayPlaylist, YoutubeDisplayPlaylistsEvent, YoutubeDisplayVideoMessageEvent } from '@nitrots/nitro-renderer';
+import { SecurityLevel } from '@nitrots/api';
+import { ControlYoutubeDisplayPlaybackMessageComposer, GetYoutubeDisplayStatusMessageComposer, SetYoutubeDisplayPlaylistMessageComposer, YoutubeControlVideoMessageEvent, YoutubeDisplayPlaylist, YoutubeDisplayPlaylistsEvent, YoutubeDisplayVideoMessageEvent } from '@nitrots/communication';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
+import { RoomId } from '@nitrots/utils';
 import { useState } from 'react';
 import { IsOwnerOfFurniture, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../../../api';
 import { useMessageEvent, useNitroEvent } from '../../../events';

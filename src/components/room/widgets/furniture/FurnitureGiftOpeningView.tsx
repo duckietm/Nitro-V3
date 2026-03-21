@@ -1,4 +1,4 @@
-import { CreateLinkEvent } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC } from 'react';
 import { attemptItemPlacement, LocalizeText } from '../../../../api';
 import { Button, Column, LayoutGiftTagView, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

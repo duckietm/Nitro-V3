@@ -1,1 +1,1 @@
-export { GetSessionDataManager } from '@nitrots/nitro-renderer';
+export { GetSessionDataManager } from '@nitrots/session';

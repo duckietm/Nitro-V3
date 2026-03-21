@@ -1,4 +1,4 @@
-import { AchievementData } from '@nitrots/nitro-renderer';
+import { AchievementData } from '@nitrots/communication';
 import { FC } from 'react';
 import { AchievementUtilities, LocalizeBadgeDescription, LocalizeBadgeName, LocalizeText } from '../../api';
 import { Column, Flex, LayoutCurrencyIcon, LayoutProgressBar, Text } from '../../common';

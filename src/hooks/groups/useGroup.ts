@@ -1,4 +1,4 @@
-import { GroupBadgePartsComposer, GroupBadgePartsEvent } from '@nitrots/nitro-renderer';
+import { GroupBadgePartsComposer, GroupBadgePartsEvent } from '@nitrots/communication';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { IGroupCustomize, SendMessageComposer } from '../../api';

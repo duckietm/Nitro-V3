@@ -1,5 +1,8 @@
 import { InfiniteGrid } from '@layout/InfiniteGrid';
-import { GetRoomEngine, GetSessionDataManager, IRoomSession, RoomObjectVariable, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
+import { IRoomSession, RoomObjectVariable } from '@nitrots/api';
+import { GetRoomEngine, RoomPreviewer } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
+import { Vector3d } from '@nitrots/utils';
 import { FC, useEffect, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import { DispatchUiEvent, FurniCategory, GroupItem, LocalizeText, UnseenItemCategory, attemptItemPlacement } from '../../../../api';

@@ -1,4 +1,7 @@
-import { BadgeImageReadyEvent, GetEventDispatcher, GetSessionDataManager, NitroSprite, TextureUtils } from '@nitrots/nitro-renderer';
+import { BadgeImageReadyEvent, GetEventDispatcher } from '@nitrots/events';
+import { NitroSprite } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager } from '@nitrots/session';
+import { TextureUtils } from '@nitrots/utils';
 import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { GetConfigurationValue, LocalizeBadgeDescription, LocalizeBadgeName, LocalizeText } from '../../api';
 import { Base, BaseProps } from '../Base';

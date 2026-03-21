@@ -1,4 +1,5 @@
-import { GetSessionDataManager, GuideSessionGetRequesterRoomMessageComposer, GuideSessionInviteRequesterMessageComposer, GuideSessionMessageMessageComposer, GuideSessionRequesterRoomMessageEvent, GuideSessionResolvedMessageComposer } from '@nitrots/nitro-renderer';
+import { GuideSessionGetRequesterRoomMessageComposer, GuideSessionInviteRequesterMessageComposer, GuideSessionMessageMessageComposer, GuideSessionRequesterRoomMessageEvent, GuideSessionResolvedMessageComposer } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { GuideToolMessageGroup, LocalizeText, SendMessageComposer, TryVisitRoom } from '../../../api';
 import { Button, Column, Flex, LayoutAvatarImageView, Text } from '../../../common';

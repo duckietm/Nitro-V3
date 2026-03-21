@@ -1,4 +1,4 @@
-import { GetRoomEngine } from '@nitrots/nitro-renderer';
+import { GetRoomEngine } from '@nitrots/room';
 
 export function SetActiveRoomId(roomId: number): void
 {

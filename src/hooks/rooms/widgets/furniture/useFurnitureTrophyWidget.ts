@@ -1,4 +1,6 @@
-import { GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectVariable } from '@nitrots/api';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
 import { useState } from 'react';
 import { useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';

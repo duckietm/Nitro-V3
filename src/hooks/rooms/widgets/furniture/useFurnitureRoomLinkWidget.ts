@@ -1,4 +1,7 @@
-import { GetGuestRoomMessageComposer, GetGuestRoomResultEvent, GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectVariable } from '@nitrots/api';
+import { GetGuestRoomMessageComposer, GetGuestRoomResultEvent } from '@nitrots/communication';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
 import { useState } from 'react';
 import { SendMessageComposer } from '../../../../api';
 import { useMessageEvent, useNitroEvent } from '../../../events';

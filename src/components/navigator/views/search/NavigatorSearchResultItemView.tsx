@@ -1,4 +1,5 @@
-import { GetSessionDataManager, RoomDataParser } from '@nitrots/nitro-renderer';
+import { RoomDataParser } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import React, { FC, MouseEvent, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { CreateRoomSession, DoorStateType, TryVisitRoom } from '../../../../api';

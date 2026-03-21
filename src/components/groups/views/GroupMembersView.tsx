@@ -1,4 +1,7 @@
-import { AddLinkEventTracker, GetSessionDataManager, GroupAdminGiveComposer, GroupAdminTakeComposer, GroupConfirmMemberRemoveEvent, GroupConfirmRemoveMemberComposer, GroupMemberParser, GroupMembersComposer, GroupMembersEvent, GroupMembershipAcceptComposer, GroupMembershipDeclineComposer, GroupMembersParser, GroupRank, GroupRemoveMemberComposer, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { GroupAdminGiveComposer, GroupAdminTakeComposer, GroupConfirmMemberRemoveEvent, GroupConfirmRemoveMemberComposer, GroupMemberParser, GroupMembersComposer, GroupMembersEvent, GroupMembershipAcceptComposer, GroupMembershipDeclineComposer, GroupMembersParser, GroupRank, GroupRemoveMemberComposer } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { GetUserProfile, LocalizeText, SendMessageComposer } from '../../../api';

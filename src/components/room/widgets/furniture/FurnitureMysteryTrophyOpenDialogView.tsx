@@ -1,4 +1,4 @@
-import { OpenMysteryTrophyMessageComposer } from '@nitrots/nitro-renderer';
+import { OpenMysteryTrophyMessageComposer } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

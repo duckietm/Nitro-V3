@@ -1,4 +1,4 @@
-import { UserProfileComposer } from '@nitrots/nitro-renderer';
+import { UserProfileComposer } from '@nitrots/communication';
 import { SendMessageComposer } from '../nitro';
 
 export function GetUserProfile(userId: number): void

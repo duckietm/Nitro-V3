@@ -1,4 +1,5 @@
-import { CreateLinkEvent, FrontPageItem } from '@nitrots/nitro-renderer';
+import { FrontPageItem } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC, useCallback, useEffect } from 'react';
 import { Column, Grid } from '../../../../../../common';
 import { useCatalog } from '../../../../../../hooks';

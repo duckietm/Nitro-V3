@@ -25,8 +25,8 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
             '~': resolve(__dirname, 'node_modules'),
-            // Renderer3 workspace packages → point to their src/index.ts
-            '@nitrots/nitro-renderer': resolve(renderer3, 'src/index.ts'),
+            // Pixi-proxy wrappers only (no longer the full barrel to avoid circular imports)
+            '@nitrots/nitro-renderer': resolve(renderer3, 'src/pixi-proxy/index.ts'),
             '@nitrots/api': resolve(renderer3, 'packages/api/src/index.ts'),
             '@nitrots/assets': resolve(renderer3, 'packages/assets/src/index.ts'),
             '@nitrots/avatar': resolve(renderer3, 'packages/avatar/src/index.ts'),
@@ -54,12 +54,9 @@ export default defineConfig({
                 assetFileNames: 'src/assets/[name]-[hash].[ext]',
                 manualChunks: id =>
                 {
-                    if(id.includes('node_modules'))
-                    {
-                        if(id.includes('@nitrots/nitro-renderer') || id.includes('renderer3')) return 'nitro-renderer';
+                    if(id.includes('renderer3')) return 'nitro-renderer';
 
-                        return 'vendor';
-                    }
+                    if(id.includes('node_modules')) return 'vendor';
                 }
             }
         }

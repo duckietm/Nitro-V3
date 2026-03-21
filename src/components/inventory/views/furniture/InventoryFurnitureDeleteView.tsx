@@ -1,4 +1,4 @@
-import { DeleteItemMessageComposer } from '@nitrots/nitro-renderer';
+import { DeleteItemMessageComposer } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { FurnitureItem, LocalizeText, ProductTypeEnum, SendMessageComposer } from '../../../../api';

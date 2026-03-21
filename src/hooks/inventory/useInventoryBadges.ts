@@ -1,4 +1,4 @@
-import { BadgeReceivedEvent, BadgesEvent, RequestBadgesComposer, SetActivatedBadgesComposer } from '@nitrots/nitro-renderer';
+import { BadgeReceivedEvent, BadgesEvent, RequestBadgesComposer, SetActivatedBadgesComposer } from '@nitrots/communication';
 import { useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { GetConfigurationValue, SendMessageComposer, UnseenItemCategory } from '../../api';

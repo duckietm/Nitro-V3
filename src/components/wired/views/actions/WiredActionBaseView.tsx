@@ -1,4 +1,4 @@
-import { WiredActionDefinition } from '@nitrots/nitro-renderer';
+import { WiredActionDefinition } from '@nitrots/communication';
 import { CSSProperties, FC, PropsWithChildren, ReactNode, useEffect } from 'react';
 import { GetWiredTimeLocale, LocalizeText, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';

@@ -1,4 +1,4 @@
-import { AvatarFigurePartType } from '@nitrots/nitro-renderer';
+import { AvatarFigurePartType } from '@nitrots/api';
 import { useCallback, useMemo, useState } from 'react';
 
 const useFigureDataState = () =>

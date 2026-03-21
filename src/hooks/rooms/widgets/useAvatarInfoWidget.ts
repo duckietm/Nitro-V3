@@ -1,4 +1,7 @@
-import { GetRoomEngine, GetSessionDataManager, RoomEngineObjectEvent, RoomEngineUseProductEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionPetInfoUpdateEvent, RoomSessionPetStatusUpdateEvent, RoomSessionUserDataUpdateEvent } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory, RoomObjectType, RoomObjectVariable } from '@nitrots/api';
+import { RoomEngineObjectEvent, RoomEngineUseProductEvent, RoomSessionPetInfoUpdateEvent, RoomSessionPetStatusUpdateEvent, RoomSessionUserDataUpdateEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 import { useEffect, useState } from 'react';
 import { AvatarInfoFurni, AvatarInfoName, AvatarInfoPet, AvatarInfoRentableBot, AvatarInfoUser, AvatarInfoUtilities, CanManipulateFurniture, FurniCategory, IAvatarInfo, IsOwnerOfFurniture, RoomWidgetUpdateRoomObjectEvent, UseProductItem } from '../../../api';
 import { useNitroEvent, useUiEvent } from '../../events';

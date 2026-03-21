@@ -1,4 +1,6 @@
-import { GetRoomEngine, GetSessionDataManager, IRoomObjectController, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { IRoomObjectController, RoomObjectCategory } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 import { GetRoomSession } from '../session';
 
 export function GetOwnRoomObject(): IRoomObjectController

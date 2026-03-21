@@ -1,4 +1,4 @@
-import { GetLocalizationManager } from '@nitrots/nitro-renderer';
+import { GetLocalizationManager } from '@nitrots/localization';
 
 export const LocalizeBadgeName = (key: string) =>
 {

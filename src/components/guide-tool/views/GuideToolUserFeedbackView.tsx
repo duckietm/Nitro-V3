@@ -1,4 +1,4 @@
-import { GuideSessionFeedbackMessageComposer } from '@nitrots/nitro-renderer';
+import { GuideSessionFeedbackMessageComposer } from '@nitrots/communication';
 import { FC } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Column, Flex, Text } from '../../../common';

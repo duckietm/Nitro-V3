@@ -1,4 +1,4 @@
-import { IFigurePartSet } from '@nitrots/nitro-renderer';
+import { IFigurePartSet } from '@nitrots/api';
 
 export const AvatarEditorPartSorter = (hcFirst: boolean) =>
 {

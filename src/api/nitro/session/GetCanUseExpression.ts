@@ -1,4 +1,4 @@
-import { RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectVariable } from '@nitrots/api';
 import { GetOwnRoomObject } from '../room';
 
 export function GetCanUseExpression(): boolean

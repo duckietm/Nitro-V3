@@ -1,4 +1,5 @@
-import { NitroEvent, PurchaseOKMessageOfferData } from '@nitrots/nitro-renderer';
+import { PurchaseOKMessageOfferData } from '@nitrots/communication';
+import { NitroEvent } from '@nitrots/events';
 
 export class CatalogPurchasedEvent extends NitroEvent
 {

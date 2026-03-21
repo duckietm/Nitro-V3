@@ -1,4 +1,5 @@
-import { GroupBadgePart, GroupInformationEvent, GroupSettingsEvent } from '@nitrots/nitro-renderer';
+import { GroupInformationEvent, GroupSettingsEvent } from '@nitrots/communication';
+import { GroupBadgePart } from '@nitrots/session';
 import { FC, useState } from 'react';
 import { IGroupData, LocalizeText } from '../../../api';
 import { Column, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../common';

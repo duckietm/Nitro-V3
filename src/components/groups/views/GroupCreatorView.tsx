@@ -1,4 +1,4 @@
-import { GroupBuyComposer, GroupBuyDataComposer, GroupBuyDataEvent } from '@nitrots/nitro-renderer';
+import { GroupBuyComposer, GroupBuyDataComposer, GroupBuyDataEvent } from '@nitrots/communication';
 import { FC, useEffect, useState } from 'react';
 import { HasHabboClub, IGroupData, LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Column, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../common';

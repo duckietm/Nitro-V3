@@ -1,4 +1,5 @@
-import { GetRoomEngine, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory, RoomObjectVariable } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
 import { FC, useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { GetUserProfile, IPhotoData, LocalizeText } from '../../../api';

@@ -1,4 +1,4 @@
-import { GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC } from 'react';
 import { LocalizeText } from '../../../../api';
 import { NameChangeLayoutViewProps } from './NameChangeView.types';

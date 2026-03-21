@@ -1,4 +1,4 @@
-import { CreateLinkEvent } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { useBetween } from 'use-between';
 import { LocalizeText } from '../api';
 import { useNotification } from './notification';

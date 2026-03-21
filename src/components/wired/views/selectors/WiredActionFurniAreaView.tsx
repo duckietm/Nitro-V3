@@ -1,4 +1,5 @@
-import { GetRoomEngine, RoomAreaSelectionManager, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory } from '@nitrots/api';
+import { GetRoomEngine, RoomAreaSelectionManager } from '@nitrots/room';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { LocalizeText } from '../../../../api';
 import { Button, Text } from '../../../../common';

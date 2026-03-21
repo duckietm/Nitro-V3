@@ -1,4 +1,4 @@
-import { MouseEventType } from '@nitrots/nitro-renderer';
+import { MouseEventType } from '@nitrots/api';
 import { FC, MouseEvent, useState } from 'react';
 import { GroupItem, attemptItemPlacement } from '../../../../api';
 import { useInventoryFurni } from '../../../../hooks';

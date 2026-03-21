@@ -1,4 +1,5 @@
-import { IRoomUserData, PetTrainingMessageParser, PetTrainingPanelMessageEvent } from '@nitrots/nitro-renderer';
+import { IRoomUserData } from '@nitrots/api';
+import { PetTrainingMessageParser, PetTrainingPanelMessageEvent } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { LocalizeText } from '../../../../api';
 import { Button, Column, Flex, Grid, LayoutPetImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

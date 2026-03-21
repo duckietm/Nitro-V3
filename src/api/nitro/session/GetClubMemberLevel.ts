@@ -1,4 +1,4 @@
-import { GetSessionDataManager, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, HabboClubLevelEnum } from '@nitrots/session';
 import { GetConfigurationValue } from '../GetConfigurationValue';
 
 export function GetClubMemberLevel(): number

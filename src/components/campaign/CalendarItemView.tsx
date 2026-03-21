@@ -1,4 +1,5 @@
-import { GetRoomEngine, GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC } from 'react';
 import { CalendarItemState, GetConfigurationValue, ICalendarItem } from '../../api';
 import { Column, Flex, LayoutImage } from '../../common';

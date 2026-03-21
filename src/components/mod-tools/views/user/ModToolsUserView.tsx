@@ -1,4 +1,5 @@
-import { CreateLinkEvent, GetModeratorUserInfoMessageComposer, ModeratorUserInfoData, ModeratorUserInfoEvent } from '@nitrots/nitro-renderer';
+import { GetModeratorUserInfoMessageComposer, ModeratorUserInfoData, ModeratorUserInfoEvent } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FriendlyTime, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, DraggableWindowPosition, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';

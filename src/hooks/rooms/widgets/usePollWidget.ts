@@ -1,4 +1,4 @@
-import { RoomSessionPollEvent } from '@nitrots/nitro-renderer';
+import { RoomSessionPollEvent } from '@nitrots/events';
 import { DispatchUiEvent, RoomWidgetPollUpdateEvent } from '../../../api';
 import { useNitroEvent } from '../../events';
 import { useRoom } from '../useRoom';

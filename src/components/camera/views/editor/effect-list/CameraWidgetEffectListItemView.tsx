@@ -1,4 +1,4 @@
-import { IRoomCameraWidgetEffect } from '@nitrots/nitro-renderer';
+import { IRoomCameraWidgetEffect } from '@nitrots/api';
 import { FC } from 'react';
 import { FaLock, FaTimes } from 'react-icons/fa';
 import { LocalizeText } from '../../../../../api';

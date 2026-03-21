@@ -1,4 +1,4 @@
-import { PurchasePrefixComposer } from '@nitrots/nitro-renderer';
+import { PurchasePrefixComposer } from '@nitrots/communication';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { SendMessageComposer, PRESET_PREFIX_EFFECTS, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';

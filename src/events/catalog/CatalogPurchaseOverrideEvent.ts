@@ -1,4 +1,4 @@
-import { NitroEvent } from '@nitrots/nitro-renderer';
+import { NitroEvent } from '@nitrots/events';
 import { CatalogWidgetEvent } from './CatalogWidgetEvent';
 
 export class CatalogPurchaseOverrideEvent extends NitroEvent

@@ -1,6 +1,6 @@
 import { createContext, Dispatch, FC, ProviderProps, SetStateAction, useContext } from 'react';
-import { IFloorplanSettings } from '@nitrots/nitro-renderer';
-import { IVisualizationSettings } from '@nitrots/nitro-renderer';
+import { IFloorplanSettings } from '@nitrots/room';
+import { IVisualizationSettings } from '@nitrots/room';
 
 interface IFloorplanEditorContext
 {

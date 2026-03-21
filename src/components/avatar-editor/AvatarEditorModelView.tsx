@@ -1,4 +1,5 @@
-import { AvatarEditorFigureCategory, AvatarFigurePartType, FigureDataContainer } from '@nitrots/nitro-renderer';
+import { AvatarEditorFigureCategory, AvatarFigurePartType } from '@nitrots/api';
+import { FigureDataContainer } from '@nitrots/avatar';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { CreateLinkEvent, GetClubMemberLevel, GetConfigurationValue, IAvatarEditorCategory } from '../../api';
 import { LayoutCurrencyIcon } from '../../common';

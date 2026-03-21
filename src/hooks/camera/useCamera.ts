@@ -1,4 +1,7 @@
-import { GetRoomCameraWidgetManager, InitCameraMessageEvent, IRoomCameraWidgetEffect, RequestCameraConfigurationComposer, RoomCameraWidgetManagerEvent } from '@nitrots/nitro-renderer';
+import { IRoomCameraWidgetEffect } from '@nitrots/api';
+import { GetRoomCameraWidgetManager } from '@nitrots/camera';
+import { InitCameraMessageEvent, RequestCameraConfigurationComposer } from '@nitrots/communication';
+import { RoomCameraWidgetManagerEvent } from '@nitrots/events';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { CameraPicture, SendMessageComposer } from '../../api';

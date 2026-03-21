@@ -1,4 +1,4 @@
-import { CatalogGroupsComposer } from '@nitrots/nitro-renderer';
+import { CatalogGroupsComposer } from '@nitrots/communication';
 import { FC, useEffect, useState } from 'react';
 import { SendMessageComposer } from '../../../../../api';
 import { Column, Grid, Text } from '../../../../../common';

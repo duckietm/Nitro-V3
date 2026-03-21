@@ -1,4 +1,5 @@
-import { GetRoomSessionManager, IRoomSession } from '@nitrots/nitro-renderer';
+import { IRoomSession } from '@nitrots/api';
+import { GetRoomSessionManager } from '@nitrots/session';
 
 export function StartRoomSession(session: IRoomSession): void
 {

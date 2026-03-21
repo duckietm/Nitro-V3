@@ -1,4 +1,7 @@
-import { GetRoomEngine, OpenPetPackageMessageComposer, RoomObjectCategory, RoomSessionPetPackageEvent } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory } from '@nitrots/api';
+import { OpenPetPackageMessageComposer } from '@nitrots/communication';
+import { RoomSessionPetPackageEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
 import { useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../api';
 import { useNitroEvent } from '../../events';

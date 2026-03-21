@@ -1,4 +1,4 @@
-import { AvailableCommandsEvent, GetCommunication } from '@nitrots/nitro-renderer';
+import { AvailableCommandsEvent, GetCommunication } from '@nitrots/communication';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CommandDefinition } from '../../../api';
 import { useMessageEvent } from '../../events';

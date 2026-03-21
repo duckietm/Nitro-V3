@@ -1,4 +1,4 @@
-import { CloseIssuesMessageComposer, ReleaseIssuesMessageComposer } from '@nitrots/nitro-renderer';
+import { CloseIssuesMessageComposer, ReleaseIssuesMessageComposer } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { GetIssueCategoryName, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

@@ -1,4 +1,4 @@
-import { GroupInformationEvent, GroupInformationParser } from '@nitrots/nitro-renderer';
+import { GroupInformationEvent, GroupInformationParser } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { LocalizeText } from '../../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../common';

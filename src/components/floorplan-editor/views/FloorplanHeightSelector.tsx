@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { COLORMAP, FloorAction, HEIGHT_SCHEME } from '@nitrots/nitro-renderer';
-import { FloorplanEditor } from '@nitrots/nitro-renderer';
+import { COLORMAP, FloorAction, HEIGHT_SCHEME } from '@nitrots/room';
+import { FloorplanEditor } from '@nitrots/room';
 import { Column, Text } from '../../../common';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
 

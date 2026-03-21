@@ -1,4 +1,4 @@
-import { NitroEvent } from '@nitrots/nitro-renderer';
+import { NitroEvent } from '@nitrots/events';
 import { FurnitureItem } from '../../api';
 
 export class DeleteItemConfirmEvent extends NitroEvent

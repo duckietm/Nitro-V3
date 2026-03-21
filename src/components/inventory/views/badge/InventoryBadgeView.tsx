@@ -1,4 +1,4 @@
-import { DeleteBadgeMessageComposer } from '@nitrots/nitro-renderer';
+import { DeleteBadgeMessageComposer } from '@nitrots/communication';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import { LocalizeBadgeName, LocalizeText, SendMessageComposer, UnseenItemCategory } from '../../../../api';

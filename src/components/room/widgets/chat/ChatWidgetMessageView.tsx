@@ -1,4 +1,6 @@
-import { GetRoomEngine, RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory } from '@nitrots/api';
+import { RoomChatSettings } from '@nitrots/communication';
+import { GetRoomEngine } from '@nitrots/room';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatBubbleMessage, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../api';
 import { useOnClickChat } from '../../../../hooks';

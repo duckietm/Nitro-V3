@@ -1,4 +1,4 @@
-import { GuideSessionRequesterCancelsMessageComposer } from '@nitrots/nitro-renderer';
+import { GuideSessionRequesterCancelsMessageComposer } from '@nitrots/communication';
 import { FC } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Column, Text } from '../../../common';

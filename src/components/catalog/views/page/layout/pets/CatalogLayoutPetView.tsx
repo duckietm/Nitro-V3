@@ -1,4 +1,5 @@
-import { ApproveNameMessageComposer, ApproveNameMessageEvent, ColorConverter, GetSellablePetPalettesComposer, PurchaseFromCatalogComposer, SellablePetPaletteData } from '@nitrots/nitro-renderer';
+import { ApproveNameMessageComposer, ApproveNameMessageEvent, GetSellablePetPalettesComposer, PurchaseFromCatalogComposer, SellablePetPaletteData } from '@nitrots/communication';
+import { ColorConverter } from '@nitrots/utils';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaFillDrip } from 'react-icons/fa';
 import { DispatchUiEvent, GetPetAvailableColors, GetPetIndexFromLocalization, LocalizeText, SendMessageComposer } from '../../../../../../api';

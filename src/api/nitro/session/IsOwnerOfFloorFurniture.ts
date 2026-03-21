@@ -1,4 +1,6 @@
-import { GetRoomEngine, GetSessionDataManager, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory, RoomObjectVariable } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 import { GetRoomSession } from './GetRoomSession';
 
 export function IsOwnerOfFloorFurniture(id: number): boolean

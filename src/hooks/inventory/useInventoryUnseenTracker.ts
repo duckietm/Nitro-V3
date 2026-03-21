@@ -1,4 +1,4 @@
-import { UnseenItemsEvent, UnseenResetCategoryComposer, UnseenResetItemsComposer } from '@nitrots/nitro-renderer';
+import { UnseenItemsEvent, UnseenResetCategoryComposer, UnseenResetItemsComposer } from '@nitrots/communication';
 import { useCallback, useMemo, useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer } from '../../api';

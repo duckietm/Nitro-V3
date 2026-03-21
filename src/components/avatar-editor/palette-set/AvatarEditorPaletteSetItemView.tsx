@@ -1,4 +1,4 @@
-import { IPartColor } from '@nitrots/nitro-renderer';
+import { IPartColor } from '@nitrots/api';
 import { FC } from 'react';
 import { ColorUtils, GetClubMemberLevel, GetConfigurationValue } from '../../../api';
 import { LayoutCurrencyIcon, LayoutGridItemProps } from '../../../common';

@@ -1,4 +1,4 @@
-import { UpdateRoomFilterMessageComposer } from '@nitrots/nitro-renderer';
+import { UpdateRoomFilterMessageComposer } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

@@ -1,4 +1,7 @@
-import { GetRoomCameraWidgetManager, IRoomCameraWidgetEffect, IRoomCameraWidgetSelectedEffect, NitroLogger, NitroTexture, RoomCameraWidgetSelectedEffect } from '@nitrots/nitro-renderer';
+import { IRoomCameraWidgetEffect, IRoomCameraWidgetSelectedEffect } from '@nitrots/api';
+import { GetRoomCameraWidgetManager, RoomCameraWidgetSelectedEffect } from '@nitrots/camera';
+import { NitroTexture } from '@nitrots/nitro-renderer';
+import { NitroLogger } from '@nitrots/utils';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave, FaSearchMinus, FaSearchPlus, FaTrash } from 'react-icons/fa';
 import { CameraEditorTabs, CameraPicture, CameraPictureThumbnail, LocalizeText } from '../../../../api';

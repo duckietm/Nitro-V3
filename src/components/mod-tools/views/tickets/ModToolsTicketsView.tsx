@@ -1,4 +1,5 @@
-import { GetSessionDataManager, IssueMessageData } from '@nitrots/nitro-renderer';
+import { IssueMessageData } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useState } from 'react';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../../../common';
 import { useModTools } from '../../../../hooks';

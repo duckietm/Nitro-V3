@@ -1,4 +1,4 @@
-import { RedeemVoucherMessageComposer, VoucherRedeemErrorMessageEvent, VoucherRedeemOkMessageEvent } from '@nitrots/nitro-renderer';
+import { RedeemVoucherMessageComposer, VoucherRedeemErrorMessageEvent, VoucherRedeemOkMessageEvent } from '@nitrots/communication';
 import { FC, useState } from 'react';
 import { FaTag } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../../../../api';

@@ -1,4 +1,6 @@
-import { GetRoomEngine, IRoomObject, IRoomObjectSpriteVisualization, RoomObjectCategory, WiredFilter } from '@nitrots/nitro-renderer';
+import { IRoomObject, IRoomObjectSpriteVisualization, RoomObjectCategory } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
+import { WiredFilter } from '@nitrots/utils';
 
 export class WiredSelectionVisualizer
 {

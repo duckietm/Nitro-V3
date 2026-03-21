@@ -1,4 +1,4 @@
-import { GroupSavePreferencesComposer } from '@nitrots/nitro-renderer';
+import { GroupSavePreferencesComposer } from '@nitrots/communication';
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { IGroupData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Flex, HorizontalRule, Text } from '../../../../common';

@@ -1,4 +1,4 @@
-import { Game2GetAccountGameStatusMessageComposer, GetGameStatusMessageComposer, JoinQueueMessageComposer } from '@nitrots/nitro-renderer';
+import { Game2GetAccountGameStatusMessageComposer, GetGameStatusMessageComposer, JoinQueueMessageComposer } from '@nitrots/communication';
 import { useEffect } from 'react';
 import { ColorUtils, LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Flex, LayoutItemCountView, Text } from '../../../common';

@@ -1,4 +1,7 @@
-import { AddLinkEventTracker, AvatarEditorFigureCategory, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker, UserFigureComposer } from '@nitrots/nitro-renderer';
+import { AvatarEditorFigureCategory, ILinkEventTracker } from '@nitrots/api';
+import { UserFigureComposer } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useEffect, useState } from 'react';
 import { FaDice, FaRedo, FaTrash } from 'react-icons/fa';
 import { AvatarEditorAction, LocalizeText, SendMessageComposer } from '../../api';

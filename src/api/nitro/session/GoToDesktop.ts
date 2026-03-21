@@ -1,4 +1,4 @@
-import { DesktopViewComposer } from '@nitrots/nitro-renderer';
+import { DesktopViewComposer } from '@nitrots/communication';
 import { SendMessageComposer } from '../SendMessageComposer';
 
 export function GoToDesktop(): void

@@ -1,4 +1,4 @@
-import { CreateLinkEvent, HabboWebTools } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, HabboWebTools } from '@nitrots/utils';
 
 export const OpenUrl = (url: string) =>
 {

@@ -1,4 +1,8 @@
-import { AvatarFigurePartType, AvatarScaleType, AvatarSetType, GetAssetManager, GetAvatarRenderManager, IFigurePart, IGraphicAsset, IPartColor, NitroAlphaFilter, NitroContainer, NitroRectangle, NitroSprite, TextureUtils } from '@nitrots/nitro-renderer';
+import { AvatarFigurePartType, AvatarScaleType, AvatarSetType, IFigurePart, IGraphicAsset, IPartColor } from '@nitrots/api';
+import { GetAssetManager } from '@nitrots/assets';
+import { GetAvatarRenderManager } from '@nitrots/avatar';
+import { NitroAlphaFilter, NitroContainer, NitroRectangle, NitroSprite } from '@nitrots/nitro-renderer';
+import { TextureUtils } from '@nitrots/utils';
 import { IAvatarEditorCategoryPartItem } from './IAvatarEditorCategoryPartItem';
 
 export class AvatarEditorThumbnailsHelper

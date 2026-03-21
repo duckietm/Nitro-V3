@@ -1,4 +1,4 @@
-import { NitroLogger } from '@nitrots/nitro-renderer';
+import { NitroLogger } from '@nitrots/utils';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { GetLocalStorage, SetLocalStorage } from '../api';
 

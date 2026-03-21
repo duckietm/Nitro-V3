@@ -1,4 +1,4 @@
-import { ActivePrefixUpdatedEvent, PrefixReceivedEvent, RequestPrefixesComposer, SetActivePrefixComposer, DeletePrefixComposer, UserPrefixesEvent } from '@nitrots/nitro-renderer';
+import { ActivePrefixUpdatedEvent, PrefixReceivedEvent, RequestPrefixesComposer, SetActivePrefixComposer, DeletePrefixComposer, UserPrefixesEvent } from '@nitrots/communication';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { IPrefixItem, SendMessageComposer, UnseenItemCategory } from '../../api';

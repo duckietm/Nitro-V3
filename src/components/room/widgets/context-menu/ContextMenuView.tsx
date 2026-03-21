@@ -1,4 +1,6 @@
-import { GetStage, GetTicker, NitroRectangle, NitroTicker, RoomObjectType } from '@nitrots/nitro-renderer';
+import { RoomObjectType } from '@nitrots/api';
+import { NitroRectangle, NitroTicker } from '@nitrots/nitro-renderer';
+import { GetStage, GetTicker } from '@nitrots/utils';
 import { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FixedSizeStack, GetRoomObjectBounds, GetRoomObjectScreenLocation, GetRoomSession } from '../../../../api';
 import { BaseProps } from '../../../../common';

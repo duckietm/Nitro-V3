@@ -1,4 +1,6 @@
-import { CameraPublishStatusMessageEvent, CameraPurchaseOKMessageEvent, CameraStorageUrlMessageEvent, CreateLinkEvent, GetRoomEngine, PublishPhotoMessageComposer, PurchasePhotoMessageComposer } from '@nitrots/nitro-renderer';
+import { CameraPublishStatusMessageEvent, CameraPurchaseOKMessageEvent, CameraStorageUrlMessageEvent, PublishPhotoMessageComposer, PurchasePhotoMessageComposer } from '@nitrots/communication';
+import { GetRoomEngine } from '@nitrots/room';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Column, LayoutCurrencyIcon, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../common';

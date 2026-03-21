@@ -1,4 +1,5 @@
-import { BotAddedToInventoryEvent, BotData, BotInventoryMessageEvent, BotRemovedFromInventoryEvent, CreateLinkEvent, GetBotInventoryComposer } from '@nitrots/nitro-renderer';
+import { BotAddedToInventoryEvent, BotData, BotInventoryMessageEvent, BotRemovedFromInventoryEvent, GetBotInventoryComposer } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { IBotItem, SendMessageComposer, UnseenItemCategory, cancelRoomObjectPlacement, getPlacingItemId } from '../../api';

@@ -1,4 +1,6 @@
-import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { RoomSessionEvent } from '@nitrots/events';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useEffect, useState } from 'react';
 import { useCamera, useNitroEvent } from '../../hooks';
 import { CameraWidgetCaptureView } from './views/CameraWidgetCaptureView';

@@ -1,3 +1,3 @@
-import { GetRoomSessionManager } from '@nitrots/nitro-renderer';
+import { GetRoomSessionManager } from '@nitrots/session';
 
 export const GetRoomSession = () => GetRoomSessionManager().getSession(-1);

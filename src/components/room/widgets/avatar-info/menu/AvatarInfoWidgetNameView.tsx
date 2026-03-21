@@ -1,4 +1,4 @@
-import { GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useMemo } from 'react';
 import { AvatarInfoName } from '../../../../../api';
 import { ContextMenuView } from '../../context-menu/ContextMenuView';

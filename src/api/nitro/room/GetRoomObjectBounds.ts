@@ -1,4 +1,4 @@
-import { GetRoomEngine } from '@nitrots/nitro-renderer';
+import { GetRoomEngine } from '@nitrots/room';
 
 export const GetRoomObjectBounds = (roomId: number, objectId: number, category: number, canvasId = 1) =>
 {

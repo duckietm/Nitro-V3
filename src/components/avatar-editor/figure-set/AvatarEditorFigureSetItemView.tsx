@@ -1,4 +1,4 @@
-import { AvatarFigurePartType } from '@nitrots/nitro-renderer';
+import { AvatarFigurePartType } from '@nitrots/api';
 import { FC, useEffect, useState } from 'react';
 import { AvatarEditorThumbnailsHelper, GetClubMemberLevel, GetConfigurationValue, IAvatarEditorCategoryPartItem } from '../../../api';
 import { LayoutCurrencyIcon, LayoutGridItemProps } from '../../../common';

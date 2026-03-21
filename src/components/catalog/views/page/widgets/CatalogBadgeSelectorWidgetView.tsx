@@ -1,4 +1,4 @@
-import { StringDataType } from '@nitrots/nitro-renderer';
+import { StringDataType } from '@nitrots/api';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { AutoGrid, AutoGridProps, LayoutBadgeImageView, LayoutGridItem } from '../../../../../common';
 import { useCatalog, useInventoryBadges } from '../../../../../hooks';

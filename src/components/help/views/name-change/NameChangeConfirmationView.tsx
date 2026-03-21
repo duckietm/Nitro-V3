@@ -1,4 +1,5 @@
-import { ChangeUserNameMessageComposer, GetSessionDataManager, UserNameChangeMessageEvent } from '@nitrots/nitro-renderer';
+import { ChangeUserNameMessageComposer, UserNameChangeMessageEvent } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { useMessageEvent } from '../../../../hooks';

@@ -1,4 +1,8 @@
-import { ApplyTonerComposer, ColorConverter, GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectVariable } from '@nitrots/api';
+import { ApplyTonerComposer } from '@nitrots/communication';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
+import { ColorConverter } from '@nitrots/utils';
 import { useEffect, useState } from 'react';
 import { CanManipulateFurniture, ColorUtils, DispatchUiEvent, RoomWidgetUpdateBackgroundColorPreviewEvent, SendMessageComposer } from '../../../../api';
 import { useNitroEvent } from '../../../events';

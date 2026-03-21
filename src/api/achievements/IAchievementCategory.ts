@@ -1,4 +1,4 @@
-import { AchievementData } from '@nitrots/nitro-renderer';
+import { AchievementData } from '@nitrots/communication';
 
 export interface IAchievementCategory
 {

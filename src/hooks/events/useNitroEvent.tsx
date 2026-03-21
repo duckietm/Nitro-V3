@@ -1,4 +1,4 @@
-import { GetEventDispatcher, NitroEvent } from '@nitrots/nitro-renderer';
+import { GetEventDispatcher, NitroEvent } from '@nitrots/events';
 import { useEventDispatcher } from './useEventDispatcher';
 
 export const useNitroEvent = <T extends NitroEvent>(

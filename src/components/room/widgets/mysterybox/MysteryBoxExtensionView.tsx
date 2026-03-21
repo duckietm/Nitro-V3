@@ -1,4 +1,4 @@
-import { MysteryBoxKeysUpdateEvent } from '@nitrots/nitro-renderer';
+import { MysteryBoxKeysUpdateEvent } from '@nitrots/events';
 import { FC, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { ColorUtils, LocalizeText } from '../../../../api';

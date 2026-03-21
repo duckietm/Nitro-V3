@@ -1,4 +1,6 @@
-import { GetRenderer, GetTicker, NitroTicker, RoomPreviewer, TextureUtils } from '@nitrots/nitro-renderer';
+import { NitroTicker } from '@nitrots/nitro-renderer';
+import { RoomPreviewer } from '@nitrots/room';
+import { GetRenderer, GetTicker, TextureUtils } from '@nitrots/utils';
 import { FC, MouseEvent, useEffect, useRef } from 'react';
 
 export const LayoutRoomPreviewerView: FC<{

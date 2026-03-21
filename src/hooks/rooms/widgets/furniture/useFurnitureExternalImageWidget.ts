@@ -1,4 +1,6 @@
-import { GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory, RoomObjectVariable } from '@nitrots/api';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
 import { useState } from 'react';
 import { IPhotoData } from '../../../../api';
 import { useNitroEvent } from '../../../events';

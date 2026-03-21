@@ -1,4 +1,5 @@
-import { GetRoomEngine, MouseEventType, TouchEventType } from '@nitrots/nitro-renderer';
+import { MouseEventType, TouchEventType } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
 
 let didMouseMove = false;
 let lastClick = 0;

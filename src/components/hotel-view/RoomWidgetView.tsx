@@ -1,4 +1,4 @@
-import { CreateLinkEvent } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC } from 'react';
 import { GetConfigurationValue } from '../../api';
 import { Base } from '../../common';

@@ -1,4 +1,4 @@
-import { RoomControllerLevel, RoomObjectOperationType } from '@nitrots/nitro-renderer';
+import { RoomControllerLevel, RoomObjectOperationType } from '@nitrots/api';
 import { FC } from 'react';
 import { FaArrowsAlt, FaSyncAlt, FaTrashRestore } from 'react-icons/fa';
 import { AvatarInfoFurni, ProcessRoomObjectOperation } from '../../../../../api';

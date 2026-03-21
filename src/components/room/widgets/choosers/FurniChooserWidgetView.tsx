@@ -1,4 +1,5 @@
-import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { FC, useEffect } from 'react';
 import { LocalizeText, chooserSelectionVisualizer } from '../../../../api';
 import { useFurniChooserWidget, useRoom } from '../../../../hooks';

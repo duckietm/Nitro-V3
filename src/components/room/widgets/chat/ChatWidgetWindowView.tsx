@@ -1,4 +1,5 @@
-import { GetSessionDataManager, RoomObjectType } from '@nitrots/nitro-renderer';
+import { RoomObjectType } from '@nitrots/api';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatEntryType, LocalizeText } from '../../../../api';
 import { DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';

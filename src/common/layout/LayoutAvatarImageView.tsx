@@ -1,4 +1,5 @@
-import { AvatarScaleType, AvatarSetType, GetAvatarRenderManager } from '@nitrots/nitro-renderer';
+import { AvatarScaleType, AvatarSetType } from '@nitrots/api';
+import { GetAvatarRenderManager } from '@nitrots/avatar';
 import { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Base, BaseProps } from '../Base';
 

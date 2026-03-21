@@ -1,4 +1,5 @@
-import { IObjectData, TradingListAddItemComposer, TradingListAddItemsComposer } from '@nitrots/nitro-renderer';
+import { IObjectData } from '@nitrots/api';
+import { TradingListAddItemComposer, TradingListAddItemsComposer } from '@nitrots/communication';
 import { FC, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight, FaLock, FaUnlock } from 'react-icons/fa';
 import { FurniCategory, GroupItem, IFurnitureItem, LocalizeText, NotificationAlertType, SendMessageComposer, TradeState, getGuildFurniType } from '../../../../api';

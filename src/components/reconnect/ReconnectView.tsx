@@ -1,4 +1,4 @@
-import { NitroEventType, ReconnectEvent } from '@nitrots/nitro-renderer';
+import { NitroEventType, ReconnectEvent } from '@nitrots/events';
 import { FC, useCallback, useState } from 'react';
 import { Base, Column, Text } from '../../common';
 import { useNitroEvent } from '../../hooks';

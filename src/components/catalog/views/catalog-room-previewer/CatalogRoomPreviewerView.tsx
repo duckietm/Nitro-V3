@@ -1,4 +1,7 @@
-import { GetEventDispatcher, NitroToolbarAnimateIconEvent, RoomPreviewer, TextureUtils, ToolbarIconEnum } from '@nitrots/nitro-renderer';
+import { ToolbarIconEnum } from '@nitrots/api';
+import { GetEventDispatcher, NitroToolbarAnimateIconEvent } from '@nitrots/events';
+import { RoomPreviewer } from '@nitrots/room';
+import { TextureUtils } from '@nitrots/utils';
 import { FC, useRef } from 'react';
 import { LayoutRoomPreviewerView } from '../../../../common';
 import { CatalogPurchasedEvent } from '../../../../events';

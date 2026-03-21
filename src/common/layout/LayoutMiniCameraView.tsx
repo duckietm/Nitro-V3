@@ -1,4 +1,5 @@
-import { GetRoomEngine, NitroRectangle, NitroTexture } from '@nitrots/nitro-renderer';
+import { NitroRectangle, NitroTexture } from '@nitrots/nitro-renderer';
+import { GetRoomEngine } from '@nitrots/room';
 import { FC, useRef } from 'react';
 import { LocalizeText, PlaySound, SoundNames } from '../../api';
 import { DraggableWindow } from '../draggable-window';

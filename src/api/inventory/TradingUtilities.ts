@@ -1,4 +1,7 @@
-import { AdvancedMap, GetSessionDataManager, IObjectData, ItemDataStructure, StringDataType } from '@nitrots/nitro-renderer';
+import { IObjectData, StringDataType } from '@nitrots/api';
+import { ItemDataStructure } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
+import { AdvancedMap } from '@nitrots/utils';
 import { FurniCategory } from './FurniCategory';
 import { FurnitureItem } from './FurnitureItem';
 import { createGroupItem } from './FurnitureUtilities';

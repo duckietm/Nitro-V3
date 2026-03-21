@@ -1,4 +1,4 @@
-import { GetTargetedOfferComposer, PurchaseTargetedOfferComposer, TargetedOfferData } from '@nitrots/nitro-renderer';
+import { GetTargetedOfferComposer, PurchaseTargetedOfferComposer, TargetedOfferData } from '@nitrots/communication';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { FriendlyTime, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

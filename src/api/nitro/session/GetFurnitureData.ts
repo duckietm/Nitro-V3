@@ -1,4 +1,5 @@
-import { GetSessionDataManager, IFurnitureData } from '@nitrots/nitro-renderer';
+import { IFurnitureData } from '@nitrots/api';
+import { GetSessionDataManager } from '@nitrots/session';
 import { ProductTypeEnum } from '../../catalog';
 
 export function GetFurnitureData(furniClassId: number, productType: string): IFurnitureData

@@ -1,4 +1,4 @@
-import { GetRoomSessionManager } from '@nitrots/nitro-renderer';
+import { GetRoomSessionManager } from '@nitrots/session';
 import { GetRoomSession } from './GetRoomSession';
 import { GoToDesktop } from './GoToDesktop';
 

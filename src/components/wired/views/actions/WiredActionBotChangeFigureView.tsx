@@ -1,4 +1,4 @@
-import { GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WIRED_STRING_DELIMETER, WiredFurniType } from '../../../../api';
 import { Button, LayoutAvatarImageView, Text } from '../../../../common';

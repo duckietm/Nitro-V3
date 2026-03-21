@@ -1,9 +1,9 @@
-import { UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
+import { UpdateFloorPropertiesMessageComposer } from '@nitrots/communication';
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../common';
-import { ConvertTileMapToString } from '@nitrots/nitro-renderer';
-import { convertNumbersForSaving } from '@nitrots/nitro-renderer';
+import { ConvertTileMapToString } from '@nitrots/room';
+import { convertNumbersForSaving } from '@nitrots/room';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
 
 interface FloorplanImportExportViewProps

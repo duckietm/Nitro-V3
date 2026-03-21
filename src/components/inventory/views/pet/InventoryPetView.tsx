@@ -1,4 +1,6 @@
-import { DeletePetMessageComposer, GetRoomEngine, IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
+import { IRoomSession, RoomObjectVariable } from '@nitrots/api';
+import { DeletePetMessageComposer } from '@nitrots/communication';
+import { GetRoomEngine, RoomPreviewer } from '@nitrots/room';
 import { FC, useEffect, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import { IPetItem, LocalizeText, SendMessageComposer, UnseenItemCategory, attemptPetPlacement } from '../../../../api';

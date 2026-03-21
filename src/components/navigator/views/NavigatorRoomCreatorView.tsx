@@ -1,5 +1,6 @@
 
-import { CreateFlatMessageComposer, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
+import { CreateFlatMessageComposer } from '@nitrots/communication';
+import { HabboClubLevelEnum } from '@nitrots/session';
 import { FC, useEffect, useState } from 'react';
 import { GetClubMemberLevel, GetConfigurationValue, IRoomModel, LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, Text } from '../../../common';

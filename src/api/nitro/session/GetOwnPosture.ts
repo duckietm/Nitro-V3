@@ -1,4 +1,4 @@
-import { AvatarAction, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { AvatarAction, RoomObjectVariable } from '@nitrots/api';
 import { GetOwnRoomObject } from '../room';
 
 export function GetOwnPosture(): string

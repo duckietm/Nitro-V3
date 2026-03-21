@@ -1,4 +1,4 @@
-import { CallForHelpCategoryData, CfhSanctionMessageEvent, CfhTopicsInitEvent, IssueDeletedMessageEvent, IssueInfoMessageEvent, IssueMessageData, IssuePickFailedMessageEvent, ModeratorActionResultMessageEvent, ModeratorInitData, ModeratorInitMessageEvent, ModeratorToolPreferencesEvent } from '@nitrots/nitro-renderer';
+import { CallForHelpCategoryData, CfhSanctionMessageEvent, CfhTopicsInitEvent, IssueDeletedMessageEvent, IssueInfoMessageEvent, IssueMessageData, IssuePickFailedMessageEvent, ModeratorActionResultMessageEvent, ModeratorInitData, ModeratorInitMessageEvent, ModeratorToolPreferencesEvent } from '@nitrots/communication';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { NotificationAlertType, PlaySound, SoundNames } from '../../api';

@@ -1,4 +1,4 @@
-import { GroupFavoriteComposer, GroupUnfavoriteComposer, HabboGroupEntryData } from '@nitrots/nitro-renderer';
+import { GroupFavoriteComposer, GroupUnfavoriteComposer, HabboGroupEntryData } from '@nitrots/communication';
 import { SendMessageComposer } from '../nitro';
 
 export const ToggleFavoriteGroup = (group: HabboGroupEntryData) =>

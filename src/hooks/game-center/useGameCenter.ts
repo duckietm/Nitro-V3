@@ -1,4 +1,4 @@
-import { Game2AccountGameStatusMessageEvent, Game2AccountGameStatusMessageParser, GameConfigurationData, GameListMessageEvent, GameStatusMessageEvent, GetGameListMessageComposer, LoadGameUrlEvent } from '@nitrots/nitro-renderer';
+import { Game2AccountGameStatusMessageEvent, Game2AccountGameStatusMessageParser, GameConfigurationData, GameListMessageEvent, GameStatusMessageEvent, GetGameListMessageComposer, LoadGameUrlEvent } from '@nitrots/communication';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer, VisitDesktop } from '../../api';

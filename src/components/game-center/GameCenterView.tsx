@@ -1,4 +1,5 @@
-import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { AddLinkEventTracker, RemoveLinkEventTracker } from '@nitrots/utils';
 import { useEffect } from 'react';
 import { Flex } from '../../common';
 import { useGameCenter } from '../../hooks';

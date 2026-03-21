@@ -1,4 +1,4 @@
-import { IObjectData } from '@nitrots/nitro-renderer';
+import { IObjectData } from '@nitrots/api';
 import { IAvatarInfo } from './IAvatarInfo';
 
 export class AvatarInfoFurni implements IAvatarInfo

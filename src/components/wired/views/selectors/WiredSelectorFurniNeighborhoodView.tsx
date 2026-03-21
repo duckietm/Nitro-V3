@@ -1,4 +1,5 @@
-import { GetRoomEngine, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
 import { CSSProperties, FC, useCallback, useEffect, useState } from 'react';
 import { FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 import { MdGridOn } from 'react-icons/md';

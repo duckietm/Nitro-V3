@@ -1,4 +1,8 @@
-import { AddLinkEventTracker, GetCommunication, GetRoomSessionManager, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { ILinkEventTracker } from '@nitrots/api';
+import { GetCommunication } from '@nitrots/communication';
+import { RoomSessionEvent } from '@nitrots/events';
+import { GetRoomSessionManager } from '@nitrots/session';
+import { AddLinkEventTracker, HabboWebTools, RemoveLinkEventTracker } from '@nitrots/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
 import { useNitroEvent } from '../hooks';

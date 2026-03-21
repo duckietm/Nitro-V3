@@ -1,11 +1,11 @@
-import { GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent } from '@nitrots/nitro-renderer';
+import { GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent } from '@nitrots/communication';
 import { FC, useEffect, useRef, useState } from 'react';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 import { SendMessageComposer } from '../../../api';
 import { Base, Column, ColumnProps } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
-import { FloorplanEditor } from '@nitrots/nitro-renderer';
+import { FloorplanEditor } from '@nitrots/room';
 
 interface FloorplanCanvasViewProps extends ColumnProps
 {

@@ -1,4 +1,6 @@
-import { GetRoomEngine, RoomEngineObjectEvent, RoomEngineRoomAdEvent, RoomEngineTriggerWidgetEvent, RoomEngineUseProductEvent, RoomId, RoomSessionErrorMessageEvent, RoomZoomEvent } from '@nitrots/nitro-renderer';
+import { RoomEngineObjectEvent, RoomEngineRoomAdEvent, RoomEngineTriggerWidgetEvent, RoomEngineUseProductEvent, RoomSessionErrorMessageEvent, RoomZoomEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
+import { RoomId } from '@nitrots/utils';
 import { FC } from 'react';
 import { DispatchUiEvent, LocalizeText, NotificationAlertType, RoomWidgetUpdateRoomObjectEvent } from '../../../api';
 import { useNitroEvent, useNotification, useRoom } from '../../../hooks';

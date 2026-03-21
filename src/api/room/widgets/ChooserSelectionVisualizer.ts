@@ -1,4 +1,6 @@
-import { ChooserSelectionFilter, GetRoomEngine, IRoomObjectSpriteVisualization, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { IRoomObjectSpriteVisualization, RoomObjectCategory } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
+import { ChooserSelectionFilter } from '@nitrots/utils';
 
 export class chooserSelectionVisualizer
 {

@@ -1,4 +1,4 @@
-import { GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useMemo } from 'react';
 import { GetGroupChatData, LocalizeText, MessengerGroupType, MessengerThread, MessengerThreadChat, MessengerThreadChatGroup } from '../../../../../api';
 import { Base, Flex, LayoutAvatarImageView } from '../../../../../common';

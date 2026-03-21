@@ -1,4 +1,6 @@
-import { FurnitureStackHeightComposer, GetRoomEngine, TextureUtils } from '@nitrots/nitro-renderer';
+import { FurnitureStackHeightComposer } from '@nitrots/communication';
+import { GetRoomEngine } from '@nitrots/room';
+import { TextureUtils } from '@nitrots/utils';
 import { CreateLinkEvent, GetRoomSession, SendMessageComposer, VisitDesktop } from '../../api';
 
 /**

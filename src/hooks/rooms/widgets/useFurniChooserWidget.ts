@@ -1,4 +1,6 @@
-import { GetRoomEngine, GetSessionDataManager, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory, RoomObjectVariable } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 import { useState } from 'react';
 import { GetRoomSession, LocalizeText, RoomObjectItem } from '../../../api';
 import { useFurniAddedEvent, useFurniRemovedEvent } from '../engine';

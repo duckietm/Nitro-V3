@@ -1,4 +1,5 @@
-import { FurnitureType, GetRoomEngine } from '@nitrots/nitro-renderer';
+import { FurnitureType } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
 import { FurniCategory } from '../inventory';
 
 export class ProductImageUtility

@@ -1,4 +1,4 @@
-import { SelectClubGiftComposer } from '@nitrots/nitro-renderer';
+import { SelectClubGiftComposer } from '@nitrots/communication';
 import { FC, useCallback, useMemo } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../../../api';
 import { AutoGrid, Text } from '../../../../../../common';

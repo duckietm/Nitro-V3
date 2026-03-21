@@ -1,4 +1,6 @@
-import { GetRoomEngine, RoomAreaSelectionManager, RoomEngineAreaHideStateEvent, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { RoomObjectVariable } from '@nitrots/api';
+import { RoomEngineAreaHideStateEvent, RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomEngine, RoomAreaSelectionManager } from '@nitrots/room';
 import { useEffect, useState } from 'react';
 import { CanManipulateFurniture } from '../../../../api';
 import { useNitroEvent } from '../../../events';

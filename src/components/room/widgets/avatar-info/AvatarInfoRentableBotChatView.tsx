@@ -1,4 +1,4 @@
-import { BotSkillSaveComposer } from '@nitrots/nitro-renderer';
+import { BotSkillSaveComposer } from '@nitrots/communication';
 import { FC, useMemo, useState } from 'react';
 import { BotSkillsEnum, GetRoomObjectBounds, GetRoomSession, LocalizeText, RoomWidgetUpdateRentableBotChatEvent, SendMessageComposer } from '../../../../api';
 import { Button, Column, DraggableWindow, DraggableWindowPosition, Flex, Text } from '../../../../common';

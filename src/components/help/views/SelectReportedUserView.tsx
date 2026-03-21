@@ -1,4 +1,5 @@
-import { GetSessionDataManager, RoomObjectType } from '@nitrots/nitro-renderer';
+import { RoomObjectType } from '@nitrots/api';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useMemo, useState } from 'react';
 import { ChatEntryType, IReportedUser, LocalizeText, ReportState } from '../../../api';
 import { AutoGrid, Button, Column, Flex, LayoutGridItem, Text } from '../../../common';

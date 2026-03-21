@@ -1,4 +1,4 @@
-import { GameConfigurationData } from '@nitrots/nitro-renderer';
+import { GameConfigurationData } from '@nitrots/communication';
 import { LocalizeText } from '../../../api';
 import { useGameCenter } from '../../../hooks';
 

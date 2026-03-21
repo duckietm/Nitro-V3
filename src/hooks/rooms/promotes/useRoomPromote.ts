@@ -1,4 +1,4 @@
-import { RoomEventEvent, RoomEventMessageParser } from '@nitrots/nitro-renderer';
+import { RoomEventEvent, RoomEventMessageParser } from '@nitrots/communication';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { useMessageEvent } from '../../events';

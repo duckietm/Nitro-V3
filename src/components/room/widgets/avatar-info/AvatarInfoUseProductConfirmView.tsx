@@ -1,4 +1,5 @@
-import { GetRoomEngine, IFurnitureData, IPetCustomPart, IRoomUserData, PetCustomPart, PetFigureData, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { IFurnitureData, IPetCustomPart, IRoomUserData, PetCustomPart, PetFigureData, RoomObjectCategory, RoomObjectVariable } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FurniCategory, GetFurnitureDataForRoomObject, LocalizeText, UseProductItem } from '../../../../api';
 import { Button, Column, Flex, LayoutPetImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

@@ -1,4 +1,4 @@
-import { IssueMessageData, PickIssuesMessageComposer } from '@nitrots/nitro-renderer';
+import { IssueMessageData, PickIssuesMessageComposer } from '@nitrots/communication';
 import { FC, useRef } from 'react';
 import { SendMessageComposer } from '../../../../api';
 import { Button, Column, Grid } from '../../../../common';

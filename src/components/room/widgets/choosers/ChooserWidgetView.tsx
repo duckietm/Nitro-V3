@@ -1,4 +1,5 @@
-import { FurniturePickupAllComposer, GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { FurniturePickupAllComposer } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { LocalizeText, RoomObjectItem, SendMessageComposer, chooserSelectionVisualizer } from '../../../../api';
 import { Button, Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';

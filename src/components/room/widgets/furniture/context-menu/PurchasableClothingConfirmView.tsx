@@ -1,4 +1,7 @@
-import { AvatarFigurePartType, GetAvatarRenderManager, GetSessionDataManager, RedeemItemClothingComposer, RoomObjectCategory, UserFigureComposer } from '@nitrots/nitro-renderer';
+import { AvatarFigurePartType, RoomObjectCategory } from '@nitrots/api';
+import { GetAvatarRenderManager } from '@nitrots/avatar';
+import { RedeemItemClothingComposer, UserFigureComposer } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useEffect, useState } from 'react';
 import { FurniCategory, GetFurnitureDataForRoomObject, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Button, Column, LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../../common';

@@ -1,4 +1,5 @@
-import { CreateLinkEvent, PetData } from '@nitrots/nitro-renderer';
+import { PetData } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { IPetItem } from './IPetItem';
 import { cancelRoomObjectPlacement, getPlacingItemId } from './InventoryUtilities';
 import { UnseenItemCategory } from './UnseenItemCategory';

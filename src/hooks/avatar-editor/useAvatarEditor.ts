@@ -1,4 +1,7 @@
-import { AvatarEditorFigureCategory, AvatarFigureContainer, AvatarFigurePartType, FigureSetIdsMessageEvent, GetAvatarRenderManager, GetSessionDataManager, GetWardrobeMessageComposer, IAvatarFigureContainer, IFigurePartSet, IPalette, IPartColor, SetType, UserWardrobePageEvent } from '@nitrots/nitro-renderer';
+import { AvatarEditorFigureCategory, AvatarFigurePartType, IAvatarFigureContainer, IFigurePartSet, IPalette, IPartColor } from '@nitrots/api';
+import { AvatarFigureContainer, GetAvatarRenderManager, SetType } from '@nitrots/avatar';
+import { FigureSetIdsMessageEvent, GetWardrobeMessageComposer, UserWardrobePageEvent } from '@nitrots/communication';
+import { GetSessionDataManager } from '@nitrots/session';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useBetween } from 'use-between';
 import { AvatarEditorColorSorter, AvatarEditorPartSorter, AvatarEditorThumbnailsHelper, GetClubMemberLevel, GetConfigurationValue, IAvatarEditorCategory, IAvatarEditorCategoryPartItem, Randomizer, SendMessageComposer } from '../../api';

@@ -1,4 +1,4 @@
-import { NitroEvent } from '@nitrots/nitro-renderer';
+import { NitroEvent } from '@nitrots/events';
 
 export class InventoryFurniAddedEvent extends NitroEvent
 {

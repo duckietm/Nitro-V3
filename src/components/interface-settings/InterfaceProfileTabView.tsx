@@ -1,4 +1,4 @@
-import { GetSessionDataManager, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, HabboClubLevelEnum } from '@nitrots/session';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { GetClubMemberLevel, GetConfigurationValue } from '../../api';
 import { Base, Flex, Grid, LayoutCurrencyIcon, NitroCardTabsItemView, NitroCardTabsView, Text } from '../../common';

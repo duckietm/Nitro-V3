@@ -1,8 +1,6 @@
-import {
-    GetCommunication,
-    IMessageEvent,
-    MessageEvent,
-} from '@nitrots/nitro-renderer';
+import { IMessageEvent } from '@nitrots/api';
+import { GetCommunication } from '@nitrots/communication';
+import { MessageEvent } from '@nitrots/events';
 import { useEffect } from 'react';
 
 export const useMessageEvent = <T extends IMessageEvent>(

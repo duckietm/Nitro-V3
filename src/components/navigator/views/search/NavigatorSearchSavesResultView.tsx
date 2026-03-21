@@ -1,4 +1,4 @@
-import { NavigatorSavedSearch } from '@nitrots/nitro-renderer';
+import { NavigatorSavedSearch } from '@nitrots/communication';
 import { FC } from 'react';
 import { FaBolt } from 'react-icons/fa';
 import { LocalizeText } from '../../../../api';

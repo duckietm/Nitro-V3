@@ -1,4 +1,4 @@
-import { SellablePetPaletteData } from '@nitrots/nitro-renderer';
+import { SellablePetPaletteData } from '@nitrots/communication';
 
 export class CatalogPetPalette
 {

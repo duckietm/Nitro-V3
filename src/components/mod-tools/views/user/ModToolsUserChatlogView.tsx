@@ -1,4 +1,4 @@
-import { ChatRecordData, GetUserChatlogMessageComposer, UserChatlogEvent } from '@nitrots/nitro-renderer';
+import { ChatRecordData, GetUserChatlogMessageComposer, UserChatlogEvent } from '@nitrots/communication';
 import { FC, useEffect, useState } from 'react';
 import { SendMessageComposer } from '../../../../api';
 import { DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';

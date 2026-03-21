@@ -1,4 +1,12 @@
-import { GetAssetManager, GetAvatarRenderManager, GetCommunication, GetConfiguration, GetLocalizationManager, GetRoomEngine, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, GetStage, GetTexturePool, GetTicker, HabboWebTools, LegacyExternalInterface, LoadGameUrlEvent, NitroLogger, NitroVersion, PrepareRenderer } from '@nitrots/nitro-renderer';
+import { GetAssetManager } from '@nitrots/assets';
+import { GetAvatarRenderManager } from '@nitrots/avatar';
+import { GetCommunication, LoadGameUrlEvent } from '@nitrots/communication';
+import { GetConfiguration } from '@nitrots/configuration';
+import { GetLocalizationManager } from '@nitrots/localization';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetRoomSessionManager, GetSessionDataManager } from '@nitrots/session';
+import { GetSoundManager } from '@nitrots/sound';
+import { GetStage, GetTexturePool, GetTicker, HabboWebTools, LegacyExternalInterface, NitroLogger, NitroVersion, PrepareRenderer } from '@nitrots/utils';
 import { FC, useEffect, useState } from 'react';
 import { GetUIVersion, UiSettingsProvider } from './api';
 import { Base } from './common';

@@ -1,4 +1,4 @@
-import { RoomEngineTriggerWidgetEvent } from '@nitrots/nitro-renderer';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { ColorUtils, FurnitureDimmerUtilities, GetConfigurationValue, LocalizeText } from '../../../../api';
 import { Button, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Slider, Text } from '../../../../common';

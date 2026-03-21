@@ -1,4 +1,6 @@
-import { CreateLinkEvent, GetSoundManager, IAdvancedMap, MusicPriorities } from '@nitrots/nitro-renderer';
+import { IAdvancedMap } from '@nitrots/api';
+import { GetSoundManager, MusicPriorities } from '@nitrots/sound';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC, MouseEvent, useCallback, useEffect, useState } from 'react';
 import { CatalogPageName, GetConfigurationValue, GetDiskColor, LocalizeText } from '../../../../../api';
 import { AutoGrid, Button, Flex, LayoutGridItem, Text } from '../../../../../common';

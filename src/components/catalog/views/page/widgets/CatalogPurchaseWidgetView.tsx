@@ -1,4 +1,5 @@
-import { CreateLinkEvent, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
+import { PurchaseFromCatalogComposer } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { CatalogPurchaseState, DispatchUiEvent, GetClubMemberLevel, LocalStorageKeys, LocalizeText, Offer, SendMessageComposer } from '../../../../../api';
 import { Button, LayoutLoadingSpinnerView } from '../../../../../common';

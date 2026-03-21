@@ -1,4 +1,7 @@
-import { ConditionDefinition, GetRoomEngine, GetSessionDataManager, OpenMessageComposer, RoomObjectCategory, RoomObjectVariable, Triggerable, TriggerDefinition, UpdateActionMessageComposer, UpdateConditionMessageComposer, UpdateTriggerMessageComposer, WiredActionDefinition, WiredFurniActionEvent, WiredFurniConditionEvent, WiredFurniTriggerEvent, WiredOpenEvent, WiredSaveSuccessEvent, WiredValidationErrorEvent } from '@nitrots/nitro-renderer';
+import { RoomObjectCategory, RoomObjectVariable } from '@nitrots/api';
+import { ConditionDefinition, OpenMessageComposer, Triggerable, TriggerDefinition, UpdateActionMessageComposer, UpdateConditionMessageComposer, UpdateTriggerMessageComposer, WiredActionDefinition, WiredFurniActionEvent, WiredFurniConditionEvent, WiredFurniTriggerEvent, WiredOpenEvent, WiredSaveSuccessEvent, WiredValidationErrorEvent } from '@nitrots/communication';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { GetRoomSession, IsOwnerOfFloorFurniture, LocalizeText, SendMessageComposer, WiredFurniType, WiredSelectionVisualizer } from '../../api';

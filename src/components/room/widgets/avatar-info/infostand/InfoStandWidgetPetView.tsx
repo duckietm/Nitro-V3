@@ -1,4 +1,6 @@
-import { CreateLinkEvent, PetRespectComposer, PetType } from '@nitrots/nitro-renderer';
+import { PetType } from '@nitrots/api';
+import { PetRespectComposer } from '@nitrots/communication';
+import { CreateLinkEvent } from '@nitrots/utils';
 import { FC, useEffect, useState, useCallback } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { AvatarInfoPet, ConvertSeconds, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../../api';

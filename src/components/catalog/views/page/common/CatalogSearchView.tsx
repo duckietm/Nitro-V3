@@ -1,4 +1,5 @@
-import { GetSessionDataManager, IFurnitureData } from '@nitrots/nitro-renderer';
+import { IFurnitureData } from '@nitrots/api';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useEffect, useState } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
 import { CatalogPage, CatalogType, FilterCatalogNode, FurnitureOffer, GetOfferNodes, ICatalogNode, ICatalogPage, IPurchasableOffer, LocalizeText, PageLocalization, SearchResult } from '../../../../../api';

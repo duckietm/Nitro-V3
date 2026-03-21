@@ -1,4 +1,4 @@
-import { RoomDataParser, RoomSettingsComposer, UpdateHomeRoomMessageComposer } from '@nitrots/nitro-renderer';
+import { RoomDataParser, RoomSettingsComposer, UpdateHomeRoomMessageComposer } from '@nitrots/communication';
 import React, { FC, useRef, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { ArrowContainer, Popover } from 'react-tiny-popover';

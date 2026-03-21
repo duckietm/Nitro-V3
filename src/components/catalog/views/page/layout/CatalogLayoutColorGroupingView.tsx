@@ -1,4 +1,4 @@
-import { ColorConverter } from '@nitrots/nitro-renderer';
+import { ColorConverter } from '@nitrots/utils';
 import { FC, useMemo, useState } from 'react';
 import { FaFillDrip } from 'react-icons/fa';
 import { IPurchasableOffer } from '../../../../../api';

@@ -1,4 +1,6 @@
-import { GetRoomEngine, IGetImageListener, ImageResult, TextureUtils, Vector3d } from '@nitrots/nitro-renderer';
+import { IGetImageListener } from '@nitrots/api';
+import { GetRoomEngine, ImageResult } from '@nitrots/room';
+import { TextureUtils, Vector3d } from '@nitrots/utils';
 import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { ProductTypeEnum } from '../../api';
 import { Base, BaseProps } from '../Base';

@@ -1,4 +1,4 @@
-import { GetCfhStatusMessageComposer } from '@nitrots/nitro-renderer';
+import { GetCfhStatusMessageComposer } from '@nitrots/communication';
 import { FC } from 'react';
 import { DispatchUiEvent, GetConfigurationValue, LocalizeText, ReportState, ReportType, SendMessageComposer } from '../../../api';
 import { Button, Text } from '../../../common';

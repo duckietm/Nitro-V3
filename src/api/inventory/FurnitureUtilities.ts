@@ -1,4 +1,6 @@
-import { FurnitureListItemParser, GetRoomEngine, IObjectData } from '@nitrots/nitro-renderer';
+import { IObjectData } from '@nitrots/api';
+import { FurnitureListItemParser } from '@nitrots/communication';
+import { GetRoomEngine } from '@nitrots/room';
 import { FurniCategory } from './FurniCategory';
 import { FurnitureItem } from './FurnitureItem';
 import { GroupItem } from './GroupItem';

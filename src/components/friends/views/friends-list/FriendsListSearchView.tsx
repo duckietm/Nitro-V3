@@ -1,4 +1,4 @@
-import { HabboSearchComposer, HabboSearchResultData, HabboSearchResultEvent } from '@nitrots/nitro-renderer';
+import { HabboSearchComposer, HabboSearchResultData, HabboSearchResultEvent } from '@nitrots/communication';
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, OpenMessengerChat, SendMessageComposer } from '../../../../api';
 import { Column, NitroCardAccordionItemView, NitroCardAccordionSetView, NitroCardAccordionSetViewProps, Text, UserProfileIconView } from '../../../../common';

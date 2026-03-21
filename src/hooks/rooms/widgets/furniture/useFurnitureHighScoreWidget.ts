@@ -1,4 +1,6 @@
-import { GetRoomEngine, HighScoreDataType, ObjectDataFactory, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { HighScoreDataType, ObjectDataFactory, RoomObjectVariable } from '@nitrots/api';
+import { RoomEngineTriggerWidgetEvent } from '@nitrots/events';
+import { GetRoomEngine } from '@nitrots/room';
 import { useState } from 'react';
 import { useNitroEvent } from '../../../events';
 import { useRoom } from '../../useRoom';

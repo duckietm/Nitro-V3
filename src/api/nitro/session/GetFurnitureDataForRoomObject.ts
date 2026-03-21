@@ -1,4 +1,6 @@
-import { GetRoomEngine, GetSessionDataManager, IFurnitureData, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { IFurnitureData, RoomObjectCategory, RoomObjectVariable } from '@nitrots/api';
+import { GetRoomEngine } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 
 export function GetFurnitureDataForRoomObject(roomId: number, objectId: number, category: number): IFurnitureData
 {

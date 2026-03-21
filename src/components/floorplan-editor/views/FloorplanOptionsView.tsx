@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { LocalizeText } from '../../../api';
 import { Flex, LayoutGridItem, Text } from '../../../common';
-import { FloorAction } from '@nitrots/nitro-renderer';
-import { FloorplanEditor } from '@nitrots/nitro-renderer';
+import { FloorAction } from '@nitrots/room';
+import { FloorplanEditor } from '@nitrots/room';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
 
 interface FloorplanOptionsViewProps

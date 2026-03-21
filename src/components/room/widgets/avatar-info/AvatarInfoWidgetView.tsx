@@ -1,4 +1,6 @@
-import { GetSessionDataManager, RoomEngineEvent, RoomEnterEffect, RoomSessionDanceEvent } from '@nitrots/nitro-renderer';
+import { RoomEngineEvent, RoomSessionDanceEvent } from '@nitrots/events';
+import { RoomEnterEffect } from '@nitrots/room';
+import { GetSessionDataManager } from '@nitrots/session';
 import { FC, useState } from 'react';
 import { AvatarInfoFurni, AvatarInfoPet, AvatarInfoRentableBot, AvatarInfoUser, GetConfigurationValue, RoomWidgetUpdateRentableBotChatEvent } from '../../../../api';
 import { Column } from '../../../../common';
