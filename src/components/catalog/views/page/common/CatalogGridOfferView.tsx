@@ -55,7 +55,7 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
 
     return (
         <LayoutGridItem
-            className={ `bg-white! border-catalog-border! rounded-lg! shadow-catalog-card hover:shadow-catalog-card-hover hover:scale-[1.03] transition-all duration-150 group/tile relative ${ itemActive ? 'ring-2 ring-catalog-accent border-catalog-accent!' : '' }` }
+            className="group/tile relative"
             itemActive={ itemActive }
             itemCount={ ((offer.pricingModel === Offer.PRICING_MODEL_MULTI) ? product.productCount : 1) }
             itemImage={ iconUrl }
@@ -70,11 +70,11 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
             { (offer.product.productType === ProductTypeEnum.ROBOT) &&
                 <LayoutAvatarImageView direction={ 3 } figure={ offer.product.extraParam } headOnly={ true } /> }
             <div
-                className={ `absolute top-0.5 right-0.5 z-10 cursor-pointer transition-opacity duration-150 ${ isFav ? 'opacity-100' : 'opacity-0 group-hover/tile:opacity-100' }` }
-                onClick={ e => { e.stopPropagation(); e.preventDefault(); toggleFavoriteOffer(offer.offerId); } }
+                className={ `absolute top-0 right-0 z-10 p-0.5 cursor-pointer transition-opacity duration-100 ${ isFav ? 'opacity-100' : 'opacity-0 group-hover/tile:opacity-100' }` }
+                onClick={ e => { e.stopPropagation(); e.preventDefault(); toggleFavoriteOffer(offer.offerId, offer.localizationName, iconUrl); } }
                 onMouseDown={ e => e.stopPropagation() }
             >
-                <FaHeart className={ `text-[11px] drop-shadow-sm transition-colors duration-150 ${ isFav ? 'text-red-500' : 'text-gray-300 hover:text-red-400' }` } />
+                <FaHeart className={ `text-[10px] drop-shadow transition-colors duration-100 ${ isFav ? 'text-danger' : 'text-muted hover:text-danger' }` } />
             </div>
         </LayoutGridItem>
     );
