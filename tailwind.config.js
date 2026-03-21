@@ -4,7 +4,21 @@ const {
     generateShades
 } = require('./css-utils/CSSColorUtils');
 
+const catalogColors = {
+    'catalog-bg': '#eef1f5',
+    'catalog-surface': '#ffffff',
+    'catalog-rail-bg': '#e4e8ee',
+    'catalog-rail-hover': '#d8dde5',
+    'catalog-rail-active': '#cdd3db',
+    'catalog-border': '#c8ced6',
+    'catalog-text': '#2c3e50',
+    'catalog-text-muted': '#7f8c9b',
+    'catalog-accent': '#3b82f6',
+    'catalog-accent-hover': '#2563eb',
+};
+
 const colors = {
+    ...catalogColors,
     'toolbar': '#555555',
     'card-header': '#1E7295',
     'card-close': '#921911',
@@ -57,7 +71,9 @@ const colors = {
 
 const boxShadow = {
     'inner1px': 'inset 0 0 0 1px rgba(255,255,255,.3)',
-    'room-previewer': '-2px -2px rgba(0, 0, 0, 0.4), inset 3px 3px rgba(0, 0, 0, 0.2);'
+    'room-previewer': '-2px -2px rgba(0, 0, 0, 0.4), inset 3px 3px rgba(0, 0, 0, 0.2);',
+    'catalog-card': '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)',
+    'catalog-card-hover': '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
 };
 
 module.exports = {
