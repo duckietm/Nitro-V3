@@ -5,7 +5,7 @@ import { WiredConditionActorIsOnFurniView } from './WiredConditionActorIsOnFurni
 import { WiredConditionActorIsTeamMemberView } from './WiredConditionActorIsTeamMemberView';
 import { WiredConditionActorIsWearingBadgeView } from './WiredConditionActorIsWearingBadgeView';
 import { WiredConditionActorIsWearingEffectView } from './WiredConditionActorIsWearingEffectView';
-import { WiredConditionCounterTimeMatchesView } from './WiredConditionCounterTimeMatchesView';
+// import { WiredConditionCounterTimeMatchesView } from './WiredConditionCounterTimeMatchesView';
 import { WiredConditionDateRangeView } from './WiredConditionDateRangeView';
 import { WiredConditionMatchDateView } from './WiredConditionMatchDateView';
 import { WiredConditionMatchTimeView } from './WiredConditionMatchTimeView';
