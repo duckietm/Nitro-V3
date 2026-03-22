@@ -1,5 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Column, Flex, Text } from '../../../common';
+import { FaSave, FaSync, FaTrash, FaArrowLeft } from 'react-icons/fa';
+import { Column } from '../../../common';
+import { LayoutFurniIconImageView } from '../../../common/layout/LayoutFurniIconImageView';
 import { CatalogRef, FurniDetail } from '../../../hooks/furni-editor';
 
 interface FurniEditorEditViewProps
@@ -9,20 +11,24 @@ interface FurniEditorEditViewProps
     furniDataEntry: Record<string, unknown> | null;
     interactions: string[];
     loading: boolean;
-    onUpdate: (id: number, fields: Record<string, unknown>) => Promise<boolean>;
-    onDelete: (id: number) => Promise<boolean>;
+    lastResult: { success: boolean; message: string; id: number } | null;
+    onUpdate: (id: number, fields: Record<string, unknown>) => void;
+    onDelete: (id: number) => void;
     onBack: () => void;
     onRefresh: (id: number) => void;
 }
 
+const ic = 'text-[13px] border border-[#c5cdd6] rounded px-2 py-1 bg-white focus:outline-none focus:border-[#1e7295] focus:shadow-[0_0_0_1px_rgba(30,114,149,0.15)] transition-all w-full';
+const ro = 'text-[13px] border border-[#d5dbe0] rounded px-2 py-1 bg-[#f0f2f4] text-[#777] w-full cursor-not-allowed';
+const lb = 'text-[11px] text-[#1e7295] uppercase font-bold tracking-wider leading-none';
+const sectionTitle = 'text-[12px] text-[#1e7295] uppercase font-bold tracking-wider';
+
 export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 {
-    const { item, catalogItems, furniDataEntry, interactions, loading, onUpdate, onDelete, onBack, onRefresh } = props;
+    const { item, catalogItems, furniDataEntry, interactions, loading, lastResult, onUpdate, onDelete, onBack, onRefresh } = props;
 
     const [ form, setForm ] = useState({
-        itemName: '',
         publicName: '',
-        spriteId: 0,
         type: 's',
         width: 1,
         length: 1,
@@ -42,15 +48,14 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     });
 
     const [ confirmDelete, setConfirmDelete ] = useState(false);
+    const [ toast, setToast ] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
     useEffect(() =>
     {
         if(!item) return;
 
         setForm({
-            itemName: item.itemName || '',
             publicName: item.publicName || '',
-            spriteId: item.spriteId || 0,
             type: item.type || 's',
             width: item.width || 1,
             length: item.length || 1,
@@ -72,105 +77,119 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
         setConfirmDelete(false);
     }, [ item ]);
 
+    useEffect(() =>
+    {
+        if(!lastResult) return;
+
+        setToast({ type: lastResult.success ? 'success' : 'error', message: lastResult.message });
+        if(lastResult.success && lastResult.id > 0) onRefresh(lastResult.id);
+
+        const timer = setTimeout(() => setToast(null), 3000);
+        return () => clearTimeout(timer);
+    }, [ lastResult ]);
+
     const setField = useCallback((key: string, value: unknown) =>
     {
         setForm(prev => ({ ...prev, [key]: value }));
     }, []);
 
-    const handleSave = useCallback(async () =>
+    const handleSave = useCallback(() =>
     {
-        const ok = await onUpdate(item.id, form);
+        onUpdate(item.id, form);
+    }, [ item, form, onUpdate ]);
 
-        if(ok) onRefresh(item.id);
-    }, [ item, form, onUpdate, onRefresh ]);
-
-    const handleDelete = useCallback(async () =>
+    const handleDelete = useCallback(() =>
     {
         if(!confirmDelete) return setConfirmDelete(true);
-
-        const ok = await onDelete(item.id);
-
-        if(ok) onBack();
-    }, [ confirmDelete, item, onDelete, onBack ]);
-
-    const inputClass = 'form-control form-control-sm';
-    const labelClass = 'text-[11px] font-bold text-[#333] mb-0';
+        onDelete(item.id);
+    }, [ confirmDelete, item, onDelete ]);
 
     return (
-        <Column gap={ 1 } className="h-full overflow-auto">
-            <Flex gap={ 1 } alignItems="center" className="mb-1">
-                <Button variant="secondary" onClick={ onBack }>Back</Button>
-                <Flex alignItems="center" gap={ 1 } className="bg-[#e9ecef] px-2 py-0.5 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-[#1e7295]">
-                        <path fillRule="evenodd" d="M4.93 1.31a41.401 41.401 0 0 1 10.14 0C16.194 1.45 17 2.414 17 3.517V18.25a.75.75 0 0 1-1.075.676l-2.8-1.344-2.8 1.344a.75.75 0 0 1-.65 0l-2.8-1.344-2.8 1.344A.75.75 0 0 1 3 18.25V3.517c0-1.103.806-2.068 1.93-2.207Z" clipRule="evenodd" />
-                    </svg>
-                    <Text bold className="text-[12px]">{ item.id }</Text>
-                    <span className="text-[#999] mx-0.5">|</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-[#1e7295]">
-                        <path d="M12.586 2.586a2 2 0 1 1 2.828 2.828l-3 3a2 2 0 0 1-2.828 0 1 1 0 0 0-1.414 1.414 4 4 0 0 0 5.656 0l3-3a4 4 0 0 0-5.656-5.656l-1.5 1.5a1 1 0 1 0 1.414 1.414l1.5-1.5ZM7.414 17.414a2 2 0 1 1-2.828-2.828l3-3a2 2 0 0 1 2.828 0 1 1 0 0 0 1.414-1.414 4 4 0 0 0-5.656 0l-3 3a4 4 0 0 0 5.656 5.656l1.5-1.5a1 1 0 1 0-1.414-1.414l-1.5 1.5Z" />
-                    </svg>
-                    <Text bold className="text-[12px]">{ item.spriteId }</Text>
-                </Flex>
-                <Text small variant="gray">({ item.usageCount } in use)</Text>
-            </Flex>
+        <Column gap={ 0 } className="h-full overflow-auto">
+            { toast &&
+                <div className={ `rounded px-2 py-1 text-[12px] font-bold text-white mb-1.5 shadow-sm ${ toast.type === 'success' ? 'bg-[#28a745]' : 'bg-[#dc3545]' }` }>
+                    { toast.message }
+                </div>
+            }
+
+            { /* Header */ }
+            <div className="flex items-center gap-3 mb-2 pb-2 border-b-2 border-[#c5cdd6]">
+                <div className="w-[46px] h-[46px] flex items-center justify-center bg-white rounded-md border border-[#c5cdd6] flex-shrink-0 shadow-sm overflow-hidden">
+                    <LayoutFurniIconImageView productType={ item.type } productClassId={ item.spriteId } style={ { transform: 'scale(1.2)' } } />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="text-[14px] font-bold text-[#2d3748] truncate leading-tight">{ item.publicName }</div>
+                    <div className="flex items-center gap-1.5 text-[11px] mt-0.5">
+                        <span className="text-[#1e7295] font-bold cursor-pointer hover:underline" title="Click to copy ID" onClick={ () => { navigator.clipboard.writeText(String(item.id)); setToast({ type: 'success', message: `ID ${item.id} copied!` }); } }>#{item.id}</span>
+                        <span className="text-[#d0d5db]">|</span>
+                        <span className="text-[#4a5568]">sprite:<b>{ item.spriteId }</b></span>
+                        <span className="text-[#d0d5db]">|</span>
+                        <span className="truncate max-w-[140px] text-[#4a5568]">{ item.itemName }</span>
+                        <span className={ `px-2 py-[2px] rounded text-white text-[11px] font-bold ${ item.type === 's' ? 'bg-[#1e7295]' : 'bg-[#718096]' }` }>
+                            { item.type === 's' ? 'FLOOR' : 'WALL' }
+                        </span>
+                        { item.usageCount > 0 && <span className="text-[#e53e3e] font-bold">{ item.usageCount } in use</span> }
+                    </div>
+                </div>
+                <div className="flex gap-1 flex-shrink-0">
+                    <button className="p-1.5 rounded-md bg-[#edf2f7] hover:bg-[#e2e8f0] cursor-pointer transition-colors" onClick={ () => onRefresh(item.id) } title="Refresh">
+                        <FaSync className="text-[9px] text-[#718096]" />
+                    </button>
+                    <button className="flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-bold bg-[#edf2f7] hover:bg-[#e2e8f0] text-[#4a5568] cursor-pointer transition-colors" onClick={ onBack }>
+                        <FaArrowLeft className="text-[7px]" /> Back
+                    </button>
+                </div>
+            </div>
 
             { /* Basic Info */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Basic Info</Text>
-                <div className="grid grid-cols-2 gap-2">
-                    <div>
-                        <label className={ labelClass }>Item Name</label>
-                        <input className={ inputClass } value={ form.itemName } onChange={ e => setField('itemName', e.target.value) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Public Name</label>
-                        <input className={ inputClass } value={ form.publicName } onChange={ e => setField('publicName', e.target.value) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Sprite ID</label>
-                        <input type="number" className={ inputClass } value={ form.spriteId } onChange={ e => setField('spriteId', Number(e.target.value)) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Type</label>
-                        <select className="form-select form-select-sm" value={ form.type } onChange={ e => setField('type', e.target.value) }>
-                            <option value="s">Floor (s)</option>
-                            <option value="i">Wall (i)</option>
-                        </select>
-                    </div>
+            <div className="grid grid-cols-4 gap-x-2 gap-y-1.5 pb-2 border-b-2 border-[#c5cdd6]">
+                <div>
+                    <label className={ lb }>Item Name</label>
+                    <input className={ ro } value={ item.itemName } readOnly />
+                </div>
+                <div>
+                    <label className={ lb }>Public Name</label>
+                    <input className={ ic } value={ form.publicName } onChange={ e => setField('publicName', e.target.value) } />
+                </div>
+                <div>
+                    <label className={ lb }>Sprite ID</label>
+                    <input className={ ro } value={ item.spriteId } readOnly />
+                </div>
+                <div>
+                    <label className={ lb }>Type</label>
+                    <select className={ ic } value={ form.type } onChange={ e => setField('type', e.target.value) }>
+                        <option value="s">Floor (s)</option>
+                        <option value="i">Wall (i)</option>
+                    </select>
                 </div>
             </div>
 
             { /* Dimensions */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Dimensions</Text>
-                <div className="grid grid-cols-3 gap-2">
+            <div className="pt-2 pb-2 border-b-2 border-[#c5cdd6]">
+                <div className={ sectionTitle + ' mb-1' }>Dimensions</div>
+                <div className="grid grid-cols-3 gap-x-2">
                     <div>
-                        <label className={ labelClass }>Width</label>
-                        <input type="number" className={ inputClass } value={ form.width } onChange={ e => setField('width', Number(e.target.value)) } />
+                        <label className={ lb }>Width</label>
+                        <input type="number" className={ ic } value={ form.width } onChange={ e => setField('width', Number(e.target.value)) } />
                     </div>
                     <div>
-                        <label className={ labelClass }>Length</label>
-                        <input type="number" className={ inputClass } value={ form.length } onChange={ e => setField('length', Number(e.target.value)) } />
+                        <label className={ lb }>Length</label>
+                        <input type="number" className={ ic } value={ form.length } onChange={ e => setField('length', Number(e.target.value)) } />
                     </div>
                     <div>
-                        <label className={ labelClass }>Stack Height</label>
-                        <input type="number" step="0.01" className={ inputClass } value={ form.stackHeight } onChange={ e => setField('stackHeight', Number(e.target.value)) } />
+                        <label className={ lb }>Stack Height</label>
+                        <input type="number" step="0.01" className={ ic } value={ form.stackHeight } onChange={ e => setField('stackHeight', Number(e.target.value)) } />
                     </div>
                 </div>
             </div>
 
             { /* Permissions */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Permissions</Text>
-                <div className="grid grid-cols-3 gap-x-3 gap-y-1">
+            <div className="pt-2 pb-2 border-b-2 border-[#c5cdd6]">
+                <div className={ sectionTitle + ' mb-1' }>Permissions</div>
+                <div className="grid grid-cols-3 gap-x-2 gap-y-[3px]">
                     { [ 'allowStack', 'allowWalk', 'allowSit', 'allowLay', 'allowGift', 'allowTrade', 'allowRecycle', 'allowMarketplaceSell', 'allowInventoryStack' ].map(key => (
-                        <label key={ key } className="flex items-center gap-1 text-[11px] cursor-pointer">
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                checked={ (form as any)[key] }
-                                onChange={ e => setField(key, e.target.checked) }
-                            />
+                        <label key={ key } className="flex items-center gap-1 text-[12px] text-[#4a5568] cursor-pointer hover:text-[#1e7295] transition-colors">
+                            <input type="checkbox" className="accent-[#1e7295] w-3 h-3" checked={ (form as any)[key] } onChange={ e => setField(key, e.target.checked) } />
                             { key.replace('allow', '') }
                         </label>
                     )) }
@@ -178,72 +197,44 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
             </div>
 
             { /* Interaction */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Interaction</Text>
-                <div className="grid grid-cols-3 gap-2">
+            <div className="pt-2">
+                <div className={ sectionTitle + ' mb-1' }>Interaction</div>
+                <div className="grid grid-cols-4 gap-x-2">
                     <div className="col-span-2">
-                        <label className={ labelClass }>Type</label>
-                        <select className="form-select form-select-sm" value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
+                        <label className={ lb }>Type</label>
+                        <select className={ ic } value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
                             <option value="">none</option>
-                            { interactions.map(i => (
-                                <option key={ i } value={ i }>{ i }</option>
-                            )) }
+                            { interactions.map(i => <option key={ i } value={ i }>{ i }</option>) }
                         </select>
                     </div>
                     <div>
-                        <label className={ labelClass }>Modes</label>
-                        <input type="number" className={ inputClass } value={ form.interactionModesCount } onChange={ e => setField('interactionModesCount', Number(e.target.value)) } />
+                        <label className={ lb }>Modes</label>
+                        <input type="number" className={ ic } value={ form.interactionModesCount } onChange={ e => setField('interactionModesCount', Number(e.target.value)) } />
                     </div>
-                </div>
-                <div className="mt-1">
-                    <label className={ labelClass }>Custom Params</label>
-                    <input className={ inputClass } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
+                    <div>
+                        <label className={ lb }>Custom Params</label>
+                        <input className={ ic } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
+                    </div>
                 </div>
             </div>
 
-            { /* Catalog References */ }
-            { catalogItems.length > 0 &&
-                <div className="bg-white rounded border border-[#ccc] p-2">
-                    <Text small bold variant="primary" className="mb-1 block">Catalog ({ catalogItems.length })</Text>
-                    <div className="text-[10px] space-y-0.5">
-                        { catalogItems.map(ci => (
-                            <div key={ ci.id } className="flex justify-between bg-[#f5f5f5] px-2 py-0.5 rounded">
-                                <span>{ ci.catalogName } (page: { ci.pageName })</span>
-                                <span>{ ci.costCredits }c + { ci.costPoints }p</span>
-                            </div>
-                        )) }
-                    </div>
-                </div>
-            }
-
-            { /* FurniData.json Entry */ }
-            { furniDataEntry &&
-                <div className="bg-white rounded border border-[#ccc] p-2">
-                    <Text small bold variant="primary" className="mb-1 block">FurniData.json</Text>
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
-                        { Object.entries(furniDataEntry).map(([ key, value ]) => (
-                            <div key={ key } className="flex justify-between bg-[#f5f5f5] px-2 py-0.5 rounded">
-                                <span className="font-bold text-[#555]">{ key }</span>
-                                <span className="text-[#333] truncate ml-1 max-w-[120px] text-right">{ String(value ?? '') }</span>
-                            </div>
-                        )) }
-                    </div>
-                </div>
-            }
-
             { /* Actions */ }
-            <Flex gap={ 1 } justifyContent="between" className="mt-1">
-                <Button variant="success" disabled={ loading } onClick={ handleSave }>
-                    { loading ? 'Saving...' : 'Save' }
-                </Button>
-                <Button
-                    variant={ confirmDelete ? 'danger' : 'warning' }
+            <div className="flex justify-between items-center mt-auto pt-2 border-t border-[#e2e8f0]">
+                <button
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold bg-[#28a745] text-white hover:bg-[#218838] shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                    disabled={ loading }
+                    onClick={ handleSave }
+                >
+                    <FaSave className="text-[8px]" /> { loading ? 'Saving...' : 'Save' }
+                </button>
+                <button
+                    className={ `flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold text-white shadow-sm transition-all cursor-pointer disabled:opacity-50 ${ confirmDelete ? 'bg-[#dc3545] hover:bg-[#c82333]' : 'bg-[#e8993e] hover:bg-[#d98a30]' }` }
                     disabled={ loading || item.usageCount > 0 }
                     onClick={ handleDelete }
                 >
-                    { confirmDelete ? 'Confirm Delete' : 'Delete' }
-                </Button>
-            </Flex>
+                    <FaTrash className="text-[8px]" /> { confirmDelete ? 'Confirm' : 'Delete' }
+                </button>
+            </div>
         </Column>
     );
 };

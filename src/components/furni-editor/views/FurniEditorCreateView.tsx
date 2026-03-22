@@ -1,18 +1,23 @@
-import { FC, useCallback, useState } from 'react';
-import { Button, Column, Flex, Text } from '../../../common';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { FaPlus } from 'react-icons/fa';
+import { Column } from '../../../common';
 
 interface FurniEditorCreateViewProps
 {
     interactions: string[];
     loading: boolean;
-    onCreate: (fields: Record<string, unknown>) => Promise<number | null>;
+    lastResult: { success: boolean; message: string; id: number } | null;
+    onCreate: (fields: Record<string, unknown>) => void;
     onCreated: (id: number) => void;
 }
 
+const inputClass = 'text-[11px] border-2 border-card-grid-item-border rounded px-2 py-1 bg-white focus:outline-none focus:border-primary transition-colors w-full';
+const labelClass = 'text-[9px] text-[#666] uppercase font-bold mb-0.5 block';
+
 export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
 {
-    const { interactions, loading, onCreate, onCreated } = props;
-    const [ success, setSuccess ] = useState<number | null>(null);
+    const { interactions, loading, lastResult, onCreate, onCreated } = props;
+    const [ toast, setToast ] = useState<{ type: 'success' | 'error'; message: string; id?: number } | null>(null);
 
     const [ form, setForm ] = useState({
         itemName: '',
@@ -36,39 +41,50 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
         customparams: '',
     });
 
+    useEffect(() =>
+    {
+        if(!lastResult) return;
+
+        if(lastResult.success && lastResult.id > 0)
+        {
+            setToast({ type: 'success', message: `Item created with ID #${ lastResult.id }`, id: lastResult.id });
+            setTimeout(() => onCreated(lastResult.id), 1500);
+        }
+        else if(!lastResult.success)
+        {
+            setToast({ type: 'error', message: lastResult.message });
+        }
+
+        const timer = setTimeout(() => setToast(null), 3000);
+        return () => clearTimeout(timer);
+    }, [ lastResult ]);
+
     const setField = useCallback((key: string, value: unknown) =>
     {
         setForm(prev => ({ ...prev, [key]: value }));
-        setSuccess(null);
     }, []);
 
-    const handleCreate = useCallback(async () =>
+    const handleCreate = useCallback(() =>
     {
         if(!form.itemName || !form.publicName) return;
-
-        const id = await onCreate(form);
-
-        if(id)
-        {
-            setSuccess(id);
-            setTimeout(() => onCreated(id), 1000);
-        }
-    }, [ form, onCreate, onCreated ]);
-
-    const inputClass = 'form-control form-control-sm';
-    const labelClass = 'text-[11px] font-bold text-[#333] mb-0';
+        onCreate(form);
+    }, [ form, onCreate ]);
 
     return (
         <Column gap={ 1 } className="h-full overflow-auto">
-            { success &&
-                <div className="bg-[#d4edda] border border-[#c3e6cb] rounded p-2 text-[#155724] text-xs">
-                    Item created with ID #{ success }!
+            { /* Toast */ }
+            { toast &&
+                <div className={ `rounded px-3 py-1.5 text-[11px] font-bold text-white ${ toast.type === 'success' ? 'bg-[#28a745]' : 'bg-[#dc3545]' }` }>
+                    { toast.message }
                 </div>
             }
 
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Basic Info</Text>
-                <div className="grid grid-cols-2 gap-2">
+            { /* Basic Info */ }
+            <div className="border-2 border-card-grid-item-border rounded overflow-hidden">
+                <div className="px-2.5 py-1.5 bg-[#f0f4f7]">
+                    <span className="text-[9px] text-primary uppercase font-bold tracking-wide">Basic Info</span>
+                </div>
+                <div className="p-2.5 bg-white grid grid-cols-2 gap-2">
                     <div>
                         <label className={ labelClass }>Item Name *</label>
                         <input className={ inputClass } value={ form.itemName } onChange={ e => setField('itemName', e.target.value) } placeholder="my_custom_furni" />
@@ -83,7 +99,7 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
                     </div>
                     <div>
                         <label className={ labelClass }>Type</label>
-                        <select className="form-select form-select-sm" value={ form.type } onChange={ e => setField('type', e.target.value) }>
+                        <select className={ inputClass } value={ form.type } onChange={ e => setField('type', e.target.value) }>
                             <option value="s">Floor (s)</option>
                             <option value="i">Wall (i)</option>
                         </select>
@@ -91,9 +107,12 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
                 </div>
             </div>
 
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Dimensions</Text>
-                <div className="grid grid-cols-3 gap-2">
+            { /* Dimensions */ }
+            <div className="border-2 border-card-grid-item-border rounded overflow-hidden">
+                <div className="px-2.5 py-1.5 bg-[#f0f4f7]">
+                    <span className="text-[9px] text-primary uppercase font-bold tracking-wide">Dimensions</span>
+                </div>
+                <div className="p-2.5 bg-white grid grid-cols-3 gap-2">
                     <div>
                         <label className={ labelClass }>Width</label>
                         <input type="number" className={ inputClass } value={ form.width } onChange={ e => setField('width', Number(e.target.value)) } />
@@ -109,14 +128,17 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
                 </div>
             </div>
 
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Permissions</Text>
-                <div className="grid grid-cols-3 gap-x-3 gap-y-1">
+            { /* Permissions */ }
+            <div className="border-2 border-card-grid-item-border rounded overflow-hidden">
+                <div className="px-2.5 py-1.5 bg-[#f0f4f7]">
+                    <span className="text-[9px] text-primary uppercase font-bold tracking-wide">Permissions</span>
+                </div>
+                <div className="p-2.5 bg-white grid grid-cols-3 gap-x-3 gap-y-1.5">
                     { [ 'allowStack', 'allowWalk', 'allowSit', 'allowLay', 'allowGift', 'allowTrade', 'allowRecycle', 'allowMarketplaceSell', 'allowInventoryStack' ].map(key => (
-                        <label key={ key } className="flex items-center gap-1 text-[11px] cursor-pointer">
+                        <label key={ key } className="flex items-center gap-1.5 text-[11px] cursor-pointer hover:text-primary transition-colors">
                             <input
                                 type="checkbox"
-                                className="form-check-input"
+                                className="accent-primary"
                                 checked={ (form as any)[key] }
                                 onChange={ e => setField(key, e.target.checked) }
                             />
@@ -126,34 +148,44 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
                 </div>
             </div>
 
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Interaction</Text>
-                <div className="grid grid-cols-3 gap-2">
-                    <div className="col-span-2">
-                        <label className={ labelClass }>Type</label>
-                        <select className="form-select form-select-sm" value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
-                            <option value="">none</option>
-                            { interactions.map(i => (
-                                <option key={ i } value={ i }>{ i }</option>
-                            )) }
-                        </select>
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Modes</label>
-                        <input type="number" className={ inputClass } value={ form.interactionModesCount } onChange={ e => setField('interactionModesCount', Number(e.target.value)) } />
-                    </div>
+            { /* Interaction */ }
+            <div className="border-2 border-card-grid-item-border rounded overflow-hidden">
+                <div className="px-2.5 py-1.5 bg-[#f0f4f7]">
+                    <span className="text-[9px] text-primary uppercase font-bold tracking-wide">Interaction</span>
                 </div>
-                <div className="mt-1">
-                    <label className={ labelClass }>Custom Params</label>
-                    <input className={ inputClass } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
+                <div className="p-2.5 bg-white">
+                    <div className="grid grid-cols-3 gap-2">
+                        <div className="col-span-2">
+                            <label className={ labelClass }>Type</label>
+                            <select className={ inputClass } value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
+                                <option value="">none</option>
+                                { interactions.map(i => (
+                                    <option key={ i } value={ i }>{ i }</option>
+                                )) }
+                            </select>
+                        </div>
+                        <div>
+                            <label className={ labelClass }>Modes</label>
+                            <input type="number" className={ inputClass } value={ form.interactionModesCount } onChange={ e => setField('interactionModesCount', Number(e.target.value)) } />
+                        </div>
+                    </div>
+                    <div className="mt-2">
+                        <label className={ labelClass }>Custom Params</label>
+                        <input className={ inputClass } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
+                    </div>
                 </div>
             </div>
 
-            <Flex className="mt-1">
-                <Button variant="success" disabled={ loading || !form.itemName || !form.publicName } onClick={ handleCreate }>
-                    { loading ? 'Creating...' : 'Create Item' }
-                </Button>
-            </Flex>
+            { /* Create Button */ }
+            <div className="pt-1">
+                <button
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded text-[11px] font-bold bg-[#28a745] text-white hover:bg-[#218838] transition-colors cursor-pointer disabled:opacity-50"
+                    disabled={ loading || !form.itemName || !form.publicName }
+                    onClick={ handleCreate }
+                >
+                    <FaPlus className="text-[9px]" /> { loading ? 'Creating...' : 'Create Item' }
+                </button>
+            </div>
         </Column>
     );
 };

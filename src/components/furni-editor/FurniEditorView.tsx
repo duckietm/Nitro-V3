@@ -1,12 +1,14 @@
-import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useFurniEditor } from '../../hooks/furni-editor';
+import { FurniEditorCreateView } from './views/FurniEditorCreateView';
 import { FurniEditorEditView } from './views/FurniEditorEditView';
 import { FurniEditorSearchView } from './views/FurniEditorSearchView';
 
 const TAB_SEARCH = 0;
 const TAB_EDIT = 1;
+const TAB_CREATE = 2;
 
 export const FurniEditorView: FC<{}> = () =>
 {
@@ -16,8 +18,8 @@ export const FurniEditorView: FC<{}> = () =>
     const {
         items, total, page, loading, error, clearError,
         selectedItem, catalogItems, furniDataEntry,
-        interactions,
-        searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions
+        interactions, lastResult,
+        searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, createItem, loadInteractions
     } = useFurniEditor();
 
     useEffect(() =>
@@ -57,13 +59,14 @@ export const FurniEditorView: FC<{}> = () =>
 
     useEffect(() =>
     {
-        const handler = async (e: CustomEvent<{ spriteId: number }>) =>
+        const handler = (e: CustomEvent<{ spriteId: number }>) =>
         {
             const { spriteId } = e.detail;
 
-            const ok = await loadBySpriteId(spriteId);
+            if(!spriteId || spriteId <= 0) return;
 
-            if(ok) setActiveTab(TAB_EDIT);
+            loadBySpriteId(spriteId);
+            setActiveTab(TAB_EDIT);
         };
 
         window.addEventListener('furni-editor:open', handler as EventListener);
@@ -71,11 +74,10 @@ export const FurniEditorView: FC<{}> = () =>
         return () => window.removeEventListener('furni-editor:open', handler as EventListener);
     }, [ loadBySpriteId ]);
 
-    const handleSelect = useCallback(async (id: number) =>
+    const handleSelect = useCallback((id: number) =>
     {
-        const ok = await loadDetail(id);
-
-        if(ok) setActiveTab(TAB_EDIT);
+        loadDetail(id);
+        setActiveTab(TAB_EDIT);
     }, [ loadDetail ]);
 
     const handleBack = useCallback(() =>
@@ -88,10 +90,17 @@ export const FurniEditorView: FC<{}> = () =>
         setIsVisible(false);
     }, []);
 
+    const handleCreated = useCallback((id: number) =>
+    {
+        loadDetail(id);
+        setActiveTab(TAB_EDIT);
+    }, [ loadDetail ]);
+
+    if(!GetSessionDataManager()?.isModerator) return null;
     if(!isVisible) return null;
 
     return (
-        <NitroCardView uniqueKey="furni-editor" className="w-[620px] h-[520px]">
+        <NitroCardView uniqueKey="furni-editor" className="min-w-[550px] w-[680px] min-h-[400px] h-[600px]">
             <NitroCardHeaderView headerText="Furni Editor" onCloseClick={ handleClose } />
             <NitroCardTabsView>
                 <NitroCardTabsItemView isActive={ activeTab === TAB_SEARCH } onClick={ () => setActiveTab(TAB_SEARCH) }>
@@ -127,12 +136,14 @@ export const FurniEditorView: FC<{}> = () =>
                         furniDataEntry={ furniDataEntry }
                         interactions={ interactions }
                         loading={ loading }
+                        lastResult={ lastResult }
                         onUpdate={ updateItem }
                         onDelete={ deleteItem }
                         onBack={ handleBack }
                         onRefresh={ loadDetail }
                     />
                 }
+
 
             </NitroCardContentView>
         </NitroCardView>
