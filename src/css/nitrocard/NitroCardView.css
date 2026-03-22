@@ -12,7 +12,7 @@
         .nitro-card-header {
             min-height: 33px;
             max-height: 33px;
-            background: #1E7295;
+            background: var(--ui-accent-color, #1E7295);
 
             .nitro-card-header-text {
                 color: #FFF;

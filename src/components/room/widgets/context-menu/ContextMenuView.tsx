@@ -76,7 +76,6 @@ export const ContextMenuView: FC<ContextMenuViewProps> = ({
   const getClassNames = useMemo(() => {
     const classes = [
       'p-[2px]!',
-      'bg-[#1c323f]',
       'border-2',
       'border-[solid]',
       'border-[rgba(255,255,255,.5)]',
@@ -98,6 +97,7 @@ export const ContextMenuView: FC<ContextMenuViewProps> = ({
       top: pos.y ?? 0,
       transition: isFading ? 'opacity 75ms linear' : undefined,
       opacity,
+      backgroundColor: 'var(--ui-ctx-bg, #1c323f)',
       ...style,
     }),
     [pos, opacity, isFading, style]

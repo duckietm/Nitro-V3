@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Base, BaseProps } from './Base';
 import { ColorVariantType, FontSizeType, FontWeightType, TextAlignType } from './types';
 
@@ -44,7 +44,7 @@ export const Text: FC<TextProps> = props => {
         const newClassNames: string[] = [truncate ? 'block' : 'inline'];
 
         if (variant) {
-			if (variant === 'primary') newClassNames.push('text-[#1e7295]');
+			// primary color handled via inline style with CSS variable
 			if (variant == 'secondary') newClassNames.push('text-[#185d79]');
 			if (variant === 'black') newClassNames.push('text-[#000000]');
 			if (variant == 'dark') newClassNames.push('text-[#18181b]');
@@ -73,7 +73,12 @@ export const Text: FC<TextProps> = props => {
         return newClassNames;
     }, [ variant, fontWeight, fontSize, fontSizeCustom, align, bold, underline, italics, truncate, center, textEnd, small, wrap, noWrap, textBreak ]);
 
-    const style = fontSizeCustom ? { '--font-size': `${fontSizeCustom}px` } as React.CSSProperties : undefined;
+    const style = useMemo(() => {
+        const s: React.CSSProperties = {};
+        if (fontSizeCustom) (s as any)['--font-size'] = `${fontSizeCustom}px`;
+        if (variant === 'primary') s.color = 'var(--ui-accent-color, #1e7295)';
+        return Object.keys(s).length ? s : undefined;
+    }, [ fontSizeCustom, variant ]);
 
     return <Base classNames={getClassNames} style={style} {...rest} />;
 };
