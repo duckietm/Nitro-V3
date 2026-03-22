@@ -5,14 +5,13 @@ interface FurniEditorCreateViewProps
 {
     interactions: string[];
     loading: boolean;
-    onCreate: (fields: Record<string, unknown>) => Promise<number | null>;
-    onCreated: (id: number) => void;
+    onCreate: (fields: Record<string, unknown>) => void;
+    onBack: () => void;
 }
 
 export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
 {
-    const { interactions, loading, onCreate, onCreated } = props;
-    const [ success, setSuccess ] = useState<number | null>(null);
+    const { interactions, loading, onCreate, onBack } = props;
 
     const [ form, setForm ] = useState({
         itemName: '',
@@ -34,37 +33,42 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
         interactionType: '',
         interactionModesCount: 1,
         customparams: '',
+        description: '',
+        revision: 0,
+        category: '',
+        defaultdir: 0,
+        offerid: 0,
+        buyout: false,
+        rentofferid: 0,
+        rentbuyout: false,
+        bc: false,
+        excludeddynamic: false,
+        furniline: '',
+        environment: '',
+        rare: false,
     });
 
     const setField = useCallback((key: string, value: unknown) =>
     {
         setForm(prev => ({ ...prev, [key]: value }));
-        setSuccess(null);
     }, []);
 
-    const handleCreate = useCallback(async () =>
+    const handleCreate = useCallback(() =>
     {
         if(!form.itemName || !form.publicName) return;
 
-        const id = await onCreate(form);
-
-        if(id)
-        {
-            setSuccess(id);
-            setTimeout(() => onCreated(id), 1000);
-        }
-    }, [ form, onCreate, onCreated ]);
+        onCreate(form);
+    }, [ form, onCreate ]);
 
     const inputClass = 'form-control form-control-sm';
     const labelClass = 'text-[11px] font-bold text-[#333] mb-0';
 
     return (
         <Column gap={ 1 } className="h-full overflow-auto">
-            { success &&
-                <div className="bg-[#d4edda] border border-[#c3e6cb] rounded p-2 text-[#155724] text-xs">
-                    Item created with ID #{ success }!
-                </div>
-            }
+            <Flex gap={ 1 } alignItems="center" className="mb-1">
+                <Button variant="secondary" onClick={ onBack }>Back</Button>
+                <Text bold className="text-[14px]">Create New Item</Text>
+            </Flex>
 
             <div className="bg-white rounded border border-[#ccc] p-2">
                 <Text small bold variant="primary" className="mb-1 block">Basic Info</Text>
@@ -76,6 +80,10 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
                     <div>
                         <label className={ labelClass }>Public Name *</label>
                         <input className={ inputClass } value={ form.publicName } onChange={ e => setField('publicName', e.target.value) } placeholder="My Custom Furni" />
+                    </div>
+                    <div className="col-span-2">
+                        <label className={ labelClass }>Description</label>
+                        <textarea className={ inputClass } rows={ 2 } value={ form.description } onChange={ e => setField('description', e.target.value) } />
                     </div>
                     <div>
                         <label className={ labelClass }>Sprite ID</label>
@@ -93,7 +101,7 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
 
             <div className="bg-white rounded border border-[#ccc] p-2">
                 <Text small bold variant="primary" className="mb-1 block">Dimensions</Text>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-4 gap-2">
                     <div>
                         <label className={ labelClass }>Width</label>
                         <input type="number" className={ inputClass } value={ form.width } onChange={ e => setField('width', Number(e.target.value)) } />
@@ -105,6 +113,10 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
                     <div>
                         <label className={ labelClass }>Stack Height</label>
                         <input type="number" step="0.01" className={ inputClass } value={ form.stackHeight } onChange={ e => setField('stackHeight', Number(e.target.value)) } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Default Dir</label>
+                        <input type="number" className={ inputClass } value={ form.defaultdir } onChange={ e => setField('defaultdir', Number(e.target.value)) } />
                     </div>
                 </div>
             </div>
@@ -146,6 +158,55 @@ export const FurniEditorCreateView: FC<FurniEditorCreateViewProps> = props =>
                 <div className="mt-1">
                     <label className={ labelClass }>Custom Params</label>
                     <input className={ inputClass } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
+                </div>
+            </div>
+
+            <div className="bg-white rounded border border-[#ccc] p-2">
+                <Text small bold variant="primary" className="mb-1 block">FurniData.json</Text>
+                <div className="grid grid-cols-3 gap-2">
+                    <div>
+                        <label className={ labelClass }>Revision</label>
+                        <input type="number" className={ inputClass } value={ form.revision } onChange={ e => setField('revision', Number(e.target.value)) } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Category</label>
+                        <input className={ inputClass } value={ form.category } onChange={ e => setField('category', e.target.value) } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Offer ID</label>
+                        <input type="number" className={ inputClass } value={ form.offerid } onChange={ e => setField('offerid', Number(e.target.value)) } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Rent Offer ID</label>
+                        <input type="number" className={ inputClass } value={ form.rentofferid } onChange={ e => setField('rentofferid', Number(e.target.value)) } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Furniline</label>
+                        <input className={ inputClass } value={ form.furniline } onChange={ e => setField('furniline', e.target.value) } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Environment</label>
+                        <input className={ inputClass } value={ form.environment } onChange={ e => setField('environment', e.target.value) } />
+                    </div>
+                </div>
+                <div className="grid grid-cols-4 gap-x-3 gap-y-1 mt-1">
+                    { [
+                        ['buyout', 'Buyout'],
+                        ['rentbuyout', 'Rent Buyout'],
+                        ['bc', 'BC'],
+                        ['excludeddynamic', 'Excl. Dynamic'],
+                        ['rare', 'Rare']
+                    ].map(([ key, label ]) => (
+                        <label key={ key } className="flex items-center gap-1 text-[11px] cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={ (form as any)[key] }
+                                onChange={ e => setField(key, e.target.checked) }
+                            />
+                            { label }
+                        </label>
+                    )) }
                 </div>
             </div>
 
