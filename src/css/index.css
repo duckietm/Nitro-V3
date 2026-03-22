@@ -78,6 +78,27 @@ body {
 }
 
 @layer components {
+    @keyframes prefix-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    @keyframes prefix-rainbow {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+    }
+
+    @keyframes prefix-shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-1px) rotate(-1deg); }
+        75% { transform: translateX(1px) rotate(1deg); }
+    }
+
+    @keyframes prefix-wave {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+    }
+
     @keyframes blink {
 
         0%,

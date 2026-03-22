@@ -1,7 +1,8 @@
 import { GetRoomEngine, RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { ChatBubbleMessage, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../api';
+import { ChatBubbleMessage } from '../../../../api';
 import { useOnClickChat } from '../../../../hooks';
+import { PrefixPreview } from '../../../../layout';
 
 interface ChatWidgetMessageViewProps
 {
@@ -90,27 +91,8 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
                     ) }
                 </div>
                 <div className="chat-content py-[5px] px-[6px] ml-[27px] leading-none min-h-[25px]">
-                    { chat.prefixEffect === 'pulse' && <style>{ PREFIX_EFFECT_KEYFRAMES }</style> }
-                    { chat.prefixText && (() => {
-                        const colors = parsePrefixColors(chat.prefixText, chat.prefixColor);
-                        const hasMultiColor = colors.length > 1 && new Set(colors).size > 1;
-                        const fxStyle = getPrefixEffectStyle(chat.prefixEffect, colors[0] || '#FFFFFF');
-                        return (
-                            <span className="prefix font-bold mr-1" style={ fxStyle }>
-                                { chat.prefixIcon && <span className="mr-0.5 text-[13px]">{ chat.prefixIcon }</span> }
-                                <span style={ hasMultiColor ? fxStyle : { ...fxStyle, color: colors[0] || '#FFFFFF' } }>
-                                    {'{'}
-                                    { hasMultiColor
-                                        ? [ ...chat.prefixText ].map((char, i) => (
-                                            <span key={ i } style={ { color: colors[i] || colors[colors.length - 1], ...getPrefixEffectStyle(chat.prefixEffect, colors[i]) } }>{ char }</span>
-                                        ))
-                                        : chat.prefixText
-                                    }
-                                    {'}'}
-                                </span>
-                            </span>
-                        );
-                    })() }
+                    { chat.prefixText &&
+                        <PrefixPreview className="mr-1" color={ chat.prefixColor } effect={ chat.prefixEffect } icon={ chat.prefixIcon } text={ chat.prefixText } textSize="text-[inherit]" /> }
                     <b className="username" dangerouslySetInnerHTML={ { __html: `${ chat.username }: ` } } />
                     <span className={ `message${ chat.type === 1 ? ' italic text-[#595959]' : '' }` } dangerouslySetInnerHTML={ { __html: `${ chat.formattedText }` } } onClick={ onClickChat } />
                 </div>
