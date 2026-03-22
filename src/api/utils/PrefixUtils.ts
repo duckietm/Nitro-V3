@@ -6,6 +6,9 @@ export const PRESET_PREFIX_EFFECTS: { id: string; label: string; icon: string }[
     { id: 'outline', label: 'Outline', icon: '🔲' },
     { id: 'pulse', label: 'Pulse', icon: '💫' },
     { id: 'bold-glow', label: 'Neon', icon: '💡' },
+    { id: 'rainbow', label: 'Rainbow', icon: '🌈' },
+    { id: 'shake', label: 'Shake', icon: '📳' },
+    { id: 'wave', label: 'Wave', icon: '🌊' },
 ];
 
 export const parsePrefixColors = (text: string, colorStr: string): string[] =>
@@ -40,9 +43,38 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
                 textShadow: `0 0 4px ${ baseColor }, 0 0 8px ${ baseColor }, 0 0 16px ${ baseColor }60`,
                 fontWeight: 900
             };
+        case 'rainbow':
+            return { animation: 'prefix-rainbow 3s linear infinite', display: 'inline-block' };
+        case 'shake':
+            return { animation: 'prefix-shake 0.4s ease-in-out infinite', display: 'inline-block' };
+        case 'wave':
+            return { animation: 'prefix-wave 1s ease-in-out infinite', display: 'inline-block' };
         default:
             return {};
     }
+};
+
+export const generateGradientColors = (startColor: string, endColor: string, steps: number): string[] =>
+{
+    if(steps <= 1) return [ startColor ];
+
+    const parseHex = (hex: string) =>
+    {
+        const h = hex.replace('#', '');
+        return { r: parseInt(h.substring(0, 2), 16), g: parseInt(h.substring(2, 4), 16), b: parseInt(h.substring(4, 6), 16) };
+    };
+
+    const start = parseHex(startColor);
+    const end = parseHex(endColor);
+
+    return Array.from({ length: steps }, (_, i) =>
+    {
+        const t = i / (steps - 1);
+        const r = Math.round(start.r + (end.r - start.r) * t);
+        const g = Math.round(start.g + (end.g - start.g) * t);
+        const b = Math.round(start.b + (end.b - start.b) * t);
+        return `#${ r.toString(16).padStart(2, '0') }${ g.toString(16).padStart(2, '0') }${ b.toString(16).padStart(2, '0') }`;
+    });
 };
 
 export const PREFIX_EFFECT_KEYFRAMES = `
