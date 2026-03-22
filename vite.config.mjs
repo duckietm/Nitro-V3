@@ -25,6 +25,8 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
             '~': resolve(__dirname, 'node_modules'),
+            // Renderer3 root → resolve through its src/index.ts
+            '@nitrots/nitro-renderer': resolve(renderer3, 'src/index.ts'),
             // Renderer3 workspace packages → point to their src/index.ts
             '@nitrots/api': resolve(renderer3, 'packages/api/src/index.ts'),
             '@nitrots/assets': resolve(renderer3, 'packages/assets/src/index.ts'),
