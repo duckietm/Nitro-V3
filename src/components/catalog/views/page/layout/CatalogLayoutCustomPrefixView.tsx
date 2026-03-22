@@ -1,7 +1,6 @@
 import { PurchasePrefixComposer } from '@nitrots/nitro-renderer';
-import { createPortal } from 'react-dom';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { SendMessageComposer, PRESET_PREFIX_EFFECTS, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../../api';
+import { LocalizeText, SendMessageComposer, PRESET_PREFIX_EFFECTS, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
@@ -32,32 +31,6 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
     const [ showIconPicker, setShowIconPicker ] = useState(false);
     const [ selectedEffect, setSelectedEffect ] = useState('');
     const [ purchased, setPurchased ] = useState(false);
-    const pickerContainerRef = useRef<HTMLDivElement>(null);
-
-    // Inject style into emoji-mart Shadow DOM to remove backdrop-filter blur
-    useEffect(() =>
-    {
-        if(!showIconPicker) return;
-
-        const timer = setTimeout(() =>
-        {
-            const container = pickerContainerRef.current;
-            if(!container) return;
-
-            const emPicker = container.querySelector('em-emoji-picker');
-            if(!emPicker?.shadowRoot) return;
-
-            const existing = emPicker.shadowRoot.querySelector('#no-blur-fix');
-            if(existing) return;
-
-            const style = document.createElement('style');
-            style.id = 'no-blur-fix';
-            style.textContent = `.sticky { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-color: rgb(var(--em-rgb-background)) !important; } .menu { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-color: rgb(var(--em-rgb-background)) !important; }`;
-            emPicker.shadowRoot.appendChild(style);
-        }, 50);
-
-        return () => clearTimeout(timer);
-    }, [ showIconPicker ]);
 
     const colorString = useMemo(() =>
     {
@@ -104,7 +77,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             setLetterColors(prev => ({ ...prev, [selectedLetterIndex]: color }));
             setCustomColorInput(color);
 
-            // Auto-advance to next letter
+            // Auto-avanza alla lettera successiva
             if(selectedLetterIndex < prefixText.length - 1)
             {
                 const nextIdx = selectedLetterIndex + 1;
@@ -194,12 +167,12 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             { /* Text + Icon Row */ }
             <div className="flex gap-2">
                 <div className="flex flex-col gap-0.5 flex-1">
-                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Text</label>
+                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">{ LocalizeText('catalog.prefix.text') }</label>
                     <div className="relative">
                         <input
                             className="w-full px-3 py-1.5 rounded-md text-sm focus:outline-none transition-all"
                             maxLength={ 15 }
-                            placeholder="Enter text..."
+                            placeholder={ LocalizeText('catalog.prefix.text.placeholder') }
                             style={ {
                                 background: 'rgba(0,0,0,0.15)',
                                 border: '1px solid rgba(0,0,0,0.15)',
@@ -214,7 +187,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                     </div>
                 </div>
                 <div className="flex flex-col gap-0.5 relative">
-                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Icon</label>
+                    <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">{ LocalizeText('catalog.prefix.icon') }</label>
                     <div className="flex gap-1">
                         <button
                             className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-md text-sm transition-all min-w-[70px]"
@@ -232,7 +205,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             <button
                                 className="flex items-center justify-center px-1.5 rounded-md text-xs transition-all"
                                 style={ { background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)' } }
-                                title="Remove icon"
+                                title={ LocalizeText('catalog.prefix.icon.remove') }
                                 onClick={ () => setSelectedIcon('') }>
                                 ✕
                             </button>
@@ -241,14 +214,14 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                 </div>
             </div>
 
-            { /* Emoji Picker (emoji-mart) - portaled to body, no backdrop */ }
-            { showIconPicker && createPortal(
+            { /* Emoji Picker (emoji-mart) - fixed overlay */ }
+            { showIconPicker && (
                 <>
-                    <div className="fixed inset-0" style={ { zIndex: 9998 } } onClick={ () => setShowIconPicker(false) } />
-                    <div ref={ pickerContainerRef } className="fixed rounded-xl overflow-hidden" style={ { zIndex: 9999, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#2b2f35' } }>
+                    <div className="fixed inset-0" style={ { zIndex: 999, background: 'rgba(0,0,0,0.5)' } } onClick={ () => setShowIconPicker(false) } />
+                    <div className="fixed rounded-xl overflow-hidden" style={ { zIndex: 1000, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' } }>
                         <Picker
                             data={ data }
-                            locale="en"
+                            locale="it"
                             onEmojiSelect={ (emoji: { native: string }) => { setSelectedIcon(emoji.native); setShowIconPicker(false); } }
                             theme="dark"
                             previewPosition="none"
@@ -261,13 +234,12 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             set="native"
                         />
                     </div>
-                </>,
-                document.body
+                </>
             ) }
 
             { /* Effect Selector */ }
             <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Effect</label>
+                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">{ LocalizeText('catalog.prefix.effect') }</label>
                 <div className="flex flex-wrap gap-1">
                     { PRESET_PREFIX_EFFECTS.map(fx => (
                         <button
@@ -287,7 +259,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
 
             { /* Color Mode Toggle */ }
             <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">Color</label>
+                <label className="text-[11px] font-bold uppercase tracking-wider opacity-60">{ LocalizeText('catalog.prefix.color') }</label>
                 <div className="flex rounded-md overflow-hidden" style={ { border: '1px solid rgba(0,0,0,0.15)' } }>
                     <button
                         className="flex-1 px-2 py-1.5 text-xs font-bold transition-all"
@@ -297,7 +269,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             opacity: colorMode === 'single' ? 1 : 0.6
                         } }
                         onClick={ () => { setColorMode('single'); setSelectedLetterIndex(null); } }>
-                        🎨 Single
+                        { LocalizeText('catalog.prefix.color.single') }
                     </button>
                     <button
                         className="flex-1 px-2 py-1.5 text-xs font-bold transition-all"
@@ -306,7 +278,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             opacity: colorMode === 'perLetter' ? 1 : 0.6
                         } }
                         onClick={ () => { setColorMode('perLetter'); if(prefixText.length > 0) setSelectedLetterIndex(0); } }>
-                        🌈 Per Letter
+                        { LocalizeText('catalog.prefix.color.per.letter') }
                     </button>
                 </div>
             </div>
@@ -316,7 +288,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                 <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
                         <span className="text-[10px] opacity-50">
-                            Select a letter, then choose a color. Auto-advances.
+                            { LocalizeText('catalog.prefix.color.hint') }
                         </span>
                         <button
                             className="text-[10px] px-1.5 py-0.5 rounded transition-all"
@@ -324,9 +296,9 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                                 background: 'rgba(0,0,0,0.1)',
                                 border: '1px solid rgba(0,0,0,0.1)'
                             } }
-                            title="Apply current color to all letters"
+                            title={ LocalizeText('catalog.prefix.color.apply.all.title') }
                             onClick={ applyColorToAll }>
-                            Apply to all
+                            { LocalizeText('catalog.prefix.color.apply.all') }
                         </button>
                     </div>
                     <div className="flex flex-wrap gap-1 p-2 rounded-lg"
@@ -379,25 +351,20 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             <div className="flex flex-col gap-1">
                 { colorMode === 'perLetter' && selectedLetterIndex !== null &&
                     <span className="text-[10px] opacity-50 italic">
-                        Selected letter: &quot;{ prefixText[selectedLetterIndex] || '' }&quot;
+                        { LocalizeText('catalog.prefix.color.selected') } &quot;{ prefixText[selectedLetterIndex] || '' }&quot;
                     </span>
                 }
-                <div className="grid grid-cols-10 gap-[3px]">
+                <div className="grid gap-1" style={ { gridTemplateColumns: 'repeat(auto-fill, minmax(34px, 1fr))' } }>
                     { PRESET_COLORS.map((color, idx) =>
                     {
                         const isActive = currentActiveColor === color;
                         return (
                             <div
                                 key={ idx }
-                                className="cursor-pointer transition-all"
+                                className={ `aspect-square rounded cursor-pointer transition-all duration-100 border-2 ${ isActive ? 'scale-110 border-white shadow-lg' : 'border-transparent hover:scale-105' }` }
                                 style={ {
-                                    width: '100%',
-                                    aspectRatio: '1',
-                                    borderRadius: '5px',
                                     backgroundColor: color,
-                                    border: isActive ? '2px solid #fff' : '1px solid rgba(0,0,0,0.15)',
-                                    boxShadow: isActive ? `0 0 6px ${ color }, 0 0 0 1px rgba(0,0,0,0.2)` : 'inset 0 1px 0 rgba(255,255,255,0.2)',
-                                    transform: isActive ? 'scale(1.2)' : 'scale(1)',
+                                    boxShadow: isActive ? `0 0 8px ${ color }, 0 0 0 1px rgba(0,0,0,0.3)` : 'inset 0 1px 0 rgba(255,255,255,0.25), 0 1px 2px rgba(0,0,0,0.15)',
                                     zIndex: isActive ? 5 : 1
                                 } }
                                 onClick={ () => handleColorSelect(color) } />
@@ -443,8 +410,8 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
             <div className="flex items-center justify-between mt-auto pt-2"
                 style={ { borderTop: '1px solid rgba(0,0,0,0.1)' } }>
                 <div className="flex items-center gap-1">
-                    <span className="text-xs opacity-60">Price:</span>
-                    <span className="text-sm font-bold">5 Credits</span>
+                    <span className="text-xs opacity-60">{ LocalizeText('catalog.prefix.price') }</span>
+                    <span className="text-sm font-bold">{ LocalizeText('catalog.prefix.price.amount') }</span>
                 </div>
                 <button
                     className="px-5 py-1.5 rounded-md text-sm font-bold transition-all"
@@ -462,7 +429,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                         borderRadius: '6px'
                     } }
                     onClick={ handlePurchase }>
-                    { purchased ? '✓ Purchased!' : 'Purchase' }
+                    { purchased ? LocalizeText('catalog.prefix.purchased') : LocalizeText('catalog.prefix.purchase') }
                 </button>
             </div>
         </div>
