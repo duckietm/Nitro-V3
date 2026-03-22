@@ -21,6 +21,9 @@ const CatalogViewInner: FC<{}> = () =>
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
     const setAdminMode = catalogAdmin?.setAdminMode ?? (() => {});
+    const hasPendingChanges = catalogAdmin?.hasPendingChanges ?? false;
+    const publishCatalog = catalogAdmin?.publishCatalog ?? (() => {});
+    const loading = catalogAdmin?.loading ?? false;
     const { favoriteOfferIds, favoritePageIds } = useCatalogFavorites();
     const [ showFavorites, setShowFavorites ] = useState(false);
 
@@ -88,8 +91,15 @@ const CatalogViewInner: FC<{}> = () =>
                     <NitroCardContentView classNames={ [ 'p-0!', 'overflow-hidden!' ] }>
                         { /* Admin banner */ }
                         { adminMode &&
-                            <div className="bg-warning text-dark text-[10px] font-bold text-center py-0.5 uppercase tracking-wider" style={ { textShadow: '0 1px 0 rgba(255,255,255,0.3)' } }>
-                                ⚙ Admin Mode Attivo
+                            <div className="flex items-center justify-between bg-warning text-dark text-[10px] font-bold px-3 py-0.5 uppercase tracking-wider" style={ { textShadow: '0 1px 0 rgba(255,255,255,0.3)' } }>
+                                <span>⚙ Admin Mode</span>
+                                <button
+                                    className={ `px-3 py-0.5 rounded text-[10px] font-bold uppercase cursor-pointer transition-all ${ hasPendingChanges ? 'bg-success text-white animate-pulse shadow-md' : 'bg-white/50 text-dark hover:bg-success hover:text-white' }` }
+                                    disabled={ loading }
+                                    onClick={ () => publishCatalog() }
+                                >
+                                    { loading ? '...' : hasPendingChanges ? '⬆ Publish' : '⬆ Publish' }
+                                </button>
                             </div> }
 
                         <div className="flex h-full">
