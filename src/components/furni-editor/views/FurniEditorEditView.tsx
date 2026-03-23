@@ -1,5 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Column, Flex, Text } from '../../../common';
+import { FaSave, FaSync, FaTrash, FaArrowLeft } from 'react-icons/fa';
+import { Column } from '../../../common';
+import { LayoutFurniIconImageView } from '../../../common/layout/LayoutFurniIconImageView';
 import { CatalogRef, FurniDetail } from '../../../hooks/furni-editor';
 
 interface FurniEditorEditViewProps
@@ -9,20 +11,24 @@ interface FurniEditorEditViewProps
     furniDataEntry: Record<string, unknown> | null;
     interactions: string[];
     loading: boolean;
+    lastResult: { success: boolean; message: string; id: number } | null;
     onUpdate: (id: number, fields: Record<string, unknown>) => void;
     onDelete: (id: number) => void;
     onBack: () => void;
     onRefresh: (id: number) => void;
 }
 
+const ic = 'text-[13px] border border-[#c5cdd6] rounded px-2 py-1 bg-white focus:outline-none focus:border-[#1e7295] focus:shadow-[0_0_0_1px_rgba(30,114,149,0.15)] transition-all w-full';
+const ro = 'text-[13px] border border-[#d5dbe0] rounded px-2 py-1 bg-[#f0f2f4] text-[#777] w-full cursor-not-allowed';
+const lb = 'text-[11px] text-[#1e7295] uppercase font-bold tracking-wider leading-none';
+const sectionTitle = 'text-[12px] text-[#1e7295] uppercase font-bold tracking-wider';
+
 export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 {
-    const { item, catalogItems, furniDataEntry, interactions, loading, onUpdate, onDelete, onBack, onRefresh } = props;
+    const { item, catalogItems, furniDataEntry, interactions, loading, lastResult, onUpdate, onDelete, onBack, onRefresh } = props;
 
     const [ form, setForm ] = useState({
-        itemName: '',
         publicName: '',
-        spriteId: 0,
         type: 's',
         width: 1,
         length: 1,
@@ -55,15 +61,14 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     });
 
     const [ confirmDelete, setConfirmDelete ] = useState(false);
+    const [ toast, setToast ] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
     useEffect(() =>
     {
         if(!item) return;
 
         setForm({
-            itemName: item.itemName || '',
             publicName: item.publicName || '',
-            spriteId: item.spriteId || 0,
             type: item.type || 's',
             width: item.width || 1,
             length: item.length || 1,
@@ -98,6 +103,17 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
         setConfirmDelete(false);
     }, [ item ]);
 
+    useEffect(() =>
+    {
+        if(!lastResult) return;
+
+        setToast({ type: lastResult.success ? 'success' : 'error', message: lastResult.message });
+        if(lastResult.success && lastResult.id > 0) onRefresh(lastResult.id);
+
+        const timer = setTimeout(() => setToast(null), 3000);
+        return () => clearTimeout(timer);
+    }, [ lastResult ]);
+
     const setField = useCallback((key: string, value: unknown) =>
     {
         setForm(prev => ({ ...prev, [key]: value }));
@@ -111,71 +127,84 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     const handleDelete = useCallback(() =>
     {
         if(!confirmDelete) return setConfirmDelete(true);
-
         onDelete(item.id);
-        onBack();
-    }, [ confirmDelete, item, onDelete, onBack ]);
-
-    const inputClass = 'form-control form-control-sm';
-    const labelClass = 'text-[11px] font-bold text-[#333] mb-0';
+    }, [ confirmDelete, item, onDelete ]);
 
     return (
-        <Column gap={ 1 } className="h-full overflow-auto">
-            <Flex gap={ 1 } alignItems="center" className="mb-1">
-                <Button variant="secondary" onClick={ onBack }>Back</Button>
-                <Flex alignItems="center" gap={ 1 } className="bg-[#e9ecef] px-2 py-0.5 rounded">
-                    <Text bold className="text-[12px]">ID: { item.id }</Text>
-                    <span className="text-[#999] mx-0.5">|</span>
-                    <Text bold className="text-[12px]">Sprite: { item.spriteId }</Text>
-                </Flex>
-                <Text small variant="gray">({ item.usageCount } in use)</Text>
-            </Flex>
+        <Column gap={ 0 } className="h-full overflow-auto">
+            { toast &&
+                <div className={ `rounded px-2 py-1 text-[12px] font-bold text-white mb-1.5 shadow-sm ${ toast.type === 'success' ? 'bg-[#28a745]' : 'bg-[#dc3545]' }` }>
+                    { toast.message }
+                </div>
+            }
+
+            { /* Header */ }
+            <div className="flex items-center gap-3 mb-2 pb-2 border-b-2 border-[#c5cdd6]">
+                <div className="w-[46px] h-[46px] flex items-center justify-center bg-white rounded-md border border-[#c5cdd6] flex-shrink-0 shadow-sm overflow-hidden">
+                    <LayoutFurniIconImageView productType={ item.type } productClassId={ item.spriteId } style={ { transform: 'scale(1.2)' } } />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="text-[14px] font-bold text-[#2d3748] truncate leading-tight">{ item.publicName }</div>
+                    <div className="flex items-center gap-1.5 text-[11px] mt-0.5">
+                        <span className="text-[#1e7295] font-bold cursor-pointer hover:underline" title="Click to copy ID" onClick={ () => { navigator.clipboard.writeText(String(item.id)); setToast({ type: 'success', message: `ID ${item.id} copied!` }); } }>#{item.id}</span>
+                        <span className="text-[#d0d5db]">|</span>
+                        <span className="text-[#4a5568]">sprite:<b>{ item.spriteId }</b></span>
+                        <span className="text-[#d0d5db]">|</span>
+                        <span className="truncate max-w-[140px] text-[#4a5568]">{ item.itemName }</span>
+                        <span className={ `px-2 py-[2px] rounded text-white text-[11px] font-bold ${ item.type === 's' ? 'bg-[#1e7295]' : 'bg-[#718096]' }` }>
+                            { item.type === 's' ? 'FLOOR' : 'WALL' }
+                        </span>
+                        { item.usageCount > 0 && <span className="text-[#e53e3e] font-bold">{ item.usageCount } in use</span> }
+                    </div>
+                </div>
+                <div className="flex gap-1 flex-shrink-0">
+                    <button className="p-1.5 rounded-md bg-[#edf2f7] hover:bg-[#e2e8f0] cursor-pointer transition-colors" onClick={ () => onRefresh(item.id) } title="Refresh">
+                        <FaSync className="text-[9px] text-[#718096]" />
+                    </button>
+                    <button className="flex items-center gap-1 px-2 py-1 rounded-md text-[9px] font-bold bg-[#edf2f7] hover:bg-[#e2e8f0] text-[#4a5568] cursor-pointer transition-colors" onClick={ onBack }>
+                        <FaArrowLeft className="text-[7px]" /> Back
+                    </button>
+                </div>
+            </div>
 
             { /* Basic Info */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Basic Info</Text>
-                <div className="grid grid-cols-2 gap-2">
-                    <div>
-                        <label className={ labelClass }>Item Name</label>
-                        <input className={ inputClass } value={ form.itemName } onChange={ e => setField('itemName', e.target.value) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Public Name</label>
-                        <input className={ inputClass } value={ form.publicName } onChange={ e => setField('publicName', e.target.value) } />
-                    </div>
-                    <div className="col-span-2">
-                        <label className={ labelClass }>Description</label>
-                        <textarea className={ inputClass } rows={ 2 } value={ form.description } onChange={ e => setField('description', e.target.value) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Sprite ID</label>
-                        <input type="number" className={ inputClass } value={ form.spriteId } onChange={ e => setField('spriteId', Number(e.target.value)) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Type</label>
-                        <select className="form-select form-select-sm" value={ form.type } onChange={ e => setField('type', e.target.value) }>
-                            <option value="s">Floor (s)</option>
-                            <option value="i">Wall (i)</option>
-                        </select>
-                    </div>
+            <div className="grid grid-cols-4 gap-x-2 gap-y-1.5 pb-2 border-b-2 border-[#c5cdd6]">
+                <div>
+                    <label className={ lb }>Item Name</label>
+                    <input className={ ro } value={ item.itemName } readOnly />
+                </div>
+                <div>
+                    <label className={ lb }>Public Name</label>
+                    <input className={ ic } value={ form.publicName } onChange={ e => setField('publicName', e.target.value) } />
+                </div>
+                <div>
+                    <label className={ lb }>Sprite ID</label>
+                    <input className={ ro } value={ item.spriteId } readOnly />
+                </div>
+                <div>
+                    <label className={ lb }>Type</label>
+                    <select className={ ic } value={ form.type } onChange={ e => setField('type', e.target.value) }>
+                        <option value="s">Floor (s)</option>
+                        <option value="i">Wall (i)</option>
+                    </select>
                 </div>
             </div>
 
             { /* Dimensions */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Dimensions</Text>
-                <div className="grid grid-cols-4 gap-2">
+            <div className="pt-2 pb-2 border-b-2 border-[#c5cdd6]">
+                <div className={ sectionTitle + ' mb-1' }>Dimensions</div>
+                <div className="grid grid-cols-3 gap-x-2">
                     <div>
-                        <label className={ labelClass }>Width</label>
-                        <input type="number" className={ inputClass } value={ form.width } onChange={ e => setField('width', Number(e.target.value)) } />
+                        <label className={ lb }>Width</label>
+                        <input type="number" className={ ic } value={ form.width } onChange={ e => setField('width', Number(e.target.value)) } />
                     </div>
                     <div>
-                        <label className={ labelClass }>Length</label>
-                        <input type="number" className={ inputClass } value={ form.length } onChange={ e => setField('length', Number(e.target.value)) } />
+                        <label className={ lb }>Length</label>
+                        <input type="number" className={ ic } value={ form.length } onChange={ e => setField('length', Number(e.target.value)) } />
                     </div>
                     <div>
-                        <label className={ labelClass }>Stack Height</label>
-                        <input type="number" step="0.01" className={ inputClass } value={ form.stackHeight } onChange={ e => setField('stackHeight', Number(e.target.value)) } />
+                        <label className={ lb }>Stack Height</label>
+                        <input type="number" step="0.01" className={ ic } value={ form.stackHeight } onChange={ e => setField('stackHeight', Number(e.target.value)) } />
                     </div>
                     <div>
                         <label className={ labelClass }>Default Dir</label>
@@ -185,17 +214,12 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
             </div>
 
             { /* Permissions */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Permissions</Text>
-                <div className="grid grid-cols-3 gap-x-3 gap-y-1">
+            <div className="pt-2 pb-2 border-b-2 border-[#c5cdd6]">
+                <div className={ sectionTitle + ' mb-1' }>Permissions</div>
+                <div className="grid grid-cols-3 gap-x-2 gap-y-[3px]">
                     { [ 'allowStack', 'allowWalk', 'allowSit', 'allowLay', 'allowGift', 'allowTrade', 'allowRecycle', 'allowMarketplaceSell', 'allowInventoryStack' ].map(key => (
-                        <label key={ key } className="flex items-center gap-1 text-[11px] cursor-pointer">
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                checked={ (form as any)[key] }
-                                onChange={ e => setField(key, e.target.checked) }
-                            />
+                        <label key={ key } className="flex items-center gap-1 text-[12px] text-[#4a5568] cursor-pointer hover:text-[#1e7295] transition-colors">
+                            <input type="checkbox" className="accent-[#1e7295] w-3 h-3" checked={ (form as any)[key] } onChange={ e => setField(key, e.target.checked) } />
                             { key.replace('allow', '') }
                         </label>
                     )) }
@@ -203,107 +227,44 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
             </div>
 
             { /* Interaction */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">Interaction</Text>
-                <div className="grid grid-cols-3 gap-2">
+            <div className="pt-2">
+                <div className={ sectionTitle + ' mb-1' }>Interaction</div>
+                <div className="grid grid-cols-4 gap-x-2">
                     <div className="col-span-2">
-                        <label className={ labelClass }>Type</label>
-                        <select className="form-select form-select-sm" value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
+                        <label className={ lb }>Type</label>
+                        <select className={ ic } value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
                             <option value="">none</option>
-                            { interactions.map(i => (
-                                <option key={ i } value={ i }>{ i }</option>
-                            )) }
+                            { interactions.map(i => <option key={ i } value={ i }>{ i }</option>) }
                         </select>
                     </div>
                     <div>
-                        <label className={ labelClass }>Modes</label>
-                        <input type="number" className={ inputClass } value={ form.interactionModesCount } onChange={ e => setField('interactionModesCount', Number(e.target.value)) } />
-                    </div>
-                </div>
-                <div className="mt-1">
-                    <label className={ labelClass }>Custom Params</label>
-                    <input className={ inputClass } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
-                </div>
-            </div>
-
-            { /* FurniData JSON */ }
-            <div className="bg-white rounded border border-[#ccc] p-2">
-                <Text small bold variant="primary" className="mb-1 block">FurniData.json</Text>
-                <div className="grid grid-cols-3 gap-2">
-                    <div>
-                        <label className={ labelClass }>Revision</label>
-                        <input type="number" className={ inputClass } value={ form.revision } onChange={ e => setField('revision', Number(e.target.value)) } />
+                        <label className={ lb }>Modes</label>
+                        <input type="number" className={ ic } value={ form.interactionModesCount } onChange={ e => setField('interactionModesCount', Number(e.target.value)) } />
                     </div>
                     <div>
-                        <label className={ labelClass }>Category</label>
-                        <input className={ inputClass } value={ form.category } onChange={ e => setField('category', e.target.value) } />
+                        <label className={ lb }>Custom Params</label>
+                        <input className={ ic } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
                     </div>
-                    <div>
-                        <label className={ labelClass }>Offer ID</label>
-                        <input type="number" className={ inputClass } value={ form.offerid } onChange={ e => setField('offerid', Number(e.target.value)) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Rent Offer ID</label>
-                        <input type="number" className={ inputClass } value={ form.rentofferid } onChange={ e => setField('rentofferid', Number(e.target.value)) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Furniline</label>
-                        <input className={ inputClass } value={ form.furniline } onChange={ e => setField('furniline', e.target.value) } />
-                    </div>
-                    <div>
-                        <label className={ labelClass }>Environment</label>
-                        <input className={ inputClass } value={ form.environment } onChange={ e => setField('environment', e.target.value) } />
-                    </div>
-                </div>
-                <div className="grid grid-cols-4 gap-x-3 gap-y-1 mt-1">
-                    { [
-                        ['buyout', 'Buyout'],
-                        ['rentbuyout', 'Rent Buyout'],
-                        ['bc', 'BC'],
-                        ['excludeddynamic', 'Excl. Dynamic'],
-                        ['rare', 'Rare']
-                    ].map(([ key, label ]) => (
-                        <label key={ key } className="flex items-center gap-1 text-[11px] cursor-pointer">
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                checked={ (form as any)[key] }
-                                onChange={ e => setField(key, e.target.checked) }
-                            />
-                            { label }
-                        </label>
-                    )) }
                 </div>
             </div>
-
-            { /* Catalog References */ }
-            { catalogItems.length > 0 &&
-                <div className="bg-white rounded border border-[#ccc] p-2">
-                    <Text small bold variant="primary" className="mb-1 block">Catalog ({ catalogItems.length })</Text>
-                    <div className="text-[10px] space-y-0.5">
-                        { catalogItems.map(ci => (
-                            <div key={ ci.id } className="flex justify-between bg-[#f5f5f5] px-2 py-0.5 rounded">
-                                <span>{ ci.catalogName } (page: { ci.pageName })</span>
-                                <span>{ ci.costCredits }c + { ci.costPoints }p</span>
-                            </div>
-                        )) }
-                    </div>
-                </div>
-            }
 
             { /* Actions */ }
-            <Flex gap={ 1 } justifyContent="between" className="mt-1">
-                <Button variant="success" disabled={ loading } onClick={ handleSave }>
-                    { loading ? 'Saving...' : 'Save' }
-                </Button>
-                <Button
-                    variant={ confirmDelete ? 'danger' : 'warning' }
+            <div className="flex justify-between items-center mt-auto pt-2 border-t border-[#e2e8f0]">
+                <button
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold bg-[#28a745] text-white hover:bg-[#218838] shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                    disabled={ loading }
+                    onClick={ handleSave }
+                >
+                    <FaSave className="text-[8px]" /> { loading ? 'Saving...' : 'Save' }
+                </button>
+                <button
+                    className={ `flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold text-white shadow-sm transition-all cursor-pointer disabled:opacity-50 ${ confirmDelete ? 'bg-[#dc3545] hover:bg-[#c82333]' : 'bg-[#e8993e] hover:bg-[#d98a30]' }` }
                     disabled={ loading || item.usageCount > 0 }
                     onClick={ handleDelete }
                 >
-                    { confirmDelete ? 'Confirm Delete' : 'Delete' }
-                </Button>
-            </Flex>
+                    <FaTrash className="text-[8px]" /> { confirmDelete ? 'Confirm' : 'Delete' }
+                </button>
+            </div>
         </Column>
     );
 };
