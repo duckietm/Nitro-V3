@@ -28,3 +28,5 @@ Thumbs.db
 *.zip
 .env
 .claude/
+public/renderer-config.json
+public/ui-config.json

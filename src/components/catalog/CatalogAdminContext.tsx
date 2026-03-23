@@ -1,5 +1,7 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react';
-import { ICatalogNode, IPurchasableOffer } from '../../api';
+import { CatalogAdminCreateOfferComposer, CatalogAdminCreatePageComposer, CatalogAdminDeleteOfferComposer, CatalogAdminDeletePageComposer, CatalogAdminMoveOfferComposer, CatalogAdminMovePageComposer, CatalogAdminPublishComposer, CatalogAdminResultEvent, CatalogAdminSaveOfferComposer, CatalogAdminSavePageComposer } from '@nitrots/nitro-renderer';
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { ICatalogNode, IPurchasableOffer, NotificationAlertType, SendMessageComposer } from '../../api';
+import { useMessageEvent, useNotification } from '../../hooks';
 
 export interface IPageEditData
 {
@@ -53,48 +55,23 @@ interface ICatalogAdminContext
     setEditingPageNode: (node: ICatalogNode | null) => void;
     loading: boolean;
     lastError: string | null;
-    savePage: (data: IPageEditData) => Promise<boolean>;
-    createPage: (data: IPageEditData) => Promise<boolean>;
-    deletePage: (pageId: number) => Promise<boolean>;
-    saveOffer: (data: IOfferEditData) => Promise<boolean>;
-    createOffer: (data: IOfferEditData) => Promise<boolean>;
-    deleteOffer: (offerId: number) => Promise<boolean>;
-    reorderOffers: (orders: { id: number; orderNumber: number }[]) => Promise<boolean>;
-    togglePageEnabled: (pageId: number) => Promise<boolean>;
-    togglePageVisible: (pageId: number) => Promise<boolean>;
+    savePage: (data: IPageEditData) => void;
+    createPage: (data: IPageEditData) => void;
+    deletePage: (pageId: number) => void;
+    saveOffer: (data: IOfferEditData) => void;
+    createOffer: (data: IOfferEditData) => void;
+    deleteOffer: (offerId: number) => void;
+    reorderOffers: (orders: { id: number; orderNumber: number }[]) => void;
+    reorderPage: (pageId: number, newParentId: number, newIndex: number) => void;
+    togglePageEnabled: (pageId: number) => void;
+    togglePageVisible: (pageId: number) => void;
+    publishCatalog: () => void;
+    hasPendingChanges: boolean;
 }
 
 const CatalogAdminContext = createContext<ICatalogAdminContext>(null);
 
 export const useCatalogAdmin = () => useContext(CatalogAdminContext);
-
-const API_BASE = '/api/admin/catalog';
-
-async function apiCall(url: string, method: string, body?: unknown): Promise<{ ok: boolean; data?: Record<string, unknown>; error?: string }>
-{
-    try
-    {
-        const res = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            ...(body !== undefined ? { body: JSON.stringify(body) } : {})
-        });
-
-        const json = await res.json();
-
-        if(!res.ok || json.error)
-        {
-            return { ok: false, error: json.error || `HTTP ${ res.status }` };
-        }
-
-        return { ok: true, data: json };
-    }
-    catch(err)
-    {
-        return { ok: false, error: (err as Error).message };
-    }
-}
 
 export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) =>
 {
@@ -105,131 +82,200 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
     const [ editingPageNode, setEditingPageNode ] = useState<ICatalogNode | null>(null);
     const [ loading, setLoading ] = useState(false);
     const [ lastError, setLastError ] = useState<string | null>(null);
+    const [ hasPendingChanges, setHasPendingChanges ] = useState(false);
+    const pendingActionRef = useRef<string | null>(null);
+    const { simpleAlert = null } = useNotification();
 
-    const withLoading = useCallback(async (fn: () => Promise<boolean>): Promise<boolean> =>
+    // Keyboard shortcuts: Esc to close edit panels
+    useEffect(() =>
+    {
+        if(!adminMode) return;
+
+        const handleKeyDown = (e: KeyboardEvent) =>
+        {
+            if(e.key === 'Escape')
+            {
+                if(editingOffer) { setEditingOffer(null); e.preventDefault(); return; }
+                if(editingPageData || editingRootPage || editingPageNode)
+                {
+                    setEditingPageData(false);
+                    setEditingRootPage(false);
+                    setEditingPageNode(null);
+                    e.preventDefault();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [ adminMode, editingOffer, editingPageData, editingRootPage, editingPageNode ]);
+
+    useMessageEvent(CatalogAdminResultEvent, (event: CatalogAdminResultEvent) =>
+    {
+        const parser = event.getParser();
+        const action = pendingActionRef.current;
+
+        pendingActionRef.current = null;
+        setLoading(false);
+
+        if(!parser.success)
+        {
+            setLastError(parser.message || 'Operation failed');
+
+            if(simpleAlert)
+            {
+                simpleAlert(parser.message || 'Operation failed', NotificationAlertType.ALERT, null, null, 'Admin Error');
+            }
+        }
+        else
+        {
+            setLastError(null);
+            setEditingOffer(null);
+            setEditingPageData(false);
+            setEditingRootPage(false);
+            setEditingPageNode(null);
+
+            if(action === 'publish')
+            {
+                setHasPendingChanges(false);
+            }
+            else
+            {
+                setHasPendingChanges(true);
+            }
+
+            if(simpleAlert && action)
+            {
+                const messages: Record<string, string> = {
+                    'savePage': 'Page saved (publish to apply)',
+                    'createPage': 'Page created (publish to apply)',
+                    'deletePage': 'Page deleted (publish to apply)',
+                    'saveOffer': 'Offer saved (publish to apply)',
+                    'createOffer': 'Offer created (publish to apply)',
+                    'deleteOffer': 'Offer deleted (publish to apply)',
+                    'reorder': 'Order updated (publish to apply)',
+                    'toggleEnabled': 'Page toggled (publish to apply)',
+                    'toggleVisible': 'Visibility toggled (publish to apply)',
+                    'movePage': 'Page moved (publish to apply)',
+                    'publish': 'Catalog published! All users updated.',
+                };
+
+                simpleAlert(messages[action] || 'Operation completed', NotificationAlertType.DEFAULT, null, null, 'Catalog Admin');
+            }
+        }
+    });
+
+    const savePage = useCallback((data: IPageEditData) =>
     {
         setLoading(true);
         setLastError(null);
+        pendingActionRef.current = 'savePage';
+        SendMessageComposer(new CatalogAdminSavePageComposer(
+            data.pageId || 0, data.caption, data.caption, data.pageLayout, 0,
+            data.minRank, data.visible === '1', data.enabled === '1',
+            data.orderNum, data.parentId,
+            data.pageHeadline || '', data.pageTeaser || '', data.pageTextDetails || ''
+        ));
+    }, []);
 
-        try
+    const createPage = useCallback((data: IPageEditData) =>
+    {
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'createPage';
+        SendMessageComposer(new CatalogAdminCreatePageComposer(
+            data.caption, data.caption, data.pageLayout, 0,
+            data.minRank, data.visible === '1', data.enabled === '1',
+            data.orderNum, data.parentId
+        ));
+    }, []);
+
+    const deletePage = useCallback((pageId: number) =>
+    {
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'deletePage';
+        SendMessageComposer(new CatalogAdminDeletePageComposer(pageId));
+    }, []);
+
+    const saveOffer = useCallback((data: IOfferEditData) =>
+    {
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'saveOffer';
+        SendMessageComposer(new CatalogAdminSaveOfferComposer(
+            data.offerId || 0, data.pageId, parseInt(data.itemIds) || 0,
+            data.catalogName, data.costCredits, data.costPoints, data.pointsType,
+            data.amount, data.clubOnly === '1' ? 1 : 0, data.extradata,
+            data.haveOffer === '1', data.offerId_group, data.limitedStack, data.orderNumber
+        ));
+    }, []);
+
+    const createOffer = useCallback((data: IOfferEditData) =>
+    {
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'createOffer';
+        SendMessageComposer(new CatalogAdminCreateOfferComposer(
+            data.pageId, parseInt(data.itemIds) || 0,
+            data.catalogName, data.costCredits, data.costPoints, data.pointsType,
+            data.amount, data.clubOnly === '1' ? 1 : 0, data.extradata,
+            data.haveOffer === '1', data.offerId_group, data.limitedStack, data.orderNumber
+        ));
+    }, []);
+
+    const deleteOffer = useCallback((offerId: number) =>
+    {
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'deleteOffer';
+        SendMessageComposer(new CatalogAdminDeleteOfferComposer(offerId));
+    }, []);
+
+    const reorderOffers = useCallback((orders: { id: number; orderNumber: number }[]) =>
+    {
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'reorder';
+
+        for(const order of orders)
         {
-            return await fn();
-        }
-        finally
-        {
-            setLoading(false);
+            SendMessageComposer(new CatalogAdminMoveOfferComposer(order.id, order.orderNumber));
         }
     }, []);
 
-    const savePage = useCallback((data: IPageEditData): Promise<boolean> =>
+    const reorderPage = useCallback((pageId: number, newParentId: number, newIndex: number) =>
     {
-        return withLoading(async () =>
-        {
-            const { pageId, ...fields } = data;
-            const result = await apiCall(`${ API_BASE }?id=${ pageId }`, 'PUT', fields);
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'movePage';
+        SendMessageComposer(new CatalogAdminMovePageComposer(pageId, newParentId, newIndex));
+    }, []);
 
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const createPage = useCallback((data: IPageEditData): Promise<boolean> =>
+    const togglePageEnabled = useCallback((pageId: number) =>
     {
-        return withLoading(async () =>
-        {
-            const result = await apiCall(API_BASE, 'POST', data);
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'toggleEnabled';
+        SendMessageComposer(new CatalogAdminMovePageComposer(pageId, -1, -1));
+    }, []);
 
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const deletePage = useCallback((pageId: number): Promise<boolean> =>
+    const togglePageVisible = useCallback((pageId: number) =>
     {
-        return withLoading(async () =>
-        {
-            const result = await apiCall(API_BASE, 'DELETE', { id: pageId });
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'toggleVisible';
+        SendMessageComposer(new CatalogAdminMovePageComposer(pageId, -2, -1));
+    }, []);
 
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const saveOffer = useCallback((data: IOfferEditData): Promise<boolean> =>
+    const publishCatalog = useCallback(() =>
     {
-        return withLoading(async () =>
-        {
-            const { offerId, ...fields } = data;
-            const result = await apiCall(`${ API_BASE }/items?id=${ offerId }`, 'PUT', fields);
-
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const createOffer = useCallback((data: IOfferEditData): Promise<boolean> =>
-    {
-        return withLoading(async () =>
-        {
-            const result = await apiCall(`${ API_BASE }/items`, 'POST', data);
-
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const deleteOffer = useCallback((offerId: number): Promise<boolean> =>
-    {
-        return withLoading(async () =>
-        {
-            const result = await apiCall(`${ API_BASE }/items`, 'DELETE', { id: offerId });
-
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const reorderOffers = useCallback((orders: { id: number; orderNumber: number }[]): Promise<boolean> =>
-    {
-        return withLoading(async () =>
-        {
-            const result = await apiCall(`${ API_BASE }/items`, 'PATCH', { action: 'reorder', orders });
-
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const togglePageEnabled = useCallback((pageId: number): Promise<boolean> =>
-    {
-        return withLoading(async () =>
-        {
-            const result = await apiCall(API_BASE, 'PATCH', { action: 'toggleEnabled', id: pageId });
-
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
-
-    const togglePageVisible = useCallback((pageId: number): Promise<boolean> =>
-    {
-        return withLoading(async () =>
-        {
-            const result = await apiCall(API_BASE, 'PATCH', { action: 'toggleVisible', id: pageId });
-
-            if(!result.ok) { setLastError(result.error); return false; }
-
-            return true;
-        });
-    }, [ withLoading ]);
+        setLoading(true);
+        setLastError(null);
+        pendingActionRef.current = 'publish';
+        SendMessageComposer(new CatalogAdminPublishComposer());
+    }, []);
 
     return (
         <CatalogAdminContext.Provider value={ {
@@ -238,10 +284,11 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
             editingPageData, setEditingPageData,
             editingRootPage, setEditingRootPage,
             editingPageNode, setEditingPageNode,
-            loading, lastError,
+            loading, lastError, hasPendingChanges,
             savePage, createPage, deletePage,
             saveOffer, createOffer, deleteOffer,
-            reorderOffers, togglePageEnabled, togglePageVisible
+            reorderOffers, reorderPage, togglePageEnabled, togglePageVisible,
+            publishCatalog
         } }>
             { children }
         </CatalogAdminContext.Provider>
