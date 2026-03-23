@@ -10,7 +10,7 @@
         overflow: hidden;
 
         &.track-0 {
-            background-color: #1e7295;
+            background-color: var(--ui-btn-primary-bg, #1e7295);
         }
 
         &.track-1 {

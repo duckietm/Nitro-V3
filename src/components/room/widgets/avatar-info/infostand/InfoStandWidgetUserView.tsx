@@ -133,7 +133,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
 
   return (
     <>
-      <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,28,32,0.95)] [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded">
+      <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded" style={ { backgroundColor: 'var(--ui-dark-bg, rgba(28,28,32,0.95))' } }>
         <Column className="h-full p-[8px] overflow-auto" gap={1} overflow="visible">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">

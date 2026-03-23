@@ -24,5 +24,6 @@ export * from './room';
 export * from './room/events';
 export * from './room/widgets';
 export * from './user';
+export * from './ui-settings';
 export * from './utils';
 export * from './wired';
