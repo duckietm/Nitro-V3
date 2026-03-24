@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredExtraBaseView } from './WiredExtraBaseView';
@@ -37,9 +37,7 @@ export const WiredExtraAnimationTimeView: FC<{}> = () =>
     return (
         <WiredExtraBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save } cardStyle={ { width: 380 } }>
             <div className="flex flex-col gap-2">
-                <Text bold>{ LocalizeText('wiredfurni.params.anim_time.title') }</Text>
-                <Text>{ LocalizeText('wiredfurni.params.anim_time.description') }</Text>
-                <Text bold>{ LocalizeText('wiredfurni.params.anim_time.value', [ 'ms' ], [ duration.toString() ]) }</Text>
+                <Text bold>{ duration } ms</Text>
                 <Slider min={ MIN_DURATION } max={ MAX_DURATION } step={ STEP_DURATION } value={ duration } onChange={ value => setDuration(normalizeDuration(Array.isArray(value) ? value[0] : Number(value))) } />
             </div>
         </WiredExtraBaseView>
