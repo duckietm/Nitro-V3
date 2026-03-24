@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { LocalizeText } from '../../../../../api';
+import { LocalizeText, SanitizeHtml } from '../../../../../api';
 import { Column, Grid, Text } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
 import { CatalogBadgeSelectorWidgetView } from '../widgets/CatalogBadgeSelectorWidgetView';
@@ -31,7 +31,7 @@ export const CatalogLayoutBadgeDisplayView: FC<CatalogLayoutProps> = props =>
                     { !currentOffer &&
                         <>
                             { !!page.localization.getImage(1) && <img alt="" src={ page.localization.getImage(1) } /> }
-                            <Text center dangerouslySetInnerHTML={ { __html: page.localization.getText(0) } } />
+                            <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
                         </> }
                     { currentOffer &&
                         <>

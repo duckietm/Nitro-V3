@@ -1,7 +1,7 @@
 import { ColorConverter } from '@nitrots/nitro-renderer';
 import { FC, useMemo, useState } from 'react';
 import { FaFillDrip } from 'react-icons/fa';
-import { IPurchasableOffer } from '../../../../../api';
+import { IPurchasableOffer, SanitizeHtml } from '../../../../../api';
 import { AutoGrid, Button, Column, Grid, LayoutGridItem, Text } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
 import { CatalogGridOfferView } from '../common/CatalogGridOfferView';
@@ -146,7 +146,7 @@ export const CatalogLayoutColorGroupingView: FC<CatalogLayoutColorGroupViewProps
                 { !currentOffer &&
                     <>
                         { !!page.localization.getImage(1) && <img alt="" src={ page.localization.getImage(1) } /> }
-                        <Text center dangerouslySetInnerHTML={ { __html: page.localization.getText(0) } } />
+                        <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
                     </> }
                 { currentOffer &&
                     <>

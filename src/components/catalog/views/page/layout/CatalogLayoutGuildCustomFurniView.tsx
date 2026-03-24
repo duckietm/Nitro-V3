@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { SanitizeHtml } from '../../../../../api';
 import { Column, Grid, Text } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
 import { CatalogGuildBadgeWidgetView } from '../widgets/CatalogGuildBadgeWidgetView';
@@ -23,7 +24,7 @@ export const CatalogLayouGuildCustomFurniView: FC<CatalogLayoutProps> = props =>
                 { !currentOffer &&
                     <>
                         { !!page.localization.getImage(1) && <img alt="" src={ page.localization.getImage(1) } /> }
-                        <Text center dangerouslySetInnerHTML={ { __html: page.localization.getText(0) } } />
+                        <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
                     </> }
                 { currentOffer &&
                     <>

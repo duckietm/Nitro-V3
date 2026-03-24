@@ -1,15 +1,9 @@
 import react from '@vitejs/plugin-react';
-import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-const rendererCandidates = [
-    resolve(__dirname, '..', 'Nitro_Render_V3'),
-    resolve(__dirname, '..', 'renderer3')
-];
-
-const renderer3 = rendererCandidates.find(path => existsSync(path)) ?? rendererCandidates[0];
+const renderer3 = resolve(__dirname, '..', 'renderer3');
 
 export default defineConfig({
     plugins: [ react(), tsconfigPaths() ],
@@ -45,7 +39,7 @@ export default defineConfig({
             '@nitrots/sound': resolve(renderer3, 'packages/sound/src/index.ts'),
             '@nitrots/utils/src': resolve(renderer3, 'packages/utils/src'),
             '@nitrots/utils': resolve(renderer3, 'packages/utils/src/index.ts'),
-            // Resolve renderer peer dependencies from the renderer workspace
+            // Resolve pixi.js and pixi-filters from renderer3's node_modules
             'pixi.js': resolve(renderer3, 'node_modules/pixi.js'),
             'pixi-filters': resolve(renderer3, 'node_modules/pixi-filters'),
             'howler': resolve(renderer3, 'node_modules/howler'),
@@ -61,7 +55,7 @@ export default defineConfig({
                 {
                     if(id.includes('node_modules'))
                     {
-                        if(id.includes('@nitrots/nitro-renderer') || id.includes('renderer3') || id.includes('Nitro_Render_V3')) return 'nitro-renderer';
+                        if(id.includes('@nitrots/nitro-renderer') || id.includes('renderer3')) return 'nitro-renderer';
 
                         return 'vendor';
                     }

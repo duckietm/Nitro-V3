@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { Column } from '../../../../../common';
+import { FaPaw } from 'react-icons/fa';
+import { SanitizeHtml } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
 export const CatalogLayoutPets3View: FC<CatalogLayoutProps> = props =>
@@ -9,17 +10,28 @@ export const CatalogLayoutPets3View: FC<CatalogLayoutProps> = props =>
     const imageUrl = page.localization.getImage(1);
 
     return (
-        <Column grow className="bg-muted rounded text-black p-2" overflow="hidden">
-            <div className="items-center gap-2">
-                { imageUrl && <img alt="" src={ imageUrl } /> }
-                <div className="fs-5" dangerouslySetInnerHTML={ { __html: page.localization.getText(1) } } />
+        <div className="flex flex-col h-full gap-2">
+            { /* Header card */ }
+            <div className="flex items-center gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
+                { imageUrl && <img alt="" className="w-[60px] h-[60px] object-contain shrink-0" src={ imageUrl } /> }
+                <div>
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                        <FaPaw className="text-primary text-xs" />
+                        <span className="text-sm font-bold" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(1)) } } />
+                    </div>
+                </div>
             </div>
-            <Column grow alignItems="center" overflow="auto">
-                <div dangerouslySetInnerHTML={ { __html: page.localization.getText(2) } } />
-            </Column>
-            <div className="flex items-center">
-                <div className="font-bold	" dangerouslySetInnerHTML={ { __html: page.localization.getText(3) } } />
+
+            { /* Content */ }
+            <div className="flex-1 overflow-auto bg-white rounded border-2 border-card-grid-item-border p-3">
+                <div className="text-[11px] leading-relaxed" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(2)) } } />
             </div>
-        </Column>
+
+            { /* Footer */ }
+            { !!page.localization.getText(3) &&
+                <div className="p-2 bg-card-grid-item rounded border border-card-grid-item-border">
+                    <span className="text-[11px] font-bold" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(3)) } } />
+                </div> }
+        </div>
     );
 };

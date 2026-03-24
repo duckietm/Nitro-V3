@@ -1,6 +1,6 @@
 import { GetOfficialSongIdMessageComposer, GetSoundManager, MusicPriorities, OfficialSongIdMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { GetConfigurationValue, LocalizeText, ProductTypeEnum, SendMessageComposer } from '../../../../../api';
+import { GetConfigurationValue, LocalizeText, ProductTypeEnum, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Grid, LayoutImage, Text } from '../../../../../common';
 import { useCatalog, useMessageEvent } from '../../../../../hooks';
 import { CatalogHeaderView } from '../../catalog-header/CatalogHeaderView';
@@ -80,7 +80,7 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
                         <>
                             { !!page.localization.getImage(1) &&
                                 <LayoutImage imageUrl={ page.localization.getImage(1) } /> }
-                            <Text center dangerouslySetInnerHTML={ { __html: page.localization.getText(0) } } />
+                            <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
                         </> }
                     { currentOffer &&
                         <>

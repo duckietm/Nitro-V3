@@ -1,6 +1,6 @@
 import { ClubOfferData, GetClubOffersMessageComposer, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CatalogPurchaseState, LocalizeText, SendMessageComposer } from '../../../../../api';
+import { CatalogPurchaseState, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { AutoGrid, Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogPurchaseFailureEvent, CatalogPurchasedEvent } from '../../../../../events';
 import { useCatalog, usePurse, useUiEvent } from '../../../../../hooks';
@@ -160,12 +160,12 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
                         );
                     }) }
                 </AutoGrid>
-                <Text center dangerouslySetInnerHTML={ { __html: LocalizeText('catalog.vip.buy.hccenter') } }></Text>
+                <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(LocalizeText('catalog.vip.buy.hccenter')) } }></Text>
             </Column>
             <Column overflow="hidden" size={ 5 }>
                 <Column center fullHeight overflow="hidden">
                     { currentPage.localization.getImage(1) && <img alt="" src={ currentPage.localization.getImage(1) } /> }
-                    <Text center dangerouslySetInnerHTML={ { __html: getSubscriptionDetails } } overflow="auto" />
+                    <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(getSubscriptionDetails) } } overflow="auto" />
                 </Column>
                 { pendingOffer &&
                     <Column fullWidth grow justifyContent="end">

@@ -1,6 +1,6 @@
 import { GetTargetedOfferComposer, PurchaseTargetedOfferComposer, TargetedOfferData } from '@nitrots/nitro-renderer';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import { FriendlyTime, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../api';
+import { FriendlyTime, GetConfigurationValue, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { usePurse } from '../../../../hooks';
 
@@ -63,7 +63,7 @@ export const OfferWindowView = (props: { offer: TargetedOfferData, setOpen: Disp
                         <h4>
                             { LocalizeText(offer.title) }
                         </h4>
-                        <div dangerouslySetInnerHTML={ { __html: offer.description } } />
+                        <div dangerouslySetInnerHTML={ { __html: SanitizeHtml(offer.description) } } />
                     </Column>
                     <Flex alignItems="center" alignSelf="center" gap={ 2 } justifyContent="center">
                         { offer.purchaseLimit > 1 &&

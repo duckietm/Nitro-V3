@@ -87,6 +87,8 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
         isPurchasingCatalogItem = true;
         setPurchaseState(CatalogPurchaseState.PURCHASE);
 
+        setTimeout(() => { isPurchasingCatalogItem = false; }, 10000);
+
         if(purchaseCallback)
         {
             purchaseCallback();

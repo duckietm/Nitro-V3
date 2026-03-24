@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { SanitizeHtml } from '../../../../../api';
 import { Column, Grid, Text } from '../../../../../common';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogBundleGridWidgetView } from '../widgets/CatalogBundleGridWidgetView';
@@ -17,7 +18,7 @@ export const CatalogLayoutRoomBundleView: FC<CatalogLayoutProps> = props =>
             <Grid>
                 <Column overflow="hidden" size={ 7 }>
                     { !!page.localization.getText(2) &&
-                        <Text dangerouslySetInnerHTML={ { __html: page.localization.getText(2) } } /> }
+                        <Text dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(2)) } } /> }
                     <Column grow className="bg-muted p-2 rounded" overflow="hidden">
                         <CatalogBundleGridWidgetView fullWidth className="nitro-catalog-layout-bundle-grid" />
                     </Column>
