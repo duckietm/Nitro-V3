@@ -16,10 +16,11 @@ export const WiredTriggerAvatarSaysSomethingView: FC<{}> = () =>
     const [ hideMessage, setHideMessage ] = useState(false);
     const [ ownerOnly, setOwnerOnly ] = useState(false);
     const { trigger = null, setStringParam = null, setIntParams = null } = useWired();
+    const isAnyTextMode = (matchMode === MATCH_ALL);
 
     const save = () =>
     {
-        setStringParam(message);
+        setStringParam(isAnyTextMode ? '' : message);
         setIntParams([
             matchMode,
             hideMessage ? 1 : 0,
@@ -39,7 +40,11 @@ export const WiredTriggerAvatarSaysSomethingView: FC<{}> = () =>
         <WiredTriggerBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save }>
             <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.whatissaid') }</Text>
-                <NitroInput type="text" value={ message } onChange={ event => setMessage(event.target.value) } />
+                <NitroInput
+                    disabled={ isAnyTextMode }
+                    type="text"
+                    value={ isAnyTextMode ? '' : message }
+                    onChange={ event => setMessage(event.target.value) } />
             </div>
             <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1">

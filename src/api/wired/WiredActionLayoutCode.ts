@@ -60,4 +60,6 @@ export class WiredActionLayoutCode
     public static MOVE_NO_ANIMATION_EXTRA: number = 59;
     public static ANIMATION_TIME_EXTRA: number = 60;
     public static MOVE_PHYSICS_EXTRA: number = 61;
+    public static UNSEEN_EXTRA: number = 62;
+    public static RANDOM_EXTRA: number = 63;
 }

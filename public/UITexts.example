@@ -29,6 +29,8 @@
     "wiredfurni.params.anim_time.title": "Durata animazione movimento",
     "wiredfurni.params.anim_time.description": "Regola la velocita dello slide per i Wired che spostano utenti e furni.",
     "wiredfurni.params.anim_time.value": "%ms% ms",
+    "wiredfurni.params.pickamount": "Seleziona %picks% effetti",
+    "wiredfurni.params.skipactions": "Evita gli effetti delle ultime %skips% esecuzioni.",
     "wiredfurni.params.mov_no_animation.title": "Animazione movimento",
     "wiredfurni.params.mov_no_animation.description": "Questo extra disattiva lo slide per i Wired che spostano utenti e furni.",
     "wiredfurni.params.select_options": "Seleziona opzioni:",

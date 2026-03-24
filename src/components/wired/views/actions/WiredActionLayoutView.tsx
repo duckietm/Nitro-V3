@@ -56,6 +56,8 @@ import { WiredExtraAnimationTimeView } from '../extras/WiredExtraAnimationTimeVi
 import { WiredExtraMoveCarryUsersView } from '../extras/WiredExtraMoveCarryUsersView';
 import { WiredExtraMoveNoAnimationView } from '../extras/WiredExtraMoveNoAnimationView';
 import { WiredExtraMovePhysicsView } from '../extras/WiredExtraMovePhysicsView';
+import { WiredExtraRandomView } from '../extras/WiredExtraRandomView';
+import { WiredExtraUnseenView } from '../extras/WiredExtraUnseenView';
 
 export const WiredActionLayoutView = (code: number) =>
 {
@@ -177,6 +179,10 @@ export const WiredActionLayoutView = (code: number) =>
             return <WiredExtraAnimationTimeView />;
         case WiredActionLayoutCode.MOVE_PHYSICS_EXTRA:
             return <WiredExtraMovePhysicsView />;
+        case WiredActionLayoutCode.UNSEEN_EXTRA:
+            return <WiredExtraUnseenView />;
+        case WiredActionLayoutCode.RANDOM_EXTRA:
+            return <WiredExtraRandomView />;
         case WiredActionLayoutCode.SEND_SIGNAL:
             return <WiredActionSendSignalView />;
     }
