@@ -1171,10 +1171,82 @@ body {
         background-position: center;
         filter: contrast(1.2) brightness(1.05);
     }
+
+    .tab-pets {
+        width: 34px;
+        height: 22px;
+        background-image: url('@/assets/images/wardrobe/pets.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 22px 22px;
+    }
 }
 
 /* ── Avatar Editor misc ─────────────────────────────────────────────────── */
 
+
+/* ── Pet Companion ─────────────────────────────────────────────────────── */
+
+.pet-equipped-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-radius: 0.3rem;
+    margin: 0 2px;
+    min-height: 48px;
+}
+
+.pet-equipped-preview {
+    width: 42px;
+    height: 42px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.pet-equipped-thumb {
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.pet-paw-icon {
+    width: 24px;
+    height: 24px;
+    background-image: url('@/assets/images/wardrobe/pets.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.pet-grid-container .avatar-parts {
+    background-size: contain;
+    overflow: hidden !important;
+}
+
+.pet-remove-btn {
+    background: none;
+    border: none;
+    color: #e57373;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    width: fit-content;
+
+    &:hover {
+        color: #ff5252;
+        text-decoration: underline;
+    }
+}
 
 .saved-outfits-title {
     color: #a7a6a2;

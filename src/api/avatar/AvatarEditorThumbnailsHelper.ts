@@ -32,6 +32,9 @@ export class AvatarEditorThumbnailsHelper
         AvatarFigurePartType.HEAD_ACCESSORY,
         AvatarFigurePartType.HEAD_ACCESSORY_EXTRA,
         AvatarFigurePartType.RIGHT_HAND_ITEM,
+        AvatarFigurePartType.PET,
+        'ptl',
+        'ptr',
     ];
 
     private static getThumbnailKey(setType: string, part: IAvatarEditorCategoryPartItem): string
@@ -104,6 +107,22 @@ export class AvatarEditorThumbnailsHelper
                 if(isDisabled) container.filters = [ AvatarEditorThumbnailsHelper.ALPHA_FILTER ];
 
                 container.addChild(sprite);
+            }
+
+            if(container.children.length > 0)
+            {
+                const isPetPart = parts.some(p => p.type === 'pt' || p.type === 'ptl' || p.type === 'ptr');
+
+                if(isPetPart)
+                {
+                    const bounds = container.getBounds();
+
+                    for(const child of container.children)
+                    {
+                        (child as NitroSprite).position.x -= bounds.x;
+                        (child as NitroSprite).position.y -= bounds.y;
+                    }
+                }
             }
 
             return container;

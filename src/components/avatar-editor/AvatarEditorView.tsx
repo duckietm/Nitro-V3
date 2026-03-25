@@ -6,6 +6,7 @@ import { Button, ButtonGroup, NitroCardContentView, NitroCardHeaderView, NitroCa
 import { useAvatarEditor } from '../../hooks';
 import { AvatarEditorFigurePreviewView } from './AvatarEditorFigurePreviewView';
 import { AvatarEditorModelView } from './AvatarEditorModelView';
+import { AvatarEditorPetView } from './AvatarEditorPetView';
 import { AvatarEditorWardrobeView } from './AvatarEditorWardrobeView';
 
 export const AvatarEditorView: FC<{}> = props =>
@@ -14,6 +15,7 @@ export const AvatarEditorView: FC<{}> = props =>
     const { setIsVisible: setEditorVisibility, avatarModels, activeModelKey, setActiveModelKey, loadAvatarData, getFigureStringWithFace, gender, randomizeCurrentFigure = null, getFigureString = null } = useAvatarEditor();
 
     const isWardrobeOpen = (activeModelKey === AvatarEditorFigureCategory.WARDROBE);
+    const isPetsOpen = (activeModelKey === AvatarEditorFigureCategory.PETS);
 
     const processAction = (action: string) =>
     {
@@ -82,10 +84,15 @@ export const AvatarEditorView: FC<{}> = props =>
                 {
                     const isActive = (activeModelKey === modelKey);
                     const isWardrobe = (modelKey === AvatarEditorFigureCategory.WARDROBE);
+                    const isPets = (modelKey === AvatarEditorFigureCategory.PETS);
+
+                    let tabClass = `tab ${ modelKey }`;
+                    if(isWardrobe) tabClass = 'tab-wardrobe';
+                    else if(isPets) tabClass = 'tab-pets';
 
                     return (
                         <NitroCardTabsItemView key={ modelKey } isActive={ isActive } onClick={ event => setActiveModelKey(modelKey) }>
-                            <div className={ isWardrobe ? 'tab-wardrobe' : `tab ${ modelKey }` } />
+                            <div className={ tabClass } />
                         </NitroCardTabsItemView>
                     );
                 }) }
@@ -94,10 +101,12 @@ export const AvatarEditorView: FC<{}> = props =>
                 <div className="flex gap-2 overflow-hidden h-full">
                     { /* left: model view or wardrobe */ }
                     <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-                        { (activeModelKey.length > 0 && !isWardrobeOpen) &&
+                        { (activeModelKey.length > 0 && !isWardrobeOpen && !isPetsOpen) &&
                             <AvatarEditorModelView categories={ avatarModels[activeModelKey] } name={ activeModelKey } /> }
                         { isWardrobeOpen &&
                             <AvatarEditorWardrobeView /> }
+                        { isPetsOpen &&
+                            <AvatarEditorPetView categories={ avatarModels[activeModelKey] } /> }
                     </div>
                     { /* right: preview + actions */ }
                     <div className="flex flex-col shrink-0 w-[120px] gap-1 overflow-hidden">
