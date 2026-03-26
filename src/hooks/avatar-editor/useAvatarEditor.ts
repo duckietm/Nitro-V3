@@ -291,7 +291,9 @@ const useAvatarEditorState = () =>
 
                 if(!partSet || !partSet.isSelectable || ((partSet.gender !== gender) && (partSet.gender !== AvatarFigurePartType.UNISEX))) continue;
 
-                const isNftPartSet = nftFigureSetIds.has(partSet.id);
+                const isNftPartSet = nftFigureSetIds.size > 0
+                    ? nftFigureSetIds.has(partSet.id)
+                    : GetAvatarRenderManager().downloadManager.isNftPartSet(partSet);
 
                 if((buildMode === buildModeDefault) && isNftPartSet) continue;
                 if((buildMode === buildModeNft) && !isNftPartSet) continue;
