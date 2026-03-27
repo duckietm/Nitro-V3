@@ -1,20 +1,20 @@
 import { FC, useMemo } from 'react';
 import { GetConfigurationValue } from '../../../../api';
-import { LayoutImage } from '../../../../common';
 
 export interface CatalogIconViewProps
 {
     icon: number;
+    className?: string;
 }
 
 export const CatalogIconView: FC<CatalogIconViewProps> = props =>
 {
-    const { icon = 0 } = props;
+    const { icon = 0, className = '' } = props;
 
-    const getIconUrl = useMemo(() =>
+    const iconUrl = useMemo(() =>
     {
         return ((GetConfigurationValue<string>('catalog.asset.icon.url')).replace('%name%', icon.toString()));
     }, [ icon ]);
 
-    return <LayoutImage imageUrl={ getIconUrl } style={ { width: 20, height: 20 } } />;
+    return <img src={ iconUrl } alt="" className={ `w-5 h-5 object-contain image-rendering-pixelated ${ className }` } draggable={ false } />;
 };

@@ -111,7 +111,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                                     className={ `flex items-center gap-2 mx-1 px-1.5 py-1.5 rounded cursor-pointer transition-all duration-150 ${ showFavorites ? 'bg-primary text-white' : 'hover:bg-card-grid-item-active' }` }
                                     onClick={ () => setShowFavorites(!showFavorites) }
                                 >
-                                    <div className="w-[28px] h-[24px] flex items-center justify-center shrink-0 relative">
+                                    <div className="w-7 h-6 flex items-center justify-center shrink-0 relative">
                                         <FaHeart className={ `text-xs ${ showFavorites ? 'text-white' : totalFavs > 0 ? 'text-danger' : 'text-muted' }` } />
                                         { totalFavs > 0 &&
                                             <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] bg-danger text-white text-[8px] font-bold rounded-full flex items-center justify-center px-0.5 leading-none">
@@ -163,7 +163,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                                                 activateNode(child);
                                             } }
                                         >
-                                            <div className="w-[28px] h-[24px] flex items-center justify-center shrink-0 relative">
+                                            <div className="w-7 h-6 flex items-center justify-center shrink-0 relative">
                                                 <CatalogIconView icon={ child.iconId } />
                                                 { isHidden && <FaEyeSlash className="absolute -bottom-0.5 -right-0.5 text-[7px] text-danger" /> }
                                             </div>

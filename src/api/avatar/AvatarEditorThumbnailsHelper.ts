@@ -109,22 +109,6 @@ export class AvatarEditorThumbnailsHelper
                 container.addChild(sprite);
             }
 
-            if(container.children.length > 0)
-            {
-                const isPetPart = parts.some(p => p.type === 'pt' || p.type === 'ptl' || p.type === 'ptr');
-
-                if(isPetPart)
-                {
-                    const bounds = container.getBounds();
-
-                    for(const child of container.children)
-                    {
-                        (child as NitroSprite).position.x -= bounds.x;
-                        (child as NitroSprite).position.y -= bounds.y;
-                    }
-                }
-            }
-
             return container;
         };
 
@@ -133,9 +117,9 @@ export class AvatarEditorThumbnailsHelper
             const resetFigure = async (figure: string) =>
             {
                 const container = buildContainer(part, useColors, partColors, isDisabled);
-                const imageUrl = await TextureUtils.generateImageUrl(container);
+                const imageUrl = await TextureUtils.generateImageUrl({ target: container, resolution: 1 });
 
-                AvatarEditorThumbnailsHelper.THUMBNAIL_CACHE.set(thumbnailKey, imageUrl);
+                if(imageUrl) AvatarEditorThumbnailsHelper.THUMBNAIL_CACHE.set(thumbnailKey, imageUrl);
 
                 resolve(imageUrl);
             };

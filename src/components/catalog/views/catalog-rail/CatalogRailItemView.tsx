@@ -19,8 +19,8 @@ export const CatalogRailItemView: FC<CatalogRailItemViewProps> = props =>
             title={ node.localization }
             onClick={ onClick }
         >
-            <div className="w-[30px] h-[30px] flex items-center justify-center shrink-0">
-                <CatalogIconView icon={ node.iconId } />
+            <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                <CatalogIconView icon={ node.iconId } className="w-6 h-6" />
             </div>
             <span className={ `text-[11px] font-medium whitespace-nowrap overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-200 truncate ${ isActive ? 'text-catalog-accent' : 'text-catalog-text' }` }>
                 { node.localization }

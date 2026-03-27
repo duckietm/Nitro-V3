@@ -121,7 +121,7 @@ export const CatalogFavoritesView: FC<CatalogFavoritesViewProps> = props =>
                                     onClick={ () => { openPageByOfferId(fav.offerId); onClose(); } }
                                 >
                                     { /* Furni icon */ }
-                                    <div className="w-[28px] h-[28px] flex items-center justify-center shrink-0 bg-white rounded border border-card-grid-item-border overflow-hidden">
+                                    <div className="w-7 h-7 flex items-center justify-center shrink-0 bg-white rounded border border-card-grid-item-border overflow-hidden">
                                         { fav.iconUrl
                                             ? <img className="max-w-full max-h-full object-contain image-rendering-pixelated" src={ fav.iconUrl } />
                                             : fav.nodeIconId !== null

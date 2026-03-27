@@ -7,9 +7,10 @@ import { AvatarEditorFigureSetItemView } from './AvatarEditorFigureSetItemView';
 export const AvatarEditorFigureSetView: FC<{
     category: IAvatarEditorCategory;
     columnCount: number;
+    estimateSize?: number;
 }> = props =>
 {
-    const { category = null, columnCount = 3 } = props;
+    const { category = null, columnCount = 3, estimateSize = 50 } = props;
     const { selectedParts = null, selectEditorPart } = useAvatarEditor();
 
     const isPartItemSelected = (partItem: IAvatarEditorCategoryPartItem) =>
@@ -29,7 +30,7 @@ export const AvatarEditorFigureSetView: FC<{
     };
 
     return (
-        <InfiniteGrid<IAvatarEditorCategoryPartItem> columnCount={ columnCount } estimateSize={ 50 } itemRender={ (item: IAvatarEditorCategoryPartItem) =>
+        <InfiniteGrid<IAvatarEditorCategoryPartItem> columnCount={ columnCount } estimateSize={ estimateSize } itemRender={ (item: IAvatarEditorCategoryPartItem) =>
         {
             if(!item) return null;
 
