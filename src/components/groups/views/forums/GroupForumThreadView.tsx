@@ -9,6 +9,7 @@ const MESSAGES_PER_PAGE = 20;
 
 // Message states
 const STATE_NORMAL = 0;
+const STATE_VISIBLE = 1;
 const STATE_HIDDEN_BY_ADMIN = 10;
 const STATE_DELETED_BY_MODERATOR = 20;
 
@@ -16,18 +17,20 @@ interface GroupForumThreadViewProps
 {
     groupId: number;
     threadId: number;
+    initialThread?: GuildForumThread;
     forumData: ExtendedForumData;
     onBack: () => void;
 }
 
 export const GroupForumThreadView: FC<GroupForumThreadViewProps> = props =>
 {
-    const { groupId = 0, threadId = 0, forumData = null, onBack = null } = props;
+    const { groupId = 0, threadId = 0, initialThread = null, forumData = null, onBack = null } = props;
     const effectiveGroupId = forumData?.groupId || groupId;
     const [ messages, setMessages ] = useState<MessageData[]>([]);
     const [ totalMessages, setTotalMessages ] = useState<number>(0);
     const [ replyText, setReplyText ] = useState<string>('');
-    const [ threadInfo, setThreadInfo ] = useState<GuildForumThread>(null);
+    const [ threadInfo, setThreadInfo ] = useState<GuildForumThread>(initialThread);
+    const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useMessageEvent<ThreadMessagesMessageEvent>(ThreadMessagesMessageEvent, event =>
@@ -109,24 +112,29 @@ export const GroupForumThreadView: FC<GroupForumThreadViewProps> = props =>
 
     const sendReply = useCallback(() =>
     {
-        if(!replyText.trim().length) return;
+        if(replyText.trim().length < 10 || isSubmitting) return;
 
+        setIsSubmitting(true);
         SendMessageComposer(new PostMessageMessageComposer(effectiveGroupId, threadId, '', replyText.trim()));
         setReplyText('');
-    }, [ effectiveGroupId, threadId, replyText ]);
+
+        setTimeout(() => setIsSubmitting(false), 1000);
+    }, [ effectiveGroupId, threadId, replyText, isSubmitting ]);
 
     const togglePinThread = useCallback(() =>
     {
         if(!threadInfo) return;
 
-        SendMessageComposer(new UpdateThreadMessageComposer(effectiveGroupId, threadId, !threadInfo.isPinned, threadInfo.isLocked));
+        // UpdateThreadMessageComposer swaps 3rd/4th params internally: (groupId, threadId, isLocked, isPinned)
+        SendMessageComposer(new UpdateThreadMessageComposer(effectiveGroupId, threadId, threadInfo.isLocked, !threadInfo.isPinned));
     }, [ effectiveGroupId, threadId, threadInfo ]);
 
     const toggleLockThread = useCallback(() =>
     {
         if(!threadInfo) return;
 
-        SendMessageComposer(new UpdateThreadMessageComposer(effectiveGroupId, threadId, threadInfo.isPinned, !threadInfo.isLocked));
+        // UpdateThreadMessageComposer swaps 3rd/4th params internally: (groupId, threadId, isLocked, isPinned)
+        SendMessageComposer(new UpdateThreadMessageComposer(effectiveGroupId, threadId, !threadInfo.isLocked, threadInfo.isPinned));
     }, [ effectiveGroupId, threadId, threadInfo ]);
 
     const hideMessage = useCallback((messageId: number) =>
@@ -136,7 +144,7 @@ export const GroupForumThreadView: FC<GroupForumThreadViewProps> = props =>
 
     const restoreMessage = useCallback((messageId: number) =>
     {
-        SendMessageComposer(new ModerateMessageMessageComposer(effectiveGroupId, threadId, messageId, STATE_NORMAL));
+        SendMessageComposer(new ModerateMessageMessageComposer(effectiveGroupId, threadId, messageId, STATE_VISIBLE));
     }, [ effectiveGroupId, threadId ]);
 
     const hideThread = useCallback(() =>
@@ -215,9 +223,11 @@ export const GroupForumThreadView: FC<GroupForumThreadViewProps> = props =>
                         <Flex key={ message.messageId }
                             className={ `p-3 border-b ${ (message.state !== STATE_NORMAL) ? 'bg-danger bg-opacity-10' : '' }` }
                             gap={ 3 }>
-                            <Column className="flex-shrink-0 text-center" gap={ 1 } style={ { width: '80px' } }>
-                                <div className="mx-auto" style={ { height: '80px', width: '50px', overflow: 'hidden' } }>
-                                    <LayoutAvatarImageView figure={ message.authorFigure } direction={ 2 } />
+                            <Column className="flex-shrink-0 items-center w-[50px]" gap={ 1 }>
+                                <div className="w-[40px] h-[40px] rounded-full mx-auto overflow-hidden bg-[rgba(255,255,255,0.1)] flex justify-center">
+                                    <div className="mt-[-25px]">
+                                        <LayoutAvatarImageView figure={ message.authorFigure } headOnly={ true } direction={ 2 } />
+                                    </div>
                                 </div>
                                 <Text small bold pointer underline onClick={ () => GetUserProfile(message.authorId) }>
                                     { message.authorName }
@@ -262,6 +272,7 @@ export const GroupForumThreadView: FC<GroupForumThreadViewProps> = props =>
                         className="form-control form-control-sm flex-1"
                         placeholder={ LocalizeText('messageboard.message.replying.to') }
                         rows={ 2 }
+                        maxLength={ 4000 }
                         value={ replyText }
                         onChange={ e => setReplyText(e.target.value) }
                         onKeyDown={ e =>
@@ -273,7 +284,7 @@ export const GroupForumThreadView: FC<GroupForumThreadViewProps> = props =>
                             }
                         } }
                     />
-                    <Button variant="primary" className="btn-sm align-self-end" onClick={ sendReply } disabled={ !replyText.trim().length }>
+                    <Button variant="primary" className="btn-sm align-self-end" onClick={ sendReply } disabled={ replyText.trim().length < 10 || isSubmitting }>
                         { LocalizeText('messageboard.reply.button') }
                     </Button>
                 </Flex> }

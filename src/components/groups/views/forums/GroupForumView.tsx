@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, ForumDataMessageEvent, GetForumStatsMessageComposer, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ForumDataMessageEvent, GetForumStatsMessageComposer, GuildForumThread, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
@@ -22,6 +22,7 @@ export const GroupForumView: FC<{}> = props =>
     const [ currentView, setCurrentView ] = useState<number>(VIEW_FORUM_LIST);
     const [ groupId, setGroupId ] = useState<number>(0);
     const [ threadId, setThreadId ] = useState<number>(0);
+    const [ currentThread, setCurrentThread ] = useState<GuildForumThread>(null);
     const [ forumData, setForumData ] = useState<ExtendedForumData>(null);
 
     useMessageEvent<ForumDataMessageEvent>(ForumDataMessageEvent, event =>
@@ -39,10 +40,11 @@ export const GroupForumView: FC<{}> = props =>
         SendMessageComposer(new GetForumStatsMessageComposer(id));
     }, []);
 
-    const openThread = useCallback((gId: number, tId: number) =>
+    const openThread = useCallback((gId: number, tId: number, thread: GuildForumThread = null) =>
     {
         setGroupId(gId);
         setThreadId(tId);
+        setCurrentThread(thread);
         setCurrentView(VIEW_THREAD);
     }, []);
 
@@ -148,6 +150,7 @@ export const GroupForumView: FC<{}> = props =>
                     <GroupForumThreadView
                         groupId={ groupId }
                         threadId={ threadId }
+                        initialThread={ currentThread }
                         forumData={ forumData }
                         onBack={ backToThreadList } /> }
                 { (currentView === VIEW_NEW_THREAD) &&

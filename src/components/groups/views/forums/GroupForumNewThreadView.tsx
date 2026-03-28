@@ -78,6 +78,7 @@ export const GroupForumNewThreadView: FC<GroupForumNewThreadViewProps> = props =
                 <textarea
                     className="form-control form-control-sm flex-1"
                     placeholder={ LocalizeText('messageboard.forum.compose.message.header') }
+                    maxLength={ 4000 }
                     value={ message }
                     onChange={ e => setMessage(e.target.value) }
                 />

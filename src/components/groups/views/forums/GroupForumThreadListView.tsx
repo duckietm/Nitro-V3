@@ -1,9 +1,8 @@
-import { GetThreadsMessageComposer, GuildForumThreadsEvent, PostThreadMessageEvent } from '@nitrots/nitro-renderer';
+import { ExtendedForumData, GetThreadsMessageComposer, GuildForumThread, GuildForumThreadsEvent, ModerateThreadMessageComposer, PostThreadMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, SendMessageComposer, GetUserProfile } from '../../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, Text } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
-import { ExtendedForumData, GuildForumThread } from '@nitrots/nitro-renderer';
 
 const THREADS_PER_PAGE = 20;
 
@@ -11,7 +10,7 @@ interface GroupForumThreadListViewProps
 {
     groupId: number;
     forumData: ExtendedForumData;
-    onOpenThread: (groupId: number, threadId: number) => void;
+    onOpenThread: (groupId: number, threadId: number, thread?: GuildForumThread) => void;
     onNewThread: () => void;
     onOpenSettings: () => void;
     onBack: () => void;
@@ -78,9 +77,16 @@ export const GroupForumThreadListView: FC<GroupForumThreadListViewProps> = props
         return null;
     };
 
+    const canModerate = forumData && forumData.hasModeratePermissionError;
+
     const pinnedThreads = threads.filter(t => t.isPinned);
     const normalThreads = threads.filter(t => !t.isPinned);
     const sortedThreads = [ ...pinnedThreads, ...normalThreads ];
+
+    const restoreThread = (thread: GuildForumThread) =>
+    {
+        SendMessageComposer(new ModerateThreadMessageComposer(effectiveGroupId, thread.threadId, 1));
+    };
 
     return (
         <Column className="h-full" gap={ 0 }>
@@ -121,8 +127,16 @@ export const GroupForumThreadListView: FC<GroupForumThreadListViewProps> = props
                     if(stateText)
                     {
                         return (
-                            <Flex key={ thread.threadId } className="p-2 border-b bg-danger bg-opacity-10" alignItems="center">
-                                <Text small variant="muted">{ stateText }</Text>
+                            <Flex key={ thread.threadId } className="p-2 border-b bg-danger bg-opacity-10" alignItems="center" justifyContent="between">
+                                <Column gap={ 0 }>
+                                    <Text small variant="muted">{ stateText }</Text>
+                                    { canModerate &&
+                                        <Text small variant="muted">{ thread.header }</Text> }
+                                </Column>
+                                { canModerate &&
+                                    <Button variant="outline-success" className="btn-sm" onClick={ () => restoreThread(thread) }>
+                                        { LocalizeText('groupforum.thread.restore') }
+                                    </Button> }
                             </Flex>
                         );
                     }
@@ -132,7 +146,7 @@ export const GroupForumThreadListView: FC<GroupForumThreadListViewProps> = props
                             className={ `p-2 border-b hover:bg-muted cursor-pointer ${ thread.isPinned ? 'bg-warning bg-opacity-10' : '' } ${ thread.unreadMessagesCount > 0 ? 'fw-bold' : '' }` }
                             gap={ 2 }
                             alignItems="center"
-                            onClick={ () => onOpenThread(effectiveGroupId, thread.threadId) }>
+                            onClick={ () => onOpenThread(effectiveGroupId, thread.threadId, thread) }>
                             <Column className="flex-1 overflow-hidden" gap={ 0 }>
                                 <Flex gap={ 1 } alignItems="center">
                                     { thread.isPinned && <i className="fas fa-thumbtack text-warning" /> }
