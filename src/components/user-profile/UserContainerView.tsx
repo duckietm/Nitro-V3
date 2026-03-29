@@ -41,8 +41,15 @@ export const UserContainerView: FC<{
                     <p className="text-sm italic leading-tight">{ userProfile.motto }</p>
                 </div>
                 <div className="flex flex-col gap-1">
-                    <p className="text-sm leading-none" dangerouslySetInnerHTML={{ __html: LocalizeText('extendedprofile.created', ['created'], [userProfile.registration]) }} />
-                    <p className="text-sm leading-none" dangerouslySetInnerHTML={{ __html: LocalizeText('extendedprofile.last.login', ['lastlogin'], [FriendlyTime.format(userProfile.secondsSinceLastVisit, '.ago', 2)]) }} />
+                    <p className="text-sm leading-none">
+                        <b>{ LocalizeText('extendedprofile.created.title') }</b> { userProfile.registration }
+                    </p>
+                    <p className="text-sm leading-none">
+                        <b>{ LocalizeText('extendedprofile.last.login.title') }</b> { FriendlyTime.format(userProfile.secondsSinceLastVisit, '.ago', 2) }
+                    </p>
+                    <p className="text-sm leading-none">
+                        <b>{ LocalizeText('extendedprofile.friends.count') }</b> { userProfile.friendsCount }
+                    </p>
                     <p className="text-sm leading-none">
                         <b>{ LocalizeText('extendedprofile.achievementscore') }</b> { userProfile.achievementPoints }
                     </p>
