@@ -70,6 +70,12 @@
     height: 34px;
 }
 
+.nitro-icon.icon-furnieditor {
+    background-image: url("@/assets/images/toolbar/icons/furnieditor.png");
+    width: 30px;
+    height: 34px;
+}
+
 .nitro-icon.icon-friendall {
     background-image: url("@/assets/images/toolbar/icons/friend_all.png");
     width: 32px;

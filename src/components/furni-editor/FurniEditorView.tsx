@@ -1,5 +1,6 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { GetSessionDataManager } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useFurniEditor } from '../../hooks/furni-editor';
 import { FurniEditorEditView } from './views/FurniEditorEditView';
@@ -15,13 +16,23 @@ export const FurniEditorView: FC<{}> = () =>
 
     const {
         items, total, page, loading, error, clearError,
-        selectedItem, catalogItems, furniDataEntry,
+        selectedItem, setSelectedItem, furniDataEntry,
         interactions,
         searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions
     } = useFurniEditor();
 
+    const isMod = GetSessionDataManager()?.isModerator;
+
+    // Auto-switch to edit tab when an item is selected
     useEffect(() =>
     {
+        if(selectedItem) setActiveTab(TAB_EDIT);
+    }, [ selectedItem ]);
+
+    useEffect(() =>
+    {
+        if(!isMod) return;
+
         const linkTracker: ILinkEventTracker = {
             linkReceived: (url: string) =>
             {
@@ -48,47 +59,62 @@ export const FurniEditorView: FC<{}> = () =>
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, []);
+    }, [ isMod ]);
 
     useEffect(() =>
     {
         if(isVisible) loadInteractions();
     }, [ isVisible ]);
 
+    // Escape to close
     useEffect(() =>
     {
-        const handler = async (e: CustomEvent<{ spriteId: number }>) =>
+        if(!isVisible) return;
+
+        const handler = (e: KeyboardEvent) =>
+        {
+            if(e.key === 'Escape') setIsVisible(false);
+        };
+
+        window.addEventListener('keydown', handler);
+
+        return () => window.removeEventListener('keydown', handler);
+    }, [ isVisible ]);
+
+    useEffect(() =>
+    {
+        if(!isMod) return;
+
+        const handler = (e: CustomEvent<{ spriteId: number }>) =>
         {
             const { spriteId } = e.detail;
 
-            const ok = await loadBySpriteId(spriteId);
-
-            if(ok) setActiveTab(TAB_EDIT);
+            setIsVisible(true);
+            loadBySpriteId(spriteId);
         };
 
         window.addEventListener('furni-editor:open', handler as EventListener);
 
         return () => window.removeEventListener('furni-editor:open', handler as EventListener);
-    }, [ loadBySpriteId ]);
+    }, [ isMod, loadBySpriteId ]);
 
-    const handleSelect = useCallback(async (id: number) =>
+    const handleSelect = useCallback((id: number) =>
     {
-        const ok = await loadDetail(id);
-
-        if(ok) setActiveTab(TAB_EDIT);
+        loadDetail(id);
     }, [ loadDetail ]);
 
     const handleBack = useCallback(() =>
     {
+        setSelectedItem(null);
         setActiveTab(TAB_SEARCH);
-    }, []);
+    }, [ setSelectedItem ]);
 
     const handleClose = useCallback(() =>
     {
         setIsVisible(false);
     }, []);
 
-    if(!isVisible) return null;
+    if(!isVisible || !isMod) return null;
 
     return (
         <NitroCardView uniqueKey="furni-editor" className="w-[620px] h-[520px]">
@@ -123,14 +149,12 @@ export const FurniEditorView: FC<{}> = () =>
                 { activeTab === TAB_EDIT && selectedItem &&
                     <FurniEditorEditView
                         item={ selectedItem }
-                        catalogItems={ catalogItems }
                         furniDataEntry={ furniDataEntry }
                         interactions={ interactions }
                         loading={ loading }
                         onUpdate={ updateItem }
                         onDelete={ deleteItem }
                         onBack={ handleBack }
-                        onRefresh={ loadDetail }
                     />
                 }
 

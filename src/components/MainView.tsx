@@ -9,6 +9,7 @@ import { CampaignView } from './campaign/CampaignView';
 import { CatalogView } from './catalog/CatalogView';
 import { ChatHistoryView } from './chat-history/ChatHistoryView';
 import { FloorplanEditorView } from './floorplan-editor/FloorplanEditorView';
+import { FurniEditorView } from './furni-editor/FurniEditorView';
 import { FriendsView } from './friends/FriendsView';
 import { GameCenterView } from './game-center/GameCenterView';
 import { GroupsView } from './groups/GroupsView';
@@ -122,6 +123,7 @@ export const MainView: FC<{}> = props =>
             <CampaignView />
             <GameCenterView />
             <FloorplanEditorView />
+            <FurniEditorView />
             <YoutubeTvView />
             <ExternalPluginLoader />
         </>
