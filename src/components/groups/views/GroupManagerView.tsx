@@ -86,7 +86,7 @@ export const GroupManagerView: FC<{}> = props =>
     if(!groupData || (groupData.groupId <= 0)) return null;
 
     return (
-        <NitroCardView className="nitro-group-manager w-[555px] h-[415px]">
+        <NitroCardView className="nitro-group-manager w-[560px]">
             <NitroCardHeaderView headerText={ LocalizeText('group.window.title') } onCloseClick={ onClose } />
             <NitroCardTabsView>
                 { TABS.map(tab =>
