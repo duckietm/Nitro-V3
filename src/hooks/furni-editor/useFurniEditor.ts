@@ -60,7 +60,7 @@ export const useFurniEditor = () =>
     const [ catalogItems, setCatalogItems ] = useState<CatalogRef[]>([]);
     const [ interactions, setInteractions ] = useState<string[]>([]);
     const [ furniDataEntry, setFurniDataEntry ] = useState<Record<string, unknown> | null>(null);
-    const pendingActionRef = useRef<string | null>(null);
+    const pendingActionRef = useRef<{ action: string; itemId: number } | null>(null);
     const { simpleAlert = null } = useNotification();
 
     const clearError = useCallback(() => setError(null), []);
@@ -161,7 +161,9 @@ export const useFurniEditor = () =>
     useMessageEvent(FurniEditorResultEvent, (event: FurniEditorResultEvent) =>
     {
         const parser = event.getParser();
-        const action = pendingActionRef.current;
+        const pending = pendingActionRef.current;
+        const action = pending?.action ?? null;
+        const actionItemId = pending?.itemId ?? null;
 
         pendingActionRef.current = null;
         setLoading(false);
@@ -182,10 +184,10 @@ export const useFurniEditor = () =>
 
         if(action === 'update')
         {
-            // Auto-reload detail after update
-            if(selectedItem)
+            // Auto-reload detail after update using the ID from the original request
+            if(actionItemId)
             {
-                SendMessageComposer(new FurniEditorDetailComposer(selectedItem.id));
+                SendMessageComposer(new FurniEditorDetailComposer(actionItemId));
             }
 
             if(simpleAlert)
@@ -231,7 +233,7 @@ export const useFurniEditor = () =>
     {
         setLoading(true);
         setError(null);
-        pendingActionRef.current = 'update';
+        pendingActionRef.current = { action: 'update', itemId: id };
         SendMessageComposer(new FurniEditorUpdateComposer(id, JSON.stringify(fields)));
     }, []);
 
@@ -239,7 +241,7 @@ export const useFurniEditor = () =>
     {
         setLoading(true);
         setError(null);
-        pendingActionRef.current = 'delete';
+        pendingActionRef.current = { action: 'delete', itemId: id };
         SendMessageComposer(new FurniEditorDeleteComposer(id));
     }, []);
 
