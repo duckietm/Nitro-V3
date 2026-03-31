@@ -26,7 +26,7 @@
     "game.center.enabled": false,
     "guides.enabled": true,
     "toolbar.hide.quests": true,
-	"catalog.style.new": true,
+	"catalog.style.new": false,
     "navigator.room.models": [{
             "clubLevel": 0,
             "tileSize": 104,

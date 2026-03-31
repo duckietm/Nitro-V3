@@ -17,42 +17,48 @@ export const FurnitureYoutubeDisplayView: FC<{}> = FurnitureYoutubeDisplayViewPr
 
     const onStateChange = (event: { target: YouTubePlayer; data: number }) =>
     {
-        setPlayer(event.target);
-
-        if(objectId === -1) return;
-
-        switch(event.target.getPlayerState())
+        try
         {
-            case -1:
-            case 1:
-                if(currentVideoState === 2)
-                {
-                    //event.target.pauseVideo();
-                }
+            setPlayer(event.target);
 
-                if(currentVideoState !== 1) play();
-                return;
-            case 2:
-                if(currentVideoState !== 2) pause();
+            if(objectId === -1) return;
+
+            switch(event.target.getPlayerState())
+            {
+                case -1:
+                case 1:
+                    if(currentVideoState !== 1) play();
+                    return;
+                case 2:
+                    if(currentVideoState !== 2) pause();
+            }
         }
+        catch(err) {}
     };
 
     useEffect(() =>
     {
         if((currentVideoState === null) || !player) return;
 
-        if((currentVideoState === YoutubeVideoPlaybackStateEnum.PLAYING) && (player.getPlayerState() !== YoutubeVideoPlaybackStateEnum.PLAYING))
+        try
         {
-            player.playVideo();
+            if((currentVideoState === YoutubeVideoPlaybackStateEnum.PLAYING) && (player.getPlayerState() !== YoutubeVideoPlaybackStateEnum.PLAYING))
+            {
+                player.playVideo();
 
-            return;
+                return;
+            }
+
+            if((currentVideoState === YoutubeVideoPlaybackStateEnum.PAUSED) && (player.getPlayerState() !== YoutubeVideoPlaybackStateEnum.PAUSED))
+            {
+                player.pauseVideo();
+
+                return;
+            }
         }
-
-        if((currentVideoState === YoutubeVideoPlaybackStateEnum.PAUSED) && (player.getPlayerState() !== YoutubeVideoPlaybackStateEnum.PAUSED))
+        catch(err)
         {
-            player.pauseVideo();
-
-            return;
+            setPlayer(null);
         }
     }, [ currentVideoState, player ]);
 

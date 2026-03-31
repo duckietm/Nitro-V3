@@ -66,4 +66,5 @@ export class WiredActionLayoutCode
     public static EXECUTION_LIMIT_EXTRA: number = 65;
     public static OR_EVAL_EXTRA: number = 66;
     public static TEXT_OUTPUT_USERNAME_EXTRA: number = 67;
+    public static TEXT_OUTPUT_FURNI_NAME_EXTRA: number = 68;
 }

@@ -1,5 +1,5 @@
 import { ControlYoutubeDisplayPlaybackMessageComposer, GetRoomEngine, GetSessionDataManager, GetYoutubeDisplayStatusMessageComposer, RoomEngineTriggerWidgetEvent, RoomId, SecurityLevel, SetYoutubeDisplayPlaylistMessageComposer, YoutubeControlVideoMessageEvent, YoutubeDisplayPlaylist, YoutubeDisplayPlaylistsEvent, YoutubeDisplayVideoMessageEvent } from '@nitrots/nitro-renderer';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { IsOwnerOfFurniture, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../../../api';
 import { useMessageEvent, useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
@@ -13,6 +13,7 @@ const useFurnitureYoutubeWidgetState = () =>
 {
     const [ objectId, setObjectId ] = useState(-1);
     const [ category, setCategory ] = useState(-1);
+    const objectIdRef = useRef(-1);
     const [ videoId, setVideoId ] = useState<string>(null);
     const [ videoStart, setVideoStart ] = useState<number>(null);
     const [ videoEnd, setVideoEnd ] = useState<number>(null);
@@ -23,6 +24,7 @@ const useFurnitureYoutubeWidgetState = () =>
 
     const onClose = () =>
     {
+        objectIdRef.current = -1;
         setObjectId(-1);
         setCategory(-1);
         setVideoId(null);
@@ -64,6 +66,7 @@ const useFurnitureYoutubeWidgetState = () =>
 
         if(!roomObject) return;
 
+        objectIdRef.current = event.objectId;
         setObjectId(event.objectId);
         setCategory(event.category);
         setHasControl(GetSessionDataManager().hasSecurity(SecurityLevel.EMPLOYEE) || IsOwnerOfFurniture(roomObject));
@@ -74,8 +77,9 @@ const useFurnitureYoutubeWidgetState = () =>
     useMessageEvent<YoutubeDisplayVideoMessageEvent>(YoutubeDisplayVideoMessageEvent, event =>
     {
         const parser = event.getParser();
+        const currentObjectId = objectIdRef.current;
 
-        if((objectId === -1) || (objectId !== parser.furniId)) return;
+        if((currentObjectId === -1) || (currentObjectId !== parser.furniId)) return;
 
         setVideoId(parser.videoId);
         setVideoStart(parser.startAtSeconds);
@@ -86,8 +90,9 @@ const useFurnitureYoutubeWidgetState = () =>
     useMessageEvent<YoutubeDisplayPlaylistsEvent>(YoutubeDisplayPlaylistsEvent, event =>
     {
         const parser = event.getParser();
+        const currentObjectId = objectIdRef.current;
 
-        if((objectId === -1) || (objectId !== parser.furniId)) return;
+        if((currentObjectId === -1) || (currentObjectId !== parser.furniId)) return;
 
         setPlaylists(parser.playlists);
         setSelectedVideo(parser.selectedPlaylistId);
@@ -100,8 +105,9 @@ const useFurnitureYoutubeWidgetState = () =>
     useMessageEvent<YoutubeControlVideoMessageEvent>(YoutubeControlVideoMessageEvent, event =>
     {
         const parser = event.getParser();
+        const currentObjectId = objectIdRef.current;
 
-        if((objectId === -1) || (objectId !== parser.furniId)) return;
+        if((currentObjectId === -1) || (currentObjectId !== parser.furniId)) return;
 
         switch(parser.commandId)
         {

@@ -60,6 +60,7 @@ import { WiredExtraMoveNoAnimationView } from '../extras/WiredExtraMoveNoAnimati
 import { WiredExtraOrEvalView } from '../extras/WiredExtraOrEvalView';
 import { WiredExtraMovePhysicsView } from '../extras/WiredExtraMovePhysicsView';
 import { WiredExtraRandomView } from '../extras/WiredExtraRandomView';
+import { WiredExtraTextOutputFurniNameView } from '../extras/WiredExtraTextOutputFurniNameView';
 import { WiredExtraTextOutputUsernameView } from '../extras/WiredExtraTextOutputUsernameView';
 import { WiredExtraUnseenView } from '../extras/WiredExtraUnseenView';
 
@@ -195,6 +196,8 @@ export const WiredActionLayoutView = (code: number) =>
             return <WiredExtraOrEvalView />;
         case WiredActionLayoutCode.TEXT_OUTPUT_USERNAME_EXTRA:
             return <WiredExtraTextOutputUsernameView />;
+        case WiredActionLayoutCode.TEXT_OUTPUT_FURNI_NAME_EXTRA:
+            return <WiredExtraTextOutputFurniNameView />;
         case WiredActionLayoutCode.SEND_SIGNAL:
             return <WiredActionSendSignalView />;
     }
