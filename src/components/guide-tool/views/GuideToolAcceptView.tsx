@@ -17,7 +17,7 @@ export const GuideToolAcceptView: FC<GuideToolAcceptViewProps> = props =>
 
     return (
         <div className="flex flex-col">
-            <div className="flex flex-col gap-0 bg-muted p-2 rounded">
+            <div className="nitro-card-panel flex flex-col gap-0 p-2">
                 <Text bold>{ LocalizeText('guide.help.request.guide.accept.request.title') }</Text>
                 <Text variant="muted">{ LocalizeText('guide.help.request.type.1') }</Text>
                 <Text textBreak wrap>{ helpRequestDescription }</Text>

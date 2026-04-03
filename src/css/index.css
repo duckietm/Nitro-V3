@@ -7,6 +7,11 @@
     src: url("@/assets/webfonts/Ubuntu-C.ttf");
 }
 
+@font-face {
+    font-family: UbuntuCondensed;
+    src: local("Ubuntu Condensed"), local("Ubuntu");
+}
+
 html,
 body {
     padding: 0;
@@ -177,16 +182,231 @@ body {
         @apply pointer-events-none relative h-[130px] w-[90px] bg-position-[center_-8px] bg-no-repeat;
     }
 
-    .ubuntu-close-button {
-        @apply inline-block h-[20px] w-[19px] bg-transparent bg-position-[0px_0px] bg-no-repeat outline-0;
-        background-image: url("@/assets/images/ui/ubuntu-close-buttons.png");
+    .nitro-card-shell {
+        border: 2px solid #000 !important;
+        border-radius: 10px;
+        background: #f2f2eb;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+        overflow: hidden;
+        max-width: min(calc(100vw - 16px), 100%);
+        max-height: calc(100vh - 16px);
+    }
 
-        &:hover {
-            @apply bg-position-[-38px];
+    .nitro-card-header-shell {
+        border: 2px solid #3c88a6;
+        border-bottom-color: #000;
+        border-radius: 8px 8px 0 0;
+        background: #30728c;
+        padding: 5px;
+    }
+
+    .nitro-card-title {
+        margin: 0 auto;
+        font-family: UbuntuCondensed, Ubuntu, sans-serif;
+        font-weight: 400;
+        line-height: 1;
+    }
+
+    .nitro-card-close-button,
+    .ubuntu-close-button {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        border: 2px solid #000;
+        border-radius: 4px;
+        background: #bf2c2c;
+        position: relative;
+        transition: border-color .2s ease, filter .2s ease, transform .15s ease;
+    }
+
+    .nitro-card-close-button::before,
+    .nitro-card-close-button::after,
+    .ubuntu-close-button::before,
+    .ubuntu-close-button::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 10px;
+        height: 2px;
+        border-radius: 2px;
+        background: #fff;
+        transform-origin: center;
+    }
+
+    .nitro-card-close-button::before,
+    .ubuntu-close-button::before {
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .nitro-card-close-button::after,
+    .ubuntu-close-button::after {
+        transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    .nitro-card-close-button:hover,
+    .ubuntu-close-button:hover {
+        border-color: #fff;
+        filter: brightness(1.08);
+    }
+
+    .nitro-card-close-button:active,
+    .ubuntu-close-button:active {
+        transform: translateY(1px);
+        filter: brightness(0.96);
+    }
+
+    .nitro-card-content-shell {
+        border: 0;
+        border-top: 0;
+        border-radius: 0 0 8px 8px;
+        background: #f2f2eb;
+        font-family: Ubuntu, sans-serif;
+        color: #000;
+    }
+
+    .nitro-card-shell,
+    .nitro-card-content-shell {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: UbuntuCondensed, Ubuntu, sans-serif;
+            font-weight: 400;
+            line-height: 1.1;
+            color: #111;
+            font-size: 16px;
         }
 
-        &:active {
-            @apply bg-position-[-19px];
+        p,
+        span,
+        label,
+        li,
+        td,
+        th,
+        input,
+        textarea,
+        select,
+        button {
+            font-family: Ubuntu, sans-serif;
+            color: #111;
+        }
+
+        p,
+        label,
+        li,
+        td,
+        th,
+        input,
+        textarea,
+        select,
+        button {
+            font-size: 12px;
+            line-height: 1.25;
+        }
+    }
+
+    .nitro-card-tabs-shell {
+        background: #d9ded7;
+        border-top: 0;
+        border-bottom: 2px solid #c4cabf;
+    }
+
+    .nitro-card-tab-item {
+        background: #d2d7cf;
+        border: 2px solid #000;
+        border-bottom: 0;
+        color: #000;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .nitro-card-tab-item-active {
+        background: #f2f2eb;
+    }
+
+    .nitro-card-panel {
+        background: rgba(0, 0, 0, 0.045) !important;
+        border: 1px solid #c4cabf !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+    }
+
+    .nitro-card-row {
+        background: rgba(0, 0, 0, 0.035) !important;
+        border: 1px solid #c4cabf !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+        transition: background-color .15s ease, border-color .15s ease;
+    }
+
+    .nitro-card-row:hover {
+        background: rgba(0, 0, 0, 0.07) !important;
+        border-color: #aeb7aa !important;
+    }
+
+    .nitro-card-divider {
+        border-color: #c4cabf !important;
+        box-shadow: none !important;
+    }
+
+    .nitro-card-shell :where(.bg-muted, .bg-light, .bg-light-dark, .bg-white, .bg-white\/50, .bg-white\/80) {
+        background: rgba(0, 0, 0, 0.045) !important;
+        box-shadow: none !important;
+    }
+
+    .nitro-card-shell :where(.border, .border-muted, .border-card-grid-item-border, .border-card-grid-item-border-active, .border-white, .border-white\/10, .border-white\/20, .border-white\/30) {
+        border-color: #c4cabf !important;
+        box-shadow: none !important;
+    }
+
+    .nitro-card-shell :where(.shadow, .shadow-md, .shadow-lg, .shadow-inner, .shadow-inner1px) {
+        box-shadow: none !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .nitro-card-shell {
+        width: min(calc(100vw - 16px), 100%) !important;
+        max-width: calc(100vw - 16px) !important;
+        max-height: calc(100vh - 16px) !important;
+    }
+
+    .nitro-card-header-shell {
+        padding: 4px;
+    }
+
+    .nitro-card-title {
+        font-size: 17px;
+    }
+
+    .nitro-card-content-shell {
+        padding: 8px !important;
+    }
+
+    .nitro-card-tabs-shell {
+        flex-wrap: wrap;
+        gap: 3px;
+        padding: 4px 6px 0;
+    }
+
+    .nitro-card-tab-item {
+        padding: 4px 9px;
+    }
+
+    .nitro-card-shell,
+    .nitro-card-content-shell {
+        p,
+        label,
+        li,
+        td,
+        th,
+        input,
+        textarea,
+        select,
+        button {
+            font-size: 11.5px;
         }
     }
 }
@@ -569,16 +789,6 @@ body {
 
 .fs-custom {
     font-size: var(--font-size, 16px); /* Fallback to 16px if not set */
-}
-
-/* Header and Tab Colors */
-
-.bg-card-header {
-    background-color: #1e7295; /* e.g., #2c3e50 */
-}
-
-.bg-card-tabs {
-    background-color: #185d79; /* Match bg-card-header */
 }
 
 .nitro-wired {

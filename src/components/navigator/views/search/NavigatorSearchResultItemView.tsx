@@ -129,7 +129,7 @@ export const NavigatorSearchResultItemView: FC<NavigatorSearchResultItemViewProp
             pointer
             overflow="hidden"
             alignItems="center"
-            className="navigator-item p-1 bg-light rounded-3 small mb-1 flex-col border border-muted"
+            className="navigator-item nitro-card-row p-1 small mb-1 flex-col"
             gap={ 0 }
             onClick={ visitRoom }
             onMouseEnter={ handleMouseEnter }

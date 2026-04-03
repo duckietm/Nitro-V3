@@ -16,7 +16,7 @@ export const GuideToolUserFeedbackView: FC<GuideToolUserFeedbackViewProps> = pro
 
     return (
         <div className="flex flex-col">
-            <Flex className="bg-muted p-2 rounded" gap={ 1 } justifyContent="between">
+            <Flex className="nitro-card-panel p-2" gap={ 1 } justifyContent="between">
                 <Column gap={ 0 }>
                     <Text bold>{ userName }</Text>
                     <Text>{ LocalizeText('guide.help.request.user.feedback.guide.desc') }</Text>
@@ -29,7 +29,7 @@ export const GuideToolUserFeedbackView: FC<GuideToolUserFeedbackViewProps> = pro
             </div>
             { userName && (userName.length > 0) &&
                 <>
-                    <hr className="bg-dark m-0 mt-auto" />
+                    <hr className="nitro-card-divider m-0 mt-auto" />
                     <div className="flex flex-col">
                         <Text bold center>{ LocalizeText('guide.help.request.user.feedback.question') }</Text>
                         <div className="flex gap-1">

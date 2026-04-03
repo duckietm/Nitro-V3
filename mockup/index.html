@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nitro V3 Mockup Lab</title>
+    <style>
+        :root {
+            --bg: #17191d;
+            --panel: #252931;
+            --panel-2: #1d2026;
+            --border: #3d4450;
+            --text: #f4f7fb;
+            --muted: #aeb6c4;
+            --card-border: #283f5d;
+            --card-header: #1e7295;
+            --card-content: #dfdfdf;
+            --toolbar: rgba(28, 28, 32, 0.95);
+            --tab: #b6bec5;
+            --tab-active: #dfdfdf;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: radial-gradient(circle at top, #222733 0%, #17191d 60%);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        h1, h2, h3, p {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .intro {
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+        }
+
+        .section {
+            background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .section-head {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .section-head h2 {
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .section-head p {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .section-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .stage {
+            background: #121419;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 200px;
+        }
+
+        .paths {
+            padding: 12px;
+            background: rgba(0,0,0,0.22);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            font: 12px/1.5 Consolas, monospace;
+            color: #d5d9e1;
+            white-space: pre-wrap;
+        }
+
+        .nitro-card {
+            width: 320px;
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+            resize: both;
+            background: var(--card-content);
+        }
+
+        .nitro-card-header {
+            min-height: 33px;
+            max-height: 33px;
+            background: var(--card-header);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .nitro-card-header-text {
+            color: #fff;
+            font-size: 20px;
+            text-shadow: 0 4px 4px rgba(0,0,0,.25);
+            font-weight: 700;
+        }
+
+        .ubuntu-close-button {
+            position: absolute;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            box-shadow: 0 0 0 1.6px #fff;
+            border: 2px solid #921911;
+            background: repeating-linear-gradient(
+                rgba(245, 80, 65, 1),
+                rgba(245, 80, 65, 1) 50%,
+                rgba(194, 48, 39, 1) 50%,
+                rgba(194, 48, 39, 1) 100%
+            );
+        }
+
+        .nitro-card-tabs {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            background: #185d79;
+            padding: 4px 8px 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .nitro-card-tab {
+            position: relative;
+            min-width: 90px;
+            padding: 5px 10px;
+            background: var(--tab);
+            color: #000;
+            text-align: center;
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+            border-top: 1px solid var(--card-border);
+            border-left: 1px solid var(--card-border);
+            border-right: 1px solid var(--card-border);
+        }
+
+        .nitro-card-tab::before {
+            content: "";
+            position: absolute;
+            top: 1.5px;
+            left: 0;
+            right: 0;
+            width: 93%;
+            height: 3px;
+            margin: auto;
+            border-radius: 4px;
+            background: #c2c9d1;
+        }
+
+        .nitro-card-tab.active {
+            background: var(--tab-active);
+            margin-bottom: -1px;
+        }
+
+        .nitro-card-tab.active::before {
+            background: #fff;
+        }
+
+        .nitro-card-content {
+            padding: 8px;
+            min-height: 150px;
+            color: #000;
+        }
+
+        .purse {
+            width: 200px;
+            background: rgba(30, 30, 42, 0.95);
+            border-radius: 10px;
+            padding: 6px;
+            color: #fff;
+        }
+
+        .purse-grid {
+            display: grid;
+            grid-template-columns: 1fr 54px 30px;
+            gap: 6px;
+        }
+
+        .currency-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .currency-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .currency--1 { background: #e8b125; border: 2px solid #f4d892; }
+        .currency-0 { background: #c364c1; border: 2px solid #ecb3ea; }
+        .currency-5 { background: #6bafaa; border: 2px solid #ace6e2; }
+
+        .subscription {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #212131;
+            border: 2px solid #383853;
+            border-radius: 8px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .side-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .side-button {
+            width: 30px;
+            height: 28px;
+            border-radius: 8px;
+            background: #b69b83;
+            border: 2px solid rgba(255,255,255,.5);
+        }
+
+        .seasonal {
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to right, #95c3e5, transparent);
+            background-color: #212131;
+            border-radius: 8px;
+            min-height: 30px;
+            color: white;
+            padding: 0 8px;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 55px;
+            padding: 8px 12px;
+            background: var(--toolbar);
+            box-shadow: inset 0 5px #22222799, inset 0 -4px #12121599;
+            border-radius: 10px;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toolbar-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #4a535f, #2d333b);
+            border: 1px solid rgba(255,255,255,.15);
+        }
+
+        .toolbar-me {
+            width: 50px;
+            height: 45px;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #8ec6ff, #4f7fb7);
+        }
+
+        .navigator {
+            width: 420px;
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,.35);
+            background: var(--card-content);
+        }
+
+        .navigator-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            color: #000;
+        }
+
+        .navigator-search {
+            height: 34px;
+            border: 1px solid #9ca3af;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .navigator-results {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 140px;
+        }
+
+        .navigator-result {
+            height: 34px;
+            background: rgba(0,0,0,.06);
+            border-radius: 6px;
+        }
+
+        .navigator-footer {
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid #b0b7c2;
+            padding-top: 8px;
+        }
+
+        .nav-action {
+            flex: 1;
+            height: 60px;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #4c8fd7, #2e66a6);
+        }
+
+        .notification-bubble {
+            width: 240px;
+            padding: 10px;
+            background-color: #262626;
+            box-shadow: inset 0 5px rgba(38,38,57,.6), inset 0 -4px rgba(25,25,37,.6);
+            color: white;
+            border-radius: .5rem;
+            font-size: 12px;
+        }
+
+        .friends-bar {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .friend-pill {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #dadfe7, #a4afbf);
+            border: 2px solid rgba(255,255,255,.35);
+        }
+
+        .hotel-view {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            overflow: hidden;
+            border-radius: 12px;
+            background: linear-gradient(to bottom, #69b4e4 0%, #9fd3f2 55%, #51841e 55%, #51841e 100%);
+        }
+
+        .hotel-slab {
+            position: absolute;
+            inset: 24px 40px 36px;
+            background: linear-gradient(180deg, #d7d1c8 0%, #b8b1a4 100%);
+            border-radius: 14px;
+            box-shadow: 0 18px 40px rgba(0,0,0,.25);
+        }
+
+        .hotel-hotspot {
+            position: absolute;
+            width: 58px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255,255,255,.25);
+            border: 1px dashed rgba(255,255,255,.7);
+        }
+
+        .hotel-hotspot.a { top: 30px; left: 40px; }
+        .hotel-hotspot.b { top: 98px; left: 160px; }
+        .hotel-hotspot.c { top: 150px; right: 90px; }
+
+        @media (max-width: 780px) {
+            body {
+                padding: 14px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigator,
+            .nitro-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Nitro V3 Mockup Lab</h1>
+    <p class="intro">Mockup HTML standalone dei componenti principali attuali. La resa è pensata per darti una base visiva da modificare rapidamente fuori dal progetto reale.</p>
+
+    <div class="grid">
+        <section class="section">
+            <div class="section-head">
+                <h2>NitroCard</h2>
+                <p>Base card attuale con header blu, tabs grigie e content chiaro.</p>
+            </div>
+            <div class="section-body">
+                <div class="stage">
+                    <div class="nitro-card">
+                        <div class="nitro-card-header">
+                            <div class="nitro-card-header-text">Navigator</div>
+                            <div class="ubuntu-close-button"></div>
+                        </div>
+                        <div class="nitro-card-tabs">
+                            <div class="nitro-card-tab active">Hotel</div>
+                            <div class="nitro-card-tab">Rooms</div>
+                            <div class="nitro-card-tab">+</div>
+                        </div>
+                        <div class="nitro-card-content">
+                            Contenuto card attuale, usato come base da vari componenti.
+                        </div>
+                    </div>
+                </div>
+                <div class="paths">Source files:
+src/common/card/NitroCardView.tsx
+src/common/card/NitroCardHeaderView.tsx
+src/common/card/NitroCardContentView.tsx
+src/common/card/tabs/NitroCardTabsView.tsx
+src/common/card/tabs/NitroCardTabsItemView.tsx
+src/css/nitrocard/NitroCardView.css</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>Purse</h2>
+                <p>Layout attuale con currency, box HC, pulsanti laterali e seasonal sotto.</p>
+            </div>
+            <div class="section-body">
+                <div class="stage">
+                    <div class="purse">
+                        <div class="purse-grid">
+                            <div class="currency-list">
+                                <div class="currency-row currency--1">3601 ◉</div>
+                                <div class="currency-row currency-0">5365 ◎</div>
+                                <div class="currency-row currency-5">700 ◈</div>
+                            </div>
+                            <div class="subscription">
+                                <div>HC</div>
+                                <div>78 g</div>
+                            </div>
+                            <div class="side-buttons">
+                                <div class="side-button"></div>
+                                <div class="side-button"></div>
+                            </div>
+                        </div>
+                        <div class="seasonal">
+                            <span>Stagionale</span>
+                            <span>99 999</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="paths">Source files:
+src/components/purse/PurseView.tsx
+src/components/purse/views/CurrencyView.tsx
+src/components/purse/views/SeasonalView.tsx
+src/css/purse/PurseView.css</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>Toolbar</h2>
+                <p>Barra bassa attuale con area me, icone centrali e blocco friend/message.</p>
+            </div>
+            <div class="section-body">
+                <div class="stage">
+                    <div class="toolbar">
+                        <div class="toolbar-left">
+                            <div class="toolbar-me"></div>
+                            <div class="toolbar-icon"></div>
+                            <div class="toolbar-icon"></div>
+                            <div class="toolbar-icon"></div>
+                            <div class="toolbar-icon"></div>
+                        </div>
+                        <div style="flex:1; height:34px; border-radius:8px; background:rgba(255,255,255,.07);"></div>
+                        <div class="toolbar-right">
+                            <div class="toolbar-icon"></div>
+                            <div class="toolbar-icon"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="paths">Source files:
+src/components/toolbar/ToolbarView.tsx
+src/components/toolbar/ToolbarItemView.tsx
+src/components/toolbar/ToolbarMeView.tsx</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>Navigator</h2>
+                <p>Finestra navigator attuale con card base, search e footer actions.</p>
+            </div>
+            <div class="section-body">
+                <div class="stage">
+                    <div class="navigator">
+                        <div class="nitro-card-header">
+                            <div class="nitro-card-header-text">Navigator</div>
+                            <div class="ubuntu-close-button"></div>
+                        </div>
+                        <div class="nitro-card-tabs">
+                            <div class="nitro-card-tab active">Saved</div>
+                            <div class="nitro-card-tab">Rooms</div>
+                            <div class="nitro-card-tab">+</div>
+                        </div>
+                        <div class="navigator-body">
+                            <div class="navigator-search"></div>
+                            <div class="navigator-results">
+                                <div class="navigator-result"></div>
+                                <div class="navigator-result"></div>
+                                <div class="navigator-result"></div>
+                            </div>
+                            <div class="navigator-footer">
+                                <div class="nav-action"></div>
+                                <div class="nav-action" style="background:linear-gradient(180deg,#64a86b,#41794c);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="paths">Source files:
+src/components/navigator/NavigatorView.tsx
+src/components/navigator/NavigatorView.scss
+src/css/room/NavigatorRoomSettings.css</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>Notifications</h2>
+                <p>Bubble attuale con fondo scuro e inner shadow.</p>
+            </div>
+            <div class="section-body">
+                <div class="stage">
+                    <div class="notification-bubble">
+                        Hai ricevuto una nuova notifica. Questo box rappresenta lo stato attuale delle bubble notifications.
+                    </div>
+                </div>
+                <div class="paths">Source files:
+src/components/notification-center/NotificationCenterView.tsx
+src/css/notification/NotificationCenterView.css</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>Friends</h2>
+                <p>Barra amici e blocchi friend pill attuali.</p>
+            </div>
+            <div class="section-body">
+                <div class="stage">
+                    <div class="friends-bar">
+                        <div class="friend-pill"></div>
+                        <div class="friend-pill"></div>
+                        <div class="friend-pill"></div>
+                        <div class="friend-pill"></div>
+                    </div>
+                </div>
+                <div class="paths">Source files:
+src/components/friends/FriendsView.tsx
+src/css/friends/FriendsView.css</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>HotelView</h2>
+                <p>Mockup della scena hotel attuale con sfondo e hotspot.</p>
+            </div>
+            <div class="section-body">
+                <div class="stage">
+                    <div class="hotel-view">
+                        <div class="hotel-slab"></div>
+                        <div class="hotel-hotspot a"></div>
+                        <div class="hotel-hotspot b"></div>
+                        <div class="hotel-hotspot c"></div>
+                    </div>
+                </div>
+                <div class="paths">Source files:
+src/components/hotel-view/HotelView.tsx
+src/css/hotelview/HotelView.css</div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

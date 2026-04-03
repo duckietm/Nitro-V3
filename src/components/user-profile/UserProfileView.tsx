@@ -159,7 +159,7 @@ export const UserProfileView: FC<{}> = props =>
                 </NitroCard.Tabs>
                 <div className="flex-1 overflow-auto p-2">
                     { activeTab === 'badge' && (
-                        <div className="flex flex-wrap content-start gap-2 p-2 rounded bg-muted h-full">
+                        <div className="nitro-card-panel flex flex-wrap content-start gap-2 p-2 h-full">
                             { userBadges && (userBadges.length > 0)
                                 ? userBadges.map((badge, index) => (
                                     <BadgeInfoView key={ badge + index } badgeCode={ badge } />
@@ -196,7 +196,7 @@ export const UserProfileView: FC<{}> = props =>
                                 </Flex>
                             ) }
                             { userRooms && userRooms.length > 0 && userRooms.map(room => (
-                                <Flex key={ room.roomId } alignItems="center" gap={ 2 } className="px-2 py-1.5 rounded bg-white/50 cursor-pointer hover:bg-white/80" onClick={ () => CreateRoomSession(room.roomId) }>
+                                <Flex key={ room.roomId } alignItems="center" gap={ 2 } className="nitro-card-row px-2 py-1.5 cursor-pointer" onClick={ () => CreateRoomSession(room.roomId) }>
                                     <div className="flex flex-col min-w-0 grow">
                                         <Text bold small truncate>{ room.roomName }</Text>
                                         { room.description && <Text small truncate variant="muted">{ room.description }</Text> }

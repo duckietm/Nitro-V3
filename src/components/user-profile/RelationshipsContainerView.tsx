@@ -28,7 +28,7 @@ export const RelationshipsContainerView: FC<RelationshipsContainerViewProps> = p
                     <i className={ `nitro-friends-spritesheet icon-${ relationshipName }` } />
                 </Flex>
                 <div className="flex flex-col grow gap-0">
-                    <div className="flex items-center justify-between bg-white rounded px-2 py-1 h-[25px]">
+                    <div className="nitro-card-row flex items-center justify-between px-2 py-1 h-[25px]">
                         <p className="text-sm underline pointer" onClick={ event => (relationshipInfo && (relationshipInfo.randomFriendId >= 1) && GetUserProfile(relationshipInfo.randomFriendId)) }>
                             { (!relationshipInfo || (relationshipInfo.friendCount === 0)) &&
                                 LocalizeText('extendedprofile.add.friends') }

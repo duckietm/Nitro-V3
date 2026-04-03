@@ -1,220 +1,146 @@
 .nitro-card {
     resize: both;
+    border: 2px solid #000 !important;
+    border-radius: 10px;
+    background: #f2f2eb;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
 
-    @include media-breakpoint-down(lg) {
-        max-width: 100vw !important;
-        max-height: 100vh !important;
-    }
+    .nitro-card-header {
+        position: relative;
+        min-height: 36px;
+        max-height: 36px;
+        width: 100%;
+        margin: 0;
+        padding: 5px;
+        background: #30728c;
+        border: 2px solid #3c88a6;
+        border-bottom-color: #000;
+        border-radius: 8px 8px 0 0;
+        box-shadow: none;
 
-    &.theme-primary {
-        border: 1px solid #283F5D;
-
-        .nitro-card-header {
-            min-height: 33px;
-            max-height: 33px;
-            background: #1E7295;
-
-            .nitro-card-header-text {
-                color: #FFF;
-                text-shadow: 0px 4px 4px rgba(#000, 0.25);
-                @include font-size(1.35);
-            }
-
-            .nitro-card-header-close {
-                cursor: pointer;
-                padding: 2px 2px;
-                line-height: 1;
-                border-radius: .25rem;
-                box-shadow: 0 0 0 1.6px #FFF;
-                border: 2px solid #921911;
-                background: repeating-linear-gradient(
-                    rgba(245, 80, 65, 1),
-                    rgba(245, 80, 65, 1) 50%,
-                    rgba(194, 48, 39, 1) 50%,
-                    rgba(194, 48, 39, 1) 100%
-                );
-
-                &:hover {
-                    filter: brightness(1.2);
-                }
-
-                &:active {
-                    filter: brightness(0.8);
-                }
-            }
-
-            .nitro-card-header-report-camera {
-                cursor: pointer;
-                padding: 1px 3px;
-                line-height: 1;
-                border-radius: .25rem;
-                box-shadow: 0 0 0 1.6px #FFF;
-                border: 2px solid #921911;
-                background: repeating-linear-gradient(
-                    rgba(245, 80, 65, 1),
-                    rgba(245, 80, 65, 1) 50%,
-                    rgba(194, 48, 39, 1) 50%,
-                    rgba(194, 48, 39, 1) 100%
-                );
-
-                &:hover {
-                    filter: brightness(1.2);
-                }
-
-                &:active {
-                    filter: brightness(0.8);
-                }
-            }
+        &:before {
+            display: none;
         }
 
-        .nitro-card-tabs {
-            background-color: #185D79;
-
-            .nav-item {
-                padding: .2rem .8rm;
-                background-color: #B6BEC5;
-                color: #000;
-                z-index: 1;
-                margin-bottom: -1px;
-
-                &.active {
-                    background-color: #DFDFDF;
-                    border-color: #283F5D #283F5D #DFDFDF !important;
-                    border-bottom: 1px solid black;
-
-                    &:before {
-                        background: #FFF;
-                    }
-                }
-
-                &:before {
-                    content: '';
-                    position: absolute;
-                    width: 93%;
-                    height: 3px;
-                    border-radius: 0.25rem;
-                    top: 1.5px;
-                    left: 0;
-                    right: 0;
-                    margin: auto;
-                    background: #c2c9d1;
-                    z-index: 1;
-                }
-            }
+        .nitro-card-header-text {
+            color: #fff;
+            text-shadow: 1px 1px 1px #000;
+            font-family: UbuntuCondensed, Ubuntu, sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 1;
+            min-height: auto;
         }
 
-        .content-area {
-            background-color: #DFDFDF;
+        .nitro-card-header-close {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            padding: 0;
+            line-height: 1;
+            border-radius: 4px;
+            border: 2px solid #000;
+            box-shadow: none;
+            background: #bf2c2c;
+
+            &:hover {
+                border-color: #fff;
+                filter: brightness(1.08);
+            }
+
+            &:active {
+                filter: brightness(0.96);
+            }
         }
     }
 
-    &.theme-primary-slim {
-        border: 1px solid #283F5D;
+    .nitro-card-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        min-height: auto;
+        max-height: none;
+        padding: 4px 8px 0;
+        background: #d9ded7;
+        border-bottom: 2px solid #c4cabf;
 
-        .nitro-card-header {
-            position: relative;
-            min-height: 28px;
-            max-height: 28px;
-            background: repeating-linear-gradient(#2DABC2, #2DABC2 50%, #2B91A7 50%, #2B91A7 100%);
-            border-bottom: 2px solid darken(#2B91A7, 5);
-            box-shadow: 0 2px white;
-            width: 100%;
-            margin: 0;
-            padding-top:2px;
+        .nav-item {
+            padding: 0.35rem 0.8rem;
+            margin-bottom: -1px;
+            color: #000;
+            background: #d2d7cf;
+            border: 2px solid #000;
+            border-bottom: 0;
+            border-radius: 8px 8px 0 0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 
             &:before {
-                position: absolute;
-                content: ' ';
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 2px;
-                background-color: rgba(#FFF, 0.3);
+                display: none;
             }
 
-            .nitro-card-header-text {
-                color: #FFF;
-                text-shadow: 0px 4px 4px rgba(#000, 0.25);
-                @include font-size (1.125);
-                min-height: 21px;
-            }
-
-            .nitro-card-header-close {
-                cursor: pointer;
-                padding: 0px 2px;
-                line-height: 1;
-                @include font-size(.675);
-                border-radius: .25rem;
-                box-shadow: 0 0 0 1.6px #FFF;
-                border: 2px solid #921911;
-                background: repeating-linear-gradient(
-                    rgba(245, 80, 65, 1),
-                    rgba(245, 80, 65, 1) 50%,
-                    rgba(194, 48, 39, 1) 50%,
-                    rgba(194, 48, 39, 1) 100%
-                );
-
-                &:hover {
-                    filter: brightness(1.2);
-                }
-
-                &:active {
-                    filter: brightness(0.8);
-                }
-            }
-
-            .nitro-card-header-report-camera {
-                cursor: pointer;
-                padding: 0px 2px;
-                margin-right: 4px;
-                line-height: 1;
-                @include font-size(.675);
-                border-radius: .25rem;
-                box-shadow: 0 0 0 1.6px #FFF;
-                border: 2px solid #921911;
-                background: repeating-linear-gradient(
-                    rgba(245, 80, 65, 1),
-                    rgba(245, 80, 65, 1) 50%,
-                    rgba(194, 48, 39, 1) 50%,
-                    rgba(194, 48, 39, 1) 100%
-                );
-
-                &:hover {
-                    filter: brightness(1.2);
-                }
-
-                &:active {
-                    filter: brightness(0.8);
-                }
+            &.active {
+                background: #f2f2eb;
+                border-color: #000 !important;
+                border-bottom: 0;
             }
         }
+    }
 
-        .nitro-card-tabs {
-            background-color: #185D79;
-        }
-
-        .content-area {
-            background-color: #DFDFDF;
-        }
+    .content-area {
+        height: 100%;
+        overflow: auto;
+        padding: 10px;
+        background: #f2f2eb;
+        border: 0;
+        border-top: 0;
+        border-radius: 0 0 8px 8px;
+        font-family: Ubuntu, sans-serif;
+        color: #111;
     }
 }
 
 .content-area {
-    height: 100%;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    overflow: auto;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: Ubuntu, sans-serif;
+        font-weight: 700;
+        line-height: 1.15;
+        color: #111;
+    }
+
+    p,
+    span,
+    label,
+    li,
+    td,
+    th,
+    input,
+    textarea,
+    select,
+    button {
+        font-family: Ubuntu, sans-serif;
+        color: #111;
+    }
+
+    p,
+    label,
+    li,
+    td,
+    th,
+    input,
+    textarea,
+    select,
+    button {
+        font-size: 12px;
+        line-height: 1.25;
+    }
 
     &.theme-dark {
-        background-color: #1C323F !important;
-    }
-}
-
-@include media-breakpoint-down(lg) {
-    .content-area {
-        height: 100% !important;
-        min-height: auto !important;
-        max-height: 100% !important;
+        background-color: #1c323f !important;
     }
 }
 
@@ -223,23 +149,66 @@
     height: 100%;
 }
 
-.nitro-card-tabs {
-    height: 100%;
-    min-height: 133px;
-    max-height: 133px;
-    border-bottom: 1px solid #283F5D;
-}
-
 .nitro-card-accordion-set {
-
     &.active {
         height: 100%;
         overflow: hidden;
-        background: rgba(#FFF, 0.5);
+        background: rgba(#fff, 0.5);
         border-bottom: 1px solid rgba(#000, 0.2);
     }
 
     .nitro-card-accordion-set-header {
         border-bottom: 1px solid rgba(#000, 0.2);
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .nitro-card {
+        resize: none !important;
+        max-width: calc(100vw - 16px) !important;
+        max-height: calc(100vh - 16px) !important;
+    }
+
+    .nitro-card {
+        .nitro-card-header {
+            min-height: 32px;
+            max-height: 32px;
+            padding: 4px;
+
+            .nitro-card-header-text {
+                font-size: 17px;
+            }
+        }
+
+        .nitro-card-tabs {
+            padding: 4px 6px 0;
+            gap: 3px;
+
+            .nav-item {
+                padding: 0.25rem 0.55rem;
+                font-size: 12px;
+            }
+        }
+
+        .content-area {
+            padding: 8px;
+        }
+    }
+
+    .content-area {
+        min-height: auto !important;
+        max-height: 100% !important;
+
+        p,
+        label,
+        li,
+        td,
+        th,
+        input,
+        textarea,
+        select,
+        button {
+            font-size: 11.5px;
+        }
     }
 }

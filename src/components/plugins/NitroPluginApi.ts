@@ -56,6 +56,7 @@ export interface INitroPluginApi
 // Internal plugin storage
 const _plugins: INitroPlugin[] = [];
 const _listeners: Array<() => void> = [];
+const _windowCleanup = new Map<string, () => void>();
 
 function notifyListeners()
 {
@@ -182,7 +183,7 @@ const pluginApi: INitroPluginApi = {
         let isDragging = false;
         let offsetX = 0, offsetY = 0;
 
-        header.addEventListener('mousedown', (e: MouseEvent) =>
+        const onMouseDown = (e: MouseEvent) =>
         {
             isDragging = true;
             const rect = overlay.getBoundingClientRect();
@@ -191,16 +192,20 @@ const pluginApi: INitroPluginApi = {
             overlay.style.transform = 'none';
             overlay.style.left = rect.left + 'px';
             overlay.style.top = rect.top + 'px';
-        });
+        };
 
-        document.addEventListener('mousemove', (e: MouseEvent) =>
+        const onMouseMove = (e: MouseEvent) =>
         {
             if (!isDragging) return;
             overlay.style.left = (e.clientX - offsetX) + 'px';
             overlay.style.top = (e.clientY - offsetY) + 'px';
-        });
+        };
 
-        document.addEventListener('mouseup', () => { isDragging = false; });
+        const onMouseUp = () => { isDragging = false; };
+
+        header.addEventListener('mousedown', onMouseDown);
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
 
         // Content area
         const content = document.createElement('div');
@@ -211,11 +216,23 @@ const pluginApi: INitroPluginApi = {
         overlay.appendChild(card);
         document.body.appendChild(overlay);
 
+        _windowCleanup.set(id, () =>
+        {
+            header.removeEventListener('mousedown', onMouseDown);
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        });
+
         return content;
     },
 
     destroyWindow(id: string)
     {
+        const cleanup = _windowCleanup.get(id);
+
+        cleanup?.();
+        _windowCleanup.delete(id);
+
         const existing = document.getElementById(`nitro-plugin-window-${id}`);
         if (existing) existing.remove();
     }

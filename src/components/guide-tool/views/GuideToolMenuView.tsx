@@ -35,7 +35,7 @@ export const GuideToolMenuView: FC<GuideToolMenuViewProps> = props =>
 
     return (
         <div className="flex flex-col">
-            <Flex alignItems="center" className="bg-muted p-2 rounded" gap={ 2 }>
+            <Flex alignItems="center" className="nitro-card-panel p-2" gap={ 2 }>
                 <div className={ 'duty-switch' + (isOnDuty ? '' : ' off') } onClick={ event => processAction('toggle_duty') } />
                 <Column gap={ 0 }>
                     <Text bold>{ LocalizeText('guide.help.guide.tool.yourstatus') }</Text>
@@ -57,7 +57,7 @@ export const GuideToolMenuView: FC<GuideToolMenuViewProps> = props =>
                     <Text>{ LocalizeText('guide.help.guide.tool.tickettypeselection.bullyreports') }</Text>
                 </div>
             </div>
-            <hr className="bg-dark m-0" />
+            <hr className="nitro-card-divider m-0" />
             <div className="flex justify-enter items-center gap-2">
                 <div className="info-icon" />
                 <div className="flex flex-col gap-1">
@@ -66,7 +66,7 @@ export const GuideToolMenuView: FC<GuideToolMenuViewProps> = props =>
                     <div dangerouslySetInnerHTML={ { __html: LocalizeText('guide.help.guide.tool.guardiansonduty', [ 'amount' ], [ guardiansOnDuty.toString() ]) } } />
                 </div>
             </div>
-            <hr className="bg-dark m-0" />
+            <hr className="nitro-card-divider m-0" />
             <Flex gap={ 2 } justifyContent="between">
                 <Button disabled onClick={ event => processAction('forum_link') }>{ LocalizeText('guide.help.guide.tool.forum.link') }</Button>
                 <Button disabled>{ LocalizeText('guide.help.guide.tool.skill.link') }</Button>

@@ -17,7 +17,7 @@ export const GuideToolUserPendingView: FC<GuideToolUserPendingViewProps> = props
 
     return (
         <div className="flex flex-col">
-            <Column className="bg-muted rounded p-2" gap={ 0 }>
+            <Column className="nitro-card-panel p-2" gap={ 0 }>
                 <Text bold>{ LocalizeText('guide.help.request.guide.accept.request.title') }</Text>
                 <Text variant="muted">{ LocalizeText('guide.help.request.type.1') }</Text>
                 <Text textBreak wrap>{ helpRequestDescription }</Text>

@@ -1,111 +1,400 @@
 .nitro-purse-container {
-    font-size: 1em;
-	pointer-events: all;
-    	
+    width: 100%;
+    pointer-events: all;
+}
+
+.nitro-purse-shell {
+    width: 100%;
+    max-width: 188px;
+    margin-top: 6px;
+    margin-left: auto;
+}
+
+.nitro-purse-shell.is-closed {
+    width: 52px;
+    max-width: 52px;
+}
+
+.nitro-purse {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    background: rgba(10, 10, 12, 0.58);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 8px 18px rgba(0, 0, 0, 0.14);
+    transition: width 0.24s cubic-bezier(0.22, 1, 0.36, 1), max-width 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease;
+}
+
+.nitro-purse.is-closed {
+    width: 52px;
+}
+
+.nitro-purse__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 5px 7px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.nitro-purse__header.is-closed {
+    justify-content: flex-end;
+    gap: 5px;
+    padding: 5px 6px;
+}
+
+.nitro-purse__header-main {
+    display: inline-flex;
+    align-items: center;
+}
+
+.nitro-purse__header-main.is-closed {
+    margin-right: 0;
+}
+
+.nitro-purse__header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    opacity: 0.9;
+}
+
+.nitro-purse__header-image {
+    display: block;
+    width: auto;
+    height: 14px;
+    object-fit: contain;
+}
+
+.nitro-purse__header-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.92) !important;
+    letter-spacing: 0.01em;
+}
+
+.nitro-purse__header-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.06);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease;
+}
+
+.nitro-purse__header-toggle.is-open {
+    transform: rotate(180deg);
+}
+
+.nitro-purse__content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 6px;
+    overflow: hidden;
+    transform-origin: top;
+    transition:
+        max-height 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.38s ease-out,
+        transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+        padding 0.4s ease-out;
+    max-height: 280px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.nitro-purse__content.is-closed {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.95);
+    padding-top: 0;
+    padding-bottom: 0;
+    pointer-events: none;
+}
+
+.nitro-purse__summary,
+.nitro-purse__seasonal {
+    transition:
+        opacity 0.32s ease-out,
+        transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nitro-purse__summary {
+    transition-delay: 0.08s;
+}
+
+.nitro-purse__seasonal {
+    transition-delay: 0.16s;
+}
+
+.nitro-purse__content.is-closed .nitro-purse__summary,
+.nitro-purse__content.is-closed .nitro-purse__seasonal {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition-delay: 0s;
+}
+
+.nitro-purse__summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 30px 26px;
+    gap: 5px;
+    align-items: stretch;
+}
+
+.nitro-purse__summary.is-no-hc {
+    grid-template-columns: minmax(0, 1fr) 26px;
+}
+
+.nitro-purse__primary,
+.nitro-purse__seasonal {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.nitro-purse .nitro-purse-button,
+.nitro-purse-seasonal-currency {
+    min-height: 22px;
+    padding: 2px 0;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.nitro-purse .allcurrencypurse,
+.nitro-purse-seasonal-currency {
+    position: relative;
+}
+
+.nitro-purse .allcurrencypurse::after,
+.nitro-purse-seasonal-currency::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.nitro-purse__primary > :last-child::after,
+.nitro-purse__seasonal > :last-child::after {
+    display: none;
+}
+
+.nitro-purse .allcurrencypurse .text-white {
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.01em;
+}
+
+.nitro-purse .nitro-purse-button.currency--1 .text-white {
+    color: #7fdcff !important;
+}
+
+.nitro-purse .nitro-purse-button.currency-0 .text-white {
+    color: #ffd76d !important;
+}
+
+.nitro-purse .nitro-purse-button.currency-5 .text-white {
+    color: #df95ff !important;
+}
+
+.nitro-purse-subscription {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 62px;
+    cursor: pointer;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.nitro-purse-subscription__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    opacity: 0.95;
+}
+
+.nitro-purse-subscription__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1px;
+}
+
+.nitro-purse-subscription__label {
+    font-size: 0.5rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.62) !important;
+    letter-spacing: 0.08em;
+}
+
+.nitro-purse-subscription__value {
+    font-size: 0.54rem;
+    font-weight: 700;
+    line-height: 1.05;
+    color: #ffffff !important;
+}
+
+.nitro-purse__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3px;
+}
+
+.nitro-purse__action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 7px;
+    color: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.nitro-purse__action-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.nitro-purse__action-button .nitro-icon {
+    transform: scale(0.82);
+}
+
+.nitro-purse-seasonal-currency > div {
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+}
+
+.seasonal-row {
+    min-width: 0;
+}
+
+.seasonal-text-padding,
+.seasonal-amount {
+    display: flex;
+    align-items: center;
+    margin-left: 0;
+}
+
+.seasonal-text {
+    min-width: 0;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.76) !important;
+    line-height: 1;
+    letter-spacing: 0.01em;
+}
+
+.seasonal-amount {
+    margin-left: auto;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.96) !important;
+}
+
+.seasonal-image-padding {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    flex: 0 0 auto;
+}
+
+.seasonal-image {
+    display: block;
+    width: auto;
+    height: 13px;
+    object-fit: contain;
+}
+
+@media (max-width: 640px) {
+    .nitro-purse-shell {
+        max-width: 100%;
+    }
+
+    .nitro-purse-shell.is-closed {
+        max-width: 52px;
+    }
+
     .nitro-purse {
-        margin-top: 4px;
-
-        .nitro-purse-subscription {
-            background-color: rgba($light, 0.1);
-        }
-    
-        .nitro-purse-button {
-            padding: 3px 2px;
-        }
-        .coffecurrencybutton{
-            border-radius: 0.5rem !important;
-            background-color: #b69b83;
-            border: 2px solid hsla(0deg, 0%, 100%, 0.5);
-            margin-bottom: 3px;
-            padding: 0px !important;
-            width: 30px;
-			pointer-events: all;
-        }
-        .borderhccontent{
-            background-color: #212131;
-            border-radius: 0.5rem!important;
-            border: 2px solid #383853;
-            height: calc(100% - 3px);
-        }
-        .nitro-purse-button.currency--1 {
-            background: #e8b125;
-            border: 2px solid #f4d892;
-        }
-        .nitro-purse-button.currency-0 {
-            background: #c364c1;
-            border: 2px solid #ecb3ea;
-        }
-        .nitro-purse-button.currency-5 {
-            background: #6bafaa;
-			border: 2px solid #ace6e2;
-        }
-        .allcurrencypurse{
-            border-radius: 5px!important;
-            margin-bottom: 2px;
-        }
+        border-radius: 9px;
     }
 
-    .nitro-purse-seasonal-currency {
-        background-color: #212131;
-		background: linear-gradient(to right, #5f5f8d, transparent);
-		height: 30px;
-        margin-bottom: 4px;
-		border-radius: 0.5rem !important;
-    }
-	
-	.seasonal-image-padding {
-      padding: 6px;
+    .nitro-purse__content {
+        padding: 6px;
     }
 
-    .seasonal-text-padding,
+    .nitro-purse__summary {
+        grid-template-columns: minmax(0, 1fr) 28px 24px;
+        gap: 4px;
+    }
+
+    .nitro-purse__summary.is-no-hc {
+        grid-template-columns: minmax(0, 1fr) 24px;
+    }
+
+    .nitro-purse-subscription {
+        min-height: 58px;
+    }
+
+    .nitro-purse .allcurrencypurse .text-white,
+    .seasonal-text,
     .seasonal-amount {
-	  margin-left: 4px;
-      display: flex;
-      align-items: center;
-
+        font-size: 0.72rem;
     }
 
-	.nitro-purse-seasonal-currency.purple {
-		&.purple {
-			background: linear-gradient(to right, #b17fbe, transparent);
-			border-top-right-radius: 0.5rem;
-			border-bottom-right-radius: 0.5rem;
-			}
-	}
-
-.nitro-purse-seasonal-currency.bronze {
-  .bronze {
-    background: linear-gradient(to right, #d4943c, transparent);
-    border-top-right-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  }
+    .nitro-purse__header-title {
+        font-size: 0.78rem;
+    }
 }
 
-.nitro-purse-seasonal-currency.pink {
-  .pink {
-    background: linear-gradient(to right, #d89ba8, transparent);
-    border-top-right-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  }
-}
+@media (max-width: 420px) {
+    .nitro-purse__summary {
+        grid-template-columns: minmax(0, 1fr) 26px 22px;
+        gap: 4px;
+    }
 
-.nitro-purse-seasonal-currency.blue {
-  .blue{
-    background: linear-gradient(to right, #95c3e5, transparent);
-    border-top-right-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  }
-}
+    .nitro-purse__summary.is-no-hc {
+        grid-template-columns: minmax(0, 1fr) 22px;
+    }
 
-.nitro-purse-seasonal-currency.red {
-  &.red{
-    background: linear-gradient(to right, #ff0004, transparent);
-    border-top-right-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  }
-}
-}
+    .nitro-purse-subscription {
+        min-height: 54px;
+    }
 
-.topcurrencygen {
-  margin-top: 2px;
+    .nitro-purse-subscription__value {
+        font-size: 0.55rem;
+    }
 }

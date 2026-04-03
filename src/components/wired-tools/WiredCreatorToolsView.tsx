@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, AvatarExpressionEnum, FigureUpdateEvent, FurnitureFloorUpdateEvent, FurnitureMultiStateComposer, FurnitureWallMultiStateComposer, FurnitureWallUpdateComposer, FurnitureWallUpdateEvent, GetLocalizationManager, GetRoomEngine, GetSessionDataManager, ILinkEventTracker, PetMoveComposer, RemoveLinkEventTracker, RoomControllerLevel, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomUnitDanceEvent, RoomUnitEffectEvent, RoomUnitExpressionEvent, RoomUnitHandItemEvent, RoomUnitInfoEvent, RoomUnitLookComposer, RoomUnitStatusEvent, RoomUnitWalkComposer, UpdateFurniturePositionComposer, Vector3d } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, AvatarExpressionEnum, FigureUpdateEvent, FurnitureFloorUpdateEvent, FurnitureMultiStateComposer, FurnitureWallMultiStateComposer, FurnitureWallUpdateComposer, FurnitureWallUpdateEvent, GetLocalizationManager, GetRoomEngine, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker, RoomControllerLevel, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomUnitDanceEvent, RoomUnitEffectEvent, RoomUnitExpressionEvent, RoomUnitHandItemEvent, RoomUnitInfoEvent, RoomUnitStatusEvent, UpdateFurniturePositionComposer, Vector3d, WiredUserInspectMoveComposer } from '@nitrots/nitro-renderer';
 import { WiredMonitorDataEvent, WiredMonitorRequestComposer } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import furniInspectionIcon from '../../assets/images/wiredtools/furni.png';
@@ -433,16 +433,6 @@ const VARIABLE_DEFINITIONS: Record<VariablesElementType, VariableDefinition[]> =
         createVariableDefinition('@chat_style', 'Context', 'Conditional')
     ]
 };
-const USER_DIRECTION_VECTORS: Array<{ x: number; y: number; }> = [
-    { x: 0, y: -1 },
-    { x: 1, y: -1 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-    { x: -1, y: 1 },
-    { x: -1, y: 0 },
-    { x: -1, y: -1 }
-];
 const WIRED_FREEZE_EFFECT_IDS: Set<number> = new Set([ 218, 12, 11, 53, 163 ]);
 const TEAM_COLOR_NAMES: Record<number, string> = {
     1: 'red',
@@ -641,6 +631,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
     const [ isManagedGiveOpen, setIsManagedGiveOpen ] = useState(false);
     const [ managedGiveVariableItemId, setManagedGiveVariableItemId ] = useState(0);
     const [ managedGiveValue, setManagedGiveValue ] = useState('0');
+    const shouldPauseVariableSnapshotRefresh = (!!editingVariable || !!editingManagedHolderVariableId || isInspectionGiveOpen || isManagedGiveOpen);
     const [ selectedVariableKeys, setSelectedVariableKeys ] = useState<Record<VariablesElementType, string>>({
         furni: VARIABLE_DEFINITIONS.furni[0].key,
         user: VARIABLE_DEFINITIONS.user[0].key,
@@ -1296,14 +1287,14 @@ export const WiredCreatorToolsView: FC<{}> = () =>
 
     useEffect(() =>
     {
-        if(!isVisible || !roomSession?.roomId || !roomSettings.canInspect) return;
+        if(!isVisible || !roomSession?.roomId || !roomSettings.canInspect || shouldPauseVariableSnapshotRefresh) return;
 
         requestUserVariables();
 
         const interval = window.setInterval(requestUserVariables, WIRED_VARIABLES_POLL_MS);
 
         return () => window.clearInterval(interval);
-    }, [ isVisible, roomSession?.roomId, roomSettings.canInspect, requestUserVariables ]);
+    }, [ isVisible, roomSession?.roomId, roomSettings.canInspect, requestUserVariables, shouldPauseVariableSnapshotRefresh ]);
 
     useEffect(() =>
     {
@@ -2789,9 +2780,8 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                 break;
         }
 
-        requestUserVariables();
         setEditingManagedHolderVariableId(0);
-    }, [ selectedManagedVariableEntry, selectedManagedHolderVariableEntry, roomSettings.canModify, editingManagedHolderValue, variablesType, updateUserVariableValue, updateFurniVariableValue, updateRoomVariableValue, requestUserVariables ]);
+    }, [ selectedManagedVariableEntry, selectedManagedHolderVariableEntry, roomSettings.canModify, editingManagedHolderValue, variablesType, updateUserVariableValue, updateFurniVariableValue, updateRoomVariableValue ]);
     const giveManagedHolderVariable = useCallback(() =>
     {
         if(!selectedManagedVariableEntry || !selectedManagedGiveDefinition || !roomSettings.canModify) return;
@@ -2803,11 +2793,10 @@ export const WiredCreatorToolsView: FC<{}> = () =>
         if(variablesType === 'user') assignUserVariable(selectedManagedVariableEntry.entityId, selectedManagedGiveDefinition.itemId, nextValue);
         else assignFurniVariable(selectedManagedVariableEntry.entityId, selectedManagedGiveDefinition.itemId, nextValue);
 
-        requestUserVariables();
         setSelectedManagedHolderVariableId(selectedManagedGiveDefinition.itemId);
         setManagedGiveValue('0');
         setIsManagedGiveOpen(false);
-    }, [ selectedManagedVariableEntry, selectedManagedGiveDefinition, roomSettings.canModify, variablesType, managedGiveValue, assignUserVariable, assignFurniVariable, requestUserVariables ]);
+    }, [ selectedManagedVariableEntry, selectedManagedGiveDefinition, roomSettings.canModify, variablesType, managedGiveValue, assignUserVariable, assignFurniVariable ]);
     const removeManagedHolderVariable = useCallback(() =>
     {
         if(!selectedManagedVariableEntry || !selectedManagedHolderVariableEntry || !roomSettings.canModify || selectedManagedHolderVariableEntry.isReadOnly) return;
@@ -2816,9 +2805,8 @@ export const WiredCreatorToolsView: FC<{}> = () =>
         if(variablesType === 'user') removeUserVariable(selectedManagedVariableEntry.entityId, selectedManagedHolderVariableEntry.variableItemId);
         else removeFurniVariable(selectedManagedVariableEntry.entityId, selectedManagedHolderVariableEntry.variableItemId);
 
-        requestUserVariables();
         setEditingManagedHolderVariableId(0);
-    }, [ selectedManagedVariableEntry, selectedManagedHolderVariableEntry, roomSettings.canModify, variablesType, removeUserVariable, removeFurniVariable, requestUserVariables ]);
+    }, [ selectedManagedVariableEntry, selectedManagedHolderVariableEntry, roomSettings.canModify, variablesType, removeUserVariable, removeFurniVariable ]);
 
     const clearMonitorLogs = () =>
     {
@@ -3012,28 +3000,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                 return;
             }
 
-            if(selectedUser.kind === 'pet')
-            {
-                SendMessageComposer(new PetMoveComposer(selectedUser.userId, nextX, nextY, nextDirection));
-            }
-            else if((selectedUser.kind === 'user') && (selectedUser.roomIndex === roomSession.ownRoomIndex))
-            {
-                if(editingVariable === '@direction')
-                {
-                    const directionVector = USER_DIRECTION_VECTORS[nextDirection] ?? USER_DIRECTION_VECTORS[0];
-
-                    SendMessageComposer(new RoomUnitLookComposer((currentLiveState.positionX + directionVector.x), (currentLiveState.positionY + directionVector.y)));
-                }
-                else
-                {
-                    SendMessageComposer(new RoomUnitWalkComposer(nextX, nextY));
-                }
-            }
-            else
-            {
-                cancelVariableEdit();
-                return;
-            }
+            SendMessageComposer(new WiredUserInspectMoveComposer(selectedUser.roomIndex, nextX, nextY, nextDirection));
 
             setSelectedUserLiveState({
                 ...currentLiveState,
@@ -3352,10 +3319,9 @@ export const WiredCreatorToolsView: FC<{}> = () =>
             setSelectedInspectionVariableKeys(prev => ({ ...prev, furni: selectedInspectionGiveDefinition.name }));
         }
 
-        requestUserVariables();
         setInspectionGiveValue('0');
         setIsInspectionGiveOpen(false);
-    }, [ canManageInspectionVariableAssignments, selectedInspectionGiveDefinition, inspectionGiveValue, inspectionType, selectedUser, assignUserVariable, selectedFurni, assignFurniVariable, requestUserVariables ]);
+    }, [ canManageInspectionVariableAssignments, selectedInspectionGiveDefinition, inspectionGiveValue, inspectionType, selectedUser, assignUserVariable, selectedFurni, assignFurniVariable ]);
     const removeInspectionVariable = useCallback(() =>
     {
         if(!canManageInspectionVariableAssignments || !selectedInspectionCustomDefinition || selectedInspectionCustomDefinition.isReadOnly) return;
@@ -3373,25 +3339,44 @@ export const WiredCreatorToolsView: FC<{}> = () =>
             setSelectedInspectionVariableKeys(prev => ({ ...prev, furni: '' }));
         }
 
-        requestUserVariables();
         setIsInspectionGiveOpen(false);
-    }, [ canManageInspectionVariableAssignments, selectedInspectionCustomDefinition, inspectionType, selectedUser, removeUserVariable, selectedFurni, removeFurniVariable, requestUserVariables ]);
+    }, [ canManageInspectionVariableAssignments, selectedInspectionCustomDefinition, inspectionType, selectedUser, removeUserVariable, selectedFurni, removeFurniVariable ]);
 
     const onVariableInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) =>
     {
         event.stopPropagation();
 
-        if(event.nativeEvent.stopImmediatePropagation) event.nativeEvent.stopImmediatePropagation();
-
         switch(event.key)
         {
             case 'Enter':
+            case 'NumpadEnter':
                 event.preventDefault();
                 commitVariableEdit();
+                window.requestAnimationFrame(() => event.currentTarget.blur());
                 return;
             case 'Escape':
                 event.preventDefault();
                 cancelVariableEdit();
+                window.requestAnimationFrame(() => event.currentTarget.blur());
+                return;
+        }
+    };
+    const onManagedHolderValueInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) =>
+    {
+        event.stopPropagation();
+
+        switch(event.key)
+        {
+            case 'Enter':
+            case 'NumpadEnter':
+                event.preventDefault();
+                commitManagedHolderValueEdit();
+                window.requestAnimationFrame(() => event.currentTarget.blur());
+                return;
+            case 'Escape':
+                event.preventDefault();
+                setEditingManagedHolderVariableId(0);
+                window.requestAnimationFrame(() => event.currentTarget.blur());
                 return;
         }
     };
@@ -3731,15 +3716,9 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                                                                             type="text"
                                                                             value={ editingValue }
                                                                             onClick={ event => event.stopPropagation() }
-                                                                            onBlur={ commitVariableEdit }
+                                                                            onBlur={ cancelVariableEdit }
                                                                             onChange={ event => setEditingValue(event.target.value) }
-                                                                            onKeyDownCapture={ event =>
-                                                                            {
-                                                                                event.stopPropagation();
-
-                                                                                if(event.nativeEvent.stopImmediatePropagation) event.nativeEvent.stopImmediatePropagation();
-                                                                            } }
-                                                                            onKeyDown={ onVariableInputKeyDown } /> }
+                                                                            onKeyDownCapture={ onVariableInputKeyDown } /> }
                                                                     { (editingVariable !== variable.key) && !variable.editable && <span className={ variable.valueClassName }>{ variable.value }</span> }
                                                                             { (editingVariable !== variable.key) && variable.editable &&
                                                                         <button
@@ -4224,19 +4203,10 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                                                             className="w-[72px] rounded border border-[#b8b2a4] bg-white px-2 py-[2px] text-[12px]"
                                                             type="number"
                                                             value={ editingManagedHolderValue }
-                                                            onBlur={ () => commitManagedHolderValueEdit() }
+                                                            onBlur={ () => setEditingManagedHolderVariableId(0) }
                                                             onChange={ event => setEditingManagedHolderValue(event.target.value) }
                                                             onClick={ event => event.stopPropagation() }
-                                                            onKeyDown={ (event: KeyboardEvent<HTMLInputElement>) =>
-                                                            {
-                                                                if(event.key === 'Enter') commitManagedHolderValueEdit();
-
-                                                                if(event.key === 'Escape')
-                                                                {
-                                                                    setEditingManagedHolderVariableId(0);
-                                                                    setEditingManagedHolderValue('');
-                                                                }
-                                                            } } /> }
+                                                            onKeyDownCapture={ onManagedHolderValueInputKeyDown } /> }
                                                 </td>
                                             </tr>
                                         );

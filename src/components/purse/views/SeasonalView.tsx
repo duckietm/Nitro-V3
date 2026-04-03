@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { GetConfigurationValue, LocalizeFormattedNumber, LocalizeText } from '../../../api';
-import { Flex, LayoutCurrencyIcon, Text } from '../../../common';
+import { Flex, Text } from '../../../common';
 
 interface SeasonalViewProps {
   type: number;
@@ -10,6 +10,8 @@ interface SeasonalViewProps {
 export const SeasonalView: FC<SeasonalViewProps> = props => {
   const { type = -1, amount = -1 } = props;
   const seasonalColor = GetConfigurationValue<string>('currency.seasonal.color', 'blue');
+  const formattedAmount = LocalizeFormattedNumber(amount);
+  const iconUrl = GetConfigurationValue<string>('currency.asset.icon.url', '').replace('%type%', type.toString());
 
   return (
     <Flex
@@ -17,21 +19,20 @@ export const SeasonalView: FC<SeasonalViewProps> = props => {
       justifyContent="between"
       className={`nitro-purse-seasonal-currency nitro-notification ${seasonalColor}`}
     >
-      <Flex fullWidth>
+      <Flex fullWidth className="seasonal-row">
+        <Flex className="nitro-seasonal-box seasonal-image-padding">
+          <img src={ iconUrl } alt="" className="seasonal-image" />
+        </Flex>
         <Text truncate fullWidth variant="white" className="seasonal-text-padding seasonal-text">
           {LocalizeText(`purse.seasonal.currency.${type}`)}
         </Text>
         <Text
-          truncate
           variant="white"
           className="seasonal-amount text-end"
-          title={amount > 99999 ? LocalizeFormattedNumber(amount) : ''}
+          title={formattedAmount}
         >
-          {amount > 99999 ? '99 999' : LocalizeFormattedNumber(amount)}
+          {formattedAmount}
         </Text>
-        <Flex className="nitro-seasonal-box seasonal-image-padding">
-          <LayoutCurrencyIcon type={type} />
-        </Flex>
       </Flex>
     </Flex>
   );

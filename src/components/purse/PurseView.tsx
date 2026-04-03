@@ -1,17 +1,21 @@
 import { CreateLinkEvent, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { FaChevronDown, FaQuestionCircle } from 'react-icons/fa';
 import { FriendlyTime, GetConfigurationValue, LocalizeText } from '../../api';
-import { Column, Flex, Grid, LayoutCurrencyIcon, Text } from '../../common';
+import { Column, Flex, LayoutCurrencyIcon, Text } from '../../common';
 import { usePurse } from '../../hooks';
+import purseIcon from '../../assets/images/rightside/purse.gif';
 import { CurrencyView } from './views/CurrencyView';
 import { SeasonalView } from './views/SeasonalView';
 
 export const PurseView: FC<{}> = props => {
     const { purse = null, hcDisabled = false } = usePurse();
+    const [ isOpen, setIsOpen ] = useState(true);
+    const [ isCompact, setIsCompact ] = useState(false);
 
     const displayedCurrencies = useMemo(() => GetConfigurationValue<number[]>('system.currency.types', []), []);
     const currencyDisplayNumberShort = useMemo(() => GetConfigurationValue<boolean>('currency.display.number.short', false), []);
-	
+
     const getClubText = (() => {
         if (!purse) return null;
 
@@ -23,11 +27,10 @@ export const PurseView: FC<{}> = props => {
         else return FriendlyTime.shortFormat(totalDays * 86400);
     })();
 
-    const getCurrencyElements = (offset: number, limit: number = -1, seasonal: boolean = false) => {
-        if (!purse || !purse.activityPoints || !purse.activityPoints.size) return null;
+    const currencyTypes = useMemo(() => {
+        if (!purse || !purse.activityPoints || !purse.activityPoints.size) return [];
 
         const types = Array.from(purse.activityPoints.keys()).filter(type => (displayedCurrencies.indexOf(type) >= 0));
-
         types.sort((a, b) => {
             if (a === 0) return -1;
             if (b === 0) return 1;
@@ -36,60 +39,73 @@ export const PurseView: FC<{}> = props => {
             return a - b;
         });
 
-        let count = 0;
+        return types;
+    }, [ displayedCurrencies, purse ]);
 
-        while (count < offset) {
-            types.shift();
-            count++;
+    const primaryCurrencies = currencyTypes.slice(0, 2);
+    const seasonalCurrencies = currencyTypes.slice(2);
+
+    useEffect(() =>
+    {
+        if(isOpen)
+        {
+            setIsCompact(false);
+            return;
         }
 
-        count = 0;
-        const elements: JSX.Element[] = [];
+        const timeout = window.setTimeout(() => setIsCompact(true), 220);
 
-        for (const type of types) {
-            if ((limit > -1) && (count === limit)) break;
-
-            if (seasonal) {
-                elements.push(<SeasonalView key={type} type={type} amount={purse.activityPoints.get(type)} />);
-            } else {
-                elements.push(<CurrencyView key={type} type={type} amount={purse.activityPoints.get(type)} short={currencyDisplayNumberShort} />);
-            }
-
-            count++;
-        }
-
-        return elements;
-    }
+        return () => window.clearTimeout(timeout);
+    }, [ isOpen ]);
 
     if (!purse) return null;
 
     return (
-        <Column alignItems="end" className="nitro-purse-container" gap={0}>
-            <Flex className="nitro-purse rounded-bottom p-1">
-                <Grid fullWidth gap={1}>
-                    <Column justifyContent="center" size={hcDisabled ? 10 : 6} gap={0}>
-                        <CurrencyView type={-1} amount={purse.credits} short={currencyDisplayNumberShort} />
-                        {getCurrencyElements(0, 2)}
-                    </Column>
-                    {!hcDisabled &&
-                        <Column center pointer size={4} gap={1} className="nitro-purse-subscription rounded borderhccontent" onClick={event => CreateLinkEvent('habboUI/open/hccenter')}>
-                            <LayoutCurrencyIcon type="hc" />
-                            <Text variant="white">{getClubText}</Text>
-                        </Column>}
-                    <Column justifyContent="center" size={1} gap={0}>
-                        <Flex center pointer fullHeight className="nitro-purse-button p-1 rounded coffecurrencybutton" onClick={event => CreateLinkEvent('help/show')}>
-                            <i className="nitro-icon icon-help"/>
+        <Column alignItems="end" className="nitro-purse-container" gap={ 0 }>
+            <div className={ `nitro-purse-shell ${ isCompact ? 'is-closed' : '' }` }>
+                <div className={ `nitro-purse ${ isCompact ? 'is-closed' : '' }` }>
+                    <div className={ `nitro-purse__header ${ isCompact ? 'is-closed' : '' }` } onClick={ () => setIsOpen(value => !value) }>
+                        <Flex alignItems="center" gap={ 1 } className={ isCompact ? 'nitro-purse__header-main is-closed' : 'nitro-purse__header-main' }>
+                            <div className="nitro-purse__header-icon">
+                                <img src={ purseIcon } alt="" className="nitro-purse__header-image" />
+                            </div>
                         </Flex>
-                        <Flex center pointer fullHeight className="nitro-purse-button p-1 rounded coffecurrencybutton" onClick={event => CreateLinkEvent('user-settings/toggle')}>
-                            <i className="nitro-icon icon-cog"/>
-                        </Flex>
-                    </Column>
-					<Column justifyContent="center" size={11} gap={0}>
-						{getCurrencyElements(2, -1, true)}
-					</Column>
-                </Grid>
-            </Flex>
-            
+                        <div className={ `nitro-purse__header-toggle ${ isOpen ? 'is-open' : '' }` }>
+                            <FaChevronDown className="fa-icon text-[10px]" />
+                        </div>
+                    </div>
+                    <div className={ `nitro-purse__content ${ isOpen ? 'is-open' : 'is-closed' }` }>
+                            <div className={ `nitro-purse__summary nitro-purse__summary--compact ${ hcDisabled ? 'is-no-hc' : '' }` }>
+                                <div className="nitro-purse__primary">
+                                    <CurrencyView type={ -1 } amount={ purse.credits } short={ currencyDisplayNumberShort } />
+                                    { primaryCurrencies.map(type => <CurrencyView key={ type } type={ type } amount={ purse.activityPoints.get(type) || 0 } short={ currencyDisplayNumberShort } />) }
+                                </div>
+                                { !hcDisabled &&
+                                    <div className="nitro-purse-subscription" onClick={ event => { event.stopPropagation(); CreateLinkEvent('habboUI/open/hccenter'); } }>
+                                        <div className="nitro-purse-subscription__icon">
+                                            <LayoutCurrencyIcon type="hc" />
+                                        </div>
+                                        <div className="nitro-purse-subscription__copy">
+                                            <Text variant="white" className="nitro-purse-subscription__label">HC</Text>
+                                            <Text variant="white" className="nitro-purse-subscription__value">{ getClubText }</Text>
+                                        </div>
+                                    </div> }
+                                <div className="nitro-purse__actions">
+                                    <button type="button" className="nitro-purse__action-button nitro-purse__action-button--help" onClick={ event => { event.stopPropagation(); CreateLinkEvent('help/show'); } } title={ LocalizeText('help.button.name') }>
+                                        <FaQuestionCircle />
+                                    </button>
+                                    <button type="button" className="nitro-purse__action-button nitro-purse__action-button--settings" onClick={ event => { event.stopPropagation(); CreateLinkEvent('user-settings/toggle'); } } title={ LocalizeText('widget.memenu.settings.title') }>
+                                        <i className="nitro-icon icon-cog" />
+                                    </button>
+                                </div>
+                            </div>
+                            { seasonalCurrencies.length > 0 &&
+                                <div className="nitro-purse__seasonal">
+                                    { seasonalCurrencies.map(type => <SeasonalView key={ type } type={ type } amount={ purse.activityPoints.get(type) || 0 } />) }
+                                </div> }
+                    </div>
+                </div>
+            </div>
         </Column>
     );
-}
+};

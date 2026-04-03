@@ -1,16 +1,65 @@
 .nitro-room-tools-container {
     position: absolute;
-    bottom:60px;
-    left: 15px;
+    bottom: 118px;
+    left: 0;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    z-index: 71;
+
+    .nitro-room-tools-rail {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .nitro-room-tools-toggle {
+        position: absolute;
+        left: calc(100% - 1px);
+        top: 50%;
+        width: 22px;
+        height: 96px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        background: rgba(10, 10, 12, 0.58);
+        color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+        transition: background .2s ease, border-color .2s ease;
+        padding: 0;
+        transform: translateY(-50%);
+        z-index: 72;
+
+        &:hover {
+            background: rgba(18, 18, 22, 0.72);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        &.is-open {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+        }
+    }
 
     .nitro-room-tools {
-        background: #212131;
-        box-shadow: inset 0px 5px lighten(rgba(#000, .6), 2.5), inset 0 -4px darken(rgba(#000, .6), 4);
-        border-top-right-radius: .25rem;
-        border-bottom-right-radius: .25rem;
+        background: rgba(10, 10, 12, 0.58);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
         transition: all .2s ease;
         z-index: 71;
-        margin-left: -20px;
+        margin-left: 0;
+        gap: 4px;
+        padding: 6px 5px;
+        min-width: 36px;
+        min-height: 96px;
 
         .list-group-item {
             background: transparent;
@@ -49,32 +98,37 @@
     .nitro-room-tools-side-container {
         display: flex;
         flex-direction: column;
-        margin-left: 10px;
+        margin-left: 26px;
         gap: 10px;
     }
 
     .nitro-room-history {
-        background: #212131;
-        box-shadow: inset 0px 5px lighten(rgba(#000, .6), 2.5), inset 0 -4px darken(rgba(#000, .6), 4);
+        background: rgba(10, 10, 12, 0.58);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
         transition: all .2s ease;
         width: 150px;
         overflow: hidden;
         z-index: 3;
+        border-radius: 14px;
     }
 
     .nitro-room-tools-info {
-        background: #212131;
-        box-shadow: inset 0px 5px lighten(rgba(#000, .6), 2.5), inset 0 -4px darken(rgba(#000, .6), 4);
+        background: rgba(10, 10, 12, 0.58);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
         transition: all .2s ease;
         max-width: 250px;
+        border-radius: 14px;
     }
 }
 
 .nitro-room-tools-history {
     position: absolute;
-    left: calc(100% - 2px);
-    margin-left: 2px;
-	height: 5%;
+    top: 0;
+    left: calc(100% + 4px);
+    margin-left: 0;
+    height: auto;
 }
 
 .wordquiz-question {

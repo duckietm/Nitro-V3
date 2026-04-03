@@ -24,10 +24,10 @@ export const LayoutGridItem: FC<LayoutGridItemProps> = props =>
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'layout-grid-item', 'border', 'border-2', 'border-muted', 'rounded' ];
+        const newClassNames: string[] = [ 'layout-grid-item', 'border', 'border-2', 'border-[#c4cabf]', 'rounded-[6px]' ];
 
 
-        if(itemActive) newClassNames.push('bg-[#ececec]! border-[#fff]!');
+        if(itemActive) newClassNames.push('bg-[#e4e7df]! border-[#aeb7aa]!');
 
         if(itemUniqueSoldout || (itemUniqueNumber > 0)) newClassNames.push('unique-item');
 

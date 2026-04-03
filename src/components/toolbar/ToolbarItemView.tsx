@@ -11,7 +11,7 @@ export const ToolbarItemView = forwardRef<HTMLDivElement, PropsWithChildren<{
         <div
             ref={ ref }
             className={ classNames(
-                'cursor-pointer relative',
+                'relative h-[32px] w-[32px] shrink-0 cursor-pointer bg-center bg-no-repeat transition-transform duration-200 ease-out hover:-translate-y-[1px] active:translate-y-0',
                 `nitro-icon icon-${ icon }`,
                 className
             ) }

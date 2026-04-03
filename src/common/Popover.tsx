@@ -45,7 +45,7 @@ export const ReactPopover: FC<PropsWithChildren<{
             <div
                 className="min-w-fit w-[200px] h-fit absolute bottom-full z-50 transition-all"
                 hidden={ !show }>
-                <div className="rounded bg-white p-3 shadow-[10px_30px_150px_rgba(46,38,92,0.25)] mb-[10px]">
+                <div className="mb-[10px] rounded-[8px] border border-[#c4cabf] bg-[#f2f2eb] p-3 shadow-none">
                     { content }
                 </div>
             </div>

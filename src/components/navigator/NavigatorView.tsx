@@ -244,8 +244,12 @@ export const NavigatorView: FC<{}> = props =>
                                     <NavigatorSearchView sendSearch={ sendSearch } />
                                     <div ref={ elementRef } className="flex flex-col flex-1 min-h-0 overflow-auto gap-2">
                                         { (searchResult && searchResult.results.map((result, index) => <NavigatorSearchResultView key={ index } searchResult={ result } />)) }
+                                        { (searchResult && (!searchResult.results || (searchResult.results.length === 0))) &&
+                                            <div className="nitro-card-panel px-3 py-2 text-sm text-muted">
+                                                { LocalizeText(searchResult.code === 'myworld_view' ? 'navigator.no.user.rooms.to.show' : 'navigator.no.results') }
+                                            </div> }
                                     </div>
-                                    <Flex className="pt-2 border-t border-muted gap-2">
+                                    <Flex className="nitro-card-divider pt-2 border-t gap-2">
                                         <Flex
                                             pointer
                                             alignItems="center"

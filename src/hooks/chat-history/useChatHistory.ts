@@ -6,6 +6,7 @@ import { useMessageEvent, useNitroEvent } from '../events';
 import { useLocalStorage } from '../useLocalStorage';
 
 const ROOM_HISTORY_MAX = 10;
+const CHAT_HISTORY_MAX = 1000;
 const MESSENGER_HISTORY_MAX = 1000;
 
 let CHAT_HISTORY_COUNTER: number = 0;
@@ -28,6 +29,7 @@ const useChatHistoryState = () =>
 
             newValue.push(entry);
 
+            if(newValue.length > CHAT_HISTORY_MAX) newValue.shift();
 
             return newValue;
         });

@@ -52,14 +52,14 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = pro
     {
         if(!searchResult) return;
 
-        setIsExtended(!searchResult.closed);
+        setIsExtended((searchResult.code === 'myworld_view') ? true : !searchResult.closed);
         setDisplayMode(searchResult.mode);
     }, [ searchResult ]);
 
     const gridHasTwoColumns = (displayMode >= NavigatorSearchResultViewDisplayMode.THUMBNAILS);
 
     return (
-        <Column className="bg-white rounded border border-muted" gap={ 0 }>
+        <Column className="nitro-card-panel" gap={ 0 }>
             <Flex fullWidth alignItems="center" className="px-2 py-1" justifyContent="between">
                 <Flex grow pointer alignItems="center" gap={ 1 } onClick={ event => setIsExtended(prevValue => !prevValue) }>
                     { isExtended && <FaMinus className="text-secondary fa-icon" /> }
@@ -105,6 +105,10 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = pro
                                 />
                             )) }
                         </Grid> }
+                    { (searchResult.rooms.length === 0) &&
+                        <Text className="px-3 py-2 text-sm" variant="muted">
+                            { LocalizeText(searchResult.code === 'myworld_view' ? 'navigator.no.user.rooms.to.show' : 'navigator.no.results') }
+                        </Text> }
                 </> }
         </Column>
     );

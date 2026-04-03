@@ -8,6 +8,7 @@ export class MessengerThread
 {
     public static MESSAGE_RECEIVED: string = 'MT_MESSAGE_RECEIVED';
     public static THREAD_ID: number = 0;
+    private static MAX_CHATS: number = 250;
 
     private _threadId: number;
     private _participant: MessengerFriend;
@@ -38,12 +39,34 @@ export class MessengerThread
         const chat = new MessengerThreadChat(senderId, message, secondsSinceSent, extraData, type);
 
         group.addChat(chat);
+        this.pruneChats();
 
         this._lastUpdated = new Date();
 
         this._unreadCount++;
 
         return chat;
+    }
+
+    private pruneChats(): void
+    {
+        let totalChats = this._groups.reduce((total, current) => (total + current.chats.length), 0);
+
+        while(totalChats > MessengerThread.MAX_CHATS)
+        {
+            const firstGroup = this._groups[0];
+
+            if(!firstGroup) break;
+
+            if(firstGroup.chats.length) firstGroup.chats.shift();
+
+            if(!firstGroup.chats.length)
+            {
+                this._groups.shift();
+            }
+
+            totalChats--;
+        }
     }
 
     private getLastGroup(userId: number): MessengerThreadChatGroup

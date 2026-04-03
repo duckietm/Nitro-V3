@@ -13,7 +13,7 @@ const NitroCardRoot = forwardRef<HTMLDivElement, PropsWithChildren<{
             <div
                 ref={ ref }
                 className={ classNames(
-                    'flex flex-col rounded-md shadow border-2 border-card-border overflow-hidden min-w-full min-h-full max-w-full max-h-full',
+                    'nitro-card-shell flex flex-col overflow-hidden min-w-full min-h-full max-w-full max-h-full',
                     className
                 ) }
                 { ...rest } />
@@ -37,10 +37,10 @@ const NitroCardHeader = forwardRef<HTMLDivElement, {
             };
 
             return (
-                <div ref={ ref } className={ classNames('relative flex items-center justify-center flex-col drag-handler min-h-card-header max-h-card-header bg-card-header', className) }>
+                <div ref={ ref } className={ classNames('nitro-card-header-shell relative flex items-center justify-center flex-col drag-handler min-h-card-header max-h-card-header', className) }>
                     <div className="flex items-center justify-center w-full ">
-                        <span className="text-xl text-white drop-shadow-lg">{ headerText }</span>
-                        <div className="absolute flex items-center justify-center cursor-pointer right-2 p-[2px] ubuntu-close-button" onClick={ onCloseClick } onMouseDownCapture={ onMouseDown } />
+                        <span className="nitro-card-title text-white">{ headerText }</span>
+                        <div className="absolute flex items-center justify-center cursor-pointer right-2 nitro-card-close-button" onClick={ onCloseClick } onMouseDownCapture={ onMouseDown } />
                     </div>
                 </div>
             );
@@ -58,7 +58,7 @@ const NitroCardContent = forwardRef<HTMLDivElement, {
         <div
             ref={ ref }
             className={ classNames(
-                'flex flex-col overflow-auto bg-card-content-area p-2 h-full',
+                'nitro-card-content-shell flex flex-col overflow-auto p-[10px] h-full',
                 className
             ) }
             { ...rest }>
@@ -80,7 +80,7 @@ const NitroCardTabs = forwardRef<HTMLDivElement, {
         <div
             ref={ ref }
             className={ classNames(
-                'justify-center gap-0.5 flex bg-card-tabs min-h-card-tabs max-h-card-tabs pt-1 border-b border-card-border px-2 -mt-px',
+                'nitro-card-tabs-shell justify-center gap-1 flex min-h-card-tabs max-h-card-tabs px-2 pt-1',
                 className)
             }
             { ...rest } />
@@ -100,8 +100,8 @@ const NitroCardTabItem = forwardRef<HTMLDivElement, {
         <div
             ref={ ref }
             className={ classNames(
-                'overflow-hidden relative cursor-pointer rounded-t-md flex bg-card-tab-item px-3 py-1 z-1 border-card-border border-t border-l border-r before:absolute before:w-[93%] before:h-[3px] before:rounded-md before:top-[1.5px] before:left-0 before:right-0 before:m-auto before:z-1 before:bg-[#C2C9D1]',
-                isActive && 'bg-card-tab-item-active -mb-px before:bg-white',
+                'nitro-card-tab-item overflow-hidden relative cursor-pointer rounded-t-[8px] flex px-3 py-[6px] z-1',
+                isActive && 'nitro-card-tab-item-active -mb-px',
                 className)
             }
             { ...rest }>

@@ -14,8 +14,8 @@ export const NitroCardTabsItemView: FC<NitroCardTabsItemViewProps> = props =>
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'overflow-hidden relative cursor-pointer rounded-t-md flex bg-card-tab-item px-3 py-1 z-1 border-card-border border-t border-l border-r before:absolute before:w-[93%] before:h-[3px] before:rounded-md before:top-[1.5px] before:left-0 before:right-0 before:m-auto before:z-1 before:bg-[#C2C9D1]',
-            isActive && 'bg-card-tab-item-active -mb-px before:bg-white' ];
+        const newClassNames: string[] = [ 'nitro-card-tab-item overflow-hidden relative cursor-pointer rounded-t-[8px] flex px-3 py-[6px] z-1',
+            isActive && 'nitro-card-tab-item-active -mb-px' ];
 
         //if (isActive) newClassNames.push('bg-[#dfdfdf] border-b-[1px_solid_black]');
 

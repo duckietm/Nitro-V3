@@ -52,7 +52,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
         <Grid overflow="auto">
             <Column size={ 6 }>
                 <Text bold>{ LocalizeText('navigator.roomsettings.moderation.banned.users') } ({ bannedUsers.length })</Text>
-                <Flex overflow="hidden" className="bg-white rounded list-container p-2">
+                <Flex overflow="hidden" className="nitro-card-panel list-container p-2">
                     <Column fullWidth overflow="auto" gap={ 1 }>
                         { bannedUsers && (bannedUsers.length > 0) && bannedUsers.map((user, index) =>
                         {

@@ -163,7 +163,7 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = props =>
                                 { (navigatorData.enteredGuestRoom.tags.length > 0) &&
                                     <div className="flex flex-wrap items-center gap-1 mt-1">
                                         { navigatorData.enteredGuestRoom.tags.map(tag => (
-                                            <Text key={ tag } pointer className="px-1 rounded bg-muted cursor-pointer text-xs" onClick={ () => processAction('navigator_search_tag', tag) }>
+                                            <Text key={ tag } pointer className="nitro-card-row px-1 cursor-pointer text-xs" onClick={ () => processAction('navigator_search_tag', tag) }>
                                                 #{ tag }
                                             </Text>
                                         )) }

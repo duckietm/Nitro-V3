@@ -14,14 +14,14 @@ export const BadgeInfoView: FC<BadgeInfoViewProps> = props =>
 
     return (
         <Flex center
-            className="w-[45px] h-[45px] rounded bg-white/50 relative cursor-pointer"
+            className="nitro-card-panel w-[45px] h-[45px] relative cursor-pointer"
             onMouseEnter={ () => setIsHovered(true) }
             onMouseLeave={ () => setIsHovered(false) }
         >
             <LayoutBadgeImageView badgeCode={ badgeCode } />
             { isHovered && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-50 bg-white text-black rounded shadow-lg py-1 px-2 text-xs w-[180px] pointer-events-none">
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45" />
+                <div className="absolute top-full left-1/2 z-50 mt-1 w-[180px] -translate-x-1/2 border border-[#c4cabf] bg-[#f2f2eb] px-2 py-1 text-xs text-black shadow-none pointer-events-none rounded-[6px]">
+                    <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-l border-t border-[#c4cabf] bg-[#f2f2eb]" />
                     <div className="font-bold mb-0.5">{ LocalizeBadgeName(badgeCode) }</div>
                     <div className="text-gray-600">{ LocalizeBadgeDescription(badgeCode) }</div>
                 </div>

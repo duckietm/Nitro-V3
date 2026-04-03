@@ -73,7 +73,7 @@ export const GuideToolOngoingView: FC<GuideToolOngoingViewProps> = props =>
 
     return (
         <Column fullHeight>
-            <Flex alignItems="center" className="p-2 rounded bg-muted" gap={ 1 } justifyContent="between">
+            <Flex alignItems="center" className="nitro-card-panel p-2" gap={ 1 } justifyContent="between">
                 { isGuide &&
                     <div className="relative inline-flex align-middle">
                         <Button onClick={ visit }>{ LocalizeText('guide.help.request.guide.ongoing.visit.button') }</Button>
@@ -86,7 +86,7 @@ export const GuideToolOngoingView: FC<GuideToolOngoingViewProps> = props =>
                     </Column> }
                 <Button disabled variant="danger">{ LocalizeText('guide.help.common.report.link') }</Button>
             </Flex>
-            <Column className="p-2 rounded bg-muted chat-messages" gap={ 1 } overflow="hidden">
+            <Column className="nitro-card-panel p-2 chat-messages" gap={ 1 } overflow="hidden">
                 <Column overflow="auto">
                     { messageGroups.map((group, index) =>
                     {
@@ -96,7 +96,7 @@ export const GuideToolOngoingView: FC<GuideToolOngoingViewProps> = props =>
                                     { (!isOwnChat(group.userId)) &&
                                         <LayoutAvatarImageView direction={ 2 } figure={ userFigure } /> }
                                 </div>
-                                <div className={ 'bg-light text-black border-radius mb-2 rounded py-1 px-2 messages-group-' + (isOwnChat(group.userId) ? 'right' : 'left') }>
+                                <div className={ 'nitro-card-row text-black border-radius mb-2 py-1 px-2 messages-group-' + (isOwnChat(group.userId) ? 'right' : 'left') }>
                                     <Text bold>
                                         { (isOwnChat(group.userId)) && GetSessionDataManager().userName }
                                         { (!isOwnChat(group.userId)) && userName }

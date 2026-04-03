@@ -80,14 +80,14 @@ export const NameChangeInputView: FC<NameChangeLayoutViewProps> = props =>
                 <button className="btn btn-primary" disabled={ newUsername === '' || isChecking } onClick={ check }>{ LocalizeText('tutorial.name_change.check') }</button>
             </div>
             { !errorCode && !canProceed &&
-                <div className="p-2 text-center rounded bg-muted">{ LocalizeText('help.tutorial.name.info') }</div> }
+                <div className="nitro-card-panel p-2 text-center">{ LocalizeText('help.tutorial.name.info') }</div> }
             { errorCode &&
                 <div className="p-2 text-center text-white rounded bg-danger">{ LocalizeText(`help.tutorial.name.${ errorCode }`, [ 'name' ], [ newUsername ]) }</div> }
             { canProceed &&
                 <div className="p-2 text-center text-white rounded bg-success">{ LocalizeText('help.tutorial.name.available', [ 'name' ], [ newUsername ]) }</div> }
             { suggestions &&
                 <div className="flex flex-col gap-2">
-                    { suggestions.map((suggestion, index) => <div key={ index } className="p-1 rounded cursor-pointer col bg-muted" onClick={ () => handleUsernameChange(suggestion) }>{ suggestion }</div>) }
+                    { suggestions.map((suggestion, index) => <div key={ index } className="nitro-card-row p-1 cursor-pointer col" onClick={ () => handleUsernameChange(suggestion) }>{ suggestion }</div>) }
                 </div> }
             <div className="flex gap-2">
                 <button className="w-full btn btn-success" disabled={ !canProceed } onClick={ () => onAction('confirmation', newUsername) }>{ LocalizeText('tutorial.name_change.pick') }</button>

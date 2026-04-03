@@ -116,7 +116,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                     ) }
                 </Text>
 
-                <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
+                <Flex overflow="hidden" className="nitro-card-panel p-2 list-container">
                     <Column fullWidth overflow="auto" gap={ 1 }>
                         { Array.from(filteredUsersWithRights.entries()).map(([ id, name ], index) =>
                         {
@@ -155,7 +155,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                     ) }
                 </Text>
 
-                <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
+                <Flex overflow="hidden" className="nitro-card-panel p-2 list-container">
                     <Column fullWidth overflow="auto" gap={ 1 }>
                         { friendsWithoutRights.map((friend, index) =>
                         {

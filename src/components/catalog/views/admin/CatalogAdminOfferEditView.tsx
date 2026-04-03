@@ -110,9 +110,9 @@ export const CatalogAdminOfferEditView: FC<{}> = () =>
         <div className="fixed inset-0 flex items-center justify-center" style={ { zIndex: 1000 } } onClick={ () => setEditingOffer(null) }>
             <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
 
-            <div className="relative bg-light rounded-lg w-[420px] border-2 border-card-border overflow-hidden shadow-lg" onClick={ e => e.stopPropagation() }>
+            <div className="nitro-card-shell relative w-[420px] overflow-hidden shadow-lg" onClick={ e => e.stopPropagation() }>
                 { /* Header */ }
-                <div className="flex items-center justify-between px-3 py-2 bg-card-header">
+                <div className="nitro-card-header-shell flex items-center justify-between px-3 py-2">
                     <span className="text-sm font-bold text-white">
                         { isNew ? LocalizeText('catalog.admin.offer.new') : `${ LocalizeText('catalog.admin.offer.edit') } #${ editingOffer.offerId }` }
                     </span>

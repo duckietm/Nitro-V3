@@ -1,19 +1,50 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useFriends } from '../../hooks';
 import { FriendBarView } from './views/friends-bar/FriendsBarView';
 import { FriendsListView } from './views/friends-list/FriendsListView';
 import { FriendsMessengerView } from './views/messenger/FriendsMessengerView';
 
-export const FriendsView: FC<{}> = props =>
-{
-    const { settings = null, onlineFriends = [] } = useFriends();
+const FRIEND_BAR_TARGET_IDS = [ 'toolbar-friend-bar-container-desktop' ];
+
+export const FriendsView: FC<{}> = props => {
+    const { settings = null, onlineFriends = [], requests = [] } = useFriends();
+    const [ portalTarget, setPortalTarget ] = useState<HTMLElement | null>(null);
+
+    useEffect(() =>
+    {
+        if(typeof document === 'undefined') return;
+
+        const resolveTarget = () =>
+        {
+            for(const id of FRIEND_BAR_TARGET_IDS)
+            {
+                const element = document.getElementById(id);
+
+                if(element)
+                {
+                    setPortalTarget(previous => ((previous === element) ? previous : element));
+                    return;
+                }
+            }
+
+            setPortalTarget(null);
+        };
+
+        resolveTarget();
+
+        const observer = new MutationObserver(resolveTarget);
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        return () => observer.disconnect();
+    }, []);
 
     if(!settings) return null;
 
     return (
         <>
-            { createPortal(<FriendBarView onlineFriends={ onlineFriends } />, document.getElementById('toolbar-friend-bar-container')) }
+            { portalTarget && createPortal(<FriendBarView onlineFriends={ onlineFriends } requestsCount={ requests.length } />, portalTarget) }
             <FriendsListView />
             <FriendsMessengerView />
         </>

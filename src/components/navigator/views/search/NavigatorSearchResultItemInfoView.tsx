@@ -89,7 +89,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
 
     return (
         <Popover
-            containerClassName="max-w-[276px] not-italic font-normal leading-normal text-left no-underline text-shadow-none normal-case tracking-[normal] [word-break:normal] [word-spacing:normal] whitespace-normal text-[.7875rem] [word-wrap:break-word] bg-[#dfdfdf] bg-clip-padding border border-[solid] border-[#283F5D] rounded-[.25rem] [box-shadow:0_2px_#00000073] z-[1070]"
+            containerClassName="max-w-[276px] not-italic font-normal leading-normal text-left no-underline text-shadow-none normal-case tracking-[normal] [word-break:normal] [word-spacing:normal] whitespace-normal text-[.7875rem] [word-wrap:break-word] bg-[#f2f2eb] border border-[#000] rounded-[8px] shadow-none z-[1070]"
             content={ ({ position, childRect, popoverRect }) => (
                 <ArrowContainer
                     arrowColor="black"
@@ -99,7 +99,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
                     popoverRect={ popoverRect }
                     position={ position }
                 >
-                    <NitroCardContentView className="bg-transparent room-info image-rendering-pixelated" overflow="hidden" onClick={ e => e.stopPropagation() }>
+                    <NitroCardContentView className="bg-transparent room-info image-rendering-pixelated !p-0" overflow="hidden" onClick={ e => e.stopPropagation() }>
                         <Flex gap={ 1 } overflow="hidden" className="p-2">
                             <LayoutRoomThumbnailView className="flex flex-col items-center justify-end mb-1" customUrl={ roomData.officialRoomPicRef } roomId={ roomData.roomId }>
                                 { roomData.habboGroupId > 0 && (

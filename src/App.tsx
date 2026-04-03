@@ -14,7 +14,6 @@ export const App: FC<{}> = props =>
     const [ isReady, setIsReady ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState('');
     const [ homeUrl, setHomeUrl ] = useState('');
-
     const showSessionExpired = useCallback(() =>
     {
         const baseUrl = window.location.origin + '/';
@@ -37,6 +36,8 @@ export const App: FC<{}> = props =>
 
     useEffect(() =>
     {
+        let heartbeatInterval: number = null;
+
         const prepare = async (width: number, height: number) =>
         {
             try
@@ -51,6 +52,11 @@ export const App: FC<{}> = props =>
                     return;
                 }
 
+                const rawUseBackBuffer = window.NitroConfig['renderer.useBackBuffer'];
+                const useBackBuffer = (rawUseBackBuffer === undefined)
+                    ? true
+                    : ((rawUseBackBuffer === true) || (rawUseBackBuffer === 'true'));
+
                 const renderer = await PrepareRenderer({
                     width: Math.floor(width),
                     height: Math.floor(height),
@@ -61,7 +67,7 @@ export const App: FC<{}> = props =>
                     eventMode: 'none',
                     failIfMajorPerformanceCaveat: false,
                     roundPixels: true,
-                    useBackBuffer: true // Enable back buffer for blend filters
+                    useBackBuffer // Keep disabled by default unless explicitly enabled in NitroConfig
                 });
 
                 await GetConfiguration().init();
@@ -93,7 +99,7 @@ export const App: FC<{}> = props =>
 
                 HabboWebTools.sendHeartBeat();
 
-                setInterval(() => HabboWebTools.sendHeartBeat(), 10000);
+                heartbeatInterval = window.setInterval(() => HabboWebTools.sendHeartBeat(), 10000);
 
                 GetTicker().add(ticker => GetRoomEngine().update(ticker));
                 GetTicker().add(ticker => renderer.render(GetStage()));
@@ -109,6 +115,11 @@ export const App: FC<{}> = props =>
         };
 
         prepare(window.innerWidth, window.innerHeight);
+
+        return () =>
+        {
+            if(heartbeatInterval !== null) window.clearInterval(heartbeatInterval);
+        };
     }, []);
 
     return (

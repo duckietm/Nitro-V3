@@ -256,7 +256,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                                 { /* Content area */ }
                                 <div className="flex flex-1 overflow-hidden">
                                     { showFavorites
-                                        ? <div className="flex-1 overflow-auto bg-card-content-area">
+                                        ? <div className="flex-1 overflow-auto nitro-card-content-shell">
                                             <CatalogFavoritesView onClose={ () => setShowFavorites(false) } />
                                         </div>
                                         : <>
@@ -264,7 +264,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                                                 <div className="w-[170px] min-w-[170px] border-r-2 border-card-grid-item-border bg-card-grid-item overflow-y-auto py-1">
                                                     <CatalogNavigationView node={ activeNodes[0] } />
                                                 </div> }
-                                            <div className="flex-1 overflow-auto p-2 bg-card-content-area">
+                                            <div className="flex-1 overflow-auto p-2 nitro-card-content-shell">
                                                 { adminMode && <CatalogAdminPageEditView /> }
                                                 { GetCatalogLayout(currentPage, () => setNavigationHidden(true)) }
                                             </div>
