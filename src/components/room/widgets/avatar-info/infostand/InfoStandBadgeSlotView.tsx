@@ -79,7 +79,7 @@ const BadgeMiniPicker: FC<{
 
 export const InfoStandBadgeSlotView: FC<InfoStandBadgeSlotProps> = ({ slotIndex, badgeCode: badgeCodeFromProps, isOwnUser }) =>
 {
-    const { activeBadgeCodes = [], setBadgeAtSlot = null, swapBadges = null, requestBadges = null } = useInventoryBadges();
+    const { activeBadgeCodes = [], setBadgeAtSlot = null, swapBadges = null, removeBadge = null, requestBadges = null } = useInventoryBadges();
     const [ isDragOver, setIsDragOver ] = useState(false);
     const [ isDragging, setIsDragging ] = useState(false);
     const [ justDropped, setJustDropped ] = useState(false);
@@ -157,6 +157,13 @@ export const InfoStandBadgeSlotView: FC<InfoStandBadgeSlotProps> = ({ slotIndex,
         setShowPicker(true);
     }, [ isOwnUser, badgeCode ]);
 
+    const handleDoubleClick = useCallback(() =>
+    {
+        if(!isOwnUser || !badgeCode) return;
+
+        removeBadge(badgeCode);
+    }, [ isOwnUser, badgeCode, removeBadge ]);
+
     const handlePickerSelect = useCallback((code: string) =>
     {
         setBadgeAtSlot(code, slotIndex);
@@ -180,7 +187,8 @@ export const InfoStandBadgeSlotView: FC<InfoStandBadgeSlotProps> = ({ slotIndex,
                 onDragOver={ onDragOver }
                 onDragStart={ onDragStart }
                 onDrop={ onDrop }
-                onClick={ handleSlotClick }>
+                onClick={ handleSlotClick }
+                onDoubleClick={ handleDoubleClick }>
                 { badgeCode
                     ? <LayoutBadgeImageView badgeCode={ badgeCode } showInfo={ true } />
                     : isOwnUser && <FaPlus className="text-white/30 text-[10px]" /> }

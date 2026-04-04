@@ -1,6 +1,7 @@
 import { FC } from 'react';
-import { LocalizeText, NotificationBubbleItem, OpenUrl } from '../../../../api';
+import { LocalizeText, NotificationBubbleItem } from '../../../../api';
 import { Flex, LayoutNotificationBubbleView, LayoutNotificationBubbleViewProps, Text } from '../../../../common';
+import { useInventoryBadges } from '../../../../hooks';
 
 export interface NotificationBadgeReceivedBubbleViewProps extends LayoutNotificationBubbleViewProps
 {
@@ -10,9 +11,16 @@ export interface NotificationBadgeReceivedBubbleViewProps extends LayoutNotifica
 export const NotificationBadgeReceivedBubbleView: FC<NotificationBadgeReceivedBubbleViewProps> = props =>
 {
     const { item = null, onClose = null, ...rest } = props;
+    const { toggleBadge = null } = useInventoryBadges();
+
+    const handleWear = () =>
+    {
+        if(item.linkUrl) toggleBadge(item.linkUrl);
+        onClose();
+    };
 
     return (
-        <LayoutNotificationBubbleView className="flex-col" fadesOut={ false } onClose={ onClose } { ...rest }>
+        <LayoutNotificationBubbleView className="flex-col" onClose={ onClose } { ...rest }>
             <Flex alignItems="center" gap={ 2 } className="mb-2">
                 <Flex center className="w-[50px] h-[50px] shrink-0">
                     { item.iconUrl && <img alt="" className="no-select" src={ item.iconUrl } /> }
@@ -26,7 +34,7 @@ export const NotificationBadgeReceivedBubbleView: FC<NotificationBadgeReceivedBu
                 <button
                     className="btn btn-success w-full btn-sm"
                     type="button"
-                    onClick={ () => { OpenUrl(item.linkUrl); onClose(); } }>
+                    onClick={ handleWear }>
                     { LocalizeText('inventory.badges.wearbadge') }
                 </button>
                 <span className="underline cursor-pointer text-nowrap" onClick={ onClose }>

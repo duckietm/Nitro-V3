@@ -223,7 +223,7 @@ const useNotificationState = () =>
         const badgeName = LocalizeBadgeName(parser.badgeCode);
         const badgeImage = GetSessionDataManager().getBadgeUrl(parser.badgeCode);
 
-        showSingleBubble(badgeName, NotificationBubbleType.BADGE_RECEIVED, badgeImage, 'inventory/toggle');
+        showSingleBubble(badgeName, NotificationBubbleType.BADGE_RECEIVED, badgeImage, parser.badgeCode);
     });
 
     useMessageEvent<ClubGiftNotificationEvent>(ClubGiftNotificationEvent, event =>

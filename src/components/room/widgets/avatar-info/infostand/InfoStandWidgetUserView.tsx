@@ -1,5 +1,6 @@
+import React from 'react';
 import { GetSessionDataManager, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomSessionFavoriteGroupUpdateEvent, RoomSessionUserBadgesEvent, RoomSessionUserFigureUpdateEvent, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
-import { Dispatch, FC, FocusEvent, KeyboardEvent, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { Dispatch, FC, FocusEvent, KeyboardEvent, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { AvatarInfoUser, CloneObject, GetConfigurationValue, GetGroupInformation, GetUserProfile, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Base, Column, Flex, LayoutAvatarImageView, LayoutBadgeImageView, Text, UserProfileIconView } from '../../../../../common';
@@ -173,43 +174,38 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                 />
               )}
               <Column grow alignItems="center" gap={0}>
-                { GetConfigurationValue<boolean>('user.badges.group.slot.enabled', true)
-                  ? (
-                    <>
-                      <div className="flex gap-1">
-                        <InfoStandBadgeSlotView slotIndex={0} badgeCode={avatarInfo.badges[0]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                        <Flex center className="relative w-[40px] h-[40px] bg-no-repeat bg-center" pointer={avatarInfo.groupId > 0} onClick={event => GetGroupInformation(avatarInfo.groupId)}>
-                          {avatarInfo.groupId > 0 &&
-                            <LayoutBadgeImageView badgeCode={avatarInfo.groupBadgeId} customTitle={avatarInfo.groupName} isGroup={true} showInfo={true} />}
-                        </Flex>
-                      </div>
-                      <Flex center gap={1}>
-                        <InfoStandBadgeSlotView slotIndex={1} badgeCode={avatarInfo.badges[1]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                        <InfoStandBadgeSlotView slotIndex={2} badgeCode={avatarInfo.badges[2]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
+                { (() => {
+                  const maxSlots = GetConfigurationValue<number>('user.badges.max.slots', 5);
+                  const isOwnUser = avatarInfo.type === AvatarInfoUser.OWN_USER;
+                  const showGroup = maxSlots <= 5;
+
+                  const items: React.ReactNode[] = [];
+                  items.push(<InfoStandBadgeSlotView key={0} slotIndex={0} badgeCode={avatarInfo.badges[0]} isOwnUser={isOwnUser} />);
+
+                  if(showGroup) {
+                    items.push(
+                      <Flex key="group" center className="relative w-[40px] h-[40px] bg-no-repeat bg-center" pointer={avatarInfo.groupId > 0} onClick={event => GetGroupInformation(avatarInfo.groupId)}>
+                        {avatarInfo.groupId > 0 && <LayoutBadgeImageView badgeCode={avatarInfo.groupBadgeId} customTitle={avatarInfo.groupName} isGroup={true} showInfo={true} />}
                       </Flex>
-                      <Flex center gap={1}>
-                        <InfoStandBadgeSlotView slotIndex={3} badgeCode={avatarInfo.badges[3]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                        <InfoStandBadgeSlotView slotIndex={4} badgeCode={avatarInfo.badges[4]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                      </Flex>
-                    </>
-                  )
-                  : (
-                    <>
-                      <Flex center gap={1}>
-                        <InfoStandBadgeSlotView slotIndex={0} badgeCode={avatarInfo.badges[0]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                        <InfoStandBadgeSlotView slotIndex={1} badgeCode={avatarInfo.badges[1]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                      </Flex>
-                      <Flex center gap={1}>
-                        <InfoStandBadgeSlotView slotIndex={2} badgeCode={avatarInfo.badges[2]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                        <InfoStandBadgeSlotView slotIndex={3} badgeCode={avatarInfo.badges[3]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                      </Flex>
-                      <Flex center gap={1}>
-                        <InfoStandBadgeSlotView slotIndex={4} badgeCode={avatarInfo.badges[4]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                        <InfoStandBadgeSlotView slotIndex={5} badgeCode={avatarInfo.badges[5]} isOwnUser={avatarInfo.type === AvatarInfoUser.OWN_USER} />
-                      </Flex>
-                    </>
-                  )
-                }
+                    );
+                  } else {
+                    items.push(<InfoStandBadgeSlotView key="slot1" slotIndex={1} badgeCode={avatarInfo.badges[1]} isOwnUser={isOwnUser} />);
+                  }
+
+                  const startIdx = showGroup ? 1 : 2;
+                  for(let i = startIdx; i < maxSlots; i++) {
+                    items.push(<InfoStandBadgeSlotView key={i} slotIndex={i} badgeCode={avatarInfo.badges[i]} isOwnUser={isOwnUser} />);
+                  }
+
+                  const rows: React.ReactNode[][] = [];
+                  for(let i = 0; i < items.length; i += 2) {
+                    rows.push(items.slice(i, i + 2));
+                  }
+
+                  return rows.map((row, idx) => (
+                    <Flex key={idx} center gap={1}>{row}</Flex>
+                  ));
+                })() }
               </Column>
             </div>
             <hr className="m-0 bg-[#0003] border-0 opacity-[0.5] h-px" />

@@ -1,5 +1,5 @@
 import { DeleteBadgeMessageComposer } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import { GetConfigurationValue, LocalizeBadgeName, LocalizeText, SendMessageComposer, UnseenItemCategory } from '../../../../api';
 import { LayoutBadgeImageView } from '../../../../common';
@@ -89,7 +89,7 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = props =
     const [ isDragOverInventory, setIsDragOverInventory ] = useState(false);
     const [ isDraggingFromActive, setIsDraggingFromActive ] = useState(false);
 
-    const maxSlots = 5;
+    const maxSlots = useMemo(() => GetConfigurationValue<number>('user.badges.max.slots', 5), []);
     const displayCodes = (filteredBadgeCodes !== null ? filteredBadgeCodes : badgeCodes);
 
     const attemptDeleteBadge = () =>
