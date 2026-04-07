@@ -1,12 +1,13 @@
 import { AddLinkEventTracker, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
 import { FaCog, FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa';
-import { GetConfigurationValue, LocalizeText } from '../../api';
+import { CatalogType, GetConfigurationValue, LocalizeText } from '../../api';
 import { Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useCatalog } from '../../hooks';
 import { CatalogAdminProvider, useCatalogAdmin } from './CatalogAdminContext';
 import { CatalogAdminOfferEditView } from './views/admin/CatalogAdminOfferEditView';
 import { CatalogAdminPageEditView } from './views/admin/CatalogAdminPageEditView';
+import { CatalogBuildersClubStatusView } from './views/catalog-header/CatalogBuildersClubStatusView';
 import { CatalogIconView } from './views/catalog-icon/CatalogIconView';
 import { CatalogGiftView } from './views/gift/CatalogGiftView';
 import { CatalogNavigationView } from './views/navigation/CatalogNavigationView';
@@ -15,7 +16,7 @@ import { MarketplacePostOfferView } from './views/page/layout/marketplace/Market
 
 const CatalogClassicViewInner: FC<{}> = () =>
 {
-    const { isVisible = false, setIsVisible = null, rootNode = null, currentPage = null, navigationHidden = false, setNavigationHidden = null, activeNodes = [], searchResult = null, setSearchResult = null, openPageByName = null, openPageByOfferId = null, activateNode = null } = useCatalog();
+    const { isVisible = false, setIsVisible = null, rootNode = null, currentPage = null, navigationHidden = false, setNavigationHidden = null, activeNodes = [], searchResult = null, setSearchResult = null, openPageByName = null, openPageByOfferId = null, activateNode = null, openCatalogByType = null, toggleCatalogByType = null, currentType = CatalogType.NORMAL } = useCatalog();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
     const setAdminMode = catalogAdmin?.setAdminMode ?? (() => {});
@@ -24,9 +25,26 @@ const CatalogClassicViewInner: FC<{}> = () =>
     const loading = catalogAdmin?.loading ?? false;
 
     const isMod = GetSessionDataManager().isModerator;
+    const buildersClubHeaderStyle = (currentType === CatalogType.BUILDER)
+        ? { borderColor: '#d79d2e', borderBottomColor: '#000', background: 'linear-gradient(180deg, #d89f2d 0%, #c68515 100%)' }
+        : undefined;
 
     useEffect(() =>
     {
+        const getCatalogTypeFromLink = (type?: string) =>
+        {
+            switch((type || '').toLowerCase())
+            {
+                case 'bc':
+                case 'builder':
+                case 'buildersclub':
+                case 'builders_club':
+                    return CatalogType.BUILDER;
+                default:
+                    return CatalogType.NORMAL;
+            }
+        };
+
         const linkTracker: ILinkEventTracker = {
             linkReceived: (url: string) =>
             {
@@ -37,12 +55,26 @@ const CatalogClassicViewInner: FC<{}> = () =>
                 switch(parts[1])
                 {
                     case 'show':
+                        if(parts.length > 2)
+                        {
+                            openCatalogByType(getCatalogTypeFromLink(parts[2]));
+
+                            return;
+                        }
+
                         setIsVisible(true);
                         return;
                     case 'hide':
                         setIsVisible(false);
                         return;
                     case 'toggle':
+                        if(parts.length > 2)
+                        {
+                            toggleCatalogByType(getCatalogTypeFromLink(parts[2]));
+
+                            return;
+                        }
+
                         setIsVisible(prevValue => !prevValue);
                         return;
                     case 'open':
@@ -76,13 +108,13 @@ const CatalogClassicViewInner: FC<{}> = () =>
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [ setIsVisible, openPageByOfferId, openPageByName ]);
+    }, [ setIsVisible, openPageByOfferId, openPageByName, openCatalogByType, toggleCatalogByType ]);
 
     return (
         <>
             { isVisible &&
                 <NitroCardView className="w-[630px] h-[400px]" style={ GetConfigurationValue('catalog.headers') ? { width: 710 } : {} } uniqueKey="catalog">
-                    <NitroCardHeaderView headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } />
+                    <NitroCardHeaderView className={ currentType === CatalogType.BUILDER ? 'builders-club-card-header' : '' } headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } style={ buildersClubHeaderStyle } />
                     { /* Admin banner */ }
                     { adminMode &&
                         <div className="flex items-center justify-between bg-warning text-dark text-[10px] font-bold px-3 py-0.5 uppercase tracking-wider" style={ { textShadow: '0 1px 0 rgba(255,255,255,0.3)' } }>
@@ -134,13 +166,14 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                 <FaCog className={ `text-[10px] ${ adminMode ? 'animate-spin' : '' }` } style={ adminMode ? { animationDuration: '3s' } : {} } />
                             </NitroCardTabsItemView> }
                     </NitroCardTabsView>
+                    <CatalogBuildersClubStatusView />
                     <NitroCardContentView>
                         { /* Admin: add new root category */ }
                         { adminMode && rootNode &&
                             <div className="flex items-center gap-2 mb-1">
                                 <button
                                     className="flex items-center gap-1 text-[9px] text-success hover:text-green-800 cursor-pointer transition-colors"
-                                    onClick={ () => catalogAdmin.createPage({ caption: 'New Category', pageLayout: 'default_3x3', minRank: 1, visible: '1', enabled: '1', orderNum: 99, parentId: rootNode.pageId }) }
+                                    onClick={ () => catalogAdmin.createPage({ caption: 'New Category', catalogMode: currentType, pageLayout: 'default_3x3', minRank: 1, visible: '1', enabled: '1', orderNum: 99, parentId: rootNode.pageId }) }
                                 >
                                     <FaPlus className="text-[8px]" />
                                     <span>{ LocalizeText('catalog.admin.new') }</span>

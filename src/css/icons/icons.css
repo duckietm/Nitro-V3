@@ -36,6 +36,13 @@
     height: 36px;
 }
 
+.nitro-icon.icon-buildersclub {
+    background-image: url("@/assets/images/toolbar/icons/buildersclub.png");
+    background-size: contain;
+    width: 38px;
+    height: 36px;
+}
+
 .nitro-icon.icon-game {
     background-image: url("@/assets/images/toolbar/icons/game.png");
     width: 44px;

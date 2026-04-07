@@ -1,5 +1,5 @@
 import { CrackableDataType, CreateLinkEvent, FurnitureFloorUpdateEvent, GetRoomEngine, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType, UpdateFurniturePositionComposer } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaCrosshairs, FaRulerVertical, FaTimes } from 'react-icons/fa';
 import { GrFormNextLink, GrRotateLeft, GrRotateRight } from 'react-icons/gr';
 import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
@@ -45,6 +45,12 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const [ itemLocation, setItemLocation ] = useState<{ x: number; y: number; z: number }>({ x: -1, y: -1, z: -1 });
     const [ dropdownOpen, setDropdownOpen ] = useState(sessionStorage.getItem('dropdownOpen') === 'true');
     const [ furniLocationZ, setFurniLocationZ ] = useState<number>(null);
+    const showOwnerProfileIcon = useMemo(() =>
+    {
+        const ownerName = (avatarInfo?.ownerName || '').trim().toLowerCase();
+
+        return !!avatarInfo && (avatarInfo.ownerId > 0) && (ownerName !== 'builders club');
+    }, [ avatarInfo ]);
 
     const sendUpdate = useCallback((deltaX: number, deltaY: number, newZ: number = 0, deltaDirection: number = 0) =>
     {
@@ -490,7 +496,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     </div>
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1">
-                            <UserProfileIconView userId={ avatarInfo.ownerId } />
+                            { showOwnerProfileIcon && <UserProfileIconView userId={ avatarInfo.ownerId } /> }
                             <Text small wrap variant="white">
                                 { LocalizeText('furni.owner', [ 'name' ], [ avatarInfo.ownerName ]) }
                             </Text>

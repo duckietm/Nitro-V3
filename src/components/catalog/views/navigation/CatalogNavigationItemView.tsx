@@ -1,6 +1,6 @@
 import { FC, useCallback, useRef, useState } from 'react';
 import { FaArrowsAlt, FaCaretDown, FaCaretUp, FaPlus, FaStar, FaTrash } from 'react-icons/fa';
-import { ICatalogNode, LocalizeText } from '../../../../api';
+import { CatalogType, ICatalogNode, LocalizeText } from '../../../../api';
 import { useCatalog, useCatalogFavorites } from '../../../../hooks';
 import { useCatalogAdmin } from '../../CatalogAdminContext';
 import { CatalogIconView } from '../catalog-icon/CatalogIconView';
@@ -15,7 +15,7 @@ export interface CatalogNavigationItemViewProps
 export const CatalogNavigationItemView: FC<CatalogNavigationItemViewProps> = props =>
 {
     const { node = null, child = false } = props;
-    const { activateNode = null } = useCatalog();
+    const { activateNode = null, currentType = CatalogType.NORMAL } = useCatalog();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
     const { isFavoritePage, toggleFavoritePage } = useCatalogFavorites();
@@ -100,6 +100,7 @@ export const CatalogNavigationItemView: FC<CatalogNavigationItemViewProps> = pro
                                 e.stopPropagation();
                                 catalogAdmin.createPage({
                                     caption: 'New Page',
+                                    catalogMode: currentType,
                                     pageLayout: 'default_3x3',
                                     minRank: 1,
                                     visible: '1',

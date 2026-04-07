@@ -7,6 +7,7 @@ export interface ICatalogOptions
     groups?: HabboGroupEntryData[];
     petPalettes?: CatalogPetPalette[];
     clubOffers?: ClubOfferData[];
+    clubOffersByWindowId?: Record<number, ClubOfferData[]>;
     clubGifts?: ClubGiftInfoParser;
     giftConfiguration?: GiftWrappingConfiguration;
     marketplaceConfiguration?: MarketplaceConfigurationMessageParser;

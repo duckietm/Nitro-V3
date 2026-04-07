@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { FaSave, FaSpinner, FaTimes, FaTrash } from 'react-icons/fa';
-import { LocalizeText } from '../../../../api';
+import { CatalogType, LocalizeText } from '../../../../api';
 import { useCatalog } from '../../../../hooks';
 import { IPageEditData, useCatalogAdmin } from '../../CatalogAdminContext';
 
@@ -8,15 +8,20 @@ const LAYOUT_OPTIONS = [
     'default_3x3', 'frontpage4', 'pets', 'pets2', 'pets3',
     'spaces_new', 'soundmachine', 'trophies', 'roomads',
     'guild_frontpage', 'guild_forum', 'guild_custom_furni',
-    'vip_buy', 'marketplace', 'marketplace_own_items',
+    'vip_buy', 'builders_club_frontpage', 'builders_club_addons', 'builders_club_loyalty', 'marketplace', 'marketplace_own_items',
     'recycler', 'recycler_info', 'recycler_prizes',
     'info_loyalty', 'badge_display', 'bots', 'single_bundle',
     'color_grouping', 'recent_purchases', 'custom_prefix'
 ];
 
+const MODE_OPTIONS = [
+    { value: CatalogType.NORMAL, label: 'Normale' },
+    { value: 'BOTH', label: 'Entrambi' }
+];
+
 export const CatalogAdminPageEditView: FC<{}> = () =>
 {
-    const { currentPage = null, activeNodes = [], rootNode = null } = useCatalog();
+    const { currentPage = null, activeNodes = [], rootNode = null, currentType = CatalogType.NORMAL } = useCatalog();
     const catalogAdmin = useCatalogAdmin();
     const editingPageData = catalogAdmin?.editingPageData ?? false;
     const editingRootPage = catalogAdmin?.editingRootPage ?? false;
@@ -24,6 +29,7 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
     const loading = catalogAdmin?.loading ?? false;
 
     const [ caption, setCaption ] = useState('');
+    const [ catalogMode, setCatalogMode ] = useState(CatalogType.NORMAL);
     const [ pageLayout, setPageLayout ] = useState('default_3x3');
     const [ minRank, setMinRank ] = useState(1);
     const [ visible, setVisible ] = useState('1');
@@ -55,12 +61,13 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
         if(!editingPageData || !targetNode) return;
 
         setCaption(targetNode.localization || '');
+        setCatalogMode(currentType === CatalogType.BUILDER ? CatalogType.BUILDER : (currentType || CatalogType.NORMAL));
         setPageLayout(currentPage?.layoutCode || 'default_3x3');
         setVisible(targetNode.isVisible ? '1' : '0');
         setEnabled('1');
         setMinRank(1);
         setOrderNum(0);
-    }, [ editingPageData, targetNode, currentPage ]);
+    }, [ editingPageData, targetNode, currentPage, currentType ]);
 
     if(!editingPageData || !targetNode) return null;
 
@@ -75,6 +82,7 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
         const data: IPageEditData = {
             pageId: targetPageId,
             caption,
+            catalogMode,
             pageLayout,
             minRank,
             visible,
@@ -115,6 +123,14 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
                 <div className="flex flex-col gap-0.5">
                     <label className="text-[9px] text-muted uppercase font-bold">Min Rank</label>
                     <input className={ inputClass } min={ 1 } type="number" value={ minRank } onChange={ e => setMinRank(parseInt(e.target.value) || 1) } />
+                </div>
+                <div className="flex flex-col gap-0.5">
+                    <label className="text-[9px] text-muted uppercase font-bold">Mode</label>
+                    { currentType === CatalogType.BUILDER
+                        ? <div className={ `${ inputClass } flex items-center min-h-[28px] bg-gray-100 text-muted` }>Builders Club</div>
+                        : <select className={ inputClass } value={ catalogMode } onChange={ e => setCatalogMode(e.target.value) }>
+                            { MODE_OPTIONS.map(option => <option key={ option.value } value={ option.value }>{ option.label }</option>) }
+                        </select> }
                 </div>
                 <div className="flex flex-col gap-0.5">
                     <label className="text-[9px] text-muted uppercase font-bold">Layout</label>

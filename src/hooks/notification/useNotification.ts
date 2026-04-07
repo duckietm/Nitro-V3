@@ -73,7 +73,17 @@ const useNotificationState = () =>
 
         const notificationItem = new NotificationBubbleItem(message, type, imageUrl, internalLink);
 
-        setBubbleAlerts(prevValue => [ notificationItem, ...prevValue ]);
+        setBubbleAlerts(prevValue =>
+        {
+            if(type === NotificationBubbleType.CLUBGIFT)
+            {
+                const filteredAlerts = prevValue.filter(value => (value.notificationType !== NotificationBubbleType.CLUBGIFT));
+
+                return [ notificationItem, ...filteredAlerts ];
+            }
+
+            return [ notificationItem, ...prevValue ];
+        });
     }, [ bubblesDisabled ]);
 
     const showNotification = (type: string, options: Map<string, string> = null) =>

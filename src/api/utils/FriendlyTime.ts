@@ -42,6 +42,8 @@ export class FriendlyTime
 
     public static getLocalization(key: string, amount: number): string
     {
-        return LocalizeText(key, [ 'amount' ], [ amount.toString() ]);
+        const amountValue = amount.toString();
+
+        return LocalizeText(key, [ 'amount', 'AMOUNT' ], [ amountValue, amountValue ]);
     }
 }

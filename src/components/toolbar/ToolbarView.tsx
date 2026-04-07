@@ -140,7 +140,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                         <ToolbarItemView icon="game" onClick={ () => CreateLinkEvent('games/toggle') } className="tb-icon" />
                                     </motion.div> }
                                 <motion.div variants={ itemVariants }>
-                                    <ToolbarItemView icon="catalog" onClick={ () => CreateLinkEvent('catalog/toggle') } className="tb-icon" />
+                                    <ToolbarItemView icon="catalog" onClick={ () => CreateLinkEvent('catalog/toggle/normal') } className="tb-icon" />
+                                </motion.div>
+                                <motion.div variants={ itemVariants }>
+                                    <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
                                 </motion.div>
                                 <motion.div variants={ itemVariants } className="relative">
                                     <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
@@ -227,7 +230,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                         <ToolbarItemView icon="game" onClick={ () => CreateLinkEvent('games/toggle') } className="tb-icon" />
                                     </motion.div> }
                                 <motion.div variants={ itemVariants }>
-                                    <ToolbarItemView icon="catalog" onClick={ () => CreateLinkEvent('catalog/toggle') } className="tb-icon" />
+                                    <ToolbarItemView icon="catalog" onClick={ () => CreateLinkEvent('catalog/toggle/normal') } className="tb-icon" />
+                                </motion.div>
+                                <motion.div variants={ itemVariants }>
+                                    <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
                                 </motion.div>
                                 <motion.div variants={ itemVariants } className="relative">
                                     <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />

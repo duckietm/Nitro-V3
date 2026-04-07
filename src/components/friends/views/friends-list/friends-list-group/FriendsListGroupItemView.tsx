@@ -65,7 +65,7 @@ export const FriendsListGroupItemView: FC<{ friend: MessengerFriend, selected: b
             <div className="flex items-center gap-1">
                 { !isRelationshipOpen &&
                     <>
-                        { friend.followingAllowed &&
+                        { friend.online &&
                             <div className="nitro-friends-spritesheet icon-follow cursor-pointer" title={ LocalizeText('friendlist.tip.follow') } onClick={ clickFollowFriend } /> }
                         { friend.online &&
                             <div className="nitro-friends-spritesheet icon-chat cursor-pointer" title={ LocalizeText('friendlist.tip.im') } onClick={ openMessengerChat } /> }

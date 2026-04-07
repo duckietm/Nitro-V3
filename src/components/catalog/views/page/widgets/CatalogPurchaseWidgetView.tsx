@@ -1,9 +1,9 @@
 import { CreateLinkEvent, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { CatalogPurchaseState, DispatchUiEvent, GetClubMemberLevel, LocalStorageKeys, LocalizeText, Offer, SendMessageComposer } from '../../../../../api';
-import { Button, LayoutLoadingSpinnerView } from '../../../../../common';
+import { BuilderFurniPlaceableStatus, CatalogPurchaseState, CatalogType, DispatchUiEvent, GetClubMemberLevel, LocalStorageKeys, LocalizeText, NotificationBubbleType, Offer, ProductTypeEnum, SendMessageComposer } from '../../../../../api';
+import { Button, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogInitGiftEvent, CatalogPurchaseFailureEvent, CatalogPurchaseNotAllowedEvent, CatalogPurchaseSoldOutEvent, CatalogPurchasedEvent } from '../../../../../events';
-import { useCatalog, useLocalStorage, usePurse, useUiEvent } from '../../../../../hooks';
+import { useCatalog, useLocalStorage, useNotification, usePurse, useUiEvent } from '../../../../../hooks';
 
 interface CatalogPurchaseWidgetViewProps
 {
@@ -16,11 +16,13 @@ let isPurchasingCatalogItem = false;
 export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = props =>
 {
     const { noGiftOption = false, purchaseCallback = null } = props;
+    const [ builderPlaceableRefreshTick, setBuilderPlaceableRefreshTick ] = useState(0);
     const [ purchaseWillBeGift, setPurchaseWillBeGift ] = useState(false);
     const [ purchaseState, setPurchaseState ] = useState(CatalogPurchaseState.NONE);
     const [ catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation ] = useLocalStorage(LocalStorageKeys.CATALOG_SKIP_PURCHASE_CONFIRMATION, false);
-    const { currentOffer = null, currentPage = null, purchaseOptions = null, setPurchaseOptions = null } = useCatalog();
+    const { currentOffer = null, currentPage = null, currentType = CatalogType.NORMAL, purchaseOptions = null, setPurchaseOptions = null, requestOfferToMover = null, setCatalogPlaceMultipleObjects = null, getBuilderFurniPlaceableStatus = null } = useCatalog();
     const { getCurrencyAmount = null } = usePurse();
+    const { showSingleBubble = null } = useNotification();
 
     const onCatalogEvent = useCallback((event: CatalogEvent) =>
     {
@@ -132,8 +134,79 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
 
     if(!currentOffer) return null;
 
+    const isBuildersClubOffer = (currentType === CatalogType.BUILDER);
+    const isBuildersClubPlaceable = isBuildersClubOffer
+        && !!currentOffer.product
+        && ((currentOffer.product.productType === ProductTypeEnum.FLOOR) || (currentOffer.product.productType === ProductTypeEnum.WALL));
+    const builderPlaceableStatus = useMemo(() =>
+    {
+        if(!isBuildersClubPlaceable || !getBuilderFurniPlaceableStatus) return BuilderFurniPlaceableStatus.OKAY;
+
+        return getBuilderFurniPlaceableStatus(currentOffer);
+    }, [ currentOffer, getBuilderFurniPlaceableStatus, isBuildersClubPlaceable, builderPlaceableRefreshTick ]);
+    const buildersClubPlaceOneButtonStyle = useMemo(() => ({
+        background: 'linear-gradient(180deg, #d89f2d 0%, #c68515 100%)',
+        borderColor: '#d79d2e',
+        color: '#ffffff'
+    }), []);
+
+    useEffect(() =>
+    {
+        if(!isBuildersClubPlaceable) return;
+
+        const interval = setInterval(() => setBuilderPlaceableRefreshTick(prevValue => (prevValue + 1)), 500);
+
+        return () => clearInterval(interval);
+    }, [ isBuildersClubPlaceable ]);
+
     const PurchaseButton = () =>
     {
+        if(isBuildersClubPlaceable)
+        {
+            const hasMissingExtraParam = (purchaseOptions.extraParamRequired && (!purchaseOptions.extraData || !purchaseOptions.extraData.length));
+            const isBlockedByVisitors = (builderPlaceableStatus === BuilderFurniPlaceableStatus.VISITORS_IN_ROOM);
+            const isDisabled = hasMissingExtraParam
+                || isBlockedByVisitors
+                || (builderPlaceableStatus === BuilderFurniPlaceableStatus.MISSING_OFFER)
+                || (builderPlaceableStatus === BuilderFurniPlaceableStatus.NOT_IN_ROOM)
+                || (builderPlaceableStatus === BuilderFurniPlaceableStatus.NOT_ROOM_OWNER)
+                || (builderPlaceableStatus === BuilderFurniPlaceableStatus.NOT_GROUP_ADMIN);
+            const startBuilderPlacement = (placeMultiple: boolean) =>
+            {
+                if(builderPlaceableStatus === BuilderFurniPlaceableStatus.FURNI_LIMIT_REACHED)
+                {
+                    showSingleBubble(LocalizeText('room.error.max_furniture'), NotificationBubbleType.INFO);
+                    return;
+                }
+
+                if(isDisabled) return;
+
+                setCatalogPlaceMultipleObjects(placeMultiple);
+                requestOfferToMover(currentOffer);
+            };
+
+            return (
+                <div className="flex flex-col gap-1.5 items-start">
+                    <div className="flex gap-1.5 flex-wrap">
+                        <Button disabled={ isDisabled } onClick={ () => startBuilderPlacement(true) }>
+                            { LocalizeText('builder.placement_widget.place_many') }
+                        </Button>
+                        <Button disabled={ isDisabled } onClick={ () => startBuilderPlacement(false) } style={ buildersClubPlaceOneButtonStyle }>
+                            { LocalizeText('builder.placement_widget.place_one') }
+                        </Button>
+                    </div>
+                    { isBlockedByVisitors &&
+                        <Text className="max-w-full" small variant="danger">
+                            { LocalizeText('builder.placement_widget.error.visitors') }
+                        </Text> }
+                    { (builderPlaceableStatus === BuilderFurniPlaceableStatus.NOT_GROUP_ADMIN) &&
+                        <Text className="max-w-full" small variant="danger">
+                            { LocalizeText('builder.placement_widget.error.not_group_admin') }
+                        </Text> }
+                </div>
+            );
+        }
+
         const priceCredits = (currentOffer.priceInCredits * purchaseOptions.quantity);
         const pricePoints = (currentOffer.priceInActivityPoints * purchaseOptions.quantity);
 
@@ -164,7 +237,7 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
     return (
         <>
             <PurchaseButton />
-            { (!noGiftOption && !currentOffer.isRentOffer) &&
+            { (!isBuildersClubOffer && !noGiftOption && !currentOffer.isRentOffer) &&
                 <Button disabled={ ((purchaseOptions.quantity > 1) || !currentOffer.giftable || isLimitedSoldOut || (purchaseOptions.extraParamRequired && (!purchaseOptions.extraData || !purchaseOptions.extraData.length))) } onClick={ event => purchase(true) }>
                     { LocalizeText('catalog.purchase_confirmation.gift') }
                 </Button> }

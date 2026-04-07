@@ -1,20 +1,25 @@
 import { ClubOfferData, GetClubOffersMessageComposer, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CatalogPurchaseState, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../api';
-import { AutoGrid, Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, LayoutLoadingSpinnerView, Text } from '../../../../../common';
+import { Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogPurchaseFailureEvent, CatalogPurchasedEvent } from '../../../../../events';
 import { useCatalog, usePurse, useUiEvent } from '../../../../../hooks';
+import { CatalogHeaderView } from '../../catalog-header/CatalogHeaderView';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
-export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
+const BUILDERS_CLUB_WINDOW_ID = 2;
+const BUILDERS_CLUB_ADDONS_WINDOW_ID = 3;
+
+export const CatalogLayoutBuildersClubBuyView: FC<CatalogLayoutProps> = () =>
 {
     const [ pendingOffer, setPendingOffer ] = useState<ClubOfferData>(null);
     const [ purchaseState, setPurchaseState ] = useState(CatalogPurchaseState.NONE);
     const { currentPage = null, catalogOptions = null } = useCatalog();
-    const { purse = null, getCurrencyAmount = null } = usePurse();
-    const { clubOffers = null, clubOffersByWindowId = null } = (catalogOptions || {});
-    const offers = clubOffersByWindowId?.[1] || clubOffers;
-    const isPurchasingRef = useRef<boolean>(false);
+    const { getCurrencyAmount = null } = usePurse();
+    const isPurchasingRef = useRef(false);
+    const isAddonLayout = (currentPage?.layoutCode === 'builders_club_addons');
+    const windowId = (isAddonLayout ? BUILDERS_CLUB_ADDONS_WINDOW_ID : BUILDERS_CLUB_WINDOW_ID);
+    const offers = catalogOptions?.clubOffersByWindowId?.[windowId] || null;
 
     const onCatalogEvent = useCallback((event: CatalogEvent) =>
     {
@@ -34,71 +39,51 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
     useUiEvent(CatalogPurchasedEvent.PURCHASE_SUCCESS, onCatalogEvent);
     useUiEvent(CatalogPurchaseFailureEvent.PURCHASE_FAILED, onCatalogEvent);
 
-    const getOfferText = useCallback((offer: ClubOfferData) =>
+    const getOfferTotalUnits = useCallback((offer: ClubOfferData) =>
     {
-        let offerText = '';
+        if(!offer) return 0;
 
-        if(offer.months > 0)
-        {
-            offerText = LocalizeText('catalog.vip.item.header.months', [ 'num_months' ], [ offer.months.toString() ]);
-        }
-
-        if(offer.extraDays > 0)
-        {
-            if(offerText !== '') offerText += ' ';
-
-            offerText += (' ' + LocalizeText('catalog.vip.item.header.days', [ 'num_days' ], [ offer.extraDays.toString() ]));
-        }
-
-        return offerText;
+        return ((offer.months * 31) + offer.extraDays);
     }, []);
 
-    const getPurchaseHeader = useCallback(() =>
+    const getOfferName = useCallback((offer: ClubOfferData) =>
     {
-        if(!purse) return '';
+        if(!offer) return '';
 
-        const extensionOrSubscription = (purse.clubDays > 0 || purse.clubPeriods > 0) ? 'extension.' : 'subscription.';
-        const daysOrMonths = ((pendingOffer.months === 0) ? 'days' : 'months');
-        const daysOrMonthsText = ((pendingOffer.months === 0) ? pendingOffer.extraDays : pendingOffer.months);
-        const locale = LocalizeText('catalog.vip.buy.confirm.' + extensionOrSubscription + daysOrMonths);
+        const localized = LocalizeText(offer.productCode);
 
-        return locale.replace('%NUM_' + daysOrMonths.toUpperCase() + '%', daysOrMonthsText.toString());
-    }, [ pendingOffer, purse ]);
+        if(localized && (localized !== offer.productCode)) return localized;
 
-    const getPurchaseValidUntil = useCallback(() =>
+        return offer.productCode.replace(/_/g, ' ');
+    }, []);
+
+    const getOfferMeta = useCallback((offer: ClubOfferData) =>
     {
-        let locale = LocalizeText('catalog.vip.buy.confirm.end_date');
+        if(!offer) return '';
 
-        locale = locale.replace('%month%', pendingOffer.month.toString());
-        locale = locale.replace('%day%', pendingOffer.day.toString());
-        locale = locale.replace('%year%', pendingOffer.year.toString());
+        if(isAddonLayout)
+        {
+            const units = getOfferTotalUnits(offer);
 
-        return locale;
-    }, [ pendingOffer ]);
+            return (units > 0) ? `+${ units }` : '';
+        }
 
-    const getSubscriptionDetails = useMemo(() =>
+        const parts: string[] = [];
+
+        if(offer.months > 0) parts.push(LocalizeText('catalog.vip.item.header.months', [ 'num_months' ], [ offer.months.toString() ]));
+        if(offer.extraDays > 0) parts.push(LocalizeText('catalog.vip.item.header.days', [ 'num_days' ], [ offer.extraDays.toString() ]));
+
+        return parts.join(' ');
+    }, [ getOfferTotalUnits, isAddonLayout ]);
+
+    const purchaseOffer = useCallback(() =>
     {
-        const clubDays = purse.clubDays;
-        const clubPeriods = purse.clubPeriods;
-        const totalDays = (clubPeriods * 31) + clubDays;
-
-        return LocalizeText('catalog.vip.extend.info', [ 'days' ], [ totalDays.toString() ]);
-    }, [ purse ]);
-
-    const purchaseSubscription = useCallback(() =>
-    {
-        if(!pendingOffer || isPurchasingRef.current) return;
+        if(!pendingOffer || !currentPage || isPurchasingRef.current) return;
 
         isPurchasingRef.current = true;
         setPurchaseState(CatalogPurchaseState.PURCHASE);
         SendMessageComposer(new PurchaseFromCatalogComposer(currentPage.pageId, pendingOffer.offerId, null, 1));
     }, [ pendingOffer, currentPage ]);
-
-    const setOffer = useCallback((offer: ClubOfferData) =>
-    {
-        setPurchaseState(CatalogPurchaseState.NONE);
-        setPendingOffer(offer);
-    }, []);
 
     const getPurchaseButton = useCallback(() =>
     {
@@ -111,13 +96,13 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
 
         if(pendingOffer.priceActivityPoints > getCurrencyAmount(pendingOffer.priceActivityPointsType))
         {
-            return <Button fullWidth variant="danger">{ LocalizeText('catalog.alert.notenough.activitypoints.title.' + pendingOffer.priceActivityPointsType) }</Button>;
+            return <Button fullWidth variant="danger">{ LocalizeText(`catalog.alert.notenough.activitypoints.title.${ pendingOffer.priceActivityPointsType }`) }</Button>;
         }
 
         switch(purchaseState)
         {
             case CatalogPurchaseState.CONFIRM:
-                return <Button fullWidth variant="warning" onClick={ purchaseSubscription }>{ LocalizeText('catalog.marketplace.confirm_title') }</Button>;
+                return <Button fullWidth variant="warning" onClick={ purchaseOffer }>{ LocalizeText('catalog.marketplace.confirm_title') }</Button>;
             case CatalogPurchaseState.PURCHASE:
                 return <Button disabled fullWidth variant="primary"><LayoutLoadingSpinnerView /></Button>;
             case CatalogPurchaseState.FAILED:
@@ -126,54 +111,81 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
             default:
                 return <Button fullWidth variant="success" onClick={ () => setPurchaseState(CatalogPurchaseState.CONFIRM) }>{ LocalizeText('buy') }</Button>;
         }
-    }, [ pendingOffer, purchaseState, purchaseSubscription, getCurrencyAmount ]);
+    }, [ getCurrencyAmount, pendingOffer, purchaseOffer, purchaseState ]);
+
+    const pageDescription = useMemo(() =>
+    {
+        if(!currentPage) return '';
+
+        return currentPage.localization.getText(1) || currentPage.localization.getText(2) || currentPage.localization.getText(0) || '';
+    }, [ currentPage ]);
 
     useEffect(() =>
     {
-        if(!offers) SendMessageComposer(new GetClubOffersMessageComposer(1));
+        if(!offers) SendMessageComposer(new GetClubOffersMessageComposer(windowId));
+    }, [ offers, windowId ]);
+
+    useEffect(() =>
+    {
+        if(!offers || !offers.length) return;
+
+        setPendingOffer(prevValue =>
+        {
+            if(prevValue && offers.some(offer => (offer.offerId === prevValue.offerId))) return prevValue;
+
+            return offers[0];
+        });
     }, [ offers ]);
 
     return (
-        <Grid>
+        <div className="flex h-full flex-col gap-2">
+            { currentPage?.localization?.getImage(0) &&
+                <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) } /> }
+            <Grid>
             <Column fullHeight justifyContent="between" overflow="hidden" size={ 7 }>
-                <AutoGrid className="nitro-catalog-layout-vip-buy-grid" columnCount={ 1 }>
+                <Column gap={ 1 } overflow="auto">
                     { offers && (offers.length > 0) && offers.map((offer, index) =>
                     {
+                        const meta = getOfferMeta(offer);
+
                         return (
-                            <LayoutGridItem key={ index } alignItems="center" center={ false } className="p-1" column={ false } itemActive={ pendingOffer === offer } justifyContent="between" onClick={ () => setOffer(offer) }>
-                                <i className="icon-hc-banner" />
-                                <Column gap={ 0 } justifyContent="end">
-                                    <Text textEnd>{ getOfferText(offer) }</Text>
-                                    <Flex gap={ 1 } justifyContent="end">
-                                        { (offer.priceCredits > 0) &&
+                            <LayoutGridItem key={ index } alignItems="center" center={ false } className="p-2" column={ false } itemActive={ pendingOffer?.offerId === offer.offerId } justifyContent="between" onClick={ () => {
+                                setPurchaseState(CatalogPurchaseState.NONE);
+                                setPendingOffer(offer);
+                            } }>
+                                <Column gap={ 0 }>
+                                    <Text fontWeight="bold">{ getOfferName(offer) }</Text>
+                                    { meta.length > 0 && <Text small>{ meta }</Text> }
+                                </Column>
+                                <div className="flex flex-col gap-1">
+                                    { (offer.priceCredits > 0) &&
                                         <Flex alignItems="center" gap={ 1 } justifyContent="end">
                                             <Text>{ offer.priceCredits }</Text>
                                             <LayoutCurrencyIcon type={ -1 } />
                                         </Flex> }
-                                        { (offer.priceActivityPoints > 0) &&
+                                    { (offer.priceActivityPoints > 0) &&
                                         <Flex alignItems="center" gap={ 1 } justifyContent="end">
                                             <Text>{ offer.priceActivityPoints }</Text>
                                             <LayoutCurrencyIcon type={ offer.priceActivityPointsType } />
                                         </Flex> }
-                                    </Flex>
-                                </Column>
+                                </div>
                             </LayoutGridItem>
                         );
                     }) }
-                </AutoGrid>
-                <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(LocalizeText('catalog.vip.buy.hccenter')) } }></Text>
+                </Column>
             </Column>
-            <Column overflow="hidden" size={ 5 }>
-                <Column center fullHeight overflow="hidden">
-                    { currentPage.localization.getImage(1) && <img alt="" src={ currentPage.localization.getImage(1) } /> }
-                    <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(getSubscriptionDetails) } } overflow="auto" />
+            <Column gap={ 2 } overflow="hidden" size={ 5 }>
+                <Column center grow overflow="hidden">
+                    { currentPage?.localization.getImage(1) && <img alt="" src={ currentPage.localization.getImage(1) } /> }
+                    { pageDescription.length > 0 && <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(pageDescription) } } overflow="auto" /> }
                 </Column>
                 { pendingOffer &&
-                    <Column fullWidth grow justifyContent="end">
+                    <Column fullWidth gap={ 1 }>
+                        <Text fontWeight="bold">{ getOfferName(pendingOffer) }</Text>
+                        { getOfferMeta(pendingOffer).length > 0 && <Text>{ getOfferMeta(pendingOffer) }</Text> }
                         <Flex alignItems="end">
                             <Column grow gap={ 0 }>
-                                <Text fontWeight="bold">{ getPurchaseHeader() }</Text>
-                                <Text>{ getPurchaseValidUntil() }</Text>
+                                <Text>{ currentPage?.localization.getText(0) || '' }</Text>
                             </Column>
                             <div className="flex flex-col gap-1">
                                 { (pendingOffer.priceCredits > 0) &&
@@ -191,6 +203,7 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
                         { getPurchaseButton() }
                     </Column> }
             </Column>
-        </Grid>
+            </Grid>
+        </div>
     );
 };

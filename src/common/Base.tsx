@@ -24,6 +24,8 @@ export interface BaseProps<T = HTMLElement> extends DetailedHTMLProps<HTMLAttrib
 export const Base: FC<BaseProps<HTMLDivElement>> = props =>
 {
     const { ref = null, innerRef = null, display = null, fit = false, fitV = false, grow = false, shrink = false, fullWidth = false, fullHeight = false, overflow = null, position = null, float = null, pointer = false, visible = null, textColor = null, classNames = [], className = '', style = {}, children = null, ...rest } = props;
+    const safeClassNames = Array.isArray(classNames) ? classNames : [];
+    const safeClassName = (typeof className === 'string') ? className : '';
 
     const getClassNames = useMemo(() =>
     {
@@ -53,19 +55,19 @@ export const Base: FC<BaseProps<HTMLDivElement>> = props =>
 
         if(textColor) newClassNames.push('text-' + textColor);
 
-        if(classNames.length) newClassNames.push(...classNames);
+        if(safeClassNames.length) newClassNames.push(...safeClassNames);
 
         return newClassNames;
-    }, [ display, fit, fitV, grow, shrink, fullWidth, fullHeight, overflow, position, float, pointer, visible, textColor, classNames ]);
+    }, [ display, fit, fitV, grow, shrink, fullWidth, fullHeight, overflow, position, float, pointer, visible, textColor, safeClassNames ]);
 
     const getClassName = useMemo(() =>
     {
         let newClassName = getClassNames.join(' ');
 
-        if(className.length) newClassName += (' ' + className);
+        if(safeClassName.length) newClassName += (' ' + safeClassName);
 
         return newClassName.trim();
-    }, [ getClassNames, className ]);
+    }, [ getClassNames, safeClassName ]);
 
     const getStyle = useMemo(() =>
     {

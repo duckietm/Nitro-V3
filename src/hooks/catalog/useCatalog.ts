@@ -1,4 +1,4 @@
-import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, ClubGiftInfoEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetClubGiftInfo, GetGiftWrappingConfigurationComposer, GetRoomEngine, GetTickerTime, GiftWrappingConfigurationEvent, GuildMembershipsMessageEvent, HabboClubOffersMessageEvent, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, NodeData, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomControllerLevel, RoomEngineObjectPlacedEvent, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType, RoomObjectVariable, RoomPreviewer, SellablePetPalettesMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
+import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, ClubGiftInfoEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetClubGiftInfo, GetGiftWrappingConfigurationComposer, GetRoomEngine, GetSessionDataManager, GetTickerTime, GiftWrappingConfigurationEvent, GuildMembershipsMessageEvent, HabboClubOffersMessageEvent, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, NodeData, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomControllerLevel, RoomEngineObjectPlacedEvent, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType, RoomObjectVariable, RoomPreviewer, SellablePetPalettesMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { BuilderFurniPlaceableStatus, CatalogNode, CatalogPage, CatalogPetPalette, CatalogType, DispatchUiEvent, FurniCategory, GetFurnitureData, GetProductDataForLocalization, GetRoomSession, GiftWrappingConfiguration, ICatalogNode, ICatalogOptions, ICatalogPage, IPageLocalization, IProduct, IPurchasableOffer, IPurchaseOptions, LocalizeText, NotificationAlertType, Offer, PageLocalization, PlacedObjectPurchaseData, PlaySound, Product, ProductTypeEnum, RequestedPage, SearchResult, SendMessageComposer, SoundNames } from '../../api';
@@ -40,7 +40,10 @@ const useCatalogState = () =>
     const [ secondsLeft, setSecondsLeft ] = useState(0);
     const [ updateTime, setUpdateTime ] = useState(0);
     const [ secondsLeftWithGrace, setSecondsLeftWithGrace ] = useState(0);
-    const { simpleAlert = null } = useNotification();
+    const [ builderPlacementBlockedByVisitors, setBuilderPlacementBlockedByVisitors ] = useState(false);
+    const [ builderPlacementAllowedInCurrentRoom, setBuilderPlacementAllowedInCurrentRoom ] = useState(false);
+    const [ builderTrialRoomHideConfirmed, setBuilderTrialRoomHideConfirmed ] = useState(false);
+    const { simpleAlert = null, showConfirm = null } = useNotification();
     const requestedPage = useRef(new RequestedPage());
 
     const resetState = useCallback(() =>
@@ -57,37 +60,108 @@ const useCatalogState = () =>
         setIsVisible(false);
     }, []);
 
+    const normalizeCatalogType = useCallback((type?: string) =>
+    {
+        if(type === CatalogType.BUILDER) return CatalogType.BUILDER;
+
+        return CatalogType.NORMAL;
+    }, []);
+
+    const resetVisibleCatalogState = useCallback((type?: string) =>
+    {
+        requestedPage.current.resetRequest();
+
+        setPageId(-1);
+        setPreviousPageId(-1);
+        setRootNode(null);
+        setOffersToNodes(null);
+        setCurrentPage(null);
+        setCurrentOffer(null);
+        setActiveNodes([]);
+        setSearchResult(null);
+        setFrontPageItems([]);
+        setNavigationHidden(false);
+        setCurrentType(normalizeCatalogType(type));
+    }, [ normalizeCatalogType ]);
+
+    const openCatalogByType = useCallback((type?: string) =>
+    {
+        const catalogType = normalizeCatalogType(type);
+
+        if(currentType !== catalogType)
+        {
+            resetVisibleCatalogState(catalogType);
+        }
+
+        setIsVisible(true);
+    }, [ currentType, normalizeCatalogType, resetVisibleCatalogState ]);
+
+    const toggleCatalogByType = useCallback((type?: string) =>
+    {
+        const catalogType = normalizeCatalogType(type);
+
+        if(isVisible && (currentType === catalogType))
+        {
+            setIsVisible(false);
+
+            return;
+        }
+
+        if(currentType !== catalogType)
+        {
+            resetVisibleCatalogState(catalogType);
+        }
+
+        setIsVisible(true);
+    }, [ isVisible, currentType, normalizeCatalogType, resetVisibleCatalogState ]);
+
     const getBuilderFurniPlaceableStatus = useCallback((offer: IPurchasableOffer) =>
     {
         if(!offer) return BuilderFurniPlaceableStatus.MISSING_OFFER;
 
-        if((furniCount < 0) || (furniCount >= furniLimit)) return BuilderFurniPlaceableStatus.FURNI_LIMIT_REACHED;
-
         const roomSession = GetRoomSession();
+        const canUseGuildAdminFallback = (!!roomSession
+            && roomSession.isGuildRoom
+            && (roomSession.controllerLevel >= RoomControllerLevel.GUILD_ADMIN)
+            && (secondsLeft > 0));
+        const usesSharedPlacementPool = (!!roomSession && !roomSession.isRoomOwner && (builderPlacementAllowedInCurrentRoom || canUseGuildAdminFallback));
 
         if(!roomSession) return BuilderFurniPlaceableStatus.NOT_IN_ROOM;
 
-        if(!roomSession.isRoomOwner) return BuilderFurniPlaceableStatus.NOT_ROOM_OWNER;
+        if(!roomSession.isRoomOwner && !builderPlacementAllowedInCurrentRoom && !canUseGuildAdminFallback) return BuilderFurniPlaceableStatus.NOT_GROUP_ADMIN;
+
+        if(!usesSharedPlacementPool && ((furniCount < 0) || (furniCount >= furniLimit))) return BuilderFurniPlaceableStatus.FURNI_LIMIT_REACHED;
+
+        if((secondsLeft <= 0) && builderPlacementBlockedByVisitors) return BuilderFurniPlaceableStatus.VISITORS_IN_ROOM;
 
         if(secondsLeft <= 0)
         {
             const roomEngine = GetRoomEngine();
+            const userDataManager = roomSession.userDataManager;
+            const sessionDataManager = GetSessionDataManager();
 
-            let objectCount = roomEngine.getRoomObjectCount(roomSession.roomId, RoomObjectCategory.UNIT);
+            if(!roomEngine || !userDataManager || !sessionDataManager) return BuilderFurniPlaceableStatus.OKAY;
 
-            while(objectCount > 0)
+            const roomObjects = roomEngine.getRoomObjects(roomSession.roomId, RoomObjectCategory.UNIT);
+
+            if(!roomObjects || !roomObjects.length) return BuilderFurniPlaceableStatus.OKAY;
+
+            for(const roomObject of roomObjects)
             {
-                const roomObject = roomEngine.getRoomObjectByIndex(roomSession.roomId, objectCount, RoomObjectCategory.UNIT);
-                const userData = roomSession.userDataManager.getUserDataByIndex(roomObject.id);
+                if(!roomObject) continue;
 
-                if(userData && (userData.type === RoomObjectType.USER) && (userData.roomIndex !== roomSession.ownRoomIndex) && !userData.isModerator) return BuilderFurniPlaceableStatus.VISITORS_IN_ROOM;
+                const userData = userDataManager.getUserDataByIndex(roomObject.id);
 
-                objectCount--;
+                if(!userData || (userData.type !== RoomObjectType.USER)) continue;
+                if(userData.webID === sessionDataManager.userId) continue;
+                if(userData.isModerator) continue;
+
+                return BuilderFurniPlaceableStatus.VISITORS_IN_ROOM;
             }
         }
 
         return BuilderFurniPlaceableStatus.OKAY;
-    }, [ furniCount, furniLimit, secondsLeft ]);
+    }, [ builderPlacementAllowedInCurrentRoom, builderPlacementBlockedByVisitors, furniCount, furniLimit, secondsLeft ]);
 
     const isDraggable = useCallback((offer: IPurchasableOffer) =>
     {
@@ -419,6 +493,10 @@ const useCatalogState = () =>
     useMessageEvent<CatalogPagesListEvent>(CatalogPagesListEvent, event =>
     {
         const parser = event.getParser();
+        const parserCatalogType = normalizeCatalogType(parser.catalogType);
+
+        if(parserCatalogType !== currentType) return;
+
         const offers: Map<number, ICatalogNode[]> = new Map();
 
         const getCatalogNode = (node: NodeData, depth: number, parent: ICatalogNode) =>
@@ -589,9 +667,14 @@ const useCatalogState = () =>
 
         setCatalogOptions(prevValue =>
         {
-            const clubOffers = parser.offers;
+            const windowId = parser.windowId;
+            const clubOffersByWindowId = { ...(prevValue.clubOffersByWindowId || {}) };
 
-            return { ...prevValue, clubOffers };
+            clubOffersByWindowId[windowId] = parser.offers;
+
+            const clubOffers = clubOffersByWindowId[1] || prevValue.clubOffers;
+
+            return { ...prevValue, clubOffers, clubOffersByWindowId };
         });
     });
 
@@ -679,6 +762,8 @@ const useCatalogState = () =>
         setSecondsLeft(parser.secondsLeft);
         setUpdateTime(GetTickerTime());
         setSecondsLeftWithGrace(parser.secondsLeftWithGrace);
+        setBuilderPlacementBlockedByVisitors(parser.placementBlockedByVisitors);
+        setBuilderPlacementAllowedInCurrentRoom(parser.placementAllowedInCurrentRoom);
 
         refreshBuilderStatus();
     });
@@ -772,24 +857,40 @@ const useCatalogState = () =>
                 break;
             }
             case CatalogType.BUILDER: {
-                let pageId = purchasableOffer.page.pageId;
-
-                if(pageId === DUMMY_PAGE_ID_FOR_OFFER_SEARCH)
+                const placeBuilderItem = () =>
                 {
-                    pageId = -1;
-                }
+                    let pageId = purchasableOffer.page.pageId;
 
-                switch(event.category)
+                    if(pageId === DUMMY_PAGE_ID_FOR_OFFER_SEARCH)
+                    {
+                        pageId = -1;
+                    }
+
+                    switch(event.category)
+                    {
+                        case RoomObjectCategory.FLOOR:
+                            SendMessageComposer(new BuildersClubPlaceRoomItemMessageComposer(pageId, purchasableOffer.offerId, product.extraParam, event.x, event.y, event.direction));
+                            break;
+                        case RoomObjectCategory.WALL:
+                            SendMessageComposer(new BuildersClubPlaceWallItemMessageComposer(pageId, purchasableOffer.offerId, product.extraParam, event.wallLocation));
+                            break;
+                    }
+
+                    if(catalogPlaceMultipleObjects && ((furniCount + 1) < furniLimit)) requestOfferToMover(purchasableOffer);
+                };
+
+                if((secondsLeft <= 0) && (furniCount <= 0) && !builderTrialRoomHideConfirmed && showConfirm)
                 {
-                    case RoomObjectCategory.FLOOR:
-                        SendMessageComposer(new BuildersClubPlaceRoomItemMessageComposer(pageId, purchasableOffer.offerId, product.extraParam, event.x, event.y, event.direction));
-                        break;
-                    case RoomObjectCategory.WALL:
-                        SendMessageComposer(new BuildersClubPlaceWallItemMessageComposer(pageId, purchasableOffer.offerId, product.extraParam, event.wallLocation));
-                        break;
+                    showConfirm(LocalizeText('room.confirm.hide_room'), () =>
+                    {
+                        setBuilderTrialRoomHideConfirmed(true);
+                        placeBuilderItem();
+                    }, () => resetPlacedOfferData());
                 }
-
-                if(catalogPlaceMultipleObjects) requestOfferToMover(purchasableOffer);
+                else
+                {
+                    placeBuilderItem();
+                }
                 break;
             }
         }
@@ -884,6 +985,11 @@ const useCatalogState = () =>
 
     useEffect(() =>
     {
+        if(secondsLeft > 0) setBuilderTrialRoomHideConfirmed(false);
+    }, [ secondsLeft ]);
+
+    useEffect(() =>
+    {
         if(!isVisible || rootNode) return;
 
         SendMessageComposer(new GetGiftWrappingConfigurationComposer());
@@ -907,7 +1013,7 @@ const useCatalogState = () =>
         };
     }, []);
 
-    return { isVisible, setIsVisible, isBusy, pageId, previousPageId, currentType, rootNode, offersToNodes, currentPage, setCurrentPage, currentOffer, setCurrentOffer, activeNodes, searchResult, setSearchResult, frontPageItems, roomPreviewer, navigationHidden, setNavigationHidden, purchaseOptions, setPurchaseOptions, catalogOptions, setCatalogOptions, getNodeById, getNodeByName, activateNode, openPageById, openPageByName, openPageByOfferId, requestOfferToMover };
+    return { isVisible, setIsVisible, isBusy, pageId, previousPageId, currentType, rootNode, offersToNodes, currentPage, setCurrentPage, currentOffer, setCurrentOffer, activeNodes, searchResult, setSearchResult, frontPageItems, roomPreviewer, navigationHidden, setNavigationHidden, purchaseOptions, setPurchaseOptions, catalogOptions, setCatalogOptions, getNodeById, getNodeByName, activateNode, openPageById, openPageByName, openPageByOfferId, requestOfferToMover, openCatalogByType, toggleCatalogByType, furniCount, furniLimit, maxFurniLimit, secondsLeft, secondsLeftWithGrace, updateTime, catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects, getBuilderFurniPlaceableStatus };
 };
 
 export const useCatalog = () => useBetween(useCatalogState);

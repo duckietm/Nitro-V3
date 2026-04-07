@@ -7,4 +7,5 @@ export class BuilderFurniPlaceableStatus
     public static NOT_ROOM_OWNER: number = 4;
     public static GUILD_ROOM: number = 5;
     public static VISITORS_IN_ROOM: number = 6;
+    public static NOT_GROUP_ADMIN: number = 7;
 }

@@ -1,8 +1,9 @@
-import { AcceptFriendMessageComposer, DeclineFriendMessageComposer, FollowFriendMessageComposer, FriendListFragmentEvent, FriendListUpdateComposer, FriendListUpdateEvent, FriendParser, FriendRequestsEvent, GetFriendRequestsComposer, GetSessionDataManager, MessengerInitComposer, MessengerInitEvent, NewFriendRequestEvent, RequestFriendComposer, SetRelationshipStatusComposer } from '@nitrots/nitro-renderer';
+import { AcceptFriendMessageComposer, DeclineFriendMessageComposer, FollowFriendFailedEvent, FollowFriendMessageComposer, FriendListFragmentEvent, FriendListUpdateComposer, FriendListUpdateEvent, FriendParser, FriendRequestsEvent, GetFriendRequestsComposer, GetSessionDataManager, MessengerInitComposer, MessengerInitEvent, NewFriendRequestEvent, RequestFriendComposer, SetRelationshipStatusComposer } from '@nitrots/nitro-renderer';
 import { useEffect, useMemo, useState } from 'react';
 import { useBetween } from 'use-between';
-import { CloneObject, MessengerFriend, MessengerRequest, MessengerSettings, SendMessageComposer } from '../../api';
+import { CloneObject, LocalizeText, MessengerFriend, MessengerRequest, MessengerSettings, NotificationAlertType, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
+import { useNotification } from '../notification';
 
 const useFriendsState = () =>
 {
@@ -11,6 +12,7 @@ const useFriendsState = () =>
     const [ sentRequests, setSentRequests ] = useState<number[]>([]);
     const [ dismissedRequestIds, setDismissedRequestIds ] = useState<number[]>([]);
     const [ settings, setSettings ] = useState<MessengerSettings>(null);
+    const { simpleAlert = null } = useNotification();
 
     const onlineFriends = useMemo(() =>
     {
@@ -152,17 +154,16 @@ const useFriendsState = () =>
             const processUpdate = (friend: FriendParser) =>
             {
                 const index = newValue.findIndex(existingFriend => (existingFriend.id === friend.id));
+                const newFriend = new MessengerFriend();
+                newFriend.populate(friend);
 
                 if(index === -1)
                 {
-                    const newFriend = new MessengerFriend();
-                    newFriend.populate(friend);
-
                     newValue.unshift(newFriend);
                 }
                 else
                 {
-                    newValue[index].populate(friend);
+                    newValue[index] = newFriend;
                 }
             };
 
@@ -209,6 +210,11 @@ const useFriendsState = () =>
 
             return newValue;
         });
+    });
+
+    useMessageEvent<FollowFriendFailedEvent>(FollowFriendFailedEvent, () =>
+    {
+        simpleAlert(LocalizeText('friendlist.followerror.hotelview'), NotificationAlertType.DEFAULT, null, null, LocalizeText('friendlist.alert.title'));
     });
 
     useMessageEvent<NewFriendRequestEvent>(NewFriendRequestEvent, event =>

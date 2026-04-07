@@ -1,7 +1,7 @@
 import { MouseEventType } from '@nitrots/nitro-renderer';
 import { FC, MouseEvent, useMemo, useState } from 'react';
 import { FaHeart } from 'react-icons/fa';
-import { IPurchasableOffer, Offer, ProductTypeEnum } from '../../../../../api';
+import { CatalogType, IPurchasableOffer, Offer, ProductTypeEnum } from '../../../../../api';
 import { LayoutAvatarImageView, LayoutGridItem, LayoutGridItemProps } from '../../../../../common';
 import { useCatalog, useCatalogFavorites, useInventoryFurni } from '../../../../../hooks';
 
@@ -15,7 +15,7 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
 {
     const { offer = null, selectOffer = null, itemActive = false, ...rest } = props;
     const [ isMouseDown, setMouseDown ] = useState(false);
-    const { requestOfferToMover = null } = useCatalog();
+    const { requestOfferToMover = null, currentType = CatalogType.NORMAL } = useCatalog();
     const { isVisible = false } = useInventoryFurni();
     const { isFavoriteOffer, toggleFavoriteOffer } = useCatalogFavorites();
     const isFav = offer ? isFavoriteOffer(offer.offerId) : false;
@@ -44,7 +44,9 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
                 setMouseDown(false);
                 return;
             case MouseEventType.ROLL_OUT:
-                if(!isMouseDown || !itemActive || !isVisible) return;
+                if(!isMouseDown || !itemActive) return;
+                if(currentType === CatalogType.BUILDER) return;
+                if(!isVisible) return;
 
                 requestOfferToMover(offer);
                 return;

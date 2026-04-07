@@ -200,11 +200,29 @@ body {
         padding: 5px;
     }
 
+    .nitro-card-header-shell.builders-club-card-header {
+        border-color: #d79d2e;
+        border-bottom-color: #000;
+        background: linear-gradient(180deg, #d89f2d 0%, #c68515 100%);
+    }
+
     .nitro-card-title {
         margin: 0 auto;
         font-family: UbuntuCondensed, Ubuntu, sans-serif;
         font-weight: 400;
         line-height: 1;
+    }
+
+    .builders-club-status-shell {
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        border-bottom: 2px solid #000;
+        background:
+            linear-gradient(180deg, rgba(84, 62, 46, 0.95) 0%, rgba(50, 38, 29, 0.97) 100%);
+    }
+
+    .builders-club-status-icon-shell {
+        background: rgba(255, 193, 70, 0.12);
+        border: 1px solid rgba(255, 193, 70, 0.26);
     }
 
     .nitro-card-close-button,
@@ -375,6 +393,10 @@ body {
 
     .nitro-card-header-shell {
         padding: 4px;
+    }
+
+    .builders-club-status-shell {
+        padding: 10px 12px;
     }
 
     .nitro-card-title {

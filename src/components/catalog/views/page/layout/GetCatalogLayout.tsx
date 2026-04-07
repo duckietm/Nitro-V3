@@ -1,6 +1,7 @@
 import { ICatalogPage } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 import { CatalogLayoutBadgeDisplayView } from './CatalogLayoutBadgeDisplayView';
+import { CatalogLayoutBuildersClubBuyView } from './CatalogLayoutBuildersClubBuyView';
 import { CatalogLayoutColorGroupingView } from './CatalogLayoutColorGroupingView';
 import { CatalogLayoutCustomPrefixView } from './CatalogLayoutCustomPrefixView';
 import { CatalogLayoutDefaultView } from './CatalogLayoutDefaultView';
@@ -43,6 +44,10 @@ export const GetCatalogLayout = (page: ICatalogPage, hideNavigation: () => void)
             return <CatalogLayoutPets3View { ...layoutProps } />;
         case 'vip_buy':
             return <CatalogLayoutVipBuyView { ...layoutProps } />;
+        case 'builders_club_frontpage':
+        case 'builders_club_addons':
+        case 'builders_club_loyalty':
+            return <CatalogLayoutBuildersClubBuyView { ...layoutProps } />;
         case 'guild_frontpage':
             return <CatalogLayouGuildFrontpageView { ...layoutProps } />;
         case 'guild_forum':

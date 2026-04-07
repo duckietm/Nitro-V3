@@ -96,7 +96,7 @@ export const FriendBarItemView: FC<{ friend: MessengerFriend }> = props => {
                         <div className="text-white font-bold text-[13px] drop-shadow-[1px_1px_0_#000] truncate max-w-[120px] px-1">{friend.name}</div>
                         <div className="flex justify-center gap-3 px-2">
                             <div className="cursor-pointer tbme-icon nitro-friends-spritesheet icon-friendbar-chat hover:-translate-y-1 transition-transform" onClick={event => { event.stopPropagation(); OpenMessengerChat(friend.id); setVisible(false); }} />
-                            {friend.followingAllowed &&
+                            {friend.online &&
                                 <div className="cursor-pointer tbme-icon nitro-friends-spritesheet icon-friendbar-visit hover:-translate-y-1 transition-transform" onClick={event => { event.stopPropagation(); followFriend(friend); setVisible(false); }} />}
                             <div className="cursor-pointer tbme-icon nitro-friends-spritesheet icon-profile hover:-translate-y-1 transition-transform" onClick={event => { event.stopPropagation(); GetUserProfile(friend.id); setVisible(false); }} />
                         </div>

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
+import { CatalogType } from '../../api';
+import { useCatalog } from './useCatalog';
 
 export interface IFavoriteOffer
 {
@@ -8,15 +10,22 @@ export interface IFavoriteOffer
     iconUrl?: string;
 }
 
-const STORAGE_KEY_OFFERS = 'catalog_fav_offers_v2';
-const STORAGE_KEY_PAGES = 'catalog_fav_pages';
+const LEGACY_STORAGE_KEY_OFFERS = 'catalog_fav_offers_v2';
+const LEGACY_STORAGE_KEY_PAGES = 'catalog_fav_pages';
+const STORAGE_KEY_OFFERS_NORMAL = 'catalog_fav_offers_v3_normal';
+const STORAGE_KEY_OFFERS_BUILDER = 'catalog_fav_offers_v3_builder';
+const STORAGE_KEY_PAGES_NORMAL = 'catalog_fav_pages_v2_normal';
+const STORAGE_KEY_PAGES_BUILDER = 'catalog_fav_pages_v2_builder';
 
-const readOffers = (): IFavoriteOffer[] =>
+const normalizeCatalogType = (catalogType?: string) => ((catalogType === CatalogType.BUILDER) ? CatalogType.BUILDER : CatalogType.NORMAL);
+
+const getOffersStorageKey = (catalogType?: string) => ((normalizeCatalogType(catalogType) === CatalogType.BUILDER) ? STORAGE_KEY_OFFERS_BUILDER : STORAGE_KEY_OFFERS_NORMAL);
+const getPagesStorageKey = (catalogType?: string) => ((normalizeCatalogType(catalogType) === CatalogType.BUILDER) ? STORAGE_KEY_PAGES_BUILDER : STORAGE_KEY_PAGES_NORMAL);
+
+const parseOffers = (raw: string): IFavoriteOffer[] =>
 {
     try
     {
-        const raw = localStorage.getItem(STORAGE_KEY_OFFERS);
-        if(!raw) return [];
         const parsed = JSON.parse(raw);
         if(!Array.isArray(parsed)) return [];
 
@@ -34,12 +43,10 @@ const readOffers = (): IFavoriteOffer[] =>
     }
 };
 
-const readPages = (): number[] =>
+const parsePages = (raw: string): number[] =>
 {
     try
     {
-        const raw = localStorage.getItem(STORAGE_KEY_PAGES);
-        if(!raw) return [];
         const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
     }
@@ -49,28 +56,92 @@ const readPages = (): number[] =>
     }
 };
 
-const writeOffers = (offers: IFavoriteOffer[]) =>
+const readOffers = (catalogType?: string): IFavoriteOffer[] =>
 {
-    localStorage.setItem(STORAGE_KEY_OFFERS, JSON.stringify(offers));
+    const storageKey = getOffersStorageKey(catalogType);
+    const raw = localStorage.getItem(storageKey);
+
+    if(raw) return parseOffers(raw);
+
+    if(normalizeCatalogType(catalogType) === CatalogType.NORMAL)
+    {
+        const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY_OFFERS);
+
+        if(legacyRaw)
+        {
+            const migrated = parseOffers(legacyRaw);
+
+            localStorage.setItem(storageKey, JSON.stringify(migrated));
+
+            return migrated;
+        }
+    }
+
+    return [];
 };
 
-const writePages = (ids: number[]) =>
+const readPages = (catalogType?: string): number[] =>
 {
-    localStorage.setItem(STORAGE_KEY_PAGES, JSON.stringify(ids));
+    const storageKey = getPagesStorageKey(catalogType);
+    const raw = localStorage.getItem(storageKey);
+
+    if(raw) return parsePages(raw);
+
+    if(normalizeCatalogType(catalogType) === CatalogType.NORMAL)
+    {
+        const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY_PAGES);
+
+        if(legacyRaw)
+        {
+            const migrated = parsePages(legacyRaw);
+
+            localStorage.setItem(storageKey, JSON.stringify(migrated));
+
+            return migrated;
+        }
+    }
+
+    return [];
+};
+
+const writeOffers = (catalogType: string, offers: IFavoriteOffer[]) =>
+{
+    localStorage.setItem(getOffersStorageKey(catalogType), JSON.stringify(offers));
+};
+
+const writePages = (catalogType: string, ids: number[]) =>
+{
+    localStorage.setItem(getPagesStorageKey(catalogType), JSON.stringify(ids));
 };
 
 const useCatalogFavoritesState = () =>
 {
-    const [ favoriteOffers, setFavoriteOffers ] = useState<IFavoriteOffer[]>([]);
-    const [ favoritePageIds, setFavoritePageIds ] = useState<number[]>([]);
+    const { currentType = CatalogType.NORMAL } = useCatalog();
+    const catalogType = normalizeCatalogType(currentType);
+    const [ favoriteOffersByType, setFavoriteOffersByType ] = useState<Record<string, IFavoriteOffer[]>>({
+        [CatalogType.NORMAL]: [],
+        [CatalogType.BUILDER]: []
+    });
+    const [ favoritePageIdsByType, setFavoritePageIdsByType ] = useState<Record<string, number[]>>({
+        [CatalogType.NORMAL]: [],
+        [CatalogType.BUILDER]: []
+    });
     const [ loaded, setLoaded ] = useState(false);
+    const favoriteOffers = favoriteOffersByType[catalogType] || [];
+    const favoritePageIds = favoritePageIdsByType[catalogType] || [];
 
     const favoriteOfferIds = favoriteOffers.map(f => f.offerId);
 
     const loadFavorites = useCallback(() =>
     {
-        setFavoriteOffers(readOffers());
-        setFavoritePageIds(readPages());
+        setFavoriteOffersByType({
+            [CatalogType.NORMAL]: readOffers(CatalogType.NORMAL),
+            [CatalogType.BUILDER]: readOffers(CatalogType.BUILDER)
+        });
+        setFavoritePageIdsByType({
+            [CatalogType.NORMAL]: readPages(CatalogType.NORMAL),
+            [CatalogType.BUILDER]: readPages(CatalogType.BUILDER)
+        });
         setLoaded(true);
     }, []);
 
@@ -81,32 +152,37 @@ const useCatalogFavoritesState = () =>
 
     const toggleFavoriteOffer = useCallback((offerId: number, name?: string, iconUrl?: string) =>
     {
-        setFavoriteOffers(prev =>
+        setFavoriteOffersByType(prev =>
         {
-            const exists = prev.find(f => f.offerId === offerId);
+            const currentOffers = prev[catalogType] || [];
+            const exists = currentOffers.find(f => f.offerId === offerId);
 
             if(exists)
             {
-                const next = prev.filter(f => f.offerId !== offerId);
-                writeOffers(next);
-                return next;
+                const next = currentOffers.filter(f => f.offerId !== offerId);
+                writeOffers(catalogType, next);
+
+                return { ...prev, [catalogType]: next };
             }
 
-            const next = [ ...prev, { offerId, name, iconUrl } ];
-            writeOffers(next);
-            return next;
+            const next = [ ...currentOffers, { offerId, name, iconUrl } ];
+            writeOffers(catalogType, next);
+
+            return { ...prev, [catalogType]: next };
         });
-    }, []);
+    }, [ catalogType ]);
 
     const toggleFavoritePage = useCallback((pageId: number) =>
     {
-        setFavoritePageIds(prev =>
+        setFavoritePageIdsByType(prev =>
         {
-            const next = prev.includes(pageId) ? prev.filter(id => id !== pageId) : [ ...prev, pageId ];
-            writePages(next);
-            return next;
+            const currentPages = prev[catalogType] || [];
+            const next = currentPages.includes(pageId) ? currentPages.filter(id => id !== pageId) : [ ...currentPages, pageId ];
+            writePages(catalogType, next);
+
+            return { ...prev, [catalogType]: next };
         });
-    }, []);
+    }, [ catalogType ]);
 
     const isFavoriteOffer = useCallback((offerId: number) =>
     {
@@ -123,7 +199,7 @@ const useCatalogFavoritesState = () =>
         return favoriteOffers.find(f => f.offerId === offerId);
     }, [ favoriteOffers ]);
 
-    return { favoriteOffers, favoriteOfferIds, favoritePageIds, loaded, loadFavorites, toggleFavoriteOffer, toggleFavoritePage, isFavoriteOffer, isFavoritePage, getFavoriteOffer };
+    return { favoriteOffers, favoriteOfferIds, favoritePageIds, loaded, loadFavorites, toggleFavoriteOffer, toggleFavoritePage, isFavoriteOffer, isFavoritePage, getFavoriteOffer, catalogType };
 };
 
 export const useCatalogFavorites = () => useBetween(useCatalogFavoritesState);

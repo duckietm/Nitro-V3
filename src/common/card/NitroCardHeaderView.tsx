@@ -15,9 +15,7 @@ interface NitroCardHeaderViewProps extends ColumnProps
 
 export const NitroCardHeaderView: FC<NitroCardHeaderViewProps> = props =>
 {
-    const { headerText = null, isGalleryPhoto = false, noCloseButton = false, isInfoToHabboPages = false, onReportPhoto = null, onClickInfoHabboPages = null, onCloseClick = null, justifyContent = 'center', alignItems = 'center', classNames = [], children = null, ...rest } = props;
-
-
+    const { headerText = null, isGalleryPhoto = false, noCloseButton = false, isInfoToHabboPages = false, onReportPhoto = null, onClickInfoHabboPages = null, onCloseClick = null, justifyContent = 'center', alignItems = 'center', classNames = [], className = '', children = null, ...rest } = props;
 
     const onMouseDown = (event: MouseEvent<HTMLDivElement>) =>
     {
@@ -26,7 +24,11 @@ export const NitroCardHeaderView: FC<NitroCardHeaderViewProps> = props =>
     };
 
     return (
-        <Column center className={ 'nitro-card-header-shell relative flex items-center justify-center flex-col drag-handler min-h-card-header max-h-card-header' } { ...rest }>
+        <Column
+            center
+            classNames={ [ 'nitro-card-header-shell', 'relative', 'flex', 'items-center', 'justify-center', 'flex-col', 'drag-handler', 'min-h-card-header', 'max-h-card-header', ...classNames ] }
+            className={ className }
+            { ...rest }>
             <Flex center fullWidth>
                 <span className="nitro-card-title text-white">{ headerText }</span>
                 { isGalleryPhoto &&
