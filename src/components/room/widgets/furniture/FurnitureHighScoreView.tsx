@@ -1,11 +1,10 @@
 import { RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
 import { LocalizeText } from '../../../../api';
-import { Column, Text } from '../../../../common';
+import { Column, DraggableWindow, Text } from '../../../../common';
 import { useFurnitureHighScoreWidget } from '../../../../hooks';
 import { ContextMenuHeaderView } from '../context-menu/ContextMenuHeaderView';
 import { ContextMenuListView } from '../context-menu/ContextMenuListView';
-import { ObjectLocationView } from '../object-location/ObjectLocationView';
 
 export const FurnitureHighScoreView: FC<{}> = props =>
 {
@@ -18,14 +17,14 @@ export const FurnitureHighScoreView: FC<{}> = props =>
             { Array.from(stuffDatas.entries()).map(([ objectId, stuffData ], index) =>
             {
                 return (
-                    <ObjectLocationView key={ index } category={ RoomObjectCategory.FLOOR } objectId={ objectId }>
-                        <Column className="nitro-widget-high-score nitro-context-menu" gap={ 0 }>
-                            <ContextMenuHeaderView>
+                    <DraggableWindow key={ index } uniqueKey={ `high-score-${ objectId }` }>
+                        <Column className="nitro-widget-high-score nitro-context-menu bg-[#1e1f23] p-2 w-[280px] max-w-[280px] h-[320px]" gap={ 0 }>
+                            <ContextMenuHeaderView classNames={ [ 'drag-handler cursor-move' ] }>
                                 { LocalizeText('high.score.display.caption', [ 'scoretype', 'cleartype' ], [ LocalizeText(`high.score.display.scoretype.${ getScoreType(stuffData.scoreType) }`), LocalizeText(`high.score.display.cleartype.${ getClearType(stuffData.clearType) }`) ]) }
                             </ContextMenuHeaderView>
-                            <ContextMenuListView className="h-full" gap={ 1 } overflow="hidden">
+                            <ContextMenuListView className="!h-auto" gap={ 1 } overflow="hidden">
                                 <div className="flex flex-col gap-1">
-                                    <div className="flex items-center">
+                                    <div className="flex items-center justify-between">
                                         <Text bold center className="col-span-8" variant="white">
                                             { LocalizeText('high.score.display.users.header') }
                                         </Text>
@@ -39,7 +38,7 @@ export const FurnitureHighScoreView: FC<{}> = props =>
                                     { stuffData.entries.map((entry, index) =>
                                     {
                                         return (
-                                            <div key={ index } className="flex items-center">
+                                            <div key={ index } className="flex items-center justify-between">
                                                 <Text center className="col-span-8" variant="white">
                                                     { entry.users.join(', ') }
                                                 </Text>
@@ -52,7 +51,7 @@ export const FurnitureHighScoreView: FC<{}> = props =>
                                 </Column>
                             </ContextMenuListView>
                         </Column>
-                    </ObjectLocationView>
+                    </DraggableWindow>
                 );
             }) }
         </>

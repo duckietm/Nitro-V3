@@ -57,9 +57,14 @@ export const CatalogGiftView: FC<{}> = props =>
 
     const boxExtraData = useMemo(() =>
     {
-        if(!giftConfiguration) return '';
+        if(!giftConfiguration || !boxTypes.length) return '';
 
-        return ((boxTypes[selectedBoxIndex] * 1000) + giftConfiguration.ribbonTypes[selectedRibbonIndex]).toString();
+        const boxType = boxTypes[selectedBoxIndex];
+        const ribbonType = giftConfiguration.ribbonTypes[selectedRibbonIndex];
+
+        if(boxType === undefined || ribbonType === undefined) return '';
+
+        return ((boxType * 1000) + ribbonType).toString();
     }, [ giftConfiguration, selectedBoxIndex, selectedRibbonIndex, boxTypes ]);
 
     const isColorable = useMemo(() =>
@@ -137,6 +142,35 @@ export const CatalogGiftView: FC<{}> = props =>
 
     useMessageEvent<GiftReceiverNotFoundEvent>(GiftReceiverNotFoundEvent, event => setReceiverNotFound(true));
 
+    const initializeGiftData = useCallback(() =>
+    {
+        if(!giftConfiguration) return;
+
+        const newBoxTypes = [ ...giftConfiguration.boxTypes ];
+        newBoxTypes.push(giftConfiguration.defaultStuffTypes[Math.floor((Math.random() * (giftConfiguration.defaultStuffTypes.length - 1)))]);
+
+        setBoxTypes(newBoxTypes);
+        setMaxBoxIndex(newBoxTypes.length - 1);
+        setMaxRibbonIndex(newBoxTypes.length - 1);
+        setSelectedBoxIndex(0);
+        setSelectedRibbonIndex(0);
+
+        const newColors: { id: number, color: string }[] = [];
+
+        for(const colorId of giftConfiguration.stuffTypes)
+        {
+            const giftData = GetSessionDataManager().getFloorItemData(colorId);
+
+            if(!giftData) continue;
+
+            if(giftData.colors && giftData.colors.length > 0) newColors.push({ id: colorId, color: ColorUtils.makeColorNumberHex(giftData.colors[0]) });
+        }
+
+        setColors(newColors);
+
+        if(newColors.length) setSelectedColorId(newColors[0].id);
+    }, [ giftConfiguration ]);
+
     useUiEvent([
         CatalogPurchasedEvent.PURCHASE_SUCCESS,
         CatalogEvent.INIT_GIFT ], event =>
@@ -155,6 +189,7 @@ export const CatalogGiftView: FC<{}> = props =>
                 setPageId(castedEvent.pageId);
                 setOfferId(castedEvent.offerId);
                 setExtraData(castedEvent.extraData);
+                initializeGiftData();
                 setIsVisible(true);
                 return;
         }
@@ -165,55 +200,14 @@ export const CatalogGiftView: FC<{}> = props =>
         setReceiverNotFound(false);
     }, [ receiverName ]);
 
-    const createBoxTypes = useCallback(() =>
-    {
-        if(!giftConfiguration) return;
-
-        setBoxTypes(prev =>
-        {
-            let newPrev = [ ...giftConfiguration.boxTypes ];
-
-            newPrev.push(giftConfiguration.defaultStuffTypes[Math.floor((Math.random() * (giftConfiguration.defaultStuffTypes.length - 1)))]);
-
-            setMaxBoxIndex(newPrev.length - 1);
-            setMaxRibbonIndex(newPrev.length - 1);
-
-            return newPrev;
-        });
-    }, [ giftConfiguration ]);
-
     useEffect(() =>
     {
-        if(!giftConfiguration) return;
+        if(!isVisible || !giftConfiguration) return;
 
-        const newColors: { id: number, color: string }[] = [];
+        initializeGiftData();
+    }, [ giftConfiguration, isVisible, initializeGiftData ]);
 
-        for(const colorId of giftConfiguration.stuffTypes)
-        {
-            const giftData = GetSessionDataManager().getFloorItemData(colorId);
-
-            if(!giftData) continue;
-
-            if(giftData.colors && giftData.colors.length > 0) newColors.push({ id: colorId, color: ColorUtils.makeColorNumberHex(giftData.colors[0]) });
-        }
-
-        createBoxTypes();
-
-        if(newColors.length)
-        {
-            setSelectedColorId(newColors[0].id);
-            setColors(newColors);
-        }
-    }, [ giftConfiguration, createBoxTypes ]);
-
-    useEffect(() =>
-    {
-        if(!isVisible) return;
-
-        createBoxTypes();
-    }, [ createBoxTypes, isVisible ]);
-
-    if(!giftConfiguration || !giftConfiguration.isEnabled || !isVisible) return null;
+    if(!giftConfiguration || !giftConfiguration.isEnabled || !isVisible || !boxTypes.length) return null;
 
     const boxName = 'catalog.gift_wrapping_new.box.' + (isBoxDefault ? 'default' : boxTypes[selectedBoxIndex]);
     const ribbonName = `catalog.gift_wrapping_new.ribbon.${ selectedRibbonIndex }`;
@@ -242,13 +236,13 @@ export const CatalogGiftView: FC<{}> = props =>
                     <label className="form-check-label">{ LocalizeText('catalog.gift_wrapping.show_face.title') }</label>
                 </div>
                 <div className="items-center gap-2">
-                    { selectedColorId &&
-                        <div className="gift-preview">
-                            <LayoutFurniImageView extraData={ boxExtraData } productClassId={ colourId } productType={ ProductTypeEnum.FLOOR } />
-                        </div> }
+                    <div className="gift-preview">
+                        { (colourId > 0 && boxExtraData) &&
+                            <LayoutFurniImageView extraData={ boxExtraData } productClassId={ colourId } productType={ ProductTypeEnum.FLOOR } /> }
+                    </div>
                     <div className="flex flex-col gap-1">
-                        <div className="flex gap-2">
-                            <div className="relative inline-flex align-middle">
+                        <div className="flex items-center gap-2">
+                            <div className="inline-flex">
                                 <Button variant="primary" onClick={ () => handleAction('prev_box') }>
                                     <FaChevronLeft className="fa-icon" />
                                 </Button>
@@ -264,8 +258,8 @@ export const CatalogGiftView: FC<{}> = props =>
                                 </div>
                             </div>
                         </div>
-                        <Flex alignItems="center" className={ isColorable ? '' : 'opacity-50 pointer-events-none' } gap={ 2 }>
-                            <div className="relative inline-flex align-middle">
+                        <div className={ `flex items-center gap-2 ${ isColorable ? '' : 'opacity-50 pointer-events-none' }` }>
+                            <div className="inline-flex">
                                 <Button variant="primary" onClick={ () => handleAction('prev_ribbon') }>
                                     <FaChevronLeft className="fa-icon" />
                                 </Button>
@@ -274,7 +268,7 @@ export const CatalogGiftView: FC<{}> = props =>
                                 </Button>
                             </div>
                             <Text fontWeight="bold">{ LocalizeText(ribbonName) }</Text>
-                        </Flex>
+                        </div>
                     </div>
                 </div>
                 <Column className={ isColorable ? '' : 'opacity-50 pointer-events-none' } gap={ 1 }>
