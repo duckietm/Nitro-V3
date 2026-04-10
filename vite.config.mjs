@@ -2,14 +2,13 @@ import react from '@vitejs/plugin-react';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
-const legacyRendererRoot = resolve(__dirname, '..', 'renderer3');
+const legacyRendererRoot = resolve(__dirname, '..', 'renderer');
 const currentRendererRoot = resolve(__dirname, '..', 'Nitro_Render_V3');
 const rendererRoot = existsSync(currentRendererRoot) ? currentRendererRoot : legacyRendererRoot;
 
 export default defineConfig({
-    plugins: [ react(), tsconfigPaths() ],
+    plugins: [ react() ],
     server: {
         fs: {
             allow: [
@@ -25,6 +24,7 @@ export default defineConfig({
         }
     },
     resolve: {
+        tsconfigPaths: true,
         alias: {
             '@': resolve(__dirname, 'src'),
             '~': resolve(__dirname, 'node_modules'),

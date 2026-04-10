@@ -1,7 +1,7 @@
 .nitro-card {
     resize: both;
 
-    @include media-breakpoint-down(lg) {
+    @media (max-width: 991.98px) {
         max-width: 100vw !important;
         max-height: 100vh !important;
     }
@@ -16,8 +16,8 @@
 
             .nitro-card-header-text {
                 color: #FFF;
-                text-shadow: 0px 4px 4px rgba(#000, 0.25);
-                @include font-size(1.35);
+                text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+                font-size: 1.35rem;
             }
 
             .nitro-card-header-close {
@@ -116,7 +116,7 @@
             min-height: 28px;
             max-height: 28px;
             background: repeating-linear-gradient(#2DABC2, #2DABC2 50%, #2B91A7 50%, #2B91A7 100%);
-            border-bottom: 2px solid darken(#2B91A7, 5);
+            border-bottom: 2px solid #267F93;
             box-shadow: 0 2px white;
             width: 100%;
             margin: 0;
@@ -129,13 +129,13 @@
                 left: 0;
                 width: 100%;
                 height: 2px;
-                background-color: rgba(#FFF, 0.3);
+                background-color: rgba(255, 255, 255, 0.3);
             }
 
             .nitro-card-header-text {
                 color: #FFF;
-                text-shadow: 0px 4px 4px rgba(#000, 0.25);
-                @include font-size (1.125);
+                text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+                font-size: 1.125rem;
                 min-height: 21px;
             }
 
@@ -143,7 +143,7 @@
                 cursor: pointer;
                 padding: 0px 2px;
                 line-height: 1;
-                @include font-size(.675);
+                font-size: 0.675rem;
                 border-radius: .25rem;
                 box-shadow: 0 0 0 1.6px #FFF;
                 border: 2px solid #921911;
@@ -168,7 +168,7 @@
                 padding: 0px 2px;
                 margin-right: 4px;
                 line-height: 1;
-                @include font-size(.675);
+                font-size: 0.675rem;
                 border-radius: .25rem;
                 box-shadow: 0 0 0 1.6px #FFF;
                 border: 2px solid #921911;
@@ -210,7 +210,7 @@
     }
 }
 
-@include media-breakpoint-down(lg) {
+@media (max-width: 991.98px) {
     .content-area {
         height: 100% !important;
         min-height: auto !important;
@@ -235,11 +235,11 @@
     &.active {
         height: 100%;
         overflow: hidden;
-        background: rgba(#FFF, 0.5);
-        border-bottom: 1px solid rgba(#000, 0.2);
+        background: rgba(255, 255, 255, 0.5);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     }
 
     .nitro-card-accordion-set-header {
-        border-bottom: 1px solid rgba(#000, 0.2);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     }
 }

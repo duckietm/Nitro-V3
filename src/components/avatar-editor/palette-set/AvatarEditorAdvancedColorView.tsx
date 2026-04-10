@@ -1,7 +1,9 @@
 import { IPartColor } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useMemo, useRef } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ColorUtils, GetClubMemberLevel, IAvatarEditorCategory } from '../../../api';
 import { useAvatarEditor } from '../../../hooks';
+
+const DEBOUNCE_MS = 150;
 
 const findNearestColor = (hex: string, colors: IPartColor[]): IPartColor | null =>
 {
@@ -34,6 +36,12 @@ export const AvatarEditorAdvancedColorView: FC<{
 {
     const { selectedColorParts = null, selectEditorColor = null } = useAvatarEditor();
     const inputRef = useRef<HTMLInputElement>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+    useEffect(() =>
+    {
+        return () => { if(debounceRef.current) clearTimeout(debounceRef.current); };
+    }, []);
 
     const selectedColor = useMemo(() =>
     {
@@ -52,9 +60,16 @@ export const AvatarEditorAdvancedColorView: FC<{
 
         if(!colors) return;
 
-        const nearest = findNearestColor(e.target.value, colors);
+        const value = e.target.value;
 
-        if(nearest) selectEditorColor(category.setType, paletteIndex, nearest.id);
+        if(debounceRef.current) clearTimeout(debounceRef.current);
+
+        debounceRef.current = setTimeout(() =>
+        {
+            const nearest = findNearestColor(value, colors);
+
+            if(nearest) selectEditorColor(category.setType, paletteIndex, nearest.id);
+        }, DEBOUNCE_MS);
     }, [ category, paletteIndex, selectEditorColor ]);
 
     return (
