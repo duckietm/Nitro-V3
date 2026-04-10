@@ -557,20 +557,6 @@ export const YouTubePlayerView: FC<{}> = () => {
                                 <button
                                     onClick={() => {
                                         if (videoId) {
-                                            navigator.clipboard.writeText(
-                                                `📺 https://youtube.com/watch?v=${videoId}`,
-                                            );
-                                            alert("Copied to clipboard!");
-                                        }
-                                    }}
-                                    disabled={!videoId}
-                                    className="px-3 py-2 bg-gray-700 rounded text-white text-sm disabled:opacity-50"
-                                >
-                                    📋 Copy with emoji
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        if (videoId) {
                                             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
                                                 'Now watching: https://youtube.com/watch?v=${videoId}',
                                             )}`;
