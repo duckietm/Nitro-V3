@@ -1,0 +1,35 @@
+{
+    // ============================================================
+    //  Renderer — Environment URLs
+    // ============================================================
+    //  Edit these when switching between dev / staging / prod.
+    //  Supports ${key} interpolation resolved at runtime.
+    // ============================================================
+
+    'socket.url': 'ws://127.0.0.1:2097',
+    base_url: 'http://127.0.0.1:3000',
+    'asset.url': '${base_url}/nitro-assets/bundled',
+    'image.library.url': '${base_url}/swf/c_images/',
+    'hof.furni.url': '${base_url}/swf/dcr/hof_furni',
+    'images.url': '${base_url}/nitro-assets/images',
+    'gamedata.url': '${base_url}/nitro-assets/config',
+    'sounds.url': '${asset.url}/sounds/%sample%.mp3',
+    'external.texts.url': [
+        '${gamedata.url}/ExternalTexts.json',
+        '${gamedata.url}/UITexts.json',
+    ],
+    'external.samples.url': '${hof.furni.url}/mp3/sound_machine_sample_%sample%.mp3',
+    'furnidata.url': '${gamedata.url}/FurnitureData.json?v=1',
+    'productdata.url': '${gamedata.url}/ProductData.json?v=1',
+    'avatar.actions.url': '${gamedata.url}/HabboAvatarActions.json?v=1',
+    'avatar.figuredata.url': '${gamedata.url}/FigureData.json?v=1',
+    'avatar.figuremap.url': '${gamedata.url}/FigureMap.json?v=1',
+    'avatar.effectmap.url': '${gamedata.url}/EffectMap.json?v=1',
+    'avatar.asset.url': '${asset.url}/figure/%libname%.nitro',
+    'avatar.asset.effect.url': '${asset.url}/effect/%libname%.nitro',
+    'furni.asset.url': '${asset.url}/furniture/%libname%.nitro',
+    'furni.asset.icon.url': '${hof.furni.url}/icons/%libname%%param%_icon.png',
+    'pet.asset.url': '${asset.url}/pet/%libname%.nitro',
+    'generic.asset.url': '${asset.url}/generic/%libname%.nitro',
+    'badge.asset.url': '${image.library.url}album1584/%badgename%.gif',
+}
