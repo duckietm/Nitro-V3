@@ -1,9 +1,8 @@
-import { CreateLinkEvent, GetRoomEngine, GetSessionDataManager, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetRoomEngine, GetSessionDataManager, MouseEventType, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useRef } from 'react';
 import { DispatchUiEvent, GetConfigurationValue, GetRoomSession, GetUserProfile, LocalizeText } from '../../api';
-import { LayoutItemCountView } from '../../common';
+import { Flex, LayoutItemCountView } from '../../common';
 import { GuideToolEvent } from '../../events';
-import { ToolbarItemView } from './ToolbarItemView';
 
 export const ToolbarMeView: FC<PropsWithChildren<{
     useGuideTool: boolean;
@@ -11,8 +10,8 @@ export const ToolbarMeView: FC<PropsWithChildren<{
     setMeExpanded: Dispatch<SetStateAction<boolean>>;
 }>> = props =>
 {
-    const { useGuideTool = false, unseenAchievementCount = 0, children = null } = props;
-    const elementRef = useRef<HTMLDivElement>(null);
+    const { useGuideTool = false, unseenAchievementCount = 0, setMeExpanded = null, children = null, ...rest } = props;
+    const elementRef = useRef<HTMLDivElement>();
 
     useEffect(() =>
     {
@@ -23,22 +22,29 @@ export const ToolbarMeView: FC<PropsWithChildren<{
         GetRoomEngine().selectRoomObject(roomSession.roomId, roomSession.ownRoomIndex, RoomObjectCategory.UNIT);
     }, []);
 
+    useEffect(() =>
+    {
+        const onClick = (event: MouseEvent) => setMeExpanded(false);
+
+        document.addEventListener('click', onClick);
+
+        return () => document.removeEventListener(MouseEventType.MOUSE_CLICK, onClick);
+    }, [ setMeExpanded ]);
+
     return (
-        <div className="w-fit max-w-[min(calc(100vw-16px),520px)] rounded-[12px] border border-white/8 bg-[rgba(10,10,12,0.58)] px-[10px] py-[7px] shadow-[0_10px_24px_rgba(0,0,0,0.2)]" ref={ elementRef }>
-            <div className="flex items-center gap-[8px] overflow-x-auto overflow-y-visible whitespace-nowrap">
-                { (GetConfigurationValue('guides.enabled') && useGuideTool) &&
-                    <ToolbarItemView icon="me-helper-tool" onClick={ event => DispatchUiEvent(new GuideToolEvent(GuideToolEvent.TOGGLE_GUIDE_TOOL)) } title={ LocalizeText('guide.help.button.label') } /> }
-                <ToolbarItemView icon="me-achievements" onClick={ event => CreateLinkEvent('achievements/toggle') } title={ LocalizeText('toolbar.icon.label.achievements') }>
-                    { (unseenAchievementCount > 0) &&
-                        <LayoutItemCountView count={ unseenAchievementCount } /> }
-                </ToolbarItemView>
-                <ToolbarItemView icon="me-profile" onClick={ event => GetUserProfile(GetSessionDataManager().userId) } title={ LocalizeText('toolbar.icon.label.memenu') } />
-                <ToolbarItemView icon="me-rooms" onClick={ event => CreateLinkEvent('navigator/search/myworld_view') } title={ LocalizeText('navigator.myworlds') } />
-                <ToolbarItemView icon="me-clothing" onClick={ event => CreateLinkEvent('avatar-editor/toggle') } title={ LocalizeText('widget.memenu.settings.avatar') } />
-                <ToolbarItemView icon="me-settings" onClick={ event => CreateLinkEvent('user-settings/toggle') } title={ LocalizeText('widget.memenu.settings.title') } />
-                <ToolbarItemView icon="me-forums" onClick={ event => CreateLinkEvent('groupforum/toggle') } title={ LocalizeText('toolbar.icon.label.forums') } />
-                { children }
+        <Flex alignItems="center" className="absolute bottom-[60px] left-[33px] bg-[rgba(20,20,20,.95)] border border-[solid] border-[#101010] [box-shadow:inset_2px_2px_rgba(255,255,255,.1),inset_-2px_-2px_rgba(255,255,255,.1)] rounded-[$border-radius] p-2" gap={ 2 } innerRef={ elementRef }>
+            { (GetConfigurationValue('guides.enabled') && useGuideTool) &&
+                <div className="navigation-item relative nitro-icon icon-me-helper-tool cursor-pointer" onClick={ event => DispatchUiEvent(new GuideToolEvent(GuideToolEvent.TOGGLE_GUIDE_TOOL)) } /> }
+            <div className="navigation-item relative nitro-icon icon-me-achievements cursor-pointer" onClick={ event => CreateLinkEvent('achievements/toggle') }>
+                { (unseenAchievementCount > 0) &&
+                    <LayoutItemCountView count={ unseenAchievementCount } /> }
             </div>
-        </div>
+            <div className="navigation-item relative nitro-icon icon-me-profile cursor-pointer" onClick={ event => GetUserProfile(GetSessionDataManager().userId) } />
+            <div className="navigation-item relative nitro-icon icon-me-rooms cursor-pointer" onClick={ event => CreateLinkEvent('navigator/search/myworld_view') } />
+            <div className="navigation-item relative nitro-icon icon-me-clothing cursor-pointer" onClick={ event => CreateLinkEvent('avatar-editor/toggle') } />
+            <div className="navigation-item relative nitro-icon icon-me-settings cursor-pointer" onClick={ event => CreateLinkEvent('user-settings/toggle') } />
+            <div className="navigation-item relative nitro-icon icon-me-forums cursor-pointer" onClick={ event => CreateLinkEvent('groupforum/toggle') } title={ LocalizeText('toolbar.icon.label.forums') } />
+            { children }
+        </Flex>
     );
 };

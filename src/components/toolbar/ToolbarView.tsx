@@ -3,28 +3,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
 import { GetConfigurationValue, MessengerIconState, OpenMessengerChat, setYoutubeRoomEnabled, VisitDesktop } from '../../api';
 import { Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
-import { useAchievements, useFriends, useInventoryUnseenTracker, useMessageEvent, useMessenger, useNitroEvent, useSessionInfo, useWiredTools } from '../../hooks';
+import { useAchievements, useFriends, useInventoryUnseenTracker, useMessageEvent, useMessenger, useNitroEvent, useSessionInfo } from '../../hooks';
 import { ToolbarItemView } from './ToolbarItemView';
 import { ToolbarMeView } from './ToolbarMeView';
 import { YouTubePlayerView } from './YouTubePlayerView';
-
-const containerVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.05 } },
-    exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 as const } }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 10, scale: 0.8 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 22 } },
-    exit: { opacity: 0, y: 6, scale: 0.85, transition: { duration: 0.1 } }
-};
 
 export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 {
     const { isInRoom } = props;
     const [ isMeExpanded, setMeExpanded ] = useState(false);
-    const [ isToolbarOpen, setIsToolbarOpen ] = useState(false);
     const [ useGuideTool, setUseGuideTool ] = useState(false);
     const [ youtubeEnabled, setYoutubeEnabled ] = useState(false);
     const { userFigure = null } = useSessionInfo();
@@ -32,10 +19,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { getTotalUnseen = 0 } = useAchievements();
     const { requests = [] } = useFriends();
     const { iconState = MessengerIconState.HIDDEN } = useMessenger();
-    const { openMonitor, showToolbarButton } = useWiredTools();
     const isMod = GetSessionDataManager().isModerator;
-    const hasDesktopUnifiedShell = (isInRoom && isToolbarOpen);
-    const showDesktopShell = (isToolbarOpen || !isInRoom);
 
     useMessageEvent<YouTubeRoomSettingsEvent>(YouTubeRoomSettingsEvent, event =>
     {
@@ -78,11 +62,13 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 
             const targetBounds = target.getBoundingClientRect();
             const imageBounds = image.getBoundingClientRect();
+
             const left = (imageBounds.x - targetBounds.x);
             const top = (imageBounds.y - targetBounds.y);
             const squared = Math.sqrt(((left * left) + (top * top)));
             const wait = (500 - Math.abs(((((1 / squared) * 100) * 500) * 0.5)));
             const height = 20;
+
             const motionName = (`ToolbarBouncing[${ iconName }]`);
 
             if(!Motions.getMotionByTag(motionName))
@@ -153,62 +139,3 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         </>
     );
 };
-
-const TOOLBAR_STYLES = `
-  .tb-icon {
-    opacity: 1;
-    transition: transform 0.15s ease;
-    cursor: pointer;
-  }
-
-  .tb-icon:hover {
-    transform: translateY(-2px);
-  }
-
-  .tb-icon:active {
-    transform: translateY(0);
-  }
-
-  .tb-toggle {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    border-radius: 9px;
-    background: rgba(18, 16, 14, 0.80);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
-    transition: background 0.15s, border-color 0.15s;
-  }
-
-  .tb-toggle:hover {
-    background: rgba(30, 26, 20, 0.88);
-    border-color: rgba(255, 255, 255, 0.13);
-  }
-
-  .tb-bar-scroll {
-    overflow-x: auto;
-    overflow-y: visible;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    flex-wrap: nowrap;
-  }
-
-  .tb-bar-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tb-open-shell {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .tb-open-shell::-webkit-scrollbar {
-    display: none;
-  }
-`;

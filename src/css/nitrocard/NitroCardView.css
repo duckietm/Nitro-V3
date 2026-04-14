@@ -220,6 +220,7 @@
         font-family: Ubuntu, sans-serif;
         color: #111;
     }
+}
 
 @media (max-width: 991.98px) {
     .content-area {
@@ -247,7 +248,7 @@
     }
 }
 
-@include media-breakpoint-down(lg) {
+@media (max-width: 991.98px) {
     .nitro-card {
         resize: none !important;
         max-width: calc(100vw - 16px) !important;
