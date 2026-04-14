@@ -1,0 +1,56 @@
+.tb-icon {
+    opacity: 1;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.tb-toggle {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 9px;
+    background: rgba(18, 16, 14, 0.80);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+        background: rgba(30, 26, 20, 0.88);
+        border-color: rgba(255, 255, 255, 0.13);
+    }
+}
+
+.tb-bar-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.tb-open-shell {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}

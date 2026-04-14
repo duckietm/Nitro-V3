@@ -32,6 +32,8 @@ import './css/room/RoomWidgets.css';
 
 import './css/slider.css';
 
+import './css/toolbar/ToolBar.css';
+
 import './css/widgets/FurnitureWidgets.css';
 
 createRoot(document.getElementById('root')).render(<App />);
