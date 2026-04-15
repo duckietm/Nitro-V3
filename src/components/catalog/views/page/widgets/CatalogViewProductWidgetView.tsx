@@ -1,6 +1,6 @@
 import { GetAvatarRenderManager, GetSessionDataManager, Vector3d } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
-import { FurniCategory, Offer, ProductTypeEnum } from '../../../../../api';
+import { BuildPurchasableClothingFigure, FurniCategory, Offer, ProductTypeEnum } from '../../../../../api';
 import { AutoGrid, Column, LayoutGridItem, LayoutRoomPreviewerView } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
 
@@ -24,18 +24,37 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
             case ProductTypeEnum.FLOOR: {
                 if(!product.furnitureData) return;
 
-                if(product.furnitureData.specialType === FurniCategory.FIGURE_PURCHASABLE_SET)
+                const furniData = GetSessionDataManager().getFloorItemData(product.furnitureData.id);
+                const isPurchasableClothing = (product.furnitureData.specialType === FurniCategory.FIGURE_PURCHASABLE_SET);
+                const hasResolvableFigureSets = (() =>
                 {
-                    const furniData = GetSessionDataManager().getFloorItemData(product.furnitureData.id);
+                    if(!furniData || !furniData.customParams || !furniData.customParams.length) return false;
+
+                    const parts = furniData.customParams.split(',').map(value => parseInt(value));
+
+                    for(const part of parts)
+                    {
+                        if(isNaN(part)) continue;
+
+                        if(GetAvatarRenderManager().structureData?.getFigurePartSet(part)) return true;
+                    }
+
+                    return false;
+                })();
+
+                if(isPurchasableClothing || hasResolvableFigureSets)
+                {
                     const customParts = furniData.customParams.split(',').map(value => parseInt(value));
                     const figureSets: number[] = [];
 
                     for(const part of customParts)
                     {
+                        if(isNaN(part)) continue;
+
                         if(GetAvatarRenderManager().isValidFigureSetForGender(part, GetSessionDataManager().gender)) figureSets.push(part);
                     }
 
-                    const figureString = GetAvatarRenderManager().getFigureStringWithFigureIds(GetSessionDataManager().figure, GetSessionDataManager().gender, figureSets);
+                    const figureString = BuildPurchasableClothingFigure(GetSessionDataManager().figure, figureSets);
 
                     roomPreviewer.addAvatarIntoRoom(figureString, product.productClassId);
                 }

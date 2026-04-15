@@ -1,6 +1,6 @@
 import { AvatarFigurePartType, GetAvatarRenderManager, GetSessionDataManager, RedeemItemClothingComposer, RoomObjectCategory, UserFigureComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { FurniCategory, GetFurnitureDataForRoomObject, LocalizeText, SendMessageComposer } from '../../../../../api';
+import { BuildPurchasableClothingFigure, GetFurnitureDataForRoomObject, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Button, Column, LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../../common';
 import { useRoom } from '../../../../../hooks';
 
@@ -41,22 +41,18 @@ export const PurchasableClothingConfirmView: FC<PurchasableClothingConfirmViewPr
         {
             const furniData = GetFurnitureDataForRoomObject(roomSession.roomId, objectId, RoomObjectCategory.FLOOR);
 
-            if(furniData)
+            if(furniData && furniData.customParams && furniData.customParams.length)
             {
-                switch(furniData.specialType)
+                const setIds = furniData.customParams.split(',')
+                    .map(part => parseInt(part))
+                    .filter(id => !isNaN(id));
+
+                for(const setId of setIds)
                 {
-                    case FurniCategory.FIGURE_PURCHASABLE_SET:
-                        mode = MODE_PURCHASABLE_CLOTHING;
-
-                        const setIds = furniData.customParams.split(',').map(part => parseInt(part));
-
-                        for(const setId of setIds)
-                        {
-                            if(GetAvatarRenderManager().isValidFigureSetForGender(setId, gender)) validSets.push(setId);
-                        }
-
-                        break;
+                    if(GetAvatarRenderManager().isValidFigureSetForGender(setId, gender)) validSets.push(setId);
                 }
+
+                if(validSets.length) mode = MODE_PURCHASABLE_CLOTHING;
             }
         }
 
@@ -68,7 +64,7 @@ export const PurchasableClothingConfirmView: FC<PurchasableClothingConfirmViewPr
         }
 
         setGender(gender);
-        setNewFigure(GetAvatarRenderManager().getFigureStringWithFigureIds(figure, gender, validSets));
+        setNewFigure(BuildPurchasableClothingFigure(figure, validSets));
 
         // if owns clothing, change to it
 
