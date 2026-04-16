@@ -1,6 +1,10 @@
 import { AddLinkEventTracker, ClubGiftInfoEvent, CreateLinkEvent, GetClubGiftInfo, ILinkEventTracker, RemoveLinkEventTracker, ScrGetKickbackInfoMessageComposer, ScrKickbackData, ScrSendKickbackInfoMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { ClubStatus, FriendlyTime, GetClubBadge, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../api';
+import hcLogo from '../../assets/images/hc-center/hc_logo.gif';
+import paydayBg from '../../assets/images/hc-center/payday.png';
+import clockIcon from '../../assets/images/hc-center/clock.png';
+import benefitsBg from '../../assets/images/hc-center/benefits.png';
 import { Button, Column, Flex, LayoutAvatarImageView, LayoutBadgeImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { useInventoryBadges, useMessageEvent, usePurse, useSessionInfo } from '../../hooks';
 
@@ -126,73 +130,72 @@ export const HcCenterView: FC<{}> = props =>
     );
 
     return (
-        <NitroCardView className="nitro-hc-center" theme="primary-slim">
+        <NitroCardView className="w-[430px] resize-none" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('generic.hccenter') } onCloseClick={ () => setIsVisible(false) } />
-            <Flex className="bg-muted p-2" position="relative">
-                <div className="flex flex-col gap-1">
-                    <div className="hc-logo" />
-                    <Flex>
-                        <Button variant="success" onClick={ event => CreateLinkEvent('catalog/open/' + GetConfigurationValue('catalog.links')['hc.buy_hc']) }>
-                            { LocalizeText((clubStatus === ClubStatus.ACTIVE) ? 'hccenter.btn.extend' : 'hccenter.btn.buy') }
-                        </Button>
-                    </Flex>
-                </div>
-                <div className="inset-e-0 p-4 top-0 habbo-avatar absolute">
+            <Flex className="bg-muted/50 p-3" position="relative">
+                <Column gap={ 2 }>
+                    <div className="w-[213px] h-[37px] bg-contain bg-no-repeat" style={ { backgroundImage: `url(${ hcLogo })` } } />
+                    <Button variant="success" onClick={ event => CreateLinkEvent('catalog/open/' + GetConfigurationValue('catalog.links')['hc.buy_hc']) }>
+                        { LocalizeText((clubStatus === ClubStatus.ACTIVE) ? 'hccenter.btn.extend' : 'hccenter.btn.buy') }
+                    </Button>
+                </Column>
+                <div className="absolute right-0 top-0 p-2 z-[4]">
                     <LayoutAvatarImageView direction={ 4 } figure={ userFigure } scale={ 2 } />
                 </div>
             </Flex>
             <NitroCardContentView>
-                <div className="flex gap-2">
-                    <LayoutBadgeImageView badgeCode={ badgeCode } className="align-self-center shrink-0 me-1" />
-                    <Column className="streak-info" gap={ 0 } size={ 5 }>
-                        <Text>{ LocalizeText('hccenter.status.' + clubStatus) }</Text>
-                        <Text dangerouslySetInnerHTML={ { __html: getInfoText() } } />
+                <Flex gap={ 2 } alignItems="center" className="p-2 rounded bg-card-grid-item/30">
+                    <LayoutBadgeImageView badgeCode={ badgeCode } className="shrink-0" />
+                    <Column gap={ 0 } className="min-h-[48px] leading-4">
+                        <Text bold>{ LocalizeText('hccenter.status.' + clubStatus) }</Text>
+                        <Text small className="text-gray-700" dangerouslySetInnerHTML={ { __html: getInfoText() } } />
                     </Column>
-                </div>
+                </Flex>
                 { GetConfigurationValue('hc.center')['payday.info'] &&
-                    <Flex alignItems="center">
-
-                        <Column className="rounded-start bg-primary p-2 payday-special mb-1">
-                            <h4 className="mb-1">{ LocalizeText('hccenter.special.title') }</h4>
-                            <div>{ LocalizeText('hccenter.special.info') }</div>
-                            <div className="btn btn-link text-white p-0 mt-auto align-self-baseline" onClick={ () => CreateLinkEvent('habbopages/' + GetConfigurationValue('hc.center')['payday.habbopage']) }>{ LocalizeText('hccenter.special.infolink') }</div>
-                        </Column>
-                        <div className="payday shrink-0 p-2">
-                            <h5 className="mb-2 ms-2">{ LocalizeText('hccenter.special.time.title') }</h5>
-                            <div className="flex flex-row mb-2">
-                                <div className="clock me-2" />
-                                <h6 className="mb-0 align-self-center">{ getHcPaydayTime() }</h6>
+                    <Flex className="rounded overflow-hidden border border-card-grid-item-border">
+                        <Column className="bg-primary p-3 flex-1 text-white" gap={ 1 }>
+                            <Text bold className="text-white">{ LocalizeText('hccenter.special.title') }</Text>
+                            <Text small className="text-white/80">{ LocalizeText('hccenter.special.info') }</Text>
+                            <div className="mt-auto">
+                                <span className="text-white/90 text-sm cursor-pointer hover:underline" onClick={ () => CreateLinkEvent('habbopages/' + GetConfigurationValue('hc.center')['payday.habbopage']) }>
+                                    { LocalizeText('hccenter.special.infolink') }
+                                </span>
                             </div>
+                        </Column>
+                        <Column className="w-[200px] shrink-0 p-3 bg-contain bg-no-repeat bg-center text-[#6b3502]" gap={ 1 } style={ { backgroundImage: `url(${ paydayBg })` } }>
+                            <Text bold small>{ LocalizeText('hccenter.special.time.title') }</Text>
+                            <Flex gap={ 1 } alignItems="center">
+                                <div className="w-5 h-5 shrink-0 bg-contain bg-no-repeat bg-center" style={ { backgroundImage: `url(${ clockIcon })` } } />
+                                <Text bold>{ getHcPaydayTime() }</Text>
+                            </Flex>
                             { clubStatus === ClubStatus.ACTIVE &&
-                                <div className="pe-3">
-                                    <h5 className="ms-2 mb-1 bolder">{ LocalizeText('hccenter.special.amount.title') }</h5>
-                                    <div className="flex flex-col">
-                                        <div className="w-full text-center ms-4n">{ getHcPaydayAmount() }</div>
-                                        <div className="btn btn-link align-self-end text-primary">
-                                            { LocalizeText('hccenter.breakdown.infolink') }
-                                        </div>
-                                    </div>
-                                </div> }
-                        </div>
+                                <Column gap={ 0 } className="mt-1">
+                                    <Text bold small>{ LocalizeText('hccenter.special.amount.title') }</Text>
+                                    <Text bold className="text-center">{ getHcPaydayAmount() }</Text>
+                                    <span className="text-primary text-sm cursor-pointer hover:underline self-end" onClick={ () => CreateLinkEvent('habbopages/' + GetConfigurationValue('hc.center')['payday.habbopage']) }>
+                                        { LocalizeText('hccenter.breakdown.infolink') }
+                                    </span>
+                                </Column> }
+                        </Column>
                     </Flex> }
                 { GetConfigurationValue('hc.center')['gift.info'] &&
-                    <div className="rounded bg-success p-2 flex flex-row mb-0">
-                        <div>
-                            <h4 className="mb-1">{ LocalizeText('hccenter.gift.title') }</h4>
-                            <div dangerouslySetInnerHTML={ { __html: unclaimedGifts > 0 ? LocalizeText('hccenter.unclaimedgifts', [ 'unclaimedgifts' ], [ unclaimedGifts.toString() ]) : LocalizeText('hccenter.gift.info') } }></div>
-                        </div>
-                        <button className="btn btn-primary btn-lg align-self-center ms-auto" onClick={ () => CreateLinkEvent('catalog/open/' + GetConfigurationValue('catalog.links')['hc.hc_gifts']) }>
+                    <Flex className="rounded bg-success/90 p-3" alignItems="center" gap={ 2 }>
+                        <Column gap={ 0 } className="flex-1">
+                            <Text bold className="text-white">{ LocalizeText('hccenter.gift.title') }</Text>
+                            <Text small className="text-white/80" dangerouslySetInnerHTML={ { __html: unclaimedGifts > 0 ? LocalizeText('hccenter.unclaimedgifts', [ 'unclaimedgifts' ], [ unclaimedGifts.toString() ]) : LocalizeText('hccenter.gift.info') } } />
+                        </Column>
+                        <Button variant="primary" className="shrink-0" onClick={ () => CreateLinkEvent('catalog/open/' + GetConfigurationValue('catalog.links')['hc.hc_gifts']) }>
                             { LocalizeText(clubStatus === ClubStatus.ACTIVE ? 'hccenter.btn.gifts.redeem' : 'hccenter.btn.gifts.view') }
-                        </button>
-                    </div> }
+                        </Button>
+                    </Flex> }
                 { GetConfigurationValue('hc.center')['benefits.info'] &&
-                    <div className="benefits text-black py-2">
-                        <h5 className="mb-1 text-primary">{ LocalizeText('hccenter.general.title') }</h5>
-                        <div className="mb-2" dangerouslySetInnerHTML={ { __html: LocalizeText('hccenter.general.info') } } />
-                        <button className="btn btn-link p-0 text-primary" onClick={ () => CreateLinkEvent('habbopages/' + GetConfigurationValue('hc.center')['benefits.habbopage']) }>
+                    <Column className="rounded p-3 bg-no-repeat bg-right-top border border-card-grid-item-border" gap={ 1 } style={ { backgroundImage: `url(${ benefitsBg })` } }>
+                        <Text bold variant="primary">{ LocalizeText('hccenter.general.title') }</Text>
+                        <Text small className="text-gray-700" dangerouslySetInnerHTML={ { __html: LocalizeText('hccenter.general.info') } } />
+                        <span className="text-primary text-sm cursor-pointer hover:underline mt-1" onClick={ () => CreateLinkEvent('habbopages/' + GetConfigurationValue('hc.center')['benefits.habbopage']) }>
                             { LocalizeText('hccenter.general.infolink') }
-                        </button>
-                    </div> }
+                        </span>
+                    </Column> }
             </NitroCardContentView>
         </NitroCardView>
     );
