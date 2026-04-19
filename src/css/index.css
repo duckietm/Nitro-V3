@@ -1819,23 +1819,23 @@ body {
 }
 
 .avatar-parts {
-    border: none !important;
+    border: 1px solid #c5c3c0 !important;
     position: relative;
     aspect-ratio: 1;
     width: 100%;
     max-width: 42px;
-    border-radius: 2rem !important;
+    border-radius: 0.3rem !important;
     overflow: hidden !important;
-    background-color: transparent;
+    background-color: #e9e8e4;
 
     &:hover {
-        box-shadow: 0 0 0 3px #dbdad5 !important;
+        box-shadow: inset 0 0 0 3px #dbdad5 !important;
         background-color: #cecdc8 !important;
     }
 
     &:active,
     &.part-selected {
-        box-shadow: 0 0 0 3px #c5c3c0 !important;
+        box-shadow: inset 0 0 0 3px #c5c3c0 !important;
         background-color: #b1b1b1 !important;
     }
 }
