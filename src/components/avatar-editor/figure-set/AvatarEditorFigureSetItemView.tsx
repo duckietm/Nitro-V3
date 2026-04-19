@@ -84,7 +84,7 @@ export const AvatarEditorFigureSetItemView: FC<{
                 <img
                     src={ assetUrl }
                     alt=""
-                    className="absolute inset-0 w-full h-full object-contain pointer-events-none image-rendering-pixelated"
+                    className="absolute inset-0 m-auto max-w-full max-h-full pointer-events-none image-rendering-pixelated"
                     draggable={ false }
                 /> }
             { !partItem.isClear && isHC && <LayoutCurrencyIcon className="absolute inset-e-1 bottom-1" type="hc" /> }

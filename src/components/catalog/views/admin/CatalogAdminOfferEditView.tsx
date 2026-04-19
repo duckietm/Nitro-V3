@@ -104,7 +104,7 @@ export const CatalogAdminOfferEditView: FC<{}> = () =>
         if(setEditingOffer) setEditingOffer(null);
     };
 
-    const inputClass = 'text-[11px] border-2 border-card-grid-item-border rounded px-2 py-1 bg-white focus:outline-none focus:border-primary transition-colors';
+    const inputClass = 'text-[11px] border-2 border-card-grid-item-border rounded px-2 py-1 bg-white placeholder:text-[#4b5563] focus:outline-none focus:border-primary transition-colors';
 
     return createPortal(
         <div className="fixed inset-0 flex items-center justify-center" style={ { zIndex: 1000 } } onClick={ () => setEditingOffer(null) }>
@@ -198,7 +198,7 @@ export const CatalogAdminOfferEditView: FC<{}> = () =>
                         </div>
                         <div className="flex flex-col gap-0.5">
                             <label className="text-[9px] text-muted">{ LocalizeText('catalog.admin.offer.extradata') }</label>
-                            <input className={ inputClass } placeholder="dati extra (opzionale)" type="text" value={ extradata } onChange={ e => setExtradata(e.target.value) } />
+                            <input className={ inputClass } placeholder={ LocalizeText('catalog.admin.offer.extradata') } type="text" value={ extradata } onChange={ e => setExtradata(e.target.value) } />
                         </div>
                         <div className="flex items-center gap-1.5 mt-1.5">
                             <input className="accent-primary" checked={ haveOffer === '1' } id="haveOffer" type="checkbox" onChange={ e => setHaveOffer(e.target.checked ? '1' : '0') } />
