@@ -14,8 +14,8 @@ const interpolate = (value: string | null | undefined): string =>
 
 const LOCK_KEY = 'nitro.login.lock';
 const MAX_ATTEMPTS = 5;
-const LOCK_WINDOW_MS = 60_000;
-const LOCK_DURATION_MS = 2 * 60_000;
+const LOCK_WINDOW_MS = 60_000; // rolling 60s window
+const LOCK_DURATION_MS = 2 * 60_000; // 2 minute lockout
 
 type AttemptState = { attempts: number; firstAt: number; lockedUntil: number };
 
@@ -33,7 +33,7 @@ const readLock = (): AttemptState =>
 const writeLock = (state: AttemptState) =>
 {
     try { sessionStorage.setItem(LOCK_KEY, JSON.stringify(state)); }
-    catch { }
+    catch { /* ignore */ }
 };
 
 export interface LoginViewProps
@@ -63,6 +63,21 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
     const rightRepeat = interpolate(loginImages['right.repeat'] || GetConfigurationValue<string>('login_right.repeat', ''));
     const right = interpolate(loginImages['right'] || GetConfigurationValue<string>('login_right', ''));
 
+    useEffect(() =>
+    {
+        // eslint-disable-next-line no-console
+        console.info('[LoginView] resolved background assets', {
+            'asset.url':            GetConfigurationValue<string>('asset.url', ''),
+            login_background:       background,
+            'login_background.colour': backgroundColor,
+            login_sun:              sun,
+            login_drape:            drape,
+            login_left:             left,
+            login_right:            right,
+            'login_right.repeat':   rightRepeat
+        });
+    }, [ background, backgroundColor, sun, drape, left, right, rightRepeat ]);
+
     const loginUrl = GetConfigurationValue<string>('login.endpoint', '/api/auth/login');
     const registerUrl = GetConfigurationValue<string>('login.register.endpoint', '/api/auth/register');
     const forgotUrl = GetConfigurationValue<string>('login.forgot.endpoint', '/api/auth/forgot-password');
@@ -73,18 +88,39 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
         || rawTurnstileEnabled === 1
         || rawTurnstileEnabled === '1') && !!turnstileSiteKey;
 
+    useEffect(() =>
+    {
+        // eslint-disable-next-line no-console
+        console.info('[LoginView] turnstile config', {
+            rawTurnstileEnabled,
+            turnstileEnabled,
+            turnstileSiteKey: turnstileSiteKey ? (turnstileSiteKey.slice(0, 6) + '…') : '(empty)'
+        });
+    }, [ rawTurnstileEnabled, turnstileEnabled, turnstileSiteKey ]);
+
     const resetLoginTurnstile = useCallback(() =>
     {
         setLoginTurnstileToken('');
         setLoginTurnstileResetSignal(prev => prev + 1);
     }, []);
 
+    // Clear error on mode change but keep the success notification so users
+    // returning to the login form can read it (e.g. "Account created").
+    // Reset the login captcha only when we're actually on the login form.
     useEffect(() =>
     {
         setError(null);
-        setInfo(null);
         if(mode === 'login') resetLoginTurnstile();
     }, [ mode, resetLoginTurnstile ]);
+
+    // Auto-dismiss the info notification after a few seconds so it doesn't
+    // hang around forever once the user has seen it.
+    useEffect(() =>
+    {
+        if(!info) return;
+        const timeout = window.setTimeout(() => setInfo(null), 8000);
+        return () => window.clearTimeout(timeout);
+    }, [ info ]);
 
     const lockState = useMemo(() => readLock(), [ submitting ]);
     const now = Date.now();
@@ -126,7 +162,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
 
         let payload: Record<string, unknown> = {};
         try { payload = await response.json(); }
-        catch { }
+        catch { /* ignore non-json responses */ }
 
         return { ok: response.ok, status: response.status, payload };
     }, []);
@@ -198,6 +234,11 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
         }
     }, [ submitting, username, password, turnstileEnabled, loginTurnstileToken, loginUrl, postJson, clearLock, recordFailure, onAuthenticated, resetLoginTurnstile ]);
 
+    // Register + forgot-password submit handlers receive the Turnstile token
+    // from the dialog (the dialog owns its own widget lifecycle), so the
+    // login widget underneath can't reset or overwrite it while the user
+    // is working on the modal.
+
     const handleRegisterSubmit = useCallback(async (body: { username: string; email: string; password: string; turnstileToken: string; }, onDialogReset: () => void) =>
     {
         if(turnstileEnabled && !body.turnstileToken)
@@ -221,7 +262,8 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
 
             if(ok)
             {
-                setInfo(typeof payload.message === 'string' ? payload.message : 'Account created. You can now log in.');
+                const friendly = `Welcome aboard, ${ body.username }! Your account is ready — log in below with the password you just chose.`;
+                setInfo(typeof payload.message === 'string' ? payload.message : friendly);
                 setMode('login');
                 setUsername(body.username);
                 setPassword('');
@@ -263,7 +305,8 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
 
             if(ok)
             {
-                setInfo(typeof payload.message === 'string' ? payload.message : 'If an account exists we just sent a reset link to your email.');
+                const friendly = 'Email sent! If an account matches that address you\'ll find a reset link in your inbox shortly (check spam if it doesn\'t show up within a minute).';
+                setInfo(typeof payload.message === 'string' ? payload.message : friendly);
                 setMode('login');
                 return;
             }
