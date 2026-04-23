@@ -1,7 +1,25 @@
 import { GetConfiguration } from '@nitrots/nitro-renderer';
 import { FC, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { GetConfigurationValue } from '../../api';
+import { GetConfigurationValue, LocalizeText } from '../../api';
 import { TurnstileWidget } from './TurnstileWidget';
+
+const t = (key: string, fallback: string, params?: string[], replacements?: string[]): string =>
+{
+    try
+    {
+        const value = LocalizeText(key, params ?? null, replacements ?? null);
+        if(value && value !== key) return value;
+    }
+    catch {}
+
+    if(!params || !replacements) return fallback;
+    let out = fallback;
+    for(let i = 0; i < params.length; i++)
+    {
+        if(replacements[i] !== undefined) out = out.replace('%' + params[i] + '%', replacements[i]);
+    }
+    return out;
+};
 
 type DialogMode = 'login' | 'register' | 'forgot';
 
@@ -207,19 +225,19 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
         if(state.lockedUntil > nowTs)
         {
             const remaining = Math.ceil((state.lockedUntil - nowTs) / 1000);
-            setError(`Too many attempts. Try again in ${ remaining }s.`);
+            setError(t('nitro.login.error.too_many_attempts', 'Too many attempts. Try again in %seconds%s.', [ 'seconds' ], [ String(remaining) ]));
             return;
         }
 
         if(!username.trim() || !password)
         {
-            setError('Please enter both your Habbo name and password.');
+            setError(t('nitro.login.error.missing_credentials', 'Please enter both your Habbo name and password.'));
             return;
         }
 
         if(turnstileEnabled && !loginTurnstileToken)
         {
-            setError('Please complete the security check.');
+            setError(t('nitro.login.error.turnstile', 'Please complete the security check.'));
             return;
         }
 
@@ -231,7 +249,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
             const serverOk = await pingLoginServer();
             if(!serverOk)
             {
-                setError('The gameserver is not running. Please try again later.');
+                setError(t('nitro.login.error.server_offline', 'The gameserver is not running. Please try again later.'));
                 return;
             }
             const { ok, payload } = await postJson(loginUrl, {
@@ -250,14 +268,14 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
             }
 
             recordFailure();
-            const message = typeof payload.error === 'string' ? payload.error : 'Invalid Habbo name or password.';
+            const message = typeof payload.error === 'string' ? payload.error : t('nitro.login.error.invalid_credentials', 'Invalid Habbo name or password.');
             setError(message);
             resetLoginTurnstile();
         }
         catch(err)
         {
             recordFailure();
-            setError('Unable to reach the login service. Please try again.');
+            setError(t('nitro.login.error.login_unreachable', 'Unable to reach the login service. Please try again.'));
             resetLoginTurnstile();
         }
         finally
@@ -294,7 +312,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
             const { ok, status, payload } = await postJson(checkEmailUrl, { email });
             const result = interpretAvailability(ok, status, payload);
             if(result.available) return { available: true };
-            return { available: false, error: result.error || 'This email is already in use.' };
+            return { available: false, error: result.error || t('nitro.login.error.email_taken', 'This email is already in use.') };
         }
         catch
         {
@@ -309,7 +327,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
             const { ok, status, payload } = await postJson(checkUsernameUrl, { username });
             const result = interpretAvailability(ok, status, payload);
             if(result.available) return { available: true };
-            return { available: false, error: result.error || 'This Habbo name is already taken.' };
+            return { available: false, error: result.error || t('nitro.login.error.username_taken', 'This Habbo name is already taken.') };
         }
         catch
         {
@@ -321,7 +339,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
     {
         if(turnstileEnabled && !body.turnstileToken)
         {
-            setError('Please complete the security check.');
+            setError(t('nitro.login.error.turnstile', 'Please complete the security check.'));
             return;
         }
 
@@ -343,7 +361,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
 
             if(ok)
             {
-                const friendly = `Welcome aboard, ${ body.username }! Your account is ready — log in below with the password you just chose.`;
+                const friendly = t('nitro.login.register.success', 'Welcome aboard, %username%! Your account is ready — log in below with the password you just chose.', [ 'username' ], [ body.username ]);
                 setInfo(typeof payload.message === 'string' ? payload.message : friendly);
                 setMode('login');
                 setUsername(body.username);
@@ -351,12 +369,12 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
                 return;
             }
 
-            setError(typeof payload.error === 'string' ? payload.error : 'Unable to create your account.');
+            setError(typeof payload.error === 'string' ? payload.error : t('nitro.login.error.register_failed', 'Unable to create your account.'));
             onDialogReset();
         }
         catch
         {
-            setError('Unable to reach the registration service.');
+            setError(t('nitro.login.error.register_unreachable', 'Unable to reach the registration service.'));
             onDialogReset();
         }
         finally
@@ -369,7 +387,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
     {
         if(turnstileEnabled && !body.turnstileToken)
         {
-            setError('Please complete the security check.');
+            setError(t('nitro.login.error.turnstile', 'Please complete the security check.'));
             return;
         }
 
@@ -386,18 +404,18 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
 
             if(ok)
             {
-                const friendly = 'Email sent! If an account matches that address you\'ll find a reset link in your inbox shortly (check spam if it doesn\'t show up within a minute).';
+                const friendly = t('nitro.login.forgot.success', 'Email sent! If an account matches that address you\'ll find a reset link in your inbox shortly (check spam if it doesn\'t show up within a minute).');
                 setInfo(typeof payload.message === 'string' ? payload.message : friendly);
                 setMode('login');
                 return;
             }
 
-            setError(typeof payload.error === 'string' ? payload.error : 'Unable to send a reset email right now.');
+            setError(typeof payload.error === 'string' ? payload.error : t('nitro.login.error.forgot_failed', 'Unable to send a reset email right now.'));
             onDialogReset();
         }
         catch
         {
-            setError('Unable to reach the password reset service.');
+            setError(t('nitro.login.error.forgot_unreachable', 'Unable to reach the password reset service.'));
             onDialogReset();
         }
         finally
@@ -420,18 +438,18 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
 
             <div className="login-stack">
                 <div className="nitro-login-card">
-                    <div className="card-title">First time here?</div>
+                    <div className="card-title">{ t('nitro.login.firsttime.title', 'First time here?') }</div>
                     <div className="card-body register-card-body">
-                        <span>Don't have a Habbo yet?</span>
-                        <a onClick={ () => setMode('register') }>You can create one here</a>
+                        <span>{ t('nitro.login.firsttime.text', 'Don\'t have a Habbo yet?') }</span>
+                        <a onClick={ () => setMode('register') }>{ t('nitro.login.firsttime.link', 'You can create one here') }</a>
                     </div>
                 </div>
 
                 <div className="nitro-login-card">
-                    <div className="card-title">What's your Habbo called?</div>
+                    <div className="card-title">{ t('nitro.login.card.title', 'What\'s your Habbo called?') }</div>
                     <form className="card-body" onSubmit={ handleLoginSubmit } autoComplete="on">
                         <div className="field">
-                            <label htmlFor="login-username">Name of your Habbo</label>
+                            <label htmlFor="login-username">{ t('login.username', 'Name of your Habbo') }</label>
                             <input
                                 id="login-username"
                                 name="username"
@@ -443,7 +461,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
                             />
                         </div>
                         <div className="field">
-                            <label htmlFor="login-password">Password</label>
+                            <label htmlFor="login-password">{ t('generic.password', 'Password') }</label>
                             <input
                                 id="login-password"
                                 name="password"
@@ -465,9 +483,9 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
                             /> }
                         { loginServerReachable === false &&
                             <div className="error-line server-offline">
-                                The gameserver isn't running right now. Please try again in a moment.
+                                { t('nitro.login.server.offline.short', 'The gameserver isn\'t running right now. Please try again in a moment.') }
                                 <button type="button" className="retry-link" onClick={ pingLoginServer } disabled={ loginPingingServer }>
-                                    { loginPingingServer ? 'Checking…' : 'Retry' }
+                                    { loginPingingServer ? t('nitro.login.server.checking', 'Checking…') : t('nitro.login.server.retry', 'Retry') }
                                 </button>
                             </div>
                         }
@@ -478,9 +496,9 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated }) =>
                                 type="submit"
                                 className="ok-button"
                                 disabled={ submitting || isLocked || loginServerReachable === false || loginPingingServer }
-                            >{ loginPingingServer ? 'Checking…' : 'OK' }</button>
+                            >{ loginPingingServer ? t('nitro.login.server.checking', 'Checking…') : t('login.title', 'Log in') }</button>
                         </div>
-                        <a className="forgot" onClick={ () => setMode('forgot') }>Forgotten your password?</a>
+                        <a className="forgot" onClick={ () => setMode('forgot') }>{ t('login.forgot_password', 'Forgotten your password?') }</a>
                     </form>
                 </div>
             </div>
@@ -742,7 +760,7 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
             .catch(() => {
                 if(cancelled) return;
                 setRoomTemplates([]);
-                setRoomTemplatesError('Could not load room options. You can still skip this step.');
+                setRoomTemplatesError(t('nitro.login.register.room.error', 'Could not load room options. You can still skip this step.'));
             });
         return () => { cancelled = true; };
     }, [ step, roomTemplates, roomTemplatesUrl ]);
@@ -863,22 +881,22 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
 
         if(!email.trim() || !password || !confirm)
         {
-            setLocalError('Please fill in every field.');
+            setLocalError(t('nitro.login.error.missing_fields', 'Please fill in every field.'));
             return;
         }
         if(!EMAIL_REGEX.test(email.trim()))
         {
-            setLocalError('Please enter a valid email address.');
+            setLocalError(t('nitro.login.error.invalid_email', 'Please enter a valid email address.'));
             return;
         }
         if(password.length < 8)
         {
-            setLocalError('Your password must be at least 8 characters.');
+            setLocalError(t('nitro.login.error.password_too_short', 'Your password must be at least 8 characters.'));
             return;
         }
         if(password !== confirm)
         {
-            setLocalError('Passwords do not match.');
+            setLocalError(t('nitro.login.error.password_mismatch', 'Passwords do not match.'));
             return;
         }
 
@@ -888,13 +906,13 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
             const serverOk = await pingServer();
             if(!serverOk)
             {
-                setLocalError('The gameserver is not running. Please try again later.');
+                setLocalError(t('nitro.login.error.server_offline', 'The gameserver is not running. Please try again later.'));
                 return;
             }
             const result = await onCheckEmail(email.trim());
             if(!result.available)
             {
-                setLocalError(result.error || 'This email is already in use.');
+                setLocalError(result.error || t('nitro.login.error.email_taken', 'This email is already in use.'));
                 return;
             }
             setStep('avatar');
@@ -973,18 +991,18 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
         const trimmed = username.trim();
         if(!trimmed)
         {
-            setLocalError('Please choose a Habbo name.');
+            setLocalError(t('nitro.login.error.missing_username', 'Please choose a Habbo name.'));
             return;
         }
         if(trimmed.length < 3 || trimmed.length > 16)
         {
-            setLocalError('Habbo name must be 3–16 characters.');
+            setLocalError(t('nitro.login.error.username_length', 'Habbo name must be 3–16 characters.'));
             return;
         }
 
         if(turnstileEnabled && !turnstileToken)
         {
-            setLocalError('Please complete the security check.');
+            setLocalError(t('nitro.login.error.turnstile', 'Please complete the security check.'));
             return;
         }
 
@@ -994,13 +1012,13 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
             const serverOk = await pingServer();
             if(!serverOk)
             {
-                setLocalError('The gameserver is not running. Please try again later.');
+                setLocalError(t('nitro.login.error.server_offline', 'The gameserver is not running. Please try again later.'));
                 return;
             }
             const result = await onCheckUsername(trimmed);
             if(!result.available)
             {
-                setLocalError(result.error || 'This Habbo name is already taken.');
+                setLocalError(result.error || t('nitro.login.error.username_taken', 'This Habbo name is already taken.'));
                 return;
             }
         }
@@ -1040,35 +1058,35 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
             <div className={ `dialog ${ step === 'avatar' ? 'dialog-avatar' : '' } ${ step === 'room' ? 'dialog-room' : '' }` }>
                 <div className="nitro-login-card">
                     <div className="card-title">
-                        <span>Habbo Details</span>
-                        <span className="nitro-card-close-button" role="button" aria-label="Close" onClick={ onCancel } />
+                        <span>{ t('nitro.login.register.title', 'Habbo Details') }</span>
+                        <span className="nitro-card-close-button" role="button" aria-label={ t('generic.close', 'Close') } onClick={ onCancel } />
                     </div>
 
                     { step === 'credentials' &&
                         <form className="card-body" onSubmit={ handleCredentialsNext } autoComplete="on">
                             <div className="register-intro">
-                                Let's create your account. Enter your email and pick a password — we'll check that email isn't already in use.
+                                { t('nitro.login.register.intro.credentials', 'Let\'s create your account. Enter your email and pick a password — we\'ll check that email isn\'t already in use.') }
                             </div>
                             { serverOffline &&
                                 <div className="error-line server-offline">
-                                    The gameserver isn't running right now, so new accounts can't be created. Please try again in a moment.
+                                    { t('nitro.login.server.offline.long', 'The gameserver isn\'t running right now, so new accounts can\'t be created. Please try again in a moment.') }
                                     <button type="button" className="retry-link" onClick={ pingServer } disabled={ pingingServer }>
-                                        { pingingServer ? 'Checking…' : 'Retry' }
+                                        { pingingServer ? t('nitro.login.server.checking', 'Checking…') : t('nitro.login.server.retry', 'Retry') }
                                     </button>
                                 </div>
                             }
                             <div className="field">
-                                <label htmlFor="register-email">Email</label>
+                                <label htmlFor="register-email">{ t('register.email', 'Email') }</label>
                                 <input id="register-email" type="email" maxLength={ 120 } autoComplete="email"
                                     value={ email } onChange={ e => setEmail(e.target.value) } />
                             </div>
                             <div className="field">
-                                <label htmlFor="register-password">Password</label>
+                                <label htmlFor="register-password">{ t('generic.password', 'Password') }</label>
                                 <input id="register-password" type="password" maxLength={ 128 } autoComplete="new-password"
                                     value={ password } onChange={ e => setPassword(e.target.value) } />
                             </div>
                             <div className="field">
-                                <label htmlFor="register-confirm">Confirm password</label>
+                                <label htmlFor="register-confirm">{ t('nitro.login.register.confirm.label', 'Confirm password') }</label>
                                 <input id="register-confirm" type="password" maxLength={ 128 } autoComplete="new-password"
                                     value={ confirm } onChange={ e => setConfirm(e.target.value) } />
                             </div>
@@ -1077,7 +1095,7 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
                             <div className="step-footer">
                                 <span className="step-indicator">1/3</span>
                                 <button type="submit" className="ok-button" disabled={ !credentialsValid || busy || serverOffline }>
-                                    { checking || pingingServer ? 'Checking…' : 'Next' }
+                                    { checking || pingingServer ? t('nitro.login.server.checking', 'Checking…') : t('nitro.login.register.next', 'Next') }
                                 </button>
                             </div>
                         </form>
@@ -1086,29 +1104,29 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
                     { step === 'avatar' &&
                         <form className="card-body" onSubmit={ handleAvatarSubmit } autoComplete="on">
                             <div className="register-intro">
-                                Now it's time to make your own Habbo character! To make your own Habbo, please start by choosing your Habbo Name.
+                                { t('nitro.login.register.intro.avatar', 'Now it\'s time to make your own Habbo character! To make your own Habbo, please start by choosing your Habbo Name.') }
                             </div>
                             { serverOffline &&
                                 <div className="error-line server-offline">
-                                    The gameserver isn't running right now, so new accounts can't be created. Please try again in a moment.
+                                    { t('nitro.login.server.offline.long', 'The gameserver isn\'t running right now, so new accounts can\'t be created. Please try again in a moment.') }
                                     <button type="button" className="retry-link" onClick={ pingServer } disabled={ pingingServer }>
-                                        { pingingServer ? 'Checking…' : 'Retry' }
+                                        { pingingServer ? t('nitro.login.server.checking', 'Checking…') : t('nitro.login.server.retry', 'Retry') }
                                     </button>
                                 </div>
                             }
                             <div className="field">
-                                <input id="register-username" type="text" maxLength={ 16 } autoComplete="username" placeholder="HabboName"
+                                <input id="register-username" type="text" maxLength={ 16 } autoComplete="username" placeholder={ t('nitro.login.register.username.placeholder', 'HabboName') }
                                     value={ username } onChange={ e => setUsername(e.target.value) } />
                             </div>
 
                             <div className="gender-row">
                                 <label>
                                     <input type="radio" name="register-gender" checked={ gender === 'F' } onChange={ () => applyGender('F') } />
-                                    <span>Girl</span>
+                                    <span>{ t('avatareditor.generic.girl', 'Girl') }</span>
                                 </label>
                                 <label>
                                     <input type="radio" name="register-gender" checked={ gender === 'M' } onChange={ () => applyGender('M') } />
-                                    <span>Boy</span>
+                                    <span>{ t('avatareditor.generic.boy', 'Boy') }</span>
                                 </label>
                             </div>
 
@@ -1156,8 +1174,10 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
                                 <button type="button" className="ok-button hot-looks-button"
                                     onClick={ cycleHotLook }
                                     disabled={ !hotLooks.length || busy }
-                                    title={ hotLooks.length ? `${ hotLooks.length } looks available` : 'No hot looks loaded' }>
-                                    Hot Looks{ hotLookIndex >= 0 && hotLooks.length ? ` (${ hotLookIndex + 1 }/${ hotLooks.length })` : '' }
+                                    title={ hotLooks.length
+                                        ? t('nitro.login.register.hotlooks.count', '%count% looks available', [ 'count' ], [ String(hotLooks.length) ])
+                                        : t('nitro.login.register.hotlooks.none', 'No hot looks loaded') }>
+                                    { t('avatareditor.category.hotlooks', 'Hot Looks') }{ hotLookIndex >= 0 && hotLooks.length ? ` (${ hotLookIndex + 1 }/${ hotLooks.length })` : '' }
                                 </button>
                             </div>
 
@@ -1174,10 +1194,10 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
                             { info && <div className="info-line">{ info }</div> }
 
                             <div className="step-footer step-footer-split">
-                                <button type="button" className="ok-button back-button" onClick={ () => setStep('credentials') } disabled={ busy }>Back</button>
+                                <button type="button" className="ok-button back-button" onClick={ () => setStep('credentials') } disabled={ busy }>{ t('generic.back', 'Back') }</button>
                                 <span className="step-indicator">2/3</span>
                                 <button type="submit" className="ok-button" disabled={ !username.trim() || busy || serverOffline }>
-                                    { (checking || pingingServer) ? 'Checking…' : 'Next' }
+                                    { (checking || pingingServer) ? t('nitro.login.server.checking', 'Checking…') : t('nitro.login.register.next', 'Next') }
                                 </button>
                             </div>
                         </form>
@@ -1186,13 +1206,13 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
                     { step === 'room' &&
                         <form className="card-body" onSubmit={ handleRoomSubmit } autoComplete="off">
                             <div className="register-intro">
-                                Last step — pick a starter room, or skip and create your own later.
+                                { t('nitro.login.register.intro.room', 'Last step — pick a starter room, or skip and create your own later.') }
                             </div>
                             { serverOffline &&
                                 <div className="error-line server-offline">
-                                    The gameserver isn't running right now, so new accounts can't be created. Please try again in a moment.
+                                    { t('nitro.login.server.offline.long', 'The gameserver isn\'t running right now, so new accounts can\'t be created. Please try again in a moment.') }
                                     <button type="button" className="retry-link" onClick={ pingServer } disabled={ pingingServer }>
-                                        { pingingServer ? 'Checking…' : 'Retry' }
+                                        { pingingServer ? t('nitro.login.server.checking', 'Checking…') : t('nitro.login.server.retry', 'Retry') }
                                     </button>
                                 </div>
                             }
@@ -1202,12 +1222,12 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
                                     <input type="radio" name="register-room-template" checked={ selectedTemplateId === null }
                                         onChange={ () => setSelectedTemplateId(null) } />
                                     <div className="room-template-body">
-                                        <div className="room-template-title">I'm okay — I'll create my own rooms</div>
-                                        <div className="room-template-description">Skip for now and start with an empty hotel inventory.</div>
+                                        <div className="room-template-title">{ t('nitro.login.register.room.skip.title', 'I\'m okay — I\'ll create my own rooms') }</div>
+                                        <div className="room-template-description">{ t('nitro.login.register.room.skip.description', 'Skip for now and start with an empty hotel inventory.') }</div>
                                     </div>
                                 </label>
 
-                                { roomTemplates === null && <div className="info-line">Loading rooms…</div> }
+                                { roomTemplates === null && <div className="info-line">{ t('nitro.login.register.room.loading', 'Loading rooms…') }</div> }
 
                                 { roomTemplates !== null && roomTemplates.map(template => (
                                     <label key={ template.templateId }
@@ -1231,10 +1251,10 @@ const RegisterDialog: FC<RegisterDialogProps> = props =>
                             { info && <div className="info-line">{ info }</div> }
 
                             <div className="step-footer step-footer-split">
-                                <button type="button" className="ok-button back-button" onClick={ () => setStep('avatar') } disabled={ busy }>Back</button>
+                                <button type="button" className="ok-button back-button" onClick={ () => setStep('avatar') } disabled={ busy }>{ t('generic.back', 'Back') }</button>
                                 <span className="step-indicator">3/3</span>
                                 <button type="submit" className="ok-button" disabled={ busy || serverOffline }>
-                                    { submitting ? 'Creating…' : 'Finish' }
+                                    { submitting ? t('nitro.login.register.creating', 'Creating…') : t('nitro.login.register.finish', 'Finish') }
                                 </button>
                             </div>
                         </form>
@@ -1272,7 +1292,7 @@ const ForgotDialog: FC<ForgotDialogProps> = props =>
 
         if(!email.trim())
         {
-            setLocalError('Please enter your email address.');
+            setLocalError(t('nitro.login.error.missing_email', 'Please enter your email address.'));
             return;
         }
 
@@ -1284,12 +1304,12 @@ const ForgotDialog: FC<ForgotDialogProps> = props =>
             <div className="dialog">
                 <div className="nitro-login-card">
                     <div className="card-title">
-                        <span>Reset password</span>
-                        <span className="nitro-card-close-button" role="button" aria-label="Close" onClick={ onCancel } />
+                        <span>{ t('nitro.login.forgot.title', 'Reset password') }</span>
+                        <span className="nitro-card-close-button" role="button" aria-label={ t('generic.close', 'Close') } onClick={ onCancel } />
                     </div>
                     <form className="card-body" onSubmit={ handle } autoComplete="on">
                         <div className="field">
-                            <label htmlFor="forgot-email">Email address</label>
+                            <label htmlFor="forgot-email">{ t('nitro.login.forgot.email.label', 'Email address') }</label>
                             <input id="forgot-email" type="email" maxLength={ 120 } autoComplete="email"
                                 value={ email } onChange={ e => setEmail(e.target.value) } />
                         </div>
@@ -1305,7 +1325,7 @@ const ForgotDialog: FC<ForgotDialogProps> = props =>
                         { (localError || error) && <div className="error-line">{ localError || error }</div> }
                         { info && <div className="info-line">{ info }</div> }
                         <div className="submit-row">
-                            <button type="submit" className="ok-button" disabled={ submitting }>Send email</button>
+                            <button type="submit" className="ok-button" disabled={ submitting }>{ t('nitro.login.forgot.send', 'Send email') }</button>
                         </div>
                     </form>
                 </div>

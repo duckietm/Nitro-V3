@@ -35,7 +35,6 @@ export const App: FC<{}> = props =>
         setPrepareTrigger(prev => prev + 1);
     }, []);
 
-    // Listen for socket closed events (code 1000 "Bye" - server rejected SSO)
     useNitroEvent(NitroEventType.SOCKET_CLOSED, showSessionExpired);
 
     useMessageEvent<LoadGameUrlEvent>(LoadGameUrlEvent, event =>
@@ -61,8 +60,6 @@ export const App: FC<{}> = props =>
 
                 if(!ssoTicket || ssoTicket === '')
                 {
-                    // Configuration is loaded lazily — fetch it up-front so the login
-                    // screen toggle and Turnstile keys are available before we decide.
                     let configInitError: unknown = null;
                     try { await GetConfiguration().init(); }
                     catch(e) { configInitError = e; }
@@ -77,6 +74,9 @@ export const App: FC<{}> = props =>
 
                     if(loginScreenEnabled)
                     {
+                        try { await GetLocalizationManager().init(); }
+                        catch(localizationErr) { NitroLogger.error('[LoginScreen] Localization init failed', localizationErr); }
+
                         setIsReady(false);
                         setShowLogin(true);
                         return;
@@ -110,7 +110,7 @@ export const App: FC<{}> = props =>
                     eventMode: 'none',
                     failIfMajorPerformanceCaveat: false,
                     roundPixels: true,
-                    useBackBuffer // Keep disabled by default unless explicitly enabled in NitroConfig
+                    useBackBuffer
                 });
 
                 await GetConfiguration().init();

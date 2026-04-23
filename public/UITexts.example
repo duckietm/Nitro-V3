@@ -109,5 +109,65 @@
     "groupforum.message.hide": "Hide message",
     "group.forum.enable.caption": "Enable / Disable group forum",
     "group.forum.enable.help": "If you disable the group forum, all posts will also be deleted!",
-    "groupforum.view.no_threads": "There are currently no active threads"
+    "groupforum.view.no_threads": "There are currently no active threads",
+    "login.username": "Name of your Habbo",
+    "login.forgot_password": "Forgotten your password?",
+
+    "nitro.login.firsttime.title": "First time here?",
+    "nitro.login.firsttime.text": "Don't have a Habbo yet?",
+    "nitro.login.firsttime.link": "You can create one here",
+    "nitro.login.card.title": "What's your Habbo called?",
+
+    "nitro.login.server.offline.short": "The gameserver isn't running right now. Please try again in a moment.",
+    "nitro.login.server.offline.long": "The gameserver isn't running right now, so new accounts can't be created. Please try again in a moment.",
+    "nitro.login.server.checking": "Checking…",
+    "nitro.login.server.retry": "Retry",
+
+    "nitro.login.register.title": "Habbo Details",
+    "nitro.login.register.next": "Next",
+    "nitro.login.register.finish": "Finish",
+    "nitro.login.register.creating": "Creating…",
+
+    "nitro.login.register.intro.credentials": "Let's create your account. Enter your email and pick a password — we'll check that email isn't already in use.",
+    "nitro.login.register.intro.avatar": "Now it's time to make your own Habbo character! To make your own Habbo, please start by choosing your Habbo Name.",
+    "nitro.login.register.intro.room": "Last step — pick a starter room, or skip and create your own later.",
+
+    "nitro.login.register.confirm.label": "Confirm password",
+    "nitro.login.register.username.placeholder": "HabboName",
+
+    "nitro.login.register.hotlooks.count": "%count% looks available",
+    "nitro.login.register.hotlooks.none": "No hot looks loaded",
+
+    "nitro.login.register.room.skip.title": "I'm okay — I'll create my own rooms",
+    "nitro.login.register.room.skip.description": "Skip for now and start with an empty hotel inventory.",
+    "nitro.login.register.room.loading": "Loading rooms…",
+    "nitro.login.register.room.error": "Could not load room options. You can still skip this step.",
+
+    "nitro.login.register.success": "Welcome aboard, %username%! Your account is ready — log in below with the password you just chose.",
+
+    "nitro.login.forgot.title": "Reset password",
+    "nitro.login.forgot.email.label": "Email address",
+    "nitro.login.forgot.send": "Send email",
+    "nitro.login.forgot.success": "Email sent! If an account matches that address you'll find a reset link in your inbox shortly (check spam if it doesn't show up within a minute).",
+
+    "nitro.login.error.missing_credentials": "Please enter both your Habbo name and password.",
+    "nitro.login.error.invalid_credentials": "Invalid Habbo name or password.",
+    "nitro.login.error.too_many_attempts": "Too many attempts. Try again in %seconds%s.",
+    "nitro.login.error.turnstile": "Please complete the security check.",
+    "nitro.login.error.server_offline": "The gameserver is not running. Please try again later.",
+    "nitro.login.error.login_unreachable": "Unable to reach the login service. Please try again.",
+    "nitro.login.error.register_failed": "Unable to create your account.",
+    "nitro.login.error.register_unreachable": "Unable to reach the registration service.",
+    "nitro.login.error.forgot_failed": "Unable to send a reset email right now.",
+    "nitro.login.error.forgot_unreachable": "Unable to reach the password reset service.",
+    "nitro.login.error.missing_fields": "Please fill in every field.",
+    "nitro.login.error.invalid_email": "Please enter a valid email address.",
+    "nitro.login.error.password_too_short": "Your password must be at least 8 characters.",
+    "nitro.login.error.password_mismatch": "Passwords do not match.",
+    "nitro.login.error.email_taken": "This email is already in use.",
+    "nitro.login.error.missing_username": "Please choose a Habbo name.",
+    "nitro.login.error.username_length": "Habbo name must be 3–16 characters.",
+    "nitro.login.error.username_taken": "This Habbo name is already taken.",
+    "nitro.login.error.missing_email": "Please enter your email address."
+}
 }
