@@ -49,6 +49,7 @@ export const App: FC<{}> = props =>
     useEffect(() =>
     {
         let heartbeatInterval: number = null;
+        let rememberRotateInterval: number = null;
 
         const prepare = async (width: number, height: number) =>
         {
@@ -194,6 +195,40 @@ export const App: FC<{}> = props =>
 
                 heartbeatInterval = window.setInterval(() => HabboWebTools.sendHeartBeat(), 10000);
 
+                const rotateMinutes = Math.max(1, Number(GetConfiguration().getValue<unknown>('login.remember.rotate.interval.minutes', 15)) || 15);
+                const refreshUrlTemplate = GetConfiguration().getValue<string>('login.refresh.endpoint', '/api/auth/refresh');
+                const refreshUrl = GetConfiguration().interpolate(refreshUrlTemplate);
+                const rotateRemember = async () =>
+                {
+                    let stored: string = null;
+                    try { stored = window.localStorage.getItem('nitro.remember.token'); }
+                    catch { return; }
+                    if(!stored) return;
+                    try
+                    {
+                        const resp = await fetch(refreshUrl, {
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'NitroRememberRotate' },
+                            body: JSON.stringify({ rememberToken: stored })
+                        });
+                        if(resp.ok)
+                        {
+                            const payload = await resp.json();
+                            if(typeof payload.rememberToken === 'string' && payload.rememberToken.length)
+                            {
+                                try { window.localStorage.setItem('nitro.remember.token', payload.rememberToken); } catch {}
+                            }
+                        }
+                        else if(resp.status === 401)
+                        {
+                            try { window.localStorage.removeItem('nitro.remember.token'); } catch {}
+                        }
+                    }
+                    catch {}
+                };
+                rememberRotateInterval = window.setInterval(rotateRemember, rotateMinutes * 60 * 1000);
+
                 GetTicker().add(ticker => GetRoomEngine().update(ticker));
                 GetTicker().add(ticker => renderer.render(GetStage()));
                 GetTicker().add(ticker => GetTexturePool().run());
@@ -212,6 +247,7 @@ export const App: FC<{}> = props =>
         return () =>
         {
             if(heartbeatInterval !== null) window.clearInterval(heartbeatInterval);
+            if(rememberRotateInterval !== null) window.clearInterval(rememberRotateInterval);
         };
     }, [ prepareTrigger ]);
 
