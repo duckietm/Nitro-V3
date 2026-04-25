@@ -28,6 +28,7 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
             '~': resolve(__dirname, 'node_modules'),
+            '@nitrots/nitro-renderer': resolve(rendererRoot, 'src/index.ts'),
             '@nitrots/api': resolve(rendererRoot, 'packages/api/src/index.ts'),
             '@nitrots/assets': resolve(rendererRoot, 'packages/assets/src/index.ts'),
             '@nitrots/avatar': resolve(rendererRoot, 'packages/avatar/src/index.ts'),
