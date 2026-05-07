@@ -36,6 +36,8 @@ export class AvatarInfoFurni implements IAvatarInfo
     public allowLay: boolean = false;
     public allowWalk: boolean = false;
     public teleportTargetId: number = 0;
+    public spriteId: number = -1;
+    public productType: string = 's';
 
     constructor(public readonly type: string)
     {}

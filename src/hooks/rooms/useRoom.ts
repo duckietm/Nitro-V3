@@ -4,6 +4,16 @@ import { useBetween } from 'use-between';
 import { CanManipulateFurniture, DispatchUiEvent, GetRoomSession, IsFurnitureSelectionDisabled, ProcessRoomObjectOperation, RoomWidgetUpdateBackgroundColorPreviewEvent, RoomWidgetUpdateRoomObjectEvent, SetActiveRoomId, StartRoomSession } from '../../api';
 import { useMessageEvent, useNitroEvent, useUiEvent } from '../events';
 
+const getViewportSize = () =>
+{
+    const viewport = window.visualViewport;
+
+    return {
+        width: Math.max(1, Math.floor(viewport?.width ?? window.innerWidth)),
+        height: Math.max(1, Math.floor(viewport?.height ?? window.innerHeight))
+    };
+};
+
 const useRoomState = () =>
 {
     const [roomSession, setRoomSession] = useState<IRoomSession>(null);
@@ -215,8 +225,7 @@ const useRoomState = () =>
         const roomEngine = GetRoomEngine();
         const roomId = roomSession.roomId;
         const canvasId = 1;
-        const width = Math.floor(window.innerWidth);
-        const height = Math.floor(window.innerHeight);
+        const { width, height } = getViewportSize();
         const renderer = GetRenderer();
 
         if (renderer) renderer.resize(width, height);
@@ -266,10 +275,9 @@ const useRoomState = () =>
 
         SetActiveRoomId(roomSession.roomId);
 
-        const resize = (event: UIEvent) =>
+        const resize = () =>
         {
-            const newWidth = Math.floor(window.innerWidth);
-            const newHeight = Math.floor(window.innerHeight);
+            const { width: newWidth, height: newHeight } = getViewportSize();
 
             const offsetX = canvas.screenOffsetX - (newWidth - canvas.width) / 2;
             const offsetY = canvas.screenOffsetY - (newHeight - canvas.height) / 2;
@@ -284,7 +292,11 @@ const useRoomState = () =>
             canvas.screenOffsetY = ~~offsetY;
         };
 
+        const viewport = window.visualViewport;
+
         window.addEventListener('resize', resize);
+        viewport?.addEventListener('resize', resize);
+        viewport?.addEventListener('scroll', resize);
 
         return () =>
         {
@@ -293,6 +305,8 @@ const useRoomState = () =>
             setOriginalRoomBackgroundColor(0);
 
             window.removeEventListener('resize', resize);
+            viewport?.removeEventListener('resize', resize);
+            viewport?.removeEventListener('scroll', resize);
         };
     }, [roomSession]);
 

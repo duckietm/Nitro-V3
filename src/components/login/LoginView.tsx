@@ -195,11 +195,15 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
     const [ localeError, setLocaleError ] = useState('');
     const [ loginViewConfig, setLoginViewConfig ] = useState<Record<string, unknown>>(() => GetConfigurationValue<Record<string, unknown>>('loginview', {}));
     const submitTimeRef = useRef(0);
+    const preloadedLoginImagesRef = useRef<Set<string>>(new Set());
 
-    const configuredLoginImages: Record<string, string> = (loginViewConfig?.['images'] as Record<string, string>) ?? {};
-    const loginImages: Record<string, string> = { ...getDefaultLoginImages(), ...configuredLoginImages };
-    
-    const configuredLoginWidgets: Record<string, unknown> = (loginViewConfig?.['widgets'] as Record<string, unknown>) ?? {};
+    const configuredLoginImages = useMemo<Record<string, string>>(() =>
+        (loginViewConfig?.['images'] as Record<string, string>) ?? {}, [ loginViewConfig ]);
+    const loginImages = useMemo<Record<string, string>>(() =>
+        ({ ...getDefaultLoginImages(), ...configuredLoginImages }), [ configuredLoginImages ]);
+
+    const configuredLoginWidgets = useMemo<Record<string, unknown>>(() =>
+        (loginViewConfig?.['widgets'] as Record<string, unknown>) ?? {}, [ loginViewConfig ]);
     const loginWidgetSlots = useMemo(() =>
     {
         return Object.entries(configuredLoginWidgets)
@@ -311,18 +315,32 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
         if(!loginImageUrls.length) return;
 
         let cancelled = false;
+        let remaining = 0;
 
-        loginImageUrls.forEach(url =>
-        {
-            const image = new Image();
-
-            image.onload = image.onerror = () =>
+        loginImageUrls
+            .filter(url =>
             {
-                if(!cancelled) setLoginImagesVersion(version => version + 1);
-            };
+                if(preloadedLoginImagesRef.current.has(url)) return false;
 
-            image.src = url;
-        });
+                preloadedLoginImagesRef.current.add(url);
+
+                return true;
+            })
+            .forEach(url =>
+            {
+                remaining++;
+
+                const image = new Image();
+
+                image.onload = image.onerror = () =>
+                {
+                    remaining--;
+
+                    if(!cancelled && remaining <= 0) setLoginImagesVersion(version => version + 1);
+                };
+
+                image.src = url;
+            });
 
         return () =>
         {

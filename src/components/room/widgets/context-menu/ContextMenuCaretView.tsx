@@ -12,7 +12,7 @@ export const ContextMenuCaretView: FC<CaretViewProps> = props =>
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'menu-footer' ];
+        const newClassNames: string[] = [ 'menu-footer nitro-context-menu-footer' ];
 
         if(classNames.length) newClassNames.push(...classNames);
 

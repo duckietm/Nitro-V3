@@ -1,5 +1,17 @@
 (() => {
-  const API_BASE = "https://nitro.slogga.it:2096";
+  const API_BASE = "http://localhost:2096";
+
+  const ensureMobileViewport = () => {
+    let viewport = document.querySelector('meta[name="viewport"]');
+    if(!viewport) {
+      viewport = document.createElement("meta");
+      viewport.name = "viewport";
+      document.head.appendChild(viewport);
+    }
+    viewport.content = "width=device-width, initial-scale=1, viewport-fit=cover";
+  };
+
+  ensureMobileViewport();
 
   const getBase = () => {
     const source = document.currentScript?.src || location.href;

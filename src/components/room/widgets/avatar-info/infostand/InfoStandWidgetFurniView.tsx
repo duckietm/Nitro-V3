@@ -1,6 +1,6 @@
 import { CrackableDataType, CreateLinkEvent, FurnitureFloorUpdateEvent, GetRoomEngine, GetSessionDataManager, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType, UpdateFurniturePositionComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { FaCrosshairs, FaRulerVertical, FaTimes } from 'react-icons/fa';
+import { FaCrosshairs, FaTimes } from 'react-icons/fa';
 import { GrFormNextLink, GrRotateLeft, GrRotateRight } from 'react-icons/gr';
 import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
@@ -487,17 +487,23 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                     <div className="absolute inset-e-0">
                                         <LayoutRarityLevelView level={ avatarInfo.stuffData.rarityLevel } />
                                     </div> }
-                                <Flex center fullWidth>
-                                    <LayoutRoomObjectImageView category={ avatarInfo.category } objectId={ avatarInfo.id } roomId={ roomSession.roomId } />
+                                <Flex center fullWidth className="min-h-[74px] max-h-[86px] overflow-hidden">
+                                    <LayoutRoomObjectImageView
+                                        category={ avatarInfo.category }
+                                        objectId={ avatarInfo.id }
+                                        roomId={ roomSession.roomId }
+                                        style={ {
+                                            maxWidth: 120,
+                                            maxHeight: 82,
+                                            backgroundSize: 'contain',
+                                            backgroundPosition: 'center',
+                                            backgroundRepeat: 'no-repeat'
+                                        } } />
                                 </Flex>
                             </Flex>
                             <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
                         </div>
                     }
-                    <div className="flex flex-col gap-1">
-                        <Text fullWidth small textBreak wrap variant="white">{ avatarInfo.description }</Text>
-                        <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
-                    </div>
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1">
                             { showOwnerProfileIcon && <UserProfileIconView userId={ avatarInfo.ownerId } /> }
@@ -551,13 +557,9 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                         { (itemLocation.x > -1) &&
                             <>
                                 <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-1 min-w-0">
                                     <FaCrosshairs className="fa-icon shrink-0" />
-                                    <Text small wrap variant="white">X: { itemLocation.x } · Y: { itemLocation.y }</Text>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                    <FaRulerVertical className="fa-icon shrink-0" />
-                                    <Text small wrap variant="white">{ LocalizeText('stack.magic.tile.height.label') }: { itemLocation.z < 0.01 ? 0 : itemLocation.z }</Text>
+                                    <Text small textBreak variant="white">X: { itemLocation.x } · Y: { itemLocation.y } · H: { itemLocation.z < 0.01 ? 0 : itemLocation.z }</Text>
                                 </div>
                             </> }
                         { godMode &&

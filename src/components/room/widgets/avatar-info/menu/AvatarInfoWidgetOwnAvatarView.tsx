@@ -58,6 +58,9 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                     case 'avatar_effect':
                         CreateLinkEvent('avatar-effects/show');
                         break;
+                    case 'customize_nick':
+                        CreateLinkEvent('customize/show');
+                        break;
                     case 'expressions':
                         hideMenu = false;
                         setMode(MODE_EXPRESSIONS);
@@ -122,7 +125,7 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
     const isRidingHorse = IsRidingHorse();
 
     return (
-        <ContextMenuView category={ RoomObjectCategory.UNIT } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
+        <ContextMenuView category={ RoomObjectCategory.UNIT } classNames={ [ 'nitro-avatar-action-menu' ] } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
 
             <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) }>
                 { avatarInfo.name }
@@ -142,6 +145,9 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                     </ContextMenuListItemView>
                     <ContextMenuListItemView onClick={ event => processAction('avatar_effect') }>
                         { LocalizeText('product.type.effect') }
+                    </ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={ event => processAction('customize_nick') }>
+                        Nick Custom
                     </ContextMenuListItemView>
                     { (HasHabboClub() && !isRidingHorse) &&
                         <ContextMenuListItemView onClick={ event => processAction('dance_menu') }>

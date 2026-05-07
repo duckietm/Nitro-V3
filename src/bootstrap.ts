@@ -1,5 +1,20 @@
 import { getClientMode, installSecureFetch, secureUrl } from './secure-assets';
 
+const ensureMobileViewport = () =>
+{
+    let viewport = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+
+    if(!viewport)
+    {
+        viewport = document.createElement('meta');
+        viewport.name = 'viewport';
+        document.head.appendChild(viewport);
+    }
+
+    viewport.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+};
+
+ensureMobileViewport();
 installSecureFetch();
 
 const setBootDebug = (message: string) =>

@@ -1,0 +1,20 @@
+{
+    "news": [
+        {
+            "id": 1,
+            "title": "Welcome to Nitro local mode",
+            "body": "This news card is loaded from public/configuration/news.json while yarn start is running.",
+            "image": "${image.library.url}web_promo_small/spromo_Canal_Bundle.png",
+            "link": "",
+            "linkText": "Read more"
+        },
+        {
+            "id": 2,
+            "title": "Local development ready",
+            "body": "API and socket use localhost:2096. Remote assets and gamedata stay available so you do not need to copy the full client folder locally.",
+            "image": "${image.library.url}web_promo_small/spromo_hween12_vampire.png",
+            "link": "",
+            "linkText": "Ok"
+        }
+    ]
+}

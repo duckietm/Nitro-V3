@@ -1,7 +1,7 @@
-import { AddLinkEventTracker, GetRoomEngine, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEnterEffect, RoomSessionDanceEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GetRoomEngine, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEngineObjectEvent, RoomEnterEffect, RoomSessionDanceEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { AvatarInfoFurni, AvatarInfoPet, AvatarInfoRentableBot, AvatarInfoUser, GetConfigurationValue, RoomWidgetUpdateRentableBotChatEvent } from '../../../../api';
-import { Column } from '../../../../common';
+import { Column, LayoutFurniIconImageView } from '../../../../common';
 import { useAvatarInfoWidget, useNitroEvent, useRoom, useUiEvent } from '../../../../hooks';
 import { AvatarInfoPetTrainingPanelView } from './AvatarInfoPetTrainingPanelView';
 import { AvatarInfoRentableBotChatView } from './AvatarInfoRentableBotChatView';
@@ -27,6 +27,9 @@ export const AvatarInfoWidgetView: FC<{}> = props =>
     const BLOCK_ROTATE_WINDOW_MS = 500;
     const [ isGameMode, setGameMode ] = useState(false);
     const [ isDancing, setIsDancing ] = useState(false);
+    const [ isTouchLayout, setIsTouchLayout ] = useState(false);
+    const [ mobileFurniDetailsOpen, setMobileFurniDetailsOpen ] = useState(false);
+    const [ mobileUserDetailsOpen, setMobileUserDetailsOpen ] = useState(false);
     const [ rentableBotChatEvent, setRentableBotChatEvent ] = useState<RoomWidgetUpdateRentableBotChatEvent>(null);
     const { avatarInfo = null, setAvatarInfo = null, activeNameBubble = null, setActiveNameBubble = null, nameBubbles = [], removeNameBubble = null, productBubbles = [], confirmingProduct = null, updateConfirmingProduct = null, removeProductBubble = null, isDecorating = false, setIsDecorating = null } = useAvatarInfoWidget();
     const { roomSession = null } = useRoom();
@@ -56,6 +59,17 @@ export const AvatarInfoWidgetView: FC<{}> = props =>
         if(!isGameMode) setGameMode(true);
     });
 
+    useEffect(() =>
+    {
+        const query = window.matchMedia('(pointer: coarse), (hover: none)');
+        const updateTouchLayout = () => setIsTouchLayout(query.matches);
+
+        updateTouchLayout();
+        query.addEventListener('change', updateTouchLayout);
+
+        return () => query.removeEventListener('change', updateTouchLayout);
+    }, []);
+
     useNitroEvent<RoomSessionDanceEvent>(RoomSessionDanceEvent.RSDE_DANCE, event =>
     {
         if(event.roomIndex !== roomSession.ownRoomIndex) return;
@@ -64,6 +78,13 @@ export const AvatarInfoWidgetView: FC<{}> = props =>
     });
 
     useUiEvent<RoomWidgetUpdateRentableBotChatEvent>(RoomWidgetUpdateRentableBotChatEvent.UPDATE_CHAT, event => setRentableBotChatEvent(event));
+
+    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.REQUEST_MANIPULATION, event =>
+    {
+        if(event.category !== avatarInfo?.category || event.objectId !== avatarInfo?.id) return;
+
+        setMobileFurniDetailsOpen(false);
+    });
 
     useEffect(() =>
     {
@@ -100,6 +121,19 @@ export const AvatarInfoWidgetView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, [ roomSession, setActiveNameBubble, setAvatarInfo ]);
 
+    useEffect(() =>
+    {
+        if(avatarInfo?.type !== AvatarInfoFurni.FURNI)
+        {
+            setMobileFurniDetailsOpen(false);
+        }
+
+        if(avatarInfo?.type !== AvatarInfoUser.OWN_USER && avatarInfo?.type !== AvatarInfoUser.PEER)
+        {
+            setMobileUserDetailsOpen(false);
+        }
+    }, [ avatarInfo ]);
+
     const getMenuView = () =>
     {
         if(!roomSession || isGameMode) return null;
@@ -120,6 +154,9 @@ export const AvatarInfoWidgetView: FC<{}> = props =>
                 case AvatarInfoUser.OWN_USER:
                 case AvatarInfoUser.PEER: {
                     const info = (avatarInfo as AvatarInfoUser);
+
+                    if(isTouchLayout && !mobileUserDetailsOpen) return null;
+
                     if(GetConfigurationValue('user.tags.enabled')) GetSessionDataManager().getUserTags(info.roomIndex);
 
                     if(info.isSpectatorMode) return null;
@@ -156,9 +193,41 @@ export const AvatarInfoWidgetView: FC<{}> = props =>
         switch(avatarInfo.type)
         {
             case AvatarInfoFurni.FURNI:
+                if(isTouchLayout && !isDecorating)
+                {
+                    const info = (avatarInfo as AvatarInfoFurni);
+
+                    if(!mobileFurniDetailsOpen)
+                    {
+                        return (
+                            <button className="nitro-mobile-furni-infostand-trigger" type="button" onClick={ () => setMobileFurniDetailsOpen(true) }>
+                                <LayoutFurniIconImageView productType={ info.productType } productClassId={ info.spriteId } />
+                            </button>
+                        );
+                    }
+                }
+
                 return <InfoStandWidgetFurniView avatarInfo={ (avatarInfo as AvatarInfoFurni) } onClose={ () => setAvatarInfo(null) } />;
             case AvatarInfoUser.OWN_USER:
             case AvatarInfoUser.PEER:
+                if(isTouchLayout)
+                {
+                    const info = (avatarInfo as AvatarInfoUser);
+                    const figure = encodeURIComponent(info.figure || '');
+                    const avatarHeadUrl = `https://www.habbo.com/habbo-imaging/avatarimage?figure=${ figure }&direction=2&head_direction=2&gesture=sml&size=m&headonly=1`;
+
+                    if(!mobileUserDetailsOpen)
+                    {
+                        return (
+                            <button className="nitro-mobile-furni-infostand-trigger nitro-mobile-user-infostand-trigger" type="button" onClick={ () => setMobileUserDetailsOpen(true) }>
+                                <div className="nitro-mobile-user-infostand-avatar">
+                                    <img className="nitro-mobile-user-infostand-avatar-image" src={ avatarHeadUrl } alt={ info.name } draggable={ false } />
+                                </div>
+                            </button>
+                        );
+                    }
+                }
+
                 return <InfoStandWidgetUserView avatarInfo={ (avatarInfo as AvatarInfoUser) } setAvatarInfo={ setAvatarInfo } onClose={ () => setAvatarInfo(null) } />;
             case AvatarInfoUser.BOT:
                 return <InfoStandWidgetBotView avatarInfo={ (avatarInfo as AvatarInfoUser) } onClose={ () => setAvatarInfo(null) } />;

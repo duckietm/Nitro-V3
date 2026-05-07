@@ -208,7 +208,7 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
     }, [ avatarInfo ]);
 
     return (
-        <ContextMenuView category={ RoomObjectCategory.UNIT } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
+        <ContextMenuView category={ RoomObjectCategory.UNIT } classNames={ [ 'nitro-avatar-action-menu' ] } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
             <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) } dangerouslySetInnerHTML={ { __html: `${ avatarInfo.name }` } }></ContextMenuHeaderView>
             { (mode === MODE_NORMAL) &&
                 <>

@@ -27,7 +27,9 @@ export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) =>
     {
         if(!newsUrl) { setFailed(true); return; }
         let cancelled = false;
-        fetch(newsUrl, { credentials: 'omit' })
+        const controller = new AbortController();
+
+        fetch(newsUrl, { credentials: 'omit', signal: controller.signal })
             .then(async r =>
             {
                 if(!r.ok) throw new Error('status ' + r.status);
@@ -42,7 +44,11 @@ export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) =>
                 setItems(list);
             })
             .catch(() => { if(!cancelled) setFailed(true); });
-        return () => { cancelled = true; };
+        return () =>
+        {
+            cancelled = true;
+            controller.abort();
+        };
     }, [ newsUrl ]);
 
     useEffect(() =>

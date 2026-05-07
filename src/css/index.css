@@ -45,16 +45,68 @@ body {
     padding: 0;
     width: 100%;
     height: 100%;
+    min-height: 100%;
     overflow: hidden;
 	background-color: #000;
     -webkit-user-select: none;
     user-select: none;
+    overscroll-behavior: none;
     scrollbar-width: thin;
     scrollbar-color: #6d7b84 #c8d0d4;
 }
 
+#root {
+    width: var(--nitro-app-width, 100vw);
+    height: var(--nitro-app-height, 100vh);
+    min-height: var(--nitro-app-height, 100vh);
+    overflow: hidden;
+}
+
+.nitro-app-root {
+    position: fixed;
+    inset: 0;
+    width: var(--nitro-app-width, 100vw) !important;
+    height: var(--nitro-app-height, 100vh) !important;
+    min-height: var(--nitro-app-height, 100vh) !important;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+}
+
+@supports (height: 100dvh) {
+    html,
+    body,
+    #root,
+    .nitro-app-root {
+        height: var(--nitro-app-height, 100dvh) !important;
+        min-height: var(--nitro-app-height, 100dvh) !important;
+    }
+}
+
 .image-rendering-pixelated {
     image-rendering: pixelated;
+}
+
+.nitro-room-touch-feedback {
+    position: fixed;
+    z-index: 35;
+    width: 34px;
+    height: 18px;
+    margin-left: -17px;
+    margin-top: -9px;
+    border-radius: 50%;
+    pointer-events: none;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(0.35);
+    opacity: 0.9;
+    animation: nitroRoomTouchFeedback 0.42s ease-out forwards;
+}
+
+@keyframes nitroRoomTouchFeedback {
+    to {
+        transform: scale(1.15);
+        opacity: 0;
+    }
 }
 
 *,

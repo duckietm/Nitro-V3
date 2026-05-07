@@ -166,7 +166,7 @@ export const useAvailableUserSources = (trigger: Triggerable, userSources: Wired
 
         if(!trigger) return;
 
-        const intervalId = window.setInterval(refreshStackSources, 100);
+        const intervalId = window.setInterval(refreshStackSources, 1000);
 
         return () => window.clearInterval(intervalId);
     }, [ refreshStackSources, trigger ]);

@@ -249,3 +249,127 @@
         }
     }
 }
+
+.nitro-mobile-furni-infostand-trigger {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.55);
+    border-radius: 8px;
+    background: rgba(27, 40, 52, 0.92);
+    box-shadow:
+        inset 1px 1px 0 rgba(255, 255, 255, 0.25),
+        0 4px 10px rgba(0, 0, 0, 0.24);
+}
+
+.nitro-mobile-furni-infostand-trigger .object-preview {
+    width: 32px;
+    height: 32px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    image-rendering: pixelated;
+}
+
+.nitro-mobile-user-infostand-avatar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    max-width: 54px;
+    max-height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+}
+
+.nitro-mobile-user-infostand-avatar-image {
+    display: block;
+    width: auto !important;
+    height: auto !important;
+    max-width: 54px;
+    max-height: 62px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    margin: 0;
+    pointer-events: none;
+}
+
+.nitro-mobile-user-infostand-trigger {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.nitro-avatar-action-menu {
+    min-width: 132px;
+    padding: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px;
+    background: rgba(10, 10, 12, 0.58) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.nitro-avatar-action-menu .nitro-context-menu-header {
+    min-width: 0;
+    height: 28px;
+    max-height: 28px;
+    margin-bottom: 4px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    background: rgba(10, 10, 12, 0.58);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-shadow: none;
+}
+
+.nitro-avatar-action-menu .nitro-context-menu-item {
+    min-height: 26px;
+    max-height: none;
+    margin-bottom: 2px;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1;
+    text-decoration: none;
+    text-shadow: none;
+}
+
+.nitro-avatar-action-menu .nitro-context-menu-item:hover {
+    background: rgba(18, 18, 22, 0.72);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.nitro-avatar-action-menu .nitro-context-menu-item.disabled {
+    opacity: 0.55;
+}
+
+.nitro-avatar-action-menu .nitro-context-menu-item .right.fa-icon,
+.nitro-avatar-action-menu .nitro-context-menu-item .left.fa-icon {
+    font-size: 12px;
+}
+
+.nitro-avatar-action-menu .nitro-context-menu-footer {
+    height: 20px;
+    margin-top: 2px;
+    border-radius: 8px;
+    background: rgba(10, 10, 12, 0.58);
+    color: #fff;
+}

@@ -118,6 +118,8 @@ export class AvatarInfoUtilities
             {
                 furniInfo.name = furnitureData.name;
                 furniInfo.description = furnitureData.description;
+                furniInfo.spriteId = furnitureData.id;
+                furniInfo.productType = ((category === RoomObjectCategory.WALL) ? 'i' : 's');
                 furniInfo.purchaseOfferId = furnitureData.purchaseOfferId;
                 furniInfo.purchaseCouldBeUsedForBuyout = furnitureData.purchaseCouldBeUsedForBuyout;
                 furniInfo.rentOfferId = furnitureData.rentOfferId;

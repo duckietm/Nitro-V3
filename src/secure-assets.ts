@@ -80,6 +80,7 @@ const textDecoder = new TextDecoder();
 let secureSessionPromise: Promise<SecureSession> = null;
 let installed = false;
 const secureResponseCache = new Map<string, Promise<Response>>();
+const SECURE_RESPONSE_CACHE_LIMIT = 128;
 let secureSessionCreatedAt = 0;
 const SECURE_SESSION_TTL_MS = 5 * 60 * 1000;
 const REKEY_ENDPOINTS = new Set([
@@ -336,6 +337,22 @@ const cloneCachedResponse = async (responsePromise: Promise<Response>): Promise<
     return response.clone();
 };
 
+const cacheSecureResponse = (cacheKey: string, responsePromise: Promise<Response>): void =>
+{
+    secureResponseCache.set(cacheKey, responsePromise);
+
+    responsePromise.catch(() => secureResponseCache.delete(cacheKey));
+
+    while(secureResponseCache.size > SECURE_RESPONSE_CACHE_LIMIT)
+    {
+        const oldestKey = secureResponseCache.keys().next().value;
+
+        if(!oldestKey) break;
+
+        secureResponseCache.delete(oldestKey);
+    }
+};
+
 const normalizeSecureCacheKey = (requestUrl: string): string =>
 {
     try
@@ -488,7 +505,7 @@ export const installSecureFetch = (): void =>
                 return response;
             })();
 
-            if(cacheKey) secureResponseCache.set(cacheKey, responsePromise);
+            if(cacheKey) cacheSecureResponse(cacheKey, responsePromise);
 
             return cloneCachedResponse(responsePromise);
         }

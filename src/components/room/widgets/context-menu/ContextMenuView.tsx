@@ -75,6 +75,7 @@ export const ContextMenuView: FC<ContextMenuViewProps> = ({
 
   const getClassNames = useMemo(() => {
     const classes = [
+      'nitro-context-menu',
       'p-[2px]!',
       'bg-[#1c323f]',
       'border-2',

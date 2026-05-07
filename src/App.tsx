@@ -10,6 +10,23 @@ import { useMessageEvent, useNitroEvent } from './hooks';
 
 NitroVersion.UI_VERSION = GetUIVersion();
 
+const getViewportDimensions = () =>
+{
+    const viewport = window.visualViewport;
+    const width = Math.max(1, Math.floor(viewport?.width ?? window.innerWidth));
+    const height = Math.max(1, Math.floor(viewport?.height ?? window.innerHeight));
+
+    return { width, height };
+};
+
+const syncViewportCssVars = () =>
+{
+    const { width, height } = getViewportDimensions();
+
+    document.documentElement.style.setProperty('--nitro-app-width', `${ width }px`);
+    document.documentElement.style.setProperty('--nitro-app-height', `${ height }px`);
+};
+
 const preloadUrl = async (url: string): Promise<void> =>
 {
     if(!url) return;
@@ -270,6 +287,25 @@ export const App: FC<{}> = props =>
 
     useEffect(() =>
     {
+        syncViewportCssVars();
+
+        const handleViewportResize = () => syncViewportCssVars();
+        const viewport = window.visualViewport;
+
+        window.addEventListener('resize', handleViewportResize);
+        viewport?.addEventListener('resize', handleViewportResize);
+        viewport?.addEventListener('scroll', handleViewportResize);
+
+        return () =>
+        {
+            window.removeEventListener('resize', handleViewportResize);
+            viewport?.removeEventListener('resize', handleViewportResize);
+            viewport?.removeEventListener('scroll', handleViewportResize);
+        };
+    }, []);
+
+    useEffect(() =>
+    {
         const prepare = async (width: number, height: number) =>
         {
             try
@@ -370,7 +406,9 @@ export const App: FC<{}> = props =>
             }
         };
 
-        prepare(window.innerWidth, window.innerHeight);
+        const { width, height } = getViewportDimensions();
+
+        prepare(width, height);
 
         return () =>
         {
@@ -380,7 +418,7 @@ export const App: FC<{}> = props =>
     }, [ prepareTrigger, startWarmup, startRenderer, tryRememberLogin, applySsoTicket, rotateRememberLogin ]);
 
     return (
-        <Base fit overflow="hidden" className={ !(window.devicePixelRatio % 1) && 'image-rendering-pixelated' }>
+        <Base fit overflow="hidden" className={ `nitro-app-root ${ !(window.devicePixelRatio % 1) ? 'image-rendering-pixelated' : '' }` }>
             { !isReady && !showLogin &&
                 <LoadingView isError={ errorMessage.length > 0 } message={ errorMessage } homeUrl={ homeUrl } /> }
             { !isReady && showLogin && <LoginView onAuthenticated={ handleAuthenticated } isEntering={ isEnteringHotel } /> }
