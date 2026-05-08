@@ -192,7 +192,12 @@ const useChatInputWidgetState = () =>
             }
         }
 
-        const preserveTrailingSpaces = (message: string) => message.replace(/ +$/g, match => '\u00A0'.repeat(match.length));
+        const preserveTrailingSpaces = (message: string) =>
+        {
+            if(message.startsWith(':')) return message;
+
+            return message.replace(/ +$/g, match => '\u00A0'.repeat(match.length));
+        };
 
         const dispatchChatMessage = (message: string) =>
         {
