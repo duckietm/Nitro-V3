@@ -387,6 +387,24 @@ The current branch (**`feat/react19-modernization`**, PR #2) has applied:
       bridges + 1 derive effect) + `useFriendRequestActions` (thin
       adapter on the friends store) + shim. Exports `ActiveFriendRequest`
       type.
+    - **chat input**: `useChatInputState` (5 state slices + 3 event
+      listeners + 3 lifecycle effects: flood countdown, idle auto-clear,
+      typing-indicator sync) + `useChatInputActions` (`sendChat` with
+      the full slash-command repertoire and the outgoing-translation
+      pipeline) + shim. Single consumer (`ChatInputView`) keeps the
+      original tuple.
+    - **wired tools**: `useWiredToolsStore` (internal singleton — state,
+      listeners, effects, 13 actions in one closure) + `useWiredToolsState`
+      / `useWiredToolsActions` (read-only and imperative `useBetween`
+      filters over the same singleton) + `useWiredTools` shim. Used by
+      ~20 consumers; the singleton sharing keeps a single source of
+      truth while letting consumers import only the slice they touch.
+    - **translation**: `useTranslationStore` (internal singleton) +
+      `useTranslationState` / `useTranslationActions` (filtered
+      `useBetween` views) + `useTranslation` shim. Same pattern as
+      Wired tools — six consumers split across read-only views
+      (settings panel, bootstrap) and dispatch sites (messenger, chat
+      input).
 - **Zustand** (proposal #5) — **enabled**. `zustand` installed; factory at
   `src/state/createNitroStore.ts`. First adoption: the `let isCreatingRoom`
   / `createRoomTimeout` module-level pair in `NavigatorRoomCreatorView`

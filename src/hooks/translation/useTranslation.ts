@@ -228,7 +228,17 @@ const resolveSupportedLanguage = (value: string, languages: ITranslationLanguage
     return languages[0].code;
 };
 
-const useTranslationState = () =>
+/**
+ * Internal singleton state + actions hook. Public consumers should
+ * call useTranslationState (read-only) or useTranslationActions
+ * (imperative) instead. useTranslation is the deprecated shim that
+ * composes both.
+ *
+ * Wrapped in useBetween at each public-hook layer so every consumer
+ * in the tree sees the same instance (preserves the previous
+ * useBetween(useTranslationState) behavior).
+ */
+const useTranslationStore = () =>
 {
     const defaultTargetLanguage = getBrowserLanguageCode();
     const [ settings, setSettings ] = useLocalStorage<ITranslationSettings>(LocalStorageKeys.CHAT_TRANSLATION_SETTINGS, {
@@ -597,4 +607,79 @@ const useTranslationState = () =>
     };
 };
 
-export const useTranslation = () => useBetween(useTranslationState);
+/**
+ * Read-only slice of the translation store: persisted settings, the
+ * supported languages list, the loading/loaded flags, the last
+ * incoming/outgoing detected language tags, and the last error message
+ * surfaced to the UI.
+ *
+ * Components that only render translation state subscribe here.
+ */
+export const useTranslationState = () =>
+{
+    const {
+        settings,
+        supportedLanguages,
+        availableTextLocales,
+        languagesLoading,
+        languagesLoaded,
+        localizationTextsLoading,
+        lastIncomingLanguage,
+        lastOutgoingLanguage,
+        lastError,
+        getLanguageName
+    } = useBetween(useTranslationStore);
+
+    return {
+        settings,
+        supportedLanguages,
+        availableTextLocales,
+        languagesLoading,
+        languagesLoaded,
+        localizationTextsLoading,
+        lastIncomingLanguage,
+        lastOutgoingLanguage,
+        lastError,
+        getLanguageName
+    };
+};
+
+/**
+ * Imperative slice of the translation store: settings mutation,
+ * supported-languages refresh, the translate* helpers, and the
+ * outgoing-queue write/read pair. Stays separate so components that
+ * only invoke actions (e.g. ChatInputActions) don't pull the full
+ * state shape.
+ */
+export const useTranslationActions = () =>
+{
+    const {
+        settings,
+        updateSettings,
+        ensureSupportedLanguagesLoaded,
+        translateIncoming,
+        translateOutgoing,
+        enqueueOutgoingTranslation,
+        consumeOutgoingTranslation
+    } = useBetween(useTranslationStore);
+
+    return {
+        // settings is exposed here too because most action call sites
+        // need `if(settings.enabled)` checks before dispatching.
+        settings,
+        updateSettings,
+        ensureSupportedLanguagesLoaded,
+        translateIncoming,
+        translateOutgoing,
+        enqueueOutgoingTranslation,
+        consumeOutgoingTranslation
+    };
+};
+
+/**
+ * @deprecated Prefer `useTranslationState` (read-only) and
+ * `useTranslationActions` (imperative) directly. This shim composes
+ * both into the historical `useTranslation()` shape so the six
+ * existing consumers keep working unchanged.
+ */
+export const useTranslation = () => useBetween(useTranslationStore);
