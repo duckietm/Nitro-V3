@@ -1,9 +1,9 @@
-import { ClubOfferData, GetClubOffersMessageComposer, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
+import { ClubOfferData, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CatalogPurchaseState, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogPurchaseFailureEvent, CatalogPurchasedEvent } from '../../../../../events';
-import { useCatalog, usePurse, useUiEvent } from '../../../../../hooks';
+import { useCatalog, useClubOffers, usePurse, useUiEvent } from '../../../../../hooks';
 import { CatalogHeaderView } from '../../catalog-header/CatalogHeaderView';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
@@ -14,12 +14,12 @@ export const CatalogLayoutBuildersClubBuyView: FC<CatalogLayoutProps> = () =>
 {
     const [ pendingOffer, setPendingOffer ] = useState<ClubOfferData>(null);
     const [ purchaseState, setPurchaseState ] = useState(CatalogPurchaseState.NONE);
-    const { currentPage = null, catalogOptions = null } = useCatalog();
+    const { currentPage = null } = useCatalog();
     const { getCurrencyAmount = null } = usePurse();
     const isPurchasingRef = useRef(false);
     const isAddonLayout = (currentPage?.layoutCode === 'builders_club_addons');
     const windowId = (isAddonLayout ? BUILDERS_CLUB_ADDONS_WINDOW_ID : BUILDERS_CLUB_WINDOW_ID);
-    const offers = catalogOptions?.clubOffersByWindowId?.[windowId] || null;
+    const { data: offers = null } = useClubOffers(windowId);
 
     const onCatalogEvent = useCallback((event: CatalogEvent) =>
     {
@@ -119,11 +119,6 @@ export const CatalogLayoutBuildersClubBuyView: FC<CatalogLayoutProps> = () =>
 
         return currentPage.localization.getText(1) || currentPage.localization.getText(2) || currentPage.localization.getText(0) || '';
     }, [ currentPage ]);
-
-    useEffect(() =>
-    {
-        if(!offers) SendMessageComposer(new GetClubOffersMessageComposer(windowId));
-    }, [ offers, windowId ]);
 
     useEffect(() =>
     {

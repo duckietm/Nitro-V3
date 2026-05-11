@@ -1,4 +1,4 @@
-import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, ClubGiftInfoEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetClubGiftInfo, GetRoomEngine, GetSessionDataManager, GetTickerTime, HabboClubOffersMessageEvent, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, NodeData, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomControllerLevel, RoomEngineObjectPlacedEvent, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType, RoomObjectVariable, RoomPreviewer, SellablePetPalettesMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
+import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, ClubGiftInfoEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetClubGiftInfo, GetRoomEngine, GetSessionDataManager, GetTickerTime, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, NodeData, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomControllerLevel, RoomEngineObjectPlacedEvent, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType, RoomObjectVariable, RoomPreviewer, SellablePetPalettesMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { BuilderFurniPlaceableStatus, CatalogNode, CatalogPage, CatalogPetPalette, CatalogType, DispatchUiEvent, FurniCategory, GetFurnitureData, GetProductDataForLocalization, GetRoomSession, ICatalogNode, ICatalogOptions, ICatalogPage, IPageLocalization, IProduct, IPurchasableOffer, IPurchaseOptions, LocalizeText, NotificationAlertType, Offer, PageLocalization, PlacedObjectPurchaseData, PlaySound, Product, ProductTypeEnum, RequestedPage, SearchResult, SendMessageComposer, SoundNames } from '../../api';
@@ -739,22 +739,6 @@ const useCatalogState = () =>
         });
     });
 
-    useMessageEvent<HabboClubOffersMessageEvent>(HabboClubOffersMessageEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setCatalogOptions(prevValue =>
-        {
-            const windowId = parser.windowId;
-            const clubOffersByWindowId = { ...(prevValue.clubOffersByWindowId || {}) };
-
-            clubOffersByWindowId[windowId] = parser.offers;
-
-            const clubOffers = clubOffersByWindowId[1] || prevValue.clubOffers;
-
-            return { ...prevValue, clubOffers, clubOffersByWindowId };
-        });
-    });
 
 
     useMessageEvent<MarketplaceMakeOfferResult>(MarketplaceMakeOfferResult, event =>
@@ -1044,23 +1028,6 @@ const useCatalogState = () =>
                 const offers = prevValue.offers?.map(offer => (offer?.clone ? offer.clone() : offer)) || [];
 
                 return new CatalogPage(prevValue.pageId, prevValue.layoutCode, prevValue.localization, offers, prevValue.acceptSeasonCurrencyAsCredits, prevValue.mode);
-            });
-            setCatalogOptions(prevValue =>
-            {
-                if(!prevValue) return prevValue;
-
-                const clubOffersByWindowId = { ...(prevValue.clubOffersByWindowId || {}) };
-
-                Object.keys(clubOffersByWindowId).forEach(key =>
-                {
-                    const offers = clubOffersByWindowId[key];
-
-                    if(Array.isArray(offers)) clubOffersByWindowId[key] = [ ...offers ];
-                });
-
-                const clubOffers = Array.isArray(prevValue.clubOffers) ? [ ...prevValue.clubOffers ] : prevValue.clubOffers;
-
-                return { ...prevValue, clubOffers, clubOffersByWindowId };
             });
         };
 

@@ -1,19 +1,20 @@
-import { ClubOfferData, GetClubOffersMessageComposer, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
+import { ClubOfferData, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CatalogPurchaseState, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { AutoGrid, Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogPurchaseFailureEvent, CatalogPurchasedEvent } from '../../../../../events';
-import { useCatalog, usePurse, useUiEvent } from '../../../../../hooks';
+import { useCatalog, useClubOffers, usePurse, useUiEvent } from '../../../../../hooks';
 import { CatalogLayoutProps } from './CatalogLayout.types';
+
+const VIP_WINDOW_ID = 1;
 
 export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
 {
     const [ pendingOffer, setPendingOffer ] = useState<ClubOfferData>(null);
     const [ purchaseState, setPurchaseState ] = useState(CatalogPurchaseState.NONE);
-    const { currentPage = null, catalogOptions = null } = useCatalog();
+    const { currentPage = null } = useCatalog();
     const { purse = null, getCurrencyAmount = null } = usePurse();
-    const { clubOffers = null, clubOffersByWindowId = null } = (catalogOptions || {});
-    const offers = clubOffersByWindowId?.[1] || clubOffers;
+    const { data: offers = null } = useClubOffers(VIP_WINDOW_ID);
     const isPurchasingRef = useRef<boolean>(false);
 
     const onCatalogEvent = useCallback((event: CatalogEvent) =>
@@ -127,11 +128,6 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
                 return <Button fullWidth variant="success" onClick={ () => setPurchaseState(CatalogPurchaseState.CONFIRM) }>{ LocalizeText('buy') }</Button>;
         }
     }, [ pendingOffer, purchaseState, purchaseSubscription, getCurrencyAmount ]);
-
-    useEffect(() =>
-    {
-        if(!offers) SendMessageComposer(new GetClubOffersMessageComposer(1));
-    }, [ offers ]);
 
     return (
         <Grid>
