@@ -16,6 +16,7 @@ export * from './card';
 export * from './card/accordion';
 export * from './card/tabs';
 export * from './draggable-window';
+export * from './error-boundary/WidgetErrorBoundary';
 export * from './layout';
 export * from './layout/limited-edition';
 export * from './types';

@@ -1,6 +1,7 @@
 import { GetRoomEngine, RoomEngineObjectEvent, RoomEngineRoomAdEvent, RoomEngineTriggerWidgetEvent, RoomEngineUseProductEvent, RoomId, RoomSessionErrorMessageEvent, RoomZoomEvent } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
 import { DispatchUiEvent, LocalizeText, NotificationAlertType, RoomWidgetUpdateRoomObjectEvent } from '../../../api';
+import { WidgetErrorBoundary } from '../../../common';
 import { useNitroEvent, useNotification, useRoom } from '../../../hooks';
 import { AvatarInfoWidgetView } from './avatar-info/AvatarInfoWidgetView';
 import { ChatInputView } from './chat-input/ChatInputView';
@@ -153,7 +154,7 @@ export const RoomWidgetsView: FC<{}> = props =>
         });
 
     return (
-        <>
+        <WidgetErrorBoundary name="RoomWidgets">
             <div className="absolute top-0 left-0 pointer-events-none size-full">
                 <FurnitureWidgetsView />
             </div>
@@ -169,6 +170,6 @@ export const RoomWidgetsView: FC<{}> = props =>
             <UserChooserWidgetView />
             <WordQuizWidgetView />
             <FriendRequestWidgetView />
-        </>
+        </WidgetErrorBoundary>
     );
 };
