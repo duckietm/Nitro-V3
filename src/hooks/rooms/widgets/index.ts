@@ -7,6 +7,8 @@ export * from './useDoorbellActions';
 export * from './useDoorbellState';
 export * from './useDoorbellWidget';
 export * from './useFilterWordsWidget';
+export * from './useFriendRequestActions';
+export * from './useFriendRequestState';
 export * from './useFriendRequestWidget';
 export * from './useFurniChooserActions';
 export * from './useFurniChooserState';
