@@ -34,6 +34,7 @@ import { ToolbarView } from './toolbar/ToolbarView';
 import { TranslationBootstrap } from './translation/TranslationBootstrap';
 import { TranslationSettingsView } from './translation/TranslationSettingsView';
 import { UserProfileView } from './user-profile/UserProfileView';
+import { UserAccountSettingsView } from './user-settings/UserAccountSettingsView';
 import { UserSettingsView } from './user-settings/UserSettingsView';
 import { WiredView } from './wired/WiredView';
 import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
@@ -133,6 +134,7 @@ export const MainView: FC<{}> = props =>
             <FriendsView />
             <RightSideView />
             <UserSettingsView />
+            <UserAccountSettingsView />
             <TranslationSettingsView />
             <UserProfileView />
             <GroupsView />

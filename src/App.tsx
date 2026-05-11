@@ -1,6 +1,6 @@
 import { GetAssetManager, GetAvatarRenderManager, GetCommunication, GetConfiguration, GetLocalizationManager, GetRoomEngine, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, GetStage, GetTexturePool, GetTicker, HabboWebTools, LegacyExternalInterface, LoadGameUrlEvent, NitroEventType, NitroLogger, NitroVersion, PrepareRenderer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useEffectEvent, useRef, useState } from 'react';
-import { ClearRememberLogin, GetRememberLogin, GetUIVersion, StoreRememberLoginFromPayload } from './api';
+import { ClearRememberLogin, GetRememberLogin, GetUIVersion, StoreRememberLoginFromPayload, persistAccessTokenFromPayload } from './api';
 import { Base } from './common';
 import { LoadingView } from './components/loading/LoadingView';
 import { LoginView } from './components/login/LoginView';
@@ -202,6 +202,7 @@ export const App: FC<{}> = props =>
 
             if(response.ok && ssoTicket)
             {
+                persistAccessTokenFromPayload(payload);
                 StoreRememberLoginFromPayload(payload, typeof payload.username === 'string' ? payload.username : remembered.username, ssoTicket);
                 return ssoTicket;
             }
@@ -251,6 +252,7 @@ export const App: FC<{}> = props =>
 
             if(response.ok)
             {
+                persistAccessTokenFromPayload(payload);
                 StoreRememberLoginFromPayload(payload, remembered.username, remembered.ssoTicket);
                 return;
             }

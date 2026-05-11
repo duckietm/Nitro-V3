@@ -1,6 +1,6 @@
-import { AddLinkEventTracker, ILinkEventTracker, NitroSettingsEvent, RemoveLinkEventTracker, UserSettingsCameraFollowComposer, UserSettingsEvent, UserSettingsOldChatComposer, UserSettingsRoomInvitesComposer, UserSettingsSoundComposer } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, CreateLinkEvent, ILinkEventTracker, NitroSettingsEvent, RemoveLinkEventTracker, UserSettingsCameraFollowComposer, UserSettingsEvent, UserSettingsOldChatComposer, UserSettingsRoomInvitesComposer, UserSettingsSoundComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
+import { FaUserCog, FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import { DispatchMainEvent, DispatchUiEvent, LocalizeText, SendMessageComposer } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useChatWindow, useMessageEvent } from '../../hooks';
@@ -186,6 +186,21 @@ export const UserSettingsView: FC<{}> = props =>
                             <FaVolumeUp className={ classNames((userSettings.volumeTrax < 50) && 'text-muted', 'fa-icon') } />
                         </div>
                     </div>
+                </div>
+                <div className="flex flex-col pt-2 mt-1 border-t border-black/10">
+                    <button
+                        type="button"
+                        onClick={ () => CreateLinkEvent('user-account-settings/show') }
+                        className="group flex items-center gap-2 rounded-md border border-black/10 bg-white px-2 py-1.5 hover:bg-[#f5fbfd] hover:border-[#1e7295] transition-colors cursor-pointer text-left">
+                        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#1e7295] text-white shadow-[inset_0_2px_#ffffff26,inset_0_-2px_#0000001a]">
+                            <FaUserCog size={ 12 } />
+                        </div>
+                        <div className="flex flex-col flex-1 leading-tight">
+                            <Text bold>User settings</Text>
+                            <Text small className="text-black/60">Password &amp; account</Text>
+                        </div>
+                        <span className="text-black/30 group-hover:text-[#1e7295] text-[10px]">›</span>
+                    </button>
                 </div>
             </NitroCardContentView>
         </NitroCardView>

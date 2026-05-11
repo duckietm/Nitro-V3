@@ -1,7 +1,7 @@
 import { AvatarScaleType, AvatarSetType, GetAvatarRenderManager, GetConfiguration, IAvatarImage } from '@nitrots/nitro-renderer';
 import { FC, useActionState, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { ClearRememberLogin, GetConfigurationValue, GetRememberLogin, StoreRememberLoginFromPayload } from '../../api';
+import { ClearRememberLogin, GetConfigurationValue, GetRememberLogin, StoreRememberLoginFromPayload, persistAccessTokenFromPayload } from '../../api';
 import { configFileUrl } from '../../secure-assets';
 import flagBr from '../../assets/images/flag_icon/flag_icon_br.png';
 import flagDe from '../../assets/images/flag_icon/flag_icon_de.png';
@@ -527,6 +527,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
             if(ok && ssoTicket)
             {
                 clearLock();
+                persistAccessTokenFromPayload(payload);
                 if(rememberFlag) StoreRememberLoginFromPayload(payload, typeof payload.username === 'string' ? payload.username : usernameInput, ssoTicket);
                 else ClearRememberLogin();
                 onAuthenticated(ssoTicket);
