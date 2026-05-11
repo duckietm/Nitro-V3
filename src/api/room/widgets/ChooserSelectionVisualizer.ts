@@ -48,7 +48,7 @@ export class chooserSelectionVisualizer
 
         for (const sprite of visualization.sprites)
         {
-            if (sprite.blendMode === 1) continue;
+            if (sprite.blendMode === 'add') continue;
             const existing = (sprite.filters || []).filter(f => !(f instanceof ChooserSelectionFilter));
             sprite.filters = [...existing, filter];
         }
