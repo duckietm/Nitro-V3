@@ -1,7 +1,7 @@
-import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, ClubGiftInfoEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetClubGiftInfo, GetRoomEngine, GetSessionDataManager, GetTickerTime, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, NodeData, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomControllerLevel, RoomEngineObjectPlacedEvent, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType, RoomObjectVariable, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
+import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetRoomEngine, GetSessionDataManager, GetTickerTime, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, NodeData, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomControllerLevel, RoomEngineObjectPlacedEvent, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType, RoomObjectVariable, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
-import { BuilderFurniPlaceableStatus, CatalogNode, CatalogPage, CatalogType, DispatchUiEvent, FurniCategory, GetFurnitureData, GetProductDataForLocalization, GetRoomSession, ICatalogNode, ICatalogOptions, ICatalogPage, IPageLocalization, IProduct, IPurchasableOffer, IPurchaseOptions, LocalizeText, NotificationAlertType, Offer, PageLocalization, PlacedObjectPurchaseData, PlaySound, Product, ProductTypeEnum, RequestedPage, SearchResult, SendMessageComposer, SoundNames } from '../../api';
+import { BuilderFurniPlaceableStatus, CatalogNode, CatalogPage, CatalogType, DispatchUiEvent, FurniCategory, GetFurnitureData, GetProductDataForLocalization, GetRoomSession, ICatalogNode, ICatalogPage, IPageLocalization, IProduct, IPurchasableOffer, IPurchaseOptions, LocalizeText, NotificationAlertType, Offer, PageLocalization, PlacedObjectPurchaseData, PlaySound, Product, ProductTypeEnum, RequestedPage, SearchResult, SendMessageComposer, SoundNames } from '../../api';
 import { CatalogPurchaseFailureEvent, CatalogPurchaseNotAllowedEvent, CatalogPurchaseSoldOutEvent, CatalogPurchasedEvent, InventoryFurniAddedEvent } from '../../events';
 import { useMessageEvent, useNitroEvent, useUiEvent } from '../events';
 import { useNotification } from '../notification';
@@ -28,7 +28,6 @@ const useCatalogState = () =>
     const [ roomPreviewer, setRoomPreviewer ] = useState<RoomPreviewer>(null);
     const [ navigationHidden, setNavigationHidden ] = useState(false);
     const [ purchaseOptions, setPurchaseOptions ] = useState<IPurchaseOptions>({ quantity: 1, extraData: null, extraParamRequired: false, previewStuffData: null });
-    const [ catalogOptions, setCatalogOptions ] = useState<ICatalogOptions>({});
     const [ objectMoverRequested, setObjectMoverRequested ] = useState(false);
     const [ catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects ] = useCatalogPlaceMultipleItems();
     const [ catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation ] = useCatalogSkipPurchaseConfirmation();
@@ -734,18 +733,6 @@ const useCatalogState = () =>
         simpleAlert(message, NotificationAlertType.DEFAULT, null, null, title);
     });
 
-    useMessageEvent<ClubGiftInfoEvent>(ClubGiftInfoEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setCatalogOptions(prevValue =>
-        {
-            const clubGifts = parser;
-
-            return { ...prevValue, clubGifts };
-        });
-    });
-
     useMessageEvent<CatalogPublishedMessageEvent>(CatalogPublishedMessageEvent, event =>
     {
         const wasVisible = isVisible;
@@ -1024,7 +1011,6 @@ const useCatalogState = () =>
     {
         if(!isVisible || rootNode) return;
 
-        SendMessageComposer(new GetClubGiftInfo());
         SendMessageComposer(new GetCatalogIndexComposer(currentType));
         SendMessageComposer(new BuildersClubQueryFurniCountMessageComposer());
     }, [ isVisible, rootNode, currentType ]);
@@ -1044,7 +1030,7 @@ const useCatalogState = () =>
         };
     }, []);
 
-    return { isVisible, setIsVisible, isBusy, pageId, previousPageId, currentType, rootNode, offersToNodes, currentPage, setCurrentPage, currentOffer, setCurrentOffer, activeNodes, searchResult, setSearchResult, frontPageItems, roomPreviewer, navigationHidden, setNavigationHidden, purchaseOptions, setPurchaseOptions, catalogOptions, setCatalogOptions, catalogLocalizationVersion, getNodeById, getNodeByName, activateNode, openPageById, openPageByName, openPageByOfferId, requestOfferToMover, openCatalogByType, toggleCatalogByType, furniCount, furniLimit, maxFurniLimit, secondsLeft, secondsLeftWithGrace, updateTime, catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects, getBuilderFurniPlaceableStatus, selectCatalogOffer };
+    return { isVisible, setIsVisible, isBusy, pageId, previousPageId, currentType, rootNode, offersToNodes, currentPage, setCurrentPage, currentOffer, setCurrentOffer, activeNodes, searchResult, setSearchResult, frontPageItems, roomPreviewer, navigationHidden, setNavigationHidden, purchaseOptions, setPurchaseOptions, catalogLocalizationVersion, getNodeById, getNodeByName, activateNode, openPageById, openPageByName, openPageByOfferId, requestOfferToMover, openCatalogByType, toggleCatalogByType, furniCount, furniLimit, maxFurniLimit, secondsLeft, secondsLeftWithGrace, updateTime, catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects, getBuilderFurniPlaceableStatus, selectCatalogOffer };
 };
 
 export const useCatalog = () => useBetween(useCatalogState);

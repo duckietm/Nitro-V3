@@ -10,7 +10,6 @@ export * from './FurnitureOffer';
 export * from './GetImageIconUrlForProduct';
 export * from './GiftWrappingConfiguration';
 export * from './ICatalogNode';
-export * from './ICatalogOptions';
 export * from './ICatalogPage';
 export * from './IMarketplaceSearchOptions';
 export * from './IPageLocalization';

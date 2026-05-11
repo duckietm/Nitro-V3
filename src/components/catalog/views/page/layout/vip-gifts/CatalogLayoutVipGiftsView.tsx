@@ -2,7 +2,7 @@ import { SelectClubGiftComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useMemo } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../../../api';
 import { AutoGrid, Text } from '../../../../../../common';
-import { useCatalog, useNotification, usePurse } from '../../../../../../hooks';
+import { useClubGifts, useNotification, usePurse } from '../../../../../../hooks';
 import { CatalogLayoutProps } from '../CatalogLayout.types';
 import { VipGiftItem } from './VipGiftItemView';
 
@@ -11,8 +11,7 @@ let isSelectingGift = false;
 export const CatalogLayoutVipGiftsView: FC<CatalogLayoutProps> = props =>
 {
     const { purse = null } = usePurse();
-    const { catalogOptions = null, setCatalogOptions = null } = useCatalog();
-    const { clubGifts = null } = catalogOptions;
+    const { data: clubGifts = null } = useClubGifts();
     const { showConfirm = null } = useNotification();
 
     const giftsAvailable = useCallback(() =>
@@ -36,34 +35,32 @@ export const CatalogLayoutVipGiftsView: FC<CatalogLayoutProps> = props =>
 
             isSelectingGift = true;
 
+            // The server replies with a fresh ClubGiftInfoEvent after
+            // accepting the selection; useClubGifts subscribes to that
+            // event via useNitroEventInvalidator, so giftsAvailable
+            // refreshes from the authoritative source — no need to
+            // mutate the parser locally.
             SendMessageComposer(new SelectClubGiftComposer(localizationId));
-
-            setCatalogOptions(prevValue =>
-            {
-                prevValue.clubGifts.giftsAvailable--;
-
-                return { ...prevValue };
-            });
 
             setTimeout(() => isSelectingGift = false, 5000);
         }, null);
-    }, [ setCatalogOptions, showConfirm ]);
+    }, [ showConfirm ]);
 
     const sortGifts = useMemo(() =>
     {
-        let gifts = clubGifts.offers.sort((a,b) =>
-        {
-            return clubGifts.getOfferExtraData(a.offerId).daysRequired - clubGifts.getOfferExtraData(b.offerId).daysRequired;
-        });
-        return gifts;
-    },[ clubGifts ]);
+        if(!clubGifts) return [];
+
+        return [ ...clubGifts.offers ].sort((a, b) =>
+            (clubGifts.getOfferExtraData(a.offerId).daysRequired - clubGifts.getOfferExtraData(b.offerId).daysRequired)
+        );
+    }, [ clubGifts ]);
 
 
     return (
         <>
             <Text shrink truncate fontWeight="bold">{ giftsAvailable() }</Text>
             <AutoGrid className="nitro-catalog-layout-vip-gifts-grid" columnCount={ 1 }>
-                { (clubGifts.offers.length > 0) && sortGifts.map(offer => <VipGiftItem key={ offer.offerId } daysRequired={ clubGifts.getOfferExtraData(offer.offerId).daysRequired } isAvailable={ (clubGifts.getOfferExtraData(offer.offerId).isSelectable && (clubGifts.giftsAvailable > 0)) } offer={ offer } onSelect={ selectGift }/>) }
+                { clubGifts && (clubGifts.offers.length > 0) && sortGifts.map(offer => <VipGiftItem key={ offer.offerId } daysRequired={ clubGifts.getOfferExtraData(offer.offerId).daysRequired } isAvailable={ (clubGifts.getOfferExtraData(offer.offerId).isSelectable && (clubGifts.giftsAvailable > 0)) } offer={ offer } onSelect={ selectGift }/>) }
             </AutoGrid>
         </>
     );
