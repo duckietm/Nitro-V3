@@ -1,6 +1,13 @@
-import { GetCommunication, UiSettingsDataEvent, UiSettingsLoadComposer, UiSettingsSaveComposer } from '@nitrots/nitro-renderer';
-import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react';
 import { DEFAULT_UI_SETTINGS, IUiSettings } from './IUiSettings';
+
+/**
+ * UI settings currently persist to localStorage only. The cross-device
+ * server-side sync (UiSettingsLoadComposer / UiSettingsSaveComposer /
+ * UiSettingsDataEvent) is a planned addition that requires both the
+ * renderer composer classes and the Arcturus packet handlers — none of
+ * which exist yet. Until those land, settings stay per-browser.
+ */
 
 const STORAGE_KEY = 'nitro.ui.settings';
 
@@ -67,60 +74,9 @@ const ALL_CSS_VARS = [
     '--ui-dark-bg', '--ui-dark-border'
 ];
 
-const sendComposer = (composer: any): void =>
-{
-    try
-    {
-        GetCommunication()?.connection?.send(composer);
-    }
-    catch(e)
-    {}
-};
-
 export const UiSettingsProvider: FC<PropsWithChildren> = ({ children }) =>
 {
     const [ settings, setSettings ] = useState<IUiSettings>(loadSettings);
-    const serverSaveTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
-
-    // Carica dal server al mount e ascolta risposta
-    useEffect(() =>
-    {
-        sendComposer(new UiSettingsLoadComposer());
-
-        const connection = GetCommunication()?.connection;
-
-        if(!connection) return;
-
-        const handler = (event: any) =>
-        {
-            try
-            {
-                const parser = event.getParser();
-                const json = parser?.settingsJson;
-
-                if(json && json !== '{}')
-                {
-                    const serverSettings = { ...DEFAULT_UI_SETTINGS, ...JSON.parse(json) };
-                    setSettings(serverSettings);
-                    saveSettings(serverSettings);
-                }
-            }
-            catch(e)
-            {}
-        };
-
-        connection.addMessageEvent(new UiSettingsDataEvent(handler));
-    }, []);
-
-    const syncToServer = useCallback((settingsToSave: IUiSettings) =>
-    {
-        if(serverSaveTimerRef.current) clearTimeout(serverSaveTimerRef.current);
-
-        serverSaveTimerRef.current = setTimeout(() =>
-        {
-            sendComposer(new UiSettingsSaveComposer(JSON.stringify(settingsToSave)));
-        }, 1000);
-    }, []);
 
     const updateSettings = useCallback((partial: Partial<IUiSettings>) =>
     {
@@ -128,18 +84,16 @@ export const UiSettingsProvider: FC<PropsWithChildren> = ({ children }) =>
         {
             const updated = { ...prev, ...partial };
             saveSettings(updated);
-            syncToServer(updated);
 
             return updated;
         });
-    }, [ syncToServer ]);
+    }, []);
 
     const resetSettings = useCallback(() =>
     {
         setSettings({ ...DEFAULT_UI_SETTINGS });
         saveSettings(DEFAULT_UI_SETTINGS);
-        syncToServer(DEFAULT_UI_SETTINGS);
-    }, [ syncToServer ]);
+    }, []);
 
     const getHeaderStyle = useCallback((): React.CSSProperties =>
     {
