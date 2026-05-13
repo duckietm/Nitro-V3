@@ -565,6 +565,53 @@ Status after this round of work:
   session start. Captures the layout convention, the patterns to use,
   what's wired up, what isn't, and the open logic bugs.
 
+### Boot-time orchestration (`src/bootstrap.ts`)
+- Mobile viewport meta tag inserted before anything else.
+- `await loadClientMode()` — fetches `client-mode.json` into
+  `window.__nitroClientMode` so `getClientMode()` can pick up
+  `secureAssetsEnabled` / `secureApiEnabled` / `apiBaseUrl` for the
+  fetch interceptor.
+- `installSecureFetch()` (no-op when both `secureAssetsEnabled` and
+  `secureApiEnabled` are off, which is the dev default).
+- Populate `window.NitroConfig` with `config.urls`, `sso.ticket`,
+  forward parameters.
+- **`await GetConfiguration().init()`** — eager configuration load
+  before React mounts. Eliminates the "Missing configuration key:
+  asset.url / login.endpoint / login.turnstile.* / …" warning flood
+  that happens when components synchronously read keys on the first
+  paint while `prepare()`'s deferred init is still in flight.
+- `import('./index')` — dynamic, so we keep top-level await for the
+  steps above.
+
+### Dev asset serving (`vite.config.mjs`)
+- Game asset directories (`bundled/`, `c_images/`, `gamedata/`, `swf/`)
+  live OUTSIDE the repo. The historical "symlink them into `public/`
+  so Vite serves them via `publicDir`" trick is a trap on Windows:
+  chokidar tries to install a watcher on every file under `public/`
+  and the dev server hangs for minutes on ~177k assets.
+- The current setup installs a tiny Vite plugin (`nitroAssetsServer`)
+  that mounts `sirv` on `/nitro-assets` and `/swf`, reading from
+  `../Nitro-Files/{nitro-assets,swf}`. `sirv` is connect-style
+  middleware; it bypasses chokidar entirely.
+- The same plugin wires the same handler into
+  `configurePreviewServer` so `yarn preview` keeps working with the
+  production build.
+- `.gitignore` has explicit entries for `/public/nitro-assets` and
+  `/public/swf` plus a comment explaining why those paths must not be
+  recreated as symlinks.
+
+### Upstream feature catch-up
+- `duckietm/Nitro-V3` PR #126 is cherry-picked: adds
+  `src/components/user-settings/UserAccountSettingsView.tsx`
+  (reset password / email / change username flows under the user
+  settings overlay) and a wear-badge popup fix in
+  `NotificationBadgeReceivedBubbleView` that gates the button on the
+  `canShowWearButton` derived predicate. The cherry-pick required
+  reconciling the LoginView fork to the Form Actions migration
+  (`useActionState` + `useFormStatus`) and restoring the
+  `useEffectEvent`-wrapped subscription pattern used elsewhere in
+  this branch.
+
 ---
 
 ## How to pick the next refactor PR
@@ -709,3 +756,10 @@ data-corrupting.
   `roomSession.userDataManager.getPetData(parser.petId)` could throw if
   `roomSession` was null at the moment the event arrived (between rooms).
   Fixed with `?.` chain.
+- **`useAvatarEditor` `set.paletteID` null-pointer** —
+  `buildCategory` read `set.paletteID` on the line above its
+  `if(!set || !palette) return null` guard. For categories where
+  `getSetType()` legitimately returns null (PETS / MISC without
+  server-side figure data), this threw and the avatar editor crashed
+  on open, escalating to `WidgetErrorBoundary`. Split the guard so
+  `set` is checked before its property access.

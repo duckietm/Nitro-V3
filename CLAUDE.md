@@ -12,6 +12,18 @@ infrastructure (TanStack Query, Zustand, Vitest, React Compiler, error
 boundaries), split a few god-hooks, and audit logic bugs along the way.
 PR is **#2** on `simoleo89/Nitro-V3`.
 
+On top of the modernization work this branch also picks up a couple of
+upstream feature commits that lived only on `duckietm/Nitro-V3` (PR #126):
+reset password / email / change username under user settings, and the
+wear-badge popup fix.
+
+Local-dev game assets are served by a small Vite plugin (`sirv` middleware
+mounted on `/nitro-assets` and `/swf`, reading from
+`E:\Users\simol\Desktop\DEV\Nitro-Files`) — NOT by symlinking inside
+`public/`. The symlink path triggers chokidar on ~177k files and the dev
+server hangs for minutes on Windows. See `vite.config.mjs` and the
+`.gitignore` note.
+
 Detailed status, decisions, and next steps live in **`docs/ARCHITECTURE.md`** —
 read that before starting anything non-trivial.
 
@@ -220,6 +232,25 @@ Login / Register / Forgot in `src/components/login/LoginView.tsx` use
 `src/components/login/components/{Register,Forgot}Dialog.tsx` and
 `shared.ts` have been **removed** (dead code).
 
+### Configuration pre-init in bootstrap
+
+`src/bootstrap.ts` calls `await GetConfiguration().init()` **before**
+importing `./index`. Otherwise the first paint dumps a flood of
+"Missing configuration key" warnings while components synchronously
+read `asset.url`, `login.endpoint`, … against an empty store before
+`prepare()`'s deferred init lands.
+
+### Asset serving in dev
+
+Game assets (`bundled/`, `c_images/`, `gamedata/`, `swf/...`) are NOT
+copied or symlinked under `public/`. They're served by a custom Vite
+plugin (`nitroAssetsServer` in `vite.config.mjs`) that mounts `sirv`
+on `/nitro-assets` and `/swf`, reading from
+`E:\Users\simol\Desktop\DEV\Nitro-Files\`. sirv is a connect-style
+middleware that bypasses chokidar entirely, so the ~177k asset files
+never enter the watch graph. The plugin also wires the same handler
+into `configurePreviewServer` so `yarn preview` keeps working.
+
 ## What's wired up and what isn't
 
 | Adopted | Pilot sites |
@@ -231,6 +262,8 @@ Login / Register / Forgot in `src/components/login/LoginView.tsx` use
 | God-hook split (`useBetween` singleton + state filter + actions filter + shim) | `wired-tools`, `translation`, `notification`, `friends` |
 | `WidgetErrorBoundary` | `RoomWidgetsView` umbrella |
 | Vitest | 113/113 cases on pure helpers + the Zustand store |
+| Form Actions | Login / Register / Forgot (LoginView.tsx) |
+| Cherry-picked from `duckietm` PR #126 | `UserAccountSettingsView` (reset password / email / username under user settings), plus the wear-badge popup `canShowWearButton` gating |
 
 | Not yet | Notes |
 |---|---|
@@ -283,3 +316,10 @@ Fix shapes documented; both are reasonable PRs on their own.
   `useMessageEventState`): `src/hooks/events/`
 - Wired-tools split (types/constants/helpers + 3 tab views):
   `src/components/wired-tools/`
+- User account settings (cherry-picked from upstream PR #126):
+  `src/components/user-settings/UserAccountSettingsView.tsx`
+- Access-token persistence helper (used by login + remember + rotate):
+  `src/api/auth/accessToken.ts` (`persistAccessTokenFromPayload`)
+- Asset middleware: `nitroAssetsServer()` in `vite.config.mjs`
+- Configuration pre-init: `src/bootstrap.ts` (`await GetConfiguration().init()`
+  before `import('./index')`)
