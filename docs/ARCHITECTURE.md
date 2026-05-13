@@ -480,9 +480,39 @@ Status after this round of work:
 | CatalogPagesList / CatalogPage | **deferred** — core state slice (rootNode / offersToNodes / currentPage), needs its own split-out store |
 | BuildersClubFurniCount / SubscriptionStatus | **deferred** — read by the internal `getBuilderFurniPlaceableStatus` logic, moves with the data/actions split |
 
-Pure-helper extraction landed before the singleton split:
-`src/hooks/catalog/useCatalog.helpers.ts` hosts the dependency-free
-pieces previously inlined in the hook —
+**Helper extraction + filter split both landed.** The 1100-line hook
+now has its dependency-free logic in
+`src/hooks/catalog/useCatalog.helpers.ts` and exposes three public
+filters built on top of the same `useBetween` singleton:
+
+- `useCatalogData()` — server-driven read-only slice (`rootNode`,
+  `offersToNodes`, `currentPage`, `currentOffer`, `frontPageItems`,
+  `searchResult`, `roomPreviewer`, `isBusy`,
+  `catalogLocalizationVersion`, Builders Club counters + timers).
+- `useCatalogUiState()` — UI ephemeral state + writers
+  (`isVisible`, `pageId`, `previousPageId`, `currentType`,
+  `activeNodes`, `navigationHidden`, `purchaseOptions`,
+  `catalogPlaceMultipleObjects`, plus all the `set*` writers,
+  including the ones that mutate the data slice on page / offer /
+  search-result selection).
+- `useCatalogActions()` — imperative operations
+  (`openCatalogByType`, `toggleCatalogByType`, `activateNode`,
+  `openPageBy{Id,Name,OfferId}`, `requestOfferToMover`,
+  `selectCatalogOffer`, `getNodeBy{Id,Name}`,
+  `getBuilderFurniPlaceableStatus`).
+
+The internal store is named `useCatalogStore` and is **not exported**;
+the four public entry points (`useCatalogData` / `useCatalogUiState`
+/ `useCatalogActions` / `useCatalog`) all funnel into the same
+`useBetween` instance, so listeners + state register once. The
+deprecated `useCatalog` shim continues to expose the full historical
+return shape so the 48 existing consumers compile unchanged; they
+should be incrementally migrated to the specific filters as PRs
+touch them. Three pilot migrations already landed in
+`CatalogBuildersClubStatusView`, `CatalogBreadcrumbView`, and
+`CatalogNavigationItemView`.
+
+Pure helpers in `useCatalog.helpers.ts`:
 
 - `normalizeCatalogType(type?)` — coerce the optional catalog type
   back to `NORMAL` / `BUILDER`.
@@ -512,7 +542,7 @@ empty-map / partial-bucket branches of the offer lookup).
 - Vitest 3 + jsdom + `@testing-library/react` + `@testing-library/jest-dom`
   configured. Separate `vitest.config.mts` so the runner doesn't drag in
   the renderer SDK aliases from `vite.config.mjs`.
-- **158 cases passing** across 11 test files. Pure-module suites:
+- **163 cases passing** across 12 test files. Pure-module suites:
     - `WiredCreatorTools.helpers.test.ts` (18) — formatters + snapshot
       factory.
     - `navigatorRoomCreatorStore.test.ts` (4) — Zustand store invariants
@@ -539,6 +569,12 @@ empty-map / partial-bucket branches of the offer lookup).
       the partial-visible fallback), `buildCatalogNodeTree` (tree
       depth + offerId index), and the full decision tree of
       `resolveBuilderFurniPlaceableStatus`.
+    - `useCatalog.filters.test.tsx` (5) — contract tests for the
+      three-way singleton-filter split. Stubs `use-between` so the
+      filters share one fake store, asserts each filter exposes
+      exactly the keys it owns (no leak across slices), and pins
+      down `===` identity of callbacks between the shim and each
+      slice so the migration of the 48 consumers stays safe.
 
   Component-/hook-level suites (on the new renderer-SDK mock):
     - `WidgetErrorBoundary.test.tsx` (4) — happy path + caught render

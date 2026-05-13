@@ -12,7 +12,15 @@ import { useCatalogSkipPurchaseConfirmation } from './useCatalogSkipPurchaseConf
 const DUMMY_PAGE_ID_FOR_OFFER_SEARCH = -12345678;
 const DRAG_AND_DROP_ENABLED = true;
 
-const useCatalogState = () =>
+// Internal singleton store — held together by `useBetween` so every
+// public filter below sees the same listeners + state. Do NOT export
+// this directly; consumers must go through the filters or the
+// deprecated `useCatalog` shim. The previous 1100-line monolith
+// exposed everything via `useCatalog`; the three filters below
+// (`useCatalogData` / `useCatalogUiState` / `useCatalogActions`)
+// shrink the surface each consumer subscribes to, which lets the
+// React Compiler memoize and avoids unrelated re-renders.
+const useCatalogStore = () =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
     const [ isBusy, setIsBusy ] = useState(false);
@@ -958,4 +966,105 @@ const useCatalogState = () =>
     return { isVisible, setIsVisible, isBusy, pageId, previousPageId, currentType, rootNode, offersToNodes, currentPage, setCurrentPage, currentOffer, setCurrentOffer, activeNodes, searchResult, setSearchResult, frontPageItems, roomPreviewer, navigationHidden, setNavigationHidden, purchaseOptions, setPurchaseOptions, catalogLocalizationVersion, getNodeById, getNodeByName, activateNode, openPageById, openPageByName, openPageByOfferId, requestOfferToMover, openCatalogByType, toggleCatalogByType, furniCount, furniLimit, maxFurniLimit, secondsLeft, secondsLeftWithGrace, updateTime, catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects, getBuilderFurniPlaceableStatus, selectCatalogOffer };
 };
 
-export const useCatalog = () => useBetween(useCatalogState);
+/**
+ * Read-only slice of server-driven catalog state. Anything a consumer
+ * needs to *display* (page tree, current page, offers, Builders Club
+ * counters) lives here.
+ *
+ * `roomPreviewer` and the busy flag are kept here too because they
+ * are observed (not mutated) by every consumer that renders a preview.
+ */
+export const useCatalogData = () =>
+{
+    const {
+        isBusy,
+        rootNode, offersToNodes,
+        currentPage, currentOffer,
+        frontPageItems, searchResult,
+        roomPreviewer,
+        catalogLocalizationVersion,
+        furniCount, furniLimit, maxFurniLimit,
+        secondsLeft, secondsLeftWithGrace, updateTime
+    } = useBetween(useCatalogStore);
+
+    return {
+        isBusy,
+        rootNode, offersToNodes,
+        currentPage, currentOffer,
+        frontPageItems, searchResult,
+        roomPreviewer,
+        catalogLocalizationVersion,
+        furniCount, furniLimit, maxFurniLimit,
+        secondsLeft, secondsLeftWithGrace, updateTime
+    };
+};
+
+/**
+ * UI-side state owned by the catalog overlay itself: visibility, the
+ * currently-rendered page id and breadcrumb, search query result,
+ * purchase options, multi-place toggle. Includes the setters that
+ * mutate the data slice when the user picks a page / offer / search
+ * result — those don't trigger server traffic so they belong to the
+ * UI layer.
+ */
+export const useCatalogUiState = () =>
+{
+    const {
+        isVisible, setIsVisible,
+        pageId, previousPageId,
+        currentType,
+        activeNodes,
+        navigationHidden, setNavigationHidden,
+        purchaseOptions, setPurchaseOptions,
+        catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects,
+        setCurrentPage, setCurrentOffer, setSearchResult
+    } = useBetween(useCatalogStore);
+
+    return {
+        isVisible, setIsVisible,
+        pageId, previousPageId,
+        currentType,
+        activeNodes,
+        navigationHidden, setNavigationHidden,
+        purchaseOptions, setPurchaseOptions,
+        catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects,
+        setCurrentPage, setCurrentOffer, setSearchResult
+    };
+};
+
+/**
+ * Imperative actions: open / toggle the catalog, navigate the page
+ * tree, request a furni to the mover, look up nodes by id/name, run
+ * the Builders Club placement check. These all either send a
+ * composer to the server, dispatch a UI event, or run synchronous
+ * tree queries — none of them are React state by themselves.
+ */
+export const useCatalogActions = () =>
+{
+    const {
+        openCatalogByType, toggleCatalogByType,
+        activateNode,
+        openPageById, openPageByName, openPageByOfferId,
+        requestOfferToMover, selectCatalogOffer,
+        getNodeById, getNodeByName,
+        getBuilderFurniPlaceableStatus
+    } = useBetween(useCatalogStore);
+
+    return {
+        openCatalogByType, toggleCatalogByType,
+        activateNode,
+        openPageById, openPageByName, openPageByOfferId,
+        requestOfferToMover, selectCatalogOffer,
+        getNodeById, getNodeByName,
+        getBuilderFurniPlaceableStatus
+    };
+};
+
+/**
+ * Deprecated. Kept so the 48 existing consumers compile unchanged —
+ * incrementally migrate them to `useCatalogData` / `useCatalogUiState`
+ * / `useCatalogActions` and remove this shim once the call sites are
+ * gone. Mirrors the same `useBetween` singleton, so behavior is
+ * identical.
+ */
+export const useCatalog = () => useBetween(useCatalogStore);

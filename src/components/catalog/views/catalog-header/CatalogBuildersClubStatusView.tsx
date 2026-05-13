@@ -2,11 +2,12 @@ import { GetTickerTime } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { CatalogType, FriendlyTime, LocalizeText } from '../../../../api';
 import buildersClubIcon from '../../../../assets/images/toolbar/icons/buildersclub.png';
-import { useCatalog } from '../../../../hooks';
+import { useCatalogData, useCatalogUiState } from '../../../../hooks';
 
 export const CatalogBuildersClubStatusView: FC = () =>
 {
-    const { currentType = CatalogType.NORMAL, furniCount = 0, furniLimit = 0, secondsLeft = 0, secondsLeftWithGrace = 0, updateTime = 0 } = useCatalog();
+    const { furniCount = 0, furniLimit = 0, secondsLeft = 0, secondsLeftWithGrace = 0, updateTime = 0 } = useCatalogData();
+    const { currentType = CatalogType.NORMAL } = useCatalogUiState();
     const [ ticker, setTicker ] = useState(() => GetTickerTime());
 
     useEffect(() =>

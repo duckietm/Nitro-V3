@@ -259,15 +259,15 @@ into `configurePreviewServer` so `yarn preview` keeps working.
 | `useNitroQuery` + `useNitroEventInvalidator` | `OfferView`, `CatalogLayoutRoomAdsView`, `ModToolsChatlogView`, `CfhChatlogView`, `useGiftConfiguration`, `useUserGroups`, `useClubOffers(windowId)`, `useSellablePetPalette(breed)`, `useMarketplaceConfiguration`, `useClubGifts` (with invalidator) |
 | Zustand | `NavigatorRoomCreatorView` (`useRoomCreatorStore`) |
 | God-hook split (state + actions + shim) | `doorbell`, `poll`, `furni-chooser`, `user-chooser`, `friend-request`, `chat-input` |
-| God-hook split (`useBetween` singleton + state filter + actions filter + shim) | `wired-tools`, `translation`, `notification`, `friends` |
+| God-hook split (`useBetween` singleton + state filter + actions filter + shim) | `wired-tools`, `translation`, `notification`, `friends`, `catalog` (three-way: `useCatalogData` / `useCatalogUiState` / `useCatalogActions`, plus the `useCatalog` shim) |
 | `WidgetErrorBoundary` | `RoomWidgetsView` umbrella |
-| Vitest | 158/158 cases — pure helpers + Zustand store + 2 component-/hook-level pilots (WidgetErrorBoundary, useDoorbellState) on top of the renderer-SDK mock at `tests/mocks/renderer-mock.ts`, plus 34 cases on the freshly extracted catalog helpers |
+| Vitest | 163/163 cases — pure helpers + Zustand store + 2 component-/hook-level pilots (WidgetErrorBoundary, useDoorbellState) on top of the renderer-SDK mock at `tests/mocks/renderer-mock.ts`, 34 cases on the catalog pure helpers, 5 contract cases on the catalog filters |
 | Form Actions | Login / Register / Forgot (LoginView.tsx) |
 | Cherry-picked from `duckietm` PR #126 | `UserAccountSettingsView` (reset password / email / username under user settings), plus the wear-badge popup `canShowWearButton` gating |
 
 | Not yet | Notes |
 |---|---|
-| Singleton-filter split of `useCatalog` | Pure helpers extracted to `useCatalog.helpers.ts` and consumed in the hook (`buildCatalogNodeTree`, `findNodeById`, `findNodeByName`, `getNodesByOfferIdFromMap`, `getOfferProductKeys`, `normalizeCatalogType`, `resolveBuilderFurniPlaceableStatus`). What still remains: split the singleton state into `useCatalogData` / `useCatalogUiState` / `useCatalogActions` filters via `useBetween`, mirroring the wired-tools / translation / notification / friends pattern. The 48 consumers can stay on the shim during the transition. |
+| Migrate the 48 `useCatalog()` consumers to the new filters | The split is done: pure helpers in `useCatalog.helpers.ts`, three filters (`useCatalogData` / `useCatalogUiState` / `useCatalogActions`) plus the deprecated `useCatalog` shim. Three pilot consumers already migrated (`CatalogBuildersClubStatusView`, `CatalogBreadcrumbView`, `CatalogNavigationItemView`). The remaining 45 still hit the shim — incremental work, each migration is mechanical: split the destructure into 2-3 filter calls based on which keys are read. |
 | Split `useChatWidget` / `useAvatarInfoWidget` | Both state-driven via events with no clean imperative actions to extract — skip-motivated. Already touched today for the InfoStand listener move. |
 | Split `usePetPackageWidget` / `useWordQuizWidget` / `useChatCommandSelector` | Their "actions" mutate internal state or are tightly interdependent — skip-motivated. |
 | Hoist Wired Creator Tools shared state to a Zustand slice | Would remove ~25 props passed to the 3 tab sub-components. (Wired-tools split done as singleton-filter; Zustand slice is the next step.) |
@@ -327,6 +327,9 @@ Fix shapes documented; both are reasonable PRs on their own.
   (`buildCatalogNodeTree`, `findNodeById` / `findNodeByName`,
   `getNodesByOfferIdFromMap`, `getOfferProductKeys`,
   `normalizeCatalogType`, `resolveBuilderFurniPlaceableStatus`)
+- Catalog three-way filter split: `useCatalogData` /
+  `useCatalogUiState` / `useCatalogActions` (with the deprecated
+  `useCatalog` shim) in `src/hooks/catalog/useCatalog.ts`
 - Renderer-SDK mock for Vitest: `tests/mocks/renderer-mock.ts`
   (aliased over `@nitrots/nitro-renderer` via `vitest.config.mts`).
   Hosts the explicit `NitroLogger` mock, the `mockEventDispatcher` /
