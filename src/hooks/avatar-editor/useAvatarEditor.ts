@@ -264,9 +264,12 @@ const useAvatarEditorState = () =>
             for(let i = 0; i < MAX_PALETTES; i++) colorItems.push([]);
 
             const set = GetAvatarRenderManager().structureData.getSetType(setType);
+
+            if(!set) return null;
+
             const palette = GetAvatarRenderManager().structureData.getPalette(set.paletteID);
 
-            if(!set || !palette) return null;
+            if(!palette) return null;
 
             for(const partColor of palette.colors.getValues())
             {
