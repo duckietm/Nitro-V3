@@ -21,10 +21,17 @@ jobs:
         with:
           path: Nitro-V3
 
+      # The client tracks renderer changes that are pushed to the
+      # `feat/react19-event-bus` branch of `simoleo89/Nitro_Render_V3`
+      # (allowUnderpass + sendBackgroundMessage + Window NitroConfig
+      # alignment, etc.). `duckietm/Nitro_Render_V3:main` doesn't yet
+      # have those, so tsgo would fail right away if we checked that
+      # out instead.
       - name: Checkout Nitro_Render_V3 (sibling)
         uses: actions/checkout@v4
         with:
-          repository: duckietm/Nitro_Render_V3
+          repository: simoleo89/Nitro_Render_V3
+          ref: feat/react19-event-bus
           path: Nitro_Render_V3
 
       - name: Setup Node 22
@@ -50,11 +57,18 @@ jobs:
       # isn't declared in package.json). tsgo (TS 7 native preview)
       # then resolves the tsconfig `include` entry pointing at the
       # renderer's `src/**/*.ts`.
+      #
+      # Use an absolute path so the link target is unambiguous
+      # regardless of the cwd that reads it. A relative target like
+      # `../../../Nitro_Render_V3` resolves to
+      # `Nitro-V3/Nitro_Render_V3` (one too few `..`), which doesn't
+      # exist and makes tsgo report TS2307 across the entire src/.
       - name: Symlink renderer into client node_modules
         run: |
           mkdir -p Nitro-V3/node_modules/@nitrots
-          ln -sfn ../../../Nitro_Render_V3 Nitro-V3/node_modules/@nitrots/nitro-renderer
+          ln -sfn "${{ github.workspace }}/Nitro_Render_V3" Nitro-V3/node_modules/@nitrots/nitro-renderer
           ls -la Nitro-V3/node_modules/@nitrots/
+          ls Nitro-V3/node_modules/@nitrots/nitro-renderer/packages/api/src/ | head -5
 
       - name: Type check (tsgo)
         working-directory: Nitro-V3
