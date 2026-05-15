@@ -1,15 +1,16 @@
 .tb-icon {
+    flex-shrink: 0;
+    overflow: hidden;
     opacity: 1;
     cursor: pointer;
     transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-    &:hover {
-        transform: translateY(-2px);
-    }
-
-    &:active {
-        transform: translateY(0);
-    }
+.tb-icon.nitro-icon {
+    width: 44px !important;
+    height: 44px !important;
+    background-position: center !important;
+    background-size: auto !important;
 }
 
 .tb-toggle {

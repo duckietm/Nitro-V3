@@ -163,10 +163,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 <motion.div
                     key="left-nav"
                     initial={ false }
-                    animate={ { x: isToolbarOpen || !isInRoom ? 0 : (isInRoom ? -10 : 0), y: isToolbarOpen || !isInRoom ? 0 : (isInRoom ? 0 : 8) } }
+                    animate={ { opacity: isToolbarOpen || !isInRoom ? 1 : 0, x: isToolbarOpen || !isInRoom ? 0 : (isInRoom ? -10 : 0), y: isToolbarOpen || !isInRoom ? 0 : (isInRoom ? 0 : 8) } }
                     transition={ { type: 'spring', stiffness: 300, damping: 28 } }
                     className={ `fixed bottom-0 left-0 z-40 h-[52px] max-w-[calc(50vw-242px)] items-center overflow-visible pl-3 pointer-events-auto will-change-transform ${ desktopFlexClasses }` }>
-                    <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className={ `tb-open-shell flex h-[52px] max-w-full items-center gap-2 overflow-visible px-[8px] pt-[10px] pb-[2px] ${ showDesktopShell ? 'bg-transparent' : 'rounded-t-[10px] border border-b-0 border-white/8 bg-[rgba(10,10,12,0.58)] shadow-[0_-6px_18px_rgba(0,0,0,0.18)]' }` }>
+                    <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className={ `tb-open-shell flex h-[52px] max-w-full items-center gap-0.5 overflow-visible px-[8px] pt-[10px] pb-[2px] ${ showDesktopShell ? 'bg-transparent' : 'rounded-t-[10px] border border-b-0 border-white/8 bg-[rgba(10,10,12,0.58)] shadow-[0_-6px_18px_rgba(0,0,0,0.18)]' }` }>
                         <motion.div variants={ itemVariants }>
                             { isInRoom
                                 ? <ToolbarItemView icon="habbo" onClick={ () => VisitDesktop() } className="tb-icon" />
@@ -203,7 +203,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                     </motion.div> }
                             </AnimatePresence>
                             <motion.div whileHover={ { scale: 1.08 } } whileTap={ { scale: 0.95 } } className="cursor-pointer" onClick={ event => { setMeExpanded(value => !value); event.stopPropagation(); } }>
-                                <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon !h-[44px] !w-[32px] !bg-center !bg-no-repeat" style={ { marginTop: '4px' } } />
+                                <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon !h-[60px] !w-[60px] !bg-no-repeat" style={ { backgroundPosition: 'center 35%', backgroundSize: 'auto' } } />
                             </motion.div>
                             { (getTotalUnseen > 0) &&
                                 <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
@@ -234,10 +234,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 <motion.div
                     key="right-nav"
                     initial={ false }
-                    animate={ { x: isToolbarOpen || !isInRoom ? 0 : 10 } }
+                    animate={ { opacity: isToolbarOpen || !isInRoom ? 1 : 0, x: isToolbarOpen || !isInRoom ? 0 : 10 } }
                     transition={ { type: 'spring', stiffness: 300, damping: 28 } }
                     className={ `fixed bottom-0 z-40 h-[52px] max-w-[calc(50vw-242px)] items-center overflow-visible pr-3 pointer-events-auto will-change-transform ${ desktopFlexClasses } ${ isInRoom ? 'right-0' : 'right-3' }` }>
-                        <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className="tb-open-shell flex h-[52px] max-w-full items-center gap-3 overflow-visible bg-transparent px-[8px] pt-[10px] pb-[2px]">
+                        <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className="tb-open-shell flex h-[52px] max-w-full items-center gap-0.5 overflow-visible bg-transparent px-[8px] pt-[10px] pb-[2px]">
                             <motion.div variants={ itemVariants } className="relative">
                                 <ToolbarItemView icon="friendall" onClick={ () => CreateLinkEvent('friends/toggle') } className="tb-icon" />
                                 { (requests.length > 0) &&
@@ -255,10 +255,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 <motion.div
                     key="mobile-nav"
                     initial={ false }
-                    animate={ { y: isToolbarOpen || !isInRoom ? 0 : 8 } }
+                    animate={ { opacity: isToolbarOpen || !isInRoom ? 1 : 0, y: isToolbarOpen || !isInRoom ? 0 : 8 } }
                     transition={ { type: 'spring', stiffness: 300, damping: 28 } }
                     className={ `fixed left-1/2 z-40 flex w-[95vw] -translate-x-1/2 items-center overflow-visible pointer-events-auto will-change-transform ${ mobileOnlyClasses } ${ isInRoom ? 'bottom-[52px] rounded-t-[12px] border border-b-0 border-white/8 bg-[rgba(10,10,12,0.58)] px-[6px] py-[4px] shadow-[0_-6px_18px_rgba(0,0,0,0.18)]' : 'bottom-0' }` }>
-                    <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className="tb-bar-scroll flex h-full min-w-0 flex-1 items-center gap-2 overflow-x-auto overflow-y-visible px-1">
+                    <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className="tb-bar-scroll flex h-full min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-visible px-1">
                         <motion.div variants={ itemVariants }>
                             { isInRoom
                                 ? <ToolbarItemView icon="habbo" onClick={ () => VisitDesktop() } className="tb-icon" />
@@ -296,12 +296,12 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 </motion.div> }
                             </AnimatePresence>
                             <motion.div whileHover={ { scale: 1.08 } } whileTap={ { scale: 0.95 } } className="cursor-pointer" onClick={ event => { setMeExpanded(value => !value); event.stopPropagation(); } }>
-                                <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon !h-[44px] !w-[32px] !bg-center !bg-no-repeat" style={ { marginTop: '4px' } } />
+                                <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon !h-[60px] !w-[60px] !bg-no-repeat" style={ { backgroundPosition: 'center 35%', backgroundSize: 'auto' } } />
                             </motion.div>
                             { (getTotalUnseen > 0) &&
                                 <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
                         </motion.div>
-                    <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className="tb-bar-scroll flex h-full items-center gap-2 overflow-x-auto overflow-y-visible px-1">
+                    <motion.div animate={ isToolbarOpen || !isInRoom ? 'visible' : 'exit' } variants={ containerVariants } initial="hidden" className="tb-bar-scroll flex h-full items-center gap-0.5 overflow-x-auto overflow-y-visible px-1">
                         { (isInRoom && showToolbarButton) &&
                             <motion.div variants={ itemVariants }>
                                 <ToolbarItemView icon="wired-tools" onClick={ openMonitor } className="tb-icon" />
@@ -337,17 +337,18 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 
 const TOOLBAR_STYLES = `
   .tb-icon {
+    flex-shrink: 0;
+    overflow: hidden;
     opacity: 1;
-    transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
     cursor: pointer;
+    transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .tb-icon:hover {
-    transform: translateY(-2px);
-  }
-
-  .tb-icon:active {
-    transform: translateY(0);
+  .tb-icon.nitro-icon {
+    width: 44px !important;
+    height: 44px !important;
+    background-position: center !important;
+    background-size: auto !important;
   }
 
   .tb-toggle {
