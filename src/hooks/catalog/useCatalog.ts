@@ -540,16 +540,9 @@ const useCatalogState = () =>
     {
         if(!offer) return;
 
-        if(!offer.isLazy)
-        {
-            applySelectedOffer(offer);
-            return;
-        }
+        applySelectedOffer(offer);
 
-        if(offer.offerId > -1)
-        {
-            offer.activate();
-        }
+        if(offer.isLazy && (offer.offerId > -1)) offer.activate();
     }, [ applySelectedOffer ]);
 
     const refreshBuilderStatus = useCallback(() =>
