@@ -12,11 +12,12 @@ export interface LayoutAvatarImageViewProps extends BaseProps<HTMLDivElement>
     headOnly?: boolean;
     direction?: number;
     scale?: number;
+    renderScale?: number;
 }
 
 export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
 {
-    const { figure = '', gender = '', headOnly = false, direction = 0, scale = 1, classNames = [], style = {}, ...rest } = props;
+    const { figure = '', gender = '', headOnly = false, direction = 0, scale = 1, renderScale = 1, classNames = [], style = {}, ...rest } = props;
     const [ avatarUrl, setAvatarUrl ] = useState<string>(null);
     const [ isReady, setIsReady ] = useState<boolean>(false);
     const isDisposed = useRef(false);
@@ -52,7 +53,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
     {
         if(!isReady) return;
 
-        const figureKey = [ figure, gender, direction, headOnly ].join('-');
+        const figureKey = [ figure, gender, direction, headOnly, renderScale ].join('-');
 
         if(AVATAR_IMAGE_CACHE.has(figureKey))
         {
@@ -72,7 +73,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
 
                 avatarImage.setDirection(setType, direction);
 
-                const imageUrl = avatarImage.processAsImageUrl(setType);
+                const imageUrl = (avatarImage as any).processAsImageUrl(setType, renderScale);
 
                 if(imageUrl && !isDisposed.current)
                 {
@@ -95,7 +96,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
 
             resetFigure(figure);
         }
-    }, [ figure, gender, direction, headOnly, isReady ]);
+    }, [ figure, gender, direction, headOnly, isReady, renderScale ]);
 
     useEffect(() =>
     {
