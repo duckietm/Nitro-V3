@@ -74,7 +74,6 @@ export const MainView: FC<{}> = props =>
                             switch(parts[2])
                             {
                                 case 'credits':
-                                    //HabboWebTools.openWebPageAndMinimizeClient(this._windowManager.getProperty(ExternalVariables.WEB_SHOP_RELATIVE_URL));
                                     break;
                                 default: {
                                     const name = parts[2];

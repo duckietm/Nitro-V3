@@ -545,11 +545,6 @@ const useCatalogState = () =>
         if(offer.isLazy && (offer.offerId > -1)) offer.activate();
     }, [ applySelectedOffer ]);
 
-    const refreshBuilderStatus = useCallback(() =>
-    {
-
-    }, []);
-
     useMessageEvent<CatalogPagesListEvent>(CatalogPagesListEvent, event =>
     {
         const parser = event.getParser();
@@ -660,7 +655,6 @@ const useCatalogState = () =>
 
         if(offerProductData.uniqueLimitedItem)
         {
-            // update unique
         }
 
         const products: IProduct[] = [];
@@ -699,8 +693,6 @@ const useCatalogState = () =>
         }
 
         applySelectedOffer(offer);
-
-        // (this._isObjectMoverRequested) && (this._purchasableOffer)
     });
 
     useMessageEvent<SellablePetPalettesMessageEvent>(SellablePetPalettesMessageEvent, event =>
@@ -820,8 +812,6 @@ const useCatalogState = () =>
         const parser = event.getParser();
 
         setFurniCount(parser.furniCount);
-
-        refreshBuilderStatus();
     });
 
     useMessageEvent<BuildersClubSubscriptionStatusMessageEvent>(BuildersClubSubscriptionStatusMessageEvent, event =>
@@ -835,8 +825,6 @@ const useCatalogState = () =>
         setSecondsLeftWithGrace(parser.secondsLeftWithGrace);
         setBuilderPlacementBlockedByVisitors(parser.placementBlockedByVisitors);
         setBuilderPlacementAllowedInCurrentRoom(parser.placementAllowedInCurrentRoom);
-
-        refreshBuilderStatus();
     });
 
     useUiEvent<CatalogPurchasedEvent>(CatalogPurchasedEvent.PURCHASE_SUCCESS, event => PlaySound(SoundNames.CREDITS));
