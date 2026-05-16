@@ -30,7 +30,6 @@
     },
     "include": [
         "src",
-        "tests",
         "node_modules/@nitrots/nitro-renderer/src/**/*.ts"
     ]
 }

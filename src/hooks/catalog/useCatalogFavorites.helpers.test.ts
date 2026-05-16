@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { CatalogType } from '../src/api/catalog/CatalogType';
-import { getOffersStorageKey, getPagesStorageKey, normalizeCatalogType, parseOffers, parsePages, STORAGE_KEY_OFFERS_BUILDER, STORAGE_KEY_OFFERS_NORMAL, STORAGE_KEY_PAGES_BUILDER, STORAGE_KEY_PAGES_NORMAL } from '../src/hooks/catalog/useCatalogFavorites.helpers';
+import { CatalogType } from '../../api/catalog/CatalogType';
+import { getOffersStorageKey, getPagesStorageKey, normalizeCatalogType, parseOffers, parsePages, STORAGE_KEY_OFFERS_BUILDER, STORAGE_KEY_OFFERS_NORMAL, STORAGE_KEY_PAGES_BUILDER, STORAGE_KEY_PAGES_NORMAL } from './useCatalogFavorites.helpers';
 
 describe('normalizeCatalogType', () =>
 {

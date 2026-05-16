@@ -106,7 +106,9 @@ src/hooks/<area>/<feature?>/             → hooks, FLAT files, no per-feature s
 src/api/                                 → cross-cutting helpers (LocalizeText, composers, formatters)
 src/common/                              → reusable UI primitives + error boundary
 src/state/                               → Zustand stores (cross-feature only)
-tests/                                   → Vitest suites (mirror filename of subject)
+src/**/*.test.{ts,tsx}                   → Vitest suites co-located next to their subject (e.g. `Foo.ts` + `Foo.test.ts`)
+src/__mocks__/                           → hand-written renderer-SDK stub for tests (aliased over `@nitrots/nitro-renderer`)
+src/test-setup.ts                        → Vitest setupFiles entry (jest-dom matchers, etc.)
 ```
 
 When splitting a god-hook the convention is **3 files, all flat in the
@@ -261,7 +263,7 @@ into `configurePreviewServer` so `yarn preview` keeps working.
 | God-hook split (state + actions + shim) | `doorbell`, `poll`, `furni-chooser`, `user-chooser`, `friend-request`, `chat-input` |
 | God-hook split (`useBetween` singleton + state filter + actions filter + shim) | `wired-tools`, `translation`, `notification`, `friends`, `catalog` (three-way: `useCatalogData` / `useCatalogUiState` / `useCatalogActions` — all 48 consumers migrated, deprecated `useCatalog` shim removed) |
 | `WidgetErrorBoundary` | `RoomWidgetsView` umbrella + per-widget wrap on all 13 room widgets and all 20 furniture widgets (so a crash in one widget no longer takes down its siblings) |
-| Vitest | 178/178 cases — pure helpers + 2 Zustand store suites (`navigatorRoomCreatorStore`, `wiredCreatorToolsUiStore`) + 2 component-/hook-level pilots (WidgetErrorBoundary, useDoorbellState) on top of the renderer-SDK mock at `tests/mocks/renderer-mock.ts`, 34 cases on the catalog pure helpers, 4 contract cases on the catalog filters |
+| Vitest | 178/178 cases — pure helpers + 2 Zustand store suites (`navigatorRoomCreatorStore`, `wiredCreatorToolsUiStore`) + 2 component-/hook-level pilots (WidgetErrorBoundary, useDoorbellState) on top of the renderer-SDK mock at `src/__mocks__/nitro-renderer.ts`, 34 cases on the catalog pure helpers, 4 contract cases on the catalog filters. **Tests are co-located** under `src/`, alongside their subject. |
 | Form Actions | Login / Register / Forgot (LoginView.tsx) |
 | Cherry-picked from `duckietm` PR #126 | `UserAccountSettingsView` (reset password / email / username under user settings), plus the wear-badge popup `canShowWearButton` gating |
 
@@ -270,7 +272,7 @@ into `configurePreviewServer` so `yarn preview` keeps working.
 | Split `useChatWidget` / `useAvatarInfoWidget` | Both state-driven via events with no clean imperative actions to extract — skip-motivated. Already touched today for the InfoStand listener move. |
 | Split `usePetPackageWidget` / `useWordQuizWidget` / `useChatCommandSelector` | Their "actions" mutate internal state or are tightly interdependent — skip-motivated. |
 | Hoist Wired Creator Tools **derived** state to the Zustand slice | UI-only flags are already hoisted (`useWiredCreatorToolsUiStore`). What's left is the event-driven derived state — `selectedFurni` / `selectedUser` / `monitorSnapshot` / `variableHighlightOverlays` — which can only move alongside their listener effects (multi-session refactor). |
-| Widen the component / hook test coverage | Mock layer is in place (`tests/mocks/renderer-mock.ts`) and the first 2 pilots pass. Good follow-up targets: other `*State` hooks built on event reducers, `LoginView` Form Actions happy/error paths, OfferView with `useNitroQuery`. |
+| Widen the component / hook test coverage | Mock layer is in place (`src/__mocks__/nitro-renderer.ts`) and the first 2 pilots pass. Good follow-up targets: other `*State` hooks built on event reducers, `LoginView` Form Actions happy/error paths, OfferView with `useNitroQuery`. |
 
 ## Known open logic bugs
 
@@ -310,7 +312,8 @@ Fix shapes documented; both are reasonable PRs on their own.
 
 - Architecture doc: `docs/ARCHITECTURE.md`
 - Test runner config: `vitest.config.mts` (separate from `vite.config.mjs`)
-- Test setup: `tests/setup.ts`
+- Test setup: `src/test-setup.ts`
+- Test convention: co-located under `src/` next to the subject (`src/<path>/Foo.ts` ↔ `src/<path>/Foo.test.ts`). No separate `tests/` tree.
 - React Query adapter: `src/api/nitro-query/createNitroQuery.ts`
 - Zustand factory: `src/state/createNitroStore.ts`
 - Error boundary: `src/common/error-boundary/WidgetErrorBoundary.tsx`
@@ -333,7 +336,7 @@ Fix shapes documented; both are reasonable PRs on their own.
   `useCatalogUiState` / `useCatalogActions` in
   `src/hooks/catalog/useCatalog.ts` (all 48 consumers migrated;
   deprecated `useCatalog` shim removed)
-- Renderer-SDK mock for Vitest: `tests/mocks/renderer-mock.ts`
+- Renderer-SDK mock for Vitest: `src/__mocks__/nitro-renderer.ts`
   (aliased over `@nitrots/nitro-renderer` via `vitest.config.mts`).
   Hosts the explicit `NitroLogger` mock, the `mockEventDispatcher` /
   `clearMockEventDispatcher` helpers used by hook tests, the

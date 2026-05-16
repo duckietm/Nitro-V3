@@ -528,7 +528,7 @@ Pure helpers in `useCatalog.helpers.ts`:
   visitors) and passes the resulting `visitorCount` into the helper.
 
 `useCatalog.ts` now imports these instead of defining them inline
-(net **−75 LOC**). Test file `tests/useCatalog.helpers.test.ts` covers
+(net **−75 LOC**). Co-located test file `src/hooks/catalog/useCatalog.helpers.test.ts` covers
 all six helpers with 34 cases (tree depth + offerId mapping,
 node lookups including root exclusion, the limit-reached / guild-admin
 fallback / visitors-in-room paths of the placement helper, and the
@@ -538,7 +538,7 @@ empty-map / partial-bucket branches of the offer lookup).
 - Vitest 3 + jsdom + `@testing-library/react` + `@testing-library/jest-dom`
   configured. Separate `vitest.config.mts` so the runner doesn't drag in
   the renderer SDK aliases from `vite.config.mjs`.
-- **163 cases passing** across 12 test files. Pure-module suites:
+- **178 cases passing** across 13 test files, **co-located under `src/`** next to each subject (no separate `tests/` tree). Pure-module suites:
     - `WiredCreatorTools.helpers.test.ts` (18) — formatters + snapshot
       factory.
     - `navigatorRoomCreatorStore.test.ts` (4) — Zustand store invariants
@@ -580,7 +580,7 @@ empty-map / partial-bucket branches of the offer lookup).
       `DOORBELL`, dedup duplicates, remove on `RSDE_ACCEPTED` /
       `RSDE_REJECTED`, ignore stale events, unsubscribe on unmount.
 
-- **Renderer-SDK mock at `tests/mocks/renderer-mock.ts`** —
+- **Renderer-SDK mock at `src/__mocks__/nitro-renderer.ts`** —
   `vitest.config.mts` aliases `@nitrots/nitro-renderer` over this file
   so jsdom-hosted tests never load Pixi or the message
   parser/composer registry. The mock exports:
@@ -734,7 +734,7 @@ Remaining order of value/risk for the next contributor:
    each tab. A slice at `src/components/wired-tools/wiredToolsStore.ts`
    would make each tab subscribe to the keys it needs.
 4. **Widen the component/hook Vitest coverage.** The renderer-SDK
-   mock layer is in place (`tests/mocks/renderer-mock.ts`) and the
+   mock layer is in place (`src/__mocks__/nitro-renderer.ts`) and the
    first two pilots — `WidgetErrorBoundary` and `useDoorbellState` —
    pass. Good follow-up targets: other `*State` hooks built on event
    reducers (`useFurniChooserState`, `useUserChooserState`,

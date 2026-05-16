@@ -6,7 +6,7 @@ import {
     formatMonitorSource,
     formatVariableTimestamp,
     normalizeMonitorReason
-} from '../src/components/wired-tools/WiredCreatorTools.helpers';
+} from './WiredCreatorTools.helpers';
 
 describe('WiredCreatorTools helpers', () =>
 {

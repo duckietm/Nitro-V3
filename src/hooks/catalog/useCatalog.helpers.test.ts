@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { BuilderFurniPlaceableStatus } from '../src/api/catalog/BuilderFurniPlaceableStatus';
-import { CatalogType } from '../src/api/catalog/CatalogType';
+import { BuilderFurniPlaceableStatus } from '../../api/catalog/BuilderFurniPlaceableStatus';
+import { CatalogType } from '../../api/catalog/CatalogType';
 import {
     buildCatalogNodeTree,
     findNodeById,
@@ -9,7 +9,7 @@ import {
     getOfferProductKeys,
     normalizeCatalogType,
     resolveBuilderFurniPlaceableStatus
-} from '../src/hooks/catalog/useCatalog.helpers';
+} from './useCatalog.helpers';
 
 // ---------------------------------------------------------------------------
 // normalizeCatalogType

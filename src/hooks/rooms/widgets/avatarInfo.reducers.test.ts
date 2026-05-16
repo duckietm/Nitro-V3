@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { AvatarInfoUser } from '../src/api/room/widgets/AvatarInfoUser';
-import type { IAvatarInfo } from '../src/api/room/widgets/IAvatarInfo';
-import { applyFavouriteGroupUpdate, applyUserBadgesUpdate, applyUserFigureUpdate } from '../src/hooks/rooms/widgets/avatarInfo.reducers';
+import { AvatarInfoUser } from '../../../api/room/widgets/AvatarInfoUser';
+import type { IAvatarInfo } from '../../../api/room/widgets/IAvatarInfo';
+import { applyFavouriteGroupUpdate, applyUserBadgesUpdate, applyUserFigureUpdate } from './avatarInfo.reducers';
 
 /**
  * Pure reducers for the InfoStand pilot. They take the inspected

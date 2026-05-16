@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { useWiredCreatorToolsUiStore } from '../src/components/wired-tools/wiredCreatorToolsUiStore';
+import { useWiredCreatorToolsUiStore } from './wiredCreatorToolsUiStore';
 
 const INITIAL = {
     isVisible: false,

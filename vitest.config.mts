@@ -6,23 +6,22 @@ import { resolve } from 'path';
  * dev/build config wires up the renderer SDK via filesystem aliases that
  * point at sibling working trees (`../renderer`, `../Nitro_Render_V3`).
  *
- * Test files were originally written against pure modules (helpers,
- * stores) that don't pull in the renderer. We now also support
- * component-level tests by aliasing `@nitrots/nitro-renderer` to a
- * hand-written stub at `tests/mocks/renderer-mock.ts` so jsdom doesn't
- * try to evaluate Pixi + the full message parser/composer registry.
+ * Tests live next to their subject under `src/` (`foo.ts` + `foo.test.ts`).
+ * The renderer SDK is aliased to a hand-written stub at
+ * `src/__mocks__/nitro-renderer.ts` so jsdom doesn't try to evaluate
+ * Pixi + the full message parser/composer registry at import time.
  */
 export default defineConfig({
     test: {
         environment: 'jsdom',
         globals: false,
-        include: [ 'tests/**/*.test.ts', 'tests/**/*.test.tsx' ],
-        setupFiles: [ './tests/setup.ts' ],
+        include: [ 'src/**/*.test.ts', 'src/**/*.test.tsx' ],
+        setupFiles: [ './src/test-setup.ts' ],
         css: false
     },
     resolve: {
         alias: {
-            '@nitrots/nitro-renderer': resolve(__dirname, 'tests/mocks/renderer-mock.ts'),
+            '@nitrots/nitro-renderer': resolve(__dirname, 'src/__mocks__/nitro-renderer.ts'),
             '@': resolve(__dirname, 'src')
         }
     }

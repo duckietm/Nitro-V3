@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dedupeBadges } from '../src/api/avatar/dedupeBadges';
+import { dedupeBadges } from './dedupeBadges';
 
 describe('dedupeBadges', () =>
 {

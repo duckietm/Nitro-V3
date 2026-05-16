@@ -5,12 +5,12 @@ import { describe, expect, it, vi } from 'vitest';
  * with a deterministic stub. The stub returns `key|amount` so each test
  * can assert both the bucket FriendlyTime chose AND the value it computed.
  */
-vi.mock('../src/api/utils/LocalizeText', () => ({
+vi.mock('./LocalizeText', () => ({
     LocalizeText: (key: string, _params?: string[], replacements?: string[]) =>
         `${ key }|${ replacements?.[0] ?? '' }`
 }));
 
-import { FriendlyTime } from '../src/api/utils/FriendlyTime';
+import { FriendlyTime } from './FriendlyTime';
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;

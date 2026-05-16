@@ -75,7 +75,7 @@ vi.mock('use-between', () => ({
 
 // Import AFTER the mock is set up. The hooks resolve `useBetween` at
 // import time via the module graph, so the order matters.
-import { useCatalogActions, useCatalogData, useCatalogUiState } from '../src/hooks/catalog/useCatalog';
+import { useCatalogActions, useCatalogData, useCatalogUiState } from './useCatalog';
 
 describe('useCatalog filter contract', () =>
 {

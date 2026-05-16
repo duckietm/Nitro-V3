@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { CloneObject } from '../src/api/utils/CloneObject';
-import { ConvertSeconds } from '../src/api/utils/ConvertSeconds';
-import { LocalizeShortNumber } from '../src/api/utils/LocalizeShortNumber';
-import { GetWiredTimeLocale } from '../src/api/wired/GetWiredTimeLocale';
-import { WiredDateToString } from '../src/api/wired/WiredDateToString';
-import { getPrefixFontStyle, parsePrefixColors, PRESET_PREFIX_FONTS } from '../src/api/utils/PrefixUtils';
+import { CloneObject } from './CloneObject';
+import { ConvertSeconds } from './ConvertSeconds';
+import { LocalizeShortNumber } from './LocalizeShortNumber';
+import { GetWiredTimeLocale } from '../wired/GetWiredTimeLocale';
+import { WiredDateToString } from '../wired/WiredDateToString';
+import { getPrefixFontStyle, parsePrefixColors, PRESET_PREFIX_FONTS } from './PrefixUtils';
 
 describe('ConvertSeconds', () =>
 {

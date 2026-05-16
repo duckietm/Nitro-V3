@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useRoomCreatorStore } from '../src/components/navigator/views/navigatorRoomCreatorStore';
+import { useRoomCreatorStore } from './navigatorRoomCreatorStore';
 
 describe('useRoomCreatorStore', () =>
 {

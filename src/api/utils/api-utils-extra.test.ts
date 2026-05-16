@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { ColorUtils } from '../src/api/utils/ColorUtils';
-import { FixedSizeStack } from '../src/api/utils/FixedSizeStack';
-import { LocalizeFormattedNumber } from '../src/api/utils/LocalizeFormattedNumber';
+import { ColorUtils } from './ColorUtils';
+import { FixedSizeStack } from './FixedSizeStack';
+import { LocalizeFormattedNumber } from './LocalizeFormattedNumber';
 
 describe('LocalizeFormattedNumber', () =>
 {
