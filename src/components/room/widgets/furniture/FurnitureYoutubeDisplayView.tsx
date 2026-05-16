@@ -1,5 +1,5 @@
 import { FC, useRef } from 'react';
-import ReactPlayer from 'react-player/youtube';
+import ReactPlayer from 'react-player';
 import { LocalizeText, YoutubeVideoPlaybackStateEnum } from '../../../../api';
 import { AutoGrid, AutoGridProps, LayoutGridItem, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFurnitureYoutubeWidget } from '../../../../hooks';
@@ -39,7 +39,7 @@ export const FurnitureYoutubeDisplayView: FC<{}> = FurnitureYoutubeDisplayViewPr
                         { (videoId && videoId.length > 0) &&
                             <ReactPlayer
                                 ref={ playerRef }
-                                url={ `https://www.youtube.com/watch?v=${ videoId }` }
+                                src={ `https://www.youtube.com/watch?v=${ videoId }` }
                                 width={ 500 }
                                 height={ 375 }
                                 playing={ playing }
@@ -47,14 +47,16 @@ export const FurnitureYoutubeDisplayView: FC<{}> = FurnitureYoutubeDisplayViewPr
                                 onPlay={ handlePlay }
                                 onPause={ handlePause }
                                 config={ {
-                                    playerVars: {
-                                        autoplay: 1,
-                                        disablekb: 1,
-                                        controls: 0,
-                                        origin: window.origin,
-                                        modestbranding: 1,
-                                        start: videoStart,
-                                        end: videoEnd
+                                    youtube: {
+                                        playerVars: {
+                                            autoplay: 1,
+                                            disablekb: 1,
+                                            controls: 0,
+                                            origin: window.origin,
+                                            modestbranding: 1,
+                                            start: videoStart,
+                                            end: videoEnd
+                                        }
                                     }
                                 } } />
                         }
