@@ -263,7 +263,7 @@ into `configurePreviewServer` so `yarn preview` keeps working.
 | God-hook split (state + actions + shim) | `doorbell`, `poll`, `furni-chooser`, `user-chooser`, `friend-request`, `chat-input` |
 | God-hook split (`useBetween` singleton + state filter + actions filter + shim) | `wired-tools`, `translation`, `notification`, `friends`, `catalog` (three-way: `useCatalogData` / `useCatalogUiState` / `useCatalogActions` — all 48 consumers migrated, deprecated `useCatalog` shim removed) |
 | `WidgetErrorBoundary` | `RoomWidgetsView` umbrella + per-widget wrap on all 13 room widgets and all 20 furniture widgets (so a crash in one widget no longer takes down its siblings) |
-| Vitest | 178/178 cases — pure helpers + 2 Zustand store suites (`navigatorRoomCreatorStore`, `wiredCreatorToolsUiStore`) + 2 component-/hook-level pilots (WidgetErrorBoundary, useDoorbellState) on top of the renderer-SDK mock at `src/nitro-renderer.mock.ts`, 34 cases on the catalog pure helpers, 4 contract cases on the catalog filters. **Tests are co-located** under `src/`, alongside their subject. |
+| Vitest | 181/181 cases — pure helpers + 2 Zustand store suites (`navigatorRoomCreatorStore`, `wiredCreatorToolsUiStore`) + 2 component-/hook-level pilots (WidgetErrorBoundary, useDoorbellState) on top of the renderer-SDK mock at `src/nitro-renderer.mock.ts`, 34 cases on the catalog pure helpers, 4 contract cases on the catalog filters. **Tests are co-located** under `src/`, alongside their subject. |
 | Form Actions | Login / Register / Forgot (LoginView.tsx) |
 | Cherry-picked from `duckietm` PR #126 | `UserAccountSettingsView` (reset password / email / username under user settings), plus the wear-badge popup `canShowWearButton` gating |
 
@@ -300,7 +300,7 @@ Fix shapes documented; both are reasonable PRs on their own.
 - **Skip-motivated god-hook splits are fine** — when a hook's actions
   mutate internal state, document the reason in the commit message and
   move on rather than forcing a bad split.
-- **`yarn test` must stay green** on every commit. Currently 178/178.
+- **`yarn test` must stay green** on every commit. Currently 181/181.
   The GitHub Actions workflow at `.github/workflows/ci.yml` runs
   `yarn typecheck` + `yarn test --run` on every push to `main` /
   `feat/**` and on every PR — both must pass.
