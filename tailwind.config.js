@@ -18,7 +18,7 @@ const colors = {
     'card-grid-item-border': '#B6BEC5',
     'card-grid-item-border-active': '#FFFFFF',
     'loading': '#393A85',
-    'muted': 'rgba(182, 190, 197)',
+    'muted': '#B6BEC5',
     'blue': '#0d6efd',
     'indigo': '#6610f2',
     'pink': '#d63384',
@@ -95,7 +95,7 @@ module.exports = {
 
             },
             zIndex: {
-                'toolbar': '',
+                'toolbar': '10',
                 'loading': '100',
                 'chat-zindex': '20'
             },

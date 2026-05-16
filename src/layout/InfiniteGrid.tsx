@@ -138,7 +138,7 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
                                 key={ virtualRow.index + i + 'b' } />;
 
                             return (
-                                <Fragment key={ i }>
+                                <Fragment key={ `${virtualRow.index}-${i}` }>
                                     { itemRender(item, index) }
                                 </Fragment>
                             );

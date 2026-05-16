@@ -17,7 +17,7 @@ const useOnClickChatState = () =>
 
         showConfirm(LocalizeText('chat.confirm.openurl', [ 'url' ], [ url ]), () =>
         {
-            window.open(url, '_blank');
+            window.open(url, '_blank', 'noopener,noreferrer');
         }, null, null, null, LocalizeText('generic.alert.title'), null, 'link');
     };
 

@@ -639,7 +639,7 @@ body {
 
     &.n-0 {
         width: 4px;
-        baseackground-position: -1px 0px;
+        background-position: -1px 0px;
     }
 
     &.n-1 {

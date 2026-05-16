@@ -142,7 +142,7 @@ const useChatWidgetState = () =>
 
                 if(chatType === RoomSessionChatEvent.CHAT_TYPE_PET_REBREED_FERTILIZE)
                 {
-                    textKey = 'widget.chatbubble.petrefertilized;';
+                    textKey = 'widget.chatbubble.petrefertilized';
                 }
 
                 else if(chatType === RoomSessionChatEvent.CHAT_TYPE_PET_SPEED_FERTILIZE)
@@ -257,7 +257,12 @@ const useChatWidgetState = () =>
 
         const offsetX = event.offsetX;
 
-        chatMessages.forEach(chat => (chat.elementRef && (chat.left += offsetX)));
+        setChatMessages(prevValue => prevValue.map(chat =>
+        {
+            if(!chat.elementRef) return chat;
+
+            return { ...chat, left: chat.left + offsetX };
+        }));
     });
 
     useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event =>
