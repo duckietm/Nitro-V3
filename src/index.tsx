@@ -10,7 +10,6 @@ import './css/chat/Chats.css';
 
 import './css/common/Buttons.css';
 
-
 import './css/forms/form_select.css';
 
 import './css/friends/FriendsView.css';
@@ -21,9 +20,7 @@ import './css/login/LoginView.css';
 
 import './css/icons/icons.css';
 
-
 import './css/layout/LayoutTrophy.css';
-
 
 import './css/nitrocard/NitroCardView.css';
 
@@ -41,4 +38,8 @@ import './css/toolbar/ToolBar.css';
 
 import './css/widgets/FurnitureWidgets.css';
 
-createRoot(document.getElementById('root')).render(<ErrorBoundary><App /></ErrorBoundary>);
+createRoot(document.getElementById('root')).render(
+    <ErrorBoundary>
+        <App />
+    </ErrorBoundary>
+);

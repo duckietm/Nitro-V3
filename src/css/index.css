@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import url('https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Pixelify+Sans:wght@400..700&family=Vampiro+One&display=swap');
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Pixelify+Sans:wght@400..700&family=Vampiro+One&display=swap");
 
 @config "../../tailwind.config.js";
 
@@ -11,23 +11,42 @@
 }
 
 @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 6px rgba(59, 130, 246, 0.3); }
-    50%      { box-shadow: 0 0 14px rgba(59, 130, 246, 0.6); }
+    0%,
+    100% {
+        box-shadow: 0 0 6px rgba(59, 130, 246, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 14px rgba(59, 130, 246, 0.6);
+    }
 }
 
 @keyframes pulseGlowRed {
-    0%, 100% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.3); }
-    50%      { box-shadow: 0 0 14px rgba(239, 68, 68, 0.6); }
+    0%,
+    100% {
+        box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+    }
 }
 
 @keyframes dropSettle {
-    0%   { transform: scale(1.15); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes pulseGlowGold {
-    0%, 100% { box-shadow: 0 0 6px rgba(255, 193, 7, 0.4); }
-    50%      { box-shadow: 0 0 14px rgba(255, 193, 7, 0.7); }
+    0%,
+    100% {
+        box-shadow: 0 0 6px rgba(255, 193, 7, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 14px rgba(255, 193, 7, 0.7);
+    }
 }
 
 @font-face {
@@ -47,7 +66,7 @@ body {
     height: 100%;
     min-height: 100%;
     overflow: hidden;
-	background-color: #000;
+    background-color: #000;
     -webkit-user-select: none;
     user-select: none;
     overscroll-behavior: none;
@@ -65,10 +84,10 @@ body {
 .nitro-app-root {
     position: fixed;
     inset: 0;
-    width: var(--nitro-app-width, 100vw) !important;
-    height: var(--nitro-app-height, 100vh) !important;
-    min-height: var(--nitro-app-height, 100vh) !important;
-    overflow: hidden !important;
+    width: var(--nitro-app-width, 100vw);
+    height: var(--nitro-app-height, 100vh);
+    min-height: var(--nitro-app-height, 100vh);
+    overflow: hidden;
     overscroll-behavior: none;
 }
 
@@ -77,8 +96,8 @@ body {
     body,
     #root,
     .nitro-app-root {
-        height: var(--nitro-app-height, 100dvh) !important;
-        min-height: var(--nitro-app-height, 100dvh) !important;
+        height: var(--nitro-app-height, 100dvh);
+        min-height: var(--nitro-app-height, 100dvh);
     }
 }
 
@@ -116,15 +135,15 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: .875rem;
+    width: 0.875rem;
 }
 
 ::-webkit-scrollbar:horizontal {
-    height: .875rem;
+    height: 0.875rem;
 }
 
 ::-webkit-scrollbar:not(:horizontal) {
-    width: .875rem;
+    width: 0.875rem;
 }
 
 ::-webkit-scrollbar-track {
@@ -155,8 +174,8 @@ body {
 
 ::-webkit-scrollbar-button:single-button {
     display: block;
-    width: .875rem;
-    height: .875rem;
+    width: 0.875rem;
+    height: 0.875rem;
     background-color: #d8dfe3;
     background-repeat: no-repeat;
     background-position: center;
@@ -165,32 +184,43 @@ body {
 }
 
 ::-webkit-scrollbar-button:single-button:vertical:decrement {
-    background-image: linear-gradient(135deg, transparent 50%, #35586a 50%), linear-gradient(225deg, transparent 50%, #35586a 50%);
+    background-image:
+        linear-gradient(135deg, transparent 50%, #35586a 50%), linear-gradient(225deg, transparent 50%, #35586a 50%);
     background-size: 6px 6px;
-    background-position: calc(50% - 3px) 55%, calc(50% + 3px) 55%;
+    background-position:
+        calc(50% - 3px) 55%,
+        calc(50% + 3px) 55%;
 }
 
 ::-webkit-scrollbar-button:single-button:vertical:increment {
-    background-image: linear-gradient(315deg, transparent 50%, #35586a 50%), linear-gradient(45deg, transparent 50%, #35586a 50%);
+    background-image:
+        linear-gradient(315deg, transparent 50%, #35586a 50%), linear-gradient(45deg, transparent 50%, #35586a 50%);
     background-size: 6px 6px;
-    background-position: calc(50% - 3px) 45%, calc(50% + 3px) 45%;
+    background-position:
+        calc(50% - 3px) 45%,
+        calc(50% + 3px) 45%;
 }
 
 ::-webkit-scrollbar-button:single-button:horizontal:decrement {
-    background-image: linear-gradient(45deg, transparent 50%, #35586a 50%), linear-gradient(135deg, transparent 50%, #35586a 50%);
+    background-image:
+        linear-gradient(45deg, transparent 50%, #35586a 50%), linear-gradient(135deg, transparent 50%, #35586a 50%);
     background-size: 6px 6px;
-    background-position: 58% calc(50% - 3px), 58% calc(50% + 3px);
+    background-position:
+        58% calc(50% - 3px),
+        58% calc(50% + 3px);
 }
 
 ::-webkit-scrollbar-button:single-button:horizontal:increment {
-    background-image: linear-gradient(225deg, transparent 50%, #35586a 50%), linear-gradient(315deg, transparent 50%, #35586a 50%);
+    background-image:
+        linear-gradient(225deg, transparent 50%, #35586a 50%), linear-gradient(315deg, transparent 50%, #35586a 50%);
     background-size: 6px 6px;
-    background-position: 42% calc(50% - 3px), 42% calc(50% + 3px);
+    background-position:
+        42% calc(50% - 3px),
+        42% calc(50% + 3px);
 }
 
 @layer components {
     @keyframes blink {
-
         0%,
         100% {
             opacity: 1;
@@ -202,7 +232,6 @@ body {
     }
 
     @keyframes scale {
-
         0%,
         100% {
             transform: scale(1);
@@ -295,7 +324,7 @@ body {
     }
 
     .nitro-card-shell:not(.nitro-wired) {
-        border: 2px solid #000 !important;
+        border: 2px solid #000;
         border-radius: 10px;
         background: #f2f2eb;
         box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
@@ -328,8 +357,7 @@ body {
     .builders-club-status-shell {
         border-top: 1px solid rgba(255, 255, 255, 0.14);
         border-bottom: 2px solid #000;
-        background:
-            linear-gradient(180deg, rgba(84, 62, 46, 0.95) 0%, rgba(50, 38, 29, 0.97) 100%);
+        background: linear-gradient(180deg, rgba(84, 62, 46, 0.95) 0%, rgba(50, 38, 29, 0.97) 100%);
     }
 
     .builders-club-status-icon-shell {
@@ -346,14 +374,17 @@ body {
         border-radius: 4px;
         background: #bf2c2c;
         position: relative;
-        transition: border-color .2s ease, filter .2s ease, transform .15s ease;
+        transition:
+            border-color 0.2s ease,
+            filter 0.2s ease,
+            transform 0.15s ease;
     }
 
     .nitro-card-close-button::before,
     .nitro-card-close-button::after,
     .ubuntu-close-button::before,
     .ubuntu-close-button::after {
-        content: '';
+        content: "";
         position: absolute;
         left: 50%;
         top: 50%;
@@ -457,50 +488,62 @@ body {
     }
 
     .nitro-card-panel {
-        background: rgba(0, 0, 0, 0.045) !important;
-        border: 1px solid #c4cabf !important;
-        border-radius: 6px !important;
-        box-shadow: none !important;
+        background: rgba(0, 0, 0, 0.045);
+        border: 1px solid #c4cabf;
+        border-radius: 6px;
+        box-shadow: none;
     }
 
     .nitro-card-row {
-        background: rgba(0, 0, 0, 0.035) !important;
-        border: 1px solid #c4cabf !important;
-        border-radius: 6px !important;
-        box-shadow: none !important;
-        transition: background-color .15s ease, border-color .15s ease;
+        background: rgba(0, 0, 0, 0.035);
+        border: 1px solid #c4cabf;
+        border-radius: 6px;
+        box-shadow: none;
+        transition:
+            background-color 0.15s ease,
+            border-color 0.15s ease;
     }
 
     .nitro-card-row:hover {
-        background: rgba(0, 0, 0, 0.07) !important;
-        border-color: #aeb7aa !important;
+        background: rgba(0, 0, 0, 0.07);
+        border-color: #aeb7aa;
     }
 
     .nitro-card-divider {
-        border-color: #c4cabf !important;
-        box-shadow: none !important;
+        border-color: #c4cabf;
+        box-shadow: none;
     }
 
     .nitro-card-shell :where(.bg-muted, .bg-light, .bg-light-dark, .bg-white, .bg-white\/50, .bg-white\/80) {
-        background: rgba(0, 0, 0, 0.045) !important;
-        box-shadow: none !important;
+        background: rgba(0, 0, 0, 0.045);
+        box-shadow: none;
     }
 
-    .nitro-card-shell :where(.border, .border-muted, .border-card-grid-item-border, .border-card-grid-item-border-active, .border-white, .border-white\/10, .border-white\/20, .border-white\/30) {
-        border-color: #c4cabf !important;
-        box-shadow: none !important;
+    .nitro-card-shell
+        :where(
+            .border,
+            .border-muted,
+            .border-card-grid-item-border,
+            .border-card-grid-item-border-active,
+            .border-white,
+            .border-white\/10,
+            .border-white\/20,
+            .border-white\/30
+        ) {
+        border-color: #c4cabf;
+        box-shadow: none;
     }
 
     .nitro-card-shell :where(.shadow, .shadow-md, .shadow-lg, .shadow-inner, .shadow-inner1px) {
-        box-shadow: none !important;
+        box-shadow: none;
     }
 }
 
 @media (max-width: 991.98px) {
     .nitro-card-shell:not(.nitro-wired) {
-        width: min(calc(100vw - 16px), 100%) !important;
-        max-width: calc(100vw - 16px) !important;
-        max-height: calc(100vh - 16px) !important;
+        width: min(calc(100vw - 16px), 100%);
+        max-width: calc(100vw - 16px);
+        max-height: calc(100vh - 16px);
     }
 
     .nitro-card-shell:not(.nitro-wired) .nitro-card-header-shell {
@@ -516,7 +559,7 @@ body {
     }
 
     .nitro-card-shell:not(.nitro-wired) .nitro-card-content-shell {
-        padding: 8px !important;
+        padding: 8px;
     }
 
     .nitro-card-tabs-shell {
@@ -562,8 +605,8 @@ body {
 
     &.sold-out:after {
         @apply bg-center bg-no-repeat;
-        background-image: url("@/assets/images/unique/grid-bg-sold-out.png"),
-            url("@/assets/images/unique/grid-bg-glass.png");
+        background-image:
+            url("@/assets/images/unique/grid-bg-sold-out.png"), url("@/assets/images/unique/grid-bg-glass.png");
     }
 
     .unique-item-counter {
@@ -696,7 +739,7 @@ body {
 }
 
 .nitro-friends-spritesheet {
-    background: url('@/assets/images/friends/friends-spritesheet.png') transparent no-repeat;
+    background: url("@/assets/images/friends/friends-spritesheet.png") transparent no-repeat;
 
     &.icon-friendbar-visit {
         width: 21px;
@@ -818,13 +861,13 @@ body {
         height: 20px;
         margin: 0 auto;
         border-radius: 100%;
-        background-color: rgba(0, 0, 0, 0.20);
+        background-color: rgba(0, 0, 0, 0.2);
         z-index: 2;
     }
 
     &:after {
         position: absolute;
-        content: '';
+        content: "";
         top: 75%;
         bottom: 0;
         left: 0;
@@ -843,8 +886,6 @@ body {
 }
 
 .nitro-avatar-editor {
-
-
     .category-item {
         height: 32px;
     }
@@ -900,13 +941,13 @@ body {
             height: 30px;
             margin: 0 auto;
             border-radius: 100%;
-            background-color: rgba(0, 0, 0, 0.20);
+            background-color: rgba(0, 0, 0, 0.2);
             z-index: 2;
         }
 
         &:after {
             position: absolute;
-            content: '';
+            content: "";
             top: 75%;
             bottom: 0;
             left: 0;
@@ -927,31 +968,31 @@ body {
 
 .nitro-wired {
     background: #efefef;
-    border: 1px solid #8d8d8d !important;
-    border-radius: 6px !important;
-    box-shadow: inset 0 0 0 1px #fff !important;
+    border: 1px solid #8d8d8d;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px #fff;
     color: #000;
-    outline: none !important;
+    outline: none;
     overflow: hidden;
 
     .nitro-wired__header {
-        min-height: 21px !important;
-        max-height: 21px !important;
-        position: absolute !important;
+        min-height: 21px;
+        max-height: 21px;
+        position: absolute;
         inset: 0 0 auto 0;
         z-index: 3;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        padding: 0 !important;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
         pointer-events: auto;
 
         .nitro-card-title {
             display: block;
-            color: #000 !important;
-            font-size: 11px !important;
-            font-weight: 700 !important;
+            color: #000;
+            font-size: 11px;
+            font-weight: 700;
             line-height: 21px;
             text-align: center;
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
@@ -967,7 +1008,7 @@ body {
         }
 
         .nitro-card-close-button {
-            right: 6px !important;
+            right: 6px;
             width: 18px;
             height: 18px;
             min-width: 18px;
@@ -990,12 +1031,12 @@ body {
 
     .nitro-wired__content {
         position: relative;
-        background: #efefef !important;
-        border: 0 !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        gap: 0 !important;
-        overflow: visible !important;
+        background: #efefef;
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+        gap: 0;
+        overflow: visible;
     }
 
     .nitro-wired__body {
@@ -1071,23 +1112,23 @@ body {
     }
 
     .nitro-wired__summary-title {
-        color: #4a4a4a !important;
-        font-size: 15px !important;
-        font-weight: 700 !important;
+        color: #4a4a4a;
+        font-size: 15px;
+        font-weight: 700;
         line-height: 1.02;
-        text-align: left !important;
+        text-align: left;
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
         word-break: break-word;
     }
 
     .nitro-wired__section--body {
-        overflow: visible !important;
+        overflow: visible;
     }
 
     .nitro-wired__section .font-bold:not(.nitro-wired__summary-title) {
         width: 100%;
-        font-size: 13px !important;
-        font-weight: 700 !important;
+        font-size: 13px;
+        font-weight: 700;
         text-align: left;
     }
 
@@ -1110,12 +1151,12 @@ body {
         border: 0;
         background: #bababa;
         box-shadow: 0 1px 0 #fff;
-        margin: 0 !important;
+        margin: 0;
     }
 
     .form-check-input,
-    input[type='checkbox'],
-    input[type='radio'] {
+    input[type="checkbox"],
+    input[type="radio"] {
         width: 18px;
         height: 18px;
         min-width: 18px;
@@ -1129,36 +1170,36 @@ body {
         position: relative;
     }
 
-    input[type='radio'] {
+    input[type="radio"] {
         border-radius: 50%;
     }
 
     .form-check-input:focus,
-    input[type='checkbox']:focus,
-    input[type='radio']:focus {
+    input[type="checkbox"]:focus,
+    input[type="radio"]:focus {
         outline: 1px solid #4b7ea1;
         outline-offset: 1px;
     }
 
-    .form-check-input[type='radio']:checked,
-    input[type='radio']:checked {
+    .form-check-input[type="radio"]:checked,
+    input[type="radio"]:checked {
         background:
             radial-gradient(circle at center, #4a4a4a 0 34%, transparent 38%),
             linear-gradient(180deg, #fcfcfc 0%, #ececec 100%);
         border-color: #767676;
     }
 
-    .form-check-input[type='checkbox']:checked,
-    input[type='checkbox']:checked {
+    .form-check-input[type="checkbox"]:checked,
+    input[type="checkbox"]:checked {
         background: linear-gradient(180deg, #d9d9d9 0%, #c8c8c8 100%);
         border-color: #767676;
     }
 
-    .form-check-input[type='checkbox']:checked::before,
-    .form-check-input[type='checkbox']:checked::after,
-    input[type='checkbox']:checked::before,
-    input[type='checkbox']:checked::after {
-        content: '';
+    .form-check-input[type="checkbox"]:checked::before,
+    .form-check-input[type="checkbox"]:checked::after,
+    input[type="checkbox"]:checked::before,
+    input[type="checkbox"]:checked::after {
+        content: "";
         position: absolute;
         left: 50%;
         top: 50%;
@@ -1169,13 +1210,13 @@ body {
         transform-origin: center;
     }
 
-    .form-check-input[type='checkbox']:checked::before,
-    input[type='checkbox']:checked::before {
+    .form-check-input[type="checkbox"]:checked::before,
+    input[type="checkbox"]:checked::before {
         transform: translate(-50%, -50%) rotate(45deg);
     }
 
-    .form-check-input[type='checkbox']:checked::after,
-    input[type='checkbox']:checked::after {
+    .form-check-input[type="checkbox"]:checked::after,
+    input[type="checkbox"]:checked::after {
         transform: translate(-50%, -50%) rotate(-45deg);
     }
 
@@ -1191,14 +1232,14 @@ body {
 
     .form-control,
     .form-select,
-    input[type='text'],
-    input[type='number'],
+    input[type="text"],
+    input[type="number"],
     textarea {
         min-height: 24px;
-        border: 1px solid #8d8d8d !important;
-        border-radius: 4px !important;
-        background: #f6f6f6 !important;
-        color: #000 !important;
+        border: 1px solid #8d8d8d;
+        border-radius: 4px;
+        background: #f6f6f6;
+        color: #000;
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
         font-size: 12px;
         padding: 3px 6px;
@@ -1207,17 +1248,17 @@ body {
     .nitro-wired__button,
     .nitro-wired__picker-button,
     .nitro-slider-button {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        min-height: 22px !important;
-        border: 1px solid #8e8e8e !important;
-        border-radius: 6px !important;
-        background: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 46%, #d5d5d5 47%, #efefef 100%) !important;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-        color: #000 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 22px;
+        border: 1px solid #8e8e8e;
+        border-radius: 6px;
+        background: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 46%, #d5d5d5 47%, #efefef 100%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+        color: #000;
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
     .nitro-wired__button:hover,
@@ -1232,7 +1273,7 @@ body {
     }
 
     &.nitro-card-shell {
-        resize: none !important;
+        resize: none;
     }
 
     .nitro-wired__actions {
@@ -1246,7 +1287,7 @@ body {
 
     .nitro-wired__advanced-toggle {
         width: 100%;
-        padding: 0 !important;
+        padding: 0;
         border: 0;
         background: transparent;
         color: #000;
@@ -1304,16 +1345,16 @@ body {
     }
 
     .nitro-wired__actions {
-        gap: 4px !important;
+        gap: 4px;
     }
 
     .nitro-wired__picker-button,
     .nitro-slider-button {
         width: 22px;
-        min-width: 22px !important;
+        min-width: 22px;
         flex: 0 0 22px;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .nitro-wired__picker-button svg,
@@ -1390,7 +1431,9 @@ body {
 
     .nitro-wired__give-var-target.is-active {
         border-color: #4d4d4d;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+        box-shadow:
+            inset 0 0 0 1px rgba(255, 255, 255, 0.72),
+            inset 0 1px 0 rgba(255, 255, 255, 0.92);
     }
 
     .nitro-wired__give-var-target:disabled {
@@ -1423,7 +1466,7 @@ body {
     }
 
     .nitro-wired__variable-picker-trigger::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 50%;
         right: 8px;
@@ -1645,22 +1688,22 @@ body {
     .nitro-wired__give-var-number {
         width: 48px;
         min-width: 48px;
-        min-height: 18px !important;
+        min-height: 18px;
         height: 18px;
-        padding: 0 4px !important;
+        padding: 0 4px;
         line-height: 18px;
         text-align: center;
     }
 
     .nitro-wired__give-var-number--blurred {
-        filter: blur(0.8px) !important;
+        filter: blur(0.8px);
         opacity: 0.78;
         pointer-events: none;
     }
 
     .nitro-wired__resizable-textarea {
-        min-height: 140px !important;
-        resize: vertical !important;
+        min-height: 140px;
+        resize: vertical;
         overflow: auto;
     }
 
@@ -1739,16 +1782,16 @@ body {
     .nitro-wired__levelup-number {
         width: 74px;
         min-width: 74px;
-        min-height: 20px !important;
+        min-height: 20px;
         height: 20px;
-        padding: 0 6px !important;
+        padding: 0 6px;
         line-height: 20px;
         text-align: center;
     }
 
     .nitro-wired__levelup-textarea {
-        min-height: 88px !important;
-        resize: vertical !important;
+        min-height: 88px;
+        resize: vertical;
         overflow: auto;
     }
 
@@ -1809,7 +1852,9 @@ body {
         background: linear-gradient(180deg, #fbfbfb 0%, #efefef 100%);
         text-align: left;
         cursor: pointer;
-        transition: background 0.12s ease, border-color 0.12s ease;
+        transition:
+            background 0.12s ease,
+            border-color 0.12s ease;
     }
 
     .nitro-wired__placeholder-preview:hover {
@@ -1860,27 +1905,29 @@ body {
         border-radius: 50%;
         border: 1px solid #7f7f7f;
         background: linear-gradient(180deg, #fefefe 0%, #dadada 100%);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        box-shadow:
+            0 1px 0 rgba(255, 255, 255, 0.85),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
 }
 
 .nitro-card-shell.nitro-wired {
-    border: 1px solid #8d8d8d !important;
-    border-color: #8d8d8d !important;
-    box-shadow: inset 0 0 0 1px #fff !important;
-    outline: none !important;
+    border: 1px solid #8d8d8d;
+    border-color: #8d8d8d;
+    box-shadow: inset 0 0 0 1px #fff;
+    outline: none;
 }
 
 .nitro-card-shell.nitro-wired .nitro-card-header-shell,
 .nitro-card-shell.nitro-wired .nitro-card-content-shell {
-    border: 0 !important;
-    box-shadow: none !important;
+    border: 0;
+    box-shadow: none;
 }
 
 /* ── Avatar Editor ─────────────────────────────────────────────────────── */
 
 .color-picker-frame {
-    border-image-source: url('@/assets/images/avatareditor/color_frame.png');
+    border-image-source: url("@/assets/images/avatareditor/color_frame.png");
     border-image-slice: 6 6 6 6 fill;
     border-image-width: 6px 6px 6px 6px;
     width: 14px;
@@ -1889,14 +1936,14 @@ body {
 
     &.active,
     &:hover {
-        border-image-source: url('@/assets/images/avatareditor/color_frame_active.png');
+        border-image-source: url("@/assets/images/avatareditor/color_frame_active.png");
         height: 21px;
         margin-top: -2px;
     }
 }
 
 .hc-icon {
-    background-image: url('@/assets/images/avatareditor/hc_icon.png');
+    background-image: url("@/assets/images/avatareditor/hc_icon.png");
     height: 9px;
     width: 10px;
     bottom: 2px;
@@ -1904,24 +1951,24 @@ body {
 }
 
 .avatar-parts {
-    border: 1px solid #c5c3c0 !important;
+    border: 1px solid #c5c3c0;
     position: relative;
     aspect-ratio: 1;
     width: 100%;
     max-width: 64px;
-    border-radius: 0.3rem !important;
-    overflow: hidden !important;
+    border-radius: 0.3rem;
+    overflow: hidden;
     background-color: #e9e8e4;
 
     &:hover {
-        box-shadow: inset 0 0 0 3px #dbdad5 !important;
-        background-color: #cecdc8 !important;
+        box-shadow: inset 0 0 0 3px #dbdad5;
+        background-color: #cecdc8;
     }
 
     &:active,
     &.part-selected {
-        box-shadow: inset 0 0 0 3px #c5c3c0 !important;
-        background-color: #b1b1b1 !important;
+        box-shadow: inset 0 0 0 3px #c5c3c0;
+        background-color: #b1b1b1;
     }
 }
 
@@ -1939,16 +1986,16 @@ body {
 
 .avatar-color-palette-container {
     height: 30%;
-    width: 100% !important;
+    width: 100%;
 }
 
 .dual-palette {
-    display: flex !important;
-    flex-direction: row !important;
+    display: flex;
+    flex-direction: row;
 }
 
 .avatar-editor-palette-set-view {
-    padding-right: 15px !important;
+    padding-right: 15px;
     flex-grow: 1;
 }
 
@@ -1969,16 +2016,24 @@ body {
         height: 22px;
     }
 
-    .hd    { background-image: url('@/assets/images/wardrobe/hd.png'); }
-    .head  { background-image: url('@/assets/images/wardrobe/head.png'); }
-    .torso { background-image: url('@/assets/images/wardrobe/torso.png'); }
-    .legs  { background-image: url('@/assets/images/wardrobe/legs.png'); }
+    .hd {
+        background-image: url("@/assets/images/wardrobe/hd.png");
+    }
+    .head {
+        background-image: url("@/assets/images/wardrobe/head.png");
+    }
+    .torso {
+        background-image: url("@/assets/images/wardrobe/torso.png");
+    }
+    .legs {
+        background-image: url("@/assets/images/wardrobe/legs.png");
+    }
 
     .tab-wardrobe {
         width: 40px;
         height: 28px;
         background-size: 38px 28px;
-        background-image: url('@/assets/images/wardrobe/wardrobe.png');
+        background-image: url("@/assets/images/wardrobe/wardrobe.png");
         background-repeat: no-repeat;
         background-position: center;
         filter: contrast(1.2) brightness(1.05);
@@ -1987,7 +2042,7 @@ body {
     .tab-pets {
         width: 34px;
         height: 22px;
-        background-image: url('@/assets/images/wardrobe/pets.png');
+        background-image: url("@/assets/images/wardrobe/pets.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: 22px 22px;
@@ -1996,7 +2051,7 @@ body {
     .tab-nft {
         width: 34px;
         height: 22px;
-        background-image: url('@/assets/images/wardrobe/nft.png');
+        background-image: url("@/assets/images/wardrobe/nft.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: 22px 22px;
@@ -2005,7 +2060,7 @@ body {
     .tab-misc {
         width: 34px;
         height: 22px;
-        background-image: url('@/assets/images/wardrobe/misc.png');
+        background-image: url("@/assets/images/wardrobe/misc.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: 24px 22px;
@@ -2017,15 +2072,14 @@ body {
     inset: 0;
     z-index: 5000;
     pointer-events: none;
-    overflow: visible !important;
-    background: transparent !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
+    overflow: visible;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 /* ── Avatar Editor misc ─────────────────────────────────────────────────── */
-
 
 /* ── Pet Companion ─────────────────────────────────────────────────────── */
 
@@ -2063,7 +2117,7 @@ body {
 .pet-paw-icon {
     width: 24px;
     height: 24px;
-    background-image: url('@/assets/images/wardrobe/pets.png');
+    background-image: url("@/assets/images/wardrobe/pets.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -2071,12 +2125,12 @@ body {
 
 .pet-grid-container .avatar-parts {
     background-size: contain;
-    overflow: hidden !important;
+    overflow: hidden;
 }
 
 .pet-sellable-locked {
     opacity: 0.5;
-    cursor: not-allowed !important;
+    cursor: not-allowed;
     position: relative;
 }
 
@@ -2129,7 +2183,7 @@ body {
 }
 
 .nitro-avatar-editor-wardrobe-figure-preview {
-    border-image-source: url('@/assets/images/avatareditor/wardrobe_user_bg.png');
+    border-image-source: url("@/assets/images/avatareditor/wardrobe_user_bg.png");
     border-image-slice: 4 4 4 4 fill;
     border-image-width: 4px 4px 4px 4px;
     background-color: transparent;
@@ -2145,7 +2199,7 @@ body {
         height: 20px;
         margin: 0 auto;
         border-radius: 100%;
-        background-color: rgba(0, 0, 0, 0.20);
+        background-color: rgba(0, 0, 0, 0.2);
         z-index: 2;
     }
 

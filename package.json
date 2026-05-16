@@ -8,7 +8,8 @@
         "start": "vite --base=/client/ --host",
         "build": "vite --base=/client/ build && node scripts/minify-dist.mjs",
         "build:prod": "npx browserslist@latest --update-db && yarn build",
-        "eslint": "eslint ./src"
+        "check": "biome check src/ --fix",
+        "format": "biome format src/ --write"
     },
     "dependencies": {
         "@babel/runtime": "^7.29.2",
@@ -28,23 +29,19 @@
         "use-between": "^1.4.0"
     },
     "devDependencies": {
+        "@biomejs/biome": "^2.4.15",
         "@tailwindcss/forms": "^0.5.11",
         "@tailwindcss/postcss": "^4.2.4",
         "@types/node": "^25.6.0",
         "@types/react": "^19.2.14",
         "@types/react-dom": "^19.2.3",
-        "@typescript-eslint/eslint-plugin": "^8.59.1",
-        "@typescript-eslint/parser": "^8.59.1",
         "@vitejs/plugin-react": "^6.0.1",
-        "eslint": "^10.2.1",
-        "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-react-hooks": "^7.1.1",
         "postcss": "^8.5.12",
         "postcss-nested": "^7.0.2",
         "sass": "^1.99.0",
         "tailwindcss": "^4.2.4",
         "typescript": "^6.0.3",
-        "typescript-eslint": "^8.59.1",
-        "vite": "^8.0.10"
+        "vite": "^8.0.10",
+        "vite-plugin-biome": "^1.2.0"
     }
 }

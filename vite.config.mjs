@@ -1,3 +1,4 @@
+import biome from 'vite-plugin-biome';
 import react from '@vitejs/plugin-react';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
@@ -8,8 +9,17 @@ const currentRendererRoot = resolve(__dirname, '..', 'Nitro_Render_V3');
 const rendererRoot = existsSync(currentRendererRoot) ? currentRendererRoot : legacyRendererRoot;
 
 export default defineConfig({
-	base: process.env.VITE_BASE || './',
-    plugins: [ react() ],
+    plugins: [
+        react(),
+        biome({
+            mode: 'check',
+            files: 'src/**/*.{ts,tsx}',
+            applyFixes: false,
+            unsafe: false,
+            failOnError: false,
+            hotUpdateMode: 'changed'
+        })
+    ],
     server: {
         fs: {
             allow: [

@@ -1,5 +1,15 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, forwardRef, useEffect, useRef, useState } from 'react';
+import {
+    DetailedHTMLProps,
+    Fragment,
+    forwardRef,
+    HTMLAttributes,
+    memo,
+    ReactElement,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { classNames } from './classNames';
 import { NitroLimitedEditionStyledNumberView } from './limited-edition';
 import { styleNames } from './styleNames';
@@ -13,31 +23,38 @@ type Props<T> = {
     itemMinWidth?: number;
     rowGap?: number;
     itemRender?: (item: T, index?: number) => ReactElement;
-}
+};
 
 const GRID_GAP_PX = 4;
 
-const InfiniteGridRoot = <T,>(props: Props<T>) =>
-{
-    const { items = [], columnCount: columnCountProp = 4, overscan = 5, estimateSize = 45, squareItems = false, itemMinWidth = null, rowGap = null, itemRender = null } = props;
+const InfiniteGridRoot = <T,>(props: Props<T>) => {
+    const {
+        items = [],
+        columnCount: columnCountProp = 4,
+        overscan = 5,
+        estimateSize = 45,
+        squareItems = false,
+        itemMinWidth = null,
+        rowGap = null,
+        itemRender = null,
+    } = props;
     const parentRef = useRef<HTMLDivElement>(null);
-    const [ measuredColumnCount, setMeasuredColumnCount ] = useState<number>(columnCountProp);
+    const [measuredColumnCount, setMeasuredColumnCount] = useState<number>(columnCountProp);
 
-    const columnCount = (itemMinWidth && itemMinWidth > 0) ? measuredColumnCount : columnCountProp;
-    const rowsContainerClassName = (rowGap !== null) ? 'flex flex-col w-full relative' : 'flex flex-col w-full *:pb-1 relative';
+    const columnCount = itemMinWidth && itemMinWidth > 0 ? measuredColumnCount : columnCountProp;
+    const rowsContainerClassName =
+        rowGap !== null ? 'flex flex-col w-full relative' : 'flex flex-col w-full *:pb-1 relative';
 
-    useEffect(() =>
-    {
-        if(!itemMinWidth || itemMinWidth <= 0) return;
+    useEffect(() => {
+        if (!itemMinWidth || itemMinWidth <= 0) return;
 
         const element = parentRef.current;
-        if(!element) return;
+        if (!element) return;
 
-        const recompute = () =>
-        {
+        const recompute = () => {
             const width = element.clientWidth;
             const cols = Math.max(1, Math.floor((width + GRID_GAP_PX) / (itemMinWidth + GRID_GAP_PX)));
-            setMeasuredColumnCount(prev => prev === cols ? prev : cols);
+            setMeasuredColumnCount((prev) => (prev === cols ? prev : cols));
         };
 
         recompute();
@@ -46,24 +63,21 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
         observer.observe(element);
 
         return () => observer.disconnect();
-    }, [ itemMinWidth ]);
+    }, [itemMinWidth]);
 
-    const autoFillStyle = (itemMinWidth && itemMinWidth > 0)
-        ? { gridTemplateColumns: `repeat(auto-fill, ${ itemMinWidth }px)` }
-        : null;
-    const fixedColsClass = (itemMinWidth && itemMinWidth > 0) ? '' : `grid-cols-${ columnCountProp }`;
+    const autoFillStyle =
+        itemMinWidth && itemMinWidth > 0 ? { gridTemplateColumns: `repeat(auto-fill, ${itemMinWidth}px)` } : null;
+    const fixedColsClass = itemMinWidth && itemMinWidth > 0 ? '' : `grid-cols-${columnCountProp}`;
 
-    if(squareItems)
-    {
+    if (squareItems) {
         return (
-            <div ref={ parentRef } className="overflow-y-auto size-full">
-                <div className={ `grid ${ fixedColsClass } gap-1 w-full` } style={ autoFillStyle ?? undefined }>
-                    { items.map((item, index) =>
-                    {
-                        if(!item) return <Fragment key={ `${ index }-empty` } />;
+            <div ref={parentRef} className="overflow-y-auto size-full">
+                <div className={`grid ${fixedColsClass} gap-1 w-full`} style={autoFillStyle ?? undefined}>
+                    {items.map((item, index) => {
+                        if (!item) return <Fragment key={`${index}-empty`} />;
 
-                        return <Fragment key={ `${ index }-item` }>{ itemRender(item, index) }</Fragment>;
-                    }) }
+                        return <Fragment key={`${index}-item`}>{itemRender(item, index)}</Fragment>;
+                    })}
                 </div>
             </div>
         );
@@ -73,175 +87,190 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
         count: Math.ceil(items.length / columnCount),
         overscan,
         getScrollElement: () => parentRef.current,
-        estimateSize: () => estimateSize
+        estimateSize: () => estimateSize,
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const element = parentRef.current;
 
-        if(!element || !items) return;
+        if (!element || !items) return;
 
-        const checkAndApplyPadding = () =>
-        {
-            if(!element) return;
+        const checkAndApplyPadding = () => {
+            if (!element) return;
 
-            element.style.paddingRight = (element.scrollHeight > element.clientHeight) ? '0.25rem' : '0';
+            element.style.paddingRight = element.scrollHeight > element.clientHeight ? '0.25rem' : '0';
         };
 
         checkAndApplyPadding();
 
         window.addEventListener('resize', checkAndApplyPadding);
 
-        return () =>
-        {
+        return () => {
             window.removeEventListener('resize', checkAndApplyPadding);
         };
-    }, [ items ]);
+    }, [items]);
 
-    useEffect(() =>
-    {
-        if(!items || !items.length) return;
+    useEffect(() => {
+        if (!items?.length) return;
 
         virtualizer.scrollToIndex(0);
-    }, [ items, virtualizer ]);
+    }, [items, virtualizer]);
 
     const virtualItems = virtualizer.getVirtualItems();
 
     return (
-        <div
-            ref={ parentRef }
-            className="overflow-y-auto size-full">
+        <div ref={parentRef} className="overflow-y-auto size-full">
             <div
-                className={ rowsContainerClassName }
-                style={ {
-                    height: virtualizer.getTotalSize()
-                } }>
-                { virtualItems.map(virtualRow => (
+                className={rowsContainerClassName}
+                style={{
+                    height: virtualizer.getTotalSize(),
+                }}
+            >
+                {virtualItems.map((virtualRow) => (
                     <div
-                        key={ virtualRow.key + 'a' }
-                        ref={ virtualizer.measureElement }
-                        className={ `grid ${ fixedColsClass } gap-1 absolute top-0 left-0 last:pb-0 w-full` }
-                        data-index={ virtualRow.index }
-                        style={ {
+                        key={`${virtualRow.key}a`}
+                        ref={virtualizer.measureElement}
+                        className={`grid ${fixedColsClass} gap-1 absolute top-0 left-0 last:pb-0 w-full`}
+                        data-index={virtualRow.index}
+                        style={{
                             ...(!squareItems && rowGap === null && { height: virtualRow.size }),
                             ...(autoFillStyle ?? {}),
-                            ...(rowGap !== null && { paddingBottom: `${ rowGap }px` }),
-                            transform: `translateY(${ virtualRow.start }px)`
-                        } }>
-                        { Array.from(Array(columnCount)).map((e, i) =>
-                        {
-                            const index = (i + (virtualRow.index * columnCount));
+                            ...(rowGap !== null && { paddingBottom: `${rowGap}px` }),
+                            transform: `translateY(${virtualRow.start}px)`,
+                        }}
+                    >
+                        {Array.from(Array(columnCount)).map((_e, i) => {
+                            const index = i + virtualRow.index * columnCount;
                             const item = items[index];
 
-                            if(!item) return <Fragment
-                                key={ virtualRow.index + i + 'b' } />;
+                            if (!item) return <Fragment key={`${virtualRow.index + i}b`} />;
 
-                            return (
-                                <Fragment key={ `${virtualRow.index}-${i}` }>
-                                    { itemRender(item, index) }
-                                </Fragment>
-                            );
-                        }) }
+                            return <Fragment key={`${virtualRow.index}-${i}`}>{itemRender(item, index)}</Fragment>;
+                        })}
                     </div>
-                )) }
+                ))}
             </div>
         </div>
     );
 };
 
-const InfiniteGridItem = forwardRef<HTMLDivElement, {
-    itemImage?: string;
-    itemColor?: string;
-    itemActive?: boolean;
-    itemCount?: number;
-    itemCountMinimum?: number;
-    itemUniqueSoldout?: boolean;
-    itemUniqueNumber?: number;
-    itemUnseen?: boolean;
-    itemHighlight?: boolean;
-    disabled?: boolean;
-} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
-{
-    const { itemImage = undefined, itemColor = undefined, itemActive = false, itemCount = 1, itemCountMinimum = 1, itemUniqueSoldout = false, itemUniqueNumber = -2, itemUnseen = false, itemHighlight = false, disabled = false, className = null, style = {}, children = null, ...rest } = props;
-    const [ backgroundImageUrl, setBackgroundImageUrl ] = useState<string>(null);
-    const disposed = useRef<boolean>(false);
-
-    useEffect(() =>
-    {
-        if(!itemImage || !itemImage.length)
+const InfiniteGridItem = memo(
+    forwardRef<
+        HTMLDivElement,
         {
-            setBackgroundImageUrl(null);
+            itemImage?: string;
+            itemColor?: string;
+            itemActive?: boolean;
+            itemCount?: number;
+            itemCountMinimum?: number;
+            itemUniqueSoldout?: boolean;
+            itemUniqueNumber?: number;
+            itemUnseen?: boolean;
+            itemHighlight?: boolean;
+            disabled?: boolean;
+        } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+    >((props, ref) => {
+        const {
+            itemImage = undefined,
+            itemColor = undefined,
+            itemActive = false,
+            itemCount = 1,
+            itemCountMinimum = 1,
+            itemUniqueSoldout = false,
+            itemUniqueNumber = -2,
+            itemUnseen = false,
+            itemHighlight = false,
+            disabled = false,
+            className = null,
+            style = {},
+            children = null,
+            ...rest
+        } = props;
+        const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>(null);
+        const disposed = useRef<boolean>(false);
 
-            return;
-        }
+        useEffect(() => {
+            if (!itemImage?.length) {
+                setBackgroundImageUrl(null);
 
-        const image = new Image();
+                return;
+            }
 
-        image.onload = () =>
-        {
-            if(disposed.current) return;
+            const image = new Image();
 
-            setBackgroundImageUrl(image.src);
-        };
+            image.onload = () => {
+                if (disposed.current) return;
 
-        image.src = itemImage;
-    }, [ itemImage ]);
+                setBackgroundImageUrl(image.src);
+            };
 
-    useEffect(() =>
-    {
-        disposed.current = false;
+            image.src = itemImage;
+        }, [itemImage]);
 
-        return () =>
-        {
-            disposed.current = true;
-        };
-    }, []);
+        useEffect(() => {
+            disposed.current = false;
 
-    return (
-        <div
-            ref={ ref }
-            className={ classNames(
-                'flex flex-col items-center justify-center cursor-pointer overflow-hidden relative bg-center bg-no-repeat w-full rounded-md border-2',
-                (itemImage && (!backgroundImageUrl || !backgroundImageUrl.length)) && 'nitro-icon icon-loading',
-                itemActive
-                    ? (itemColor ? 'border-card-grid-item-active' : 'border-card-grid-item-active bg-card-grid-item-active')
-                    : (itemColor ? 'border-card-grid-item-border' : 'border-card-grid-item-border bg-card-grid-item'),
-                (itemUniqueSoldout || (itemUniqueNumber > 0)) && 'unique-item',
-                itemUniqueSoldout && 'sold-out',
-                itemUnseen && ' animate-pulse-glow-gold border-yellow-400/60',
-                className
-            ) }
-            style={ styleNames(
-                backgroundImageUrl && backgroundImageUrl.length && !(itemUniqueSoldout || (itemUniqueNumber > 0)) && {
-                    backgroundImage: `url(${ backgroundImageUrl })`
-                },
-                itemColor && {
-                    backgroundColor: itemColor
-                },
-                style
-            ) }
-            { ...rest }>
-            { (itemCount > itemCountMinimum) &&
-                <div className="absolute align-middle rounded bg-red-700 bg-opacity-80 text-white border-black border top-[2px] right-[2px] text-[9.5px] p-[2px] z-1 leading-[8px]">{ itemCount }</div> }
-            { (itemUniqueNumber > 0) &&
-                <>
-                    <div
-                        className="size-full unique-bg-override"
-                        style={ {
-                            backgroundImage: `url(${ backgroundImageUrl })`
-                        } } />
-                    <div className="absolute bottom-0 unique-item-counter">
-                        <NitroLimitedEditionStyledNumberView value={ itemUniqueNumber } />
+            return () => {
+                disposed.current = true;
+            };
+        }, []);
+
+        return (
+            <div
+                ref={ref}
+                className={classNames(
+                    'flex flex-col items-center justify-center cursor-pointer overflow-hidden relative bg-center bg-no-repeat w-full rounded-md border-2',
+                    itemImage && !backgroundImageUrl?.length && 'nitro-icon icon-loading',
+                    itemActive
+                        ? itemColor
+                            ? 'border-card-grid-item-active'
+                            : 'border-card-grid-item-active bg-card-grid-item-active'
+                        : itemColor
+                          ? 'border-card-grid-item-border'
+                          : 'border-card-grid-item-border bg-card-grid-item',
+                    (itemUniqueSoldout || itemUniqueNumber > 0) && 'unique-item',
+                    itemUniqueSoldout && 'sold-out',
+                    itemUnseen && ' animate-pulse-glow-gold border-yellow-400/60',
+                    className
+                )}
+                style={styleNames(
+                    backgroundImageUrl?.length &&
+                        !(itemUniqueSoldout || itemUniqueNumber > 0) && {
+                            backgroundImage: `url(${backgroundImageUrl})`,
+                        },
+                    itemColor && {
+                        backgroundColor: itemColor,
+                    },
+                    style
+                )}
+                {...rest}
+            >
+                {itemCount > itemCountMinimum && (
+                    <div className="absolute align-middle rounded bg-red-700 bg-opacity-80 text-white border-black border top-[2px] right-[2px] text-[9.5px] p-[2px] z-1 leading-[8px]">
+                        {itemCount}
                     </div>
-                </> }
-            { children }
-        </div>
-    );
-});
+                )}
+                {itemUniqueNumber > 0 && (
+                    <>
+                        <div
+                            className="size-full unique-bg-override"
+                            style={{
+                                backgroundImage: `url(${backgroundImageUrl})`,
+                            }}
+                        />
+                        <div className="absolute bottom-0 unique-item-counter">
+                            <NitroLimitedEditionStyledNumberView value={itemUniqueNumber} />
+                        </div>
+                    </>
+                )}
+                {children}
+            </div>
+        );
+    })
+);
 
 InfiniteGridItem.displayName = 'InfiniteGridItem';
 
 export const InfiniteGrid = Object.assign(InfiniteGridRoot, {
-    Item: InfiniteGridItem
+    Item: InfiniteGridItem,
 });
