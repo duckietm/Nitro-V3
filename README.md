@@ -1,56 +1,84 @@
-# v2.2.0 -Nitro V3 !! Use at Own Risk as it is still in Beta !!
+# Nitro V3
+
+A modern Habbo Hotel client built with React, TypeScript, and Vite.
 
 ## Prerequisites
 
 -   [Git](https://git-scm.com/)
--   [NodeJS](https://nodejs.org/) >= 18
-    - If using NodeJS < 18 remove `--openssl-legacy-provider` from the package.json scripts
--   [Yarn](https://yarnpkg.com/) `npm i yarn -g`
+-   [Node.js](https://nodejs.org/) >= 20
+-   [Yarn](https://yarnpkg.com/) (`npm install -g yarn`)
 
 ## Installation
 
--   First you should open terminal and navigate to the folder where you want to clone Nitro and Nitro-Renderer
--   Clone Nitro (Expl. C:\Github\)
-    -   `git clone https://github.com/duckietm/Nitro-V3.git` <== For now switch to Dev-RendererV2 
-	-   `git clone https://github.com/duckietm/Nitro_Render_V3.git`
-	-   Install the dependencies for the renderer : cd C:\Github\Nitro_Render_V3
-    	-   `yarn install`
-	-	Now we will create a Link for the Nitro Renderer : `yarn link` This will give you a link address `yarn link "@nitrots/nitro-renderer"`
-    -   Install the dependencies for Cool UI : cd C:\Github\Nitro-V3
-	-   `yarn install`
-	-   `yarn link "@nitrots/nitro-renderer"` <== This will link the renderer in the project
--   Rename a few files
-    -   Copy `public/configuration/renderer-config.example` to `public/configuration/renderer-config.json`
-    -   Copy `public/configuration/ui-config.example` to `public/configuration/ui-config.json`
-    -   Copy `public/configuration/client-mode.example` to `public/configuration/client-mode.json`
-    -   Set your links
-    -   Open `public/configuration/renderer-config.json`
-        -   Update `socket.url, asset.url, image.library.url, & hof.furni.url`
-    -   Open `public/configuration/ui-config.json`
-        -   Update `camera.url, thumbnails.url, url.prefix, habbopages.url`
-	-   `yarn build` <== the final step to build the DIST folder this is where your browser needs to point / or upload this to your /client if you do the compile on a other machine (preferd)
-    -   You can override any variable by passing it to `NitroConfig` in the index.html
+1. Clone the repositories:
+
+```bash
+git clone https://github.com/duckietm/Nitro-V3.git
+git clone https://github.com/duckietm/Nitro_Render_V3.git
+```
+
+2. Link the renderer:
+
+```bash
+cd Nitro_Render_V3
+yarn install
+yarn link
+```
+
+3. Install dependencies and link the renderer:
+
+```bash
+cd ../Nitro-V3
+yarn install
+yarn link "@nitrots/nitro-renderer"
+```
+
+4. Copy and configure the configuration files:
+
+```bash
+cp public/configuration/renderer-config.example public/configuration/renderer-config.json
+cp public/configuration/ui-config.example public/configuration/ui-config.json
+cp public/configuration/client-mode.example public/configuration/client-mode.json
+```
+
+5. Update the configuration values:
+
+-   **`renderer-config.json`**: Update `socket.url`, `asset.url`, `image.library.url`, and `hof.furni.url`
+-   **`ui-config.json`**: Update `camera.url`, `thumbnails.url`, `url.prefix`, and `habbopages.url`
 
 ## Usage
 
--   To use Nitro you need `.nitro` assets generated, see [nitro-converter](https://git.krews.org/nitro/nitro-converter) for instructions
--   See [Morningstar Websockets](https://git.krews.org/nitro/ms-websockets) for instructions on configuring websockets on your server
-
 ### Development
 
-Run Nitro in development mode when you are editing the files, this way you can see the changes in your browser instantly
+Run in development mode with hot module replacement:
 
-```
+```bash
 yarn start
 ```
 
 ### Production
 
-To build a production version of Nitro just run the following command
+Build for production:
 
+```bash
+yarn build
 ```
+
+Or build with updated browser compatibility database:
+
+```bash
 yarn build:prod
 ```
 
--   A `dist` folder will be generated, these are the files that must be uploaded to your webserver
--   Consult your CMS documentation for compatibility with Nitro and how to add the production files
+The built files will be output to the `dist/` directory. Upload these to your webserver's client directory.
+
+## Additional Resources
+
+-   **Assets**: Generate `.nitro` assets using [nitro-converter](https://git.krews.org/nitro/nitro-converter)
+-   **WebSockets**: Configure websockets using [Morningstar Websockets](https://git.krews.org/nitro/ms-websockets)
+-   **Local Development**: See [docs/local-development-setup.md](docs/local-development-setup.md)
+-   **Production Setup**: See [docs/secure-production-setup.md](docs/secure-production-setup.md)
+
+## Configuration Override
+
+You can override any configuration variable by passing it to `NitroConfig` in `index.html`.
