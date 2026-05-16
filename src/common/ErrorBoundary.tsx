@@ -1,5 +1,4 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { NitroLogger } from '@nitrots/nitro-renderer';
 
 interface Props {
     children: ReactNode;
@@ -9,6 +8,7 @@ interface Props {
 interface State {
     hasError: boolean;
     error: Error | null;
+    errorInfo: string | null;
 }
 
 export class ErrorBoundary extends Component<Props, State>
@@ -17,19 +17,28 @@ export class ErrorBoundary extends Component<Props, State>
     {
         super(props);
 
-        this.state = { hasError: false, error: null };
+        this.state = { hasError: false, error: null, errorInfo: null };
     }
 
     static getDerivedStateFromError(error: Error): State
     {
-        return { hasError: true, error };
+        return { hasError: true, error, errorInfo: null };
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo): void
     {
-        NitroLogger.error('[ErrorBoundary] Uncaught error:', error);
-        NitroLogger.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);
+        try
+        {
+            console.error('[ErrorBoundary] Uncaught error:', error);
+            console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);
+        }
+        catch {}
     }
+
+    handleReset = (): void =>
+    {
+        this.setState({ hasError: false, error: null, errorInfo: null });
+    };
 
     render(): ReactNode
     {
@@ -38,35 +47,23 @@ export class ErrorBoundary extends Component<Props, State>
             if(this.props.fallback) return this.props.fallback;
 
             return (
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100vh',
-                    backgroundColor: '#1c1c20',
-                    color: '#fff',
-                    fontFamily: 'Ubuntu, sans-serif',
-                    padding: '2rem',
-                    textAlign: 'center'
-                }}>
-                    <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Something went wrong</h1>
-                    <p style={{ fontSize: '0.875rem', color: '#adb5bd', marginBottom: '1rem' }}>
+                <div className="flex flex-col items-center justify-center min-h-screen bg-[#1c1c20] text-white font-sans p-8 text-center">
+                    <h1 className="text-2xl mb-2">Something went wrong</h1>
+                    <p className="text-sm text-gray-400 mb-4 max-w-md">
                         {this.state.error?.message || 'An unexpected error occurred.'}
                     </p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        style={{
-                            padding: '0.5rem 1.5rem',
-                            backgroundColor: '#1E7295',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '0.875rem'
-                        }}>
-                        Reload page
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={this.handleReset}
+                            className="px-6 py-2 bg-[#1E7295] text-white rounded cursor-pointer text-sm hover:brightness-90 transition">
+                            Try again
+                        </button>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="px-6 py-2 bg-gray-600 text-white rounded cursor-pointer text-sm hover:brightness-90 transition">
+                            Reload page
+                        </button>
+                    </div>
                 </div>
             );
         }

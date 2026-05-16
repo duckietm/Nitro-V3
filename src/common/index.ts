@@ -4,6 +4,7 @@ export * from './Base';
 export * from './Button';
 export * from './ButtonGroup';
 export * from './Column';
+export * from './ErrorBoundary';
 export * from './Flex';
 export * from './FormGroup';
 export * from './Grid';
