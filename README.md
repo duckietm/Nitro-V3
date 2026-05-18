@@ -7,7 +7,75 @@
     - If using NodeJS < 18 remove `--openssl-legacy-provider` from the package.json scripts
 -   [Yarn](https://yarnpkg.com/) `npm i yarn -g`
 
-## Installation
+## Quick install (recommended)
+
+The repository ships a cross-platform installer that performs the full setup
+in one go: prerequisites check, renderer clone & link, dependency install,
+config copy, JSON parsing mode selection, URL prompt with validation, and the
+production build.
+
+After cloning Nitro V3, from its root run:
+
+```
+# Windows
+install.bat
+
+# Linux / macOS
+./install.sh
+```
+
+Both wrappers just exec `node install.mjs`, so you can also invoke it directly:
+
+```
+node install.mjs
+```
+
+The installer walks through these steps:
+
+```
+[1/9] Check prerequisites (node >= 18, yarn, git)
+[2/9] Clone Nitro_Render_V3
+[3/9] Setup renderer (yarn install + yarn link)
+[4/9] Setup client (yarn install + yarn link "@nitrots/nitro-renderer")
+[5/9] Copy public/configuration/*.example -> *.json
+[6/9] Choose JSON parsing mode (json5 recommended) -> writes .nitro-build.json
+[7/9] Configure URLs (interactive, validated)
+[8/9] Build (yarn build)
+[9/9] Summary
+```
+
+### Headless / CI runs
+
+Every step can be driven from flags so the installer can be used in pipelines:
+
+```
+node install.mjs --non-interactive \
+    --json-mode=json5 \
+    --socket-url=wss://example.com/ws \
+    --api-url=https://example.com \
+    --asset-url=https://example.com/nitro-assets/ \
+    --image-library-url=https://example.com/c_images \
+    --hof-furni-url=https://example.com/hof_furni \
+    --camera-url=https://example.com/camera \
+    --thumbnails-url=https://example.com/thumbnails \
+    --habbopages-url=/habbopages \
+    --api-base-url=https://example.com \
+    --plain-config-base-url=https://example.com/configuration \
+    --plain-gamedata-base-url=https://example.com/gamedata \
+    --skip-link
+```
+
+Useful workflow flags:
+
+-   `--non-interactive` / `--skip-prompts` — keep example defaults unless a URL override is passed
+-   `--json-mode=<json5\|legacy\|auto>` — pick the parser without the JSON mode prompt
+-   `--skip-build`, `--skip-clone`, `--skip-link` — re-runs without redoing those steps
+-   `--help` — full flag reference and per-key URL flags
+
+`install.mjs` is idempotent: re-running it keeps any `*.json` config files
+that already exist and only patches the URL keys you pass on the CLI.
+
+## Installation (manual)
 
 -   First you should open terminal and navigate to the folder where you want to clone Nitro and Nitro-Renderer
 -   Clone Nitro (Expl. C:\Github\)
