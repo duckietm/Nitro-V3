@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
@@ -7,9 +7,34 @@ const legacyRendererRoot = resolve(__dirname, '..', 'renderer');
 const currentRendererRoot = resolve(__dirname, '..', 'Nitro_Render_V3');
 const rendererRoot = existsSync(currentRendererRoot) ? currentRendererRoot : legacyRendererRoot;
 
+const resolveJsonMode = () =>
+{
+    const envOverride = process.env.NITRO_JSON_MODE;
+    if(envOverride === 'legacy' || envOverride === 'json5' || envOverride === 'auto') return envOverride;
+
+    const configFile = resolve(__dirname, '.nitro-build.json');
+    if(existsSync(configFile))
+    {
+        try
+        {
+            const parsed = JSON.parse(readFileSync(configFile, 'utf8'));
+            if(parsed?.jsonMode === 'legacy' || parsed?.jsonMode === 'json5' || parsed?.jsonMode === 'auto') return parsed.jsonMode;
+        }
+        catch {}
+    }
+
+    return 'auto';
+};
+
+const nitroJsonMode = resolveJsonMode();
+process.stdout.write(`[vite] __NITRO_JSON_MODE__ = ${ nitroJsonMode }\n`);
+
 export default defineConfig({
 	base: process.env.VITE_BASE || './',
     plugins: [ react() ],
+    define: {
+        __NITRO_JSON_MODE__: JSON.stringify(nitroJsonMode)
+    },
     server: {
         fs: {
             allow: [
@@ -29,6 +54,7 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
             '~': resolve(__dirname, 'node_modules'),
+            '@nitrots/nitro-renderer': resolve(rendererRoot, 'index.ts'),
             '@nitrots/api': resolve(rendererRoot, 'packages/api/src/index.ts'),
             '@nitrots/assets': resolve(rendererRoot, 'packages/assets/src/index.ts'),
             '@nitrots/avatar': resolve(rendererRoot, 'packages/avatar/src/index.ts'),

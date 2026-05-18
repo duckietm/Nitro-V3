@@ -1,6 +1,22 @@
 import JSON5 from 'json5';
 import { configFileUrl, getClientMode, installSecureFetch } from './secure-assets';
 
+declare const __NITRO_JSON_MODE__: 'legacy' | 'json5' | 'auto' | undefined;
+
+const resolveJsonMode = (): 'legacy' | 'json5' | 'auto' =>
+{
+    try
+    {
+        if(typeof __NITRO_JSON_MODE__ !== 'undefined' && __NITRO_JSON_MODE__)
+        {
+            if(__NITRO_JSON_MODE__ === 'legacy' || __NITRO_JSON_MODE__ === 'json5' || __NITRO_JSON_MODE__ === 'auto') return __NITRO_JSON_MODE__;
+        }
+    }
+    catch {}
+
+    return 'auto';
+};
+
 const ensureMobileViewport = () =>
 {
     let viewport = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
@@ -76,16 +92,28 @@ const loadClientMode = async () =>
         if(!response.ok) throw new Error(`HTTP ${ response.status }`);
 
         const text = await response.text();
+        const mode = resolveJsonMode();
 
-        try
+        if(mode === 'legacy')
         {
             (window as any).__nitroClientMode = JSON.parse(text);
         }
-        catch
+        else if(mode === 'json5')
         {
             (window as any).__nitroClientMode = JSON5.parse(text);
         }
-        setBootDebug('boot: client-mode loaded');
+        else
+        {
+            try
+            {
+                (window as any).__nitroClientMode = JSON.parse(text);
+            }
+            catch
+            {
+                (window as any).__nitroClientMode = JSON5.parse(text);
+            }
+        }
+        setBootDebug(`boot: client-mode loaded (mode=${ mode })`);
     }
     catch(error)
     {
