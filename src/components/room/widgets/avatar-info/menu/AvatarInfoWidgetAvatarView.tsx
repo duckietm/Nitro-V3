@@ -3,7 +3,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { AvatarInfoUser, DispatchUiEvent, GetOwnRoomObject, GetUserProfile, LocalizeText, MessengerFriend, ReportType, RoomWidgetUpdateChatInputContentEvent, SendMessageComposer } from '../../../../../api';
 import { Flex } from '../../../../../common';
-import { useFriends, useHelp, useIsUserIgnored, useRoom, useSessionInfo, useWiredTools } from '../../../../../hooks';
+import { useFriends, useHelp, useRoom, useSessionInfo, useWiredTools } from '../../../../../hooks';
 import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView';
 import { ContextMenuListItemView } from '../../context-menu/ContextMenuListItemView';
 import { ContextMenuView } from '../../context-menu/ContextMenuView';
@@ -31,10 +31,6 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
     const { roomSession = null, isHandItemBlocked = false } = useRoom();
     const { userRespectRemaining = 0, respectUser = null } = useSessionInfo();
     const { openInspectionForUser, showInspectButton } = useWiredTools();
-    // Reactive: the menu auto-flips Ignore <-> Unignore if the state
-    // changes while the popup is open, instead of being frozen to the
-    // snapshot AvatarInfoUtilities took at click time.
-    const isIgnored = useIsUserIgnored(avatarInfo.name);
 
     const isShowGiveRights = useMemo(() =>
     {
@@ -235,11 +231,11 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
                             { LocalizeText('infostand.link.relationship') }
                             <FaChevronRight className="right fa-icon" />
                         </ContextMenuListItemView> }
-                    { !isIgnored &&
+                    { !avatarInfo.isIgnored &&
                         <ContextMenuListItemView onClick={ event => processAction('ignore') }>
                             { LocalizeText('infostand.button.ignore') }
                         </ContextMenuListItemView> }
-                    { isIgnored &&
+                    { avatarInfo.isIgnored &&
                         <ContextMenuListItemView onClick={ event => processAction('unignore') }>
                             { LocalizeText('infostand.button.unignore') }
                         </ContextMenuListItemView> }

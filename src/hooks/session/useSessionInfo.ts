@@ -1,21 +1,16 @@
-import { GetSessionDataManager, RoomUnitChatStyleComposer, UserSettingsEvent } from '@nitrots/nitro-renderer';
+import { FigureUpdateEvent, GetSessionDataManager, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent, UserSettingsEvent } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
-import { useUserDataSnapshot } from './useSessionSnapshots';
 
 const useSessionInfoState = () =>
 {
-    // figure / respectsLeft / respectsPetLeft come from the renderer's
-    // referentially-stable IUserDataSnapshot. The snapshot is invalidated
-    // (and re-derived on next read) inside SessionDataManager whenever
-    // the underlying state changes: UserInfoEvent + FigureUpdateEvent +
-    // giveRespect/givePetRespect all call invalidateUserDataSnapshot().
-    // So we no longer need to mirror those fields into local useState.
-    const userData = useUserDataSnapshot();
-
+    const [ userInfo, setUserInfo ] = useState<UserInfoDataParser>(null);
+    const [ userFigure, setUserFigure ] = useState<string>(null);
     const [ chatStyleId, setChatStyleId ] = useState<number>(0);
+    const [ userRespectRemaining, setUserRespectRemaining ] = useState<number>(0);
+    const [ petRespectRemaining, setPetRespectRemaining ] = useState<number>(0);
 
     const updateChatStyleId = (styleId: number) =>
     {
@@ -24,8 +19,36 @@ const useSessionInfoState = () =>
         SendMessageComposer(new RoomUnitChatStyleComposer(styleId));
     };
 
-    const respectUser = (userId: number) => GetSessionDataManager().giveRespect(userId);
-    const respectPet = (petId: number) => GetSessionDataManager().givePetRespect(petId);
+    const respectUser = (userId: number) =>
+    {
+        GetSessionDataManager().giveRespect(userId);
+
+        setUserRespectRemaining(GetSessionDataManager().respectsLeft);
+    };
+
+    const respectPet = (petId: number) =>
+    {
+        GetSessionDataManager().givePetRespect(petId);
+
+        setPetRespectRemaining(GetSessionDataManager().respectsPetLeft);
+    };
+
+    useMessageEvent<UserInfoEvent>(UserInfoEvent, event =>
+    {
+        const parser = event.getParser();
+
+        setUserInfo(parser.userInfo);
+        setUserFigure(parser.userInfo.figure);
+        setUserRespectRemaining(parser.userInfo.respectsRemaining);
+        setPetRespectRemaining(parser.userInfo.respectsPetRemaining);
+    });
+
+    useMessageEvent<FigureUpdateEvent>(FigureUpdateEvent, event =>
+    {
+        const parser = event.getParser();
+
+        setUserFigure(parser.figure);
+    });
 
     useMessageEvent<UserSettingsEvent>(UserSettingsEvent, event =>
     {
@@ -34,15 +57,7 @@ const useSessionInfoState = () =>
         setChatStyleId(parser.chatType);
     });
 
-    return {
-        userFigure: userData.figure,
-        chatStyleId,
-        userRespectRemaining: userData.respectsLeft,
-        petRespectRemaining: userData.respectsPetLeft,
-        respectUser,
-        respectPet,
-        updateChatStyleId
-    };
+    return { userInfo, userFigure, chatStyleId, userRespectRemaining, petRespectRemaining, respectUser, respectPet, updateChatStyleId };
 };
 
 export const useSessionInfo = () => useBetween(useSessionInfoState);
