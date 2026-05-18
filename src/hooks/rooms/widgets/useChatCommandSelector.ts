@@ -1,8 +1,10 @@
 import { AvailableCommandsEvent, GetCommunication } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CommandDefinition } from '../../../api';
+import { createNitroStore } from '../../../state/createNitroStore';
 import { useMessageEvent } from '../../events';
 
+// Client-only commands are static; safe to keep at module scope.
 const CLIENT_COMMANDS: CommandDefinition[] = [
     // Effetti stanza
     { key: 'shake', description: 'Scuoti la stanza' },
@@ -31,60 +33,79 @@ const CLIENT_COMMANDS: CommandDefinition[] = [
     { key: 'nitro', description: 'Info client' },
 ];
 
-// Module-level cache: cattura i comandi dal server anche prima che React monti
-let cachedServerCommands: CommandDefinition[] = [];
-let globalListenerRegistered = false;
-
-function ensureGlobalListener(): void
+/**
+ * Server-pushed command cache. Lives in a Zustand store (instead of
+ * module-level `let` variables) so the React Compiler can analyze the
+ * surrounding hook cleanly, and so a future test can `setState({…})`
+ * a deterministic fixture without monkey-patching the module.
+ *
+ * The `isListenerRegistered` flag prevents the renderer from getting
+ * two AvailableCommandsEvent listeners — one from the module-level
+ * pre-mount registration (which captures the server's reply that lands
+ * during login, BEFORE any React widget mounts) and one from the
+ * in-hook `useMessageEvent` (which covers later rank-change refreshes).
+ */
+interface ChatCommandStore
 {
-    if(globalListenerRegistered) return;
-    globalListenerRegistered = true;
+    serverCommands: CommandDefinition[];
+    isListenerRegistered: boolean;
+    setServerCommands: (commands: CommandDefinition[]) => void;
+    markListenerRegistered: () => void;
+}
+
+const useChatCommandStore = createNitroStore<ChatCommandStore>()((set) => ({
+    serverCommands: [],
+    isListenerRegistered: false,
+    setServerCommands: (commands) => set({ serverCommands: commands }),
+    markListenerRegistered: () => set({ isListenerRegistered: true })
+}));
+
+const ensureGlobalListener = (): void =>
+{
+    if(useChatCommandStore.getState().isListenerRegistered) return;
 
     try
     {
         const event = new AvailableCommandsEvent((event: AvailableCommandsEvent) =>
         {
             const parser = event.getParser();
-            cachedServerCommands = parser.commands.map(cmd => ({ key: cmd.key, description: cmd.description }));
+            useChatCommandStore.getState().setServerCommands(parser.commands.map(cmd => ({ key: cmd.key, description: cmd.description })));
         });
 
         GetCommunication().registerMessageEvent(event);
+        useChatCommandStore.getState().markListenerRegistered();
     }
-    catch(e)
+    catch
     {
-        // Communication not ready yet, will retry on hook mount
-        globalListenerRegistered = false;
+        // Communication not ready yet — the in-hook useMessageEvent
+        // below covers later mounts.
     }
-}
+};
 
-// Try to register immediately at module load
+// Try once at module load so the server's response landing before any
+// React mount still hits the cache.
 ensureGlobalListener();
 
 export const useChatCommandSelector = (chatValue: string) =>
 {
-    const [ serverCommands, setServerCommands ] = useState<CommandDefinition[]>(cachedServerCommands);
+    const serverCommands = useChatCommandStore(s => s.serverCommands);
+    const setServerCommands = useChatCommandStore(s => s.setServerCommands);
     const [ selectedIndex, setSelectedIndex ] = useState(0);
     const [ dismissed, setDismissed ] = useState(false);
 
-    // Ensure global listener is registered
     useEffect(() =>
     {
+        // Cover the case where the module-level registration failed
+        // because GetCommunication() wasn't ready at import time.
         ensureGlobalListener();
-
-        // If cache already has data (from login), use it
-        if(cachedServerCommands.length > 0 && serverCommands.length === 0)
-        {
-            setServerCommands(cachedServerCommands);
-        }
     }, []);
 
-    // Also listen via React hook for any future updates (e.g. rank change)
+    // Late updates (rank change, etc.) — go through the store so all
+    // consumers see the same data.
     useMessageEvent<AvailableCommandsEvent>(AvailableCommandsEvent, event =>
     {
         const parser = event.getParser();
-        const cmds = parser.commands.map(cmd => ({ key: cmd.key, description: cmd.description }));
-        cachedServerCommands = cmds;
-        setServerCommands(cmds);
+        setServerCommands(parser.commands.map(cmd => ({ key: cmd.key, description: cmd.description })));
     });
 
     const allCommands = useMemo(() =>
@@ -93,10 +114,7 @@ export const useChatCommandSelector = (chatValue: string) =>
 
         for(const clientCmd of CLIENT_COMMANDS)
         {
-            if(!merged.some(cmd => cmd.key === clientCmd.key))
-            {
-                merged.push(clientCmd);
-            }
+            if(!merged.some(cmd => cmd.key === clientCmd.key)) merged.push(clientCmd);
         }
 
         return merged.sort((a, b) => a.key.localeCompare(b.key));
