@@ -82,6 +82,15 @@ jobs:
         working-directory: Nitro-V3
         run: yarn typecheck
 
+      # Hook-order lint gate — the full yarn eslint emits ~900 pre-existing
+      # baseline errors (brace style, indentation), so we use a focused
+      # config that asserts only react-hooks/rules-of-hooks. Catches the
+      # "hook below early-return" pattern that produced two production
+      # crashes this session (CatalogPurchaseWidgetView, CatalogItemGridWidgetView).
+      - name: ESLint (hook-order gate)
+        working-directory: Nitro-V3
+        run: yarn lint:hooks
+
       - name: Vitest
         working-directory: Nitro-V3
         run: yarn test --run

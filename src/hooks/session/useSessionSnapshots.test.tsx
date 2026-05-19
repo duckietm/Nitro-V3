@@ -59,6 +59,7 @@ describe('use-between + useSyncExternalStore incompatibility', () =>
 
         const Broken = () =>
         {
+            // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional: this test asserts the runtime crash
             useBetween(() => useSyncExternalStore(() => () => undefined, () => 'v', () => 'v'));
             return null;
         };
@@ -85,9 +86,15 @@ describe('use-between + useSyncExternalStore incompatibility', () =>
     {
         const sharedState = () => ({ count: 0 });
 
+        // Lowercase intentionally — this is a custom hook named like a
+        // regular function so the test reproduces the exact call shape
+        // a refactor might land on. The eslint disable below silences
+        // the "hooks must start with use" lint that flags the body.
         const safeHook = () =>
         {
+            // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional: function named like a hook to mirror real call sites
             const shared = useBetween(sharedState);
+            // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional: same reason as above
             const external = useSyncExternalStore(() => () => undefined, () => 'value', () => 'value');
 
             return { ...shared, external };

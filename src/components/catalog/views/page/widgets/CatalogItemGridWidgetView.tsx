@@ -26,13 +26,13 @@ export const CatalogItemGridWidgetView: FC<CatalogItemGridWidgetViewProps> = pro
         if(elementRef && elementRef.current) elementRef.current.scrollTop = 0;
     }, [ currentPage ]);
 
-    if(!currentPage) return null;
-
-    const selectOffer = (offer: IPurchasableOffer) =>
-    {
-        selectCatalogOffer(offer);
-    };
-
+    // Drag-and-drop handlers — hooks MUST run unconditionally so the
+    // hook order stays stable when currentPage flips from null to a
+    // real value (the `if(!currentPage) return null` below would
+    // otherwise hide these from the first render and React would flag
+    // "Rendered more hooks than during the previous render"). Bodies
+    // are safe to evaluate pre-load: currentPage? optional chaining
+    // already guards the only access inside handleDrop.
     const handleDragStart = useCallback((index: number) =>
     {
         setDragIndex(index);
@@ -67,6 +67,13 @@ export const CatalogItemGridWidgetView: FC<CatalogItemGridWidgetViewProps> = pro
         setDragIndex(null);
         setDropIndex(null);
     }, []);
+
+    if(!currentPage) return null;
+
+    const selectOffer = (offer: IPurchasableOffer) =>
+    {
+        selectCatalogOffer(offer);
+    };
 
     return (
         <AutoGrid columnCount={ columnCount } innerRef={ elementRef } { ...rest }>

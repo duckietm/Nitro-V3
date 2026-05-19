@@ -12,6 +12,7 @@
         "build:prod": "npx browserslist@latest --update-db && yarn build",
         "preview": "vite preview --host",
         "eslint": "eslint ./src",
+        "lint:hooks": "eslint --config eslint.hooks.config.mjs ./src",
         "typecheck": "tsgo --noEmit",
         "test": "vitest run",
         "test:watch": "vitest"
