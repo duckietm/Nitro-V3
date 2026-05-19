@@ -2,6 +2,7 @@ import { GetGuestRoomResultEvent, GetRoomEngine, GetSessionDataManager, PetFigur
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatBubbleMessage, ChatBubbleUtilities, ChatEntryType, ChatHistoryCurrentDate, GetConfigurationValue, GetRoomObjectScreenLocation, IRoomChatSettings, LocalizeText, PlaySound, RoomChatFormatter } from '../../../api';
 import { useMessageEvent, useNitroEvent } from '../../events';
+import { useUserDataSnapshot } from '../../session/useSessionSnapshots';
 import { useTranslation } from '../../translation';
 import { useRoom } from '../useRoom';
 import { useChatHistory } from './../../chat-history';
@@ -22,7 +23,12 @@ const useChatWidgetState = () =>
     const { addChatEntry, updateChatEntry } = useChatHistory();
     const { settings, translateIncoming, consumeOutgoingTranslation } = useTranslation();
     const isDisposed = useRef(false);
-    const ownUserId = (GetSessionDataManager()?.userId || -1);
+    // Reactive: re-renders if the session-data snapshot flips (e.g.
+    // reconnect under a different user id). Safe to call here —
+    // useChatWidget is NOT wrapped in useBetween (see export below),
+    // so the real React dispatcher is in scope and
+    // useSyncExternalStore installs correctly.
+    const ownUserId = (useUserDataSnapshot().userId || -1);
 
     const applyTranslationToBubble = useCallback((chatMessage: ChatBubbleMessage, originalText: string, translatedText: string, detectedLanguage: string, targetLanguage: string) =>
     {
