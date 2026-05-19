@@ -1,7 +1,8 @@
-import { FurniturePickupAllComposer, GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { FurniturePickupAllComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import { LocalizeText, RoomObjectItem, SendMessageComposer, chooserSelectionVisualizer } from '../../../../api';
 import { Button, Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { useIsModerator } from '../../../../hooks';
 import { NitroInput, classNames } from '../../../../layout';
 
 const LIMIT_FURNI_PICKALL = 100;
@@ -23,7 +24,7 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
     const [ searchValue, setSearchValue ] = useState('');
     const [ checkAll, setCheckAll ] = useState(false);
     const [ checkedIds, setCheckedIds ] = useState<number[]>([]);
-    const canSeeId = GetSessionDataManager().isModerator;
+    const canSeeId = useIsModerator();
 
     const ownerNames = useMemo(() =>
     {

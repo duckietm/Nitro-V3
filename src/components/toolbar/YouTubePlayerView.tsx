@@ -1,9 +1,9 @@
 import { ControlYoutubeDisplayPlaybackMessageComposer, YouTubeRoomBroadcastEvent, YouTubeRoomPlayComposer, YouTubeRoomSettingsEvent, YouTubeRoomWatchersEvent, YouTubeRoomWatchingComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player/youtube';
-import { GetRoomSession, getYoutubeRoomEnabled, GetSessionDataManager, LocalizeText, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../api';
+import { GetRoomSession, getYoutubeRoomEnabled, LocalizeText, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, LayoutAvatarImageView } from '../../common';
-import { useFurnitureYoutubeWidget, useMessageEvent } from '../../hooks';
+import { useFurnitureYoutubeWidget, useIsModerator, useMessageEvent } from '../../hooks';
 
 const CONTROL_COMMAND_PREVIOUS_VIDEO = 0;
 const CONTROL_COMMAND_NEXT_VIDEO = 1;
@@ -46,6 +46,9 @@ export const YouTubePlayerView: FC<{}> = () =>
     const [broadcastPlaylist, setBroadcastPlaylist] = useState<string[]>([]);
     const [watcherIds, setWatcherIds] = useState<Set<number>>(new Set());
     const [youtubeEnabled, setYoutubeEnabled] = useState(getYoutubeRoomEnabled());
+    // Reactive — must sit above the `if (!isOpen) return null` below
+    // so the hook order stays stable across renders.
+    const isModerator = useIsModerator();
 
     useMessageEvent<YouTubeRoomSettingsEvent>(YouTubeRoomSettingsEvent, event =>
     {
@@ -270,7 +273,7 @@ export const YouTubePlayerView: FC<{}> = () =>
     const isPlaying = currentVideoState === YoutubeVideoPlaybackStateEnum.PLAYING;
     const isPaused = currentVideoState === YoutubeVideoPlaybackStateEnum.PAUSED;
     const roomSession = GetRoomSession();
-    const isMyRoom = GetSessionDataManager().isModerator || (roomSession && roomSession.isRoomOwner);
+    const isMyRoom = isModerator || (roomSession && roomSession.isRoomOwner);
 
     const QuickVolumeButton = ({
         value,

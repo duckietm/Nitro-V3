@@ -1,4 +1,4 @@
-import { GetEventDispatcher, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, IRoomSessionSnapshot, IRoomUserData, ISoundVolumesSnapshot, IUserDataSnapshot, NitroEventType } from '@nitrots/nitro-renderer';
+import { GetEventDispatcher, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, IRoomSessionSnapshot, IRoomUserData, ISoundVolumesSnapshot, IUserDataSnapshot, NitroEventType, SecurityLevel } from '@nitrots/nitro-renderer';
 import { useMemo } from 'react';
 import { useExternalSnapshot } from '../events/useExternalSnapshot';
 
@@ -121,6 +121,20 @@ export const useIsUserIgnored = (name: string): boolean =>
     const list = useIgnoredUsersSnapshot();
 
     return useMemo(() => list.includes(name), [ list, name ]);
+};
+
+/**
+ * Reactive equivalent of `GetSessionDataManager().isModerator`. Derives
+ * from `useUserDataSnapshot().securityLevel` so any future
+ * promote/demote that flips the SESSION_DATA_UPDATED event re-renders
+ * the consumer without an F5. Mirrors the renderer-side getter at
+ * `SessionDataManager.ts:684` (`securityLevel >= SecurityLevel.MODERATOR`).
+ */
+export const useIsModerator = (): boolean =>
+{
+    const userData = useUserDataSnapshot();
+
+    return userData.securityLevel >= SecurityLevel.MODERATOR;
 };
 
 export const useGroupBadgesSnapshot = (): ReadonlyMap<number, string> =>
