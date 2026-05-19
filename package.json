@@ -4,7 +4,9 @@
     "homepage": ".",
     "private": true,
     "scripts": {
-        "prebuild": "node scripts/write-asset-loader.mjs",
+        "configure": "node scripts/configure-json.mjs",
+        "prestart": "node scripts/configure-json.mjs --if-missing",
+        "prebuild": "node scripts/configure-json.mjs --if-missing && node scripts/write-asset-loader.mjs",
         "start": "vite --host",
         "build": "vite build && node scripts/minify-dist.mjs",
         "build:prod": "npx browserslist@latest --update-db && yarn build",

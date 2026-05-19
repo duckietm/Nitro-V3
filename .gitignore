@@ -29,6 +29,9 @@ Thumbs.db
 .env
 .claude/
 
+# Per-deploy build configuration (yarn configure)
+/.nitro-build.json
+
 # Local runtime config copies
 /public/configuration/renderer-config.json
 /public/configuration/ui-config.json

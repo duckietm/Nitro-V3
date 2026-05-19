@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import sirv from 'sirv';
@@ -73,6 +73,28 @@ const ReactCompilerConfig = {
     target: '19'
 };
 
+const resolveJsonMode = () =>
+{
+    const envOverride = process.env.NITRO_JSON_MODE;
+    if(envOverride === 'legacy' || envOverride === 'json5' || envOverride === 'auto') return envOverride;
+
+    const configFile = resolve(__dirname, '.nitro-build.json');
+    if(existsSync(configFile))
+    {
+        try
+        {
+            const parsed = JSON.parse(readFileSync(configFile, 'utf8'));
+            if(parsed?.jsonMode === 'legacy' || parsed?.jsonMode === 'json5' || parsed?.jsonMode === 'auto') return parsed.jsonMode;
+        }
+        catch {}
+    }
+
+    return 'auto';
+};
+
+const nitroJsonMode = resolveJsonMode();
+process.stdout.write(`[vite] __NITRO_JSON_MODE__ = ${ nitroJsonMode }\n`);
+
 export default defineConfig({
     base: process.env.VITE_BASE || './',
     plugins: [
@@ -85,6 +107,9 @@ export default defineConfig({
         }),
         nitroAssetsServer()
     ],
+    define: {
+        __NITRO_JSON_MODE__: JSON.stringify(nitroJsonMode)
+    },
     server: {
         fs: {
             allow: [

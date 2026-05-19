@@ -1,0 +1,4 @@
+install.sh   text eol=lf
+install.mjs  text eol=lf
+*.sh         text eol=lf
+*.bat        text eol=crlf
