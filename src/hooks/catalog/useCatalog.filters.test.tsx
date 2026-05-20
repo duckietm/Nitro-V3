@@ -63,6 +63,7 @@ const { fakeStore } = vi.hoisted(() =>
         selectCatalogOffer: vi.fn(),
         getNodeById: vi.fn(),
         getNodeByName: vi.fn(),
+        getNodesByOfferId: vi.fn(),
         getBuilderFurniPlaceableStatus: vi.fn()
     };
 
@@ -142,6 +143,7 @@ describe('useCatalog filter contract', () =>
             'getBuilderFurniPlaceableStatus',
             'getNodeById',
             'getNodeByName',
+            'getNodesByOfferId',
             'openCatalogByType',
             'openPageById',
             'openPageByName',
