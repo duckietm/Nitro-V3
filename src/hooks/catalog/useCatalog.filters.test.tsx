@@ -142,6 +142,7 @@ describe('useCatalog filter contract', () =>
             'getBuilderFurniPlaceableStatus',
             'getNodeById',
             'getNodeByName',
+            'getNodesByOfferId',
             'openCatalogByType',
             'openPageById',
             'openPageByName',
