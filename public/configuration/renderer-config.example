@@ -68,7 +68,11 @@
 	"badges.custom.update.endpoint": "${api.url}/api/badges/custom/%badgeId%",
 	"badges.custom.delete.endpoint": "${api.url}/api/badges/custom/%badgeId%",
 	"badges.custom.texts.endpoint": "${api.url}/api/badges/custom/texts",
+	"badges.custom.texts.endpoint": "${api.url}//api/auth/change-password",
 	"badges.leaderboard.endpoint": "${api.url}/api/badges/leaderboard",
+	"account.change-password.endpoint": "${api.url}/api/auth/change-password",
+	"account.change-email.endpoint": "${api.url}/api/auth/change-email",
+	"account.change-username.endpoint": "${api.url}/api/auth/change-username",
 	"login.turnstile.enabled": true,
     "login.turnstile.sitekey": "1x00000000000000000000AA",
 	"avatar.mandatory.libraries": [
