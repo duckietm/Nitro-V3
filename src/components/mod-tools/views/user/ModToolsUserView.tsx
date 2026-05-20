@@ -1,8 +1,8 @@
-import { CreateLinkEvent, GetModeratorUserInfoMessageComposer, ModeratorUserInfoData, ModeratorUserInfoEvent } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetModeratorUserInfoMessageComposer, ModeratorActionResultMessageEvent, ModeratorUserInfoData, ModeratorUserInfoEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FriendlyTime, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, DraggableWindowPosition, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
-import { useMessageEvent } from '../../../../hooks';
+import { useMessageEvent, useRoomUserListSnapshot } from '../../../../hooks';
 import { ModToolsUserModActionView } from './ModToolsUserModActionView';
 import { ModToolsUserRoomVisitsView } from './ModToolsUserRoomVisitsView';
 import { ModToolsUserSendMessageView } from './ModToolsUserSendMessageView';
@@ -20,6 +20,15 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
     const [ sendMessageVisible, setSendMessageVisible ] = useState(false);
     const [ modActionVisible, setModActionVisible ] = useState(false);
     const [ roomVisitsVisible, setRoomVisitsVisible ] = useState(false);
+    // Reactive presence: if the target user is currently in the room
+    // we're observing, they're online — irrespective of what the
+    // one-shot ModeratorUserInfoData.online said when the panel opened.
+    const roomUserList = useRoomUserListSnapshot();
+    const isPresentInCurrentRoom = useMemo(
+        () => roomUserList.some(user => user && (user.webID === userId)),
+        [ roomUserList, userId ]
+    );
+    const isOnline = isPresentInCurrentRoom || !!(userInfo && userInfo.online);
 
     const userProperties = useMemo(() =>
     {
@@ -95,6 +104,19 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
         setUserInfo(parser.data);
     });
 
+    // Refresh counters (cfhCount / banCount / cautionCount /
+    // lastSanctionTime) after the moderator applies a sanction on THIS
+    // user — otherwise the table stays frozen on the values at panel
+    // open. Parser carries userId so we can filter precisely.
+    useMessageEvent<ModeratorActionResultMessageEvent>(ModeratorActionResultMessageEvent, event =>
+    {
+        const parser = event.getParser();
+
+        if(!parser || !parser.success || parser.userId !== userId) return;
+
+        SendMessageComposer(new GetModeratorUserInfoMessageComposer(userId));
+    });
+
     useEffect(() =>
     {
         SendMessageComposer(new GetModeratorUserInfoMessageComposer(userId));
@@ -120,7 +142,7 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
                                                 <td>
                                                     { property.value }
                                                     { property.showOnline &&
-                                                    <i className={ `icon icon-pf-${ userInfo.online ? 'online' : 'offline' } ms-2` } /> }
+                                                    <i className={ `icon icon-pf-${ isOnline ? 'online' : 'offline' } ms-2` } title={ isPresentInCurrentRoom ? 'In this room' : (userInfo.online ? 'Online' : 'Offline') } /> }
                                                 </td>
                                             </tr>
                                         );
