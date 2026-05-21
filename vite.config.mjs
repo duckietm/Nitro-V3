@@ -164,18 +164,46 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 assetFileNames: 'src/assets/[name]-[hash].[ext]',
+                // Granular chunking: split the monolithic vendor / nitro-renderer
+                // bundles into smaller chunks so the browser can fetch them in
+                // parallel and CF can cache each independently. Splits chosen
+                // by size impact (pixi ~600KB, react ~150KB, framer-motion ~100KB,
+                // jodit ~250KB lazy-loaded only by admin news, etc.).
                 manualChunks: id =>
                 {
-                    // Renderer source is consumed via filesystem alias
-                    // (../Nitro_Render_V3/packages/*/src) so it is NOT
-                    // under node_modules — needs its own branch before
-                    // the node_modules check.
-                    if(id.includes('Nitro_Render_V3') || id.includes(`${ rendererRoot }`)) return 'nitro-renderer';
+                    // Vendor checks first — pixi.js/howler are aliased to
+                    // ../Nitro_Render_V3/node_modules so they match
+                    // `Nitro_Render_V3` too. Without this priority, they end
+                    // up bundled into nitro-renderer instead of getting their
+                    // own chunks (pixi alone is ~600KB). Use `/pixi.js/` to
+                    // avoid matching path fragments like `assets/pixi.js/`.
+                    const norm = id.replace(/\\/g, '/');
+                    if(norm.includes('pixi.js') || norm.includes('pixi-filters')) return 'vendor-pixi';
+                    if(norm.includes('howler')) return 'vendor-audio';
+                    if(norm.includes('@emoji-mart')) return 'vendor-emoji';
+                    if(norm.includes('jodit') || norm.includes('@react-page')) return 'vendor-editor';
+
+                    if(id.includes('Nitro_Render_V3') || id.includes(`${ rendererRoot }`))
+                    {
+                        // Heaviest renderer packages get their own chunks so
+                        // pages that don't touch them (login flow, very early
+                        // boot) don't have to pay for them upfront.
+                        if(id.includes('/packages/avatar/')) return 'nitro-renderer-avatar';
+                        if(id.includes('/packages/communication/')) return 'nitro-renderer-comm';
+                        if(id.includes('/packages/room/')) return 'nitro-renderer-room';
+                        if(id.includes('/packages/assets/')) return 'nitro-renderer-assets';
+                        return 'nitro-renderer';
+                    }
 
                     if(id.includes('node_modules'))
                     {
                         if(id.includes('@nitrots/nitro-renderer') || id.includes('renderer3')) return 'nitro-renderer';
-
+                        if(id.match(/\/react(-dom)?\/|\/scheduler\//) || id.includes('react-error-boundary')) return 'vendor-react';
+                        if(id.includes('framer-motion')) return 'vendor-motion';
+                        if(id.includes('@tanstack')) return 'vendor-query';
+                        if(id.includes('zustand') || id.includes('use-between')) return 'vendor-state';
+                        if(id.includes('react-icons')) return 'vendor-icons';
+                        if(id.includes('json5')) return 'vendor-json5';
                         return 'vendor';
                     }
                 }

@@ -63,6 +63,7 @@ const { fakeStore } = vi.hoisted(() =>
         selectCatalogOffer: vi.fn(),
         getNodeById: vi.fn(),
         getNodeByName: vi.fn(),
+        getNodesByOfferId: vi.fn(),
         getBuilderFurniPlaceableStatus: vi.fn()
     };
 

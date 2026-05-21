@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, AvatarDirectionAngle, AvatarEffectActivatedComposer, GetConfiguration, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, AvatarDirectionAngle, AvatarEffectActivatedComposer, GetConfiguration, GetSessionDataManager, ILinkEventTracker, loadGamedata, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { ChangeEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../api';
@@ -65,9 +65,11 @@ export const AvatarEffectsView: FC<{}> = () =>
         {
             try
             {
-                const response = await fetch(url);
-                if(!response.ok) throw new Error(`HTTP ${ response.status }`);
-                const json = await response.json();
+                // The effectmap is served either as a single JSON file or as a
+                // tiered directory with core/custom/seasonal manifests using
+                // JSON5 syntax (// comments allowed). loadGamedata picks the
+                // right mode for us and merges tiers.
+                const json = await loadGamedata<{ effects?: EffectMapEntry[] }>(url);
                 if(cancelled) return;
 
                 const list: EffectMapEntry[] = Array.isArray(json?.effects)
