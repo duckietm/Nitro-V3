@@ -477,11 +477,16 @@ export const App: FC<{}> = props =>
     {
         const prepare = async (width: number, height: number) =>
         {
+            // Don't dump the actual SSO ticket — it's a one-shot bearer
+            // credential that grants access to the user's session, so
+            // logging it in console.warn would leak it via copied logs
+            // / screen shares / browser extension hooks. Boolean flag is
+            // enough for the diagnostic.
             console.warn('[App] prepare() start', {
                 hasNitroConfig: !!window.NitroConfig,
                 ssoTicketInConfig: !!window.NitroConfig?.['sso.ticket'],
                 hasRememberLocal: !!GetRememberLogin(),
-                urlSso: new URLSearchParams(window.location.search).get('sso')
+                hasUrlSso: !!new URLSearchParams(window.location.search).get('sso')
             });
 
             const bootLabel = taskLabel('loading.task.boot', 'Avvio in corso...');
