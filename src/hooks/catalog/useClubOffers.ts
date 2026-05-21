@@ -1,33 +1,38 @@
 import { ClubOfferData, GetClubOffersMessageComposer, HabboClubOffersMessageEvent } from '@nitrots/nitro-renderer';
-import { UseQueryResult } from '@tanstack/react-query';
-import { useNitroQuery } from '../../api/nitro-query';
+import { useEffect } from 'react';
+import { SendMessageComposer } from '../../api';
+import { useMessageEventState } from '../events';
 
-/**
- * Habbo Club offer list keyed by Catalog `windowId`. windowId 1 is the
- * VIP buy page; 2 / 3 are the Builders Club / Builders Club Addons
- * pages. Each catalog layout asks the server for its own slice via
- * GetClubOffersMessageComposer(windowId) — the server replies with a
- * HabboClubOffersMessageEvent carrying parser.windowId + parser.offers.
- *
- * Wrapped as a TanStack query so multiple consumers reading the same
- * windowId share one request, and reopening the page within the
- * session-stable cache window doesn't re-fetch.
- *
- * The accept() predicate filters out responses tagged with a different
- * windowId — the renderer multiplexes the same event for every page,
- * so without the filter a slow VIP response would land in a Builders
- * Club query.
- */
+const offersCache = new Map<number, ClubOfferData[]>();
+
 export const useClubOffers = (
     windowId: number,
     options: { enabled?: boolean } = {}
-): UseQueryResult<ClubOfferData[]> =>
-    useNitroQuery<HabboClubOffersMessageEvent, ClubOfferData[]>({
-        key: [ 'nitro', 'catalog', 'clubOffers', windowId ],
-        request: () => new GetClubOffersMessageComposer(windowId),
-        parser: HabboClubOffersMessageEvent,
-        accept: event => (event.getParser().windowId === windowId),
-        select: event => (event.getParser().offers || []),
-        enabled: options.enabled,
-        staleTime: Infinity
-    });
+): { data: ClubOfferData[] | null } =>
+{
+    const enabled = options.enabled !== false;
+
+    const data = useMessageEventState<HabboClubOffersMessageEvent, ClubOfferData[] | null>(
+        HabboClubOffersMessageEvent,
+        event =>
+        {
+            const parser = event.getParser();
+            if(!parser || parser.windowId !== windowId) return offersCache.get(windowId) ?? null;
+
+            const offers = parser.offers || [];
+            offersCache.set(windowId, offers);
+            return offers;
+        },
+        () => offersCache.get(windowId) ?? null
+    );
+
+    useEffect(() =>
+    {
+        if(!enabled) return;
+        if(offersCache.has(windowId)) return;
+
+        SendMessageComposer(new GetClubOffersMessageComposer(windowId));
+    }, [ enabled, windowId ]);
+
+    return { data };
+};

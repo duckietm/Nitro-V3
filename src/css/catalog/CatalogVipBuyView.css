@@ -1,0 +1,85 @@
+.nitro-catalog-layout-vip-buy-grid .nitro-vip-buy-offer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 2px solid #b48a18;
+    background: #fffbe7;
+    color: #2c2a25;
+    cursor: pointer;
+    transition: background-color 100ms ease-out, border-color 100ms ease-out, box-shadow 100ms ease-out;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.nitro-catalog-layout-vip-buy-grid .nitro-vip-buy-offer:hover {
+    background: #fff5c4;
+    border-color: #9c7610;
+}
+
+.nitro-catalog-layout-vip-buy-grid .nitro-vip-buy-offer.active {
+    background: #ffe066;
+    border-color: #7a5500;
+    box-shadow: inset 0 0 0 1px #ffd92e, 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.nitro-vip-buy-offer .vip-offer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #b48a18;
+}
+
+.nitro-vip-buy-offer .vip-offer-banner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 34px;
+    height: 20px;
+}
+
+.nitro-vip-buy-offer .vip-offer-banner .nitro-icon.icon-hc-banner,
+.nitro-vip-buy-offer .vip-offer-banner i.icon-hc-banner {
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 34px !important;
+    height: 20px !important;
+}
+
+.nitro-vip-buy-offer .vip-offer-title {
+    font-weight: 700;
+    color: #2c2a25;
+    line-height: 1.1;
+    font-size: 1.05rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nitro-vip-buy-offer .vip-offer-prices {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nitro-vip-buy-offer .vip-offer-price {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #4a473e;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.nitro-vip-buy-offer .vip-offer-price .nitro-currency-icon {
+    flex: 0 0 auto;
+}

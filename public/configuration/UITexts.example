@@ -265,4 +265,5 @@
     "loading.task.userdata": "loading user data...",
     "loading.task.rooms": "loading rooms...",
     "loading.task.engine": "loading graphics engine...",
+	"catalog.gift_wrapping.gift_sent": "Done!"
 }
