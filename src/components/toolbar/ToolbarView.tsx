@@ -67,8 +67,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         toggleTimeoutRef.current = setTimeout(() => { toggleLockRef.current = false; }, TOGGLE_LOCK_MS);
     }, []);
 
-    const compactFramePosition = (isToolbarOpen && isInRoom) ? 'bottom-[55px] min-[1540px]:bottom-0' : 'bottom-0';
-    const desktopFrameTransparencyClasses = isTouchLayout ? '' : 'min-[1540px]:rounded-none min-[1540px]:border-0 min-[1540px]:bg-transparent min-[1540px]:shadow-none';
+    const compactFramePosition = (isToolbarOpen && isInRoom) ? 'bottom-[90px] min-[1540px]:bottom-0' : 'bottom-0';
     const mobileOnlyClasses = isTouchLayout ? '' : 'min-[1540px]:hidden';
     const desktopBlockClasses = isTouchLayout ? 'hidden' : 'hidden min-[1540px]:block';
     const desktopFlexClasses = isTouchLayout ? 'hidden' : 'hidden min-[1540px]:flex';
@@ -162,7 +161,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
             { youtubeEnabled && <YouTubePlayerView /> }
 
             { isInRoom &&
-                <div className={ `tb-frame fixed ${ compactFramePosition } left-1/2 -translate-x-1/2 z-40 flex h-[52px] w-[420px] max-w-[95vw] items-center px-[6px] py-[4px] pointer-events-none ${ isToolbarOpen ? `${ desktopFrameTransparencyClasses } rounded-[12px] border border-white/8 bg-[rgba(10,10,12,0.58)] shadow-[0_-6px_18px_rgba(0,0,0,0.18)]` : `border-0 bg-transparent shadow-none ${ desktopFrameTransparencyClasses }` }` }>
+                <div className={ `tb-frame fixed ${ compactFramePosition } left-1/2 -translate-x-1/2 z-40 flex h-[38px] w-[420px] max-w-[95vw] items-center px-[6px] py-[4px] pointer-events-none` }>
                     <motion.div
                         className="tb-toggle pointer-events-auto mr-2 flex-shrink-0"
                         onClick={ handleToggleClick }
@@ -183,12 +182,14 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         className="pointer-events-auto h-full w-full min-w-0 flex-1"
                         id="toolbar-chat-input-container" />
                 </div> }
+
             <motion.div
                 initial="hidden"
                 animate={ visibilityVariant }
                 variants={ shellVariants }
                 transition={ SHELL_TRANSITION }
                 className={ `pointer-events-none fixed bottom-0 left-0 right-0 z-[39] h-[52px] rounded-t-[12px] border border-b-0 border-white/8 bg-[rgba(10,10,12,0.58)] shadow-[0_-6px_18px_rgba(0,0,0,0.18)] ${ desktopBlockClasses }` } />
+
             <motion.div
                 initial="hidden"
                 animate={ visibilityVariant }
