@@ -6,6 +6,16 @@ on:
       - main
       - 'feat/**'
   pull_request:
+  workflow_dispatch:
+    inputs:
+      renderer_repo:
+        description: 'Renderer repo (owner/name). Empty = auto from client branch.'
+        required: false
+        default: ''
+      renderer_ref:
+        description: 'Renderer git ref. Empty = auto from client branch.'
+        required: false
+        default: ''
 
 # Opt into the Node.js 24 runtime for the JavaScript actions
 # (actions/checkout, actions/setup-node, …). Node 20 will be removed
@@ -29,17 +39,61 @@ jobs:
         with:
           path: Nitro-V3
 
-      # The client tracks renderer changes that are pushed to the
-      # `feat/react19-event-bus` branch of `simoleo89/Nitro_Render_V3`
-      # (allowUnderpass + sendBackgroundMessage + Window NitroConfig
-      # alignment, etc.). `duckietm/Nitro_Render_V3:main` doesn't yet
-      # have those, so tsgo would fail right away if we checked that
-      # out instead.
+      # Pick the renderer ref dynamically based on the client context.
+      # Renderer repo is always upstream `duckietm/Nitro_Render_V3` —
+      # the two repos must stay wire-aligned (composer/parser
+      # signatures); pairing `main` with a stale branch is what
+      # produced the "Expected 14-15 arguments, but got 16" failure on
+      # the catalog edit composer.
+      #
+      # Mapping:
+      #   client `main`             → duckietm/Nitro_Render_V3 @ main
+      #   client `feat/**`          → duckietm/Nitro_Render_V3 @ Dev
+      #   PR base `main`            → duckietm/Nitro_Render_V3 @ main
+      #   PR base `Dev` (upstream)  → duckietm/Nitro_Render_V3 @ Dev
+      #   PR base `feat/**`         → duckietm/Nitro_Render_V3 @ Dev
+      #
+      # Override via workflow_dispatch inputs when you need an ad-hoc
+      # pairing.
+      - name: Resolve renderer ref
+        id: renderer
+        run: |
+          REPO="${{ github.event.inputs.renderer_repo }}"
+          REF="${{ github.event.inputs.renderer_ref }}"
+
+          if [ -z "$REPO" ] || [ -z "$REF" ]; then
+            case "${GITHUB_EVENT_NAME}" in
+              pull_request)
+                CTX="${GITHUB_BASE_REF}"
+                ;;
+              *)
+                CTX="${GITHUB_REF_NAME}"
+                ;;
+            esac
+
+            AUTO_REPO="duckietm/Nitro_Render_V3"
+            case "$CTX" in
+              main)
+                AUTO_REF="main"
+                ;;
+              *)
+                AUTO_REF="Dev"
+                ;;
+            esac
+
+            [ -z "$REPO" ] && REPO="$AUTO_REPO"
+            [ -z "$REF" ]  && REF="$AUTO_REF"
+          fi
+
+          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
+          echo "ref=$REF"   >> "$GITHUB_OUTPUT"
+          echo "Resolved renderer pairing: $REPO @ $REF (client ctx: ${GITHUB_BASE_REF:-$GITHUB_REF_NAME}, event: ${GITHUB_EVENT_NAME})"
+
       - name: Checkout Nitro_Render_V3 (sibling)
         uses: actions/checkout@v4
         with:
-          repository: simoleo89/Nitro_Render_V3
-          ref: feat/react19-event-bus
+          repository: ${{ steps.renderer.outputs.repo }}
+          ref: ${{ steps.renderer.outputs.ref }}
           path: Nitro_Render_V3
 
       - name: Setup Node 22
