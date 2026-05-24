@@ -40,18 +40,27 @@ jobs:
           path: Nitro-V3
 
       # Pick the renderer ref dynamically based on the client context.
-      # Renderer repo is always upstream `duckietm/Nitro_Render_V3` —
-      # the two repos must stay wire-aligned (composer/parser
+      # The two repos must stay wire-aligned (composer/parser
       # signatures); pairing `main` with a stale branch is what
       # produced the "Expected 14-15 arguments, but got 16" failure on
       # the catalog edit composer.
       #
+      # This branch (`feat/housekeeping-panel`) references HK composers
+      # /events that live on the renderer PR branch
+      # (simoleo89/Nitro_Render_V3 @ feat/housekeeping-packets) — they
+      # haven't been merged upstream yet. Pair against the fork branch
+      # for this PR so the typecheck step can resolve the imports;
+      # once the renderer PR lands on duckietm:Dev this whole
+      # special-case block can be dropped.
+      #
       # Mapping:
-      #   client `main`             → duckietm/Nitro_Render_V3 @ main
-      #   client `feat/**`          → duckietm/Nitro_Render_V3 @ Dev
-      #   PR base `main`            → duckietm/Nitro_Render_V3 @ main
-      #   PR base `Dev` (upstream)  → duckietm/Nitro_Render_V3 @ Dev
-      #   PR base `feat/**`         → duckietm/Nitro_Render_V3 @ Dev
+      #   client `main`                              → duckietm/Nitro_Render_V3 @ main
+      #   client `feat/housekeeping-panel`           → simoleo89/Nitro_Render_V3 @ feat/housekeeping-packets
+      #   client `feat/**` (other)                   → duckietm/Nitro_Render_V3 @ Dev
+      #   PR base `main`                             → duckietm/Nitro_Render_V3 @ main
+      #   PR head `feat/housekeeping-panel`          → simoleo89/Nitro_Render_V3 @ feat/housekeeping-packets
+      #   PR base `Dev` (upstream)                   → duckietm/Nitro_Render_V3 @ Dev
+      #   PR base `feat/**`                          → duckietm/Nitro_Render_V3 @ Dev
       #
       # Override via workflow_dispatch inputs when you need an ad-hoc
       # pairing.
@@ -62,21 +71,34 @@ jobs:
           REF="${{ github.event.inputs.renderer_ref }}"
 
           if [ -z "$REPO" ] || [ -z "$REF" ]; then
+            # For PRs we usually pair against the base ref, but the HK
+            # PR specifically needs to pair against its OWN head ref —
+            # the renderer companion PR is named identically
+            # (`feat/housekeeping-packets`) and lives on the same fork.
             case "${GITHUB_EVENT_NAME}" in
               pull_request)
-                CTX="${GITHUB_BASE_REF}"
+                if [ "${GITHUB_HEAD_REF}" = "feat/housekeeping-panel" ]; then
+                  CTX="${GITHUB_HEAD_REF}"
+                else
+                  CTX="${GITHUB_BASE_REF}"
+                fi
                 ;;
               *)
                 CTX="${GITHUB_REF_NAME}"
                 ;;
             esac
 
-            AUTO_REPO="duckietm/Nitro_Render_V3"
             case "$CTX" in
               main)
+                AUTO_REPO="duckietm/Nitro_Render_V3"
                 AUTO_REF="main"
                 ;;
+              feat/housekeeping-panel)
+                AUTO_REPO="simoleo89/Nitro_Render_V3"
+                AUTO_REF="feat/housekeeping-packets"
+                ;;
               *)
+                AUTO_REPO="duckietm/Nitro_Render_V3"
                 AUTO_REF="Dev"
                 ;;
             esac
