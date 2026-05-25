@@ -22,10 +22,10 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
     const adminMode = catalogAdmin?.adminMode ?? false;
 
     return (
-        <div className="flex flex-col h-full gap-2">
+        <div className="nitro-catalog-classic-default-layout flex flex-col h-full gap-2">
             { /* Admin: quick actions */ }
             { adminMode && !catalogAdmin.editingPageData &&
-                <div className="flex gap-2">
+                <div className="flex gap-2 nitro-catalog-classic-default-admin">
                     <button
                         className="flex items-center gap-1 text-[10px] text-primary hover:text-dark transition-colors cursor-pointer"
                         onClick={ () =>
@@ -45,9 +45,9 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
 
             { /* Product detail card */ }
             { currentOffer &&
-                <div className="flex gap-0 bg-white rounded border-2 border-card-grid-item-border overflow-hidden">
+                <div className="nitro-catalog-classic-offer-panel flex gap-0 overflow-hidden">
                     { /* Preview area */ }
-                    <div className="w-[140px] min-w-[140px] bg-card-grid-item relative flex items-center justify-center border-r-2 border-card-grid-item-border">
+                    <div className="nitro-catalog-classic-offer-preview relative flex items-center justify-center">
                         { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
                             <>
                                 <CatalogViewProductWidgetView />
@@ -57,7 +57,7 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
                             <CatalogAddOnBadgeWidgetView className="scale-2" /> }
                     </div>
                     { /* Product info + purchase */ }
-                    <div className="flex flex-col flex-1 min-w-0 p-2.5 gap-2">
+                    <div className="nitro-catalog-classic-offer-info flex flex-col flex-1 min-w-0 gap-2">
                         { /* Title row */ }
                         <div>
                             <div className="flex items-start justify-between gap-2">
@@ -90,17 +90,17 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
 
             { /* Welcome/description card */ }
             { !currentOffer &&
-                <div className="flex items-center gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
+                <div className="nitro-catalog-classic-welcome flex items-center gap-3">
                     { !!page.localization.getImage(1) &&
                         <img className="w-[70px] h-[70px] object-contain rounded shrink-0" src={ page.localization.getImage(1) } /> }
                     <Text className="text-[11px]! text-muted" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
                 </div> }
 
             { /* Item grid */ }
-            <div className="flex-1 overflow-auto min-h-0">
+            <div className="nitro-catalog-classic-grid-shell flex-1 overflow-auto min-h-0">
                 { GetConfigurationValue('catalog.headers') &&
                     <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) } /> }
-                <CatalogItemGridWidgetView columnCount={ 7 } columnMinHeight={ 50 } columnMinWidth={ 50 } />
+                <CatalogItemGridWidgetView className="nitro-catalog-classic-grid" columnCount={ 7 } columnMinHeight={ 50 } columnMinWidth={ 50 } />
             </div>
         </div>
     );

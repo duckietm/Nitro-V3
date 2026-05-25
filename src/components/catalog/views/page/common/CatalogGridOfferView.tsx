@@ -62,10 +62,9 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
 
     return (
         <LayoutGridItem
-            className="group/tile relative"
+            className={ `group/tile relative ${ itemActive ? 'is-active' : '' }` }
             itemActive={ itemActive }
             itemCount={ ((offer.pricingModel === Offer.PRICING_MODEL_MULTI) ? product.productCount : 1) }
-            itemImage={ iconUrl }
             itemUniqueNumber={ product.uniqueLimitedItemSeriesSize }
             itemUniqueSoldout={ (product.uniqueLimitedItemSeriesSize && !product.uniqueLimitedItemsLeft) }
             title={ `ID: ${ product.productClassId } | Offer: ${ offer.offerId }` }
@@ -74,6 +73,8 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
             onMouseUp={ onMouseEvent }
             { ...rest }
         >
+            { iconUrl && !(offer.product.productType === ProductTypeEnum.ROBOT) &&
+                <div className="nitro-catalog-classic-grid-offer-icon" style={ { backgroundImage: `url(${ iconUrl })` } } /> }
             { (offer.product.productType === ProductTypeEnum.ROBOT) &&
                 <LayoutAvatarImageView direction={ 3 } figure={ offer.product.extraParam } headOnly={ true } /> }
             <div

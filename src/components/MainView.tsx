@@ -12,6 +12,7 @@ import { CampaignView } from './campaign/CampaignView';
 import { CatalogView } from './catalog/CatalogView';
 import { ChatHistoryView } from './chat-history/ChatHistoryView';
 import { CustomizeNickIconView } from './customize/CustomizeNickIconView';
+import { EmuStatsView } from './emustats/EmuStatsView';
 import { FloorplanEditorView } from './floorplan-editor/FloorplanEditorView';
 import { FurniEditorView } from './furni-editor/FurniEditorView';
 import { FriendsView } from './friends/FriendsView';
@@ -149,6 +150,7 @@ export const MainView: FC<{}> = props =>
             <AvatarEditorView />
             <BadgeCreatorView />
             <BadgeLeaderboardView />
+            <EmuStatsView />
             <AvatarEffectsView />
             <AchievementsView />
             <NavigatorView />

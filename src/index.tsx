@@ -19,6 +19,8 @@ import './css/index.css';
 
 import './css/backgrounds/BackgroundsView.css';
 import './css/badges/BadgeLeaderboardView.css';
+import './css/catalog/CatalogClassicView.css';
+import './css/emustats/EmuStatsView.css';
 
 import './css/chat/Chats.css';
 
@@ -52,6 +54,7 @@ import './css/room/RoomWidgets.css';
 import './css/slider.css';
 
 import './css/toolbar/ToolBar.css';
+import './css/user-profile/UserProfileView.css';
 
 import './css/widgets/FurnitureWidgets.css';
 

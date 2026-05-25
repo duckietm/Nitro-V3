@@ -8,6 +8,7 @@ export * from './camera';
 export * from './campaign';
 export * from './catalog';
 export * from './chat-history';
+export * from './emustats';
 export * from './events';
 export * from './friends';
 export * from './groups';

@@ -1,31 +1,22 @@
-import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, NavigatorSearchComposer, NavigatorSearchEvent, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomDataParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
+import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, NavigatorSearchComposer, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { CreateRoomSession, GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
-import { Flex, Text } from '../../common';
-import { BadgeInfoView } from './BadgeInfoView';
+import { GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
 import { NitroCard } from '../../layout';
-import { FriendsContainerView } from './FriendsContainerView';
 import { GroupsContainerView } from './GroupsContainerView';
 import { UserContainerView } from './UserContainerView';
 
-type ProfileTab = 'badge' | 'friends' | 'rooms' | 'groups';
-
-export const UserProfileView: FC<{}> = props =>
+export const UserProfileView: FC<{}> = () =>
 {
     const [ userProfile, setUserProfile ] = useState<UserProfileParser>(null);
     const [ userBadges, setUserBadges ] = useState<string[]>([]);
     const [ userRelationships, setUserRelationships ] = useState<RelationshipStatusInfoMessageParser>(null);
-    const [ activeTab, setActiveTab ] = useState<ProfileTab>('badge');
-    const [ userRooms, setUserRooms ] = useState<RoomDataParser[]>(null);
 
     const onClose = () =>
     {
         setUserProfile(null);
         setUserBadges([]);
         setUserRelationships(null);
-        setActiveTab('badge');
-        setUserRooms(null);
     };
 
     const onLeaveGroup = () =>
@@ -35,11 +26,9 @@ export const UserProfileView: FC<{}> = props =>
         GetUserProfile(userProfile.id);
     };
 
-    const onTabClick = (tab: ProfileTab) =>
+    const onOpenRooms = () =>
     {
-        setActiveTab(tab);
-
-        if(tab === 'rooms' && !userRooms && userProfile)
+        if(userProfile)
         {
             SendMessageComposer(new NavigatorSearchComposer('hotel_view', `owner:${ userProfile.username }`));
         }
@@ -80,8 +69,6 @@ export const UserProfileView: FC<{}> = props =>
         {
             setUserBadges([]);
             setUserRelationships(null);
-            setActiveTab('badge');
-            setUserRooms(null);
         }
 
         SendMessageComposer(new UserCurrentBadgesComposer(parser.id));
@@ -95,28 +82,6 @@ export const UserProfileView: FC<{}> = props =>
         if(parser.userId != userProfile?.id) return;
 
         GetUserProfile(parser.userId);
-    });
-
-    useMessageEvent<NavigatorSearchEvent>(NavigatorSearchEvent, event =>
-    {
-        if(!userProfile || activeTab !== 'rooms') return;
-
-        const parser = event.getParser();
-        const result = parser.result;
-
-        if(!result) return;
-
-        const rooms: RoomDataParser[] = [];
-
-        for(const resultList of result.results)
-        {
-            if(resultList.rooms && resultList.rooms.length)
-            {
-                for(const room of resultList.rooms) rooms.push(room);
-            }
-        }
-
-        setUserRooms(rooms);
     });
 
     useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.SELECTED, event =>
@@ -135,82 +100,22 @@ export const UserProfileView: FC<{}> = props =>
     if(!userProfile) return null;
 
     return (
-        <NitroCard className="w-[470px] h-[460px]" uniqueKey="nitro-user-profile">
+        <NitroCard className="nitro-extended-profile-window w-[521px] h-[537px]" uniqueKey="nitro-user-profile">
             <NitroCard.Header
                 headerText={ LocalizeText('extendedprofile.caption') }
                 onCloseClick={ onClose } />
-            <NitroCard.Content className="overflow-hidden !p-0 flex flex-col">
-                <div className="p-2">
-                    <UserContainerView userProfile={ userProfile } />
+            <NitroCard.Content className="nitro-extended-profile-window__content overflow-hidden !p-0 flex flex-col">
+                <div className="px-[10px] pt-[8px]">
+                    <UserContainerView
+                        userBadges={ userBadges }
+                        userProfile={ userProfile }
+                        userRelationships={ userRelationships }
+                        onOpenRooms={ onOpenRooms } />
                 </div>
-                <NitroCard.Tabs>
-                    <NitroCard.TabItem isActive={ activeTab === 'badge' } count={ userBadges.length } onClick={ () => onTabClick('badge') }>
-                        { LocalizeText('levelinfo.category.badge') }
-                    </NitroCard.TabItem>
-                    <NitroCard.TabItem isActive={ activeTab === 'friends' } count={ userProfile.friendsCount } onClick={ () => onTabClick('friends') }>
-                        { LocalizeText('navigator.tab.3') }
-                    </NitroCard.TabItem>
-                    <NitroCard.TabItem isActive={ activeTab === 'rooms' } onClick={ () => onTabClick('rooms') }>
-                        { LocalizeText('navigator.tab.2') }
-                    </NitroCard.TabItem>
-                    <NitroCard.TabItem isActive={ activeTab === 'groups' } count={ userProfile.groups?.length } onClick={ () => onTabClick('groups') }>
-                        { LocalizeText('navigator.searchcode.title.groups') }
-                    </NitroCard.TabItem>
-                </NitroCard.Tabs>
-                <div className="flex-1 overflow-auto p-2">
-                    { activeTab === 'badge' && (
-                        <div className="nitro-card-panel flex flex-wrap content-start gap-2 p-2 h-full">
-                            { userBadges && (userBadges.length > 0)
-                                ? userBadges.map((badge, index) => (
-                                    <BadgeInfoView key={ badge + index } badgeCode={ badge } />
-                                ))
-                                : (
-                                    <Flex center fullWidth className="h-full">
-                                        <Text small variant="muted">{ LocalizeText('extendedprofile.badge.empty') }</Text>
-                                    </Flex>
-                                )
-                            }
-                        </div>
-                    ) }
-                    { activeTab === 'friends' && (
-                        <div className="flex flex-col gap-2 h-full">
-                            { userRelationships ? (
-                                <FriendsContainerView friendsCount={ userProfile.friendsCount } relationships={ userRelationships } />
-                            ) : (
-                                <Flex center className="h-full">
-                                    <Text small variant="muted">{ LocalizeText('generic.loading') }</Text>
-                                </Flex>
-                            ) }
-                        </div>
-                    ) }
-                    { activeTab === 'rooms' && (
-                        <div className="flex flex-col gap-1 h-full">
-                            { !userRooms && (
-                                <Flex center className="h-full">
-                                    <Text small variant="muted">{ LocalizeText('extendedprofile.rooms.loading') }</Text>
-                                </Flex>
-                            ) }
-                            { userRooms && userRooms.length === 0 && (
-                                <Flex center className="h-full">
-                                    <Text small variant="muted">{ LocalizeText('extendedprofile.rooms.empty') }</Text>
-                                </Flex>
-                            ) }
-                            { userRooms && userRooms.length > 0 && userRooms.map(room => (
-                                <Flex key={ room.roomId } alignItems="center" gap={ 2 } className="nitro-card-row px-2 py-1.5 cursor-pointer" onClick={ () => CreateRoomSession(room.roomId) }>
-                                    <div className="flex flex-col min-w-0 grow">
-                                        <Text bold small truncate>{ room.roomName }</Text>
-                                        { room.description && <Text small truncate variant="muted">{ room.description }</Text> }
-                                    </div>
-                                    <Text small variant="muted" className="shrink-0">{ room.userCount }/{ room.maxUserCount }</Text>
-                                </Flex>
-                            )) }
-                        </div>
-                    ) }
-                    { activeTab === 'groups' && (
-                        <div className="h-full">
-                            <GroupsContainerView fullWidth groups={ userProfile.groups } itsMe={ userProfile.id === GetSessionDataManager().userId } onLeaveGroup={ onLeaveGroup } />
-                        </div>
-                    ) }
+                <div className="nitro-extended-profile-window__body nitro-extended-profile-window__body--groups flex-1 overflow-hidden px-[10px] pb-[10px] pt-[6px]">
+                    <div className="nitro-extended-profile-window__panel h-full p-2">
+                        <GroupsContainerView fullWidth groups={ userProfile.groups } itsMe={ userProfile.id === GetSessionDataManager().userId } onLeaveGroup={ onLeaveGroup } />
+                    </div>
                 </div>
             </NitroCard.Content>
         </NitroCard>

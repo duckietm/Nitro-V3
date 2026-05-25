@@ -1,21 +1,20 @@
 import { CreateLinkEvent, GetSessionDataManager, GroupInformationParser, GroupRemoveMemberComposer } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
 import { CatalogPageName, GetGroupManager, GetGroupMembers, GroupMembershipType, GroupType, LocalizeText, SendMessageComposer, TryJoinGroup, TryVisitRoom } from '../../../api';
-import { Button, Column, Grid, GridProps, LayoutBadgeImageView, Text } from '../../../common';
+import { Button, LayoutBadgeImageView, Text } from '../../../common';
 import { useNotification } from '../../../hooks';
 
 const STATES: string[] = [ 'regular', 'exclusive', 'private' ];
 
-interface GroupInformationViewProps extends GridProps
+interface GroupInformationViewProps
 {
     groupInformation: GroupInformationParser;
-    onJoin?: () => void;
     onClose?: () => void;
 }
 
 export const GroupInformationView: FC<GroupInformationViewProps> = props =>
 {
-    const { groupInformation = null, onClose = null, overflow = 'hidden', ...rest } = props;
+    const { groupInformation = null, onClose = null } = props;
     const { showConfirm = null } = useNotification();
 
     const isRealOwner = (groupInformation && (groupInformation.ownerName === GetSessionDataManager().userName));
@@ -103,49 +102,47 @@ export const GroupInformationView: FC<GroupInformationViewProps> = props =>
     if(!groupInformation) return null;
 
     return (
-        <Grid overflow={ overflow } { ...rest }>
-            <Column center overflow="hidden" size={ 3 }>
-                <div className="flex items-center overflow-hidden group-badge">
-                    <LayoutBadgeImageView badgeCode={ groupInformation.badge } isGroup={ true } scale={ 2 } />
+        <div className="nitro-extended-profile-group-info">
+            <div className="nitro-extended-profile-group-info__badge-column">
+                <div className="nitro-extended-profile-group-info__badge-wrap group-badge">
+                    <LayoutBadgeImageView badgeCode={ groupInformation.badge } isGroup={ true } scale={ 2.1 } />
                 </div>
-                <Column alignItems="center" gap={ 1 }>
-                    <Text pointer small underline onClick={ () => handleAction('members') }>{ LocalizeText('group.membercount', [ 'totalMembers' ], [ groupInformation.membersCount.toString() ]) }</Text>
+                <div className="nitro-extended-profile-group-info__meta">
+                    <Text pointer small bold underline onClick={ () => handleAction('members') }>{ LocalizeText('group.membercount', [ 'totalMembers' ], [ groupInformation.membersCount.toString() ]) }</Text>
                     { (groupInformation.pendingRequestsCount > 0) &&
                         <Text pointer small underline onClick={ () => handleAction('members_pending') }>{ LocalizeText('group.pendingmembercount', [ 'amount' ], [ groupInformation.pendingRequestsCount.toString() ]) }</Text> }
-                    { groupInformation.isOwner &&
-                        <Text pointer small underline onClick={ () => handleAction('manage') }>{ LocalizeText('group.manage') }</Text> }
-                </Column>
-                { getRoleIcon() }
-            </Column>
-            <div className="flex flex-col justify-between overflow-auto col-span-9">
-                <div className="flex flex-col overflow-hidden">
-                    <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                            <Text bold>{ groupInformation.title }</Text>
-                            <div className="flex gap-1">
-                                <i className={ 'nitro-icon icon-group-type-' + groupInformation.type } title={ LocalizeText(`group.edit.settings.type.${ STATES[groupInformation.type] }.help`) } />
-                                { groupInformation.canMembersDecorate &&
-                                    <i className="nitro-icon icon-group-decorate" title={ LocalizeText('group.memberscandecorate') } /> }
-                            </div>
-                        </div>
-                        <Text small>{ LocalizeText('group.created', [ 'date', 'owner' ], [ groupInformation.createdAt, groupInformation.ownerName ]) }</Text>
-                    </div>
-                    <Text small className="group-description" overflow="auto">{ groupInformation.description }</Text>
                 </div>
-                <div className="flex flex-col gap-2">
-                    <div className="flex flex-col gap-1">
-                        <Text pointer small underline onClick={ () => handleAction('homeroom') }>{ LocalizeText('group.linktobase') }</Text>
-                        <Text pointer small underline onClick={ () => handleAction('furniture') }>{ LocalizeText('group.buyfurni') }</Text>
-                        <Text pointer small underline onClick={ () => handleAction('popular_groups') }>{ LocalizeText('group.showgroups') }</Text>
-                        { groupInformation.hasForum &&
-                            <Text pointer small underline onClick={ () => handleAction('forum') }>{ LocalizeText('group.showforum') }</Text> }
-                    </div>
-                    { (groupInformation.type !== GroupType.PRIVATE || groupInformation.type === GroupType.PRIVATE && groupInformation.membershipType === GroupMembershipType.MEMBER) &&
-                        <Button disabled={ (groupInformation.membershipType === GroupMembershipType.REQUEST_PENDING) || isRealOwner } onClick={ handleButtonClick }>
-                            { LocalizeText(getButtonText()) }
-                        </Button> }
+                <div className="nitro-extended-profile-group-info__role">
+                    { getRoleIcon() }
                 </div>
             </div>
-        </Grid>
+            <div className="nitro-extended-profile-group-info__content">
+                <div className="nitro-extended-profile-group-info__header-copy">
+                    <div className="flex items-center gap-2">
+                        <Text bold>{ groupInformation.title }</Text>
+                        <div className="flex gap-1">
+                            <i className={ 'nitro-icon icon-group-type-' + groupInformation.type } title={ LocalizeText(`group.edit.settings.type.${ STATES[groupInformation.type] }.help`) } />
+                            { groupInformation.canMembersDecorate &&
+                                <i className="nitro-icon icon-group-decorate" title={ LocalizeText('group.memberscandecorate') } /> }
+                        </div>
+                    </div>
+                    <Text small>{ LocalizeText('group.created', [ 'date', 'owner' ], [ groupInformation.createdAt, groupInformation.ownerName ]) }</Text>
+                </div>
+                <Text small className="nitro-extended-profile-group-info__description" overflow="auto">{ groupInformation.description }</Text>
+                <div className="nitro-extended-profile-group-info__links">
+                    <Text pointer small underline onClick={ () => handleAction('homeroom') }>{ LocalizeText('group.linktobase') }</Text>
+                    <Text pointer small underline onClick={ () => handleAction('furniture') }>{ LocalizeText('group.buyfurni') }</Text>
+                    <Text pointer small underline onClick={ () => handleAction('popular_groups') }>{ LocalizeText('group.showgroups') }</Text>
+                    { groupInformation.hasForum &&
+                        <Text pointer small underline onClick={ () => handleAction('forum') }>{ LocalizeText('group.showforum') }</Text> }
+                    { groupInformation.isOwner &&
+                        <Text pointer small underline onClick={ () => handleAction('manage') }>{ LocalizeText('group.manage') }</Text> }
+                </div>
+                { (groupInformation.type !== GroupType.PRIVATE || groupInformation.type === GroupType.PRIVATE && groupInformation.membershipType === GroupMembershipType.MEMBER) &&
+                    <Button className="nitro-extended-profile-group-info__button" disabled={ (groupInformation.membershipType === GroupMembershipType.REQUEST_PENDING) || isRealOwner } onClick={ handleButtonClick }>
+                        { LocalizeText(getButtonText()) }
+                    </Button> }
+            </div>
+        </div>
     );
 };

@@ -10,7 +10,9 @@ import { CatalogAdminPageEditView } from './views/admin/CatalogAdminPageEditView
 import { CatalogBuildersClubStatusView } from './views/catalog-header/CatalogBuildersClubStatusView';
 import { CatalogIconView } from './views/catalog-icon/CatalogIconView';
 import { CatalogGiftView } from './views/gift/CatalogGiftView';
+import { CatalogBreadcrumbView } from './views/navigation/CatalogBreadcrumbView';
 import { CatalogNavigationView } from './views/navigation/CatalogNavigationView';
+import { CatalogSearchView } from './views/page/common/CatalogSearchView';
 import { GetCatalogLayout } from './views/page/layout/GetCatalogLayout';
 import { MarketplacePostOfferView } from './views/page/layout/marketplace/MarketplacePostOfferView';
 
@@ -117,21 +119,20 @@ const CatalogClassicViewInner: FC<{}> = () =>
     return (
         <>
             { isVisible &&
-                <NitroCardView className="w-[630px] h-[400px]" style={ GetConfigurationValue('catalog.headers') ? { width: 710 } : {} } uniqueKey="catalog">
+                <NitroCardView classNames={ [ 'nitro-catalog-classic-window' ] } isResizable={ false } uniqueKey="catalog">
                     <NitroCardHeaderView className={ currentType === CatalogType.BUILDER ? 'builders-club-card-header' : '' } headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } style={ buildersClubHeaderStyle } />
-                    { /* Admin banner */ }
                     { adminMode &&
-                        <div className="flex items-center justify-between bg-warning text-dark text-[10px] font-bold px-3 py-0.5 uppercase tracking-wider" style={ { textShadow: '0 1px 0 rgba(255,255,255,0.3)' } }>
-                            <span>⚙ Admin Mode</span>
+                        <div className="nitro-catalog-classic-admin-banner flex items-center justify-between text-[10px] font-bold px-3 py-0.5 uppercase tracking-wider">
+                            <span>Admin Mode</span>
                             <button
                                 className={ `px-3 py-0.5 rounded text-[10px] font-bold uppercase cursor-pointer transition-all ${ hasPendingChanges ? 'bg-success text-white animate-pulse shadow-md' : 'bg-white/50 text-dark hover:bg-success hover:text-white' }` }
                                 disabled={ loading }
                                 onClick={ () => publishCatalog() }
                             >
-                                { loading ? '...' : '⬆ Publish' }
+                                { loading ? '...' : 'Publish' }
                             </button>
                         </div> }
-                    <NitroCardTabsView>
+                    <NitroCardTabsView classNames={ [ 'nitro-catalog-classic-tabs-shell' ] } justifyContent="start">
                         { rootNode && (rootNode.children.length > 0) && rootNode.children.map((child, index) =>
                         {
                             if(!adminMode && !child.isVisible) return null;
@@ -144,10 +145,10 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                     if(searchResult) setSearchResult(null);
 
                                     activateNode(child);
-                                } } >
-                                    <div className={ `flex items-center gap-${ GetConfigurationValue('catalog.tab.icons') ? 1 : 0 } ${ isHidden ? 'opacity-40' : '' }` }>
-                                        { GetConfigurationValue('catalog.tab.icons') && <CatalogIconView icon={ child.iconId } /> }
-                                        { child.localization }
+                                } }>
+                                    <div className={ `flex items-center gap-1 ${ isHidden ? 'opacity-40' : '' }` }>
+                                        <CatalogIconView icon={ child.iconId } />
+                                        <span className="truncate">{ child.localization }</span>
                                         { adminMode && isHidden && <FaEyeSlash className="text-[8px] text-danger ml-1" /> }
                                         { adminMode &&
                                             <div className="flex items-center gap-0.5 ml-1" onClick={ e => e.stopPropagation() }>
@@ -170,17 +171,15 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                 </NitroCardTabsItemView>
                             );
                         }) }
-                        { /* Admin toggle button in tabs bar */ }
                         { isMod &&
                             <NitroCardTabsItemView isActive={ adminMode } onClick={ () => setAdminMode(!adminMode) }>
                                 <FaCog className={ `text-[10px] ${ adminMode ? 'animate-spin' : '' }` } style={ adminMode ? { animationDuration: '3s' } : {} } />
                             </NitroCardTabsItemView> }
                     </NitroCardTabsView>
-                    <CatalogBuildersClubStatusView />
-                    <NitroCardContentView>
-                        { /* Admin: add new root category */ }
+                    <NitroCardContentView classNames={ [ 'nitro-catalog-classic-content-shell' ] }>
+                        <CatalogBuildersClubStatusView />
                         { adminMode && rootNode &&
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="flex items-center gap-2 mb-1 nitro-catalog-classic-admin-actions">
                                 <button
                                     className="flex items-center gap-1 text-[9px] text-success hover:text-green-800 cursor-pointer transition-colors"
                                     onClick={ () => catalogAdmin.createPage({ caption: 'New Category', captionSave: 'New Category', catalogMode: currentType, pageLayout: 'default_3x3', iconImage: 0, minRank: 1, visible: '1', enabled: '1', orderNum: 99, parentId: rootNode.pageId }) }
@@ -199,17 +198,30 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                     <span>{ LocalizeText('catalog.admin.root') }</span>
                                 </button>
                             </div> }
-                        <Grid>
+                        <div className={ `nitro-catalog-classic-stage ${ navigationHidden ? 'is-navigation-hidden' : '' }` }>
                             { !navigationHidden &&
-                                <Column overflow="auto" size={ 3 }>
-                                    { activeNodes && (activeNodes.length > 0) &&
-                                        <CatalogNavigationView node={ activeNodes[0] } /> }
-                                </Column> }
-                            <Column overflow="hidden" size={ !navigationHidden ? 9 : 12 }>
-                                { adminMode && <CatalogAdminPageEditView /> }
-                                { GetCatalogLayout(currentPage, () => setNavigationHidden(true)) }
-                            </Column>
-                        </Grid>
+                                <div className="nitro-catalog-classic-sidebar">
+                                    <div className="nitro-catalog-classic-search-shell">
+                                        <CatalogSearchView />
+                                    </div>
+                                    <div className="nitro-catalog-classic-navigation-shell">
+                                        { activeNodes && (activeNodes.length > 0) &&
+                                            <CatalogNavigationView node={ activeNodes[0] } /> }
+                                    </div>
+                                </div> }
+                            <div className="nitro-catalog-classic-layout-shell">
+                                <div className="nitro-catalog-classic-layout-header-shell">
+                                    <CatalogBreadcrumbView />
+                                    <div className="nitro-catalog-classic-layout-hero">
+                                        { !!currentPage?.localization?.getImage(0) && <img src={ currentPage.localization.getImage(0) } /> }
+                                    </div>
+                                </div>
+                                <div className="nitro-catalog-classic-layout-container">
+                                    { adminMode && <CatalogAdminPageEditView /> }
+                                    { GetCatalogLayout(currentPage, () => setNavigationHidden(true)) }
+                                </div>
+                            </div>
+                        </div>
                     </NitroCardContentView>
                 </NitroCardView> }
             <CatalogAdminOfferEditView />

@@ -23,24 +23,24 @@ export const RelationshipsContainerView: FC<RelationshipsContainerViewProps> = p
         const relationshipName = RelationshipStatusEnum.RELATIONSHIP_NAMES[type].toLocaleLowerCase();
 
         return (
-            <div className="flex w-full gap-1">
-                <Flex center className="h-[25px]">
+            <div className="nitro-extended-profile__relationship">
+                <Flex center className="nitro-extended-profile__relationship-icon">
                     <i className={ `nitro-friends-spritesheet icon-${ relationshipName }` } />
                 </Flex>
-                <div className="flex flex-col grow gap-0">
-                    <div className="nitro-card-row flex items-center justify-between px-2 py-1 h-[25px]">
-                        <p className="text-sm underline pointer" onClick={ event => (relationshipInfo && (relationshipInfo.randomFriendId >= 1) && GetUserProfile(relationshipInfo.randomFriendId)) }>
+                <div className="nitro-extended-profile__relationship-copy">
+                    <div className="nitro-extended-profile__relationship-box">
+                        <p className="nitro-extended-profile__relationship-name" onClick={ event => (relationshipInfo && (relationshipInfo.randomFriendId >= 1) && GetUserProfile(relationshipInfo.randomFriendId)) }>
                             { (!relationshipInfo || (relationshipInfo.friendCount === 0)) &&
                                 LocalizeText('extendedprofile.add.friends') }
                             { (relationshipInfo && (relationshipInfo.friendCount >= 1)) &&
                                 relationshipInfo.randomFriendName }
                         </p>
                         { (relationshipInfo && (relationshipInfo.friendCount >= 1)) &&
-                            <div className="flex items-center justify-center w-[50px] h-[50px] top-[20px] -right-[8px] relative">
-                                <LayoutAvatarImageView direction={ 4 } figure={ relationshipInfo.randomFriendFigure } headOnly={ true } />
+                            <div className="nitro-extended-profile__relationship-head">
+                                <LayoutAvatarImageView direction={ 4 } figure={ relationshipInfo.randomFriendFigure } headOnly={ true } classNames={ [ '!w-auto', '!h-auto', '!left-0' ] } />
                             </div> }
                     </div>
-                    <p className="italics text-sm mt-[2px] ml-[5px] text-[#939392]!">
+                    <p className="nitro-extended-profile__relationship-subcopy">
                         { (!relationshipInfo || (relationshipInfo.friendCount === 0)) &&
                             LocalizeText('extendedprofile.no.friends.in.this.category') }
                         { (relationshipInfo && (relationshipInfo.friendCount > 1)) &&

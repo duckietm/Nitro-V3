@@ -1,7 +1,7 @@
 import { GroupInformationComposer, GroupInformationEvent, GroupInformationParser, HabboGroupEntryData } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { SendMessageComposer, ToggleFavoriteGroup } from '../../api';
-import { AutoGrid, Column, Grid, GridProps, LayoutBadgeImageView, LayoutGridItem } from '../../common';
+import { LocalizeText, SendMessageComposer, ToggleFavoriteGroup } from '../../api';
+import { Column, GridProps, LayoutBadgeImageView, LayoutGridItem } from '../../common';
 import { useMessageEvent } from '../../hooks';
 import { GroupInformationView } from '../groups/views/GroupInformationView';
 
@@ -14,7 +14,7 @@ interface GroupsContainerViewProps extends GridProps
 
 export const GroupsContainerView: FC<GroupsContainerViewProps> = props =>
 {
-    const { itsMe = null, groups = null, onLeaveGroup = null, overflow = 'hidden', gap = 2, ...rest } = props;
+    const { itsMe = null, groups = null, onLeaveGroup = null } = props;
     const [ selectedGroupId, setSelectedGroupId ] = useState<number>(null);
     const [ groupInformation, setGroupInformation ] = useState<GroupInformationParser>(null);
 
@@ -55,7 +55,7 @@ export const GroupsContainerView: FC<GroupsContainerViewProps> = props =>
     if(!groups || !groups.length)
     {
         return (
-            <Column center fullHeight>
+            <Column center fullHeight className="nitro-extended-profile-groups">
                 <div className="flex justify-center gap-2">
                     <div className="no-group-spritesheet image-1" />
                     <div className="no-group-spritesheet image-2" />
@@ -66,25 +66,28 @@ export const GroupsContainerView: FC<GroupsContainerViewProps> = props =>
     }
 
     return (
-        <Grid gap={ 2 } overflow={ overflow } { ...rest }>
-            <Column alignItems="center" overflow="auto" size={ 2 }>
-                <AutoGrid className="w-[50px]" columnCount={ 1 } columnMinHeight={ 50 } overflow={ null }>
+        <div className="nitro-extended-profile-groups">
+            <div className="nitro-extended-profile-groups__sidebar">
+                <div className="nitro-extended-profile-groups__count">
+                    { LocalizeText('extendedprofile.groups.count', [ 'count' ], [ groups.length.toString() ]) }
+                </div>
+                <div className="nitro-extended-profile-groups__list">
                     { groups.map((group, index) =>
                     {
                         return (
-                            <LayoutGridItem key={ index } className="p-1" itemActive={ (selectedGroupId === group.groupId) } overflow="unset" onClick={ () => setSelectedGroupId(group.groupId) }>
+                            <LayoutGridItem key={ index } className="nitro-extended-profile-groups__item p-1" itemActive={ (selectedGroupId === group.groupId) } overflow="unset" onClick={ () => setSelectedGroupId(group.groupId) }>
                                 { itsMe &&
-                                    <i className={ 'absolute inset-e-0 top-0 z-20 nitro-icon icon-group-' + (group.favourite ? 'favorite' : 'not-favorite') } onClick={ () => ToggleFavoriteGroup(group) } /> }
+                                    <i className={ 'absolute inset-e-0 top-0 z-20 nitro-icon icon-group-' + (group.favourite ? 'favorite' : 'not-favorite') } onClick={ event => { event.stopPropagation(); ToggleFavoriteGroup(group); } } /> }
                                 <LayoutBadgeImageView badgeCode={ group.badgeCode } isGroup={ true } />
                             </LayoutGridItem>
                         );
                     }) }
-                </AutoGrid>
-            </Column>
-            <Column overflow="hidden" size={ 10 }>
+                </div>
+            </div>
+            <div className="nitro-extended-profile-groups__details">
                 { groupInformation &&
                     <GroupInformationView groupInformation={ groupInformation } onClose={ onLeaveGroup } /> }
-            </Column>
-        </Grid>
+            </div>
+        </div>
     );
 };
