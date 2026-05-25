@@ -121,10 +121,14 @@ export const UserContainerView: FC<UserContainerViewProps> = props =>
 
                 <div className="nitro-extended-profile__right">
                     <p
-                        className="nitro-extended-profile__meta"
-                        dangerouslySetInnerHTML={ {
-                            __html: LocalizeText('extendedprofile.friends.count', [ 'count' ], [ userProfile.friendsCount ])
-                        } }
+                        className="text-sm leading-none"
+                        dangerouslySetInnerHTML={{
+                            __html: LocalizeText(
+                                'extendedprofile.friends.count',
+                                ['count'],
+                                [userProfile.friendsCount.toString()]
+                            )
+                        }}
                     />
                     <p className="nitro-extended-profile__relationships-label">{ LocalizeText('extendedprofile.relstatus') }</p>
                     { userRelationships &&

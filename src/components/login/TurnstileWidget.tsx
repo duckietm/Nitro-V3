@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useEffectEvent, useRef, useState } from 'react';
 
 declare global
 {
@@ -12,41 +12,6 @@ declare global
         onTurnstileLoad?: () => void;
     }
 }
-
-const SCRIPT_ID = 'cf-turnstile-script';
-const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-
-let scriptPromise: Promise<void> | null = null;
-
-const loadTurnstileScript = (): Promise<void> =>
-{
-    if(typeof window === 'undefined') return Promise.resolve();
-    if(window.turnstile) return Promise.resolve();
-    if(scriptPromise) return scriptPromise;
-
-    scriptPromise = new Promise<void>((resolve, reject) =>
-    {
-        const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
-
-        if(existing)
-        {
-            existing.addEventListener('load', () => resolve());
-            existing.addEventListener('error', () => reject(new Error('Turnstile failed to load')));
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.id = SCRIPT_ID;
-        script.src = SCRIPT_SRC;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Turnstile failed to load'));
-        document.head.appendChild(script);
-    });
-
-    return scriptPromise;
-};
 
 export interface TurnstileWidgetProps
 {
@@ -64,51 +29,68 @@ export const TurnstileWidget: FC<TurnstileWidgetProps> = props =>
     const { siteKey, theme = 'light', size = 'normal', onToken, onExpire, onError, resetSignal = 0 } = props;
     const containerRef = useRef<HTMLDivElement | null>(null);
     const widgetIdRef = useRef<string | null>(null);
+    const [ scriptReady, setScriptReady ] = useState<boolean>(typeof window !== 'undefined' && !!window.turnstile);
+
+    const handleToken = useEffectEvent((token: string) => onToken(token));
+    const handleExpire = useEffectEvent(() => onExpire?.());
+    const handleError = useEffectEvent(() => onError?.());
 
     useEffect(() =>
     {
-        if(!siteKey || !containerRef.current) return;
+        if(scriptReady) return;
+        if(typeof window === 'undefined') return;
 
-        let cancelled = false;
-
-        loadTurnstileScript()
-            .then(() =>
+        const interval = window.setInterval(() =>
+        {
+            if(window.turnstile)
             {
-                if(cancelled || !window.turnstile || !containerRef.current) return;
+                setScriptReady(true);
+                window.clearInterval(interval);
+            }
+        }, 100);
 
-                widgetIdRef.current = window.turnstile.render(containerRef.current, {
-                    sitekey: siteKey,
-                    theme,
-                    size,
-                    callback: (token: string) => onToken(token),
-                    'expired-callback': () => onExpire?.(),
-                    'error-callback': () => onError?.()
-                });
-            })
-            .catch(err =>
-            {
-                console.error('[Turnstile] script load failed', err);
-                onError?.();
-            });
+        return () => window.clearInterval(interval);
+    }, [ scriptReady ]);
+
+    useEffect(() =>
+    {
+        if(!scriptReady || !siteKey || !containerRef.current || !window.turnstile) return;
+
+        widgetIdRef.current = window.turnstile.render(containerRef.current, {
+            sitekey: siteKey,
+            theme,
+            size,
+            callback: handleToken,
+            'expired-callback': handleExpire,
+            'error-callback': handleError
+        });
 
         return () =>
         {
-            cancelled = true;
-
             if(widgetIdRef.current && window.turnstile)
             {
-                try { window.turnstile.remove(widgetIdRef.current); } catch { }
+                try
+                {
+                    window.turnstile.remove(widgetIdRef.current);
+                }
+                catch
+                { }
                 widgetIdRef.current = null;
             }
         };
-    }, [ siteKey, theme, size ]);
+    }, [ scriptReady, siteKey, theme, size ]);
 
     useEffect(() =>
     {
         if(resetSignal <= 0) return;
         if(widgetIdRef.current && window.turnstile)
         {
-            try { window.turnstile.reset(widgetIdRef.current); } catch { }
+            try
+            {
+                window.turnstile.reset(widgetIdRef.current);
+            }
+            catch
+            { }
         }
     }, [ resetSignal ]);
 

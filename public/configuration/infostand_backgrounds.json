@@ -708,5 +708,33 @@
         {
             "backgroundId": 15
         }
+    ],
+    "borders.data": [
+        { "borderId": 0 },
+        { "borderId": 1 },
+        { "borderId": 2 },
+        { "borderId": 3 },
+        { "borderId": 4 },
+        { "borderId": 5 },
+        { "borderId": 6 },
+        { "borderId": 7 },
+        { "borderId": 8 },
+        { "borderId": 9 },
+        { "borderId": 10 },
+        { "borderId": 11 },
+        { "borderId": 12 },
+        { "borderId": 13 },
+        { "borderId": 14 },
+        { "borderId": 15 },
+        { "borderId": 16 },
+        { "borderId": 17 },
+        { "borderId": 18 },
+        { "borderId": 19 },
+        { "borderId": 20 },
+        { "borderId": 21 },
+        { "borderId": 22 },
+        { "borderId": 23 },
+        { "borderId": 24 },
+        { "borderId": 25 }
     ]
 }

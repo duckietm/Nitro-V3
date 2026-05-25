@@ -1,16 +1,21 @@
-import { FigureUpdateEvent, GetSessionDataManager, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent, UserSettingsEvent } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent, UserSettingsEvent } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
+import { useUserDataSnapshot } from './useSessionSnapshots';
 
+// State function — ONLY use-between-safe hooks here (useState,
+// useMessageEvent, plain actions). Do NOT call snapshot hooks here:
+// use-between's dispatcher does not implement useSyncExternalStore, so
+// any `useUserDataSnapshot()` / `useExternalSnapshot()` call inside
+// this body crashes the React tree on first paint with
+// "(intermediate value)() is undefined". See useSessionSnapshots.test.tsx
+// for the regression guard.
 const useSessionInfoState = () =>
 {
     const [ userInfo, setUserInfo ] = useState<UserInfoDataParser>(null);
-    const [ userFigure, setUserFigure ] = useState<string>(null);
     const [ chatStyleId, setChatStyleId ] = useState<number>(0);
-    const [ userRespectRemaining, setUserRespectRemaining ] = useState<number>(0);
-    const [ petRespectRemaining, setPetRespectRemaining ] = useState<number>(0);
 
     const updateChatStyleId = (styleId: number) =>
     {
@@ -19,45 +24,38 @@ const useSessionInfoState = () =>
         SendMessageComposer(new RoomUnitChatStyleComposer(styleId));
     };
 
-    const respectUser = (userId: number) =>
-    {
-        GetSessionDataManager().giveRespect(userId);
-
-        setUserRespectRemaining(GetSessionDataManager().respectsLeft);
-    };
-
-    const respectPet = (petId: number) =>
-    {
-        GetSessionDataManager().givePetRespect(petId);
-
-        setPetRespectRemaining(GetSessionDataManager().respectsPetLeft);
-    };
+    const respectUser = (userId: number) => GetSessionDataManager().giveRespect(userId);
+    const respectPet = (petId: number) => GetSessionDataManager().givePetRespect(petId);
 
     useMessageEvent<UserInfoEvent>(UserInfoEvent, event =>
     {
-        const parser = event.getParser();
-
-        setUserInfo(parser.userInfo);
-        setUserFigure(parser.userInfo.figure);
-        setUserRespectRemaining(parser.userInfo.respectsRemaining);
-        setPetRespectRemaining(parser.userInfo.respectsPetRemaining);
-    });
-
-    useMessageEvent<FigureUpdateEvent>(FigureUpdateEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setUserFigure(parser.figure);
+        setUserInfo(event.getParser().userInfo);
     });
 
     useMessageEvent<UserSettingsEvent>(UserSettingsEvent, event =>
     {
-        const parser = event.getParser();
-
-        setChatStyleId(parser.chatType);
+        setChatStyleId(event.getParser().chatType);
     });
 
-    return { userInfo, userFigure, chatStyleId, userRespectRemaining, petRespectRemaining, respectUser, respectPet, updateChatStyleId };
+    return { userInfo, chatStyleId, respectUser, respectPet, updateChatStyleId };
 };
 
-export const useSessionInfo = () => useBetween(useSessionInfoState);
+// Public surface — snapshot reads happen in the OUTER wrapper, in the
+// real React dispatcher's scope, so useSyncExternalStore installs
+// correctly. useBetween only proxies the non-snapshot slice, where its
+// dispatcher works fine. SessionDataManager already invalidates the
+// snapshot on UserInfoEvent / FigureUpdateEvent / giveRespect /
+// givePetRespect, so userFigure / respectsLeft / respectsPetLeft stay
+// in sync without local useState mirrors.
+export const useSessionInfo = () =>
+{
+    const shared = useBetween(useSessionInfoState);
+    const userData = useUserDataSnapshot();
+
+    return {
+        ...shared,
+        userFigure: userData.figure,
+        userRespectRemaining: userData.respectsLeft,
+        petRespectRemaining: userData.respectsPetLeft
+    };
+};

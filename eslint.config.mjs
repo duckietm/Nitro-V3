@@ -1,6 +1,7 @@
 import typescriptEslintPlugin from "@typescript-eslint/eslint-plugin";
 import typescriptEslintParser from "@typescript-eslint/parser";
 import reactPlugin from "eslint-plugin-react";
+import reactCompilerPlugin from "eslint-plugin-react-compiler";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,6 +15,7 @@ export default [
         plugins: {
             react: reactPlugin,
             "react-hooks": reactHooksPlugin,
+            "react-compiler": reactCompilerPlugin,
             "@typescript-eslint": typescriptEslintPlugin,
         },
         languageOptions: {
@@ -110,28 +112,24 @@ export default [
             '@typescript-eslint/no-unused-vars': [
                 'off'
             ],
-            '@typescript-eslint/ban-types': [
+            '@typescript-eslint/no-restricted-types': [
                 'error',
                 {
                     'types':
                     {
-                        'String': true,
-                        'Boolean': true,
-                        'Number': true,
-                        'Symbol': true,
-                        '{}': false,
-                        'Object': false,
-                        'object': false,
-                        'Function': false
-                    },
-                    'extendDefaults': true
+                        'String': { message: 'Use string instead', fixWith: 'string' },
+                        'Boolean': { message: 'Use boolean instead', fixWith: 'boolean' },
+                        'Number': { message: 'Use number instead', fixWith: 'number' },
+                        'Symbol': { message: 'Use symbol instead', fixWith: 'symbol' }
+                    }
                 }
             ],
-            'react/react-in-jsx-scope': 'off'
+            'react/react-in-jsx-scope': 'off',
+            'react-compiler/react-compiler': 'warn'
         },
         settings: {
             react: {
-                version: "18.3.1",
+                version: "19.2",
             },
         },
     },

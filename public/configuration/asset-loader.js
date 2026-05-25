@@ -57,7 +57,10 @@
   const renderShell = () => {
     const root = document.getElementById("root");
     if(!root || root.firstChild) return;
-    root.innerHTML = '<div style="position:fixed;inset:0;background:linear-gradient(180deg,#6eadc8 0%,#78b7cf 45%,#8ec4d7 100%);overflow:hidden;z-index:1"><div style="position:absolute;left:0;top:0;width:220px;height:220px;background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,0));clip-path:polygon(0 0,100% 0,0 100%)"></div><div style="position:absolute;right:0;bottom:0;width:32vw;max-width:420px;height:100%;background:linear-gradient(270deg,rgba(255,255,255,.16),rgba(255,255,255,0))"></div><div style="position:absolute;top:50%;right:8vw;transform:translateY(-50%);display:flex;flex-direction:column;gap:18px;width:260px"><div style="height:86px;background:#a2bfd1;border:2px solid #3f6a85;border-radius:8px;box-shadow:inset 0 2px rgba(255,255,255,.35),0 4px 6px rgba(0,0,0,.25)"></div><div style="height:190px;background:#a2bfd1;border:2px solid #3f6a85;border-radius:8px;box-shadow:inset 0 2px rgba(255,255,255,.35),0 4px 6px rgba(0,0,0,.25)"></div></div></div>';
+    // Match the React LoadingView background so the pre-React shell paints
+    // the same gradient — no light-blue login-skeleton flash before the
+    // loader takes over.
+    root.innerHTML = '<div style="position:fixed;inset:0;background:radial-gradient(#1d1a24,#003a6b);overflow:hidden;z-index:1"></div>';
   };
 
   const decodeAsset = (bytes) => {

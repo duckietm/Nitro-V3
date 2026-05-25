@@ -1,4 +1,4 @@
-import { createContext, Dispatch, FC, ProviderProps, SetStateAction, useContext } from 'react';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext } from 'react';
 
 export interface INitroCardAccordionContext
 {
@@ -13,9 +13,9 @@ const NitroCardAccordionContext = createContext<INitroCardAccordionContext>({
     closeAll: null
 });
 
-export const NitroCardAccordionContextProvider: FC<ProviderProps<INitroCardAccordionContext>> = props =>
+export const NitroCardAccordionContextProvider: FC<{ value: INitroCardAccordionContext; children?: ReactNode }> = props =>
 {
-    return <NitroCardAccordionContext.Provider { ...props } />;
+    return <NitroCardAccordionContext { ...props } />;
 };
 
 export const useNitroCardAccordionContext = () => useContext(NitroCardAccordionContext);

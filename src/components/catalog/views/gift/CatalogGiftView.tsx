@@ -4,7 +4,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { ColorUtils, LocalizeText, MessengerFriend, ProductTypeEnum, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, FormGroup, LayoutCurrencyIcon, LayoutFurniImageView, LayoutGiftTagView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { CatalogEvent, CatalogInitGiftEvent, CatalogPurchasedEvent } from '../../../../events';
-import { useCatalog, useFriends, useMessageEvent, useUiEvent } from '../../../../hooks';
+import { useFriends, useGiftConfiguration, useMessageEvent, useUiEvent } from '../../../../hooks';
 import { classNames } from '../../../../layout';
 
 let isBuyingGift = false;
@@ -25,9 +25,8 @@ export const CatalogGiftView: FC<{}> = props =>
     const [ maxBoxIndex, setMaxBoxIndex ] = useState<number>(0);
     const [ maxRibbonIndex, setMaxRibbonIndex ] = useState<number>(0);
     const [ receiverNotFound, setReceiverNotFound ] = useState<boolean>(false);
-    const { catalogOptions = null } = useCatalog();
     const { friends } = useFriends();
-    const { giftConfiguration = null } = catalogOptions;
+    const { data: giftConfiguration = null } = useGiftConfiguration();
     const [ boxTypes, setBoxTypes ] = useState<number[]>([]);
     const [ suggestions, setSuggestions ] = useState([]);
     const [ isAutocompleteVisible, setIsAutocompleteVisible ] = useState(true);
@@ -133,7 +132,10 @@ export const CatalogGiftView: FC<{}> = props =>
                 if(isBuyingGift) return;
 
                 isBuyingGift = true;
-                setTimeout(() => { isBuyingGift = false; }, 10000);
+                setTimeout(() =>
+                {
+                    isBuyingGift = false;
+                }, 10000);
 
                 SendMessageComposer(new PurchaseFromCatalogAsGiftComposer(pageId, offerId, extraData, receiverName, message, colourId, selectedBoxIndex, selectedRibbonIndex, showMyFace));
                 return;

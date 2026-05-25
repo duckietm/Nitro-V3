@@ -101,7 +101,7 @@ export const WiredActionFurniAreaView: FC<{}> = props =>
         : 0;
 
     return (
-        <WiredSelectorBaseView hasSpecialInput={ true } requiresFurni={ 0 } save={ save } hideDelay={ true } cardStyle={ { width: '385px'} }>
+        <WiredSelectorBaseView hasSpecialInput={ true } requiresFurni={ 0 } save={ save } hideDelay={ true } cardStyle={ { width: '385px' } }>
             <div className="flex flex-col gap-2">
                 <Text bold>{ LocalizeText('wiredfurni.params.area_selection') }</Text>
                 <Text small>{ LocalizeText('wiredfurni.params.area_selection.info') }</Text>

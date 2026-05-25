@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, forwardRef, HTMLAttributes, PropsWithChildren } from 'react';
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, Ref } from 'react';
 import { classNames } from './classNames';
 
 const classes = {
@@ -8,13 +8,14 @@ const classes = {
     }
 };
 
-export const NitroItemCountBadge = forwardRef<HTMLDivElement, PropsWithChildren<{
+type NitroItemCountBadgeProps = PropsWithChildren<{
     theme?: 'primary';
     count: number;
-}> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
-{
-    const { theme = 'primary', count = 0, className = null, children = null, ...rest } = props;
+    ref?: Ref<HTMLDivElement>;
+}> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
+export const NitroItemCountBadge = ({ ref, theme = 'primary', count = 0, className = null, children = null, ...rest }: NitroItemCountBadgeProps) =>
+{
     return (
         <div
             ref={ ref }
@@ -28,6 +29,4 @@ export const NitroItemCountBadge = forwardRef<HTMLDivElement, PropsWithChildren<
             { children }
         </div>
     );
-});
-
-NitroItemCountBadge.displayName = 'NitroItemCountBadge';
+};

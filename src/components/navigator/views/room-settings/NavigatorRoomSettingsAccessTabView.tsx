@@ -21,7 +21,7 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
         if(!isTryingPassword || ((password.length <= 0) || (confirmPassword.length <= 0) || (password !== confirmPassword))) return;
 
         handleChange('password', password);
-    }
+    };
 
     useEffect(() =>
     {

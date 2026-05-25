@@ -1,9 +1,9 @@
-import { GetMarketplaceConfigurationMessageComposer, MakeOfferMessageComposer, MarketplaceConfigurationEvent } from '@nitrots/nitro-renderer';
+import { MakeOfferMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FurnitureItem, LocalizeText, ProductTypeEnum, SendMessageComposer } from '../../../../../../api';
 import { Button, Column, Grid, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../../../common';
 import { CatalogPostMarketplaceOfferEvent } from '../../../../../../events';
-import { useCatalog, useMessageEvent, useNotification, useUiEvent } from '../../../../../../hooks';
+import { useMarketplaceConfiguration, useNotification, useUiEvent } from '../../../../../../hooks';
 import { NitroInput } from '../../../../../../layout';
 
 let isPostingMarketplaceOffer = false;
@@ -13,8 +13,7 @@ export const MarketplacePostOfferView: FC<{}> = props =>
     const [ item, setItem ] = useState<FurnitureItem>(null);
     const [ askingPrice, setAskingPrice ] = useState(0);
     const [ tempAskingPrice, setTempAskingPrice ] = useState('0');
-    const { catalogOptions = null, setCatalogOptions = null } = useCatalog();
-    const { marketplaceConfiguration = null } = catalogOptions;
+    const { data: marketplaceConfiguration = null } = useMarketplaceConfiguration({ enabled: !!item });
     const { showConfirm = null } = useNotification();
 
     const updateAskingPrice = (price: string) =>
@@ -28,28 +27,7 @@ export const MarketplacePostOfferView: FC<{}> = props =>
         setAskingPrice(parseInt(price));
     };
 
-    useMessageEvent<MarketplaceConfigurationEvent>(MarketplaceConfigurationEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setCatalogOptions(prevValue =>
-        {
-            const newValue = { ...prevValue };
-
-            newValue.marketplaceConfiguration = parser;
-
-            return newValue;
-        });
-    });
-
     useUiEvent<CatalogPostMarketplaceOfferEvent>(CatalogPostMarketplaceOfferEvent.POST_MARKETPLACE, event => setItem(event.item));
-
-    useEffect(() =>
-    {
-        if(!item || marketplaceConfiguration) return;
-
-        SendMessageComposer(new GetMarketplaceConfigurationMessageComposer());
-    }, [ item, marketplaceConfiguration ]);
 
     useEffect(() =>
     {

@@ -53,19 +53,24 @@ const useFurniturePresentWidgetState = () =>
     {
         // async fix image
         return {
-            imageReady: (id, texture, image) =>
+            imageReady: (result) =>
             {
                 (async () =>
                 {
-                    if(!image && texture)
+                    let image = result.image;
+
+                    if(!image && result.data)
                     {
-                        image = await TextureUtils.generateImage(texture);
+                        image = await TextureUtils.generateImage(result.data);
                     }
 
-                    setImageUrl(image.src);
+                    if(image) setImageUrl(image.src);
                 })();
             },
-            imageFailed: null
+            imageFailed: () =>
+            {
+                // no-op
+            }
         };
     }, []);
 

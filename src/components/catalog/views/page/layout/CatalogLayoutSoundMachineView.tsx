@@ -2,7 +2,7 @@ import { GetOfficialSongIdMessageComposer, GetSoundManager, MusicPriorities, Off
 import { FC, useEffect, useState } from 'react';
 import { GetConfigurationValue, LocalizeText, ProductTypeEnum, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Grid, LayoutImage, Text } from '../../../../../common';
-import { useCatalog, useMessageEvent } from '../../../../../hooks';
+import { useCatalogData, useMessageEvent } from '../../../../../hooks';
 import { CatalogHeaderView } from '../../catalog-header/CatalogHeaderView';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogItemGridWidgetView } from '../widgets/CatalogItemGridWidgetView';
@@ -18,7 +18,7 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
     const { page = null } = props;
     const [ songId, setSongId ] = useState(-1);
     const [ officialSongId, setOfficialSongId ] = useState('');
-    const { currentOffer = null, currentPage = null } = useCatalog();
+    const { currentOffer = null, currentPage = null } = useCatalogData();
 
     const previewSong = (previewSongId: number) => GetSoundManager().musicController?.playSong(previewSongId, MusicPriorities.PRIORITY_PURCHASE_PREVIEW, 15, 0, 0, 0);
 

@@ -2,7 +2,7 @@ import { AvatarFigurePartType, GetAvatarRenderManager, IAvatarFigureContainer } 
 
 export class MannequinUtilities
 {
-    public static MANNEQUIN_FIGURE = [ 'hd', 99999, [ 99998 ] ];
+    public static MANNEQUIN_FIGURE: [ string, number, number[] ] = [ 'hd', 99999, [ 99998 ] ];
     public static MANNEQUIN_CLOTHING_PART_TYPES = [
         AvatarFigurePartType.CHEST_ACCESSORY,
         AvatarFigurePartType.COAT_CHEST,
@@ -33,6 +33,6 @@ export class MannequinUtilities
             figureContainer.removePart(part);
         }
 
-        figureContainer.updatePart((this.MANNEQUIN_FIGURE[0] as string), (this.MANNEQUIN_FIGURE[1] as number), (this.MANNEQUIN_FIGURE[2] as number[]));
+        figureContainer.updatePart((this.MANNEQUIN_FIGURE[0]), (this.MANNEQUIN_FIGURE[1]), (this.MANNEQUIN_FIGURE[2]));
     };
 }

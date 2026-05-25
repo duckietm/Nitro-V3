@@ -1,9 +1,9 @@
 import { AvatarAction, GetRoomEngine, IQuestion, RoomSessionWordQuizEvent } from '@nitrots/nitro-renderer';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { VoteValue } from '../../../api';
 import { useNitroEvent } from '../../events';
 import { useRoom } from '../useRoom';
-import { usePollWidget } from './usePollWidget';
+import { usePollActions } from './usePollActions';
 
 const DEFAULT_DISPLAY_DELAY = 4000;
 const SIGN_FADE_DELAY = 3;
@@ -13,16 +13,31 @@ const useWordQuizWidgetState = () =>
     const [ pollId, setPollId ] = useState(-1);
     const [ question, setQuestion ] = useState<IQuestion>(null);
     const [ answerSent, setAnswerSent ] = useState(false);
-    const [ questionClearTimeout, setQuestionClearTimeout ] = useState<ReturnType<typeof setTimeout>>(null);
     const [ answerCounts, setAnswerCounts ] = useState<Map<string, number>>(new Map());
     const [ userAnswers, setUserAnswers ] = useState<Map<number, VoteValue>>(new Map());
-    const { answerPoll = null } = usePollWidget();
+    // The question-clear timeout is a side-channel handle, not display
+    // state — storing it in a ref avoids a re-render every time we
+    // (re)schedule it and lets the cleanup effect read the *latest*
+    // handle on unmount instead of the closed-over one.
+    const questionClearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const { answerPoll } = usePollActions();
     const { roomSession = null } = useRoom();
 
     const clearQuestion = () =>
     {
         setPollId(-1);
         setQuestion(null);
+    };
+
+    const scheduleQuestionClear = (delay: number) =>
+    {
+        if(questionClearTimeoutRef.current) clearTimeout(questionClearTimeoutRef.current);
+
+        questionClearTimeoutRef.current = setTimeout(() =>
+        {
+            questionClearTimeoutRef.current = null;
+            clearQuestion();
+        }, delay);
     };
 
     const vote = (vote: string) =>
@@ -44,16 +59,15 @@ const useWordQuizWidgetState = () =>
 
         setUserAnswers(prevValue =>
         {
-            if(!prevValue.has(userData.roomIndex))
-            {
-                const newValue = new Map(userAnswers);
+            // Bug fix: previously this read the closure-captured `userAnswers`
+            // (which was stale by one render) instead of `prevValue`, so
+            // rapid successive ANSWERED events for different users could
+            // overwrite each other. Use prevValue.
+            if(prevValue.has(userData.roomIndex)) return prevValue;
 
-                newValue.set(userData.roomIndex, { value: event.value, secondsLeft: SIGN_FADE_DELAY });
-
-                return newValue;
-            }
-
-            return prevValue;
+            const next = new Map(prevValue);
+            next.set(userData.roomIndex, { value: event.value, secondsLeft: SIGN_FADE_DELAY });
+            return next;
         });
 
         GetRoomEngine().updateRoomObjectUserGesture(roomSession.roomId, userData.roomIndex, AvatarAction.getGestureId((event.value === '0') ? AvatarAction.GESTURE_SAD : AvatarAction.GESTURE_SMILE));
@@ -66,12 +80,7 @@ const useWordQuizWidgetState = () =>
             setAnswerCounts(event.answerCounts);
             setAnswerSent(true);
 
-            setQuestionClearTimeout(prevValue =>
-            {
-                if(prevValue) clearTimeout(prevValue);
-
-                return setTimeout(() => clearQuestion(), DEFAULT_DISPLAY_DELAY);
-            });
+            scheduleQuestionClear(DEFAULT_DISPLAY_DELAY);
         }
 
         setUserAnswers(new Map());
@@ -85,24 +94,21 @@ const useWordQuizWidgetState = () =>
         setAnswerCounts(new Map());
         setUserAnswers(new Map());
 
-        setQuestionClearTimeout(prevValue =>
+        if(event.duration > 0)
         {
-            if(prevValue) clearTimeout(prevValue);
-
-            if(event.duration > 0)
-            {
-                const delay = event.duration < 1000 ? DEFAULT_DISPLAY_DELAY : event.duration;
-
-                return setTimeout(() => clearQuestion(), delay);
-            }
-
-            return null;
-        });
+            const delay = event.duration < 1000 ? DEFAULT_DISPLAY_DELAY : event.duration;
+            scheduleQuestionClear(delay);
+        }
+        else if(questionClearTimeoutRef.current)
+        {
+            clearTimeout(questionClearTimeoutRef.current);
+            questionClearTimeoutRef.current = null;
+        }
     });
 
     useEffect(() =>
     {
-        const checkSignFade = () =>
+        const tick = () =>
         {
             setUserAnswers(prevValue =>
             {
@@ -117,30 +123,24 @@ const useWordQuizWidgetState = () =>
 
                 if(keysToRemove.length === 0) return prevValue;
 
-                const copy = new Map(prevValue);
-
-                keysToRemove.forEach(key => copy.delete(key));
-
-                return copy;
+                const next = new Map(prevValue);
+                keysToRemove.forEach(key => next.delete(key));
+                return next;
             });
         };
 
-        const interval = setInterval(() => checkSignFade(), 1000);
+        const interval = setInterval(tick, 1000);
 
         return () => clearInterval(interval);
     }, []);
 
-    useEffect(() =>
+    useEffect(() => () =>
     {
-        return () =>
+        if(questionClearTimeoutRef.current)
         {
-            setQuestionClearTimeout(prevValue =>
-            {
-                if(prevValue) clearTimeout(prevValue);
-
-                return null;
-            });
-        };
+            clearTimeout(questionClearTimeoutRef.current);
+            questionClearTimeoutRef.current = null;
+        }
     }, []);
 
     return { question, answerSent, answerCounts, userAnswers, vote };

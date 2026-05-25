@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { FC, JSX, PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 export const ReactPopover: FC<PropsWithChildren<{
     content: JSX.Element;

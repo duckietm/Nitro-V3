@@ -5,21 +5,26 @@ import { GetClubMemberLevel, GetConfigurationValue, IRoomModel, LocalizeText, Se
 import { Button, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, Text } from '../../../common';
 import { useNavigator } from '../../../hooks';
 import { NitroInput } from '../../../layout';
+import { useRoomCreatorStore } from './navigatorRoomCreatorStore';
 
-let isCreatingRoom = false;
-let createRoomTimeout: ReturnType<typeof setTimeout> = null;
+const MAX_VISITORS_LIST: number[] = Array.from({ length: 10 }, (_, i) => (i + 1) * 10);
 
-export const NavigatorRoomCreatorView: FC<{}> = props =>
+export const NavigatorRoomCreatorView: FC = () =>
 {
-    const [ maxVisitorsList, setMaxVisitorsList ] = useState<number[]>(null);
     const [ name, setName ] = useState<string>(null);
     const [ description, setDescription ] = useState<string>(null);
     const [ category, setCategory ] = useState<number>(null);
-    const [ visitorsCount, setVisitorsCount ] = useState<number>(null);
+    const [ visitorsCount, setVisitorsCount ] = useState<number>(MAX_VISITORS_LIST[0]);
     const [ tradesSetting, setTradesSetting ] = useState<number>(0);
-    const [ roomModels, setRoomModels ] = useState<IRoomModel[]>([]);
-    const [ selectedModelName, setSelectedModelName ] = useState<string>('');
-    const [ isCreating, setIsCreating ] = useState<boolean>(isCreatingRoom);
+    const [ roomModels ] = useState<IRoomModel[]>(() => GetConfigurationValue<IRoomModel[]>('navigator.room.models') ?? []);
+    const [ selectedModelName, setSelectedModelName ] = useState<string>(() =>
+    {
+        const models = GetConfigurationValue<IRoomModel[]>('navigator.room.models');
+
+        return (models && models.length) ? models[0].name : '';
+    });
+    const isCreating = useRoomCreatorStore(s => s.isCreating);
+    const beginCreate = useRoomCreatorStore(s => s.beginCreate);
     const { categories = null } = useNavigator();
 
     const hcDisabled = GetConfigurationValue<boolean>('hc.disabled', false);
@@ -35,49 +40,17 @@ export const NavigatorRoomCreatorView: FC<{}> = props =>
 
     const createRoom = () =>
     {
-        if(isCreatingRoom) return;
+        if(useRoomCreatorStore.getState().isCreating) return;
 
-        isCreatingRoom = true;
-        setIsCreating(true);
+        beginCreate();
 
         SendMessageComposer(new CreateFlatMessageComposer(name, description, 'model_' + selectedModelName, Number(category), Number(visitorsCount), tradesSetting));
-
-        if(createRoomTimeout) clearTimeout(createRoomTimeout);
-        createRoomTimeout = setTimeout(() =>
-        {
-            isCreatingRoom = false;
-            setIsCreating(false);
-        }, 5000);
     };
-
-    useEffect(() =>
-    {
-        if(!maxVisitorsList)
-        {
-            const list = [];
-
-            for(let i = 10; i <= 100; i = i + 10) list.push(i);
-
-            setMaxVisitorsList(list);
-            setVisitorsCount(list[0]);
-        }
-    }, [ maxVisitorsList ]);
 
     useEffect(() =>
     {
         if(categories && categories.length) setCategory(categories[0].id);
     }, [ categories ]);
-
-    useEffect(() =>
-    {
-        const models = GetConfigurationValue<IRoomModel[]>('navigator.room.models');
-
-        if(models && models.length)
-        {
-            setRoomModels(models);
-            setSelectedModelName(models[0].name);
-        }
-    }, []);
 
     return (
         <div className="flex flex-col overflow-auto">
@@ -103,7 +76,7 @@ export const NavigatorRoomCreatorView: FC<{}> = props =>
                     <div className="flex flex-col gap-1">
                         <Text>{ LocalizeText('navigator.maxvisitors') }</Text>
                         <select className="form-select form-select-sm" onChange={ event => setVisitorsCount(Number(event.target.value)) }>
-                            { maxVisitorsList && maxVisitorsList.map(value =>
+                            { MAX_VISITORS_LIST.map(value =>
                             {
                                 return <option key={ value } value={ value }>{ value }</option>;
                             }) }

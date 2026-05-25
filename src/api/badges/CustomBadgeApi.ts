@@ -31,8 +31,14 @@ export interface CustomBadgeError
 
 const interpolate = (value: string): string =>
 {
-    try { return GetConfiguration().interpolate(value); }
-    catch { return value; }
+    try
+    {
+        return GetConfiguration().interpolate(value);
+    }
+    catch
+    {
+        return value;
+    }
 };
 
 const getConfigUrl = (key: string, fallback: string): string =>
@@ -61,8 +67,14 @@ const parseJson = async <T>(response: Response): Promise<T> =>
 {
     const text = await response.text();
     if(!text) return {} as T;
-    try { return JSON.parse(text) as T; }
-    catch { throw new Error('Invalid response from server.'); }
+    try
+    {
+        return JSON.parse(text) as T;
+    }
+    catch
+    {
+        throw new Error('Invalid response from server.');
+    }
 };
 
 const throwOnError = async (response: Response): Promise<void> =>
@@ -129,8 +141,14 @@ const injectTextsIntoLocalization = (texts: Record<string, string> | null | unde
 {
     if(!texts) return;
     let manager: ReturnType<typeof GetLocalizationManager> | null = null;
-    try { manager = GetLocalizationManager(); }
-    catch { return; }
+    try
+    {
+        manager = GetLocalizationManager();
+    }
+    catch
+    {
+        return;
+    }
     if(!manager || typeof manager.setValue !== 'function') return;
     for(const key of Object.keys(texts))
     {
@@ -152,7 +170,8 @@ export const ensureCustomBadgeTexts = (): Promise<void> =>
             const payload = await parseJson<{ texts: Record<string, string> }>(response);
             injectTextsIntoLocalization(payload.texts);
         }
-        catch {}
+        catch
+        {}
     })();
     return customBadgeTextsLoadPromise;
 };

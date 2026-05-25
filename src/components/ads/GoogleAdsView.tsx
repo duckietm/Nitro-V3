@@ -9,10 +9,10 @@ interface AdsenseConfig {
     fullWidthResponsive?: boolean;
 }
 
-const ADSENSE_SCRIPT_ID = 'google-adsense-script';
-
-const parsePublisherIdFromAdsTxt = (text: string): string | null => {
-    for (const rawLine of text.split(/\r?\n/)) {
+const parsePublisherIdFromAdsTxt = (text: string): string | null =>
+{
+    for (const rawLine of text.split(/\r?\n/))
+    {
         const line = rawLine.split('#')[0].trim();
         if (!line) continue;
         const parts = line.split(',').map(part => part.trim());
@@ -24,19 +24,8 @@ const parsePublisherIdFromAdsTxt = (text: string): string | null => {
     return null;
 };
 
-const ensureAdsenseScript = (publisherId: string): void => {
-    if (typeof document === 'undefined') return;
-    if (document.getElementById(ADSENSE_SCRIPT_ID)) return;
-
-    const script = document.createElement('script');
-    script.id = ADSENSE_SCRIPT_ID;
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${ publisherId }`;
-    document.head.appendChild(script);
-};
-
-export const GoogleAdsView: FC<{}> = () => {
+export const GoogleAdsView: FC<{}> = () =>
+{
     const adsEnabled = GetConfigurationValue<boolean>('show.google.ads', false);
     const [ isOpen, setIsOpen ] = useState(false);
     const [ publisherId, setPublisherId ] = useState<string | null>(null);
@@ -46,7 +35,8 @@ export const GoogleAdsView: FC<{}> = () => {
     const pushedRef = useRef(false);
     const autoOpenedRef = useRef(false);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!adsEnabled) return;
         const handler = () => setIsOpen(prev => !prev);
         window.addEventListener('ads:toggle', handler);
@@ -56,7 +46,8 @@ export const GoogleAdsView: FC<{}> = () => {
     // Auto-open once on initial mount (the login / landing stage).
     // Subsequent toggles are driven by the "ads:toggle" window event
     // (e.g. the Show Ad button in NitroSystemAlertView).
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!adsEnabled) return;
         if (autoOpenedRef.current) return;
         autoOpenedRef.current = true;
@@ -64,11 +55,14 @@ export const GoogleAdsView: FC<{}> = () => {
         return () => clearTimeout(t);
     }, [ adsEnabled ]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         let cancelled = false;
 
-        (async () => {
-            try {
+        (async () =>
+        {
+            try
+            {
                 const [ adsTxtRes, configRes ] = await Promise.all([
                     fetch('/ads.txt', { cache: 'no-cache' }),
                     fetch(configFileUrl('adsense.json', true), { cache: 'no-cache' })
@@ -87,44 +81,54 @@ export const GoogleAdsView: FC<{}> = () => {
                 if (cancelled) return;
                 setPublisherId(pubId);
                 setConfig(cfg);
-            } catch (err) {
+            }
+            catch (err)
+            {
                 if (!cancelled) setLoadError((err as Error).message);
             }
         })();
 
-        return () => { cancelled = true; };
+        return () =>
+        {
+            cancelled = true;
+        };
     }, []);
 
-    useEffect(() => {
-        if (!isOpen || !publisherId || !config) return;
-        ensureAdsenseScript(publisherId);
-    }, [ isOpen, publisherId, config ]);
-
-    useEffect(() => {
-        if (!isOpen) {
+    useEffect(() =>
+    {
+        if (!isOpen)
+        {
             pushedRef.current = false;
             return;
         }
         if (!insRef.current || pushedRef.current) return;
         if (!publisherId || !config?.slot) return;
 
-        const tryPush = () => {
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tryPush = () =>
+        {
+            try
+            {
+
                 const w = window as any;
                 w.adsbygoogle = w.adsbygoogle || [];
                 w.adsbygoogle.push({});
                 pushedRef.current = true;
-            } catch {
+            }
+            catch
+            {
                 // AdSense script may not be ready yet; retry once
-                setTimeout(() => {
-                    try {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                setTimeout(() =>
+                {
+                    try
+                    {
+
                         const w = window as any;
                         w.adsbygoogle = w.adsbygoogle || [];
                         w.adsbygoogle.push({});
                         pushedRef.current = true;
-                    } catch { /* give up */ }
+                    }
+                    catch
+                    { /* give up */ }
                 }, 500);
             }
         };
@@ -138,6 +142,11 @@ export const GoogleAdsView: FC<{}> = () => {
 
     return (
         <NitroCardView className="nitro-google-ads" uniqueKey="google-ads" theme="primary">
+            { publisherId &&
+                <script
+                    async
+                    crossOrigin="anonymous"
+                    src={ `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${ publisherId }` } /> }
             <NitroCardHeaderView headerText="Sponsored" onCloseClick={ () => setIsOpen(false) } />
             <NitroCardContentView>
                 <div className="flex items-center justify-center w-[300px] h-[250px] bg-white">

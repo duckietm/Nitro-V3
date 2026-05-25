@@ -146,7 +146,8 @@ export const useFurniEditor = () =>
                 furniData = JSON.parse(parser.furniDataJson);
             }
         }
-        catch(e) {}
+        catch(e)
+        {}
 
         setFurniDataEntry(furniData);
     });

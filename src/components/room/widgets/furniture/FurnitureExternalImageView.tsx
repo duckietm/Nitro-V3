@@ -1,19 +1,23 @@
 import { FC } from 'react';
+import { GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { GetConfigurationValue, LocalizeText, ReportType } from '../../../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFurnitureExternalImageWidget, useHelp } from '../../../../hooks';
 import { CameraWidgetShowPhotoView } from '../../../camera/views/CameraWidgetShowPhotoView';
 
-export const FurnitureExternalImageView: FC<{}> = props => {
+export const FurnitureExternalImageView: FC<{}> = props =>
+{
     const { objectId = -1, currentPhotoIndex = -1, currentPhotos = null, onClose = null } = useFurnitureExternalImageWidget();
     const { report = null } = useHelp();
 
     if (objectId === -1 || currentPhotoIndex === -1) return null;
 
-    const handleOpenFullPhoto = () => {
+    const handleOpenFullPhoto = () =>
+    {
         const photoUrl = currentPhotos[currentPhotoIndex].w.replace('_small.png', '.png');
-        if (photoUrl) {
-            console.log("Opened photo URL:", photoUrl);
+        if (photoUrl)
+        {
+            console.log('Opened photo URL:', photoUrl);
             window.open(photoUrl, '_blank');
         }
     };

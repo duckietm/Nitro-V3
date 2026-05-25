@@ -12,7 +12,8 @@ const t = (key: string, fallback: string, params?: string[], replacements?: stri
         const value = LocalizeText(key, params ?? null, replacements ?? null);
         if(value && value !== key) return value;
     }
-    catch {}
+    catch
+    {}
 
     if(!params || !replacements) return fallback;
     let out = fallback;
@@ -38,8 +39,8 @@ const PALETTE: number[] = [
 const currencyName = (type: number): string =>
 {
     if(type === -1) return 'credits';
-    if(type === 0)  return 'duckets';
-    if(type === 5)  return 'diamonds';
+    if(type === 0) return 'duckets';
+    if(type === 5) return 'diamonds';
     return `currency #${ type }`;
 };
 
@@ -58,14 +59,14 @@ const floodFill = (grid: Uint32Array, w: number, h: number, startX: number, star
     const stack: number[] = [ startIdx ];
     while(stack.length)
     {
-        const idx = stack.pop() as number;
+        const idx = stack.pop();
         if(next[idx] !== target) continue;
         next[idx] = replacement;
         const x = idx % w;
         const y = (idx - x) / w;
-        if(x > 0)     stack.push(idx - 1);
+        if(x > 0) stack.push(idx - 1);
         if(x < w - 1) stack.push(idx + 1);
-        if(y > 0)     stack.push(idx - w);
+        if(y > 0) stack.push(idx - w);
         if(y < h - 1) stack.push(idx + w);
     }
     return next;
@@ -119,7 +120,7 @@ const gridToPngBase64 = async (grid: Uint32Array): Promise<{ b64: string; bytes:
     {
         const argb = grid[i];
         const o = i * 4;
-        image.data[o]     = (argb >>> 16) & 0xff;
+        image.data[o] = (argb >>> 16) & 0xff;
         image.data[o + 1] = (argb >>> 8) & 0xff;
         image.data[o + 2] = argb & 0xff;
         image.data[o + 3] = (argb >>> 24) & 0xff;
@@ -157,12 +158,18 @@ const loadGridFromUrl = (url: string): Promise<Uint32Array> =>
                 {
                     const o = i * 4;
                     const a = data[o + 3];
-                    if(a === 0) { grid[i] = 0; continue; }
+                    if(a === 0)
+                    {
+                        grid[i] = 0; continue;
+                    }
                     grid[i] = ((a & 0xff) << 24) | ((data[o] & 0xff) << 16) | ((data[o + 1] & 0xff) << 8) | (data[o + 2] & 0xff);
                 }
                 resolve(grid);
             }
-            catch(err) { reject(err); }
+            catch(err)
+            {
+                reject(err);
+            }
         };
         image.onerror = () => reject(new Error('Could not load badge image (CORS?).'));
         image.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
@@ -216,8 +223,8 @@ export const BadgeCreatorView: FC<{}> = () =>
                 if(parts.length < 2) return;
                 switch(parts[1])
                 {
-                    case 'show':   setIsVisible(true); return;
-                    case 'hide':   setIsVisible(false); return;
+                    case 'show': setIsVisible(true); return;
+                    case 'hide': setIsVisible(false); return;
                     case 'toggle': setIsVisible(v => !v); return;
                     case 'edit':
                         if(!parts[2]) return;
@@ -232,7 +239,13 @@ export const BadgeCreatorView: FC<{}> = () =>
         return () => RemoveLinkEventTracker(tracker);
     }, []);
 
-    useEffect(() => { if(isVisible) { refresh(); ensureCustomBadgeTexts(); } }, [ isVisible, refresh ]);
+    useEffect(() =>
+    {
+        if(isVisible)
+        {
+            refresh(); ensureCustomBadgeTexts();
+        }
+    }, [ isVisible, refresh ]);
 
     const resetEditor = useCallback(() =>
     {
@@ -316,9 +329,9 @@ export const BadgeCreatorView: FC<{}> = () =>
             {
                 const v = grid[i];
                 const o = i * 4;
-                buffer[o]     = (v >>> 16) & 0xff;
-                buffer[o + 1] = (v >>> 8)  & 0xff;
-                buffer[o + 2] = v          & 0xff;
+                buffer[o] = (v >>> 16) & 0xff;
+                buffer[o + 1] = (v >>> 8) & 0xff;
+                buffer[o + 2] = v & 0xff;
                 buffer[o + 3] = (v >>> 24) & 0xff;
             }
             ctx.putImageData(image, 0, 0);
@@ -365,7 +378,10 @@ export const BadgeCreatorView: FC<{}> = () =>
 
     useEffect(() =>
     {
-        const stopDrag = () => { isDraggingRef.current = false; };
+        const stopDrag = () =>
+        {
+            isDraggingRef.current = false;
+        };
         window.addEventListener('mouseup', stopDrag);
         return () => window.removeEventListener('mouseup', stopDrag);
     }, []);
@@ -385,7 +401,10 @@ export const BadgeCreatorView: FC<{}> = () =>
     const handleSave = useCallback(async () =>
     {
         if(submitting) return;
-        if(isEmpty) { setError(t('badgecreator.error.empty', 'Draw something first.')); return; }
+        if(isEmpty)
+        {
+            setError(t('badgecreator.error.empty', 'Draw something first.')); return;
+        }
         if(!editingBadgeId && !canCreateMore)
         {
             setError(t('badgecreator.error.limit', 'You already have %max% custom badges.', [ 'max' ], [ String(maxBadges) ]));
@@ -506,7 +525,10 @@ export const BadgeCreatorView: FC<{}> = () =>
                                         <button
                                             key={ idx }
                                             type="button"
-                                            onClick={ () => { setSelectedColor(color); setTool('paint'); } }
+                                            onClick={ () =>
+                                            {
+                                                setSelectedColor(color); setTool('paint');
+                                            } }
                                             title={ isTransparent ? 'Transparent' : argbToCss(color) }
                                             style={ {
                                                 width: 22,

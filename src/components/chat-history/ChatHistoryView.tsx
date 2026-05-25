@@ -5,54 +5,64 @@ import { Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } 
 import { useChatHistory, useOnClickChat } from '../../hooks';
 import { NitroInput } from '../../layout';
 
-export const ChatHistoryView: FC<{}> = props => {
+export const ChatHistoryView: FC<{}> = props =>
+{
     const [isVisible, setIsVisible] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
-    const {chatHistory = []} = useChatHistory();
+    const { chatHistory = [] } = useChatHistory();
     const { onClickChat } = useOnClickChat();
     const elementRef = useRef<HTMLDivElement>(null);
     const isFirstRender = useRef(true);
     const prevChatLength = useRef<number>(0);
 
-    const filteredChatHistory = useMemo(() => {
+    const filteredChatHistory = useMemo(() =>
+    {
         let result = chatHistory;
-        
-        if (searchText.length > 0) {
+
+        if (searchText.length > 0)
+        {
             const text = searchText.toLowerCase();
-            result = chatHistory.filter(entry => 
-                (entry.message && entry.message.toLowerCase().includes(text)) || 
+            result = chatHistory.filter(entry =>
+                (entry.message && entry.message.toLowerCase().includes(text)) ||
                 (entry.name && entry.name.toLowerCase().includes(text))
             );
         }
-        
+
         return [...result];
     }, [chatHistory, searchText]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!elementRef.current || !isVisible) return;
 
         const element = elementRef.current;
         const maxScrollTop = Math.max(0, element.scrollHeight - element.clientHeight);
         const isAtBottom = maxScrollTop === 0 || Math.abs(element.scrollTop - maxScrollTop) <= 50;
 
-        if (isFirstRender.current) {
+        if (isFirstRender.current)
+        {
             element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
             isFirstRender.current = false;
-        } else if (filteredChatHistory.length > prevChatLength.current) {
+        }
+        else if (filteredChatHistory.length > prevChatLength.current)
+        {
             element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
         }
 
         prevChatLength.current = filteredChatHistory.length;
     }, [filteredChatHistory, isVisible]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) => {
+            linkReceived: (url: string) =>
+            {
                 const parts = url.split('/');
 
                 if (parts.length < 2) return;
 
-                switch (parts[1]) {
+                switch (parts[1])
+                {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -84,18 +94,18 @@ export const ChatHistoryView: FC<{}> = props => {
                         <Flex key={index} alignItems="center" className="p-1" gap={2}>
                             <Text variant="gray">{row.timestamp}</Text>
                             {row.type === ChatEntryType.TYPE_CHAT && (
-                                <div className="bubble-container" style={{position: 'relative', display: 'inline-flex', alignItems: 'center'}}>
-                                    <div 
-                                        className={`chat-bubble bubble-${row.style} type-${row.chatType}`} 
+                                <div className="bubble-container" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                                    <div
+                                        className={`chat-bubble bubble-${row.style} type-${row.chatType}`}
                                         style={{ maxWidth: '100%', backgroundColor: row.style === 0 ? row.color : 'transparent', position: 'relative', zIndex: 1 }}>
                                         <div className="user-container">
                                             {row.imageUrl && row.imageUrl.length > 0 && (
-                                                <div className="user-image" style={{backgroundImage: `url(${row.imageUrl})`}} />
+                                                <div className="user-image" style={{ backgroundImage: `url(${row.imageUrl})` }} />
                                             )}
                                         </div>
                                         <div className="chat-content">
-                                            <b className="mr-1 username" dangerouslySetInnerHTML={{__html: `${row.name}: `}} />
-                                            <span className="message" dangerouslySetInnerHTML={{__html: `${row.message}`}} onClick={ onClickChat } />
+                                            <b className="mr-1 username" dangerouslySetInnerHTML={{ __html: `${row.name}: ` }} />
+                                            <span className="message" dangerouslySetInnerHTML={{ __html: `${row.message}` }} onClick={ onClickChat } />
                                         </div>
                                     </div>
                                 </div>

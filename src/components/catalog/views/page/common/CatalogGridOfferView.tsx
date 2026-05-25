@@ -3,7 +3,7 @@ import { FC, MouseEvent, useMemo, useState } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { CatalogType, IPurchasableOffer, Offer, ProductTypeEnum } from '../../../../../api';
 import { LayoutAvatarImageView, LayoutGridItem, LayoutGridItemProps } from '../../../../../common';
-import { useCatalog, useCatalogFavorites, useInventoryFurni } from '../../../../../hooks';
+import { useCatalogActions, useCatalogFavorites, useCatalogUiState, useInventoryFurni } from '../../../../../hooks';
 
 interface CatalogGridOfferViewProps extends LayoutGridItemProps
 {
@@ -15,7 +15,8 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
 {
     const { offer = null, selectOffer = null, itemActive = false, ...rest } = props;
     const [ isMouseDown, setMouseDown ] = useState(false);
-    const { requestOfferToMover = null, currentType = CatalogType.NORMAL } = useCatalog();
+    const { requestOfferToMover = null } = useCatalogActions();
+    const { currentType = CatalogType.NORMAL } = useCatalogUiState();
     const { isVisible = false } = useInventoryFurni();
     const { isFavoriteOffer, toggleFavoriteOffer } = useCatalogFavorites();
     const isFav = offer ? isFavoriteOffer(offer.offerId) : false;
@@ -78,7 +79,10 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
                 <LayoutAvatarImageView direction={ 3 } figure={ offer.product.extraParam } headOnly={ true } /> }
             <div
                 className={ `absolute top-0 right-0 z-10 p-0.5 cursor-pointer transition-opacity duration-100 ${ isFav ? 'opacity-100' : 'opacity-0 group-hover/tile:opacity-100' }` }
-                onClick={ e => { e.stopPropagation(); e.preventDefault(); toggleFavoriteOffer(offer.offerId, offer.localizationName, iconUrl); } }
+                onClick={ e =>
+                {
+                    e.stopPropagation(); e.preventDefault(); toggleFavoriteOffer(offer.offerId, offer.localizationName, iconUrl);
+                } }
                 onMouseDown={ e => e.stopPropagation() }
             >
                 <FaHeart className={ `text-[10px] drop-shadow transition-colors duration-100 ${ isFav ? 'text-danger' : 'text-muted hover:text-danger' }` } />

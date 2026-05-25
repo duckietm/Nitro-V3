@@ -1,10 +1,10 @@
 import { FC } from 'react';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData } from '../../../../../hooks';
 import { CatalogPriceDisplayWidgetView } from './CatalogPriceDisplayWidgetView';
 
 export const CatalogSimplePriceWidgetView: FC<{}> = props =>
 {
-    const { currentOffer = null } = useCatalog();
+    const { currentOffer = null } = useCatalogData();
 
     return (
         <div className="flex items-center bg-muted p-1 rounded gap-1">

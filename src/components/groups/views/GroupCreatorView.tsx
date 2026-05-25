@@ -108,13 +108,14 @@ export const GroupCreatorView: FC<GroupCreatorViewProps> = props =>
 
         setGroupData({
             groupId: -1,
-            groupName: null,
-            groupDescription: null,
+            groupName: '',
+            groupDescription: '',
             groupHomeroomId: -1,
             groupState: 1,
             groupCanMembersDecorate: true,
-            groupColors: null,
-            groupBadgeParts: null
+            groupHasForum: false,
+            groupColors: [],
+            groupBadgeParts: []
         });
 
         SendMessageComposer(new GroupBuyDataComposer());

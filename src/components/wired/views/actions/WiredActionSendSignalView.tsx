@@ -40,13 +40,13 @@ const serializeForwardIds = (ids: number[]): string =>
 
 export const WiredActionSendSignalView: FC<{}> = () =>
 {
-    const [ furniSource, setFurniSource ]       = useState<number>(SOURCE_TRIGGER);
-    const [ userSource, setUserSource ]         = useState<number>(SOURCE_TRIGGER);
+    const [ furniSource, setFurniSource ] = useState<number>(SOURCE_TRIGGER);
+    const [ userSource, setUserSource ] = useState<number>(SOURCE_TRIGGER);
     const [ signalPerFurni, setSignalPerFurni ] = useState(false);
-    const [ signalPerUser, setSignalPerUser ]   = useState(false);
-    const [ antennaIds, setAntennaIds ]         = useState<number[]>([]);
+    const [ signalPerUser, setSignalPerUser ] = useState(false);
+    const [ antennaIds, setAntennaIds ] = useState<number[]>([]);
     const [ forwardFurniIds, setForwardFurniIds ] = useState<number[]>([]);
-    const [ selectionMode, setSelectionMode ]   = useState<SelectionMode>('antenna');
+    const [ selectionMode, setSelectionMode ] = useState<SelectionMode>('antenna');
     const highlightedIds = useRef<number[]>([]);
 
     const { trigger = null, furniIds = [], setFurniIds = null, setIntParams = null, setStringParam = null } = useWired();
@@ -194,7 +194,8 @@ export const WiredActionSendSignalView: FC<{}> = () =>
                         selectionCount={ antennaIds.length }
                         selectionLimit={ selectionLimit }
                         selectionEnabledValues={ [ SOURCE_SELECTED ] }
-                        onChange={ () => {} }
+                        onChange={ () =>
+                        {} }
                         onSelectionActivate={ () => switchSelection('antenna') } />
                     <WiredFurniSelectionSourceRow
                         title="Furni da mandare avanti:"
@@ -222,7 +223,7 @@ export const WiredActionSendSignalView: FC<{}> = () =>
                         onChange={ setUserSource } />
                 </div>
             }
-            >
+        >
             <div className="flex flex-col gap-3">
                 <Text bold>{ LocalizeText('wiredfurni.params.signal.options') }</Text>
                 <div className="form-check">

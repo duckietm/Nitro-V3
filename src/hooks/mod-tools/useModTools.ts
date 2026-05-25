@@ -30,7 +30,7 @@ const useModToolsState = () =>
             const newValue = [ ...prevValue ];
             const existingIndex = newValue.indexOf(roomId);
 
-            if(existingIndex >= 0) newValue.splice(existingIndex);
+            if(existingIndex >= 0) newValue.splice(existingIndex, 1);
 
             return newValue;
         });
@@ -56,7 +56,7 @@ const useModToolsState = () =>
             const newValue = [ ...prevValue ];
             const existingIndex = newValue.indexOf(roomId);
 
-            if(existingIndex >= 0) newValue.splice(existingIndex);
+            if(existingIndex >= 0) newValue.splice(existingIndex, 1);
 
             return newValue;
         });
@@ -82,7 +82,7 @@ const useModToolsState = () =>
             const newValue = [ ...prevValue ];
             const existingIndex = newValue.indexOf(userId);
 
-            if(existingIndex >= 0) newValue.splice(existingIndex);
+            if(existingIndex >= 0) newValue.splice(existingIndex, 1);
 
             return newValue;
         });
@@ -108,7 +108,7 @@ const useModToolsState = () =>
             const newValue = [ ...prevValue ];
             const existingIndex = newValue.indexOf(userId);
 
-            if(existingIndex >= 0) newValue.splice(existingIndex);
+            if(existingIndex >= 0) newValue.splice(existingIndex, 1);
 
             return newValue;
         });
@@ -116,7 +116,7 @@ const useModToolsState = () =>
 
     const toggleUserChatlog = (userId: number) =>
     {
-        if(openRoomChatlogs.indexOf(userId) >= 0) closeUserChatlog(userId);
+        if(openUserChatlogs.indexOf(userId) >= 0) closeUserChatlog(userId);
         else openUserChatlog(userId);
     };
 

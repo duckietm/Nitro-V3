@@ -9,7 +9,7 @@ export const NitrobubbleHiddenView: FC<{}> = props =>
     const { chatHistory = [] } = useChatHistory();
     const elementRef = useRef<HTMLDivElement>(null);
 
-    const filteredChatHistory = useMemo(() => 
+    const filteredChatHistory = useMemo(() =>
     {
         if (searchText.length === 0) return chatHistory;
 
@@ -29,9 +29,9 @@ export const NitrobubbleHiddenView: FC<{}> = props =>
             linkReceived: (url: string) =>
             {
                 const parts = url.split('/');
-        
+
                 if(parts.length < 2) return;
-        
+
                 switch(parts[1])
                 {
                     case 'show':
@@ -54,6 +54,6 @@ export const NitrobubbleHiddenView: FC<{}> = props =>
     }, []);
 
     if(!isVisible) return null;
-    var stylecssnew = "<style>.newbubblehe { visibility: hidden !important; }</style>";
+    var stylecssnew = '<style>.newbubblehe { visibility: hidden !important; }</style>';
     return ( <div dangerouslySetInnerHTML={ { __html: stylecssnew }} />);
-}
+};

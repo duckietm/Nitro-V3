@@ -79,7 +79,7 @@ export const WiredExtraTextInputVariableView: FC<{}> = () =>
 
         const itemId = getCustomVariableItemId(variableToken);
 
-        return (targetDefinitions.find(definition => (definition.itemId === itemId)) ?? null) as IVariableDefinition | null;
+        return (targetDefinitions.find(definition => (definition.itemId === itemId)) ?? null);
     }, [ targetDefinitions, variableToken ]);
 
     const canUseTextDisplay = !!selectedVariableDefinition?.isTextConnected;

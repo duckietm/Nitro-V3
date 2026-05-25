@@ -1,0 +1,150 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feat/**'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      renderer_repo:
+        description: 'Renderer repo (owner/name). Empty = auto from client branch.'
+        required: false
+        default: ''
+      renderer_ref:
+        description: 'Renderer git ref. Empty = auto from client branch.'
+        required: false
+        default: ''
+
+# Opt into the Node.js 24 runtime for the JavaScript actions
+# (actions/checkout, actions/setup-node, …). Node 20 will be removed
+# from GitHub-hosted runners in September 2026; this env var asks the
+# runner to use Node 24 today so the workflow logs stop warning about
+# it on every run.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  check:
+    name: Type check + tests
+    runs-on: ubuntu-latest
+    steps:
+      # The build/dev/typecheck setup expects the Nitro renderer SDK to
+      # live as a sibling of this repo (see CLAUDE.md → Setup walkthrough).
+      # Mirror that here by checking the client into <workspace>/Nitro-V3
+      # and the renderer into <workspace>/Nitro_Render_V3.
+      - name: Checkout Nitro-V3
+        uses: actions/checkout@v4
+        with:
+          path: Nitro-V3
+
+      # Pick the renderer ref dynamically based on the client context.
+      # Renderer repo is always upstream `duckietm/Nitro_Render_V3` —
+      # the two repos must stay wire-aligned (composer/parser
+      # signatures); pairing `main` with a stale branch is what
+      # produced the "Expected 14-15 arguments, but got 16" failure on
+      # the catalog edit composer.
+      #
+      # Mapping:
+      #   client `main`             → duckietm/Nitro_Render_V3 @ main
+      #   client `feat/**`          → duckietm/Nitro_Render_V3 @ Dev
+      #   PR base `main`            → duckietm/Nitro_Render_V3 @ main
+      #   PR base `Dev` (upstream)  → duckietm/Nitro_Render_V3 @ Dev
+      #   PR base `feat/**`         → duckietm/Nitro_Render_V3 @ Dev
+      #
+      # Override via workflow_dispatch inputs when you need an ad-hoc
+      # pairing.
+      - name: Resolve renderer ref
+        id: renderer
+        run: |
+          REPO="${{ github.event.inputs.renderer_repo }}"
+          REF="${{ github.event.inputs.renderer_ref }}"
+
+          if [ -z "$REPO" ] || [ -z "$REF" ]; then
+            case "${GITHUB_EVENT_NAME}" in
+              pull_request)
+                CTX="${GITHUB_BASE_REF}"
+                ;;
+              *)
+                CTX="${GITHUB_REF_NAME}"
+                ;;
+            esac
+
+            AUTO_REPO="duckietm/Nitro_Render_V3"
+            case "$CTX" in
+              main)
+                AUTO_REF="main"
+                ;;
+              *)
+                AUTO_REF="Dev"
+                ;;
+            esac
+
+            [ -z "$REPO" ] && REPO="$AUTO_REPO"
+            [ -z "$REF" ]  && REF="$AUTO_REF"
+          fi
+
+          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
+          echo "ref=$REF"   >> "$GITHUB_OUTPUT"
+          echo "Resolved renderer pairing: $REPO @ $REF (client ctx: ${GITHUB_BASE_REF:-$GITHUB_REF_NAME}, event: ${GITHUB_EVENT_NAME})"
+
+      - name: Checkout Nitro_Render_V3 (sibling)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.renderer.outputs.repo }}
+          ref: ${{ steps.renderer.outputs.ref }}
+          path: Nitro_Render_V3
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+          cache-dependency-path: |
+            Nitro-V3/yarn.lock
+            Nitro_Render_V3/yarn.lock
+
+      - name: Install renderer SDK deps
+        working-directory: Nitro_Render_V3
+        run: yarn install --frozen-lockfile
+
+      - name: Install client deps
+        working-directory: Nitro-V3
+        run: yarn install --frozen-lockfile
+
+      # The renderer SDK is consumed via a filesystem symlink in
+      # node_modules/@nitrots/nitro-renderer; create it AFTER yarn
+      # install (otherwise yarn would clean it up since the package
+      # isn't declared in package.json). tsgo (TS 7 native preview)
+      # then resolves the tsconfig `include` entry pointing at the
+      # renderer's `src/**/*.ts`.
+      #
+      # Use an absolute path so the link target is unambiguous
+      # regardless of the cwd that reads it. A relative target like
+      # `../../../Nitro_Render_V3` resolves to
+      # `Nitro-V3/Nitro_Render_V3` (one too few `..`), which doesn't
+      # exist and makes tsgo report TS2307 across the entire src/.
+      - name: Symlink renderer into client node_modules
+        run: |
+          mkdir -p Nitro-V3/node_modules/@nitrots
+          ln -sfn "${{ github.workspace }}/Nitro_Render_V3" Nitro-V3/node_modules/@nitrots/nitro-renderer
+          ls -la Nitro-V3/node_modules/@nitrots/
+          ls Nitro-V3/node_modules/@nitrots/nitro-renderer/packages/api/src/ | head -5
+
+      - name: Type check (tsgo)
+        working-directory: Nitro-V3
+        run: yarn typecheck
+
+      # Hook-order lint gate — the full yarn eslint emits ~900 pre-existing
+      # baseline errors (brace style, indentation), so we use a focused
+      # config that asserts only react-hooks/rules-of-hooks. Catches the
+      # "hook below early-return" pattern that produced two production
+      # crashes this session (CatalogPurchaseWidgetView, CatalogItemGridWidgetView).
+      - name: ESLint (hook-order gate)
+        working-directory: Nitro-V3
+        run: yarn lint:hooks
+
+      - name: Vitest
+        working-directory: Nitro-V3
+        run: yarn test --run

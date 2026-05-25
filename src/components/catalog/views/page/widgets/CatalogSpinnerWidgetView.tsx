@@ -1,14 +1,15 @@
 import { FC } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import { LocalizeText } from '../../../../../api';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
 
 const MIN_VALUE: number = 1;
 const MAX_VALUE: number = 99;
 
 export const CatalogSpinnerWidgetView: FC<{}> = props =>
 {
-    const { currentOffer = null, purchaseOptions = null, setPurchaseOptions = null } = useCatalog();
+    const { currentOffer = null } = useCatalogData();
+    const { purchaseOptions = null, setPurchaseOptions = null } = useCatalogUiState();
     const { quantity = 1 } = purchaseOptions;
 
     const updateQuantity = (value: number) =>

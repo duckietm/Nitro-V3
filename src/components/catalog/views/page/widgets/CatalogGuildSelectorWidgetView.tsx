@@ -1,14 +1,15 @@
-import { CatalogGroupsComposer, StringDataType } from '@nitrots/nitro-renderer';
+import { StringDataType } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, SendMessageComposer } from '../../../../../api';
+import { LocalizeText } from '../../../../../api';
 import { Button, Flex } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData, useCatalogUiState, useUserGroups } from '../../../../../hooks';
 
 export const CatalogGuildSelectorWidgetView: FC<{}> = props =>
 {
     const [ selectedGroupIndex, setSelectedGroupIndex ] = useState<number>(0);
-    const { currentOffer = null, catalogOptions = null, setPurchaseOptions = null } = useCatalog();
-    const { groups = null } = catalogOptions;
+    const { currentOffer = null } = useCatalogData();
+    const { setPurchaseOptions = null } = useCatalogUiState();
+    const { data: groups = null } = useUserGroups();
 
     const previewStuffData = useMemo(() =>
     {
@@ -40,11 +41,6 @@ export const CatalogGuildSelectorWidgetView: FC<{}> = props =>
             return newValue;
         });
     }, [ currentOffer, previewStuffData, setPurchaseOptions ]);
-
-    useEffect(() =>
-    {
-        SendMessageComposer(new CatalogGroupsComposer());
-    }, []);
 
     if(!groups || !groups.length)
     {

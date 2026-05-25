@@ -2,24 +2,25 @@ import { FC, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { LocalizeText, MessengerFriend } from '../../../../api';
 import { FriendBarItemView } from './FriendBarItemView';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 const MAX_DISPLAY_COUNT = 3;
 
 // Mirrored from Toolbar to keep physics identical
-const containerVariants = {
+const containerVariants: Variants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.05 } },
-    exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 as const } },
+    exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
     hidden: { opacity: 0, y: 10, scale: 0.8 },
     visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 22 } },
     exit: { opacity: 0, y: 6, scale: 0.85, transition: { duration: 0.1 } },
 };
 
-export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount?: number }> = props => {
+export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount?: number }> = props =>
+{
     const { onlineFriends = [], requestsCount = 0 } = props;
     const [ indexOffset, setIndexOffset ] = useState(0);
     const elementRef = useRef<HTMLDivElement>(null);
@@ -27,8 +28,8 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
     const visibleFriends = onlineFriends.slice(indexOffset, (indexOffset + MAX_DISPLAY_COUNT));
 
     return (
-        <motion.div 
-            ref={elementRef} 
+        <motion.div
+            ref={elementRef}
             className="flex h-[40px] items-center gap-[6px] px-[2px] py-[3px]"
             variants={containerVariants}
             initial="hidden"
@@ -42,9 +43,12 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
                     </div>
                 </motion.div> }
             <motion.div variants={itemVariants}>
-                <div 
+                <div
                     className={ `flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-all ${ (!hasScrollableFriends || (indexOffset <= 0)) ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer hover:text-white active:scale-95' }` }
-                    onClick={ () => { if(indexOffset > 0) setIndexOffset(indexOffset - 1); } }
+                    onClick={ () =>
+                    {
+                        if(indexOffset > 0) setIndexOffset(indexOffset - 1);
+                    } }
                 >
                     <FaChevronLeft className="text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
                 </div>
@@ -89,9 +93,12 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
             </AnimatePresence>
 
             <motion.div variants={itemVariants}>
-                <div 
+                <div
                     className={ `flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-all ${ (!hasScrollableFriends || !((onlineFriends.length > MAX_DISPLAY_COUNT) && ((indexOffset + MAX_DISPLAY_COUNT) <= (onlineFriends.length - 1)))) ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer hover:text-white active:scale-95' }` }
-                    onClick={ () => { if((onlineFriends.length > MAX_DISPLAY_COUNT) && ((indexOffset + MAX_DISPLAY_COUNT) <= (onlineFriends.length - 1))) setIndexOffset(indexOffset + 1); } }
+                    onClick={ () =>
+                    {
+                        if((onlineFriends.length > MAX_DISPLAY_COUNT) && ((indexOffset + MAX_DISPLAY_COUNT) <= (onlineFriends.length - 1))) setIndexOffset(indexOffset + 1);
+                    } }
                 >
                     <FaChevronRight className="text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
                 </div>

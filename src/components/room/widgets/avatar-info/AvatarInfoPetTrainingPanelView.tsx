@@ -17,7 +17,7 @@ export const AvatarInfoPetTrainingPanelView: FC<{}> = props =>
 
         if(!parser) return;
 
-        const roomPetData = roomSession.userDataManager.getPetData(parser.petId);
+        const roomPetData = roomSession?.userDataManager?.getPetData(parser.petId);
 
         if(!roomPetData) return;
 

@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "baseUrl": "./src",
         "target": "es2022",
         "lib": [
             "dom",
@@ -12,18 +11,20 @@
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "strict": false,
-        "downlevelIteration": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": false,
         "module": "ES2022",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
         "paths": {
             "@layout/*": [
-                "layout/*"
+                "./src/layout/*"
+            ],
+            "@/*": [
+                "./src/*"
             ]
         }
     },

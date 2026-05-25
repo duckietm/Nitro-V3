@@ -1,5 +1,126 @@
 # Changelog
 
+## React 19 Modernization Phase 2 (2026-05-12)
+
+Long-running work on the `feat/react19-modernization` branch — see
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the design rationale.
+Companion changes shipped on `feat/react19-event-bus` in
+[`Nitro_Render_V3`](../Nitro_Render_V3) — see that repo's CLAUDE.md
+for the renderer-side notes.
+
+### Pattern #1: `useNitroEventState` + companions
+- New `useNitroEventReducer` / `useMessageEventReducer` for the case
+  where multiple event types collapse into one owned state slice.
+- New `useExternalSnapshot` — typed wrapper of
+  `useSyncExternalStore` pairing the renderer's
+  `EventDispatcher.subscribe()` with `getXxxSnapshot()` getters.
+- Pilot adoption: `useAvatarInfoWidget` now owns the figure / badges /
+  group merge (three event listeners moved out of
+  `InfoStandWidgetUserView`, three `CloneObject` calls dropped).
+  Reducers extracted to `src/hooks/rooms/widgets/avatarInfo.reducers.ts`
+  with 14 Vitest cases.
+- `useInventoryFurni` refactored to call three pure reducers
+  (`useInventoryFurni.reducers.ts`) instead of inlining ~250 LOC of
+  merge logic in the event handlers. Module-level
+  `furniMsgFragments` becomes a `useRef` — eliminates a latent bug
+  where two simultaneous client instances would have trampled each
+  other's fragment buffers. Empty `FurniturePostItPlacedEvent` listener
+  dropped.
+
+### Pattern #2: `useNitroQuery` adoption
+- New `useNitroEventInvalidator(eventType, queryKey, accept?)` companion
+  in `src/api/nitro-query/` — invalidates a query slot every time the
+  renderer pushes the matching parser event. Required when the server
+  refreshes data outside the request cycle (e.g. ClubGiftInfoEvent
+  after a gift claim).
+- Seven catalog fetches lifted out of `useCatalog` into dedicated
+  TanStack queries:
+    - `useGiftConfiguration` (GiftWrappingConfigurationEvent)
+    - `useUserGroups` — consolidates 5 sites that each dispatched
+      `CatalogGroupsComposer` independently
+    - `useClubOffers(windowId)` — per-windowId, with `accept` filter
+    - `useSellablePetPalette(breed)` — per-breed, with `accept` filter
+    - `useMarketplaceConfiguration` — lifted out of a self-fetch in
+      `MarketplacePostOfferView`
+    - `useClubGifts` — paired with `useNitroEventInvalidator` for the
+      server-push-after-SelectClubGift case
+- `ICatalogOptions` (the "catalogOptions" bag that the various views
+  stuffed their fetched data into) is now **empty and deleted**.
+
+### Pattern #4: god-hook splits
+Five new splits in this round, two patterns. The doorbell-style
+(state + actions + shim, no shared singleton) for hooks whose actions
+are pure-dispatch:
+
+- **chat-input** (334 LOC → 3 files) — `useChatInputState` owns the
+  5 state slices + 3 event listeners + 3 lifecycle effects;
+  `useChatInputActions` owns `sendChat` with the full slash-command
+  repertoire and the outgoing-translation pipeline. Single consumer
+  (`ChatInputView`) keeps the original tuple via the shim.
+
+The `useBetween` singleton-filter style for hooks where actions
+mutate shared state:
+
+- **wired-tools** (618 LOC) — 20 consumers; `useWiredToolsStore`
+  internal singleton, public `useWiredToolsState` /
+  `useWiredToolsActions` filter views, `useWiredTools` shim.
+- **translation** (600 LOC) — 6 consumers; `useTranslationStore`
+  inline + filter views.
+- **notification** (493 LOC) — ~44 consumers, most of which use a
+  single action (`simpleAlert` or `showConfirm`); the read-only state
+  slice exposes the three queue arrays for the renderer view layer.
+- **friends** (258 LOC) — 16 consumers; state slice covers the friend
+  list / settings / derived online-offline split, actions slice covers
+  `requestFriend` / `requestResponse` / `followFriend` /
+  `updateRelationship`.
+
+Documented skip-motivated splits: `useChatWidget`,
+`useChatCommandSelector`, `useFurniturePresentWidget`,
+`useAvatarInfoWidget`, `useNavigator`, `useMessenger`,
+`usePetPackageWidget`, `useWordQuizWidget`. Reasons logged in commit
+messages.
+
+### Typecheck / Pixi v8 / Arcturus alignment
+- Repository-wide `tsgo` (TS 7 preview) error count: **134 → 0** client,
+  **24 → 0** renderer. Notable clusters: framer-motion `Variants`
+  typing on Toolbar + FriendsBar (-33), `useFurniChooserState`
+  retyped as `IRoomObject` + dead `getUserData` guard dropped (-10),
+  React 19 `useRef<T>()` → `useRef<T>(null)` sweep on 15 sites (-15),
+  `IGetImageListener` single-arg signature migration on 3 sites,
+  `ColorVariantType` extended with the 5 `outline-*` bootstrap
+  variants.
+- Renderer-side aligned with Pixi v8 (Filter[] narrowing,
+  WebGLRenderer narrowing, ImageLike cast) and TS 5.7+ ArrayBuffer
+  drift (BinaryReader / BinaryWriter / WsSessionCrypto / NitroBundle).
+- Cross-repo additions on `Nitro_Render_V3`:
+  `RoomEnterComposer` now accepts optional `spawnX`/`spawnY` matching
+  Arcturus' `RequestRoomLoadEvent` optional tail; `RoomSettingsData`
+  surfaces the `allowUnderpass` field that Arcturus already emits.
+  Dead `sendWhisperGroupMessage` / `ChatWhisperGroupComposer`
+  reference removed.
+
+### Vitest coverage
+Bumped from 65 → 113 cases across 8 test files. New coverage:
+- `dedupeBadges.test.ts` (6) — slot-preserving badge dedup.
+- `catalog-favorites.helpers.test.ts` (16) — v2→v3 localStorage
+  migration + per-catalog-type storage-key routing.
+- `avatar-info-reducers.test.ts` (14) — three reducer bail-out
+  branches + apply paths.
+- `friendly-time.test.ts` (12) — `FriendlyTime` with a deterministic
+  `LocalizeText` mock.
+
+### Logic bug fixes (in scope)
+- `useInventoryFurni`'s module-level `furniMsgFragments` buffer
+  scoped to `useRef`.
+- `RoomChatHandler.dispatchEvent(RoomSessionChatEvent)` arg order
+  fix in renderer — `chatColours` and `links` slots were swapped.
+- `PetBreedingMessageParser.bytesAvailable < 12` was a boolean-vs-number
+  bug; replaced with the standard guard pattern.
+- `useOnClickChat` was passing an extra 8th arg to `showConfirm`
+  (signature only takes 7).
+- `UserContainerView` was passing `userProfile.friendsCount` (number)
+  to a `LocalizeText` placeholder array (expects string).
+
 ## Badge System Rework (2026-04-04)
 
 ### Bug Fixes

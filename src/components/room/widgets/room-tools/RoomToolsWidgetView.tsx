@@ -7,7 +7,8 @@ import { Text } from '../../../../common';
 import { useMessageEvent, useNavigator, useRoom } from '../../../../hooks';
 import { getRegisteredPlugins, INitroPlugin, subscribePlugins } from '../../../plugins/NitroPluginApi';
 
-export const RoomToolsWidgetView: FC<{}> = props => {
+export const RoomToolsWidgetView: FC<{}> = props =>
+{
     const [areBubblesMuted, setAreBubblesMuted] = useState(false);
     const [isZoomedIn, setIsZoomedIn] = useState<boolean>(false);
     const [roomName, setRoomName] = useState<string>(null);
@@ -27,19 +28,25 @@ export const RoomToolsWidgetView: FC<{}> = props => {
         return subscribePlugins(() => setPlugins(getRegisteredPlugins()));
     }, []);
 
-    const handleToolClick = (action: string, value?: string) => {
-		if (!roomSession) return;
+    const handleToolClick = (action: string, value?: string) =>
+    {
+        if (!roomSession) return;
 
-        switch (action) {
+        switch (action)
+        {
             case 'settings':
                 CreateLinkEvent('navigator/toggle-room-info');
                 return;
             case 'zoom':
-                setIsZoomedIn(prevValue => {
-                    if (GetConfigurationValue('room.zoom.enabled', true)) {
+                setIsZoomedIn(prevValue =>
+                {
+                    if (GetConfigurationValue('room.zoom.enabled', true))
+                    {
                         const scale = GetRoomEngine().getRoomInstanceRenderingCanvasScale(roomSession.roomId, 1);
                         GetRoomEngine().setRoomInstanceRenderingCanvasScale(roomSession.roomId, 1, scale === 1 ? 0.5 : 1);
-                    } else {
+                    }
+                    else
+                    {
                         const geometry = GetRoomEngine().getRoomInstanceGeometry(roomSession.roomId, 1);
                         if (geometry) geometry.performZoom();
                     }
@@ -77,7 +84,8 @@ export const RoomToolsWidgetView: FC<{}> = props => {
         }
     };
 
-    const onChangeRoomHistory = (roomId: number, roomName: string) => {
+    const onChangeRoomHistory = (roomId: number, roomName: string) =>
+    {
         let newStorage = JSON.parse(window.localStorage.getItem('nitro.room.history') || '[]');
         if (newStorage.some((room: { roomId: number }) => room.roomId === roomId)) return;
 
@@ -88,7 +96,8 @@ export const RoomToolsWidgetView: FC<{}> = props => {
         SetLocalStorage('nitro.room.history', newStorage);
     };
 
-    useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event => {
+    useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event =>
+    {
         const parser = event.getParser();
         if (!parser.roomEnter || (parser.data.roomId !== roomSession.roomId)) return;
 
@@ -98,31 +107,25 @@ export const RoomToolsWidgetView: FC<{}> = props => {
         onChangeRoomHistory(parser.data.roomId, parser.data.roomName);
     });
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         setIsOpen(true);
         const timeout = setTimeout(() => setIsOpen(false), 5000);
         return () => clearTimeout(timeout);
     }, [roomName, roomOwner, roomTags]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         setRoomHistory(JSON.parse(window.localStorage.getItem('nitro.room.history') || '[]'));
-    }, []);
-
-    useEffect(() => {
-        const handleTabClose = () => {
-            window.localStorage.removeItem('nitro.room.history');
-        };
-        window.addEventListener('beforeunload', handleTabClose);
-        return () => window.removeEventListener('beforeunload', handleTabClose);
     }, []);
 
     return (
         <div className="flex space-x-2 nitro-room-tools-container">
             <div className="flex flex-col items-center justify-center p-2 nitro-room-tools">
-				<div className="cursor-pointer nitro-icon icon-cog" title={LocalizeText('room.settings.button.text')} onClick={() => handleToolClick('settings')} />
+                <div className="cursor-pointer nitro-icon icon-cog" title={LocalizeText('room.settings.button.text')} onClick={() => handleToolClick('settings')} />
                 <div className={classNames('cursor-pointer', 'nitro-icon', (!isZoomedIn && 'icon-zoom-less'), (isZoomedIn && 'icon-zoom-more'))} title={LocalizeText('room.zoom.button.text')} onClick={() => handleToolClick('zoom')} />
                 <div className="cursor-pointer nitro-icon icon-chat-history" title={LocalizeText('room.chathistory.button.text')} onClick={() => handleToolClick('chat_history')} />
-				<div className={classNames('cursor-pointer', 'nitro-icon', (areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble'))} title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')} onClick={() => handleToolClick('hiddenbubbles')} />
+                <div className={classNames('cursor-pointer', 'nitro-icon', (areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble'))} title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')} onClick={() => handleToolClick('hiddenbubbles')} />
 
                 {navigatorData.canRate && (
                     <div className="cursor-pointer nitro-icon icon-like-room" title={LocalizeText('room.like.button.text')} onClick={() => handleToolClick('like_room')} />

@@ -1,4 +1,4 @@
-import { createContext, FC, ProviderProps, useContext } from 'react';
+import { createContext, FC, ReactNode, useContext } from 'react';
 
 export interface IGridContext
 {
@@ -9,9 +9,9 @@ const GridContext = createContext<IGridContext>({
     isCssGrid: false
 });
 
-export const GridContextProvider: FC<ProviderProps<IGridContext>> = props =>
+export const GridContextProvider: FC<{ value: IGridContext; children?: ReactNode }> = props =>
 {
-    return <GridContext.Provider value={ props.value }>{ props.children }</GridContext.Provider>;
+    return <GridContext value={ props.value }>{ props.children }</GridContext>;
 };
 
 export const useGridContext = () => useContext(GridContext);

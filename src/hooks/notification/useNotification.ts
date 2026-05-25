@@ -15,8 +15,7 @@ const getTimeZeroPadded = (time: number) =>
 
 let modDisclaimerTimeout: ReturnType<typeof setTimeout> = null;
 const recentBadgeNotifications = new Set<string>();
-
-const useNotificationState = () =>
+const useNotificationStore = () =>
 {
     const [ alerts, setAlerts ] = useState<NotificationAlertItem[]>([]);
     const [ bubbleAlerts, setBubbleAlerts ] = useState<NotificationBubbleItem[]>([]);
@@ -230,7 +229,6 @@ const useNotificationState = () =>
     {
         const parser = event.getParser();
 
-        // Skip if BadgeReceivedEvent already showed a notification for this badge
         if(recentBadgeNotifications.has(parser.data.badgeCode)) return;
 
         recentBadgeNotifications.add(parser.data.badgeCode);
@@ -246,7 +244,6 @@ const useNotificationState = () =>
     {
         const parser = event.getParser();
 
-        // Skip if AchievementNotificationMessageEvent already showed a notification for this badge
         if(recentBadgeNotifications.has(parser.badgeCode)) return;
 
         recentBadgeNotifications.add(parser.badgeCode);
@@ -254,9 +251,6 @@ const useNotificationState = () =>
 
         const badgeName = LocalizeBadgeName(parser.badgeCode);
         const badgeImage = GetSessionDataManager().getBadgeUrl(parser.badgeCode);
-        // senderName is non-empty only when a staff member awarded the badge
-        // via the `:badge` command. Empty for achievements, catalog buys,
-        // wired rewards, poll rewards, etc.
         const senderName = parser.senderName || '';
 
         showSingleBubble(badgeName, NotificationBubbleType.BADGE_RECEIVED, badgeImage, parser.badgeCode, senderName);
@@ -380,8 +374,7 @@ const useNotificationState = () =>
     {
         const parser = event.getParser();
 
-        // Skip badge notifications — handled by BadgeReceivedEvent with "Wear" button
-        if(parser.type === 'badge_received' || parser.type === 'badges' || parser.type.includes('badge')) return;
+        if(parser.type === 'badge_received' || parser.type === 'badges') return;
 
         showNotification(parser.type, parser.parameters);
     });
@@ -500,4 +493,36 @@ const useNotificationState = () =>
     return { alerts, bubbleAlerts, confirms, simpleAlert, showNitroAlert, showTradeAlert, showConfirm, showSingleBubble, closeAlert, closeBubbleAlert, closeConfirm };
 };
 
-export const useNotification = () => useBetween(useNotificationState);
+export const useNotificationState = () =>
+{
+    const { alerts, bubbleAlerts, confirms } = useBetween(useNotificationStore);
+
+    return { alerts, bubbleAlerts, confirms };
+};
+
+export const useNotificationActions = () =>
+{
+    const {
+        simpleAlert,
+        showNitroAlert,
+        showTradeAlert,
+        showConfirm,
+        showSingleBubble,
+        closeAlert,
+        closeBubbleAlert,
+        closeConfirm
+    } = useBetween(useNotificationStore);
+
+    return {
+        simpleAlert,
+        showNitroAlert,
+        showTradeAlert,
+        showConfirm,
+        showSingleBubble,
+        closeAlert,
+        closeBubbleAlert,
+        closeConfirm
+    };
+};
+
+export const useNotification = () => useBetween(useNotificationStore);

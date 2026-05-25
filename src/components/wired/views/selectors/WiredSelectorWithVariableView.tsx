@@ -137,7 +137,7 @@ export const WiredSelectorWithVariableView: FC<WiredSelectorWithVariableViewProp
         if(!variableToken) return mainEntries;
         if(flattenWiredVariablePickerEntries(mainEntries).some(entry => (entry.token === variableToken))) return mainEntries;
 
-        const fallbackEntry = createFallbackVariableEntry(selectorTarget as WiredVariablePickerTarget, variableToken);
+        const fallbackEntry = createFallbackVariableEntry(selectorTarget, variableToken);
         return fallbackEntry ? [ fallbackEntry, ...mainEntries ] : mainEntries;
     }, [ mainEntries, selectorTarget, variableToken ]);
     const selectedMainEntry = useMemo(() => flattenWiredVariablePickerEntries(resolvedMainEntries).find(entry => (entry.token === variableToken)) || null, [ resolvedMainEntries, variableToken ]);

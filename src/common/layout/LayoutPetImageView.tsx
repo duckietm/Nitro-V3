@@ -67,9 +67,11 @@ export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
         if(petTypeId === 16) petHeadOnly = false;
 
         const imageResult = GetRoomEngine().getRoomObjectPetImage(petTypeId, petPaletteId, petColor1, new Vector3d((direction * 45)), 64, {
-            imageReady: async (id, texture, image) =>
+            imageReady: async (result) =>
             {
                 if(isDisposed.current) return;
+
+                const { image, data: texture } = result;
 
                 if(image)
                 {
@@ -85,9 +87,9 @@ export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
                     setHeight(texture.height);
                 }
             },
-            imageFailed: (id) =>
+            imageFailed: () =>
             {
-
+                // no-op
             }
         }, petHeadOnly, 0, petCustomParts, posture);
 

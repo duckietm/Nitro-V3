@@ -127,7 +127,7 @@ export const WiredExtraFilterByVariableView: FC<WiredExtraFilterByVariableViewPr
         if(!variableToken) return mainEntries;
         if(flattenWiredVariablePickerEntries(mainEntries).some(entry => (entry.token === variableToken))) return mainEntries;
 
-        const fallbackEntry = createFallbackVariableEntry(target as WiredVariablePickerTarget, variableToken);
+        const fallbackEntry = createFallbackVariableEntry(target, variableToken);
         return fallbackEntry ? [ fallbackEntry, ...mainEntries ] : mainEntries;
     }, [ mainEntries, target, variableToken ]);
 

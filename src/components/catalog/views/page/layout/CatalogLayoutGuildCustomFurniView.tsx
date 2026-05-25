@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { SanitizeHtml } from '../../../../../api';
 import { Column, Grid, Text } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData } from '../../../../../hooks';
 import { CatalogGuildBadgeWidgetView } from '../widgets/CatalogGuildBadgeWidgetView';
 import { CatalogGuildSelectorWidgetView } from '../widgets/CatalogGuildSelectorWidgetView';
 import { CatalogItemGridWidgetView } from '../widgets/CatalogItemGridWidgetView';
@@ -13,7 +13,7 @@ import { CatalogLayoutProps } from './CatalogLayout.types';
 export const CatalogLayouGuildCustomFurniView: FC<CatalogLayoutProps> = props =>
 {
     const { page = null } = props;
-    const { currentOffer = null } = useCatalog();
+    const { currentOffer = null } = useCatalogData();
 
     return (
         <Grid>

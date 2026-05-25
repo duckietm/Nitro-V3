@@ -7,7 +7,7 @@ export const GameStageView = () =>
 {
     const { gameURL, setGameURL } = useGameCenter();
     const [ loadTimes, setLoadTimes ] = useState<number>(0);
-    const ref = useRef<HTMLDivElement>();
+    const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() =>
     {

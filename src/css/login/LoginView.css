@@ -1174,3 +1174,99 @@
         animation-duration: 0.4s !important;
     }
 }
+
+/* ─── Register dialog · room template step ─── */
+
+.nitro-login-modal .dialog.dialog-room {
+    width: 400px;
+}
+
+.nitro-login-card .room-templates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    margin-top: 2px;
+    scrollbar-width: thin;
+}
+
+.nitro-login-card .room-template-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: linear-gradient(180deg, #f4f9fc 0%, #dbe9f1 100%);
+    border: 1px solid #a4c0d2;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    color: #0a2e45;
+    user-select: none;
+    position: relative;
+}
+
+.nitro-login-card .room-template-option:hover {
+    border-color: #4a8ec0;
+    box-shadow: 0 0 0 1px rgba(74, 142, 192, 0.45);
+}
+
+.nitro-login-card .room-template-option.selected {
+    border-color: #2a78b8;
+    background: linear-gradient(180deg, #eaf4fb 0%, #c5dcec 100%);
+    box-shadow: 0 0 0 2px rgba(42, 120, 184, 0.55), 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.nitro-login-card .room-template-option input[type="radio"] {
+    flex-shrink: 0;
+    margin: 0;
+    accent-color: #2a78b8;
+    cursor: pointer;
+}
+
+.nitro-login-card .room-template-thumb {
+    width: 64px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #a4c0d2;
+    background: #fff;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+}
+
+.nitro-login-card .room-template-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.nitro-login-card .room-template-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0a2e45;
+    line-height: 1.2;
+    text-transform: capitalize;
+}
+
+.nitro-login-card .room-template-description {
+    font-size: 11px;
+    line-height: 1.35;
+    color: #486175;
+    word-break: break-word;
+}
+
+/* The "Skip" option sits at the top with a softer dashed border so it
+   visually distinguishes itself from the actual templates. */
+.nitro-login-card .room-template-option.room-template-skip {
+    background: linear-gradient(180deg, #fbfcfd 0%, #e7eef4 100%);
+    border-style: dashed;
+}
+
+.nitro-login-card .room-template-option.room-template-skip.selected {
+    border-style: solid;
+}

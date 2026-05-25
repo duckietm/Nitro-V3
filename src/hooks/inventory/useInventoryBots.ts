@@ -59,7 +59,7 @@ const useInventoryBotsState = () =>
 
             for(const botData of addedDatas)
             {
-                const botItem = { botData } as IBotItem;
+                const botItem = { botData };
                 const unseen = isUnseen(UnseenItemCategory.BOT, botData.id);
 
                 if(unseen) newValue.unshift(botItem);
@@ -82,7 +82,7 @@ const useInventoryBotsState = () =>
 
             if(index >= 0) return prevValue;
 
-            const botItem = { botData: parser.item } as IBotItem;
+            const botItem = { botData: parser.item };
             const unseen = isUnseen(UnseenItemCategory.BOT, botItem.botData.id);
 
             if(unseen) newValue.unshift(botItem);

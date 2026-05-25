@@ -1,9 +1,9 @@
-import { AddLinkEventTracker, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
 import { FaCog, FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa';
-import { CatalogType, LocalizeText } from '../../api';
-import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
-import { useCatalog } from '../../hooks';
+import { CatalogType, GetConfigurationValue, LocalizeText } from '../../api';
+import { Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
+import { useCatalogActions, useCatalogData, useCatalogUiState, useHasPermission } from '../../hooks';
 import { CatalogAdminProvider, useCatalogAdmin } from './CatalogAdminContext';
 import { CatalogAdminOfferEditView } from './views/admin/CatalogAdminOfferEditView';
 import { CatalogAdminPageEditView } from './views/admin/CatalogAdminPageEditView';
@@ -18,14 +18,19 @@ import { MarketplacePostOfferView } from './views/page/layout/marketplace/Market
 
 const CatalogClassicViewInner: FC<{}> = () =>
 {
-    const { isVisible = false, setIsVisible = null, rootNode = null, currentPage = null, navigationHidden = false, setNavigationHidden = null, activeNodes = [], searchResult = null, setSearchResult = null, openPageByName = null, openPageByOfferId = null, activateNode = null, openCatalogByType = null, toggleCatalogByType = null, currentType = CatalogType.NORMAL } = useCatalog();
+    const { rootNode = null, currentPage = null, searchResult = null } = useCatalogData();
+    const { isVisible = false, setIsVisible = null, navigationHidden = false, setNavigationHidden = null, activeNodes = [], setSearchResult = null, currentType = CatalogType.NORMAL } = useCatalogUiState();
+    const { openPageByName = null, openPageByOfferId = null, activateNode = null, openCatalogByType = null, toggleCatalogByType = null } = useCatalogActions();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
-    const setAdminMode = catalogAdmin?.setAdminMode ?? (() => {});
+    const setAdminMode = catalogAdmin?.setAdminMode ?? (() =>
+    {});
     const hasPendingChanges = catalogAdmin?.hasPendingChanges ?? false;
-    const publishCatalog = catalogAdmin?.publishCatalog ?? (() => {});
+    const publishCatalog = catalogAdmin?.publishCatalog ?? (() =>
+    {});
     const loading = catalogAdmin?.loading ?? false;
-    const isMod = GetSessionDataManager().isModerator;
+
+    const isMod = useHasPermission('acc_catalogfurni');
     const buildersClubHeaderStyle = (currentType === CatalogType.BUILDER)
         ? { borderColor: '#d79d2e', borderBottomColor: '#000', background: 'linear-gradient(180deg, #d89f2d 0%, #c68515 100%)' }
         : undefined;
@@ -148,13 +153,19 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                         { adminMode &&
                                             <div className="flex items-center gap-0.5 ml-1" onClick={ e => e.stopPropagation() }>
                                                 <FaEdit className="text-[8px] text-primary cursor-pointer hover:text-dark" title={ LocalizeText('catalog.admin.edit.title') }
-                                                    onClick={ () => { catalogAdmin.setEditingPageNode(child); catalogAdmin.setEditingRootPage(false); catalogAdmin.setEditingPageData(true); } } />
+                                                    onClick={ () =>
+                                                    {
+                                                        catalogAdmin.setEditingPageNode(child); catalogAdmin.setEditingRootPage(false); catalogAdmin.setEditingPageData(true);
+                                                    } } />
                                                 <span className="cursor-pointer" title={ isHidden ? LocalizeText('catalog.admin.show') : LocalizeText('catalog.admin.hide') }
                                                     onClick={ () => catalogAdmin.togglePageVisible(child.pageId) }>
                                                     { isHidden ? <FaEye className="text-[8px] text-success" /> : <FaEyeSlash className="text-[8px] text-muted" /> }
                                                 </span>
                                                 <FaTrash className="text-[8px] text-danger cursor-pointer hover:text-red-800" title={ LocalizeText('catalog.admin.delete.title') }
-                                                    onClick={ () => { if(confirm(LocalizeText('catalog.admin.delete.category.confirm', [ 'name' ], [ child.localization ]))) catalogAdmin.deletePage(child.pageId); } } />
+                                                    onClick={ () =>
+                                                    {
+                                                        if(confirm(LocalizeText('catalog.admin.delete.category.confirm', [ 'name' ], [ child.localization ]))) catalogAdmin.deletePage(child.pageId);
+                                                    } } />
                                             </div> }
                                     </div>
                                 </NitroCardTabsItemView>
@@ -171,14 +182,17 @@ const CatalogClassicViewInner: FC<{}> = () =>
                             <div className="flex items-center gap-2 mb-1 nitro-catalog-classic-admin-actions">
                                 <button
                                     className="flex items-center gap-1 text-[9px] text-success hover:text-green-800 cursor-pointer transition-colors"
-                                    onClick={ () => catalogAdmin.createPage({ caption: 'New Category', catalogMode: currentType, pageLayout: 'default_3x3', minRank: 1, visible: '1', enabled: '1', orderNum: 99, parentId: rootNode.pageId }) }
+                                    onClick={ () => catalogAdmin.createPage({ caption: 'New Category', captionSave: 'New Category', catalogMode: currentType, pageLayout: 'default_3x3', iconImage: 0, minRank: 1, visible: '1', enabled: '1', orderNum: 99, parentId: rootNode.pageId }) }
                                 >
                                     <FaPlus className="text-[8px]" />
                                     <span>{ LocalizeText('catalog.admin.new') }</span>
                                 </button>
                                 <button
                                     className="flex items-center gap-1 text-[9px] text-primary hover:text-dark cursor-pointer transition-colors"
-                                    onClick={ () => { catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(true); catalogAdmin.setEditingPageData(true); } }
+                                    onClick={ () =>
+                                    {
+                                        catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(true); catalogAdmin.setEditingPageData(true);
+                                    } }
                                 >
                                     <FaEdit className="text-[8px]" />
                                     <span>{ LocalizeText('catalog.admin.root') }</span>

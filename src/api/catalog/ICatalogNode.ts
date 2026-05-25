@@ -10,6 +10,7 @@ export interface ICatalogNode
     readonly isLeaf: boolean;
     readonly localization: string;
     readonly pageId: number;
+    readonly parentId: number;
     readonly pageName: string;
     readonly iconId: number;
     readonly children: ICatalogNode[];

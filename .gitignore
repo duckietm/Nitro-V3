@@ -38,3 +38,9 @@ Thumbs.db
 /public/configuration/client-mode.json
 /public/configuration/adsense.json
 /public/configuration/hotlooks.json
+
+# Game assets are served by an external server (emulator/CMS), not by Vite.
+# Never recreate these as symlinks inside public/ — chokidar follows them and
+# the dev server takes minutes to start with 100k+ files under public/.
+/public/nitro-assets
+/public/swf

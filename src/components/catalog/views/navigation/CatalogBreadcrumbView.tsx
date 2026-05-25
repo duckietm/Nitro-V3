@@ -1,10 +1,11 @@
 import { FC } from 'react';
 import { LocalizeText } from '../../../../api';
-import { useCatalog } from '../../../../hooks';
+import { useCatalogActions, useCatalogUiState } from '../../../../hooks';
 
 export const CatalogBreadcrumbView: FC<{}> = () =>
 {
-    const { activeNodes = [], activateNode } = useCatalog();
+    const { activeNodes = [] } = useCatalogUiState();
+    const { activateNode } = useCatalogActions();
 
     if(!activeNodes || activeNodes.length === 0)
     {

@@ -4,13 +4,13 @@ import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSelectorBaseView } from './WiredSelectorBaseView';
 
-const SOURCE_FURNI_PICKED   = 0;
+const SOURCE_FURNI_PICKED = 0;
 
 export const WiredSelectorFurniByTypeView: FC<{}> = () =>
 {
-    const [ matchState,     setMatchState     ] = useState(false);
+    const [ matchState, setMatchState ] = useState(false);
     const [ filterExisting, setFilterExisting ] = useState(false);
-    const [ invert,         setInvert         ] = useState(false);
+    const [ invert, setInvert ] = useState(false);
 
     const { trigger = null, setIntParams } = useWired();
 
@@ -28,9 +28,9 @@ export const WiredSelectorFurniByTypeView: FC<{}> = () =>
     {
         setIntParams([
             SOURCE_FURNI_PICKED,
-            matchState      ? 1 : 0,
-            filterExisting  ? 1 : 0,
-            invert          ? 1 : 0,
+            matchState ? 1 : 0,
+            filterExisting ? 1 : 0,
+            invert ? 1 : 0,
         ]);
     }, [ matchState, filterExisting, invert, setIntParams ]);
 

@@ -19,4 +19,4 @@ export const ButtonGroup: FC<ButtonGroupProps> = props =>
     }, [ classNames ]);
 
     return <Base classNames={ getClassNames } { ...rest } />;
-}
+};

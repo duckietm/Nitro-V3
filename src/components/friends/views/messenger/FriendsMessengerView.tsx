@@ -14,7 +14,7 @@ export const FriendsMessengerView: FC<{}> = props =>
     const { visibleThreads = [], activeThread = null, getMessageThread = null, sendMessage = null, setActiveThreadId = null, closeThread = null } = useMessenger();
     const { report = null } = useHelp();
     const { settings, translateOutgoing } = useTranslation();
-    const messagesBox = useRef<HTMLDivElement>();
+    const messagesBox = useRef<HTMLDivElement>(null);
 
     const followFriend = () => (activeThread && activeThread.participant && SendMessageComposer(new FollowFriendMessageComposer(activeThread.participant.id)));
     const openProfile = () => (activeThread && activeThread.participant && GetUserProfile(activeThread.participant.id));

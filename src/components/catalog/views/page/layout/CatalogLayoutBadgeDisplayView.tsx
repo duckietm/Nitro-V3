@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { LocalizeText, SanitizeHtml } from '../../../../../api';
 import { Column, Grid, Text } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData } from '../../../../../hooks';
 import { CatalogBadgeSelectorWidgetView } from '../widgets/CatalogBadgeSelectorWidgetView';
 import { CatalogFirstProductSelectorWidgetView } from '../widgets/CatalogFirstProductSelectorWidgetView';
 import { CatalogItemGridWidgetView } from '../widgets/CatalogItemGridWidgetView';
@@ -14,7 +14,7 @@ import { CatalogLayoutProps } from './CatalogLayout.types';
 export const CatalogLayoutBadgeDisplayView: FC<CatalogLayoutProps> = props =>
 {
     const { page = null } = props;
-    const { currentOffer = null } = useCatalog();
+    const { currentOffer = null } = useCatalogData();
 
     return (
         <>

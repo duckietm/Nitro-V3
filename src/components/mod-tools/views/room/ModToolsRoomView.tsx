@@ -1,7 +1,8 @@
 import { CreateLinkEvent, GetModeratorRoomInfoMessageComposer, ModerateRoomMessageComposer, ModeratorActionMessageComposer, ModeratorRoomInfoEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { SendMessageComposer, TryVisitRoom } from '../../../../api';
-import { Button, Column, DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { FaBullhorn, FaCommentDots, FaDoorOpen, FaExclamationTriangle, FaSignInAlt, FaSync, FaUserShield, FaUsers } from 'react-icons/fa';
+import { LocalizeText, SendMessageComposer, TryVisitRoom } from '../../../../api';
+import { Button, DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
 
 interface ModToolsRoomViewProps
@@ -25,7 +26,9 @@ export const ModToolsRoomView: FC<ModToolsRoomViewProps> = props =>
     const [ changeRoomName, setChangeRoomName ] = useState(false);
     const [ message, setMessage ] = useState('');
 
-    const handleClick = (action: string, value?: string) =>
+    const refresh = () => SendMessageComposer(new GetModeratorRoomInfoMessageComposer(roomId));
+
+    const handleClick = (action: string) =>
     {
         if(!action) return;
 
@@ -66,55 +69,102 @@ export const ModToolsRoomView: FC<ModToolsRoomViewProps> = props =>
 
         SendMessageComposer(new GetModeratorRoomInfoMessageComposer(roomId));
         setInfoRequested(true);
-    }, [ roomId, infoRequested, setInfoRequested ]);
+    }, [ roomId, infoRequested ]);
+
+    const isLoaded = loadedRoomId !== null;
+    const hasMessage = message.trim().length > 0;
+    const ownerPillClass = ownerInRoom
+        ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+        : 'bg-zinc-100 text-zinc-600 border-zinc-200';
+    const ownerDotClass = ownerInRoom ? 'bg-emerald-500' : 'bg-zinc-400';
 
     return (
-        <NitroCardView className="nitro-mod-tools-room min-w-[280px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
-            <NitroCardHeaderView headerText={ 'Room Info' } onCloseClick={ event => onCloseClick() } />
+        <NitroCardView className="nitro-mod-tools-room min-w-[400px] max-w-[460px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+            <NitroCardHeaderView headerText={ LocalizeText('modtools.roominfo.title') } onCloseClick={ () => onCloseClick() } />
             <NitroCardContentView className="text-black" gap={ 2 }>
-                { name &&
-                    <div className="bg-muted rounded px-2 py-1.5 text-center">
-                        <Text bold truncate>{ name }</Text>
+                {/* Identity header */}
+                <div className="flex items-center gap-2 bg-gradient-to-r from-sky-50 to-transparent rounded p-2 border border-sky-100">
+                    <FaDoorOpen className="text-sky-600 shrink-0" size={ 16 } />
+                    <div className="flex flex-col grow min-w-0">
+                        <Text bold className="truncate text-base leading-tight">{ name || LocalizeText('modtools.roominfo.loading') }</Text>
+                        <Text className="opacity-60 text-xs truncate">#{ roomId }</Text>
                     </div>
-                }
-                <div className="flex gap-2">
-                    <Column grow gap={ 1 }>
-                        <div className="flex items-center gap-1">
-                            <Text bold className="opacity-60 shrink-0">Owner:</Text>
-                            <Text bold pointer truncate underline onClick={ () => CreateLinkEvent(`mod-tools/open-user-info/${ ownerId }`) }>{ ownerName }</Text>
+                    <span
+                        className={ `inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border ${ ownerPillClass }` }
+                        title={ ownerInRoom ? LocalizeText('modtools.roominfo.owner.title.here') : LocalizeText('modtools.roominfo.owner.title.away') }>
+                        <span className={ `inline-block w-2 h-2 rounded-full ${ ownerDotClass }` } />
+                        { ownerInRoom ? LocalizeText('modtools.roominfo.owner.here') : LocalizeText('modtools.roominfo.owner.away') }
+                    </span>
+                    <button
+                        className="inline-flex items-center justify-center w-7 h-7 rounded text-zinc-500 hover:text-sky-700 hover:bg-sky-100 transition-colors shrink-0"
+                        onClick={ refresh }
+                        title={ LocalizeText('modtools.roominfo.refresh') }>
+                        <FaSync size={ 12 } />
+                    </button>
+                </div>
+
+                {/* Stat strip */}
+                <div className="flex gap-1.5">
+                    <div className="flex flex-col items-center justify-center px-2 py-1.5 rounded border bg-sky-50 border-sky-200 text-sky-700 grow min-w-0">
+                        <div className="flex items-center gap-1.5 text-[.7rem] uppercase tracking-wide opacity-70">
+                            <FaUsers size={ 10 } /><span>{ LocalizeText('modtools.roominfo.stat.users') }</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                            <Text bold className="opacity-60 shrink-0">Users in room:</Text>
-                            <Text>{ usersInRoom }</Text>
+                        <div className="text-lg font-semibold tabular-nums leading-tight">{ usersInRoom }</div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center px-2 py-1.5 rounded border bg-zinc-50 border-zinc-200 text-zinc-700 grow min-w-0">
+                        <div className="flex items-center gap-1.5 text-[.7rem] uppercase tracking-wide opacity-70">
+                            <FaUserShield size={ 10 } /><span>{ LocalizeText('modtools.roominfo.stat.owner') }</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                            <Text bold className="opacity-60 shrink-0">Owner here:</Text>
-                            <Text className={ ownerInRoom ? 'text-green-700' : 'text-red-700' }>{ ownerInRoom ? 'Yes' : 'No' }</Text>
+                        <div
+                            className="text-sm font-semibold leading-tight truncate max-w-full underline cursor-pointer hover:text-sky-700"
+                            onClick={ () => ownerId && CreateLinkEvent(`mod-tools/open-user-info/${ ownerId }`) }
+                            title={ ownerName ? LocalizeText('modtools.roominfo.owner.open', [ 'username' ], [ ownerName ]) : '' }>
+                            { ownerName || '-' }
                         </div>
-                    </Column>
-                    <div className="flex flex-col gap-1 shrink-0">
-                        <Button onClick={ event => TryVisitRoom(roomId) }>Visit Room</Button>
-                        <Button onClick={ event => CreateLinkEvent(`mod-tools/open-room-chatlog/${ roomId }`) }>Chatlog</Button>
                     </div>
                 </div>
-                <Column className="bg-muted rounded p-2" gap={ 1 }>
-                    <div className="flex items-center gap-2">
+
+                {/* Quick actions */}
+                <div className="grid grid-cols-2 gap-1.5">
+                    <Button gap={ 1 } variant="secondary" onClick={ () => TryVisitRoom(roomId) }>
+                        <FaSignInAlt size={ 12 } /> { LocalizeText('modtools.roominfo.button.visit') }
+                    </Button>
+                    <Button gap={ 1 } variant="secondary" onClick={ () => CreateLinkEvent(`mod-tools/open-room-chatlog/${ roomId }`) }>
+                        <FaCommentDots size={ 12 } /> { LocalizeText('modtools.roominfo.button.chatlog') }
+                    </Button>
+                </div>
+
+                {/* Moderate panel */}
+                <div className="flex flex-col gap-1.5 bg-amber-50 border border-amber-200 rounded p-2">
+                    <div className="flex items-center gap-1.5 text-[.7rem] uppercase tracking-wide font-semibold text-amber-800">
+                        <FaExclamationTriangle size={ 10 } /> { LocalizeText('modtools.roominfo.moderate.title') }
+                    </div>
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
                         <input checked={ kickUsers } className="form-check-input" type="checkbox" onChange={ event => setKickUsers(event.target.checked) } />
-                        <Text small>Kick everyone out</Text>
-                    </div>
-                    <div className="flex items-center gap-2">
+                        <span>{ LocalizeText('modtools.roominfo.moderate.kick') }</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
                         <input checked={ lockRoom } className="form-check-input" type="checkbox" onChange={ event => setLockRoom(event.target.checked) } />
-                        <Text small>Enable the doorbell</Text>
-                    </div>
-                    <div className="flex items-center gap-2">
+                        <span>{ LocalizeText('modtools.roominfo.moderate.doorbell') }</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
                         <input checked={ changeRoomName } className="form-check-input" type="checkbox" onChange={ event => setChangeRoomName(event.target.checked) } />
-                        <Text small>Change room name</Text>
+                        <span>{ LocalizeText('modtools.roominfo.moderate.rename') }</span>
+                    </label>
+                    <textarea
+                        className="min-h-[60px] px-2 py-1.5 rounded text-sm border border-amber-300 bg-white/70 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        placeholder={ LocalizeText('modtools.roominfo.moderate.message.placeholder') }
+                        value={ message }
+                        onChange={ event => setMessage(event.target.value) }
+                    />
+                    <div className="flex gap-1.5">
+                        <Button className="grow" disabled={ !hasMessage || !isLoaded } gap={ 1 } variant="danger" onClick={ () => handleClick('send_message') }>
+                            <FaBullhorn size={ 12 } /> { LocalizeText('modtools.roominfo.moderate.send.caution') }
+                        </Button>
+                        <Button className="grow" disabled={ !hasMessage || !isLoaded } gap={ 1 } variant="warning" onClick={ () => handleClick('alert_only') }>
+                            <FaExclamationTriangle size={ 12 } /> { LocalizeText('modtools.roominfo.moderate.send.alert') }
+                        </Button>
                     </div>
-                </Column>
-                <textarea className="min-h-[60px] px-2 py-1.5 rounded text-sm border border-black/10" placeholder="Type a mandatory message..." value={ message } onChange={ event => setMessage(event.target.value) }></textarea>
-                <div className="flex gap-2">
-                    <Button className="grow" variant="danger" onClick={ event => handleClick('send_message') }>Send Caution</Button>
-                    <Button className="grow" onClick={ event => handleClick('alert_only') }>Send Alert</Button>
                 </div>
             </NitroCardContentView>
         </NitroCardView>

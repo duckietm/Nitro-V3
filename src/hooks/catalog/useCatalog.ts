@@ -1,17 +1,26 @@
-import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, ClubGiftInfoEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetClubGiftInfo, GetGiftWrappingConfigurationComposer, GetRoomEngine, GetSessionDataManager, GetTickerTime, GiftWrappingConfigurationEvent, GuildMembershipsMessageEvent, HabboClubOffersMessageEvent, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, NodeData, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomControllerLevel, RoomEngineObjectPlacedEvent, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType, RoomObjectVariable, RoomPreviewer, SellablePetPalettesMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
+import { BuildersClubFurniCountMessageEvent, BuildersClubPlaceRoomItemMessageComposer, BuildersClubPlaceWallItemMessageComposer, BuildersClubQueryFurniCountMessageComposer, BuildersClubSubscriptionStatusMessageEvent, CatalogPageMessageEvent, CatalogPagesListEvent, CatalogPublishedMessageEvent, CreateLinkEvent, FrontPageItem, FurniturePlaceComposer, FurniturePlacePaintComposer, GetCatalogIndexComposer, GetCatalogPageComposer, GetRoomEngine, GetSessionDataManager, GetTickerTime, LegacyDataType, LimitedEditionSoldOutEvent, MarketplaceMakeOfferResult, ProductOfferEvent, PurchaseErrorMessageEvent, PurchaseFromCatalogComposer, PurchaseNotAllowedMessageEvent, PurchaseOKMessageEvent, RoomEngineObjectPlacedEvent, RoomObjectPlacementSource, RoomObjectVariable, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
-import { BuilderFurniPlaceableStatus, CatalogNode, CatalogPage, CatalogPetPalette, CatalogType, DispatchUiEvent, FurniCategory, GetFurnitureData, GetProductDataForLocalization, GetRoomSession, GiftWrappingConfiguration, ICatalogNode, ICatalogOptions, ICatalogPage, IPageLocalization, IProduct, IPurchasableOffer, IPurchaseOptions, LocalizeText, NotificationAlertType, Offer, PageLocalization, PlacedObjectPurchaseData, PlaySound, Product, ProductTypeEnum, RequestedPage, SearchResult, SendMessageComposer, SoundNames } from '../../api';
+import { BuilderFurniPlaceableStatus, CatalogPage, CatalogType, DispatchUiEvent, FurniCategory, GetFurnitureData, GetProductDataForLocalization, GetRoomSession, ICatalogNode, ICatalogPage, IPageLocalization, IProduct, IPurchasableOffer, IPurchaseOptions, LocalizeText, NotificationAlertType, Offer, PageLocalization, PlacedObjectPurchaseData, PlaySound, Product, ProductTypeEnum, RequestedPage, SearchResult, SendMessageComposer, SoundNames } from '../../api';
 import { CatalogPurchaseFailureEvent, CatalogPurchaseNotAllowedEvent, CatalogPurchaseSoldOutEvent, CatalogPurchasedEvent, InventoryFurniAddedEvent } from '../../events';
 import { useMessageEvent, useNitroEvent, useUiEvent } from '../events';
 import { useNotification } from '../notification';
+import { buildCatalogNodeTree, findNodeById, findNodeByName, getNodesByOfferIdFromMap, getOfferProductKeys, normalizeCatalogType, resolveBuilderFurniPlaceableStatus, RoomControllerLevel, RoomObjectCategory, RoomObjectType } from './useCatalog.helpers';
 import { useCatalogPlaceMultipleItems } from './useCatalogPlaceMultipleItems';
 import { useCatalogSkipPurchaseConfirmation } from './useCatalogSkipPurchaseConfirmation';
 
 const DUMMY_PAGE_ID_FOR_OFFER_SEARCH = -12345678;
 const DRAG_AND_DROP_ENABLED = true;
 
-const useCatalogState = () =>
+// Internal singleton store — held together by `useBetween` so every
+// public filter below sees the same listeners + state. Do NOT export
+// this directly; consumers must go through the filters or the
+// deprecated `useCatalog` shim. The previous 1100-line monolith
+// exposed everything via `useCatalog`; the three filters below
+// (`useCatalogData` / `useCatalogUiState` / `useCatalogActions`)
+// shrink the surface each consumer subscribes to, which lets the
+// React Compiler memoize and avoids unrelated re-renders.
+const useCatalogStore = () =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
     const [ isBusy, setIsBusy ] = useState(false);
@@ -28,7 +37,6 @@ const useCatalogState = () =>
     const [ roomPreviewer, setRoomPreviewer ] = useState<RoomPreviewer>(null);
     const [ navigationHidden, setNavigationHidden ] = useState(false);
     const [ purchaseOptions, setPurchaseOptions ] = useState<IPurchaseOptions>({ quantity: 1, extraData: null, extraParamRequired: false, previewStuffData: null });
-    const [ catalogOptions, setCatalogOptions ] = useState<ICatalogOptions>({});
     const [ objectMoverRequested, setObjectMoverRequested ] = useState(false);
     const [ catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects ] = useCatalogPlaceMultipleItems();
     const [ catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation ] = useCatalogSkipPurchaseConfirmation();
@@ -63,13 +71,6 @@ const useCatalogState = () =>
         setIsVisible(false);
     }, []);
 
-    const normalizeCatalogType = useCallback((type?: string) =>
-    {
-        if(type === CatalogType.BUILDER) return CatalogType.BUILDER;
-
-        return CatalogType.NORMAL;
-    }, []);
-
     const resetVisibleCatalogState = useCallback((type?: string) =>
     {
         requestedPage.current.resetRequest();
@@ -86,7 +87,7 @@ const useCatalogState = () =>
         setFrontPageItems([]);
         setNavigationHidden(false);
         setCurrentType(normalizeCatalogType(type));
-    }, [ normalizeCatalogType ]);
+    }, []);
 
     const openCatalogByType = useCallback((type?: string) =>
     {
@@ -98,7 +99,7 @@ const useCatalogState = () =>
         }
 
         setIsVisible(true);
-    }, [ currentType, normalizeCatalogType, resetVisibleCatalogState ]);
+    }, [ currentType, resetVisibleCatalogState ]);
 
     const toggleCatalogByType = useCallback((type?: string) =>
     {
@@ -117,54 +118,60 @@ const useCatalogState = () =>
         }
 
         setIsVisible(true);
-    }, [ isVisible, currentType, normalizeCatalogType, resetVisibleCatalogState ]);
+    }, [ isVisible, currentType, resetVisibleCatalogState ]);
 
     const getBuilderFurniPlaceableStatus = useCallback((offer: IPurchasableOffer) =>
     {
-        if(!offer) return BuilderFurniPlaceableStatus.MISSING_OFFER;
-
         const roomSession = GetRoomSession();
-        const canUseGuildAdminFallback = (!!roomSession
-            && roomSession.isGuildRoom
-            && (roomSession.controllerLevel >= RoomControllerLevel.GUILD_ADMIN)
-            && (secondsLeft > 0));
-        const usesSharedPlacementPool = (!!roomSession && !roomSession.isRoomOwner && (builderPlacementAllowedInCurrentRoom || canUseGuildAdminFallback));
 
-        if(!roomSession) return BuilderFurniPlaceableStatus.NOT_IN_ROOM;
+        // Count non-self, non-moderator users sharing the room. Only
+        // matters when the subscription has expired — the pure helper
+        // short-circuits on the limit-reached / not-in-room paths
+        // first, so we skip the room scan when there's still time on
+        // the clock.
+        let visitorCount = 0;
 
-        if(!roomSession.isRoomOwner && !builderPlacementAllowedInCurrentRoom && !canUseGuildAdminFallback) return BuilderFurniPlaceableStatus.NOT_GROUP_ADMIN;
-
-        if(!usesSharedPlacementPool && ((furniCount < 0) || (furniCount >= furniLimit))) return BuilderFurniPlaceableStatus.FURNI_LIMIT_REACHED;
-
-        if((secondsLeft <= 0) && builderPlacementBlockedByVisitors) return BuilderFurniPlaceableStatus.VISITORS_IN_ROOM;
-
-        if(secondsLeft <= 0)
+        if(roomSession && (secondsLeft <= 0) && !builderPlacementBlockedByVisitors)
         {
             const roomEngine = GetRoomEngine();
             const userDataManager = roomSession.userDataManager;
             const sessionDataManager = GetSessionDataManager();
 
-            if(!roomEngine || !userDataManager || !sessionDataManager) return BuilderFurniPlaceableStatus.OKAY;
-
-            const roomObjects = roomEngine.getRoomObjects(roomSession.roomId, RoomObjectCategory.UNIT);
-
-            if(!roomObjects || !roomObjects.length) return BuilderFurniPlaceableStatus.OKAY;
-
-            for(const roomObject of roomObjects)
+            if(roomEngine && userDataManager && sessionDataManager)
             {
-                if(!roomObject) continue;
+                const roomObjects = roomEngine.getRoomObjects(roomSession.roomId, RoomObjectCategory.UNIT);
 
-                const userData = userDataManager.getUserDataByIndex(roomObject.id);
+                if(roomObjects && roomObjects.length)
+                {
+                    for(const roomObject of roomObjects)
+                    {
+                        if(!roomObject) continue;
 
-                if(!userData || (userData.type !== RoomObjectType.USER)) continue;
-                if(userData.webID === sessionDataManager.userId) continue;
-                if(userData.isModerator) continue;
+                        const userData = userDataManager.getUserDataByIndex(roomObject.id);
 
-                return BuilderFurniPlaceableStatus.VISITORS_IN_ROOM;
+                        if(!userData || (userData.type !== RoomObjectType.USER)) continue;
+                        if(userData.webID === sessionDataManager.userId) continue;
+                        if(userData.isModerator) continue;
+
+                        visitorCount++;
+                        break;
+                    }
+                }
             }
         }
 
-        return BuilderFurniPlaceableStatus.OKAY;
+        return resolveBuilderFurniPlaceableStatus({
+            offer,
+            roomSession: roomSession
+                ? { isGuildRoom: roomSession.isGuildRoom, isRoomOwner: roomSession.isRoomOwner, controllerLevel: roomSession.controllerLevel }
+                : null,
+            secondsLeft,
+            furniCount,
+            furniLimit,
+            builderPlacementAllowedInCurrentRoom,
+            builderPlacementBlockedByVisitors,
+            visitorCount
+        });
     }, [ builderPlacementAllowedInCurrentRoom, builderPlacementBlockedByVisitors, furniCount, furniLimit, secondsLeft ]);
 
     const isDraggable = useCallback((offer: IPurchasableOffer) =>
@@ -295,70 +302,12 @@ const useCatalogState = () =>
         });
     }, [ resetObjectMover, resetRoomPaint ]);
 
-    const getNodeById = useCallback((id: number, node: ICatalogNode) =>
-    {
-        if((node.pageId === id) && (node !== rootNode)) return node;
+    const getNodeById = useCallback((id: number, node: ICatalogNode) => findNodeById(id, node, rootNode), [ rootNode ]);
 
-        for(const child of node.children)
-        {
-            const found = (getNodeById(id, child));
-
-            if(found) return found;
-        }
-
-        return null;
-    }, [ rootNode ]);
-
-    const getNodeByName = useCallback((name: string, node: ICatalogNode) =>
-    {
-        if((node.pageName === name) && (node !== rootNode)) return node;
-
-        for(const child of node.children)
-        {
-            const found = (getNodeByName(name, child));
-
-            if(found) return found;
-        }
-
-        return null;
-    }, [ rootNode ]);
+    const getNodeByName = useCallback((name: string, node: ICatalogNode) => findNodeByName(name, node, rootNode), [ rootNode ]);
 
     const getNodesByOfferId = useCallback((offerId: number, flag: boolean = false) =>
-    {
-        if(!offersToNodes || !offersToNodes.size) return null;
-
-        if(flag)
-        {
-            const nodes: ICatalogNode[] = [];
-            const offers = offersToNodes.get(offerId);
-
-            if(offers && offers.length) for(const offer of offers) (offer.isVisible && nodes.push(offer));
-
-            if(nodes.length) return nodes;
-        }
-
-        return offersToNodes.get(offerId);
-    }, [ offersToNodes ]);
-
-    const getOfferProductKeys = useCallback((offer: IPurchasableOffer) =>
-    {
-        const product = offer?.product;
-        const keys: string[] = [];
-
-        if(!product) return keys;
-
-        if(product.productType && (product.productClassId >= 0))
-        {
-            keys.push(`${ product.productType }:id:${ product.productClassId }`);
-        }
-
-        if(product.productType && product.furnitureData?.className?.length)
-        {
-            keys.push(`${ product.productType }:class:${ product.furnitureData.className }`);
-        }
-
-        return keys;
-    }, []);
+        getNodesByOfferIdFromMap(offerId, offersToNodes, flag), [ offersToNodes ]);
 
     const cacheResolvedOffer = useCallback((offer: IPurchasableOffer) =>
     {
@@ -366,7 +315,7 @@ const useCatalogState = () =>
         {
             resolvedOffersByProductKey.current.set(key, offer);
         }
-    }, [ getOfferProductKeys ]);
+    }, []);
 
     const applySelectedOffer = useCallback((offer: IPurchasableOffer) =>
     {
@@ -557,27 +506,10 @@ const useCatalogState = () =>
 
         if(parserCatalogType !== currentType) return;
 
-        const offers: Map<number, ICatalogNode[]> = new Map();
+        const { rootNode: builtRoot, offersToNodes: builtOffers } = buildCatalogNodeTree(parser.root);
 
-        const getCatalogNode = (node: NodeData, depth: number, parent: ICatalogNode) =>
-        {
-            const catalogNode = (new CatalogNode(node, depth, parent) as ICatalogNode);
-
-            for(const offerId of catalogNode.offerIds)
-            {
-                if(offers.has(offerId)) offers.get(offerId).push(catalogNode);
-                else offers.set(offerId, [ catalogNode ]);
-            }
-
-            depth++;
-
-            for(const child of node.children) catalogNode.addChild(getCatalogNode(child, depth, catalogNode));
-
-            return catalogNode;
-        };
-
-        setRootNode(getCatalogNode(parser.root, 0, null));
-        setOffersToNodes(offers);
+        setRootNode(builtRoot);
+        setOffersToNodes(builtOffers);
     });
 
     useMessageEvent<CatalogPageMessageEvent>(CatalogPageMessageEvent, event =>
@@ -703,75 +635,8 @@ const useCatalogState = () =>
         // (this._isObjectMoverRequested) && (this._purchasableOffer)
     });
 
-    useMessageEvent<SellablePetPalettesMessageEvent>(SellablePetPalettesMessageEvent, event =>
-    {
-        const parser = event.getParser();
-        const petPalette = new CatalogPetPalette(parser.productCode, parser.palettes.slice());
 
-        setCatalogOptions(prevValue =>
-        {
-            const petPalettes = [];
 
-            if(prevValue.petPalettes) petPalettes.push(...prevValue.petPalettes);
-
-            for(let i = 0; i < petPalettes.length; i++)
-            {
-                const palette = petPalettes[i];
-
-                if(palette.breed === petPalette.breed)
-                {
-                    petPalettes.splice(i, 1);
-
-                    break;
-                }
-            }
-
-            petPalettes.push(petPalette);
-
-            return { ...prevValue, petPalettes };
-        });
-    });
-
-    useMessageEvent<HabboClubOffersMessageEvent>(HabboClubOffersMessageEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setCatalogOptions(prevValue =>
-        {
-            const windowId = parser.windowId;
-            const clubOffersByWindowId = { ...(prevValue.clubOffersByWindowId || {}) };
-
-            clubOffersByWindowId[windowId] = parser.offers;
-
-            const clubOffers = clubOffersByWindowId[1] || prevValue.clubOffers;
-
-            return { ...prevValue, clubOffers, clubOffersByWindowId };
-        });
-    });
-
-    useMessageEvent<GuildMembershipsMessageEvent>(GuildMembershipsMessageEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setCatalogOptions(prevValue =>
-        {
-            const groups = parser.groups;
-
-            return { ...prevValue, groups };
-        });
-    });
-
-    useMessageEvent<GiftWrappingConfigurationEvent>(GiftWrappingConfigurationEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setCatalogOptions(prevValue =>
-        {
-            const giftConfiguration = new GiftWrappingConfiguration(parser);
-
-            return { ...prevValue, giftConfiguration };
-        });
-    });
 
     useMessageEvent<MarketplaceMakeOfferResult>(MarketplaceMakeOfferResult, event =>
     {
@@ -792,18 +657,6 @@ const useCatalogState = () =>
         const message = LocalizeText(`inventory.marketplace.result.${ parser.result }`);
 
         simpleAlert(message, NotificationAlertType.DEFAULT, null, null, title);
-    });
-
-    useMessageEvent<ClubGiftInfoEvent>(ClubGiftInfoEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setCatalogOptions(prevValue =>
-        {
-            const clubGifts = parser;
-
-            return { ...prevValue, clubGifts };
-        });
     });
 
     useMessageEvent<CatalogPublishedMessageEvent>(CatalogPublishedMessageEvent, event =>
@@ -1061,23 +914,6 @@ const useCatalogState = () =>
 
                 return new CatalogPage(prevValue.pageId, prevValue.layoutCode, prevValue.localization, offers, prevValue.acceptSeasonCurrencyAsCredits, prevValue.mode);
             });
-            setCatalogOptions(prevValue =>
-            {
-                if(!prevValue) return prevValue;
-
-                const clubOffersByWindowId = { ...(prevValue.clubOffersByWindowId || {}) };
-
-                Object.keys(clubOffersByWindowId).forEach(key =>
-                {
-                    const offers = clubOffersByWindowId[key];
-
-                    if(Array.isArray(offers)) clubOffersByWindowId[key] = [ ...offers ];
-                });
-
-                const clubOffers = Array.isArray(prevValue.clubOffers) ? [ ...prevValue.clubOffers ] : prevValue.clubOffers;
-
-                return { ...prevValue, clubOffers, clubOffersByWindowId };
-            });
         };
 
         window.addEventListener('nitro-localization-updated', refreshCatalogLocalization);
@@ -1101,8 +937,6 @@ const useCatalogState = () =>
     {
         if(!isVisible || rootNode) return;
 
-        SendMessageComposer(new GetGiftWrappingConfigurationComposer());
-        SendMessageComposer(new GetClubGiftInfo());
         SendMessageComposer(new GetCatalogIndexComposer(currentType));
         SendMessageComposer(new BuildersClubQueryFurniCountMessageComposer());
     }, [ isVisible, rootNode, currentType ]);
@@ -1122,7 +956,100 @@ const useCatalogState = () =>
         };
     }, []);
 
-    return { isVisible, setIsVisible, isBusy, pageId, previousPageId, currentType, rootNode, offersToNodes, currentPage, setCurrentPage, currentOffer, setCurrentOffer, activeNodes, searchResult, setSearchResult, frontPageItems, roomPreviewer, navigationHidden, setNavigationHidden, purchaseOptions, setPurchaseOptions, catalogOptions, setCatalogOptions, catalogLocalizationVersion, getNodeById, getNodeByName, activateNode, openPageById, openPageByName, openPageByOfferId, requestOfferToMover, openCatalogByType, toggleCatalogByType, furniCount, furniLimit, maxFurniLimit, secondsLeft, secondsLeftWithGrace, updateTime, catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects, getBuilderFurniPlaceableStatus, selectCatalogOffer };
+    return { isVisible, setIsVisible, isBusy, pageId, previousPageId, currentType, rootNode, offersToNodes, currentPage, setCurrentPage, currentOffer, setCurrentOffer, activeNodes, searchResult, setSearchResult, frontPageItems, roomPreviewer, navigationHidden, setNavigationHidden, purchaseOptions, setPurchaseOptions, catalogLocalizationVersion, getNodeById, getNodeByName, getNodesByOfferId, activateNode, openPageById, openPageByName, openPageByOfferId, requestOfferToMover, openCatalogByType, toggleCatalogByType, furniCount, furniLimit, maxFurniLimit, secondsLeft, secondsLeftWithGrace, updateTime, catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects, getBuilderFurniPlaceableStatus, selectCatalogOffer };
 };
 
-export const useCatalog = () => useBetween(useCatalogState);
+/**
+ * Read-only slice of server-driven catalog state. Anything a consumer
+ * needs to *display* (page tree, current page, offers, Builders Club
+ * counters) lives here.
+ *
+ * `roomPreviewer` and the busy flag are kept here too because they
+ * are observed (not mutated) by every consumer that renders a preview.
+ */
+export const useCatalogData = () =>
+{
+    const {
+        isBusy,
+        rootNode, offersToNodes,
+        currentPage, currentOffer,
+        frontPageItems, searchResult,
+        roomPreviewer,
+        catalogLocalizationVersion,
+        furniCount, furniLimit, maxFurniLimit,
+        secondsLeft, secondsLeftWithGrace, updateTime
+    } = useBetween(useCatalogStore);
+
+    return {
+        isBusy,
+        rootNode, offersToNodes,
+        currentPage, currentOffer,
+        frontPageItems, searchResult,
+        roomPreviewer,
+        catalogLocalizationVersion,
+        furniCount, furniLimit, maxFurniLimit,
+        secondsLeft, secondsLeftWithGrace, updateTime
+    };
+};
+
+/**
+ * UI-side state owned by the catalog overlay itself: visibility, the
+ * currently-rendered page id and breadcrumb, search query result,
+ * purchase options, multi-place toggle. Includes the setters that
+ * mutate the data slice when the user picks a page / offer / search
+ * result — those don't trigger server traffic so they belong to the
+ * UI layer.
+ */
+export const useCatalogUiState = () =>
+{
+    const {
+        isVisible, setIsVisible,
+        pageId, previousPageId,
+        currentType,
+        activeNodes,
+        navigationHidden, setNavigationHidden,
+        purchaseOptions, setPurchaseOptions,
+        catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects,
+        setCurrentPage, setCurrentOffer, setSearchResult
+    } = useBetween(useCatalogStore);
+
+    return {
+        isVisible, setIsVisible,
+        pageId, previousPageId,
+        currentType,
+        activeNodes,
+        navigationHidden, setNavigationHidden,
+        purchaseOptions, setPurchaseOptions,
+        catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects,
+        setCurrentPage, setCurrentOffer, setSearchResult
+    };
+};
+
+/**
+ * Imperative actions: open / toggle the catalog, navigate the page
+ * tree, request a furni to the mover, look up nodes by id/name, run
+ * the Builders Club placement check. These all either send a
+ * composer to the server, dispatch a UI event, or run synchronous
+ * tree queries — none of them are React state by themselves.
+ */
+export const useCatalogActions = () =>
+{
+    const {
+        openCatalogByType, toggleCatalogByType,
+        activateNode,
+        openPageById, openPageByName, openPageByOfferId,
+        requestOfferToMover, selectCatalogOffer,
+        getNodeById, getNodeByName, getNodesByOfferId,
+        getBuilderFurniPlaceableStatus
+    } = useBetween(useCatalogStore);
+
+    return {
+        openCatalogByType, toggleCatalogByType,
+        activateNode,
+        openPageById, openPageByName, openPageByOfferId,
+        requestOfferToMover, selectCatalogOffer,
+        getNodeById, getNodeByName, getNodesByOfferId,
+        getBuilderFurniPlaceableStatus
+    };
+};
+

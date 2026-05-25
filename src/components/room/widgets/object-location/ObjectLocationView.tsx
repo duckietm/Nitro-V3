@@ -14,7 +14,7 @@ export const ObjectLocationView: FC<ObjectLocationViewProps> = props =>
 {
     const { objectId = -1, category = -1, noFollow = false, ...rest } = props;
     const [ pos, setPos ] = useState<{ x: number, y: number }>({ x: -1, y: -1 });
-    const elementRef = useRef<HTMLDivElement>();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     useEffect(() =>
     {

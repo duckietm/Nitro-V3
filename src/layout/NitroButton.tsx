@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef, PropsWithChildren } from 'react';
+import { ButtonHTMLAttributes, DetailedHTMLProps, PropsWithChildren, Ref } from 'react';
 import { classNames } from './classNames';
 
 const classes = {
@@ -17,14 +17,15 @@ const classes = {
     }
 };
 
-export const NitroButton = forwardRef<HTMLButtonElement, PropsWithChildren<{
+type NitroButtonProps = PropsWithChildren<{
     color?: 'default' | 'dark' | 'ghost';
     size?: 'default' | 'lg' | 'xl';
     outline?: boolean;
-}> & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>>((props, ref) =>
-{
-    const { color = 'default', size = 'default', outline = false, disabled = false, type = 'button', className = null, ...rest } = props;
+    ref?: Ref<HTMLButtonElement>;
+}> & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 
+export const NitroButton = ({ ref, color = 'default', size = 'default', outline = false, disabled = false, type = 'button', className = null, ...rest }: NitroButtonProps) =>
+{
     return (
         <button
             ref={ ref }
@@ -39,6 +40,4 @@ export const NitroButton = forwardRef<HTMLButtonElement, PropsWithChildren<{
             type={ type }
             { ...rest } />
     );
-});
-
-NitroButton.displayName = 'NitroButton';
+};

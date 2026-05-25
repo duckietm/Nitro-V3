@@ -3,7 +3,7 @@ import { FC, useMemo, useState } from 'react';
 import { FaFillDrip } from 'react-icons/fa';
 import { IPurchasableOffer, SanitizeHtml } from '../../../../../api';
 import { AutoGrid, Button, Column, Grid, LayoutGridItem, Text } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
 import { CatalogGridOfferView } from '../common/CatalogGridOfferView';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogLimitedItemWidgetView } from '../widgets/CatalogLimitedItemWidgetView';
@@ -22,7 +22,8 @@ export const CatalogLayoutColorGroupingView: FC<CatalogLayoutColorGroupViewProps
 {
     const { page = null } = props;
     const [ colorableItems, setColorableItems ] = useState<Map<string, number[]>>(new Map<string, number[]>());
-    const { currentOffer = null, setCurrentOffer = null } = useCatalog();
+    const { currentOffer = null } = useCatalogData();
+    const { setCurrentOffer = null } = useCatalogUiState();
     const [ colorsShowing, setColorsShowing ] = useState<boolean>(false);
 
     const sortByColorIndex = (a: IPurchasableOffer, b: IPurchasableOffer) =>

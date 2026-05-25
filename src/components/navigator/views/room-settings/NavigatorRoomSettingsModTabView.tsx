@@ -27,12 +27,12 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
             if(index >= 0) newValue.splice(index, 1);
 
             return newValue;
-        })
+        });
 
         SendMessageComposer(new RoomUnbanUserComposer(userId, roomData.roomId));
 
         setSelectedUserId(-1);
-    }
+    };
 
     useMessageEvent<BannedUsersFromRoomEvent>(BannedUsersFromRoomEvent, event =>
     {
@@ -58,7 +58,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
                         {
                             return (
                                 <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
-                                    <UserProfileIconView userName={ user.userId } />
+                                    <UserProfileIconView userId={ user.userId } />
                                     <Text pointer grow onClick={ event => setSelectedUserId(user.userId) }> { user.userName }</Text>
                                 </Flex>
                             );
@@ -115,4 +115,4 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
             </Column>
         </Grid>
     );
-}
+};

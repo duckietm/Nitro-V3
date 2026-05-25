@@ -36,7 +36,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
     {
         if(friend.id === STAFF_CHAT_ID) return false;
         if(friend.name === STAFF_CHAT_NAME) return false;
-		if(friend.id <= 0) return false;
+        if(friend.id <= 0) return false;
 
         return true;
     });
@@ -46,7 +46,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
         {
             if(id === STAFF_CHAT_ID) return false;
             if(name === STAFF_CHAT_NAME) return false;
-			if(id <= 0) return false;
+            if(id <= 0) return false;
 
             return true;
         })
@@ -100,7 +100,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
         if(!roomData) return;
 
         SendMessageComposer(new RoomUsersWithRightsComposer(roomData.roomId));
-    }, [ roomData?.roomId ]);
+    }, [ roomData ]);
 
     return (
         <Grid>

@@ -1,60 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { CatalogType } from '../../api';
-import { useCatalog } from './useCatalog';
+import { useCatalogUiState } from './useCatalog';
+import { getOffersStorageKey, getPagesStorageKey, IFavoriteOffer, LEGACY_STORAGE_KEY_OFFERS, LEGACY_STORAGE_KEY_PAGES, normalizeCatalogType, parseOffers, parsePages } from './useCatalogFavorites.helpers';
 
-export interface IFavoriteOffer
-{
-    offerId: number;
-    name?: string;
-    iconUrl?: string;
-}
-
-const LEGACY_STORAGE_KEY_OFFERS = 'catalog_fav_offers_v2';
-const LEGACY_STORAGE_KEY_PAGES = 'catalog_fav_pages';
-const STORAGE_KEY_OFFERS_NORMAL = 'catalog_fav_offers_v3_normal';
-const STORAGE_KEY_OFFERS_BUILDER = 'catalog_fav_offers_v3_builder';
-const STORAGE_KEY_PAGES_NORMAL = 'catalog_fav_pages_v2_normal';
-const STORAGE_KEY_PAGES_BUILDER = 'catalog_fav_pages_v2_builder';
-
-const normalizeCatalogType = (catalogType?: string) => ((catalogType === CatalogType.BUILDER) ? CatalogType.BUILDER : CatalogType.NORMAL);
-
-const getOffersStorageKey = (catalogType?: string) => ((normalizeCatalogType(catalogType) === CatalogType.BUILDER) ? STORAGE_KEY_OFFERS_BUILDER : STORAGE_KEY_OFFERS_NORMAL);
-const getPagesStorageKey = (catalogType?: string) => ((normalizeCatalogType(catalogType) === CatalogType.BUILDER) ? STORAGE_KEY_PAGES_BUILDER : STORAGE_KEY_PAGES_NORMAL);
-
-const parseOffers = (raw: string): IFavoriteOffer[] =>
-{
-    try
-    {
-        const parsed = JSON.parse(raw);
-        if(!Array.isArray(parsed)) return [];
-
-        // migrate from old format (number[]) to new format (IFavoriteOffer[])
-        if(parsed.length > 0 && typeof parsed[0] === 'number')
-        {
-            return (parsed as number[]).map(id => ({ offerId: id }));
-        }
-
-        return parsed;
-    }
-    catch
-    {
-        return [];
-    }
-};
-
-const parsePages = (raw: string): number[] =>
-{
-    try
-    {
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-    }
-    catch
-    {
-        return [];
-    }
-};
+export type { IFavoriteOffer } from './useCatalogFavorites.helpers';
 
 const readOffers = (catalogType?: string): IFavoriteOffer[] =>
 {
@@ -116,7 +66,7 @@ const writePages = (catalogType: string, ids: number[]) =>
 
 const useCatalogFavoritesState = () =>
 {
-    const { currentType = CatalogType.NORMAL } = useCatalog();
+    const { currentType = CatalogType.NORMAL } = useCatalogUiState();
     const catalogType = normalizeCatalogType(currentType);
     const [ favoriteOffersByType, setFavoriteOffersByType ] = useState<Record<string, IFavoriteOffer[]>>({
         [CatalogType.NORMAL]: [],

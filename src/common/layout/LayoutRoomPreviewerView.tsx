@@ -7,7 +7,7 @@ export const LayoutRoomPreviewerView: FC<{
 }> = props =>
 {
     const { roomPreviewer = null, height = 0 } = props;
-    const elementRef = useRef<HTMLDivElement>();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     const onClick = (event: MouseEvent<HTMLDivElement>) =>
     {

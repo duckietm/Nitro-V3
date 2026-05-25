@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, AvatarDirectionAngle, AvatarEffectActivatedComposer, GetConfiguration, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, AvatarDirectionAngle, AvatarEffectActivatedComposer, GetConfiguration, GetSessionDataManager, ILinkEventTracker, loadGamedata, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { ChangeEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../api';
@@ -36,8 +36,8 @@ export const AvatarEffectsView: FC<{}> = () =>
 
                 switch(parts[1])
                 {
-                    case 'show':   setIsVisible(true); return;
-                    case 'hide':   setIsVisible(false); return;
+                    case 'show': setIsVisible(true); return;
+                    case 'hide': setIsVisible(false); return;
                     case 'toggle': setIsVisible(prev => !prev); return;
                 }
             },
@@ -65,9 +65,11 @@ export const AvatarEffectsView: FC<{}> = () =>
         {
             try
             {
-                const response = await fetch(url);
-                if(!response.ok) throw new Error(`HTTP ${ response.status }`);
-                const json = await response.json();
+                // The effectmap is served either as a single JSON file or as a
+                // tiered directory with core/custom/seasonal manifests using
+                // JSON5 syntax (// comments allowed). loadGamedata picks the
+                // right mode for us and merges tiers.
+                const json = await loadGamedata<{ effects?: EffectMapEntry[] }>(url);
                 if(cancelled) return;
 
                 const list: EffectMapEntry[] = Array.isArray(json?.effects)
@@ -83,7 +85,10 @@ export const AvatarEffectsView: FC<{}> = () =>
             }
         })();
 
-        return () => { cancelled = true; };
+        return () =>
+        {
+            cancelled = true;
+        };
     }, [ isVisible, effects.length, loadError ]);
 
     const session = GetSessionDataManager();
@@ -107,6 +112,13 @@ export const AvatarEffectsView: FC<{}> = () =>
         SendMessageComposer(new AvatarEffectActivatedComposer(selectedId));
         setIsVisible(false);
     }, [ selectedId ]);
+
+    const removeCurrentEffect = useCallback(() =>
+    {
+        SendMessageComposer(new AvatarEffectActivatedComposer(0));
+        setSelectedId(0);
+        setIsVisible(false);
+    }, []);
 
     const onClose = useCallback(() => setIsVisible(false), []);
 
@@ -191,9 +203,14 @@ export const AvatarEffectsView: FC<{}> = () =>
                             </div>
                         }
                     </div>
-                    <Button variant="success" disabled={ !selectedId } onClick={ applySelectedEffect } className="w-full mt-2">
-                        { LocalizeText('inventory.effects.activate') || 'Use' }
-                    </Button>
+                    <div className="flex gap-1 mt-2">
+                        <Button variant="success" disabled={ !selectedId } onClick={ applySelectedEffect } className="flex-1">
+                            { LocalizeText('inventory.effects.activate') || 'Use effect' }
+                        </Button>
+                        <Button variant="danger" onClick={ removeCurrentEffect } className="flex-1">
+                            { LocalizeText('inventory.effects.remove') || 'Remove effect' }
+                        </Button>
+                    </div>
                 </Column>
                 <Column overflow="hidden" className="flex-1 min-h-0">
                     <div className="relative">

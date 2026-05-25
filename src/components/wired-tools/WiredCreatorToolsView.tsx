@@ -1,661 +1,97 @@
 import { AddLinkEventTracker, AvatarExpressionEnum, FigureUpdateEvent, FurnitureFloorUpdateEvent, FurnitureMultiStateComposer, FurnitureWallMultiStateComposer, FurnitureWallUpdateComposer, FurnitureWallUpdateEvent, GetLocalizationManager, GetRoomEngine, GetSessionDataManager, GetStage, GetTicker, ILinkEventTracker, RemoveLinkEventTracker, RoomControllerLevel, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomUnitDanceEvent, RoomUnitEffectEvent, RoomUnitExpressionEvent, RoomUnitHandItemEvent, RoomUnitInfoEvent, RoomUnitStatusEvent, UpdateFurniturePositionComposer, Vector3d, WiredUserInspectMoveComposer } from '@nitrots/nitro-renderer';
 import { WiredMonitorDataEvent, WiredMonitorRequestComposer } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import furniInspectionIcon from '../../assets/images/wiredtools/furni.png';
-import globalInspectionIcon from '../../assets/images/wiredtools/global.png';
-import userInspectionIcon from '../../assets/images/wiredtools/user.png';
-import contextInspectionIcon from '../../assets/images/wiredtools/context.png';
 import wiredGlobalPlaceholderImage from '../../assets/images/wiredtools/wired_global_placeholder.png';
 import wiredMonitorImage from '../../assets/images/wiredtools/wired_monitor.png';
-import { AvatarInfoFurni, AvatarInfoUtilities, GetRoomObjectBounds, GetRoomObjectScreenLocation, LocalizeText, NotificationAlertType, SendMessageComposer, WiredSelectionVisualizer } from '../../api';
+import { AvatarInfoUtilities, GetRoomObjectBounds, GetRoomObjectScreenLocation, LocalizeText, NotificationAlertType, SendMessageComposer, WiredSelectionVisualizer } from '../../api';
 import { Button, DraggableWindowPosition, LayoutAvatarImageView, LayoutPetImageView, LayoutRoomObjectImageView, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../common';
 import { useInventoryTrade, useMessageEvent, useNotification, useObjectSelectedEvent, useRoom, useWiredTools } from '../../hooks';
+import { DIRECTION_NAMES, EDITABLE_FURNI_VARIABLES, EDITABLE_USER_VARIABLES, INSPECTION_ELEMENTS, MONITOR_ERROR_INFO, MONITOR_LOG_ORDER, MONTH_NAMES, TABS, TEAM_COLOR_NAMES, VARIABLES_ELEMENTS, VARIABLE_DEFINITIONS, WEEKDAY_NAMES, WIRED_CLOCK_REFRESH_MS, WIRED_FREEZE_EFFECT_IDS, WIRED_INSPECTION_REFRESH_MS, WIRED_MONITOR_ACTION_CLEAR_LOGS, WIRED_MONITOR_ACTION_FETCH, WIRED_MONITOR_POLL_MS, WIRED_VARIABLES_POLL_MS } from './WiredCreatorTools.constants';
+import { formatMonitorHistoryOccurrence, formatMonitorLatestOccurrence, formatMonitorSource, formatVariableTimestamp, getHotelDateTimeParts, getHotelTimeFormatter, normalizeMonitorReason } from './WiredCreatorTools.helpers';
+import { HotelDateTimeParts, InspectionElementButton, InspectionElementType, InspectionFurniLiveState, InspectionFurniSelection, InspectionUserLiveState, InspectionUserSelection, InspectionUserTeamData, InspectionVariable, ManagedHolderVariableEntry, MonitorLog, MonitorLogDetails, MonitorStat, ParsedWallLocation, TeamEffectData, VariableDefinition, VariableHighlightOverlay, VariableHighlightTarget, VariableManageEntry, VariableTextValue, VariablesElementButton, VariablesElementType, WiredToolsTab } from './WiredCreatorTools.types';
+import { useWiredCreatorToolsUiStore } from './wiredCreatorToolsUiStore';
+import { WiredInspectionTabView } from './WiredInspectionTabView';
+import { WiredMonitorTabView } from './WiredMonitorTabView';
 import { WiredToolsSettingsTabView } from './WiredToolsSettingsTabView';
-
-type WiredToolsTab = 'monitor' | 'variables' | 'inspection' | 'chests' | 'settings';
-type InspectionElementType = 'furni' | 'user' | 'global';
-type VariablesElementType = InspectionElementType | 'context';
-
-interface InspectionElementButton
-{
-    key: InspectionElementType;
-    label: string;
-    icon: string;
-}
-
-interface VariablesElementButton
-{
-    key: VariablesElementType;
-    label: string;
-    icon: string;
-    disabled?: boolean;
-}
-
-interface InspectionFurniSelection
-{
-    objectId: number;
-    category: number;
-    info: AvatarInfoFurni;
-}
-
-interface InspectionFurniLiveState
-{
-    positionX: number;
-    positionY: number;
-    altitude: number;
-    rotation: number;
-    state: number;
-}
-
-interface InspectionUserSelection
-{
-    kind: 'user' | 'bot' | 'rentable_bot' | 'pet';
-    roomIndex: number;
-    name: string;
-    figure: string;
-    gender: string;
-    userId: number;
-    level: number;
-    achievementScore: number;
-    isHC: boolean;
-    hasRights: boolean;
-    isOwner: boolean;
-    favouriteGroupId: number;
-    roomEntryMethod: string;
-    roomEntryTeleportId: number;
-    posture?: string;
-}
-
-interface InspectionUserLiveState
-{
-    positionX: number;
-    positionY: number;
-    altitude: number;
-    direction: number;
-}
-
-interface MonitorStat
-{
-    label: string;
-    value: string;
-}
-
-interface MonitorLog
-{
-    type: string;
-    category: string;
-    amount: string;
-    latest: string;
-    latestReason: string;
-    latestSourceId: number;
-    latestSourceLabel: string;
-}
-
-interface MonitorSnapshot
-{
-    usageCurrentWindow: number;
-    usageLimitPerWindow: number;
-    isHeavy: boolean;
-    delayedEventsPending: number;
-    delayedEventsLimit: number;
-    averageExecutionMs: number;
-    peakExecutionMs: number;
-    recursionDepthCurrent: number;
-    recursionDepthLimit: number;
-    killedRemainingSeconds: number;
-    usageWindowMs: number;
-    overloadAverageThresholdMs: number;
-    overloadPeakThresholdMs: number;
-    heavyUsageThresholdPercent: number;
-    heavyConsecutiveWindowsThreshold: number;
-    overloadConsecutiveWindowsThreshold: number;
-    heavyDelayedThresholdPercent: number;
-    logs: Array<{
-        amount: number;
-        latestOccurrenceSeconds: number;
-        latestReason: string;
-        latestSourceId: number;
-        latestSourceLabel: string;
-        severity: string;
-        type: string;
-    }>;
-    history: Array<{
-        occurredAtSeconds: number;
-        reason: string;
-        sourceId: number;
-        sourceLabel: string;
-        severity: string;
-        type: string;
-    }>;
-}
-
-interface MonitorLogDetails
-{
-    amount?: string;
-    latest?: string;
-    occurredAt?: string;
-    reason: string;
-    severity: string;
-    sourceId: number;
-    sourceLabel: string;
-    type: string;
-}
-
-interface InspectionVariable
-{
-    key: string;
-    value: string;
-    editable?: boolean;
-    valueClassName?: string;
-}
-
-interface VariableDefinition
-{
-    key: string;
-    itemId?: number;
-    target: 'Furni' | 'User' | 'Global' | 'Context';
-    type: string;
-    hasValue: boolean;
-    isReadOnly?: boolean;
-    availability: string;
-    canWriteTo: boolean;
-    canCreateDelete: boolean;
-    canIntercept: boolean;
-    hasCreationTime: boolean;
-    hasUpdateTime: boolean;
-    isTextConnected: boolean;
-    isAlwaysAvailable?: boolean;
-}
-
-interface VariableTextValue
-{
-    value: string;
-    text: string;
-}
-
-interface VariableManageEntry
-{
-    categoryLabel: string;
-    createdAt: number;
-    entityId: number;
-    entityName: string;
-    manageLabel: string;
-    updatedAt: number;
-    value: number | null;
-}
-
-interface VariableHighlightTarget
-{
-    category: number;
-    hasValue: boolean;
-    objectId: number;
-    value: number | null;
-}
-
-interface VariableHighlightOverlay extends VariableHighlightTarget
-{
-    key: string;
-    x: number;
-    y: number;
-}
-
-interface ManagedHolderVariableEntry
-{
-    availability: string;
-    createdAt: number;
-    hasValue: boolean;
-    name: string;
-    isReadOnly?: boolean;
-    updatedAt: number;
-    value: number | null;
-    variableItemId: number;
-}
-
-interface InspectionUserTeamData
-{
-    colorId: number;
-    typeId: number;
-    score: number;
-}
-
-interface TeamEffectData
-{
-    colorId: number;
-    typeId: number;
-}
-
-interface ParsedWallLocation
-{
-    width: number;
-    height: number;
-    localX: number;
-    localY: number;
-    direction: string;
-}
-
-interface HotelDateTimeParts
-{
-    year: number;
-    month: number;
-    day: number;
-    hour: number;
-    minute: number;
-    second: number;
-    millisecond: number;
-}
-
-const TABS: Array<{ key: WiredToolsTab; label: string; }> = [
-    { key: 'monitor', label: 'Monitor' },
-    { key: 'variables', label: 'Variables' },
-    { key: 'inspection', label: 'Inspection' },
-    { key: 'chests', label: 'Chests' },
-    { key: 'settings', label: 'Settings' }
-];
-
-const MONITOR_LOG_ORDER: string[] = [
-    'EXECUTION_CAP',
-    'DELAYED_EVENTS_CAP',
-    'EXECUTOR_OVERLOAD',
-    'MARKED_AS_HEAVY',
-    'KILLED',
-    'RECURSION_TIMEOUT'
-];
-
-const WIRED_MONITOR_ACTION_FETCH = 0;
-const WIRED_MONITOR_ACTION_CLEAR_LOGS = 1;
-const WIRED_MONITOR_POLL_MS = 50;
-const WIRED_VARIABLES_POLL_MS = 50;
-const WIRED_INSPECTION_REFRESH_MS = 50;
-const WIRED_CLOCK_REFRESH_MS = 50;
-
-const MONITOR_ERROR_INFO: Record<string, { description: string[]; severity: string; title: string; }> = {
-    EXECUTION_CAP: {
-        title: 'EXECUTION_CAP',
-        severity: 'ERROR',
-        description: [
-            'This error occurs when the maximum Wired usage limit is about to be exceeded by a Wired execution.',
-            'When this happens, the current execution is cancelled so the room never goes over the configured usage budget.',
-            'If this happens too often, it usually means the setup is too complex for the amount of triggers firing in a short time.'
-        ]
-    },
-    DELAYED_EVENTS_CAP: {
-        title: 'DELAYED_EVENTS_CAP',
-        severity: 'ERROR',
-        description: [
-            'Delayed Wired events happen when effects are scheduled to run later.',
-            'There is a limit to how many delayed events can be pending at the same time. Once the limit is reached, new delayed executions are refused.',
-            'If this appears often, the setup is likely relying too heavily on delayed effects and should be simplified.'
-        ]
-    },
-    EXECUTOR_OVERLOAD: {
-        title: 'EXECUTOR_OVERLOAD',
-        severity: 'ERROR',
-        description: [
-            'This error occurs when the Wired engine is receiving a lot of instructions and the room cannot keep up with the execution time.',
-            'This can be a sign of server pressure or of a setup that is too expensive to evaluate repeatedly.',
-            'If the room is also marked as heavy, it is a good sign that the setup should be reduced or optimized.'
-        ]
-    },
-    MARKED_AS_HEAVY: {
-        title: 'MARKED_AS_HEAVY',
-        severity: 'WARNING',
-        description: [
-            'The room is being considered heavy because its Wired usage stays high across multiple monitor windows.',
-            'This is not a fatal error by itself, but it means the room is consuming a significant portion of the execution budget.',
-            'If the room is not intentionally complex, it is worth reviewing the setup before it starts triggering harder limits.'
-        ]
-    },
-    KILLED: {
-        title: 'KILLED',
-        severity: 'ERROR',
-        description: [
-            'This happens when the room is temporarily halted by the protection layer because the Wired flow looks abusive or unstable.',
-            'While the room is killed, Wired execution is paused for a cooldown period.',
-            'This is usually caused by loops, event spam, or repeated limit violations.'
-        ]
-    },
-    RECURSION_TIMEOUT: {
-        title: 'RECURSION_TIMEOUT',
-        severity: 'ERROR',
-        description: [
-            'Recursive Wired events happen when signals keep re-triggering other stacks in the same room.',
-            'When the recursion depth limit is reached, execution is stopped to prevent runaway loops.',
-            'In most cases this means two or more stacks are indirectly calling each other too many times.'
-        ]
-    }
-};
-
-const INSPECTION_ELEMENTS: InspectionElementButton[] = [
-    { key: 'furni', label: 'Furni', icon: furniInspectionIcon },
-    { key: 'user', label: 'User', icon: userInspectionIcon },
-    { key: 'global', label: 'Global', icon: globalInspectionIcon }
-];
-
-const VARIABLES_ELEMENTS: VariablesElementButton[] = [
-    { key: 'furni', label: 'Furni', icon: furniInspectionIcon },
-    { key: 'user', label: 'User', icon: userInspectionIcon },
-    { key: 'global', label: 'Global', icon: globalInspectionIcon },
-    { key: 'context', label: 'Context', icon: contextInspectionIcon }
-];
-
-const EDITABLE_FURNI_VARIABLES: string[] = [ '@position_x', '@position_y', '@rotation', '@altitude', '@state', '@wallitem_offset' ];
-const EDITABLE_USER_VARIABLES: string[] = [ '@position_x', '@position_y', '@direction' ];
-const createVariableDefinition = (key: string, target: 'Furni' | 'User' | 'Global' | 'Context', availability: string = 'Always', canWriteTo = false): VariableDefinition =>
-({
-    key,
-    target,
-    type: 'Internal',
-    hasValue: true,
-    availability,
-    canWriteTo,
-    canCreateDelete: false,
-    canIntercept: false,
-    hasCreationTime: false,
-    hasUpdateTime: false,
-    isTextConnected: false,
-    isAlwaysAvailable: (availability === 'Always')
-});
-const VARIABLE_DEFINITIONS: Record<VariablesElementType, VariableDefinition[]> = {
-    furni: [
-        createVariableDefinition('~teleport.target_id', 'Furni', 'Conditional'),
-        createVariableDefinition('@id', 'Furni'),
-        createVariableDefinition('@class_id', 'Furni'),
-        createVariableDefinition('@height', 'Furni'),
-        createVariableDefinition('@state', 'Furni', 'Always', true),
-        createVariableDefinition('@position_x', 'Furni', 'Always', true),
-        createVariableDefinition('@position_y', 'Furni', 'Always', true),
-        createVariableDefinition('@rotation', 'Furni', 'Always', true),
-        createVariableDefinition('@altitude', 'Furni', 'Always', true),
-        createVariableDefinition('@is_invisible', 'Furni', 'Conditional'),
-        createVariableDefinition('@wallitem_offset', 'Furni', 'Conditional', true),
-        createVariableDefinition('@type', 'Furni'),
-        createVariableDefinition('@can_sit_on', 'Furni', 'Conditional'),
-        createVariableDefinition('@can_lay_on', 'Furni', 'Conditional'),
-        createVariableDefinition('@can_stand_on', 'Furni', 'Conditional'),
-        createVariableDefinition('@is_stackable', 'Furni', 'Conditional'),
-        createVariableDefinition('@dimensions.x', 'Furni'),
-        createVariableDefinition('@dimensions.y', 'Furni'),
-        createVariableDefinition('@owner_id', 'Furni')
-    ],
-    user: [
-        createVariableDefinition('@index', 'User'),
-        createVariableDefinition('@type', 'User'),
-        createVariableDefinition('@gender', 'User'),
-        createVariableDefinition('@level', 'User'),
-        createVariableDefinition('@achievement_score', 'User'),
-        createVariableDefinition('@is_hc', 'User', 'Conditional'),
-        createVariableDefinition('@has_rights', 'User', 'Conditional'),
-        createVariableDefinition('@is_owner', 'User', 'Conditional'),
-        createVariableDefinition('@is_group_admin', 'User', 'Conditional'),
-        createVariableDefinition('@is_muted', 'User', 'Conditional'),
-        createVariableDefinition('@is_trading', 'User', 'Conditional'),
-        createVariableDefinition('@is_frozen', 'User', 'Conditional'),
-        createVariableDefinition('@effect_id', 'User', 'Conditional'),
-        createVariableDefinition('@team_score', 'User', 'Conditional'),
-        createVariableDefinition('@team_color', 'User', 'Conditional'),
-        createVariableDefinition('@team_type', 'User', 'Conditional'),
-        createVariableDefinition('@sign', 'User', 'Conditional'),
-        createVariableDefinition('@dance', 'User', 'Conditional'),
-        createVariableDefinition('@is_idle', 'User', 'Conditional'),
-        createVariableDefinition('@handitem_id', 'User', 'Conditional'),
-        createVariableDefinition('@position_x', 'User', 'Always', true),
-        createVariableDefinition('@position_y', 'User', 'Always', true),
-        createVariableDefinition('@direction', 'User', 'Always', true),
-        createVariableDefinition('@altitude', 'User'),
-        createVariableDefinition('@favourite_group_id', 'User', 'Conditional'),
-        createVariableDefinition('@room_entry.method', 'User', 'Conditional'),
-        createVariableDefinition('@room_entry.teleport_id', 'User', 'Conditional'),
-        createVariableDefinition('@user_id', 'User', 'Conditional'),
-        createVariableDefinition('@bot_id', 'User', 'Conditional'),
-        createVariableDefinition('@pet_id', 'User', 'Conditional'),
-        createVariableDefinition('@pet_owner_id', 'User', 'Conditional')
-    ],
-    global: [
-        createVariableDefinition('@furni_count', 'Global'),
-        createVariableDefinition('@user_count', 'Global'),
-        createVariableDefinition('@wired_timer', 'Global'),
-        createVariableDefinition('@team_red_score', 'Global'),
-        createVariableDefinition('@team_green_score', 'Global'),
-        createVariableDefinition('@team_blue_score', 'Global'),
-        createVariableDefinition('@team_yellow_score', 'Global'),
-        createVariableDefinition('@team_red_size', 'Global'),
-        createVariableDefinition('@team_green_size', 'Global'),
-        createVariableDefinition('@team_blue_size', 'Global'),
-        createVariableDefinition('@team_yellow_size', 'Global'),
-        createVariableDefinition('@room_id', 'Global'),
-        createVariableDefinition('@group_id', 'Global'),
-        createVariableDefinition('@timezone_server', 'Global'),
-        createVariableDefinition('@timezone_client', 'Global'),
-        createVariableDefinition('@current_time', 'Global'),
-        createVariableDefinition('@current_time.millisecond_of_second', 'Global'),
-        createVariableDefinition('@current_time.seconds_of_minute', 'Global'),
-        createVariableDefinition('@current_time.minute_of_hour', 'Global'),
-        createVariableDefinition('@current_time.hour_of_day', 'Global'),
-        createVariableDefinition('@current_time.day_of_week', 'Global'),
-        createVariableDefinition('@current_time.day_of_month', 'Global'),
-        createVariableDefinition('@current_time.day_of_year', 'Global'),
-        createVariableDefinition('@current_time.week_of_year', 'Global'),
-        createVariableDefinition('@current_time.month_of_year', 'Global'),
-        createVariableDefinition('@current_time.year', 'Global')
-    ],
-    context: [
-        createVariableDefinition('@selector_furni_count', 'Context', 'Conditional'),
-        createVariableDefinition('@selector_user_count', 'Context', 'Conditional'),
-        createVariableDefinition('@signal_furni_count', 'Context', 'Conditional'),
-        createVariableDefinition('@signal_user_count', 'Context', 'Conditional'),
-        createVariableDefinition('@antenna_id', 'Context', 'Conditional'),
-        createVariableDefinition('@chat_type', 'Context', 'Conditional'),
-        createVariableDefinition('@chat_style', 'Context', 'Conditional')
-    ]
-};
-const WIRED_FREEZE_EFFECT_IDS: Set<number> = new Set([ 218, 12, 11, 53, 163 ]);
-const TEAM_COLOR_NAMES: Record<number, string> = {
-    1: 'red',
-    2: 'green',
-    3: 'blue',
-    4: 'yellow'
-};
-const WEEKDAY_NAMES: string[] = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
-const MONTH_NAMES: string[] = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-const DIRECTION_NAMES: string[] = [ 'North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West' ];
-const HOTEL_TIME_FORMATTERS: Map<string, Intl.DateTimeFormat> = new Map();
-
-const createEmptyMonitorSnapshot = (): MonitorSnapshot =>
-({
-    usageCurrentWindow: 0,
-    usageLimitPerWindow: 0,
-    isHeavy: false,
-    delayedEventsPending: 0,
-    delayedEventsLimit: 0,
-    averageExecutionMs: 0,
-    peakExecutionMs: 0,
-    recursionDepthCurrent: 0,
-    recursionDepthLimit: 0,
-    killedRemainingSeconds: 0,
-    usageWindowMs: 0,
-    overloadAverageThresholdMs: 0,
-    overloadPeakThresholdMs: 0,
-    heavyUsageThresholdPercent: 0,
-    heavyConsecutiveWindowsThreshold: 0,
-    overloadConsecutiveWindowsThreshold: 0,
-    heavyDelayedThresholdPercent: 0,
-    logs: [],
-    history: []
-});
-
-const getHotelTimeFormatter = (timeZone: string): Intl.DateTimeFormat =>
-{
-    const formatterTimeZone = (timeZone || 'UTC');
-    const existingFormatter = HOTEL_TIME_FORMATTERS.get(formatterTimeZone);
-
-    if(existingFormatter) return existingFormatter;
-
-    let formatter: Intl.DateTimeFormat = null;
-
-    try
-    {
-        formatter = new Intl.DateTimeFormat('en-GB', {
-            timeZone: formatterTimeZone,
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hourCycle: 'h23'
-        });
-    }
-    catch
-    {
-        formatter = new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'UTC',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hourCycle: 'h23'
-        });
-    }
-
-    HOTEL_TIME_FORMATTERS.set(formatterTimeZone, formatter);
-
-    return formatter;
-};
-
-const getHotelDateTimeParts = (epochMs: number, timeZone: string): HotelDateTimeParts =>
-{
-    const normalizedEpochMs = Number.isFinite(epochMs) ? epochMs : Date.now();
-    const date = new Date(normalizedEpochMs);
-    const formatter = getHotelTimeFormatter(timeZone);
-    const formattedParts = formatter.formatToParts(date);
-    const partsMap = new Map<string, string>();
-
-    for(const part of formattedParts)
-    {
-        if(part.type === 'literal') continue;
-
-        partsMap.set(part.type, part.value);
-    }
-
-    return {
-        year: Number(partsMap.get('year') ?? date.getUTCFullYear()),
-        month: Number(partsMap.get('month') ?? (date.getUTCMonth() + 1)),
-        day: Number(partsMap.get('day') ?? date.getUTCDate()),
-        hour: Number(partsMap.get('hour') ?? date.getUTCHours()),
-        minute: Number(partsMap.get('minute') ?? date.getUTCMinutes()),
-        second: Number(partsMap.get('second') ?? date.getUTCSeconds()),
-        millisecond: (((normalizedEpochMs % 1000) + 1000) % 1000)
-    };
-};
-
-const formatMonitorLatestOccurrence = (latestOccurrenceSeconds: number, nowMs: number): string =>
-{
-    if(latestOccurrenceSeconds <= 0) return '/';
-
-    const diffMs = Math.max(0, (nowMs - (latestOccurrenceSeconds * 1000)));
-    const diffSeconds = Math.floor(diffMs / 1000);
-
-    if(diffSeconds < 5) return 'Just now';
-    if(diffSeconds < 60) return `${ diffSeconds }s ago`;
-
-    const diffMinutes = Math.floor(diffSeconds / 60);
-
-    if(diffMinutes < 60) return `${ diffMinutes }m ago`;
-
-    const diffHours = Math.floor(diffMinutes / 60);
-
-    if(diffHours < 24) return `${ diffHours }h ago`;
-
-    const diffDays = Math.floor(diffHours / 24);
-
-    return `${ diffDays }d ago`;
-};
-
-const formatMonitorHistoryOccurrence = (occurredAtSeconds: number): string =>
-{
-    if(occurredAtSeconds <= 0) return '/';
-
-    return new Date(occurredAtSeconds * 1000).toLocaleString('en-GB');
-};
-
-const formatVariableTimestamp = (timestamp: number): string =>
-{
-    if(!timestamp || (timestamp <= 0)) return '/';
-
-    return new Date(timestamp * 1000).toLocaleString('en-GB');
-};
-
-const formatMonitorSource = (sourceLabel: string, sourceId: number): string =>
-{
-    const normalizedLabel = (sourceLabel || '').trim();
-
-    if(!normalizedLabel && !(sourceId > 0)) return 'Room monitor';
-    if(sourceId > 0) return `${ normalizedLabel || 'wired' } (#${ sourceId })`;
-
-    return normalizedLabel;
-};
-
-const normalizeMonitorReason = (reason: string): string =>
-{
-    const normalizedReason = (reason || '').trim();
-
-    return normalizedReason || 'No detailed reason was recorded for this entry.';
-};
+import { WiredVariablesTabView } from './WiredVariablesTabView';
 
 export const WiredCreatorToolsView: FC<{}> = () =>
 {
-    const [ isVisible, setIsVisible ] = useState(false);
-    const [ activeTab, setActiveTab ] = useState<WiredToolsTab>('monitor');
-    const [ inspectionType, setInspectionType ] = useState<InspectionElementType>('furni');
-    const [ variablesType, setVariablesType ] = useState<VariablesElementType>('furni');
+    const isVisible = useWiredCreatorToolsUiStore(s => s.isVisible);
+    const setIsVisible = useWiredCreatorToolsUiStore(s => s.setIsVisible);
+    const activeTab = useWiredCreatorToolsUiStore(s => s.activeTab);
+    const setActiveTab = useWiredCreatorToolsUiStore(s => s.setActiveTab);
+    const inspectionType = useWiredCreatorToolsUiStore(s => s.inspectionType);
+    const setInspectionType = useWiredCreatorToolsUiStore(s => s.setInspectionType);
+    const variablesType = useWiredCreatorToolsUiStore(s => s.variablesType);
     const [ keepSelected, setKeepSelected ] = useState(false);
-    const [ selectedFurni, setSelectedFurni ] = useState<InspectionFurniSelection>(null);
-    const [ selectedFurniLiveState, setSelectedFurniLiveState ] = useState<InspectionFurniLiveState>(null);
-    const [ selectedUser, setSelectedUser ] = useState<InspectionUserSelection>(null);
-    const [ selectedUserLiveState, setSelectedUserLiveState ] = useState<InspectionUserLiveState>(null);
-    const [ selectedUserActionVersion, setSelectedUserActionVersion ] = useState(0);
+    const selectedFurni = useWiredCreatorToolsUiStore(s => s.selectedFurni);
+    const setSelectedFurni = useWiredCreatorToolsUiStore(s => s.setSelectedFurni);
+    const selectedFurniLiveState = useWiredCreatorToolsUiStore(s => s.selectedFurniLiveState);
+    const setSelectedFurniLiveState = useWiredCreatorToolsUiStore(s => s.setSelectedFurniLiveState);
+    const selectedUser = useWiredCreatorToolsUiStore(s => s.selectedUser);
+    const setSelectedUser = useWiredCreatorToolsUiStore(s => s.setSelectedUser);
+    const selectedUserLiveState = useWiredCreatorToolsUiStore(s => s.selectedUserLiveState);
+    const setSelectedUserLiveState = useWiredCreatorToolsUiStore(s => s.setSelectedUserLiveState);
+    const selectedUserActionVersion = useWiredCreatorToolsUiStore(s => s.selectedUserActionVersion);
+    const setSelectedUserActionVersion = useWiredCreatorToolsUiStore(s => s.setSelectedUserActionVersion);
     const [ globalClock, setGlobalClock ] = useState(Date.now());
     const [ roomEnteredAt, setRoomEnteredAt ] = useState(Date.now());
-    const [ monitorSnapshot, setMonitorSnapshot ] = useState<MonitorSnapshot>(() => createEmptyMonitorSnapshot());
+    const monitorSnapshot = useWiredCreatorToolsUiStore(s => s.monitorSnapshot);
+    const setMonitorSnapshot = useWiredCreatorToolsUiStore(s => s.setMonitorSnapshot);
+    const resetMonitorSnapshot = useWiredCreatorToolsUiStore(s => s.resetMonitorSnapshot);
     const [ selectedMonitorErrorType, setSelectedMonitorErrorType ] = useState<string>(null);
     const [ selectedMonitorLogDetails, setSelectedMonitorLogDetails ] = useState<MonitorLogDetails>(null);
-    const [ isMonitorHistoryOpen, setIsMonitorHistoryOpen ] = useState(false);
-    const [ isMonitorInfoOpen, setIsMonitorInfoOpen ] = useState(false);
-    const [ monitorHistorySeverityFilter, setMonitorHistorySeverityFilter ] = useState<'ALL' | 'ERROR' | 'WARNING'>('ALL');
-    const [ monitorHistoryTypeFilter, setMonitorHistoryTypeFilter ] = useState<string>('ALL');
-    const [ editingVariable, setEditingVariable ] = useState<string>(null);
-    const [ editingValue, setEditingValue ] = useState('');
-    const [ selectedInspectionVariableKeys, setSelectedInspectionVariableKeys ] = useState<Record<InspectionElementType, string>>({
-        furni: '',
-        user: '',
-        global: ''
-    });
-    const [ isInspectionGiveOpen, setIsInspectionGiveOpen ] = useState(false);
-    const [ inspectionGiveVariableItemId, setInspectionGiveVariableItemId ] = useState(0);
-    const [ inspectionGiveValue, setInspectionGiveValue ] = useState('0');
-    const [ isVariableManageOpen, setIsVariableManageOpen ] = useState(false);
-    const [ variableManageTypeFilter, setVariableManageTypeFilter ] = useState<string>('ALL');
-    const [ variableManageSort, setVariableManageSort ] = useState<string>('highest_value');
-    const [ variableManagePage, setVariableManagePage ] = useState(1);
-    const [ selectedManagedVariableEntry, setSelectedManagedVariableEntry ] = useState<VariableManageEntry>(null);
-    const [ selectedManagedHolderVariableId, setSelectedManagedHolderVariableId ] = useState(0);
-    const [ editingManagedHolderVariableId, setEditingManagedHolderVariableId ] = useState(0);
-    const [ editingManagedHolderValue, setEditingManagedHolderValue ] = useState('');
-    const [ isManagedGiveOpen, setIsManagedGiveOpen ] = useState(false);
-    const [ managedGiveVariableItemId, setManagedGiveVariableItemId ] = useState(0);
-    const [ managedGiveValue, setManagedGiveValue ] = useState('0');
-    const [ isVariableHighlightActive, setIsVariableHighlightActive ] = useState(false);
-    const [ variableHighlightOverlays, setVariableHighlightOverlays ] = useState<VariableHighlightOverlay[]>([]);
+    const isMonitorHistoryOpen = useWiredCreatorToolsUiStore(s => s.isMonitorHistoryOpen);
+    const setIsMonitorHistoryOpen = useWiredCreatorToolsUiStore(s => s.setIsMonitorHistoryOpen);
+    const isMonitorInfoOpen = useWiredCreatorToolsUiStore(s => s.isMonitorInfoOpen);
+    const setIsMonitorInfoOpen = useWiredCreatorToolsUiStore(s => s.setIsMonitorInfoOpen);
+    const monitorHistorySeverityFilter = useWiredCreatorToolsUiStore(s => s.monitorHistorySeverityFilter);
+    const setMonitorHistorySeverityFilter = useWiredCreatorToolsUiStore(s => s.setMonitorHistorySeverityFilter);
+    const monitorHistoryTypeFilter = useWiredCreatorToolsUiStore(s => s.monitorHistoryTypeFilter);
+    const setMonitorHistoryTypeFilter = useWiredCreatorToolsUiStore(s => s.setMonitorHistoryTypeFilter);
+    const editingVariable = useWiredCreatorToolsUiStore(s => s.editingVariable);
+    const setEditingVariable = useWiredCreatorToolsUiStore(s => s.setEditingVariable);
+    const editingValue = useWiredCreatorToolsUiStore(s => s.editingValue);
+    const setEditingValue = useWiredCreatorToolsUiStore(s => s.setEditingValue);
+    const selectedInspectionVariableKeys = useWiredCreatorToolsUiStore(s => s.selectedInspectionVariableKeys);
+    const setSelectedInspectionVariableKeys = useWiredCreatorToolsUiStore(s => s.setSelectedInspectionVariableKeys);
+    const isInspectionGiveOpen = useWiredCreatorToolsUiStore(s => s.isInspectionGiveOpen);
+    const setIsInspectionGiveOpen = useWiredCreatorToolsUiStore(s => s.setIsInspectionGiveOpen);
+    const inspectionGiveVariableItemId = useWiredCreatorToolsUiStore(s => s.inspectionGiveVariableItemId);
+    const setInspectionGiveVariableItemId = useWiredCreatorToolsUiStore(s => s.setInspectionGiveVariableItemId);
+    const inspectionGiveValue = useWiredCreatorToolsUiStore(s => s.inspectionGiveValue);
+    const setInspectionGiveValue = useWiredCreatorToolsUiStore(s => s.setInspectionGiveValue);
+    const isVariableManageOpen = useWiredCreatorToolsUiStore(s => s.isVariableManageOpen);
+    const setIsVariableManageOpen = useWiredCreatorToolsUiStore(s => s.setIsVariableManageOpen);
+    const variableManageTypeFilter = useWiredCreatorToolsUiStore(s => s.variableManageTypeFilter);
+    const setVariableManageTypeFilter = useWiredCreatorToolsUiStore(s => s.setVariableManageTypeFilter);
+    const variableManageSort = useWiredCreatorToolsUiStore(s => s.variableManageSort);
+    const setVariableManageSort = useWiredCreatorToolsUiStore(s => s.setVariableManageSort);
+    const variableManagePage = useWiredCreatorToolsUiStore(s => s.variableManagePage);
+    const setVariableManagePage = useWiredCreatorToolsUiStore(s => s.setVariableManagePage);
+    const selectedManagedVariableEntry = useWiredCreatorToolsUiStore(s => s.selectedManagedVariableEntry);
+    const setSelectedManagedVariableEntry = useWiredCreatorToolsUiStore(s => s.setSelectedManagedVariableEntry);
+    const selectedManagedHolderVariableId = useWiredCreatorToolsUiStore(s => s.selectedManagedHolderVariableId);
+    const setSelectedManagedHolderVariableId = useWiredCreatorToolsUiStore(s => s.setSelectedManagedHolderVariableId);
+    const editingManagedHolderVariableId = useWiredCreatorToolsUiStore(s => s.editingManagedHolderVariableId);
+    const setEditingManagedHolderVariableId = useWiredCreatorToolsUiStore(s => s.setEditingManagedHolderVariableId);
+    const editingManagedHolderValue = useWiredCreatorToolsUiStore(s => s.editingManagedHolderValue);
+    const setEditingManagedHolderValue = useWiredCreatorToolsUiStore(s => s.setEditingManagedHolderValue);
+    const isManagedGiveOpen = useWiredCreatorToolsUiStore(s => s.isManagedGiveOpen);
+    const setIsManagedGiveOpen = useWiredCreatorToolsUiStore(s => s.setIsManagedGiveOpen);
+    const managedGiveVariableItemId = useWiredCreatorToolsUiStore(s => s.managedGiveVariableItemId);
+    const setManagedGiveVariableItemId = useWiredCreatorToolsUiStore(s => s.setManagedGiveVariableItemId);
+    const managedGiveValue = useWiredCreatorToolsUiStore(s => s.managedGiveValue);
+    const setManagedGiveValue = useWiredCreatorToolsUiStore(s => s.setManagedGiveValue);
+    const isVariableHighlightActive = useWiredCreatorToolsUiStore(s => s.isVariableHighlightActive);
+    const setIsVariableHighlightActive = useWiredCreatorToolsUiStore(s => s.setIsVariableHighlightActive);
+    const variableHighlightOverlays = useWiredCreatorToolsUiStore(s => s.variableHighlightOverlays);
+    const setVariableHighlightOverlays = useWiredCreatorToolsUiStore(s => s.setVariableHighlightOverlays);
     const variableHighlightObjectsRef = useRef<Array<{ category: number; objectId: number; }>>([]);
     const shouldPauseVariableSnapshotRefresh = (!!editingVariable || !!editingManagedHolderVariableId || isInspectionGiveOpen || isManagedGiveOpen);
-    const [ selectedVariableKeys, setSelectedVariableKeys ] = useState<Record<VariablesElementType, string>>({
-        furni: VARIABLE_DEFINITIONS.furni[0].key,
-        user: VARIABLE_DEFINITIONS.user[0].key,
-        global: VARIABLE_DEFINITIONS.global[0].key,
-        context: VARIABLE_DEFINITIONS.context[0].key
-    });
+    const selectedVariableKeys = useWiredCreatorToolsUiStore(s => s.selectedVariableKeys);
+    const setSelectedVariableKeys = useWiredCreatorToolsUiStore(s => s.setSelectedVariableKeys);
     const { roomSession = null } = useRoom();
     const { ownUser: tradeOwnUser = null, otherUser: tradeOtherUser = null, isTrading = false } = useInventoryTrade();
     const { roomSettings, userVariableDefinitions, userVariableAssignments, furniVariableDefinitions, furniVariableAssignments, roomVariableDefinitions, roomVariableAssignments, contextVariableDefinitions, requestUserVariables, assignUserVariable, removeUserVariable, updateUserVariableValue, assignFurniVariable, removeFurniVariable, updateFurniVariableValue, updateRoomVariableValue } = useWiredTools();
@@ -1264,7 +700,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
 
     useEffect(() =>
     {
-        setMonitorSnapshot(createEmptyMonitorSnapshot());
+        resetMonitorSnapshot();
         setSelectedMonitorErrorType(null);
         setSelectedMonitorLogDetails(null);
         setIsMonitorHistoryOpen(false);
@@ -2565,7 +2001,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
 
         ticker.add(updateOverlays);
 
-        return () => ticker.remove(updateOverlays);
+        return () => { ticker.remove(updateOverlays); };
     }, [ isVariableHighlightActive, roomSession?.roomId, variableHighlightTargets ]);
     const variableManageTypeOptions = useMemo(() =>
     {
@@ -3245,7 +2681,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
 
         switch(editingVariable)
         {
-                case '@position_x': {
+            case '@position_x': {
                 const parsed = parseInt(editingValue.trim(), 10);
 
                 if(Number.isNaN(parsed))
@@ -3257,7 +2693,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                 nextX = parsed;
                 break;
             }
-                case '@position_y': {
+            case '@position_y': {
                 const parsed = parseInt(editingValue.trim(), 10);
 
                 if(Number.isNaN(parsed))
@@ -3632,7 +3068,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
 
     return (
         <>
-        { isVariableHighlightActive && !!variableHighlightOverlays.length &&
+            { isVariableHighlightActive && !!variableHighlightOverlays.length &&
             <div className="pointer-events-none absolute left-0 top-0 z-30">
                 { variableHighlightOverlays.map(overlay => (
                     <div
@@ -3653,445 +3089,75 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                     </div>
                 )) }
             </div> }
-        <NitroCardView className="min-w-[520px] max-w-[520px]" theme="primary-slim" uniqueKey="wired-creator-tools" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
-            <NitroCardHeaderView headerText="Wired Creator Tools (:wired)" onCloseClick={ () => setIsVisible(false) } />
-            <NitroCardTabsView justifyContent="start">
-                { TABS.map(tab => (
-                    <NitroCardTabsItemView key={ tab.key } isActive={ (activeTab === tab.key) } onClick={ () => setActiveTab(tab.key) }>
-                        <Text>{ tab.label }</Text>
-                    </NitroCardTabsItemView>
-                )) }
-            </NitroCardTabsView>
-            <NitroCardContentView className="text-black bg-[#e9e6d9]" gap={ 3 }>
+            <NitroCardView className="min-w-[520px] max-w-[520px]" theme="primary-slim" uniqueKey="wired-creator-tools" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+                <NitroCardHeaderView headerText="Wired Creator Tools (:wired)" onCloseClick={ () => setIsVisible(false) } />
+                <NitroCardTabsView justifyContent="start">
+                    { TABS.map(tab => (
+                        <NitroCardTabsItemView key={ tab.key } isActive={ (activeTab === tab.key) } onClick={ () => setActiveTab(tab.key) }>
+                            <Text>{ tab.label }</Text>
+                        </NitroCardTabsItemView>
+                    )) }
+                </NitroCardTabsView>
+                <NitroCardContentView className="text-black bg-[#e9e6d9]" gap={ 3 }>
                     { (activeTab === 'monitor') &&
-                        <div className="p-3 flex flex-col gap-3 relative">
-                            <div className="grid grid-cols-[190px_1fr] gap-3">
-                                <div className="bg-white rounded border border-[#b9b3a5] p-2 flex flex-col gap-1">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <Text bold>Statistics:</Text>
-                                        <button className="rounded border border-[#7f7f7f] bg-[#ece9e1] px-2 py-[2px] text-[11px] text-[#333] hover:bg-[#e3ded2]" type="button" onClick={ () => setIsMonitorInfoOpen(true) }>Info</button>
-                                    </div>
-                                    { monitorStats.map(stat => (
-                                        <div key={ stat.label } className="flex justify-between gap-2 text-[12px]">
-                                            <span>{ stat.label }:</span>
-                                            <span>{ stat.value }</span>
-                                        </div>
-                                    )) }
-                                </div>
-                                <div className="min-h-[140px] flex items-center justify-center px-4">
-                                    <img alt="Monitor preview" className="max-w-full max-h-[180px] object-contain" src={ wiredMonitorImage } />
-                                </div>
-                            </div>
-                                <div className="bg-white rounded border border-[#b9b3a5] p-2 flex flex-col gap-2">
-                                <Text bold>Logs:</Text>
-                                <div className="max-h-[180px] overflow-y-auto border border-[#d1ccbf] rounded">
-                                    <table className="w-full text-[12px]">
-                                        <thead className="bg-[#efede5] sticky top-0">
-                                            <tr>
-                                                <th className="text-left px-2 py-1">Type</th>
-                                                <th className="text-left px-2 py-1">Severity</th>
-                                                <th className="text-left px-2 py-1">Amount</th>
-                                                <th className="text-left px-2 py-1">Latest occurrence</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            { monitorLogs.map((log, index) => (
-                                                <tr
-                                                    key={ log.type }
-                                                    className={ `${ (index % 2 === 0) ? 'bg-white' : 'bg-[#f8f6f0]' } cursor-pointer hover:bg-[#e8eefc]` }
-                                                    onClick={ () => openMonitorLogDetails(log.type, {
-                                                        severity: log.category,
-                                                        amount: log.amount,
-                                                        latest: log.latest,
-                                                        reason: log.latestReason,
-                                                        sourceLabel: log.latestSourceLabel,
-                                                        sourceId: log.latestSourceId
-                                                    }) }>
-                                                    <td className="px-2 py-1 text-[#1b57b2] underline-offset-2 hover:underline">{ log.type }</td>
-                                                    <td className="px-2 py-1">{ log.category }</td>
-                                                    <td className="px-2 py-1">{ log.amount }</td>
-                                                    <td className="px-2 py-1">{ log.latest }</td>
-                                                </tr>
-                                            )) }
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="flex justify-between gap-2">
-                                    <Button disabled={ !monitorHistoryRows.length && !monitorLogs.some(log => log.amount !== '0') } variant="danger" onClick={ clearMonitorLogs }>Clear all</Button>
-                                    <Button disabled={ !monitorHistoryRows.length } variant="secondary" onClick={ () => setIsMonitorHistoryOpen(true) }>View full logs</Button>
-                                </div>
-                            </div>
-                            { false && isMonitorHistoryOpen &&
-                                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25">
-                                    <div className="w-[760px] rounded border border-[#6b8ca0] overflow-hidden shadow-lg bg-[#f4efe3]">
-                                        <div className="h-[32px] bg-[#3b8bb5] text-white flex items-center justify-between px-3">
-                                            <Text bold>Wired Monitor Logs</Text>
-                                            <button className="w-[20px] h-[20px] rounded bg-[#c9482e] text-white leading-none" type="button" onClick={ () => setIsMonitorHistoryOpen(false) }>×</button>
-                                        </div>
-                                        <div className="p-3 flex flex-col gap-3">
-                                            <div className="flex flex-wrap items-center gap-2 text-[12px]">
-                                                <span className="text-[#555]">Severity:</span>
-                                                { [ 'ALL', 'WARNING', 'ERROR' ].map(severity => (
-                                                    <button
-                                                        key={ severity }
-                                                        className={ `rounded border px-2 py-[2px] ${ (monitorHistorySeverityFilter === severity) ? 'border-[#4d7892] bg-[#dbeaf4] text-[#1a4d68]' : 'border-[#b8b2a4] bg-white text-[#555]' }` }
-                                                        type="button"
-                                                        onClick={ () => setMonitorHistorySeverityFilter(severity as 'ALL' | 'ERROR' | 'WARNING') }>
-                                                        { severity }
-                                                    </button>
-                                                )) }
-                                                <span className="ml-2 text-[#555]">Type:</span>
-                                                <select
-                                                    className="rounded border border-[#b8b2a4] bg-white px-2 py-[2px] text-[12px]"
-                                                    value={ monitorHistoryTypeFilter }
-                                                    onChange={ event => setMonitorHistoryTypeFilter(event.target.value) }>
-                                                    { monitorHistoryTypeOptions.map(type => (
-                                                        <option key={ type } value={ type }>
-                                                            { type }
-                                                        </option>
-                                                    )) }
-                                                </select>
-                                            </div>
-                                            <div className="max-h-[300px] overflow-y-auto border border-[#d1ccbf] rounded bg-white">
-                                                <table className="w-full text-[12px]">
-                                                    <thead className="bg-[#efede5] sticky top-0">
-                                                        <tr>
-                                                            <th className="text-left px-2 py-1">Type</th>
-                                                            <th className="text-left px-2 py-1">Severity</th>
-                                                            <th className="text-left px-2 py-1">Trigger</th>
-                                                            <th className="text-left px-2 py-1">Motivation</th>
-                                                            <th className="text-left px-2 py-1">Occurred at</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        { !filteredMonitorHistoryRows.length &&
-                                                            <tr>
-                                                                <td className="px-2 py-3 text-center text-[#8b8678]" colSpan={ 5 }>No log history for the current filters</td>
-                                                            </tr> }
-                                                        { filteredMonitorHistoryRows.map((row, index) => (
-                                                            <tr
-                                                                key={ row.id }
-                                                                className={ `${ (index % 2 === 0) ? 'bg-white' : 'bg-[#f8f6f0]' } cursor-pointer hover:bg-[#e8eefc]` }
-                                                                onClick={ () => openMonitorLogDetails(row.type, {
-                                                                    severity: row.category,
-                                                                    occurredAt: row.occurredAt,
-                                                                    reason: row.reason,
-                                                                    sourceLabel: row.sourceLabel,
-                                                                    sourceId: row.sourceId
-                                                                }) }>
-                                                                <td className="px-2 py-1 text-[#1b57b2]">{ row.type }</td>
-                                                                <td className="px-2 py-1">{ row.category }</td>
-                                                                <td className="px-2 py-1">{ formatMonitorSource(row.sourceLabel, row.sourceId) }</td>
-                                                                <td className="px-2 py-1 text-[#555]">{ row.reason }</td>
-                                                                <td className="px-2 py-1">{ row.occurredAt }</td>
-                                                            </tr>
-                                                        )) }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> }
-                            { false && isMonitorInfoOpen &&
-                                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25">
-                                    <div className="w-[560px] rounded border border-[#6b8ca0] overflow-hidden shadow-lg bg-[#f4efe3]">
-                                        <div className="h-[32px] bg-[#3b8bb5] text-white flex items-center justify-between px-3">
-                                            <Text bold>Wired Monitor Information</Text>
-                                            <button className="w-[20px] h-[20px] rounded bg-[#c9482e] text-white leading-none" type="button" onClick={ () => setIsMonitorInfoOpen(false) }>Ã—</button>
-                                        </div>
-                                        <div className="p-4 flex flex-col gap-4 text-[12px] text-[#222]">
-                                            { monitorInfoSections.map(section => (
-                                                <div key={ section.title } className="flex flex-col gap-1">
-                                                    <Text bold>{ section.title }</Text>
-                                                    { section.lines.map((line, index) => (
-                                                        <Text key={ `${ section.title }-${ index }` }>{ line }</Text>
-                                                    )) }
-                                                </div>
-                                            )) }
-                                        </div>
-                                    </div>
-                                </div> }
-                            { false && !!selectedMonitorErrorInfo &&
-                                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25">
-                                    <div className="w-[470px] rounded border border-[#6b8ca0] overflow-hidden shadow-lg bg-[#f4efe3]">
-                                        <div className="h-[32px] bg-[#3b8bb5] text-white flex items-center justify-between px-3">
-                                            <Text bold>Wired Error Information</Text>
-                                            <button className="w-[20px] h-[20px] rounded bg-[#c9482e] text-white leading-none" type="button" onClick={ () => setSelectedMonitorErrorType(null) }>×</button>
-                                        </div>
-                                        <div className="p-4 flex flex-col gap-3 text-[12px] text-[#222]">
-                                            <div className="flex items-start justify-between gap-3">
-                                                <Text bold>{ selectedMonitorErrorInfo.title }</Text>
-                                                <span className={ `rounded px-2 py-[2px] text-[10px] font-semibold ${ ((selectedMonitorLogDetails?.severity ?? selectedMonitorErrorInfo.severity) === 'WARNING') ? 'bg-[#d4f0d0] text-[#2a6a24]' : 'bg-[#f6d7d7] text-[#8c2424]' }` }>
-                                                    { selectedMonitorLogDetails?.severity ?? selectedMonitorErrorInfo.severity }
-                                                </span>
-                                            </div>
-                                            { !!selectedMonitorLogDetails &&
-                                                <div className="rounded border border-[#d8d2c3] bg-white/60 p-3 flex flex-col gap-1">
-                                                    <Text><b>Trigger:</b> { selectedMonitorDetailSource }</Text>
-                                                    <Text><b>Motivation:</b> { selectedMonitorLogDetails.reason }</Text>
-                                                    { !!selectedMonitorLogDetails.amount && <Text><b>Amount:</b> { selectedMonitorLogDetails.amount }</Text> }
-                                                    { !!selectedMonitorLogDetails.latest && <Text><b>Latest occurrence:</b> { selectedMonitorLogDetails.latest }</Text> }
-                                                    { !!selectedMonitorLogDetails.occurredAt && <Text><b>Occurred at:</b> { selectedMonitorLogDetails.occurredAt }</Text> }
-                                                </div> }
-                                            { selectedMonitorErrorInfo.description.map((paragraph, index) => (
-                                                <Text key={ index }>{ paragraph }</Text>
-                                            )) }
-                                        </div>
-                                    </div>
-                                </div> }
-                        </div> }
+                        <WiredMonitorTabView
+                            monitorStats={ monitorStats }
+                            monitorLogs={ monitorLogs }
+                            monitorHistoryRows={ monitorHistoryRows }
+                            onOpenMonitorInfo={ () => setIsMonitorInfoOpen(true) }
+                            onOpenMonitorHistory={ () => setIsMonitorHistoryOpen(true) }
+                            onClearMonitorLogs={ clearMonitorLogs }
+                            onOpenMonitorLogDetails={ openMonitorLogDetails }
+                        /> }
                     { (activeTab === 'inspection') &&
-                        <div className="p-3 min-h-[360px] flex gap-4">
-                            <div className="w-[145px] shrink-0 flex flex-col gap-2">
-                                <div className="flex flex-col gap-1">
-                                    <Text bold>Element type:</Text>
-                                    <div className="flex gap-1">
-                                        { INSPECTION_ELEMENTS.map(element => (
-                                            <button
-                                                key={ element.key }
-                                                type="button"
-                                                className={ `w-[42px] h-[38px] rounded border flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,.7)] ${ (inspectionType === element.key) ? 'border-[#222] bg-[#d9d6cf]' : 'border-[#7f7f7f] bg-[#ece9e1]' }` }
-                                                onClick={ () => setInspectionType(element.key) }
-                                                title={ element.label }>
-                                                <img alt={ element.label } className="w-auto h-auto max-w-[22px] max-h-[22px] object-contain" src={ element.icon } />
-                                            </button>
-                                        )) }
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <Text bold>Preview:</Text>
-                                    <div className="relative h-[224px] rounded border border-[#c0bdb4] bg-[#d7d7d7] overflow-hidden">
-                                        { (inspectionType === 'furni') && selectedFurni && roomSession &&
-                                            <div className="absolute inset-0 flex items-center justify-center p-3">
-                                                <LayoutRoomObjectImageView category={ selectedFurni.category } objectId={ selectedFurni.objectId } roomId={ roomSession.roomId } />
-                                            </div> }
-                                        { (inspectionType === 'user') && selectedUser &&
-                                            <div className="absolute inset-0 flex items-center justify-center p-3">
-                                                { (selectedUser.kind === 'pet')
-                                                    ? <LayoutPetImageView direction={ 2 } figure={ selectedUser.figure } posture={ selectedUser.posture } />
-                                                    : <LayoutAvatarImageView direction={ 2 } figure={ selectedUser.figure } /> }
-                                            </div> }
-                                        { (inspectionType === 'global') &&
-                                            <div className="absolute inset-0 flex items-center justify-center p-3">
-                                                <img alt="Global placeholder" className="max-w-full max-h-full object-contain" src={ wiredGlobalPlaceholderImage } />
-                                            </div> }
-                                        { (((inspectionType === 'furni') && !selectedFurni) || ((inspectionType === 'user') && !selectedUser) || (inspectionType === 'global')) &&
-                                            <div className={ `absolute inset-0 flex items-center justify-center px-3 text-center text-[#666] text-[12px] ${ (inspectionType === 'global') ? 'hidden' : '' }` }>
-                                                { previewPlaceholder }
-                                            </div> }
-                                    </div>
-                                </div>
-                                <label className="flex items-center gap-2 text-[12px] text-[#111]">
-                                    <input checked={ keepSelected } className="form-check-input mt-0" type="checkbox" onChange={ event => setKeepSelected(event.target.checked) } />
-                                    <span>Keep selected</span>
-                                </label>
-                            </div>
-                            <div className="min-w-0 grow flex flex-col gap-2">
-                                <div className="flex flex-col gap-1 grow min-h-0">
-                                    <Text bold>Variables:</Text>
-                                    <div className="grow rounded border border-[#bdb8ab] bg-white overflow-hidden">
-                                        <div className="grid grid-cols-[1fr_120px] border-b border-[#d8d4c8] bg-[#f5f2ea] px-3 py-2 text-[12px] text-[#666]">
-                                            <span>Variable</span>
-                                            <span>Value</span>
-                                        </div>
-                                        { !displayedVariables.length &&
-                                            <div className="h-[calc(100%-37px)] flex items-center justify-center text-[#b1aca2] text-[20px]">
-                                                <Text>Nothing to display</Text>
-                                            </div> }
-                                        { !!displayedVariables.length &&
-                                            <div className="max-h-[290px] overflow-y-auto">
-                                                <table className="w-full text-[12px]">
-                                                    <tbody>
-                                                        { displayedVariables.map((variable, index) => (
-                                                            <tr
-                                                                key={ variable.key }
-                                                                className={ `${ (selectedInspectionVariableKey === variable.key) ? 'bg-[#d7dfea]' : ((index % 2 === 0) ? 'bg-white' : 'bg-[#f3f3f3]') } ${ variable.editable ? 'cursor-pointer hover:bg-[#e8eefc]' : 'cursor-pointer' }` }
-                                                                onClick={ () =>
-                                                                {
-                                                                    setSelectedInspectionVariableKeys(prev => ({ ...prev, [inspectionType]: variable.key }));
-                                                                    beginVariableEdit(variable);
-                                                                } }>
-                                                                <td className="px-3 py-1 text-[#444]">{ variable.key }</td>
-                                                                <td className="px-3 py-1 text-right text-[#222]">
-                                                                    { (editingVariable === variable.key) &&
-                                                                        <input
-                                                                            autoFocus
-                                                                            className="w-[170px] rounded border border-[#8d8d8d] px-2 py-1 text-right text-[12px]"
-                                                                            spellCheck={ false }
-                                                                            type="text"
-                                                                            value={ editingValue }
-                                                                            onClick={ event => event.stopPropagation() }
-                                                                            onBlur={ cancelVariableEdit }
-                                                                            onChange={ event => setEditingValue(event.target.value) }
-                                                                            onKeyDownCapture={ onVariableInputKeyDown } /> }
-                                                                    { (editingVariable !== variable.key) && !variable.editable && <span className={ variable.valueClassName }>{ variable.value }</span> }
-                                                                            { (editingVariable !== variable.key) && variable.editable &&
-                                                                        <button
-                                                                            className={ `w-full cursor-pointer rounded px-1 text-right text-[#1b57b2] hover:underline ${ variable.valueClassName ?? '' }` }
-                                                                            type="button"
-                                                                            onClick={ event =>
-                                                                            {
-                                                                                event.stopPropagation();
-                                                                                setSelectedInspectionVariableKeys(prev => ({ ...prev, [inspectionType]: variable.key }));
-                                                                                beginVariableEdit(variable);
-                                                                            } }>
-                                                                            { variable.value }
-                                                                        </button> }
-                                                                </td>
-                                                            </tr>
-                                                        )) }
-                                                    </tbody>
-                                                </table>
-                                            </div> }
-                                    </div>
-                                </div>
-                                <div className="relative flex justify-between gap-2">
-                                    { isInspectionGiveOpen &&
-                                        <div className="absolute right-0 bottom-full mb-2 w-[210px] rounded border border-[#8d887a] bg-[#efede5] p-3 shadow-[0_2px_8px_rgba(0,0,0,.25)] z-10 flex flex-col gap-2">
-                                            <Text bold>Variable:</Text>
-                                            <select
-                                                className="rounded border border-[#b8b2a4] bg-white px-2 py-[3px] text-[12px]"
-                                                value={ selectedInspectionGiveDefinition?.itemId ?? 0 }
-                                                onChange={ event => setInspectionGiveVariableItemId(Number(event.target.value)) }>
-                                                { !availableInspectionDefinitions.length && <option value={ 0 }>No variables available</option> }
-                                                { availableInspectionDefinitions.map(definition => (
-                                                    <option key={ definition.itemId } value={ definition.itemId }>
-                                                        { definition.name }
-                                                    </option>
-                                                )) }
-                                            </select>
-                                            <Text bold>Value:</Text>
-                                            <input
-                                                className="w-[96px] rounded border border-[#b8b2a4] bg-white px-2 py-[3px] text-[12px] disabled:opacity-60"
-                                                disabled={ !selectedInspectionGiveDefinition?.hasValue }
-                                                type="number"
-                                                value={ inspectionGiveValue }
-                                                onChange={ event => setInspectionGiveValue(event.target.value) } />
-                                            <Button disabled={ !canGiveInspectionVariable } variant="secondary" onClick={ () => giveInspectionVariable() }>Create</Button>
-                                        </div> }
-                                    <Button disabled={ !canRemoveInspectionVariable } variant="secondary" onClick={ () => removeInspectionVariable() }>Remove variable</Button>
-                                    <Button
-                                        disabled={ !canGiveInspectionVariable }
-                                        variant="secondary"
-                                        onClick={ () => setIsInspectionGiveOpen(value => !value) }>
-                                        Give variable
-                                    </Button>
-                                </div>
-                            </div>
-                        </div> }
+                        <WiredInspectionTabView
+                            selectedFurni={ selectedFurni }
+                            selectedUser={ selectedUser }
+                            roomId={ roomSession?.roomId ?? null }
+                            previewPlaceholder={ previewPlaceholder }
+                            keepSelected={ keepSelected }
+                            onKeepSelectedChange={ setKeepSelected }
+                            displayedVariables={ displayedVariables }
+                            selectedInspectionVariableKey={ selectedInspectionVariableKey }
+                            onSelectInspectionVariable={ variable =>
+                            {
+                                setSelectedInspectionVariableKeys(prev => ({ ...prev, [inspectionType]: variable.key }));
+                                beginVariableEdit(variable);
+                            } }
+                            onCancelVariableEdit={ cancelVariableEdit }
+                            onVariableInputKeyDown={ onVariableInputKeyDown }
+                            onBeginVariableEdit={ variable =>
+                            {
+                                setSelectedInspectionVariableKeys(prev => ({ ...prev, [inspectionType]: variable.key }));
+                                beginVariableEdit(variable);
+                            } }
+                            selectedInspectionGiveDefinition={ selectedInspectionGiveDefinition }
+                            onSelectGiveVariable={ setInspectionGiveVariableItemId }
+                            availableInspectionDefinitions={ availableInspectionDefinitions }
+                            inspectionGiveValue={ inspectionGiveValue }
+                            onInspectionGiveValueChange={ setInspectionGiveValue }
+                            canGiveInspectionVariable={ canGiveInspectionVariable }
+                            onGiveInspectionVariable={ () => giveInspectionVariable() }
+                            canRemoveInspectionVariable={ canRemoveInspectionVariable }
+                            onRemoveInspectionVariable={ () => removeInspectionVariable() }
+                        /> }
                     { (activeTab === 'variables') &&
-                        <div className="p-3 min-h-[360px] flex gap-4">
-                            <div className="w-[205px] shrink-0 flex flex-col gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <Text bold>Variable type:</Text>
-                                    <div className="flex gap-1">
-                                        { VARIABLES_ELEMENTS.map(element => (
-                                            <button
-                                                key={ element.key }
-                                                type="button"
-                                                className={ `w-[42px] h-[38px] rounded border flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,.7)] ${ element.disabled ? 'border-[#b7b7b7] bg-[#e7e3da] opacity-60 cursor-not-allowed' : ((variablesType === element.key) ? 'border-[#222] bg-[#d9d6cf]' : 'border-[#7f7f7f] bg-[#ece9e1]') }` }
-                                                disabled={ element.disabled }
-                                                onClick={ () => !element.disabled && setVariablesType(element.key) }
-                                                title={ element.label }>
-                                                <img alt={ element.label } className="w-auto h-auto max-w-[22px] max-h-[22px] object-contain" src={ element.icon } />
-                                            </button>
-                                        )) }
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-1 min-h-0 grow">
-                                    <Text bold>Variable picker:</Text>
-                                    <div className="grow rounded border border-[#bdb8ab] bg-white overflow-hidden">
-                                        <div className="max-h-[408px] overflow-y-auto">
-                                            <table className="w-full text-[12px]">
-                                                <tbody>
-                                                    { variablePickerDefinitions.map((variable, index) => (
-                                                        <tr
-                                                            key={ variable.key }
-                                                            className={ `cursor-pointer ${ (selectedVariableDefinition?.key === variable.key) ? 'bg-[#d7dfea]' : ((index % 2 === 0) ? 'bg-white' : 'bg-[#f3f3f3]') } hover:bg-[#e8eefc]` }
-                                                            onClick={ () => setSelectedVariableKeys(prev => ({ ...prev, [variablesType]: variable.key })) }>
-                                                            <td className="px-3 py-1 text-[#444]">{ variable.key }</td>
-                                                        </tr>
-                                                    )) }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
-                                    <Button
-                                        disabled={ !canVariableHighlight }
-                                        variant="secondary"
-                                        onClick={ () => setIsVariableHighlightActive(value => !value) }>
-                                        { isVariableHighlightActive ? 'Undo' : 'Highlight' }
-                                    </Button>
-                                    <Button
-                                        disabled={ !variableManageCanOpen }
-                                        variant="secondary"
-                                        onClick={ () =>
-                                        {
-                                            requestUserVariables();
-                                            setVariableManagePage(1);
-                                            setSelectedManagedVariableEntry(null);
-                                            setIsVariableManageOpen(true);
-                                        } }>
-                                        Manage
-                                    </Button>
-                                </div>
-                            </div>
-                            <div className="min-w-0 grow flex flex-col gap-3">
-                                { (variablesType === 'context') &&
-                                    <div className="rounded border border-[#c8b98f] bg-[#fff7df] px-3 py-2 text-[12px] text-[#6a5d33]">
-                                        Context variables live only during the current wired execution. This tab shows their definitions, text mappings and execution-scoped capabilities, but not live values from a running stack.
-                                    </div> }
-                                <div className="flex flex-col gap-1">
-                                    <Text bold>Properties:</Text>
-                                    <div className="rounded border border-[#bdb8ab] bg-white overflow-hidden">
-                                        <div className="grid grid-cols-[1fr_120px] border-b border-[#d8d4c8] bg-[#f5f2ea] px-3 py-2 text-[12px] font-bold text-[#333]">
-                                            <span>Property</span>
-                                            <span>Value</span>
-                                        </div>
-                                        <div className="max-h-[210px] overflow-y-auto">
-                                            <table className="w-full text-[12px]">
-                                                <tbody>
-                                                    { selectedVariableProperties.map((property, index) => (
-                                                        <tr key={ property.key } className={ (index % 2 === 0) ? 'bg-white' : 'bg-[#f3f3f3]' }>
-                                                            <td className="px-3 py-1 text-[#444]">{ property.key }</td>
-                                                            <td className="px-3 py-1 text-[#222]">{ property.value }</td>
-                                                        </tr>
-                                                    )) }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-1 min-h-0 grow">
-                                    <Text bold>Text values:</Text>
-                                    <div className="grow rounded border border-[#bdb8ab] bg-white overflow-hidden">
-                                        <div className="grid grid-cols-[120px_1fr] border-b border-[#d8d4c8] bg-[#f5f2ea] px-3 py-2 text-[12px] font-bold text-[#333]">
-                                            <span>Value</span>
-                                            <span>Text</span>
-                                        </div>
-                                        { !selectedVariableTextValues.length &&
-                                            <div className="h-[calc(100%-37px)] flex items-center justify-center text-[#b1aca2] text-[20px]">
-                                                <Text>Nothing to display</Text>
-                                            </div> }
-                                        { !!selectedVariableTextValues.length &&
-                                            <div className="max-h-[178px] overflow-y-auto">
-                                                <table className="w-full text-[12px]">
-                                                    <tbody>
-                                                        { selectedVariableTextValues.map((entry, index) => (
-                                                            <tr key={ `${ entry.value }-${ index }` } className={ (index % 2 === 0) ? 'bg-white' : 'bg-[#f3f3f3]' }>
-                                                                <td className="px-3 py-1 text-[#444]">{ entry.value }</td>
-                                                                <td className="px-3 py-1 text-[#222]">{ entry.text }</td>
-                                                            </tr>
-                                                        )) }
-                                                    </tbody>
-                                                </table>
-                                            </div> }
-                                    </div>
-                                </div>
-                            </div>
-                        </div> }
+                        <WiredVariablesTabView
+                            variablePickerDefinitions={ variablePickerDefinitions }
+                            selectedVariableDefinition={ selectedVariableDefinition }
+                            onPickVariable={ key => setSelectedVariableKeys(prev => ({ ...prev, [variablesType]: key })) }
+                            canVariableHighlight={ canVariableHighlight }
+                            variableManageCanOpen={ variableManageCanOpen }
+                            onOpenManagePanel={ () =>
+                            {
+                                requestUserVariables();
+                                setVariableManagePage(1);
+                                setSelectedManagedVariableEntry(null);
+                                setIsVariableManageOpen(true);
+                            } }
+                            selectedVariableProperties={ selectedVariableProperties }
+                            selectedVariableTextValues={ selectedVariableTextValues }
+                        /> }
                     { (activeTab === 'settings') && <WiredToolsSettingsTabView /> }
                     { (activeTab !== 'monitor') &&
                       (activeTab !== 'inspection') &&
@@ -4105,9 +3171,9 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                                 </div>
                             </div>
                         </div> }
-            </NitroCardContentView>
-        </NitroCardView>
-        { isMonitorHistoryOpen &&
+                </NitroCardContentView>
+            </NitroCardView>
+            { isMonitorHistoryOpen &&
             <NitroCardView className="min-w-[760px] max-w-[760px] max-h-[520px]" theme="primary-slim" uniqueKey="wired-monitor-history" windowPosition={ DraggableWindowPosition.TOP_LEFT } offsetLeft={ 560 } offsetTop={ 40 }>
                 <NitroCardHeaderView headerText="Wired Monitor Logs" onCloseClick={ () => setIsMonitorHistoryOpen(false) } />
                 <NitroCardContentView className="text-black bg-[#f4efe3] p-3 flex flex-col gap-3" overflow="hidden">
@@ -4173,7 +3239,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                     </div>
                 </NitroCardContentView>
             </NitroCardView> }
-        { isMonitorInfoOpen &&
+            { isMonitorInfoOpen &&
             <NitroCardView className="min-w-[560px] max-w-[560px] max-h-[520px]" theme="primary-slim" uniqueKey="wired-monitor-info" windowPosition={ DraggableWindowPosition.TOP_LEFT } offsetLeft={ 610 } offsetTop={ 80 }>
                 <NitroCardHeaderView headerText="Wired Monitor Information" onCloseClick={ () => setIsMonitorInfoOpen(false) } />
                 <NitroCardContentView className="text-black bg-[#f4efe3] p-4 flex flex-col gap-4 overflow-y-auto">
@@ -4187,7 +3253,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                     )) }
                 </NitroCardContentView>
             </NitroCardView> }
-        { isVariableManageOpen && !!selectedVariableDefinition &&
+            { isVariableManageOpen && !!selectedVariableDefinition &&
             <NitroCardView className="min-w-[860px] max-w-[860px] max-h-[620px]" theme="primary-slim" uniqueKey="wired-variable-management" windowPosition={ DraggableWindowPosition.TOP_LEFT } offsetLeft={ 540 } offsetTop={ 60 }>
                 <NitroCardHeaderView headerText="Variable Management" onCloseClick={ () => setIsVariableManageOpen(false) } />
                 <NitroCardContentView className="text-black bg-[#f4efe3] p-3 flex flex-col gap-3" overflow="hidden">
@@ -4322,10 +3388,10 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                                 &raquo;
                             </button>
                         </div>
-                        </div>
+                    </div>
                 </NitroCardContentView>
             </NitroCardView> }
-        { !!selectedManagedVariableEntry && !!selectedVariableDefinition &&
+            { !!selectedManagedVariableEntry && !!selectedVariableDefinition &&
             <NitroCardView className="min-w-[430px] max-w-[430px] max-h-[620px]" theme="primary-slim" uniqueKey="wired-variable-management-entry" windowPosition={ DraggableWindowPosition.TOP_LEFT } offsetLeft={ 890 } offsetTop={ 110 }>
                 <NitroCardHeaderView headerText={ managedHolderPanelTitle } onCloseClick={ () => setSelectedManagedVariableEntry(null) } />
                 <NitroCardContentView className="text-black bg-[#f4efe3] p-3 flex flex-col gap-3 relative" overflow="hidden">
@@ -4459,7 +3525,7 @@ export const WiredCreatorToolsView: FC<{}> = () =>
                     </div>
                 </NitroCardContentView>
             </NitroCardView> }
-        { !!selectedMonitorErrorInfo &&
+            { !!selectedMonitorErrorInfo &&
             <NitroCardView className="min-w-[470px] max-w-[470px] max-h-[500px]" theme="primary-slim" uniqueKey="wired-monitor-error-info" windowPosition={ DraggableWindowPosition.TOP_LEFT } offsetLeft={ 660 } offsetTop={ 120 }>
                 <NitroCardHeaderView
                     headerText="Wired Error Information"

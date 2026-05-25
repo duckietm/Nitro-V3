@@ -1,4 +1,4 @@
-import { createContext, Dispatch, FC, ProviderProps, SetStateAction, useContext } from 'react';
+import { createContext, Dispatch, FC, SetStateAction, useContext } from 'react';
 import { IFloorplanSettings } from '@nitrots/nitro-renderer';
 import { IVisualizationSettings } from '@nitrots/nitro-renderer';
 
@@ -29,6 +29,6 @@ const FloorplanEditorContext = createContext<IFloorplanEditorContext>({
     areaInfo: { total: 0, walkable: 0 }
 });
 
-export const FloorplanEditorContextProvider: FC<ProviderProps<IFloorplanEditorContext>> = props => <FloorplanEditorContext.Provider { ...props } />;
+export const FloorplanEditorContextProvider: FC<{ value: IFloorplanEditorContext; children?: React.ReactNode }> = props => <FloorplanEditorContext { ...props } />;
 
 export const useFloorplanEditorContext = () => useContext(FloorplanEditorContext);

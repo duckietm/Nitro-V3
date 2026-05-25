@@ -37,8 +37,8 @@ function getHourInTimezone(timezone: string): number
  */
 function getTimeOfDay(hour: number): string
 {
-    if(hour > 5  && hour <= 9)  return 'morning';
-    if(hour > 9  && hour <= 16) return 'day';
+    if(hour > 5 && hour <= 9) return 'morning';
+    if(hour > 9 && hour <= 16) return 'day';
     if(hour > 16 && hour <= 19) return 'sunset';
     if(hour > 19 && hour <= 23) return 'evening';
 
@@ -64,8 +64,8 @@ export const HotelView: FC<{}> = props =>
 
         return getTimeOfDay(hour);
     }, [ timezone ]);
-	
-	/**
+
+    /**
 	const timeOfDay = 'sunset';
 	For debuging the diff views
 	*/
@@ -73,9 +73,9 @@ export const HotelView: FC<{}> = props =>
     const skyColor = SKY_COLORS[timeOfDay] ?? configBgColor ?? '#000';
 
     const containerRef = useRef<HTMLDivElement>(null);
-    const isDragging   = useRef(false);
-    const lastMouseX   = useRef(0);
-    const lastMouseY   = useRef(0);
+    const isDragging = useRef(false);
+    const lastMouseX = useRef(0);
+    const lastMouseY = useRef(0);
 
     useEffect(() =>
     {
@@ -85,7 +85,7 @@ export const HotelView: FC<{}> = props =>
 
         const centerView = () =>
         {
-            const viewportWidth  = window.innerWidth;
+            const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight - 55;
 
             const lobbyEl = container.querySelector<HTMLElement>('.nitro-hotel-view-lobby');
@@ -93,18 +93,18 @@ export const HotelView: FC<{}> = props =>
             if(lobbyEl)
             {
                 const containerRect = container.getBoundingClientRect();
-                const lobbyRect     = lobbyEl.getBoundingClientRect();
+                const lobbyRect = lobbyEl.getBoundingClientRect();
 
-                const lobbyCenterX = (lobbyRect.left - containerRect.left) + container.scrollLeft + lobbyRect.width  / 2;
-                const lobbyCenterY = (lobbyRect.top  - containerRect.top)  + container.scrollTop  + lobbyRect.height / 2;
+                const lobbyCenterX = (lobbyRect.left - containerRect.left) + container.scrollLeft + lobbyRect.width / 2;
+                const lobbyCenterY = (lobbyRect.top - containerRect.top) + container.scrollTop + lobbyRect.height / 2;
 
-                container.scrollLeft = Math.max(0, lobbyCenterX - viewportWidth  / 2);
-                container.scrollTop  = Math.max(0, lobbyCenterY - viewportHeight / 2);
+                container.scrollLeft = Math.max(0, lobbyCenterX - viewportWidth / 2);
+                container.scrollTop = Math.max(0, lobbyCenterY - viewportHeight / 2);
             }
             else
             {
-                container.scrollLeft = Math.max(0, (2600 - viewportWidth)  / 2);
-                container.scrollTop  = Math.max(0, (1425 - viewportHeight) / 2);
+                container.scrollLeft = Math.max(0, (2600 - viewportWidth) / 2);
+                container.scrollTop = Math.max(0, (1425 - viewportHeight) / 2);
             }
         };
 
@@ -141,7 +141,7 @@ export const HotelView: FC<{}> = props =>
         if(containerRef.current)
         {
             containerRef.current.scrollLeft -= dx;
-            containerRef.current.scrollTop  -= dy;
+            containerRef.current.scrollTop -= dy;
         }
     };
 

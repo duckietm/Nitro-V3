@@ -20,7 +20,8 @@ export interface TextProps extends BaseProps<HTMLDivElement> {
     textBreak?: boolean;
 }
 
-export const Text: FC<TextProps> = props => {
+export const Text: FC<TextProps> = props =>
+{
     const {
         variant = 'black',
         fontWeight = null,
@@ -40,20 +41,22 @@ export const Text: FC<TextProps> = props => {
         ...rest
     } = props;
 
-    const getClassNames = useMemo(() => {
+    const getClassNames = useMemo(() =>
+    {
         const newClassNames: string[] = [truncate ? 'block' : 'inline'];
 
-        if (variant) {
-			if (variant === 'primary') newClassNames.push('text-[#1e7295]');
-			if (variant == 'secondary') newClassNames.push('text-[#185d79]');
-			if (variant === 'black') newClassNames.push('text-[#000000]');
-			if (variant == 'dark') newClassNames.push('text-[#18181b]');
-			if (variant === 'gray') newClassNames.push('text-[#6b7280]');
-			if (variant === 'white') newClassNames.push('text-[#ffffff]');
-			if (variant == 'success') newClassNames.push('text-[#00800b]');
-			if (variant == 'danger') newClassNames.push('text-[#a81a12]');
-			if (variant == 'warning') newClassNames.push('text-[#ffc107]');
-		}
+        if (variant)
+        {
+            if (variant === 'primary') newClassNames.push('text-[#1e7295]');
+            if (variant == 'secondary') newClassNames.push('text-[#185d79]');
+            if (variant === 'black') newClassNames.push('text-[#000000]');
+            if (variant == 'dark') newClassNames.push('text-[#18181b]');
+            if (variant === 'gray') newClassNames.push('text-[#6b7280]');
+            if (variant === 'white') newClassNames.push('text-[#ffffff]');
+            if (variant == 'success') newClassNames.push('text-[#00800b]');
+            if (variant == 'danger') newClassNames.push('text-[#a81a12]');
+            if (variant == 'warning') newClassNames.push('text-[#ffc107]');
+        }
 
         if (bold) newClassNames.push('font-bold');
         if (fontWeight) newClassNames.push('font-' + fontWeight);

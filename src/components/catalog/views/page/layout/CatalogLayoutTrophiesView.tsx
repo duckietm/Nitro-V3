@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { FaEdit, FaPen, FaPlus, FaTrophy } from 'react-icons/fa';
 import { LocalizeText, ProductTypeEnum, SanitizeHtml } from '../../../../../api';
 import { Text } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
 import { useCatalogAdmin } from '../../../CatalogAdminContext';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogItemGridWidgetView } from '../widgets/CatalogItemGridWidgetView';
@@ -15,7 +15,8 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
 {
     const { page = null } = props;
     const [ trophyText, setTrophyText ] = useState<string>('');
-    const { currentOffer = null, setPurchaseOptions = null } = useCatalog();
+    const { currentOffer = null } = useCatalogData();
+    const { setPurchaseOptions = null } = useCatalogUiState();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
 
@@ -42,7 +43,10 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
                 <div className="flex gap-2">
                     <button
                         className="flex items-center gap-1 text-[10px] text-primary hover:text-dark transition-colors cursor-pointer"
-                        onClick={ () => { catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(false); catalogAdmin.setEditingPageData(true); } }
+                        onClick={ () =>
+                        {
+                            catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(false); catalogAdmin.setEditingPageData(true);
+                        } }
                     >
                         <FaEdit className="text-[10px]" /> { LocalizeText('catalog.admin.edit.page') }
                     </button>

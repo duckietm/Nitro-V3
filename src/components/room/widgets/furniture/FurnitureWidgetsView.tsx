@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { WidgetErrorBoundary } from '../../../../common';
 import { FurnitureBackgroundColorView } from './FurnitureBackgroundColorView';
 import { FurnitureAreaHideView } from './FurnitureAreaHideView';
 import { FurnitureBadgeDisplayView } from './FurnitureBadgeDisplayView';
@@ -24,26 +25,26 @@ export const FurnitureWidgetsView: FC<{}> = props =>
 {
     return (
         <>
-            <FurnitureAreaHideView />
-            <FurnitureBackgroundColorView />
-            <FurnitureBadgeDisplayView />
-            <FurnitureCraftingView />
-            <FurnitureDimmerView />
-            <FurnitureExchangeCreditView />
-            <FurnitureExternalImageView />
-            <FurnitureFriendFurniView />
-            <FurnitureGiftOpeningView />
-            <FurnitureHighScoreView />
-            <FurnitureInternalLinkView />
-            <FurnitureMannequinView />
-            <FurniturePlaylistEditorWidgetView />
-            <FurnitureRoomLinkView />
-            <FurnitureSpamWallPostItView />
-            <FurnitureStackHeightView />
-            <FurnitureStickieView />
-            <FurnitureTrophyView />
-            <FurnitureContextMenuView />
-            <FurnitureYoutubeDisplayView />
+            <WidgetErrorBoundary name="FurnitureAreaHide"><FurnitureAreaHideView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureBackgroundColor"><FurnitureBackgroundColorView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureBadgeDisplay"><FurnitureBadgeDisplayView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureCrafting"><FurnitureCraftingView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureDimmer"><FurnitureDimmerView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureExchangeCredit"><FurnitureExchangeCreditView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureExternalImage"><FurnitureExternalImageView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureFriendFurni"><FurnitureFriendFurniView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureGiftOpening"><FurnitureGiftOpeningView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureHighScore"><FurnitureHighScoreView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureInternalLink"><FurnitureInternalLinkView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureMannequin"><FurnitureMannequinView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurniturePlaylistEditorWidget"><FurniturePlaylistEditorWidgetView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureRoomLink"><FurnitureRoomLinkView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureSpamWallPostIt"><FurnitureSpamWallPostItView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureStackHeight"><FurnitureStackHeightView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureStickie"><FurnitureStickieView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureTrophy"><FurnitureTrophyView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureContextMenu"><FurnitureContextMenuView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureYoutubeDisplay"><FurnitureYoutubeDisplayView /></WidgetErrorBoundary>
         </>
     );
 };

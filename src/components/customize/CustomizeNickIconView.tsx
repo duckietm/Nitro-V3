@@ -367,38 +367,38 @@ export const CustomizeNickIconView: FC<{}> = () =>
 
                         { activePrefixSubTab === 'library' &&
                             <>
-                        <div className="rounded border border-black/10 bg-black/5 p-2 text-[11px] leading-4">
+                                <div className="rounded border border-black/10 bg-black/5 p-2 text-[11px] leading-4">
                             Choose a preset or custom prefix for your bubble identity.
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                            { combinedPrefixes.map(item => (
-                                <div key={ `${ item.catalogPrefixId || 'custom' }-${ item.ownedPrefixId || item.id }` } className={ `relative flex min-h-[96px] flex-col gap-2 rounded border p-2.5 ${ item.active ? 'border-[#1e7295] bg-[#dff3fb]' : 'border-black/10 bg-black/5' }` }>
-                                    { item.active && <span className="absolute right-1 top-1 rounded bg-[#1e7295] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Active</span> }
-                                    <UserIdentityView
-                                        displayOrder={ displayOrder }
-                                        nickIcon={ activeIcon?.iconKey || '' }
-                                        prefixColor={ item.color }
-                                        prefixEffect={ item.effect }
-                                        prefixFont={ item.font || '' }
-                                        prefixIcon={ item.icon }
-                                        prefixText={ item.text }
-                                        username="Username" />
-                                    <div className="flex flex-col gap-1 text-[11px]">
-                                        <span>{ item.owned ? (item.active ? 'Owned - Active' : 'Owned') : 'Locked' }</span>
-                                        <span className="truncate">{ item.displayName || item.text }{ item.isCustom ? ' - Custom' : '' }</span>
-                                        <span className="inline-flex items-center gap-1">
-                                            <LayoutCurrencyIcon type={ item.pointsType } />
-                                            { item.points }
-                                        </span>
-                                    </div>
-                                    <Button disabled={ isLoading } onClick={ () => handleCombinedPrefixAction(item) }>
-                                        { !item.owned && 'Buy' }
-                                        { item.owned && !item.active && 'Activate' }
-                                        { item.owned && item.active && 'Deactivate' }
-                                    </Button>
                                 </div>
-                            )) }
-                        </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    { combinedPrefixes.map(item => (
+                                        <div key={ `${ item.catalogPrefixId || 'custom' }-${ item.ownedPrefixId || item.id }` } className={ `relative flex min-h-[96px] flex-col gap-2 rounded border p-2.5 ${ item.active ? 'border-[#1e7295] bg-[#dff3fb]' : 'border-black/10 bg-black/5' }` }>
+                                            { item.active && <span className="absolute right-1 top-1 rounded bg-[#1e7295] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">Active</span> }
+                                            <UserIdentityView
+                                                displayOrder={ displayOrder }
+                                                nickIcon={ activeIcon?.iconKey || '' }
+                                                prefixColor={ item.color }
+                                                prefixEffect={ item.effect }
+                                                prefixFont={ item.font || '' }
+                                                prefixIcon={ item.icon }
+                                                prefixText={ item.text }
+                                                username="Username" />
+                                            <div className="flex flex-col gap-1 text-[11px]">
+                                                <span>{ item.owned ? (item.active ? 'Owned - Active' : 'Owned') : 'Locked' }</span>
+                                                <span className="truncate">{ item.displayName || item.text }{ item.isCustom ? ' - Custom' : '' }</span>
+                                                <span className="inline-flex items-center gap-1">
+                                                    <LayoutCurrencyIcon type={ item.pointsType } />
+                                                    { item.points }
+                                                </span>
+                                            </div>
+                                            <Button disabled={ isLoading } onClick={ () => handleCombinedPrefixAction(item) }>
+                                                { !item.owned && 'Buy' }
+                                                { item.owned && !item.active && 'Activate' }
+                                                { item.owned && item.active && 'Deactivate' }
+                                            </Button>
+                                        </div>
+                                    )) }
+                                </div>
                             </> }
 
                         { activePrefixSubTab === 'custom' &&
@@ -430,14 +430,14 @@ export const CustomizeNickIconView: FC<{}> = () =>
                                     </div>
                                     <div className="grid grid-cols-6 gap-2">
                                         { PRESET_COLORS.map(color => (
-                                        <button
-                                            key={ color }
-                                            className={ `flex h-[28px] items-center justify-center rounded border text-[10px] font-bold uppercase ${ customPrefixColor === color ? 'border-[#1e7295] ring-1 ring-[#1e7295]' : 'border-black/10' }` }
-                                            style={ { backgroundColor: color } }
-                                            type="button"
-                                            onClick={ () => setCustomPrefixColor(color) }>
-                                            { customPrefixColor === color ? 'ON' : '' }
-                                        </button>
+                                            <button
+                                                key={ color }
+                                                className={ `flex h-[28px] items-center justify-center rounded border text-[10px] font-bold uppercase ${ customPrefixColor === color ? 'border-[#1e7295] ring-1 ring-[#1e7295]' : 'border-black/10' }` }
+                                                style={ { backgroundColor: color } }
+                                                type="button"
+                                                onClick={ () => setCustomPrefixColor(color) }>
+                                                { customPrefixColor === color ? 'ON' : '' }
+                                            </button>
                                         )) }
                                     </div>
                                 </div>
@@ -572,7 +572,10 @@ export const CustomizeNickIconView: FC<{}> = () =>
                         <Picker
                             data={ data }
                             locale="en"
-                            onEmojiSelect={ (emoji: { native: string }) => { setCustomPrefixIcon(emoji.native); setShowEmojiPicker(false); } }
+                            onEmojiSelect={ (emoji: { native: string }) =>
+                            {
+                                setCustomPrefixIcon(emoji.native); setShowEmojiPicker(false);
+                            } }
                             previewPosition="none"
                             set="native"
                             theme="dark" />

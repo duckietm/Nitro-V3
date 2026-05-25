@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { BuilderFurniPlaceableStatus, CatalogPurchaseState, CatalogType, DispatchUiEvent, GetClubMemberLevel, LocalStorageKeys, LocalizeText, NotificationBubbleType, Offer, ProductTypeEnum, SendMessageComposer } from '../../../../../api';
 import { Button, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogInitGiftEvent, CatalogPurchaseFailureEvent, CatalogPurchaseNotAllowedEvent, CatalogPurchaseSoldOutEvent, CatalogPurchasedEvent } from '../../../../../events';
-import { useCatalog, useLocalStorage, useNotification, usePurse, useUiEvent } from '../../../../../hooks';
+import { useCatalogActions, useCatalogData, useCatalogUiState, useLocalStorage, useNotification, usePurse, useUiEvent } from '../../../../../hooks';
 
 interface CatalogPurchaseWidgetViewProps
 {
@@ -20,7 +20,9 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
     const [ purchaseWillBeGift, setPurchaseWillBeGift ] = useState(false);
     const [ purchaseState, setPurchaseState ] = useState(CatalogPurchaseState.NONE);
     const [ catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation ] = useLocalStorage(LocalStorageKeys.CATALOG_SKIP_PURCHASE_CONFIRMATION, false);
-    const { currentOffer = null, currentPage = null, currentType = CatalogType.NORMAL, purchaseOptions = null, setPurchaseOptions = null, requestOfferToMover = null, setCatalogPlaceMultipleObjects = null, getBuilderFurniPlaceableStatus = null } = useCatalog();
+    const { currentOffer = null, currentPage = null } = useCatalogData();
+    const { currentType = CatalogType.NORMAL, purchaseOptions = null, setPurchaseOptions = null, setCatalogPlaceMultipleObjects = null } = useCatalogUiState();
+    const { requestOfferToMover = null, getBuilderFurniPlaceableStatus = null, getNodesByOfferId = null } = useCatalogActions();
     const { getCurrencyAmount = null } = usePurse();
     const { showSingleBubble = null } = useNotification();
 
@@ -89,7 +91,10 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
         isPurchasingCatalogItem = true;
         setPurchaseState(CatalogPurchaseState.PURCHASE);
 
-        setTimeout(() => { isPurchasingCatalogItem = false; }, 10000);
+        setTimeout(() =>
+        {
+            isPurchasingCatalogItem = false;
+        }, 10000);
 
         if(purchaseCallback)
         {
@@ -100,12 +105,11 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
 
         let pageId = currentOffer.page.pageId;
 
-        // if(pageId === -1)
-        // {
-        //     const nodes = getNodesByOfferId(currentOffer.offerId);
-
-        //     if(nodes) pageId = nodes[0].pageId;
-        // }
+        if(pageId === -1 && getNodesByOfferId)
+        {
+            const nodes = getNodesByOfferId(currentOffer.offerId);
+            if(nodes && nodes.length) pageId = nodes[0].pageId;
+        }
 
         SendMessageComposer(new PurchaseFromCatalogComposer(pageId, currentOffer.offerId, purchaseOptions.extraData, purchaseOptions.quantity));
     };
@@ -132,15 +136,19 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
         };
     }, [ purchaseState ]);
 
-    if(!currentOffer) return null;
-
+    // Builders-club state — derived + hooks MUST run unconditionally on
+    // every render so the hook order stays stable even when currentOffer
+    // is null (the `if(!currentOffer) return null` below would otherwise
+    // hide the useMemo/useEffect block from the first render and React
+    // would flag "Rendered more hooks than during the previous render").
     const isBuildersClubOffer = (currentType === CatalogType.BUILDER);
     const isBuildersClubPlaceable = isBuildersClubOffer
+        && !!currentOffer
         && !!currentOffer.product
         && ((currentOffer.product.productType === ProductTypeEnum.FLOOR) || (currentOffer.product.productType === ProductTypeEnum.WALL));
     const builderPlaceableStatus = useMemo(() =>
     {
-        if(!isBuildersClubPlaceable || !getBuilderFurniPlaceableStatus) return BuilderFurniPlaceableStatus.OKAY;
+        if(!isBuildersClubPlaceable || !getBuilderFurniPlaceableStatus || !currentOffer) return BuilderFurniPlaceableStatus.OKAY;
 
         return getBuilderFurniPlaceableStatus(currentOffer);
     }, [ currentOffer, getBuilderFurniPlaceableStatus, isBuildersClubPlaceable, builderPlaceableRefreshTick ]);
@@ -158,6 +166,8 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = pro
 
         return () => clearInterval(interval);
     }, [ isBuildersClubPlaceable ]);
+
+    if(!currentOffer) return null;
 
     const PurchaseButton = () =>
     {

@@ -284,7 +284,10 @@ export const ChatInputView: FC<{}> = props =>
                     <ChatInputCommandSelectorView
                         commands={ filteredCommands }
                         selectedIndex={ selectedIndex }
-                        onSelect={ (cmd) => { setChatValue(':' + cmd.key + ' '); inputRef.current?.focus(); } }
+                        onSelect={ (cmd) =>
+                        {
+                            setChatValue(':' + cmd.key + ' '); inputRef.current?.focus();
+                        } }
                         onHover={ setSelectedIndex }
                     /> }
                 <div className="flex-1 items-center input-sizer">

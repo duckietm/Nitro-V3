@@ -23,7 +23,10 @@ const findNearestColor = (hex: string, colors: IPartColor[]): IPartColor | null 
         const cb = color.rgb & 0xFF;
         const dist = (r - cr) ** 2 + (g - cg) ** 2 + (b - cb) ** 2;
 
-        if(dist < minDist) { minDist = dist; nearest = color; }
+        if(dist < minDist)
+        {
+            minDist = dist; nearest = color;
+        }
     }
 
     return nearest;
@@ -40,7 +43,10 @@ export const AvatarEditorAdvancedColorView: FC<{
 
     useEffect(() =>
     {
-        return () => { if(debounceRef.current) clearTimeout(debounceRef.current); };
+        return () =>
+        {
+            if(debounceRef.current) clearTimeout(debounceRef.current);
+        };
     }, []);
 
     const selectedColor = useMemo(() =>
@@ -52,7 +58,7 @@ export const AvatarEditorAdvancedColorView: FC<{
 
     const hexColor = useMemo(() =>
         ColorUtils.makeColorNumberHex((selectedColor?.rgb ?? 0) & 0xFFFFFF),
-        [ selectedColor ]);
+    [ selectedColor ]);
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
     {

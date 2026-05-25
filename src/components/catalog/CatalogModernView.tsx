@@ -1,9 +1,9 @@
-import { AddLinkEventTracker, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaCog, FaEdit, FaEye, FaEyeSlash, FaHeart, FaPlus, FaStar, FaTrash } from 'react-icons/fa';
 import { CatalogType, LocalizeText } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
-import { useCatalog, useCatalogFavorites } from '../../hooks';
+import { useCatalogActions, useCatalogData, useCatalogFavorites, useCatalogUiState, useHasPermission } from '../../hooks';
 import { CatalogAdminProvider, useCatalogAdmin } from './CatalogAdminContext';
 import { CatalogAdminOfferEditView } from './views/admin/CatalogAdminOfferEditView';
 import { CatalogAdminPageEditView } from './views/admin/CatalogAdminPageEditView';
@@ -18,17 +18,21 @@ import { MarketplacePostOfferView } from './views/page/layout/marketplace/Market
 
 const CatalogModernViewInner: FC<{}> = () =>
 {
-    const { isVisible = false, setIsVisible = null, rootNode = null, currentPage = null, navigationHidden = false, setNavigationHidden = null, activeNodes = [], searchResult = null, setSearchResult = null, openPageByName = null, openPageByOfferId = null, activateNode = null, openCatalogByType = null, toggleCatalogByType = null, currentType = CatalogType.NORMAL } = useCatalog();
+    const { rootNode = null, currentPage = null, searchResult = null } = useCatalogData();
+    const { isVisible = false, setIsVisible = null, navigationHidden = false, setNavigationHidden = null, activeNodes = [], setSearchResult = null, currentType = CatalogType.NORMAL } = useCatalogUiState();
+    const { openPageByName = null, openPageByOfferId = null, activateNode = null, openCatalogByType = null, toggleCatalogByType = null } = useCatalogActions();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
-    const setAdminMode = catalogAdmin?.setAdminMode ?? (() => {});
+    const setAdminMode = catalogAdmin?.setAdminMode ?? (() =>
+    {});
     const hasPendingChanges = catalogAdmin?.hasPendingChanges ?? false;
-    const publishCatalog = catalogAdmin?.publishCatalog ?? (() => {});
+    const publishCatalog = catalogAdmin?.publishCatalog ?? (() =>
+    {});
     const loading = catalogAdmin?.loading ?? false;
     const { favoriteOfferIds, favoritePageIds } = useCatalogFavorites();
     const [ showFavorites, setShowFavorites ] = useState(false);
 
-    const isMod = GetSessionDataManager().isModerator;
+    const isMod = useHasPermission('acc_catalogfurni');
     const totalFavs = favoriteOfferIds.length + favoritePageIds.length;
     const buildersClubHeaderStyle = (currentType === CatalogType.BUILDER)
         ? { borderColor: '#d79d2e', borderBottomColor: '#000', background: 'linear-gradient(180deg, #d89f2d 0%, #c68515 100%)' }
@@ -162,7 +166,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                                         <button
                                             className="flex items-center gap-1 text-[9px] text-success hover:text-green-800 cursor-pointer transition-colors"
                                             title={ LocalizeText('catalog.admin.new.root.category') }
-                                            onClick={ () => catalogAdmin.createPage({ caption: 'New Category', catalogMode: currentType, pageLayout: 'default_3x3', minRank: 1, visible: '1', enabled: '1', orderNum: 99, parentId: rootNode.pageId }) }
+                                            onClick={ () => catalogAdmin.createPage({ caption: 'New Category', captionSave: 'New Category', catalogMode: currentType, pageLayout: 'default_3x3', iconImage: 0, minRank: 1, visible: '1', enabled: '1', orderNum: 99, parentId: rootNode.pageId }) }
                                         >
                                             <FaPlus className="text-[8px]" />
                                             <span className="whitespace-nowrap">{ LocalizeText('catalog.admin.new') }</span>
@@ -170,7 +174,10 @@ const CatalogModernViewInner: FC<{}> = () =>
                                         <button
                                             className="flex items-center gap-1 text-[9px] text-primary hover:text-dark cursor-pointer transition-colors"
                                             title={ LocalizeText('catalog.admin.edit.root') }
-                                            onClick={ () => { catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(true); catalogAdmin.setEditingPageData(true); } }
+                                            onClick={ () =>
+                                            {
+                                                catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(true); catalogAdmin.setEditingPageData(true);
+                                            } }
                                         >
                                             <FaEdit className="text-[8px]" />
                                             <span className="whitespace-nowrap">{ LocalizeText('catalog.admin.root') }</span>

@@ -59,21 +59,21 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
             CreateLinkEvent('navigator/search/myworld_view');
         },
         null, null, null, LocalizeText('navigator.roomsettings.deleteroom.confirm.title'));
-    }
+    };
 
     const saveRoomName = () =>
     {
         if((roomName === roomData.roomName) || (roomName.length < ROOM_NAME_MIN_LENGTH) || (roomName.length > ROOM_NAME_MAX_LENGTH)) return;
 
         handleChange('name', roomName);
-    }
+    };
 
     const saveRoomDescription = () =>
     {
         if((roomDescription === roomData.roomDescription) || (roomDescription.length > DESC_MAX_LENGTH)) return;
 
         handleChange('description', roomDescription);
-    }
+    };
 
     const saveTags = (index: number) =>
     {
@@ -86,7 +86,7 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
         setTypeError('');
         setTagIndex(index);
         handleChange('tags', (roomTag1 === '' && roomTag2 !== '') ? [ roomTag2 ] : [ roomTag1, roomTag2 ]);
-    }
+    };
 
     useEffect(() =>
     {
@@ -168,7 +168,7 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                 <Text>{ LocalizeText('navigator.roomsettings.allow_underpass') }</Text>
             </Flex>
             <Text variant="danger" underline bold pointer className="d-flex justify-content-center align-items-center gap-1" onClick={ deleteRoom }>
-                <FaTimes className="fa-icon" /> { LocalizeText('navigator.roomsettings.delete') } 
+                <FaTimes className="fa-icon" /> { LocalizeText('navigator.roomsettings.delete') }
             </Text>
         </>
     );

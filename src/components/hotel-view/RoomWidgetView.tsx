@@ -5,7 +5,8 @@ import { Base } from '../../common';
 
 export interface RoomWidgetViewProps {}
 
-export const RoomWidgetView: FC<RoomWidgetViewProps> = props => {
+export const RoomWidgetView: FC<RoomWidgetViewProps> = props =>
+{
     const poolId = GetConfigurationValue<string>('hotelview')['room.pool'];
     const picnicId = GetConfigurationValue<string>('hotelview')['room.picnic'];
     const rooftopId = GetConfigurationValue<string>('hotelview')['room.rooftop'];

@@ -81,7 +81,8 @@ export const AvatarInfoWidgetView: FC<{}> = props =>
 
     useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.REQUEST_MANIPULATION, event =>
     {
-        if(event.category !== avatarInfo?.category || event.objectId !== avatarInfo?.id) return;
+        if(!(avatarInfo instanceof AvatarInfoFurni)) return;
+        if(event.category !== avatarInfo.category || event.objectId !== avatarInfo.id) return;
 
         setMobileFurniDetailsOpen(false);
     });

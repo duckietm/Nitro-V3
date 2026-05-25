@@ -24,4 +24,5 @@ export interface IPurchasableOffer
     products: IProduct[];
     itemIds: string;
     haveOffer: boolean;
+    clone?(): IPurchasableOffer;
 }

@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import { IPurchasableOffer, LocalizeText, Offer, ProductTypeEnum } from '../../../../../api';
 import { AutoGrid, AutoGridProps, Button } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
 import { CatalogGridOfferView } from '../common/CatalogGridOfferView';
 
 interface CatalogSpacesWidgetViewProps extends AutoGridProps
@@ -17,8 +17,9 @@ export const CatalogSpacesWidgetView: FC<CatalogSpacesWidgetViewProps> = props =
     const [ groupedOffers, setGroupedOffers ] = useState<IPurchasableOffer[][]>(null);
     const [ selectedGroupIndex, setSelectedGroupIndex ] = useState(-1);
     const [ selectedOfferForGroup, setSelectedOfferForGroup ] = useState<IPurchasableOffer[]>(null);
-    const { currentPage = null, currentOffer = null, setCurrentOffer = null, setPurchaseOptions = null } = useCatalog();
-    const elementRef = useRef<HTMLDivElement>();
+    const { currentPage = null, currentOffer = null } = useCatalogData();
+    const { setCurrentOffer = null, setPurchaseOptions = null } = useCatalogUiState();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     const setSelectedOffer = (offer: IPurchasableOffer) =>
     {

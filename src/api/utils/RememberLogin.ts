@@ -53,8 +53,12 @@ export const SetRememberLogin = (data: RememberLoginData): void =>
 {
     if(!data?.token?.length && !data?.ssoTicket?.length) return;
 
-    try { window.localStorage.setItem(REMEMBER_LOGIN_KEY, JSON.stringify(data)); }
-    catch {}
+    try
+    {
+        window.localStorage.setItem(REMEMBER_LOGIN_KEY, JSON.stringify(data));
+    }
+    catch
+    {}
 };
 
 export const ClearRememberLogin = (): void =>
@@ -64,7 +68,8 @@ export const ClearRememberLogin = (): void =>
         window.localStorage.removeItem(REMEMBER_LOGIN_KEY);
         window.localStorage.removeItem(LEGACY_REMEMBER_LOGIN_KEY);
     }
-    catch {}
+    catch
+    {}
 };
 
 export const StoreRememberLoginFromPayload = (payload: Record<string, unknown>, username?: string, ssoTicket?: string): void =>

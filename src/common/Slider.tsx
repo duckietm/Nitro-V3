@@ -145,4 +145,4 @@ export const Slider: FC<SliderProps> = props =>
             ) }
         </Flex>
     );
-}
+};

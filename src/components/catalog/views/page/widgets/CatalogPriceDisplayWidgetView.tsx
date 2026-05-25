@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { IPurchasableOffer } from '../../../../../api';
 import { LayoutCurrencyIcon, Text } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogUiState } from '../../../../../hooks';
 
 interface CatalogPriceDisplayWidgetViewProps
 {
@@ -13,7 +13,7 @@ interface CatalogPriceDisplayWidgetViewProps
 export const CatalogPriceDisplayWidgetView: FC<CatalogPriceDisplayWidgetViewProps> = props =>
 {
     const { offer = null, separator = false } = props;
-    const { purchaseOptions = null } = useCatalog();
+    const { purchaseOptions = null } = useCatalogUiState();
     const { quantity = 1 } = purchaseOptions;
 
     if(!offer) return null;

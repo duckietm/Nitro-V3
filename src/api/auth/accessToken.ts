@@ -17,13 +17,20 @@ export const setAccessToken = (token: string | null | undefined, expiresAt?: num
             window.localStorage.removeItem(EXPIRES_KEY);
         }
     }
-    catch {}
+    catch
+    {}
 };
 
 export const getAccessToken = (): string =>
 {
-    try { return window.localStorage.getItem(STORAGE_KEY) ?? ''; }
-    catch { return ''; }
+    try
+    {
+        return window.localStorage.getItem(STORAGE_KEY) ?? '';
+    }
+    catch
+    {
+        return '';
+    }
 };
 
 export const getAccessTokenExpiresAt = (): number =>
@@ -35,7 +42,10 @@ export const getAccessTokenExpiresAt = (): number =>
         const value = parseInt(raw, 10);
         return Number.isFinite(value) ? value : 0;
     }
-    catch { return 0; }
+    catch
+    {
+        return 0;
+    }
 };
 
 export const clearAccessToken = (): void =>

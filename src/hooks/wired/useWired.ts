@@ -67,9 +67,9 @@ const useWiredState = () =>
         {
             if(!furniData) return null;
 
-            const rawValue = (furniData as any).interactionType
-                ?? (furniData as any).interactionTypeName
-                ?? (furniData as any).interactionTypeId;
+            const rawValue = (furniData).interactionType
+                ?? (furniData).interactionTypeName
+                ?? (furniData).interactionTypeId;
 
             if(rawValue === undefined || rawValue === null) return null;
             if(typeof rawValue !== 'string') return null;
@@ -83,9 +83,9 @@ const useWiredState = () =>
 
             const values = [
                 getInteractionTypeName(furniData),
-                (typeof (furniData as any).className === 'string') ? (furniData as any).className.toLowerCase() : null,
-                (typeof (furniData as any).fullName === 'string') ? (furniData as any).fullName.toLowerCase() : null,
-                (typeof (furniData as any).name === 'string') ? (furniData as any).name.toLowerCase() : null
+                (typeof (furniData).className === 'string') ? (furniData).className.toLowerCase() : null,
+                (typeof (furniData).fullName === 'string') ? (furniData).fullName.toLowerCase() : null,
+                (typeof (furniData).name === 'string') ? (furniData).name.toLowerCase() : null
             ];
 
             return values.filter((value, index, array): value is string => !!value && (array.indexOf(value) === index));

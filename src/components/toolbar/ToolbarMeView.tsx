@@ -11,7 +11,7 @@ export const ToolbarMeView: FC<PropsWithChildren<{
 }>> = props =>
 {
     const { useGuideTool = false, unseenAchievementCount = 0, setMeExpanded = null, children = null, ...rest } = props;
-    const elementRef = useRef<HTMLDivElement>();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     useEffect(() =>
     {

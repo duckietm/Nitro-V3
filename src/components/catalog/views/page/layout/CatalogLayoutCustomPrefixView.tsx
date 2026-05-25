@@ -117,7 +117,10 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
         if(!prefixText.length) return;
 
         const newColors: Record<number, string> = {};
-        [ ...prefixText ].forEach((_, i) => { newColors[i] = customColorInput; });
+        [ ...prefixText ].forEach((_, i) =>
+        {
+            newColors[i] = customColorInput;
+        });
         setLetterColors(newColors);
     };
 
@@ -222,7 +225,10 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                         <Picker
                             data={ data }
                             locale="it"
-                            onEmojiSelect={ (emoji: { native: string }) => { setSelectedIcon(emoji.native); setShowIconPicker(false); } }
+                            onEmojiSelect={ (emoji: { native: string }) =>
+                            {
+                                setSelectedIcon(emoji.native); setShowIconPicker(false);
+                            } }
                             theme="dark"
                             previewPosition="none"
                             skinTonePosition="search"
@@ -268,7 +274,10 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             borderRight: '1px solid rgba(0,0,0,0.1)',
                             opacity: colorMode === 'single' ? 1 : 0.6
                         } }
-                        onClick={ () => { setColorMode('single'); setSelectedLetterIndex(null); } }>
+                        onClick={ () =>
+                        {
+                            setColorMode('single'); setSelectedLetterIndex(null);
+                        } }>
                         { LocalizeText('catalog.prefix.color.single') }
                     </button>
                     <button
@@ -277,7 +286,10 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                             background: colorMode === 'perLetter' ? 'rgba(59,130,246,0.25)' : 'rgba(0,0,0,0.1)',
                             opacity: colorMode === 'perLetter' ? 1 : 0.6
                         } }
-                        onClick={ () => { setColorMode('perLetter'); if(prefixText.length > 0) setSelectedLetterIndex(0); } }>
+                        onClick={ () =>
+                        {
+                            setColorMode('perLetter'); if(prefixText.length > 0) setSelectedLetterIndex(0);
+                        } }>
                         { LocalizeText('catalog.prefix.color.per.letter') }
                     </button>
                 </div>
@@ -328,7 +340,10 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                                         zIndex: isSelected ? 10 : 1,
                                         boxShadow: isSelected ? '0 0 8px rgba(59,130,246,0.3)' : 'none'
                                     } }
-                                    onClick={ () => { setSelectedLetterIndex(i); setCustomColorInput(charColor); } }>
+                                    onClick={ () =>
+                                    {
+                                        setSelectedLetterIndex(i); setCustomColorInput(charColor);
+                                    } }>
                                     <span className="text-sm font-black" style={ { color: charColor } }>
                                         { char }
                                     </span>

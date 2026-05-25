@@ -21,7 +21,10 @@ export const LayoutRoomObjectImageView: FC<LayoutRoomObjectImageViewProps> = pro
     {
         isMounted.current = true;
 
-        return () => { isMounted.current = false; };
+        return () =>
+        {
+            isMounted.current = false;
+        };
     }, []);
 
     const getStyle = useMemo(() =>
@@ -50,13 +53,16 @@ export const LayoutRoomObjectImageView: FC<LayoutRoomObjectImageViewProps> = pro
     useEffect(() =>
     {
         const imageResult = GetRoomEngine().getRoomObjectImage(roomId, objectId, category, new Vector3d(direction * 45), 64, {
-            imageReady: async (id, texture, image) =>
+            imageReady: async (result) =>
             {
-                const img = await TextureUtils.generateImage(texture);
+                const img = await TextureUtils.generateImage(result.data);
 
                 if(img && isMounted.current) setImageElement(img);
             },
-            imageFailed: null
+            imageFailed: () =>
+            {
+                // no-op
+            }
         });
 
         if(!imageResult) return;

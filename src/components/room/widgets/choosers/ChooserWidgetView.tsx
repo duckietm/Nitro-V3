@@ -1,7 +1,8 @@
-import { FurniturePickupAllComposer, GetSessionDataManager } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FurniturePickupAllComposer } from '@nitrots/nitro-renderer';
+import { FC, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import { LocalizeText, RoomObjectItem, SendMessageComposer, chooserSelectionVisualizer } from '../../../../api';
 import { Button, Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { useHasPermission } from '../../../../hooks';
 import { NitroInput, classNames } from '../../../../layout';
 
 const LIMIT_FURNI_PICKALL = 100;
@@ -23,7 +24,7 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
     const [ searchValue, setSearchValue ] = useState('');
     const [ checkAll, setCheckAll ] = useState(false);
     const [ checkedIds, setCheckedIds ] = useState<number[]>([]);
-    const canSeeId = GetSessionDataManager().isModerator;
+    const canSeeId = useHasPermission('acc_supporttool');
 
     const ownerNames = useMemo(() =>
     {
@@ -69,7 +70,7 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
                 chooserSelectionVisualizer.clearAll();
             }
         }
-    }
+    };
 
     const isChecked = (id: number) => checkedIds.includes(id);
 
@@ -80,7 +81,7 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
         setCheckAll(false);
         chooserSelectionVisualizer.clearAll();
         setSelectedItems([]);
-    }
+    };
 
     const filteredItems = useMemo(() =>
     {
@@ -98,19 +99,24 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
             .sort((a, b) => a.name.localeCompare(b.name));
     }, [ items, searchValue, selectedFilter, pickallFurni ]);
 
-    useEffect(() =>
+    const notifySelectionChange = useEffectEvent((items: RoomObjectItem[]) =>
     {
-        if(selectedItems.length === 0) return;
-
-        selectItem(selectedItems[selectedItems.length - 1]);
+        selectItem(items[items.length - 1]);
 
         chooserSelectionVisualizer.clearAll();
-        selectedItems.forEach(item =>
+        items.forEach(item =>
         {
             if(item.id && item.category)
                 chooserSelectionVisualizer.show(item.id, item.category);
         });
-    }, [ selectedItems, selectItem ]);
+    });
+
+    useEffect(() =>
+    {
+        if(selectedItems.length === 0) return;
+
+        notifySelectionChange(selectedItems);
+    }, [ selectedItems ]);
 
     const toggleItemSelection = (item: RoomObjectItem) =>
     {
@@ -179,7 +185,10 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
                         alignItems="center"
                         className={ classNames('rounded p-1', selectedItems.some(item => item.id === row.id) && 'bg-muted') }
                         pointer
-                        onClick={ () => { toggleItemSelection(row); if(pickallFurni) checkedId(row.id); } }
+                        onClick={ () =>
+                        {
+                            toggleItemSelection(row); if(pickallFurni) checkedId(row.id);
+                        } }
                     >
                         { pickallFurni && (
                             <input
@@ -187,7 +196,10 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
                                 type="checkbox"
                                 checked={ isChecked(row.id) }
                                 onChange={ () => checkedId(row.id) }
-                                onClick={ e => { e.stopPropagation(); toggleItemSelection(row); } }
+                                onClick={ e =>
+                                {
+                                    e.stopPropagation(); toggleItemSelection(row);
+                                } }
                             />
                         )}
                         <Text truncate>

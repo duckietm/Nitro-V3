@@ -13,11 +13,18 @@ export const readLock = (): AttemptState =>
         if(!raw) return { attempts: 0, firstAt: 0, lockedUntil: 0 };
         return JSON.parse(raw);
     }
-    catch { return { attempts: 0, firstAt: 0, lockedUntil: 0 }; }
+    catch
+    {
+        return { attempts: 0, firstAt: 0, lockedUntil: 0 };
+    }
 };
 
 export const writeLock = (state: AttemptState) =>
 {
-    try { sessionStorage.setItem(LOCK_KEY, JSON.stringify(state)); }
-    catch { }
+    try
+    {
+        sessionStorage.setItem(LOCK_KEY, JSON.stringify(state));
+    }
+    catch
+    { }
 };

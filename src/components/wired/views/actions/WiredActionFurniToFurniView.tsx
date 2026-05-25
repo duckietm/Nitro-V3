@@ -211,6 +211,6 @@ export const WiredActionFurniToFurniView: FC<{}> = () =>
                         onSelectionActivate={ () => switchSelection('target') } />
                 </div>
             }
-            />
+        />
     );
 };

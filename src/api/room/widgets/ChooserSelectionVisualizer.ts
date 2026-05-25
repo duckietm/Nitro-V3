@@ -9,9 +9,11 @@ export class chooserSelectionVisualizer
     {
         if (this.animationFrameId !== null) return;
 
-        const animate = (time: number) => {
+        const animate = (time: number) =>
+        {
             const elapsed = time / 1000; // Convert to seconds
-            this.activeFilters.forEach(filter => {
+            this.activeFilters.forEach(filter =>
+            {
                 filter.time = elapsed; // Update time uniform
             });
             this.animationFrameId = requestAnimationFrame(animate);
@@ -22,7 +24,8 @@ export class chooserSelectionVisualizer
 
     private static stopAnimation(): void
     {
-        if (this.animationFrameId !== null) {
+        if (this.animationFrameId !== null)
+        {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
         }
@@ -45,7 +48,7 @@ export class chooserSelectionVisualizer
 
         for (const sprite of visualization.sprites)
         {
-            if (sprite.blendMode === 1) continue;
+            if (sprite.blendMode === 'add') continue;
             const existing = (sprite.filters || []).filter(f => !(f instanceof ChooserSelectionFilter));
             sprite.filters = [...existing, filter];
         }
@@ -69,7 +72,8 @@ export class chooserSelectionVisualizer
             sprite.filters = (sprite.filters || []).filter(f => !(f instanceof ChooserSelectionFilter));
         }
 
-        if (this.activeFilters.size === 0) {
+        if (this.activeFilters.size === 0)
+        {
             this.stopAnimation();
         }
     }

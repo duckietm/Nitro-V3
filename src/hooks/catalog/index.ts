@@ -2,3 +2,8 @@ export * from './useCatalog';
 export * from './useCatalogFavorites';
 export * from './useCatalogPlaceMultipleItems';
 export * from './useCatalogSkipPurchaseConfirmation';
+export * from './useClubGifts';
+export * from './useClubOffers';
+export * from './useGiftConfiguration';
+export * from './useMarketplaceConfiguration';
+export * from './useSellablePetPalette';

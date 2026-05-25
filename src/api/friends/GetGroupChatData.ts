@@ -9,5 +9,5 @@ export const GetGroupChatData = (extraData: string) =>
     const figure = splitData[1];
     const userId = parseInt(splitData[2]);
 
-    return ({ username: username, figure: figure, userId: userId } as IGroupChatData);
+    return ({ username: username, figure: figure, userId: userId });
 };

@@ -1595,3 +1595,128 @@
     background-image: url('@/assets/images/backgrounds/overlay/overlay_8.png');
   }
 }
+
+/* Infostand-only colored border. A thin CSS-drawn rounded ring drawn 5px
+   outside the card on each side. Pure CSS — no artwork files. */
+.infostand-border {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  left: -5px;
+  right: -5px;
+  pointer-events: none;
+  z-index: 5;
+  border-width: 5px;
+  border-style: solid;
+  border-radius: 10px;
+  box-sizing: content-box;
+}
+
+.infostand-border.border-1  { border-color: #ef4444; } /* Red */
+.infostand-border.border-2  { border-color: #f97316; } /* Orange */
+.infostand-border.border-3  { border-color: #eab308; } /* Yellow */
+.infostand-border.border-4  { border-color: #84cc16; } /* Lime */
+.infostand-border.border-5  { border-color: #22c55e; } /* Green */
+.infostand-border.border-6  { border-color: #14b8a6; } /* Teal */
+.infostand-border.border-7  { border-color: #06b6d4; } /* Cyan */
+.infostand-border.border-8  { border-color: #3b82f6; } /* Blue */
+.infostand-border.border-9  { border-color: #6366f1; } /* Indigo */
+.infostand-border.border-10 { border-color: #a855f7; } /* Purple */
+.infostand-border.border-11 { border-color: #ec4899; } /* Pink */
+.infostand-border.border-12 { border-color: #f43f5e; } /* Rose */
+.infostand-border.border-13 { border-color: #92400e; } /* Brown */
+.infostand-border.border-14 { border-color: #d4a020; } /* Gold */
+.infostand-border.border-15 { border-color: #cbd5e1; } /* Silver */
+.infostand-border.border-16 { border-color: #1f2937; } /* Black */
+
+/* Image-based borders (17-25). These override the colour-border insets and
+   strip the CSS border so the artwork sits ~22px outside the card and
+   stretches to fill the frame area. */
+.infostand-border.border-17,
+.infostand-border.border-18,
+.infostand-border.border-19,
+.infostand-border.border-20,
+.infostand-border.border-21,
+.infostand-border.border-22,
+.infostand-border.border-23,
+.infostand-border.border-24,
+.infostand-border.border-25 {
+  top: -22px;
+  bottom: -22px;
+  left: -22px;
+  right: -22px;
+  border: none;
+  border-radius: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.infostand-border.border-17 { background-image: url('@/assets/images/backgrounds/borders/border_17.webp'); }
+.infostand-border.border-18 { background-image: url('@/assets/images/backgrounds/borders/border_18.webp'); }
+.infostand-border.border-19 { background-image: url('@/assets/images/backgrounds/borders/border_19.webp'); }
+.infostand-border.border-20 { background-image: url('@/assets/images/backgrounds/borders/border_20.webp'); }
+.infostand-border.border-21 { background-image: url('@/assets/images/backgrounds/borders/border_21.webp'); }
+.infostand-border.border-22 { background-image: url('@/assets/images/backgrounds/borders/border_22.webp'); }
+.infostand-border.border-23 { background-image: url('@/assets/images/backgrounds/borders/border_23.webp'); }
+.infostand-border.border-24 { background-image: url('@/assets/images/backgrounds/borders/border_24.webp'); }
+.infostand-border.border-25 { background-image: url('@/assets/images/backgrounds/borders/border_25.webp'); }
+
+/* Picker thumbnails inside the BackgroundsView "Borders" tab.
+   Each thumbnail is a small rounded box outlined in its border colour. */
+.profile-border {
+  width: 60px;
+  height: 76px;
+  border-width: 4px;
+  border-style: solid;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* border-0 = no border (default) — show as a dashed translucent outline */
+.profile-border.border-0  { border: 2px dashed rgba(255, 255, 255, 0.25); }
+
+.profile-border.border-1  { border-color: #ef4444; }
+.profile-border.border-2  { border-color: #f97316; }
+.profile-border.border-3  { border-color: #eab308; }
+.profile-border.border-4  { border-color: #84cc16; }
+.profile-border.border-5  { border-color: #22c55e; }
+.profile-border.border-6  { border-color: #14b8a6; }
+.profile-border.border-7  { border-color: #06b6d4; }
+.profile-border.border-8  { border-color: #3b82f6; }
+.profile-border.border-9  { border-color: #6366f1; }
+.profile-border.border-10 { border-color: #a855f7; }
+.profile-border.border-11 { border-color: #ec4899; }
+.profile-border.border-12 { border-color: #f43f5e; }
+.profile-border.border-13 { border-color: #92400e; }
+.profile-border.border-14 { border-color: #d4a020; }
+.profile-border.border-15 { border-color: #cbd5e1; }
+.profile-border.border-16 { border-color: #1f2937; }
+
+/* Image-border picker thumbnails — drop the CSS frame and show the artwork. */
+.profile-border.border-17,
+.profile-border.border-18,
+.profile-border.border-19,
+.profile-border.border-20,
+.profile-border.border-21,
+.profile-border.border-22,
+.profile-border.border-23,
+.profile-border.border-24,
+.profile-border.border-25 {
+  border: none;
+  background: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.profile-border.border-17 { background-image: url('@/assets/images/backgrounds/borders/border_17.webp'); }
+.profile-border.border-18 { background-image: url('@/assets/images/backgrounds/borders/border_18.webp'); }
+.profile-border.border-19 { background-image: url('@/assets/images/backgrounds/borders/border_19.webp'); }
+.profile-border.border-20 { background-image: url('@/assets/images/backgrounds/borders/border_20.webp'); }
+.profile-border.border-21 { background-image: url('@/assets/images/backgrounds/borders/border_21.webp'); }
+.profile-border.border-22 { background-image: url('@/assets/images/backgrounds/borders/border_22.webp'); }
+.profile-border.border-23 { background-image: url('@/assets/images/backgrounds/borders/border_23.webp'); }
+.profile-border.border-24 { background-image: url('@/assets/images/backgrounds/borders/border_24.webp'); }
+.profile-border.border-25 { background-image: url('@/assets/images/backgrounds/borders/border_25.webp'); }

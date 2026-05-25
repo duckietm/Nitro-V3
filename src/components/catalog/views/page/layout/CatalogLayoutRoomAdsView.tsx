@@ -1,8 +1,9 @@
 import { GetRoomAdPurchaseInfoComposer, GetUserEventCatsMessageComposer, PurchaseRoomAdMessageComposer, RoomAdPurchaseInfoEvent, RoomEntryData } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../../api';
+import { useNitroQuery } from '../../../../../api/nitro-query';
 import { Button, Column, Text } from '../../../../../common';
-import { useCatalog, useMessageEvent, useNavigator, useRoomPromote } from '../../../../../hooks';
+import { useCatalogUiState, useNavigator, useRoomPromote } from '../../../../../hooks';
 import { NitroInput } from '../../../../../layout';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
@@ -14,12 +15,19 @@ export const CatalogLayoutRoomAdsView: FC<CatalogLayoutProps> = props =>
     const [ eventName, setEventName ] = useState<string>('');
     const [ eventDesc, setEventDesc ] = useState<string>('');
     const [ roomId, setRoomId ] = useState<number>(-1);
-    const [ availableRooms, setAvailableRooms ] = useState<RoomEntryData[]>([]);
     const [ extended, setExtended ] = useState<boolean>(false);
     const [ categoryId, setCategoryId ] = useState<number>(1);
     const { categories = null } = useNavigator();
-    const { setIsVisible = null } = useCatalog();
+    const { setIsVisible = null } = useCatalogUiState();
     const { promoteInformation, isExtended, setIsExtended } = useRoomPromote();
+
+    const { data: availableRooms = [] } = useNitroQuery<RoomAdPurchaseInfoEvent, RoomEntryData[]>({
+        key: [ 'nitro', 'catalog', 'room-ad-purchase-info' ],
+        request: () => new GetRoomAdPurchaseInfoComposer(),
+        parser: RoomAdPurchaseInfoEvent,
+        select: e => e.getParser()?.rooms ?? [],
+        staleTime: 60_000
+    });
 
     useEffect(() =>
     {
@@ -62,18 +70,8 @@ export const CatalogLayoutRoomAdsView: FC<CatalogLayoutProps> = props =>
         resetData();
     };
 
-    useMessageEvent<RoomAdPurchaseInfoEvent>(RoomAdPurchaseInfoEvent, event =>
-    {
-        const parser = event.getParser();
-
-        if(!parser) return;
-
-        setAvailableRooms(parser.rooms);
-    });
-
     useEffect(() =>
     {
-        SendMessageComposer(new GetRoomAdPurchaseInfoComposer());
         // TODO: someone needs to fix this for morningstar
         SendMessageComposer(new GetUserEventCatsMessageComposer());
     }, []);

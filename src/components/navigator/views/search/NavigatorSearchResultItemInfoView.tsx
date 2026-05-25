@@ -100,8 +100,14 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
                     ref={ elementRef }
                     className="cursor-pointer nitro-icon icon-navigator-info"
                     onClick={ handleIconClick }
-                    onMouseOver={ () => { if(!isControlled) setInternalVisible(true); } }
-                    onMouseLeave={ () => { if(!isControlled) setInternalVisible(false); } }
+                    onMouseOver={ () =>
+                    {
+                        if(!isControlled) setInternalVisible(true);
+                    } }
+                    onMouseLeave={ () =>
+                    {
+                        if(!isControlled) setInternalVisible(false);
+                    } }
                 />
             </Popover.Trigger>
             <Popover.Portal>

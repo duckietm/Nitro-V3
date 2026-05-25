@@ -5,7 +5,14 @@ import { CloneObject, LocalizeText, MessengerFriend, MessengerRequest, Messenger
 import { useMessageEvent } from '../events';
 import { useNotification } from '../notification';
 
-const useFriendsState = () =>
+/**
+ * Internal singleton store for friend-list state + actions. Public
+ * consumers should use useFriendsState (read-only — friends arrays,
+ * settings, derived online/offline split) or useFriendsActions
+ * (imperative — request / response / follow / update). useFriends is
+ * the legacy shim that composes both.
+ */
+const useFriendsStore = () =>
 {
     const [ friends, setFriends ] = useState<MessengerFriend[]>([]);
     const [ requests, setRequests ] = useState<MessengerRequest[]>([]);
@@ -255,4 +262,71 @@ const useFriendsState = () =>
     return { friends, requests, sentRequests, dismissedRequestIds, setDismissedRequestIds, settings, onlineFriends, offlineFriends, getFriend, canRequestFriend, requestFriend, requestResponse, followFriend, updateRelationship };
 };
 
-export const useFriends = () => useBetween(useFriendsState);
+/**
+ * Read-only slice of the friends store: the friend list itself
+ * (friends, requests, sentRequests, dismissedRequestIds, settings)
+ * plus the derived online/offline splits and the lookup helpers
+ * (getFriend, canRequestFriend) that don't mutate state.
+ *
+ * setDismissedRequestIds is exposed here because most consumers that
+ * read dismissedRequestIds also need to mutate it (it's UI-local
+ * "I've already hidden this banner" state, not server-driven).
+ */
+export const useFriendsState = () =>
+{
+    const {
+        friends,
+        requests,
+        sentRequests,
+        dismissedRequestIds,
+        setDismissedRequestIds,
+        settings,
+        onlineFriends,
+        offlineFriends,
+        getFriend,
+        canRequestFriend
+    } = useBetween(useFriendsStore);
+
+    return {
+        friends,
+        requests,
+        sentRequests,
+        dismissedRequestIds,
+        setDismissedRequestIds,
+        settings,
+        onlineFriends,
+        offlineFriends,
+        getFriend,
+        canRequestFriend
+    };
+};
+
+/**
+ * Imperative slice of the friends store: request a new friendship,
+ * respond to an incoming request, follow a friend, update an existing
+ * relationship.
+ */
+export const useFriendsActions = () =>
+{
+    const {
+        requestFriend,
+        requestResponse,
+        followFriend,
+        updateRelationship
+    } = useBetween(useFriendsStore);
+
+    return {
+        requestFriend,
+        requestResponse,
+        followFriend,
+        updateRelationship
+    };
+};
+
+/**
+ * @deprecated Prefer `useFriendsState` (read-only friends list) and
+ * `useFriendsActions` (request / follow / update) directly. This shim
+ * composes both into the historical `useFriends()` shape so the 16
+ * existing consumers keep working unchanged.
+ */
+export const useFriends = () => useBetween(useFriendsStore);

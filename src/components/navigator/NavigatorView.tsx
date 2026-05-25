@@ -31,7 +31,7 @@ export const NavigatorView: FC<{}> = props =>
     const [ needsSearch, setNeedsSearch ] = useState(false);
     const { searchResult = null, topLevelContext = null, topLevelContexts = null, navigatorData = null, navigatorSearches = null } = useNavigator();
     const pendingSearch = useRef<{ value: string, code: string }>(null);
-    const elementRef = useRef<HTMLDivElement>();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     useNitroEvent<RoomSessionEvent>(RoomSessionEvent.CREATED, event =>
     {
@@ -246,7 +246,7 @@ export const NavigatorView: FC<{}> = props =>
                                         { (searchResult && searchResult.results.map((result, index) => <NavigatorSearchResultView key={ index } searchResult={ result } />)) }
                                         { (searchResult && (!searchResult.results || (searchResult.results.length === 0))) &&
                                             <div className="nitro-card-panel px-3 py-2 text-sm text-muted">
-                                                { LocalizeText(searchResult.code === 'myworld_view' ? 'navigator.no.user.rooms.to.show' : 'navigator.no.results') }
+                                                { LocalizeText(searchResult.code === 'myworld_view' ? 'navigator.roomsettings.moderation.none' : 'navigator.search.returned.no.results') }
                                             </div> }
                                     </div>
                                     <Flex className="nitro-card-divider pt-2 border-t gap-2">

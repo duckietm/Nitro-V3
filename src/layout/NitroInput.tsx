@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, PropsWithChildren } from 'react';
+import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, Ref } from 'react';
 import { classNames } from './classNames';
 
 const classes = {
@@ -13,20 +13,19 @@ const classes = {
     }
 };
 
-export const NitroInput = forwardRef<HTMLInputElement, PropsWithChildren<{
+type NitroInputProps = PropsWithChildren<{
     color?: 'default' | 'dark' | 'ghost';
     inputSize?: 'xs' | 'sm' | 'default' | 'lg' | 'xl';
     rounded?: boolean;
-}> & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>>((props, ref) =>
-{
-    const { color = 'default', inputSize = 'default', rounded = true, disabled = false, type = 'text', autoComplete = 'off', className = null, ...rest } = props;
+    ref?: Ref<HTMLInputElement>;
+}> & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
+export const NitroInput = ({ ref, color = 'default', inputSize = 'default', rounded = true, disabled = false, type = 'text', autoComplete = 'off', className = null, ...rest }: NitroInputProps) =>
+{
     return (
         <input ref={ ref } autoComplete={ autoComplete } className={ classNames( classes.base, classes.size[inputSize], rounded && classes.rounded, classes.color[color], disabled && classes.disabled, className ) }
             disabled={ disabled }
             type={ type }
             { ...rest } />
     );
-});
-
-NitroInput.displayName = 'NitroInput';
+};

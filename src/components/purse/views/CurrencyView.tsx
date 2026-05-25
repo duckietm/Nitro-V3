@@ -34,4 +34,4 @@ export const CurrencyView: FC<CurrencyViewProps> = props =>
             </div>
         </div>
     );
-}
+};

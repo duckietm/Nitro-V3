@@ -52,11 +52,11 @@ const INTERNAL_TOKEN_PREFIX = 'internal:';
 const GROUP_TOKEN_PREFIX = 'group:';
 
 const createInternalMeta = (key: string, canUseAsDestination = false, canUseAsReference = false): IInternalVariableMeta =>
-({
-    key,
-    canUseAsDestination,
-    canUseAsReference
-});
+    ({
+        key,
+        canUseAsDestination,
+        canUseAsReference
+    });
 
 export const normalizeInternalVariableKey = (key: string) =>
 {
@@ -216,30 +216,30 @@ const getRootKey = (key: string) =>
 };
 
 const createInternalEntry = (target: WiredVariablePickerTarget, usage: WiredVariablePickerUsage, meta: IInternalVariableMeta): IWiredVariablePickerEntry =>
-({
-    id: `${ INTERNAL_TOKEN_PREFIX }${ meta.key }`,
-    token: `${ INTERNAL_TOKEN_PREFIX }${ meta.key }`,
-    label: meta.key,
-    displayLabel: meta.key,
-    searchableText: meta.key,
-    selectable: getInternalSelectable(usage, meta),
-    hasValue: meta.canUseAsReference,
-    kind: 'internal',
-    target
-});
+    ({
+        id: `${ INTERNAL_TOKEN_PREFIX }${ meta.key }`,
+        token: `${ INTERNAL_TOKEN_PREFIX }${ meta.key }`,
+        label: meta.key,
+        displayLabel: meta.key,
+        searchableText: meta.key,
+        selectable: getInternalSelectable(usage, meta),
+        hasValue: meta.canUseAsReference,
+        kind: 'internal',
+        target
+    });
 
 const createCustomEntry = (target: WiredVariablePickerTarget, usage: WiredVariablePickerUsage, definition: IWiredVariableDefinitionLike): IWiredVariablePickerEntry =>
-({
-    id: `${ CUSTOM_TOKEN_PREFIX }${ definition.itemId }`,
-    token: `${ CUSTOM_TOKEN_PREFIX }${ definition.itemId }`,
-    label: definition.name,
-    displayLabel: definition.name,
-    searchableText: definition.name,
-    selectable: getCustomSelectable(usage, definition),
-    hasValue: !!definition.hasValue,
-    kind: 'custom',
-    target
-});
+    ({
+        id: `${ CUSTOM_TOKEN_PREFIX }${ definition.itemId }`,
+        token: `${ CUSTOM_TOKEN_PREFIX }${ definition.itemId }`,
+        label: definition.name,
+        displayLabel: definition.name,
+        searchableText: definition.name,
+        selectable: getCustomSelectable(usage, definition),
+        hasValue: !!definition.hasValue,
+        kind: 'custom',
+        target
+    });
 
 const groupEntries = (entries: IWiredVariablePickerEntry[]) =>
 {

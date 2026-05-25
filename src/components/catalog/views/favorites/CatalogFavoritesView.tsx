@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { FaHeart, FaStar, FaTimes } from 'react-icons/fa';
 import { ICatalogNode, LocalizeText } from '../../../../api';
-import { useCatalog, useCatalogFavorites } from '../../../../hooks';
+import { useCatalogActions, useCatalogData, useCatalogFavorites } from '../../../../hooks';
 import { CatalogIconView } from '../catalog-icon/CatalogIconView';
 
 interface CatalogFavoritesViewProps
@@ -13,7 +13,8 @@ export const CatalogFavoritesView: FC<CatalogFavoritesViewProps> = props =>
 {
     const { onClose } = props;
     const { favoriteOffers, favoritePageIds, toggleFavoritePage, toggleFavoriteOffer } = useCatalogFavorites();
-    const { offersToNodes, activateNode, openPageByOfferId, rootNode } = useCatalog();
+    const { offersToNodes, rootNode } = useCatalogData();
+    const { activateNode, openPageByOfferId } = useCatalogActions();
 
     const favoritePages = useMemo(() =>
     {
@@ -93,13 +94,19 @@ export const CatalogFavoritesView: FC<CatalogFavoritesViewProps> = props =>
                                 <div
                                     key={ page.pageId }
                                     className="group/fav flex items-center gap-2 px-1.5 py-1 bg-card-grid-item rounded border border-card-grid-item-border hover:bg-card-grid-item-active cursor-pointer transition-all duration-100"
-                                    onClick={ () => { activateNode(page.node); onClose(); } }
+                                    onClick={ () =>
+                                    {
+                                        activateNode(page.node); onClose();
+                                    } }
                                 >
                                     <CatalogIconView icon={ page.iconId } />
                                     <span className="text-[11px] flex-1 truncate font-medium">{ page.name }</span>
                                     <FaTimes
                                         className="text-[7px] text-muted opacity-0 group-hover/fav:opacity-100 hover:text-danger transition-all cursor-pointer"
-                                        onClick={ e => { e.stopPropagation(); toggleFavoritePage(page.pageId); } }
+                                        onClick={ e =>
+                                        {
+                                            e.stopPropagation(); toggleFavoritePage(page.pageId);
+                                        } }
                                     />
                                 </div>
                             )) }
@@ -118,7 +125,10 @@ export const CatalogFavoritesView: FC<CatalogFavoritesViewProps> = props =>
                                 <div
                                     key={ fav.offerId }
                                     className="group/fav flex items-center gap-2 px-1.5 py-1 bg-card-grid-item rounded border border-card-grid-item-border hover:bg-card-grid-item-active cursor-pointer transition-all duration-100"
-                                    onClick={ () => { openPageByOfferId(fav.offerId); onClose(); } }
+                                    onClick={ () =>
+                                    {
+                                        openPageByOfferId(fav.offerId); onClose();
+                                    } }
                                 >
                                     { /* Furni icon */ }
                                     <div className="w-7 h-7 flex items-center justify-center shrink-0 bg-white rounded border border-card-grid-item-border overflow-hidden">
@@ -132,7 +142,10 @@ export const CatalogFavoritesView: FC<CatalogFavoritesViewProps> = props =>
                                     <span className="text-[11px] flex-1 truncate font-medium">{ fav.displayName }</span>
                                     <FaTimes
                                         className="text-[7px] text-muted opacity-0 group-hover/fav:opacity-100 hover:text-danger transition-all cursor-pointer"
-                                        onClick={ e => { e.stopPropagation(); toggleFavoriteOffer(fav.offerId); } }
+                                        onClick={ e =>
+                                        {
+                                            e.stopPropagation(); toggleFavoriteOffer(fav.offerId);
+                                        } }
                                     />
                                 </div>
                             )) }

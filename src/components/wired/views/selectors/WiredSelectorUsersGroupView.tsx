@@ -1,8 +1,7 @@
-import { CatalogGroupsComposer, GuildMembershipsMessageEvent, HabboGroupEntryData } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, SendMessageComposer } from '../../../../api';
+import { LocalizeText } from '../../../../api';
 import { Text } from '../../../../common';
-import { useMessageEvent, useWired } from '../../../../hooks';
+import { useUserGroups, useWired } from '../../../../hooks';
 import { WiredSelectorBaseView } from './WiredSelectorBaseView';
 
 const GROUP_CURRENT_ROOM = 0;
@@ -10,24 +9,12 @@ const GROUP_SELECTED = 1;
 
 export const WiredSelectorUsersGroupView: FC<{}> = () =>
 {
-    const [ groups, setGroups ] = useState<HabboGroupEntryData[]>([]);
+    const { data: groups = [] } = useUserGroups();
     const [ groupType, setGroupType ] = useState(GROUP_CURRENT_ROOM);
     const [ selectedGroupId, setSelectedGroupId ] = useState(0);
     const [ filterExisting, setFilterExisting ] = useState(false);
     const [ invert, setInvert ] = useState(false);
     const { trigger = null, setIntParams = null } = useWired();
-
-    useMessageEvent<GuildMembershipsMessageEvent>(GuildMembershipsMessageEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setGroups(parser.groups || []);
-    });
-
-    useEffect(() =>
-    {
-        SendMessageComposer(new CatalogGroupsComposer());
-    }, []);
 
     useEffect(() =>
     {

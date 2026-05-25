@@ -6,6 +6,7 @@ export class CatalogNode implements ICatalogNode
     private _depth: number = 0;
     private _localization: string = '';
     private _pageId: number = -1;
+    private _parentId: number = -1;
     private _pageName: string = '';
     private _iconId: number = 0;
     private _children: ICatalogNode[];
@@ -21,6 +22,7 @@ export class CatalogNode implements ICatalogNode
         this._parent = parent;
         this._localization = node.localization;
         this._pageId = node.pageId;
+        this._parentId = node.parentId;
         this._pageName = node.pageName;
         this._iconId = node.icon;
         this._children = [];
@@ -80,6 +82,11 @@ export class CatalogNode implements ICatalogNode
     public get pageId(): number
     {
         return this._pageId;
+    }
+
+    public get parentId(): number
+    {
+        return this._parentId;
     }
 
     public get pageName(): string

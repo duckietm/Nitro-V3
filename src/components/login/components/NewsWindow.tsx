@@ -45,7 +45,10 @@ export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) =>
 
     useEffect(() =>
     {
-        if(!newsUrl) { setFailed(true); return; }
+        if(!newsUrl)
+        {
+            setFailed(true); return;
+        }
         let cancelled = false;
         const controller = new AbortController();
 
@@ -63,7 +66,10 @@ export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) =>
                     : Array.isArray(json) ? (json as RawNewsItem[]) : [];
                 setItems(rawList.map((raw, idx) => normalizeNewsItem(raw, idx + 1)));
             })
-            .catch(() => { if(!cancelled) setFailed(true); });
+            .catch(() =>
+            {
+                if(!cancelled) setFailed(true);
+            });
         return () =>
         {
             cancelled = true;
@@ -87,8 +93,14 @@ export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) =>
     const current = items[Math.min(index, items.length - 1)];
     const hasMany = items.length > 1;
     const bumpAuto = () => setAutoTick(t => t + 1);
-    const prev = () => { setIndex(i => (i - 1 + items.length) % items.length); bumpAuto(); };
-    const next = () => { setIndex(i => (i + 1) % items.length); bumpAuto(); };
+    const prev = () =>
+    {
+        setIndex(i => (i - 1 + items.length) % items.length); bumpAuto();
+    };
+    const next = () =>
+    {
+        setIndex(i => (i + 1) % items.length); bumpAuto();
+    };
 
     const safeLinkUrl = resolveNewsLink(current.linkUrl);
     const safeImageSrc = resolveNewsImage(current.image);
@@ -119,7 +131,10 @@ export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) =>
                                 <img
                                     src={ safeImageSrc }
                                     alt={ current.title || 'news' }
-                                    onError={ e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; } }
+                                    onError={ e =>
+                                    {
+                                        (e.currentTarget).style.display = 'none';
+                                    } }
                                 />
                             </div>
                         }

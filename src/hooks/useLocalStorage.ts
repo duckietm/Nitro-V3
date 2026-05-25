@@ -7,12 +7,12 @@ const userId = new URLSearchParams(window.location.search).get('userid') || 0;
 const useLocalStorageState = <T>(key: string, initialValue: T): [ T, Dispatch<SetStateAction<T>>] =>
 {
     key = userId ? `${ key }.${ userId }` : key;
-    
+
     const [ storedValue, setStoredValue ] = useState<T>(() =>
     {
         try
         {
-            const item = typeof window !== 'undefined' ? GetLocalStorage<T>(key) as T : undefined;
+            const item = typeof window !== 'undefined' ? GetLocalStorage<T>(key) : undefined;
             return item ?? initialValue;
         }
 
@@ -37,9 +37,9 @@ const useLocalStorageState = <T>(key: string, initialValue: T): [ T, Dispatch<Se
         {
             NitroLogger.error(error);
         }
-    }
+    };
 
     return [ storedValue, setValue ];
-}
+};
 
 export const useLocalStorage = useLocalStorageState;

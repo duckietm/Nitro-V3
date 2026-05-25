@@ -20,6 +20,12 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
     const [ avatarUrl, setAvatarUrl ] = useState<string>(null);
     const [ isReady, setIsReady ] = useState<boolean>(false);
     const isDisposed = useRef(false);
+    // Request id bumped on every prop change. The SDK can call
+    // resetFigure asynchronously when server-side figure data lands;
+    // if props change in quick succession the older callback could
+    // otherwise overwrite the newer image. The closure captures the
+    // id and bails when stale.
+    const requestIdRef = useRef(0);
 
     const getClassNames = useMemo(() =>
     {
@@ -52,6 +58,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
     {
         if(!isReady) return;
 
+        const requestId = ++requestIdRef.current;
         const figureKey = [ figure, gender, direction, headOnly ].join('-');
 
         if(AVATAR_IMAGE_CACHE.has(figureKey))
@@ -62,7 +69,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
         {
             const resetFigure = (_figure: string) =>
             {
-                if(isDisposed.current) return;
+                if(isDisposed.current || (requestIdRef.current !== requestId)) return;
 
                 const avatarImage = GetAvatarRenderManager().createAvatarImage(_figure, AvatarScaleType.LARGE, gender, { resetFigure: (figure: string) => resetFigure(figure), dispose: null, disposed: false });
 
@@ -74,7 +81,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
 
                 const imageUrl = avatarImage.processAsImageUrl(setType);
 
-                if(imageUrl && !isDisposed.current)
+                if(imageUrl && !isDisposed.current && (requestIdRef.current === requestId))
                 {
                     if(!avatarImage.isPlaceholder())
                     {

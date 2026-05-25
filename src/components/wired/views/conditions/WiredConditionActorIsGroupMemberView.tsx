@@ -1,8 +1,7 @@
-import { CatalogGroupsComposer, GuildMembershipsMessageEvent, HabboGroupEntryData } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, SendMessageComposer, WiredFurniType } from '../../../../api';
+import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
-import { useMessageEvent, useWired } from '../../../../hooks';
+import { useUserGroups, useWired } from '../../../../hooks';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
 import { WiredConditionBaseView } from './WiredConditionBaseView';
 
@@ -16,24 +15,12 @@ interface WiredConditionActorIsGroupMemberViewProps
 
 export const WiredConditionActorIsGroupMemberView: FC<WiredConditionActorIsGroupMemberViewProps> = ({ negative = false }) =>
 {
-    const [ groups, setGroups ] = useState<HabboGroupEntryData[]>([]);
+    const { data: groups = [] } = useUserGroups();
     const [ userSource, setUserSource ] = useState(0);
     const [ groupType, setGroupType ] = useState(GROUP_CURRENT_ROOM);
     const [ selectedGroupId, setSelectedGroupId ] = useState(0);
     const [ quantifier, setQuantifier ] = useState(0);
     const { trigger = null, setIntParams = null } = useWired();
-
-    useMessageEvent<GuildMembershipsMessageEvent>(GuildMembershipsMessageEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setGroups(parser.groups || []);
-    });
-
-    useEffect(() =>
-    {
-        SendMessageComposer(new CatalogGroupsComposer());
-    }, []);
 
     useEffect(() =>
     {

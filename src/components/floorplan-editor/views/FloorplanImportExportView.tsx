@@ -28,7 +28,7 @@ export const FloorplanImportExportView: FC<FloorplanImportExportViewProps> = pro
             convertNumbersForSaving(originalFloorplanSettings.thicknessFloor),
             originalFloorplanSettings.wallHeight - 1
         ));
-    }
+    };
 
     useEffect(() =>
     {
@@ -52,4 +52,4 @@ export const FloorplanImportExportView: FC<FloorplanImportExportViewProps> = pro
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

@@ -1,53 +1,74 @@
 import { GetRoomEngine, OpenPetPackageMessageComposer, RoomObjectCategory, RoomSessionPetPackageEvent } from '@nitrots/nitro-renderer';
-import { useState } from 'react';
+import { useReducer } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../api';
 import { useNitroEvent } from '../../events';
 
+interface PetPackageState
+{
+    isVisible: boolean;
+    objectId: number;
+    objectType: string;
+    petName: string;
+    errorResult: string;
+}
+
+type PetPackageAction =
+    | { type: 'open'; objectId: number; objectType: string }
+    | { type: 'close' }
+    | { type: 'set-name'; petName: string }
+    | { type: 'set-error'; errorResult: string };
+
+const INITIAL_STATE: PetPackageState = {
+    isVisible: false,
+    objectId: -1,
+    objectType: '',
+    petName: '',
+    errorResult: ''
+};
+
+const petPackageReducer = (state: PetPackageState, action: PetPackageAction): PetPackageState =>
+{
+    switch(action.type)
+    {
+        case 'open':
+            return { ...INITIAL_STATE, isVisible: true, objectId: action.objectId, objectType: action.objectType };
+        case 'close':
+            return INITIAL_STATE;
+        case 'set-name':
+            // Typing into the input always clears any previous error label.
+            return { ...state, petName: action.petName, errorResult: '' };
+        case 'set-error':
+            return { ...state, errorResult: action.errorResult };
+    }
+};
+
+/**
+ * Maps the pet-package name-validation error code returned by the
+ * server to a localized error label. Exported for testability — the
+ * mapping is server-protocol contract, not UI state.
+ */
+export const getPetPackageNameError = (errorCode: number): string =>
+{
+    if(!errorCode) return '';
+
+    switch(errorCode)
+    {
+        case 1: return LocalizeText('catalog.alert.petname.long');
+        case 2: return LocalizeText('catalog.alert.petname.short');
+        case 3: return LocalizeText('catalog.alert.petname.chars');
+        case 4:
+        default:
+            return LocalizeText('catalog.alert.petname.bobba');
+    }
+};
+
 const usePetPackageWidgetState = () =>
 {
-    const [ isVisible, setIsVisible ] = useState<boolean>(false);
-    const [ objectId, setObjectId ] = useState<number>(-1);
-    const [ objectType, setObjectType ] = useState<string>('');
-    const [ petName, setPetName ] = useState<string>('');
-    const [ errorResult, setErrorResult ] = useState<string>('');
+    const [ state, dispatch ] = useReducer(petPackageReducer, INITIAL_STATE);
 
-    const onClose = () =>
-    {
-        setErrorResult('');
-        setPetName('');
-        setObjectType('');
-        setObjectId(-1);
-        setIsVisible(false);
-    };
-
-    const onConfirm = () =>
-    {
-        SendMessageComposer(new OpenPetPackageMessageComposer(objectId, petName));
-    };
-
-    const onChangePetName = (petName: string) =>
-    {
-        setPetName(petName);
-        if(errorResult.length > 0) setErrorResult('');
-    };
-
-    const getErrorResultForCode = (errorCode: number) =>
-    {
-        if(!errorCode || errorCode === 0) return;
-
-        switch(errorCode)
-        {
-            case 1:
-                return LocalizeText('catalog.alert.petname.long');
-            case 2:
-                return LocalizeText('catalog.alert.petname.short');
-            case 3:
-                return LocalizeText('catalog.alert.petname.chars');
-            case 4:
-            default:
-                return LocalizeText('catalog.alert.petname.bobba');
-        }
-    };
+    const onClose = () => dispatch({ type: 'close' });
+    const onConfirm = () => SendMessageComposer(new OpenPetPackageMessageComposer(state.objectId, state.petName));
+    const onChangePetName = (petName: string) => dispatch({ type: 'set-name', petName });
 
     useNitroEvent<RoomSessionPetPackageEvent>(RoomSessionPetPackageEvent.RSOPPE_OPEN_PET_PACKAGE_REQUESTED, event =>
     {
@@ -55,21 +76,31 @@ const usePetPackageWidgetState = () =>
 
         const roomObject = GetRoomEngine().getRoomObject(event.session.roomId, event.objectId, RoomObjectCategory.FLOOR);
 
-        setObjectId(event.objectId);
-        setObjectType(roomObject.type);
-        setIsVisible(true);
+        dispatch({ type: 'open', objectId: event.objectId, objectType: roomObject.type });
     });
 
     useNitroEvent<RoomSessionPetPackageEvent>(RoomSessionPetPackageEvent.RSOPPE_OPEN_PET_PACKAGE_RESULT, event =>
     {
         if(!event) return;
 
-        if(event.nameValidationStatus === 0) onClose();
+        if(event.nameValidationStatus === 0)
+        {
+            dispatch({ type: 'close' });
+            return;
+        }
 
-        if(event.nameValidationStatus !== 0) setErrorResult(getErrorResultForCode(event.nameValidationStatus));
+        dispatch({ type: 'set-error', errorResult: getPetPackageNameError(event.nameValidationStatus) });
     });
 
-    return { isVisible, errorResult, petName, objectType, onChangePetName, onConfirm, onClose };
+    return {
+        isVisible: state.isVisible,
+        errorResult: state.errorResult,
+        petName: state.petName,
+        objectType: state.objectType,
+        onChangePetName,
+        onConfirm,
+        onClose
+    };
 };
 
 export const usePetPackageWidget = usePetPackageWidgetState;

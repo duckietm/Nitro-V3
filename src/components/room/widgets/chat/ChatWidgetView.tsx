@@ -11,7 +11,7 @@ export const ChatWidgetView: FC<{}> = props =>
 {
     const { chatMessages = [], setChatMessages = null, chatSettings = null, getScrollSpeed = 6000 } = useChatWidget();
     const [ chatWindowEnabled ] = useChatWindow();
-    const elementRef = useRef<HTMLDivElement>();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     const removeHiddenChats = useCallback(() =>
     {

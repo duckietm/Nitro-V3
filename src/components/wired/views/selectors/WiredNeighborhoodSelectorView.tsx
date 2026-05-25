@@ -1,5 +1,5 @@
 import { GetRoomEngine } from '@nitrots/nitro-renderer';
-import { CSSProperties, FC, MouseEvent as ReactMouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, FC, JSX, MouseEvent as ReactMouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 import { MdGridOn } from 'react-icons/md';
 import { LocalizeText, WiredFurniType } from '../../../../api';

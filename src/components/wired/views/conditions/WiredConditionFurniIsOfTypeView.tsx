@@ -221,7 +221,7 @@ export const WiredConditionFurniIsOfTypeView: FC<WiredConditionFurniIsOfTypeView
                         onSelectionActivate={ () => switchSelection('secondary') } />
                 </div>
             }
-            >
+        >
             <div className="flex flex-col gap-2">
                 <Text bold>{ LocalizeText('wiredfurni.params.quantifier_selection') }</Text>
                 { [ 0, 1 ].map(value => (

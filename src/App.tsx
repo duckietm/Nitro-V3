@@ -1,6 +1,6 @@
 import { GetAssetManager, GetAvatarRenderManager, GetCommunication, GetConfiguration, GetLocalizationManager, GetRoomEngine, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, GetStage, GetTexturePool, GetTicker, HabboWebTools, LegacyExternalInterface, LoadGameUrlEvent, NitroEventType, NitroLogger, NitroVersion, PrepareRenderer } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { ClearRememberLogin, GetRememberLogin, GetUIVersion, StoreRememberLoginFromPayload, persistAccessTokenFromPayload } from './api';
+import { FC, useCallback, useEffect, useEffectEvent, useRef, useState } from 'react';
+import { ClearRememberLogin, GetRememberLogin, GetUIVersion, SetRememberLogin, StoreRememberLoginFromPayload, persistAccessTokenFromPayload } from './api';
 import { Base } from './common';
 import { LoadingView } from './components/loading/LoadingView';
 import { LoginView } from './components/login/LoginView';
@@ -36,7 +36,8 @@ const preloadUrl = async (url: string): Promise<void> =>
         const response = await fetch(url, { cache: 'force-cache' });
         await response.arrayBuffer();
     }
-    catch {}
+    catch
+    {}
 };
 
 const preloadImage = (url: string): void =>
@@ -49,7 +50,8 @@ const preloadImage = (url: string): void =>
         image.decoding = 'async';
         image.src = url;
     }
-    catch {}
+    catch
+    {}
 };
 
 const asStringArray = (value: unknown): string[] =>
@@ -70,20 +72,99 @@ export const App: FC<{}> = props =>
     const [ showLogin, setShowLogin ] = useState(false);
     const [ isEnteringHotel, setIsEnteringHotel ] = useState(() => !!window.NitroConfig?.['sso.ticket'] || hasRememberLogin());
     const [ prepareTrigger, setPrepareTrigger ] = useState(0);
+    const [ loadingProgress, setLoadingProgress ] = useState(0);
+    const [ loadingTask, setLoadingTask ] = useState('');
+    const taskLabel = useCallback((key: string, fallback: string): string =>
+    {
+        try
+        {
+            const locManager = GetLocalizationManager();
+            if(locManager && typeof locManager.getValue === 'function')
+            {
+                const fromLoc = locManager.getValue(key, false);
+
+                if(typeof fromLoc === 'string' && fromLoc.length && fromLoc !== key) return fromLoc;
+            }
+        }
+        catch
+        { }
+
+        try
+        {
+            const fromConfig = GetConfiguration().getValue<string>(key, '');
+            if(typeof fromConfig === 'string' && fromConfig.length) return fromConfig;
+        }
+        catch
+        { }
+
+        return fallback;
+    }, []);
+    const bumpProgress = useCallback((value: number, task?: string) =>
+    {
+        setLoadingProgress(prev => (value > prev ? value : prev));
+        if(task !== undefined) setLoadingTask(task);
+    }, []);
     const warmupPromiseRef = useRef<Promise<void>>(null);
     const rendererPromiseRef = useRef<Promise<any>>(null);
+    const gameInitPromiseRef = useRef<Promise<void> | null>(null);
+    const bootstrapDoneRef = useRef(false);
+    const lastPrepareTriggerRef = useRef<number | null>(null);
     const tickersStartedRef = useRef(false);
     const heartbeatIntervalRef = useRef<number>(null);
     const rememberRotateIntervalRef = useRef<number>(null);
+    const isReadyRef = useRef(false);
+    const reconnectInProgressRef = useRef(false);
+
+    const clearStoredCredentials = useCallback(() =>
+    {
+        ClearRememberLogin();
+        try { delete (window as any).NitroConfig?.['sso.ticket']; } catch {}
+        try { GetConfiguration().setValue('sso.ticket', ''); } catch {}
+        try
+        {
+            const url = new URL(window.location.href);
+
+            if(url.searchParams.has('sso'))
+            {
+                url.searchParams.delete('sso');
+                window.history.replaceState({}, '', url.toString());
+            }
+        }
+        catch {}
+    }, []);
+
     const showSessionExpired = useCallback(() =>
     {
+        console.warn('[App] showSessionExpired — diagnostic shown (mid-game close)');
+        clearStoredCredentials();
+
         const baseUrl = window.location.origin + '/';
         setHomeUrl(baseUrl);
         setErrorMessage('Your session has expired.\nPlease log in again to enter the hotel.');
         setIsReady(false);
         setShowLogin(false);
         setIsEnteringHotel(false);
-    }, []);
+    }, [ clearStoredCredentials ]);
+
+    const fallbackToLogin = useCallback(() =>
+    {
+        const rawLoginEnabled = GetConfiguration().getValue<unknown>('login.screen.enabled', false);
+        const loginScreenEnabled = rawLoginEnabled === true || rawLoginEnabled === 'true' || rawLoginEnabled === 1;
+
+        if(!loginScreenEnabled)
+        {
+            console.warn('[App] fallbackToLogin — login.screen.enabled=false, redirecting to home instead');
+            showSessionExpired();
+            return;
+        }
+        console.warn('[App] fallbackToLogin — surfacing login form, credentials cleared');
+        clearStoredCredentials();
+        setHomeUrl('');
+        setErrorMessage('');
+        setIsReady(false);
+        setShowLogin(true);
+        setIsEnteringHotel(false);
+    }, [ clearStoredCredentials, showSessionExpired ]);
 
     const applySsoTicket = useCallback((ssoTicket: string) =>
     {
@@ -105,10 +186,18 @@ export const App: FC<{}> = props =>
     {
         const remembered = GetRememberLogin();
 
-        if(!remembered) return '';
-        if(!remembered.token?.length && remembered.ssoTicket?.length) return remembered.ssoTicket;
+        console.warn('[App] tryRememberLogin start', {
+            hasRemembered: !!remembered,
+            hasToken: !!remembered?.token?.length,
+            hasStoredSso: !!remembered?.ssoTicket?.length
+        });
 
-        let allowSsoFallback = true;
+        if(!remembered?.token?.length)
+        {
+            if(remembered) ClearRememberLogin();
+            console.warn('[App] tryRememberLogin → no token, returning empty');
+            return '';
+        }
 
         try
         {
@@ -126,10 +215,20 @@ export const App: FC<{}> = props =>
             });
 
             let payload: Record<string, unknown> = {};
-            try { payload = await response.json(); }
-            catch {}
+            try
+            {
+                payload = await response.json();
+            }
+            catch
+            {}
 
             const ssoTicket = typeof payload.ssoTicket === 'string' ? payload.ssoTicket : (typeof payload.sso === 'string' ? payload.sso : '');
+
+            console.warn('[App] tryRememberLogin → remember endpoint replied', {
+                status: response.status,
+                ok: response.ok,
+                gotSsoTicket: !!ssoTicket
+            });
 
             if(response.ok && ssoTicket)
             {
@@ -137,19 +236,14 @@ export const App: FC<{}> = props =>
                 StoreRememberLoginFromPayload(payload, typeof payload.username === 'string' ? payload.username : remembered.username, ssoTicket);
                 return ssoTicket;
             }
-
-            if(response.status === 400 || response.status === 401 || response.status === 403)
-            {
-                allowSsoFallback = false;
-                ClearRememberLogin();
-            }
         }
         catch(error)
         {
-            NitroLogger.error('[LoginScreen] Remember login failed', error);
+            console.warn('[App] tryRememberLogin → fetch threw', error);
         }
 
-        if(allowSsoFallback && remembered.ssoTicket?.length) return remembered.ssoTicket;
+        ClearRememberLogin();
+        console.warn('[App] tryRememberLogin → cleared remember, returning empty');
 
         return '';
     }, []);
@@ -176,8 +270,12 @@ export const App: FC<{}> = props =>
             });
 
             let payload: Record<string, unknown> = {};
-            try { payload = await response.json(); }
-            catch {}
+            try
+            {
+                payload = await response.json();
+            }
+            catch
+            {}
 
             if(response.ok)
             {
@@ -194,8 +292,28 @@ export const App: FC<{}> = props =>
         }
     }, []);
 
-    // Listen for socket closed events (code 1000 "Bye" - server rejected SSO)
-    useNitroEvent(NitroEventType.SOCKET_CLOSED, showSessionExpired);
+    useEffect(() => { isReadyRef.current = isReady; }, [ isReady ]);
+    useNitroEvent(NitroEventType.SOCKET_RECONNECTING, () => { reconnectInProgressRef.current = true; });
+    useNitroEvent(NitroEventType.SOCKET_REAUTHENTICATED, () => { reconnectInProgressRef.current = false; });
+
+    useNitroEvent(NitroEventType.SOCKET_CLOSED, () =>
+    {
+        console.warn('[App] SOCKET_CLOSED fired', {
+            isReady: isReadyRef.current,
+            reconnectInProgress: reconnectInProgressRef.current
+        });
+
+        if(!isReadyRef.current)
+        {
+            console.warn('[App] Socket closed before authentication completed — falling back to login');
+            fallbackToLogin();
+            return;
+        }
+
+        if(reconnectInProgressRef.current) return;
+
+        showSessionExpired();
+    });
 
     useMessageEvent<LoadGameUrlEvent>(LoadGameUrlEvent, event =>
     {
@@ -238,6 +356,7 @@ export const App: FC<{}> = props =>
         warmupPromiseRef.current = (async () =>
         {
             await GetConfiguration().init();
+            bumpProgress(25, taskLabel('loader.waiting', 'Loading content...'));
 
             GetTicker().maxFPS = GetConfiguration().getValue<number>('system.fps.max', 24);
             NitroLogger.LOG_DEBUG = GetConfiguration().getValue<boolean>('system.log.debug', true);
@@ -274,18 +393,25 @@ export const App: FC<{}> = props =>
             loginImageUrls.forEach(preloadImage);
             gamedataUrls.forEach(url => preloadUrl(url));
 
-            await Promise.all(
-                [
-                    GetAssetManager().downloadAssets(assetUrls),
-                    GetLocalizationManager().init(),
-                    GetAvatarRenderManager().init(),
-                    GetSoundManager().init()
-                ]
-            );
+            const warmupTasks: { promise: Promise<any>; label: string }[] = [
+                { promise: GetAssetManager().downloadAssets(assetUrls), label: taskLabel('loading.task.assets', 'Loading game assets...') },
+                { promise: GetLocalizationManager().init(), label: taskLabel('loading.task.localization', 'Loading translations...') },
+                { promise: GetAvatarRenderManager().init(), label: taskLabel('loading.task.avatar', 'Loading wardrobe...') },
+                { promise: GetSoundManager().init(), label: taskLabel('loading.task.sounds', 'Loading sounds...') }
+            ];
+            let warmupDone = 0;
+            const warmupStart = 25;
+            const warmupSpan = 45;
+            await Promise.all(warmupTasks.map(t => t.promise.then(value =>
+            {
+                warmupDone++;
+                bumpProgress(warmupStart + Math.round((warmupSpan * warmupDone) / warmupTasks.length), t.label);
+                return value;
+            })));
         })();
 
         return warmupPromiseRef.current;
-    }, [ startRenderer ]);
+    }, [ startRenderer, bumpProgress, taskLabel ]);
 
     useEffect(() =>
     {
@@ -306,10 +432,25 @@ export const App: FC<{}> = props =>
         };
     }, []);
 
+    const onSessionExpired = useEffectEvent(() => showSessionExpired());
+    const onInitFailure = useEffectEvent(() => fallbackToLogin());
+
     useEffect(() =>
     {
         const prepare = async (width: number, height: number) =>
         {
+            console.warn('[App] prepare() start', {
+                hasNitroConfig: !!window.NitroConfig,
+                ssoTicketInConfig: !!window.NitroConfig?.['sso.ticket'],
+                hasRememberLocal: !!GetRememberLogin(),
+                hasUrlSso: !!new URLSearchParams(window.location.search).get('sso')
+            });
+
+            const bootLabel = taskLabel('loader', 'Booting...');
+            setLoadingProgress(0);
+            setLoadingTask(bootLabel);
+            bumpProgress(5, bootLabel);
+
             try
             {
                 if(!window.NitroConfig) throw new Error('NitroConfig is not defined!');
@@ -317,16 +458,48 @@ export const App: FC<{}> = props =>
                 let ssoTicket = window.NitroConfig['sso.ticket'];
                 if(ssoTicket) GetConfiguration().setValue('sso.ticket', ssoTicket);
 
+                try
+                {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const tokenParam = urlParams.get('token');
+                    const tokenExpParam = urlParams.get('token_exp');
+                    if(tokenParam && !GetRememberLogin())
+                    {
+                        const parsedExpiry = Number(tokenExpParam || 0);
+                        const expiresAt = (Number.isFinite(parsedExpiry) && parsedExpiry > 0)
+                            ? parsedExpiry
+                            : Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60);
+                        SetRememberLogin({ token: tokenParam, expiresAt });
+                    }
+                }
+                catch(e)
+                {
+                    console.warn('[App] failed to persist remember token from URL', e);
+                }
+
+                bumpProgress(10, taskLabel('loading.task.session', 'Verifying session...'));
+
                 if(!ssoTicket || ssoTicket === '')
                 {
-                    // Configuration is loaded lazily — fetch it up-front so the login
-                    // screen toggle and Turnstile keys are available before we decide.
                     let configInitError: unknown = null;
-                    try { await GetConfiguration().init(); }
-                    catch(e) { configInitError = e; }
+                    try
+                    {
+                        await GetConfiguration().init();
+                    }
+                    catch(e)
+                    {
+                        configInitError = e;
+                    }
 
                     const rawLoginEnabled = GetConfiguration().getValue<unknown>('login.screen.enabled', false);
                     const loginScreenEnabled = rawLoginEnabled === true || rawLoginEnabled === 'true' || rawLoginEnabled === 1;
+
+                    console.warn('[App] no SSO path — login gate', {
+                        configInitError: configInitError ? String((configInitError as Error)?.message ?? configInitError) : null,
+                        rawLoginEnabled,
+                        rawLoginEnabledType: typeof rawLoginEnabled,
+                        loginScreenEnabled
+                    });
 
                     if(configInitError)
                     {
@@ -363,22 +536,40 @@ export const App: FC<{}> = props =>
                             return;
                         }
 
-                        showSessionExpired();
+                        onSessionExpired();
                         return;
                     }
                 }
 
                 const renderer = await startRenderer(width, height);
+                bumpProgress(20, taskLabel('loading.task.renderer', 'Initializing renderer...'));
 
                 await startWarmup(width, height);
-                await GetSessionDataManager().init();
-                await GetRoomSessionManager().init();
-                await GetRoomEngine().init();
-                await GetCommunication().init();
+                bumpProgress(70, taskLabel('loading.task.startsession', 'Starting session...'));
 
-                if(LegacyExternalInterface.available) LegacyExternalInterface.call('legacyTrack', 'authentication', 'authok', []);
+                if(!gameInitPromiseRef.current)
+                {
+                    gameInitPromiseRef.current = (async () =>
+                    {
+                        await GetSessionDataManager().init();
+                        bumpProgress(78, taskLabel('loading.task.userdata', 'Loading user data...'));
+                        await GetRoomSessionManager().init();
+                        bumpProgress(85, taskLabel('loading.task.rooms', 'Loading rooms...'));
+                        await GetRoomEngine().init();
+                        bumpProgress(92, taskLabel('loading.task.engine', 'Loading graphics engine...'));
+                        await GetCommunication().init();
+                        bumpProgress(98, taskLabel('generic.reconnecting', 'Connecting to server...'));
+                    })();
+                }
 
-                HabboWebTools.sendHeartBeat();
+                await gameInitPromiseRef.current;
+
+                if(!bootstrapDoneRef.current)
+                {
+                    bootstrapDoneRef.current = true;
+                    if(LegacyExternalInterface.available) LegacyExternalInterface.call('legacyTrack', 'authentication', 'authok', []);
+                    HabboWebTools.sendHeartBeat();
+                }
 
                 if(heartbeatIntervalRef.current !== null) window.clearInterval(heartbeatIntervalRef.current);
                 heartbeatIntervalRef.current = window.setInterval(() => HabboWebTools.sendHeartBeat(), 10000);
@@ -396,17 +587,20 @@ export const App: FC<{}> = props =>
                     GetTicker().add(ticker => GetTexturePool().run());
                 }
 
+                bumpProgress(100, taskLabel('onboarding.button.ready', 'Ready!'));
                 setIsReady(true);
                 setShowLogin(false);
                 setIsEnteringHotel(false);
             }
             catch(err)
             {
-                NitroLogger.error(err);
-                setIsEnteringHotel(false);
-                showSessionExpired();
+                NitroLogger.error('[App] Initialization failed — falling back to login', err);
+                onInitFailure();
             }
         };
+
+        if(lastPrepareTriggerRef.current === prepareTrigger) return;
+        lastPrepareTriggerRef.current = prepareTrigger;
 
         const { width, height } = getViewportDimensions();
 
@@ -417,15 +611,15 @@ export const App: FC<{}> = props =>
             if(heartbeatIntervalRef.current !== null) window.clearInterval(heartbeatIntervalRef.current);
             if(rememberRotateIntervalRef.current !== null) window.clearInterval(rememberRotateIntervalRef.current);
         };
-    }, [ prepareTrigger, startWarmup, startRenderer, tryRememberLogin, applySsoTicket, rotateRememberLogin ]);
+    }, [ prepareTrigger, startWarmup, startRenderer, tryRememberLogin, applySsoTicket, rotateRememberLogin, bumpProgress, taskLabel ]);
 
     return (
         <Base fit overflow="hidden" className={ `nitro-app-root ${ !(window.devicePixelRatio % 1) ? 'image-rendering-pixelated' : '' }` }>
             { !isReady && !showLogin &&
-                <LoadingView isError={ errorMessage.length > 0 } message={ errorMessage } homeUrl={ homeUrl } /> }
+                <LoadingView isError={ errorMessage.length > 0 } message={ errorMessage } homeUrl={ homeUrl } progress={ loadingProgress } currentTask={ loadingTask } /> }
             { !isReady && showLogin && <LoginView onAuthenticated={ handleAuthenticated } isEntering={ isEnteringHotel } /> }
             { isReady && <MainView /> }
-            <ReconnectView />
+            { isReady && <ReconnectView /> }
             <Base id="draggable-windows-container" />
         </Base>
     );

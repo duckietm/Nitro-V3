@@ -7,7 +7,8 @@ import { FriendsMessengerView } from './views/messenger/FriendsMessengerView';
 
 const FRIEND_BAR_TARGET_IDS = [ 'toolbar-friend-bar-container-desktop' ];
 
-export const FriendsView: FC<{}> = props => {
+export const FriendsView: FC<{}> = props =>
+{
     const { settings = null, onlineFriends = [], requests = [] } = useFriends();
     const [ portalTarget, setPortalTarget ] = useState<HTMLElement | null>(null);
 

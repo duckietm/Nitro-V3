@@ -1,6 +1,13 @@
-import { GetCommunication, UiSettingsDataEvent, UiSettingsLoadComposer, UiSettingsSaveComposer } from '@nitrots/nitro-renderer';
-import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react';
 import { DEFAULT_UI_SETTINGS, IUiSettings } from './IUiSettings';
+
+/**
+ * UI settings currently persist to localStorage only. The cross-device
+ * server-side sync (UiSettingsLoadComposer / UiSettingsSaveComposer /
+ * UiSettingsDataEvent) is a planned addition that requires both the
+ * renderer composer classes and the Arcturus packet handlers — none of
+ * which exist yet. Until those land, settings stay per-browser.
+ */
 
 const STORAGE_KEY = 'nitro.ui.settings';
 
@@ -18,8 +25,10 @@ interface IUiSettingsContext
 const UiSettingsContext = createContext<IUiSettingsContext>({
     settings: DEFAULT_UI_SETTINGS,
     isCustomActive: false,
-    updateSettings: () => {},
-    resetSettings: () => {},
+    updateSettings: () =>
+    {},
+    resetSettings: () =>
+    {},
     getHeaderStyle: () => ({}),
     getTabsStyle: () => ({}),
     getAccentColor: () => DEFAULT_UI_SETTINGS.headerColor
@@ -42,7 +51,8 @@ const loadSettings = (): IUiSettings =>
         const stored = localStorage.getItem(STORAGE_KEY);
         if(stored) return { ...DEFAULT_UI_SETTINGS, ...JSON.parse(stored) };
     }
-    catch(e) {}
+    catch(e)
+    {}
 
     return { ...DEFAULT_UI_SETTINGS };
 };
@@ -53,61 +63,20 @@ const saveSettings = (settings: IUiSettings): void =>
     {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     }
-    catch(e) {}
+    catch(e)
+    {}
 };
 
-const sendComposer = (composer: any): void =>
-{
-    try
-    {
-        GetCommunication()?.connection?.send(composer);
-    }
-    catch(e) {}
-};
+const ALL_CSS_VARS = [
+    '--ui-accent-color', '--ui-accent-dark',
+    '--ui-ctx-bg', '--ui-ctx-header-bg', '--ui-ctx-item-bg1', '--ui-ctx-item-bg2',
+    '--ui-btn-primary-bg', '--ui-btn-primary-border',
+    '--ui-dark-bg', '--ui-dark-border'
+];
 
 export const UiSettingsProvider: FC<PropsWithChildren> = ({ children }) =>
 {
     const [ settings, setSettings ] = useState<IUiSettings>(loadSettings);
-    const serverSaveTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
-
-    // Carica dal server al mount e ascolta risposta
-    useEffect(() =>
-    {
-        sendComposer(new UiSettingsLoadComposer());
-
-        const connection = GetCommunication()?.connection;
-
-        if(!connection) return;
-
-        const handler = (event: any) =>
-        {
-            try
-            {
-                const parser = event.getParser();
-                const json = parser?.settingsJson;
-
-                if(json && json !== '{}')
-                {
-                    const serverSettings = { ...DEFAULT_UI_SETTINGS, ...JSON.parse(json) };
-                    setSettings(serverSettings);
-                    saveSettings(serverSettings);
-                }
-            }
-            catch(e) {}
-        };
-
-        connection.addMessageEvent(new UiSettingsDataEvent(handler));
-    }, []);
-
-    const syncToServer = useCallback((settingsToSave: IUiSettings) =>
-    {
-        if(serverSaveTimerRef.current) clearTimeout(serverSaveTimerRef.current);
-
-        serverSaveTimerRef.current = setTimeout(() =>
-        {
-            sendComposer(new UiSettingsSaveComposer(JSON.stringify(settingsToSave)));
-        }, 1000);
-    }, []);
 
     const updateSettings = useCallback((partial: Partial<IUiSettings>) =>
     {
@@ -115,18 +84,16 @@ export const UiSettingsProvider: FC<PropsWithChildren> = ({ children }) =>
         {
             const updated = { ...prev, ...partial };
             saveSettings(updated);
-            syncToServer(updated);
 
             return updated;
         });
-    }, [ syncToServer ]);
+    }, []);
 
     const resetSettings = useCallback(() =>
     {
         setSettings({ ...DEFAULT_UI_SETTINGS });
         saveSettings(DEFAULT_UI_SETTINGS);
-        syncToServer(DEFAULT_UI_SETTINGS);
-    }, [ syncToServer ]);
+    }, []);
 
     const getHeaderStyle = useCallback((): React.CSSProperties =>
     {
@@ -183,13 +150,6 @@ export const UiSettingsProvider: FC<PropsWithChildren> = ({ children }) =>
 
     const isCustomActive = settings.colorMode !== 'default';
 
-    const ALL_CSS_VARS = [
-        '--ui-accent-color', '--ui-accent-dark',
-        '--ui-ctx-bg', '--ui-ctx-header-bg', '--ui-ctx-item-bg1', '--ui-ctx-item-bg2',
-        '--ui-btn-primary-bg', '--ui-btn-primary-border',
-        '--ui-dark-bg', '--ui-dark-border'
-    ];
-
     useEffect(() =>
     {
         const root = document.documentElement;
@@ -215,9 +175,9 @@ export const UiSettingsProvider: FC<PropsWithChildren> = ({ children }) =>
     }, [ settings ]);
 
     return (
-        <UiSettingsContext.Provider value={ { settings, isCustomActive, updateSettings, resetSettings, getHeaderStyle, getTabsStyle, getAccentColor } }>
+        <UiSettingsContext value={ { settings, isCustomActive, updateSettings, resetSettings, getHeaderStyle, getTabsStyle, getAccentColor } }>
             { children }
-        </UiSettingsContext.Provider>
+        </UiSettingsContext>
     );
 };
 

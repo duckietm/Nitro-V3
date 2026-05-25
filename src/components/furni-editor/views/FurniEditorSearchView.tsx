@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react';
 import { Button, Column, Flex, LayoutFurniIconImageView, Text } from '../../../common';
 import { FurniItem } from '../../../hooks/furni-editor';
 
@@ -30,9 +30,11 @@ export const FurniEditorSearchView: FC<FurniEditorSearchViewProps> = props =>
     const [ sortField, setSortField ] = useState<SortField>('id');
     const [ sortDir, setSortDir ] = useState<SortDir>('asc');
 
+    const initialSearch = useEffectEvent(() => onSearch('', '', 1));
+
     useEffect(() =>
     {
-        onSearch('', '', 1);
+        initialSearch();
     }, []);
 
     const handleSearch = useCallback(() =>

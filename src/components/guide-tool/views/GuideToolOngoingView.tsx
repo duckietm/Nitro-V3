@@ -101,7 +101,7 @@ export const GuideToolOngoingView: FC<GuideToolOngoingViewProps> = props =>
                                         { (isOwnChat(group.userId)) && GetSessionDataManager().userName }
                                         { (!isOwnChat(group.userId)) && userName }
                                     </Text>
-                                    { group.messages.map((chat, index) => <div key={ index } className={ classNames(chat.roomId ? 'text-break text-underline' : 'text-break', 'chat.roomId' && 'cursor-pointer') } onClick={ () => chat.roomId ? TryVisitRoom(chat.roomId) : null }>{ chat.message }</div>) }
+                                    { group.messages.map((chat, index) => <div key={ index } className={ classNames(chat.roomId ? 'text-break text-underline' : 'text-break', chat.roomId && 'cursor-pointer') } onClick={ () => chat.roomId ? TryVisitRoom(chat.roomId) : null }>{ chat.message }</div>) }
                                 </div>
                                 { (isOwnChat(group.userId)) &&
                                     <div className="shrink-0 message-avatar">

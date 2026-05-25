@@ -1,4 +1,4 @@
-const rawNickIcons = import.meta.glob('./*.gif', { eager: true, import: 'default' }) as Record<string, string>;
+const rawNickIcons = import.meta.glob('./*.gif', { eager: true, import: 'default' });
 
 export const NICK_ICON_URLS: Record<string, string> = Object.entries(rawNickIcons).reduce((accumulator, [ path, url ]) =>
 {

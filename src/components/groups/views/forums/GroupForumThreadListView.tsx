@@ -165,7 +165,10 @@ export const GroupForumThreadListView: FC<GroupForumThreadListViewProps> = props
                                 </Flex>
                                 <Flex gap={ 1 }>
                                     <Text small variant="muted">{ LocalizeText('messageboard.started.by') }</Text>
-                                    <Text small pointer underline onClick={ e => { e.stopPropagation(); GetUserProfile(thread.authorId); } }>
+                                    <Text small pointer underline onClick={ e =>
+                                    {
+                                        e.stopPropagation(); GetUserProfile(thread.authorId);
+                                    } }>
                                         { thread.authorName }
                                     </Text>
                                     <Text small variant="muted">- { formatTimeAgo(thread.creationTimeAsSecondsAgo) }</Text>
@@ -182,7 +185,10 @@ export const GroupForumThreadListView: FC<GroupForumThreadListViewProps> = props
                                 </Column> }
                             <Column className="flex-shrink-0 text-end min-w-[100px]" gap={ 0 }>
                                 <Text small variant="muted">{ LocalizeText('messageboard.last.message') }</Text>
-                                <Text small pointer underline onClick={ e => { e.stopPropagation(); GetUserProfile(thread.lastUserId); } }>
+                                <Text small pointer underline onClick={ e =>
+                                {
+                                    e.stopPropagation(); GetUserProfile(thread.lastUserId);
+                                } }>
                                     { thread.lastUserName }
                                 </Text>
                                 <Text small variant="muted">{ formatTimeAgo(thread.lastCommentTime) }</Text>

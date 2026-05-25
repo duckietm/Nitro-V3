@@ -1,4 +1,4 @@
-import { GetRoomEngine, GetSessionDataManager, RoomEngineObjectEvent, RoomEngineUseProductEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionPetInfoUpdateEvent, RoomSessionPetStatusUpdateEvent, RoomSessionUserDataUpdateEvent } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, GetSessionDataManager, RoomEngineObjectEvent, RoomEngineUseProductEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionFavoriteGroupUpdateEvent, RoomSessionPetInfoUpdateEvent, RoomSessionPetStatusUpdateEvent, RoomSessionUserBadgesEvent, RoomSessionUserDataUpdateEvent, RoomSessionUserFigureUpdateEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useRef, useState } from 'react';
 import { AvatarInfoFurni, AvatarInfoName, AvatarInfoPet, AvatarInfoRentableBot, AvatarInfoUser, AvatarInfoUtilities, CanManipulateFurniture, FurniCategory, IAvatarInfo, IsOwnerOfFurniture, RoomWidgetUpdateRoomObjectEvent, UseProductItem } from '../../../api';
 import { useNitroEvent, useUiEvent } from '../../events';
@@ -6,10 +6,23 @@ import { useFriends } from '../../friends';
 import { useWired } from '../../wired';
 import { useObjectDeselectedEvent, useObjectRollOutEvent, useObjectRollOverEvent, useObjectSelectedEvent } from '../engine';
 import { useRoom } from '../useRoom';
+import { applyFavouriteGroupUpdate, applyUserBadgesUpdate, applyUserFigureUpdate } from './avatarInfo.reducers';
+
+// Time window after a directional / move-state user click during
+// which the context menu must NOT open. Set on `globalThis.__nitroAvatarClickControl`
+// by the click-routing code in the room engine.
+const CLICK_USER_DEBOUNCE_MS = 120;
+
+interface NitroAvatarClickControl
+{
+    suppressMenuUntil: number;
+}
+
+const getAvatarClickControl = (): NitroAvatarClickControl | null =>
+    (globalThis as unknown as { __nitroAvatarClickControl?: NitroAvatarClickControl }).__nitroAvatarClickControl ?? null;
 
 const useAvatarInfoWidgetState = () =>
 {
-    const CLICK_USER_DEBOUNCE_MS = 120;
     const [ avatarInfo, setAvatarInfo ] = useState<IAvatarInfo>(null);
     const [ activeNameBubble, setActiveNameBubble ] = useState<AvatarInfoName>(null);
     const [ nameBubbles, setNameBubbles ] = useState<AvatarInfoName[]>([]);
@@ -32,7 +45,7 @@ const useAvatarInfoWidgetState = () =>
 
     const isAvatarMenuBlocked = () =>
     {
-        const control = (globalThis as any).__nitroAvatarClickControl;
+        const control = getAvatarClickControl();
 
         return !!control && (control.suppressMenuUntil > Date.now());
     };
@@ -296,6 +309,21 @@ const useAvatarInfoWidgetState = () =>
         setIsDecorating(true);
     });
 
+    useNitroEvent<RoomSessionUserBadgesEvent>(RoomSessionUserBadgesEvent.RSUBE_BADGES, event =>
+    {
+        setAvatarInfo(prev => applyUserBadgesUpdate(prev, event));
+    });
+
+    useNitroEvent<RoomSessionUserFigureUpdateEvent>(RoomSessionUserFigureUpdateEvent.USER_FIGURE, event =>
+    {
+        setAvatarInfo(prev => applyUserFigureUpdate(prev, event));
+    });
+
+    useNitroEvent<RoomSessionFavoriteGroupUpdateEvent>(RoomSessionFavoriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, event =>
+    {
+        setAvatarInfo(prev => applyFavouriteGroupUpdate(prev, event, groupId => GetSessionDataManager().getGroupBadge(groupId)));
+    });
+
     useObjectSelectedEvent(event =>
     {
         getObjectInfo(event.id, event.category);
@@ -401,8 +429,8 @@ const useAvatarInfoWidgetState = () =>
 
     useEffect(() =>
     {
-		if(!roomSession) return;
-		
+        if(!roomSession) return;
+
         roomSession.isDecorating = isDecorating;
     }, [ roomSession, isDecorating ]);
 

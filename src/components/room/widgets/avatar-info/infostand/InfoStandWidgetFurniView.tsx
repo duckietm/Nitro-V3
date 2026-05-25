@@ -1,10 +1,10 @@
-import { CrackableDataType, CreateLinkEvent, FurnitureFloorUpdateEvent, GetRoomEngine, GetSessionDataManager, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType, UpdateFurniturePositionComposer } from '@nitrots/nitro-renderer';
+import { CrackableDataType, CreateLinkEvent, FurnitureFloorUpdateEvent, GetRoomEngine, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType, UpdateFurniturePositionComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaCrosshairs, FaTimes } from 'react-icons/fa';
 import { GrFormNextLink, GrRotateLeft, GrRotateRight } from 'react-icons/gr';
 import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
-import { useMessageEvent, useNitroEvent, useRoom, useWiredTools } from '../../../../../hooks';
+import { useHasPermission, useMessageEvent, useNitroEvent, useRoom, useWiredTools } from '../../../../../hooks';
 import { NitroInput } from '../../../../../layout';
 
 interface InfoStandWidgetFurniViewProps
@@ -22,6 +22,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const { avatarInfo = null, onClose = null } = props;
     const { roomSession = null } = useRoom();
     const { openInspectionForFurni, showInspectButton } = useWiredTools();
+    const isModerator = useHasPermission('acc_anyroomowner');
 
     const [ pickupMode, setPickupMode ] = useState(0);
     const [ canMove, setCanMove ] = useState(false);
@@ -577,7 +578,10 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-[#7ec8e3]">
                                                 <path d="M5.127 3.502 5.25 3.5h9.5c.041 0 .082 0 .123.002A2.251 2.251 0 0 0 12.75 2h-5.5a2.25 2.25 0 0 0-2.123 1.502ZM1 10.25A2.25 2.25 0 0 1 3.25 8h13.5A2.25 2.25 0 0 1 19 10.25v5.5A2.25 2.25 0 0 1 16.75 18H3.25A2.25 2.25 0 0 1 1 15.75v-5.5ZM3.25 6.5c-.04 0-.082 0-.123.002A2.25 2.25 0 0 1 5.25 5h9.5c.98 0 1.814.627 2.123 1.502a3.819 3.819 0 0 0-.123-.002H3.25Z" />
                                             </svg>
-                                            <Text small wrap variant="white">Sprite: { (() => { const ro = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR); return ro?.model?.getValue(RoomObjectVariable.FURNITURE_TYPE_ID) ?? '?'; })() }</Text>
+                                            <Text small wrap variant="white">Sprite: { (() =>
+                                            {
+                                                const ro = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR); return ro?.model?.getValue(RoomObjectVariable.FURNITURE_TYPE_ID) ?? '?';
+                                            })() }</Text>
                                         </div>
                                     </div> }
                                 { (!avatarInfo.isWallItem && canMove) &&
@@ -587,7 +591,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                             onClick={ () => setDropdownOpen(!dropdownOpen) }>
                                             { dropdownOpen ? `${LocalizeText('widget.furni.present.close')} Buildtools` : `${LocalizeText('navigator.roomsettings.doormode.open')} Buildtools` }
                                         </button>
-                                        { GetSessionDataManager().isModerator &&
+                                        { isModerator &&
                                             <button
                                                 className="w-full text-white text-xs bg-[#1e7295] hover:bg-[#1a617f] border border-[#ffffff33] rounded px-2 py-1 cursor-pointer transition-colors"
                                                 onClick={ () =>

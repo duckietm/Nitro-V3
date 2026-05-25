@@ -9,11 +9,13 @@ interface LayoutMiniCameraViewProps {
     onClose: () => void;
 }
 
-export const LayoutMiniCameraView: FC<LayoutMiniCameraViewProps> = props => {
+export const LayoutMiniCameraView: FC<LayoutMiniCameraViewProps> = props =>
+{
     const { roomId = -1, textureReceiver = null, onClose = null } = props;
-    const elementRef = useRef<HTMLDivElement>();
+    const elementRef = useRef<HTMLDivElement>(null);
 
-    const getCameraBounds = () => {
+    const getCameraBounds = () =>
+    {
         if (!elementRef || !elementRef.current) return null;
 
         const frameBounds = elementRef.current.getBoundingClientRect();
@@ -26,7 +28,8 @@ export const LayoutMiniCameraView: FC<LayoutMiniCameraViewProps> = props => {
         );
     };
 
-    const takePicture = () => {
+    const takePicture = () =>
+    {
         PlaySound(SoundNames.CAMERA_SHUTTER);
         textureReceiver(GetRoomEngine().createTextureFromRoom(roomId, 1, getCameraBounds()));
     };

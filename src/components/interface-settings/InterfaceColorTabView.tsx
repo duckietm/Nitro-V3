@@ -126,7 +126,8 @@ export const InterfaceColorTabView: FC<{}> = () =>
             setImportValue('');
             setShowImport(false);
         }
-        catch(e) {}
+        catch(e)
+        {}
     }, [ importValue, updateSettings ]);
 
     return (

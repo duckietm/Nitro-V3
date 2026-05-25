@@ -1,3 +1,4 @@
+import { GetConfiguration } from '@nitrots/nitro-renderer';
 import JSON5 from 'json5';
 import { configFileUrl, getClientMode, installSecureFetch } from './secure-assets';
 
@@ -32,7 +33,6 @@ const ensureMobileViewport = () =>
 };
 
 ensureMobileViewport();
-installSecureFetch();
 
 const setBootDebug = (message: string) =>
 {
@@ -43,10 +43,9 @@ const setBootDebug = (message: string) =>
 
         if(secureNode) secureNode.textContent = `${ secureNode.textContent }\n${ message }`;
     }
-    catch {}
+    catch
+    {}
 };
-
-setBootDebug('boot: secure fetch installed');
 
 const deployBaseUrl = (): string =>
 {
@@ -55,14 +54,16 @@ const deployBaseUrl = (): string =>
         const loaderBase = (window as any).__nitroLoaderBase;
         if(typeof loaderBase === 'string' && loaderBase.length) return new URL('..', loaderBase).toString();
     }
-    catch {}
+    catch
+    {}
 
     try
     {
         const moduleUrl = (import.meta as any).url;
         if(typeof moduleUrl === 'string' && moduleUrl.length) return new URL('..', new URL('.', moduleUrl)).toString();
     }
-    catch {}
+    catch
+    {}
 
     try
     {
@@ -73,7 +74,8 @@ const deployBaseUrl = (): string =>
             return trimmed ? `${ window.location.origin }/${ trimmed }/` : `${ window.location.origin }/`;
         }
     }
-    catch {}
+    catch
+    {}
 
     return `${ window.location.origin }/`;
 };
@@ -123,6 +125,9 @@ const loadClientMode = async () =>
 
 await loadClientMode();
 
+installSecureFetch();
+setBootDebug('boot: secure fetch installed');
+
 const search = new URLSearchParams(window.location.search);
 const clientMode = getClientMode();
 
@@ -140,6 +145,21 @@ const clientMode = getClientMode();
 };
 
 setBootDebug('boot: NitroConfig assigned');
+
+// Load renderer-config.json + ui-config.json BEFORE rendering React. Otherwise
+// the first paint triggers a flood of "Missing configuration key" warnings for
+// every key components read synchronously (asset.url, login.endpoint, …) until
+// prepare()'s deferred init() finally lands. Doing it here makes the config
+// already populated by the time index.tsx mounts <App/>.
+try
+{
+    await GetConfiguration().init();
+    setBootDebug('boot: configuration init done');
+}
+catch(error)
+{
+    setBootDebug(`boot: configuration init failed ${ error?.message || error }`);
+}
 
 import('./index')
     .then(() => setBootDebug('boot: app bundle imported'))

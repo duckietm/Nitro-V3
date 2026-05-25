@@ -1,6 +1,7 @@
 import { ChatRecordData, GetRoomChatlogMessageComposer, RoomChatlogEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { SendMessageComposer } from '../../../../api';
+import { FaSpinner } from 'react-icons/fa';
+import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
 import { ChatlogView } from '../chatlog/ChatlogView';
@@ -30,14 +31,16 @@ export const ModToolsChatlogView: FC<ModToolsChatlogViewProps> = props =>
         SendMessageComposer(new GetRoomChatlogMessageComposer(roomId));
     }, [ roomId ]);
 
-    if(!roomChatlog) return null;
-
     return (
-        <NitroCardView className="nitro-mod-tools-chatlog min-w-[400px] max-h-[500px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
-            <NitroCardHeaderView headerText={ `Room Chatlog` } onCloseClick={ onCloseClick } />
-            <NitroCardContentView className="text-black" overflow="auto">
-                { roomChatlog &&
-                    <ChatlogView records={ [ roomChatlog ] } /> }
+        <NitroCardView className="nitro-mod-tools-chatlog min-w-[460px] max-w-[520px] max-h-[500px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+            <NitroCardHeaderView headerText={ LocalizeText('modtools.room.chatlog.title') } onCloseClick={ onCloseClick } />
+            <NitroCardContentView className="text-black" gap={ 1 } overflow="auto">
+                { roomChatlog
+                    ? <ChatlogView records={ [ roomChatlog ] } />
+                    : <div className="flex flex-col items-center justify-center gap-2 py-8 opacity-50 text-sm">
+                        <FaSpinner className="animate-spin" size={ 22 } />
+                        <span>{ LocalizeText('modtools.user.chatlog.loading') }</span>
+                    </div> }
             </NitroCardContentView>
         </NitroCardView>
     );

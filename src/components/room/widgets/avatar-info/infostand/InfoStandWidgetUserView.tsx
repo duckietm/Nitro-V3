@@ -25,6 +25,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
   const [standId, setStandId] = useState<number>(null);
   const [overlayId, setOverlayId] = useState<number>(null);
   const [cardBackgroundId, setCardBackgroundId] = useState<number>(null);
+  const [borderId, setBorderId] = useState<number>(null);
   const [isVisible, setIsVisible] = useState(false);
   const { roomSession = null } = useRoom();
 
@@ -32,6 +33,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
   const infostandStandClass = `stand-${standId ?? 'default'}`;
   const infostandOverlayClass = `overlay-${overlayId ?? 'default'}`;
   const infostandCardBackgroundClass = cardBackgroundId ? `card-background-${cardBackgroundId}` : '';
+  const infostandBorderClass = borderId ? `border-${borderId}` : '';
   const handleProfileClick = useCallback(() => { GetUserProfile(avatarInfo.webID); }, [avatarInfo.webID]);
 
   const handleEditClick = useCallback((event: React.MouseEvent) => { event.stopPropagation(); setIsVisible(prev => !prev); }, []);
@@ -99,6 +101,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
       newValue.standId = event.standId;
       newValue.overlayId = event.overlayId;
       newValue.cardBackgroundId = event.cardBackgroundId ?? 0;
+      newValue.borderId = event.borderId ?? 0;
       return newValue;
     });
   });
@@ -134,6 +137,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
     setStandId(avatarInfo.standId);
     setOverlayId(avatarInfo.overlayId);
     setCardBackgroundId(avatarInfo.cardBackgroundId ?? 0);
+    setBorderId(avatarInfo.borderId ?? 0);
 
     SendMessageComposer(new UserRelationshipsComposer(avatarInfo.webID));
 
@@ -146,7 +150,9 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
 
   return (
     <>
-      <Column className={`relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto ${cardBackgroundId ? '' : 'bg-[rgba(28,28,32,0.95)]'} [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded overflow-hidden profile-card-background ${infostandCardBackgroundClass}`}>
+      <div className="relative min-w-[190px] max-w-[190px] pointer-events-auto z-30">
+        {borderId ? <Base className={`infostand-border ${infostandBorderClass}`} /> : null}
+        <Column className={`relative min-w-[190px] max-w-[190px] ${cardBackgroundId ? '' : 'bg-[rgba(28,28,32,0.95)]'} [box-shadow:inset_0_5px_#22222799,inset_0_-4px_#12121599] rounded overflow-hidden profile-card-background ${infostandCardBackgroundClass}`}>
         <Column className="h-full p-[8px] overflow-auto" gap={1} overflow="visible">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
@@ -281,6 +287,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
           )}
         </Column>
       </Column>
+      </div>
       {isVisible && avatarInfo.type === AvatarInfoUser.OWN_USER && (
         <div className="backgrounds-view-container">
           <BackgroundsView
@@ -293,6 +300,8 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
             setSelectedOverlay={setOverlayId}
             selectedCardBackground={cardBackgroundId}
             setSelectedCardBackground={setCardBackgroundId}
+            selectedBorder={borderId}
+            setSelectedBorder={setBorderId}
           />
         </div>
       )}

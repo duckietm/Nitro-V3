@@ -1,13 +1,14 @@
-import { DetailedHTMLProps, forwardRef, HTMLAttributes, MouseEvent, PropsWithChildren } from 'react';
+import { DetailedHTMLProps, HTMLAttributes, MouseEvent, PropsWithChildren, Ref } from 'react';
 import { DraggableWindow, DraggableWindowPosition, DraggableWindowProps } from '../common';
 import { classNames } from './classNames';
 import { NitroItemCountBadge } from './NitroItemCountBadge';
 
-const NitroCardRoot = forwardRef<HTMLDivElement, PropsWithChildren<{
-} & DraggableWindowProps> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
-{
-    const { uniqueKey = null, handleSelector = '.drag-handler', windowPosition = DraggableWindowPosition.CENTER, disableDrag = false, className = null, ...rest } = props;
+type NitroCardRootProps = PropsWithChildren<{
+    ref?: Ref<HTMLDivElement>;
+} & DraggableWindowProps> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
+const NitroCardRoot = ({ ref, uniqueKey = null, handleSelector = '.drag-handler', windowPosition = DraggableWindowPosition.CENTER, disableDrag = false, className = null, ...rest }: NitroCardRootProps) =>
+{
     return (
         <DraggableWindow disableDrag={ disableDrag } handleSelector={ handleSelector } uniqueKey={ uniqueKey } windowPosition={ windowPosition }>
             <div
@@ -19,41 +20,39 @@ const NitroCardRoot = forwardRef<HTMLDivElement, PropsWithChildren<{
                 { ...rest } />
         </DraggableWindow>
     );
-});
+};
 
-NitroCardRoot.displayName = 'NitroCardRoot';
-
-const NitroCardHeader = forwardRef<HTMLDivElement, {
+type NitroCardHeaderProps = {
     headerText: string;
     onCloseClick?: (event: MouseEvent) => void;
-        } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
-        {
-            const { headerText = '', onCloseClick = null, className = null, ...rest } = props;
+    ref?: Ref<HTMLDivElement>;
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-            const onMouseDown = (event: MouseEvent<HTMLDivElement>) =>
-            {
-                event.stopPropagation();
-                event.nativeEvent.stopImmediatePropagation();
-            };
-
-            return (
-                <div ref={ ref } className={ classNames('nitro-card-header-shell relative flex items-center justify-center flex-col drag-handler min-h-card-header max-h-card-header', className) }>
-                    <div className="flex items-center justify-center w-full ">
-                        <span className="nitro-card-title text-white">{ headerText }</span>
-                        <div className="absolute flex items-center justify-center cursor-pointer right-2 nitro-card-close-button" onClick={ onCloseClick } onMouseDownCapture={ onMouseDown } />
-                    </div>
-                </div>
-            );
-        });
-
-NitroCardHeader.displayName = 'NitroCardHeader';
-
-const NitroCardContent = forwardRef<HTMLDivElement, {
-    isLoading?: boolean;
-} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
+const NitroCardHeader = ({ ref, headerText = '', onCloseClick = null, className = null, ...rest }: NitroCardHeaderProps) =>
 {
-    const { isLoading = false, className = null, children = null, ...rest } = props;
+    const onMouseDown = (event: MouseEvent<HTMLDivElement>) =>
+    {
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+    };
 
+    return (
+        <div ref={ ref } className={ classNames('nitro-card-header-shell relative flex items-center justify-center flex-col drag-handler min-h-card-header max-h-card-header', className) }>
+            <div className="flex items-center justify-center w-full ">
+                <span className="nitro-card-title text-white">{ headerText }</span>
+                <div className="absolute flex items-center justify-center cursor-pointer right-2 nitro-card-close-button" onClick={ onCloseClick } onMouseDownCapture={ onMouseDown } />
+            </div>
+        </div>
+    );
+};
+
+type NitroCardContentProps = {
+    isLoading?: boolean;
+    ref?: Ref<HTMLDivElement>;
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+
+const NitroCardContent = ({ ref, isLoading = false, className = null, children = null, ...rest }: NitroCardContentProps) =>
+{
     return (
         <div
             ref={ ref }
@@ -67,15 +66,14 @@ const NitroCardContent = forwardRef<HTMLDivElement, {
             { children }
         </div>
     );
-});
+};
 
-NitroCardContent.displayName = 'NitroCardContent';
+type NitroCardTabsProps = {
+    ref?: Ref<HTMLDivElement>;
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-const NitroCardTabs = forwardRef<HTMLDivElement, {
-} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
+const NitroCardTabs = ({ ref, className = null, ...rest }: NitroCardTabsProps) =>
 {
-    const { className = null, ...rest } = props;
-
     return (
         <div
             ref={ ref }
@@ -85,17 +83,16 @@ const NitroCardTabs = forwardRef<HTMLDivElement, {
             }
             { ...rest } />
     );
-});
+};
 
-NitroCardTabs.displayName = 'NitroCardTabs';
-
-const NitroCardTabItem = forwardRef<HTMLDivElement, {
+type NitroCardTabItemProps = {
     isActive?: boolean;
     count?: number;
-} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
-{
-    const { isActive = false, count = 0, className = null, children = null, ...rest } = props;
+    ref?: Ref<HTMLDivElement>;
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
+const NitroCardTabItem = ({ ref, isActive = false, count = 0, className = null, children = null, ...rest }: NitroCardTabItemProps) =>
+{
     return (
         <div
             ref={ ref }
@@ -112,9 +109,7 @@ const NitroCardTabItem = forwardRef<HTMLDivElement, {
                 <NitroItemCountBadge count={ count } /> }
         </div>
     );
-});
-
-NitroCardTabItem.displayName = 'NitroCardTabItem';
+};
 
 export const NitroCard = Object.assign(NitroCardRoot, {
     Header: NitroCardHeader,

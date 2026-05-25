@@ -16,7 +16,8 @@ export interface CameraWidgetEditorViewProps {
 
 const TABS: string[] = [ CameraEditorTabs.COLORMATRIX, CameraEditorTabs.COMPOSITE ];
 
-export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => {
+export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
+{
     const { picture = null, availableEffects = null, myLevel = 1, onClose = null, onCancel = null, onCheckout = null } = props;
     const [ currentTab, setCurrentTab ] = useState(TABS[0]);
     const [ selectedEffectName, setSelectedEffectName ] = useState<string>(null);
@@ -35,37 +36,45 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => 
         img.src = picture.imageUrl;
     }, [ picture ]);
 
-    const getColorMatrixEffects = useMemo(() => {
+    const getColorMatrixEffects = useMemo(() =>
+    {
         return availableEffects.filter(effect => effect.colorMatrix);
     }, [ availableEffects ]);
 
-    const getCompositeEffects = useMemo(() => {
+    const getCompositeEffects = useMemo(() =>
+    {
         return availableEffects.filter(effect => effect.texture);
     }, [ availableEffects ]);
 
-    const getEffectList = useCallback(() => {
+    const getEffectList = useCallback(() =>
+    {
         return currentTab === CameraEditorTabs.COLORMATRIX ? getColorMatrixEffects : getCompositeEffects;
     }, [ currentTab, getColorMatrixEffects, getCompositeEffects ]);
 
-    const getSelectedEffectIndex = useCallback((name: string) => {
+    const getSelectedEffectIndex = useCallback((name: string) =>
+    {
         if (!name || !name.length || !selectedEffects || !selectedEffects.length) return -1;
         return selectedEffects.findIndex(effect => effect.effect.name === name);
     }, [ selectedEffects ]);
 
-    const getCurrentEffectIndex = useMemo(() => {
+    const getCurrentEffectIndex = useMemo(() =>
+    {
         return getSelectedEffectIndex(selectedEffectName);
     }, [ selectedEffectName, getSelectedEffectIndex ]);
 
-    const getCurrentEffect = useMemo(() => {
+    const getCurrentEffect = useMemo(() =>
+    {
         if (!selectedEffectName) return null;
         return selectedEffects[getCurrentEffectIndex] || null;
     }, [ selectedEffectName, getCurrentEffectIndex, selectedEffects ]);
 
-    const setSelectedEffectAlpha = useCallback((alpha: number) => {
+    const setSelectedEffectAlpha = useCallback((alpha: number) =>
+    {
         const index = getCurrentEffectIndex;
         if (index === -1) return;
 
-        setSelectedEffects(prevValue => {
+        setSelectedEffects(prevValue =>
+        {
             const clone = [ ...prevValue ];
             const currentEffect = clone[index];
             clone[index] = new RoomCameraWidgetSelectedEffect(currentEffect.effect, alpha);
@@ -73,8 +82,10 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => 
         });
     }, [ getCurrentEffectIndex ]);
 
-    const processAction = useCallback((type: string, effectName: string = null) => {
-        switch (type) {
+    const processAction = useCallback((type: string, effectName: string = null) =>
+    {
+        switch (type)
+        {
             case 'close':
                 onClose();
                 return;
@@ -102,7 +113,8 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => 
                 const existingIndex = getSelectedEffectIndex(effectName);
                 if (existingIndex === -1) return;
 
-                setSelectedEffects(prevValue => {
+                setSelectedEffects(prevValue =>
+                {
                     const clone = [ ...prevValue ];
                     clone.splice(existingIndex, 1);
                     return clone;
@@ -141,10 +153,12 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => 
         }
     }, [ availableEffects, selectedEffectName, currentPictureUrl, getSelectedEffectIndex, onCancel, onCheckout, onClose ]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         if(!stableTexture) return;
 
-        const processThumbnails = async () => {
+        const processThumbnails = async () =>
+        {
             const renderedEffects = await Promise.all(
                 availableEffects.map(effect =>
                     GetRoomCameraWidgetManager().applyEffects(stableTexture, [ new RoomCameraWidgetSelectedEffect(effect, 1) ], false)
@@ -155,24 +169,28 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => 
         processThumbnails();
     }, [ stableTexture, availableEffects ]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         if(!stableTexture) return;
 
         if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
 
-        debounceTimerRef.current = setTimeout(() => {
+        debounceTimerRef.current = setTimeout(() =>
+        {
             const id = ++requestIdRef.current;
 
             GetRoomCameraWidgetManager()
                 .applyEffects(stableTexture, selectedEffects, false)
-                .then(imageElement => {
+                .then(imageElement =>
+                {
                     if (id !== requestIdRef.current) return;
                     setCurrentPictureUrl(imageElement.src);
                 })
                 .catch(error => NitroLogger.error('Failed to apply effects to picture', error));
         }, 50);
 
-        return () => {
+        return () =>
+        {
             if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
         };
     }, [ stableTexture, selectedEffects ]);

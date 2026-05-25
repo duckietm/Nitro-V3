@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, forwardRef } from 'react';
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, Ref } from 'react';
 import { classNames } from '../../layout';
 
 import arrowLeftIcon from '../../assets/images/avatareditor/arrow-left-icon.png';
@@ -55,13 +55,14 @@ const ICON_MAP: Record<string, { normal: string; selected?: string }> = {
     'wa': { normal: waIcon, selected: waSelectedIcon },
 };
 
-export const AvatarEditorIcon = forwardRef<HTMLDivElement, PropsWithChildren<{
+type AvatarEditorIconProps = PropsWithChildren<{
     icon: string;
     selected?: boolean;
-}> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
-{
-    const { icon = null, selected = false, className = null, children, ...rest } = props;
+    ref?: Ref<HTMLDivElement>;
+}> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
+export const AvatarEditorIcon = ({ ref, icon = null, selected = false, className = null, children, ...rest }: AvatarEditorIconProps) =>
+{
     const iconEntry = icon ? ICON_MAP[icon] : null;
 
     if(!iconEntry) return null;
@@ -77,6 +78,4 @@ export const AvatarEditorIcon = forwardRef<HTMLDivElement, PropsWithChildren<{
             { children }
         </div>
     );
-});
-
-AvatarEditorIcon.displayName = 'AvatarEditorIcon';
+};

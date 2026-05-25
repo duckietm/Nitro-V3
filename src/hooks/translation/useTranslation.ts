@@ -228,7 +228,7 @@ const resolveSupportedLanguage = (value: string, languages: ITranslationLanguage
     return languages[0].code;
 };
 
-const useTranslationState = () =>
+const useTranslationStore = () =>
 {
     const defaultTargetLanguage = getBrowserLanguageCode();
     const [ settings, setSettings ] = useLocalStorage<ITranslationSettings>(LocalStorageKeys.CHAT_TRANSLATION_SETTINGS, {
@@ -589,6 +589,7 @@ const useTranslationState = () =>
         lastError,
         updateSettings,
         ensureSupportedLanguagesLoaded,
+        translateText,
         translateIncoming,
         translateOutgoing,
         enqueueOutgoingTranslation,
@@ -597,4 +598,58 @@ const useTranslationState = () =>
     };
 };
 
-export const useTranslation = () => useBetween(useTranslationState);
+export const useTranslationState = () =>
+{
+    const {
+        settings,
+        supportedLanguages,
+        availableTextLocales,
+        languagesLoading,
+        languagesLoaded,
+        localizationTextsLoading,
+        lastIncomingLanguage,
+        lastOutgoingLanguage,
+        lastError,
+        getLanguageName
+    } = useBetween(useTranslationStore);
+
+    return {
+        settings,
+        supportedLanguages,
+        availableTextLocales,
+        languagesLoading,
+        languagesLoaded,
+        localizationTextsLoading,
+        lastIncomingLanguage,
+        lastOutgoingLanguage,
+        lastError,
+        getLanguageName
+    };
+};
+
+export const useTranslationActions = () =>
+{
+    const {
+        settings,
+        updateSettings,
+        ensureSupportedLanguagesLoaded,
+        translateText,
+        translateIncoming,
+        translateOutgoing,
+        enqueueOutgoingTranslation,
+        consumeOutgoingTranslation
+    } = useBetween(useTranslationStore);
+
+    return {
+        settings,
+        updateSettings,
+        ensureSupportedLanguagesLoaded,
+        translateText,
+        translateIncoming,
+        translateOutgoing,
+        enqueueOutgoingTranslation,
+        consumeOutgoingTranslation
+    };
+};
+
+export const useTranslation = () => useBetween(useTranslationStore);

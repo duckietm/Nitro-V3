@@ -19,7 +19,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
     const { onClose = null, onEdit = null, onDelete = null } = props;
     const { cameraRoll = null, setCameraRoll = null, selectedPictureIndex = -1, setSelectedPictureIndex = null } = useCamera();
     const { simpleAlert = null } = useNotification();
-    const elementRef = useRef<HTMLDivElement>();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     const selectedPicture = ((selectedPictureIndex > -1) ? cameraRoll[selectedPictureIndex] : null);
 

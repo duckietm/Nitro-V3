@@ -1,15 +1,17 @@
 import { CatalogAdminCreateOfferComposer, CatalogAdminCreatePageComposer, CatalogAdminDeleteOfferComposer, CatalogAdminDeletePageComposer, CatalogAdminMoveOfferComposer, CatalogAdminMovePageComposer, CatalogAdminPublishComposer, CatalogAdminResultEvent, CatalogAdminSaveOfferComposer, CatalogAdminSavePageComposer } from '@nitrots/nitro-renderer';
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ICatalogNode, IPurchasableOffer, NotificationAlertType, SendMessageComposer } from '../../api';
-import { useCatalog, useMessageEvent, useNotification } from '../../hooks';
+import { useCatalogUiState, useMessageEvent, useNotification } from '../../hooks';
 
 export interface IPageEditData
 {
     pageId?: number;
     caption: string;
+    captionSave: string;
     parentId: number;
     catalogMode: string;
     pageLayout: string;
+    iconImage: number;
     enabled: string;
     visible: string;
     minRank: number;
@@ -76,7 +78,7 @@ export const useCatalogAdmin = () => useContext(CatalogAdminContext);
 
 export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) =>
 {
-    const { currentType } = useCatalog();
+    const { currentType } = useCatalogUiState();
     const [ adminMode, setAdminMode ] = useState(false);
     const [ editingOffer, setEditingOffer ] = useState<IPurchasableOffer | null>(null);
     const [ editingPageData, setEditingPageData ] = useState(false);
@@ -88,7 +90,6 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
     const pendingActionRef = useRef<string | null>(null);
     const { simpleAlert = null } = useNotification();
 
-    // Keyboard shortcuts: Esc to close edit panels
     useEffect(() =>
     {
         if(!adminMode) return;
@@ -97,7 +98,10 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
         {
             if(e.key === 'Escape')
             {
-                if(editingOffer) { setEditingOffer(null); e.preventDefault(); return; }
+                if(editingOffer)
+                {
+                    setEditingOffer(null); e.preventDefault(); return;
+                }
                 if(editingPageData || editingRootPage || editingPageNode)
                 {
                     setEditingPageData(false);
@@ -173,11 +177,13 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
         setLoading(true);
         setLastError(null);
         pendingActionRef.current = 'savePage';
+
         SendMessageComposer(new CatalogAdminSavePageComposer(
-            data.pageId || 0, data.caption, data.caption, data.pageLayout, 0,
+            data.pageId || 0, data.caption, data.captionSave, data.pageLayout, data.iconImage,
             data.minRank, data.visible === '1', data.enabled === '1',
             data.orderNum, data.parentId,
-            data.pageHeadline || '', data.pageTeaser || '', data.pageTextDetails || '', currentType, data.catalogMode
+            data.pageHeadline || '', data.pageTeaser || '', data.pageTextDetails || '', currentType, data.catalogMode,
+            data.pageText1 || ''
         ));
     }, [ currentType ]);
 
@@ -187,7 +193,7 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
         setLastError(null);
         pendingActionRef.current = 'createPage';
         SendMessageComposer(new CatalogAdminCreatePageComposer(
-            data.caption, data.caption, data.pageLayout, 0,
+            data.caption, data.captionSave, data.pageLayout, data.iconImage,
             data.minRank, data.visible === '1', data.enabled === '1',
             data.orderNum, data.parentId, currentType, data.catalogMode
         ));
@@ -280,7 +286,7 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
     }, []);
 
     return (
-        <CatalogAdminContext.Provider value={ {
+        <CatalogAdminContext value={ {
             adminMode, setAdminMode,
             editingOffer, setEditingOffer,
             editingPageData, setEditingPageData,
@@ -293,6 +299,6 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
             publishCatalog
         } }>
             { children }
-        </CatalogAdminContext.Provider>
+        </CatalogAdminContext>
     );
 };

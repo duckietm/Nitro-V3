@@ -107,8 +107,14 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = props =
         }
     }, []);
 
-    useEffect(() => { refreshOwnCustomBadges(); }, [ refreshOwnCustomBadges ]);
-    useEffect(() => { ensureCustomBadgeTexts(); }, []);
+    useEffect(() =>
+    {
+        refreshOwnCustomBadges();
+    }, [ refreshOwnCustomBadges ]);
+    useEffect(() =>
+    {
+        ensureCustomBadgeTexts();
+    }, []);
 
     const baseCodes = (filteredBadgeCodes !== null ? filteredBadgeCodes : badgeCodes);
     const customCount = useMemo(() => baseCodes.filter(c => isCustomBadgeCode(c)).length, [ baseCodes ]);
@@ -138,7 +144,8 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = props =
                     await refreshOwnCustomBadges();
                     refreshCustomBadgeTexts();
                 }
-                catch { /* error already surfaced server-side */ }
+                catch
+                { /* error already surfaced server-side */ }
             },
             null, null, null,
             LocalizeText('inventory.delete.confirm_delete.title')

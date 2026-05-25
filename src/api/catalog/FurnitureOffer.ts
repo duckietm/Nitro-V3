@@ -15,7 +15,7 @@ export class FurnitureOffer implements IPurchasableOffer
     constructor(furniData: IFurnitureData)
     {
         this._furniData = furniData;
-        this._product = (new Product(this._furniData.type, this._furniData.id, this._furniData.customParams, 1, GetProductDataForLocalization(this._furniData.className), this._furniData) as IProduct);
+        this._product = (new Product(this._furniData.type, this._furniData.id, this._furniData.customParams, 1, GetProductDataForLocalization(this._furniData.className), this._furniData));
     }
 
     public activate(): void

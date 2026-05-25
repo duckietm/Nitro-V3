@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef } from 'react';
 import { AutoGrid, AutoGridProps, LayoutGridItem } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData } from '../../../../../hooks';
 
 interface CatalogBundleGridWidgetViewProps extends AutoGridProps
 {
@@ -10,8 +10,8 @@ interface CatalogBundleGridWidgetViewProps extends AutoGridProps
 export const CatalogBundleGridWidgetView: FC<CatalogBundleGridWidgetViewProps> = props =>
 {
     const { columnCount = 5, children = null, ...rest } = props;
-    const { currentOffer = null } = useCatalog();
-    const elementRef = useRef<HTMLDivElement>();
+    const { currentOffer = null } = useCatalogData();
+    const elementRef = useRef<HTMLDivElement>(null);
 
     useEffect(() =>
     {

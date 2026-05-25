@@ -1,12 +1,13 @@
-import { DetailedHTMLProps, forwardRef, HTMLAttributes, PropsWithChildren } from 'react';
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, Ref } from 'react';
 import { classNames } from '../../layout';
 
-export const ToolbarItemView = forwardRef<HTMLDivElement, PropsWithChildren<{
+type ToolbarItemViewProps = PropsWithChildren<{
     icon: string;
-}> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
-{
-    const { icon = null, className = null, ...rest } = props;
+    ref?: Ref<HTMLDivElement>;
+}> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
+export const ToolbarItemView = ({ ref, icon = null, className = null, ...rest }: ToolbarItemViewProps) =>
+{
     return (
         <div
             ref={ ref }
@@ -17,6 +18,4 @@ export const ToolbarItemView = forwardRef<HTMLDivElement, PropsWithChildren<{
             ) }
             { ...rest } />
     );
-});
-
-ToolbarItemView.displayName = 'ToolbarItemView';
+};

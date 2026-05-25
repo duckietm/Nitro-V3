@@ -1,7 +1,7 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { GetSessionDataManager } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
+import { useHasPermission } from '../../hooks';
 import { useFurniEditor } from '../../hooks/furni-editor';
 import { FurniEditorEditView } from './views/FurniEditorEditView';
 import { FurniEditorSearchView } from './views/FurniEditorSearchView';
@@ -21,7 +21,7 @@ export const FurniEditorView: FC<{}> = () =>
         searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions
     } = useFurniEditor();
 
-    const isMod = GetSessionDataManager()?.isModerator;
+    const isMod = useHasPermission('acc_catalogfurni');
 
     // Auto-switch to edit tab when an item is selected
     useEffect(() =>
@@ -93,9 +93,9 @@ export const FurniEditorView: FC<{}> = () =>
             loadBySpriteId(spriteId);
         };
 
-        window.addEventListener('furni-editor:open', handler as EventListener);
+        window.addEventListener('furni-editor:open', handler);
 
-        return () => window.removeEventListener('furni-editor:open', handler as EventListener);
+        return () => window.removeEventListener('furni-editor:open', handler);
     }, [ isMod, loadBySpriteId ]);
 
     const handleSelect = useCallback((id: number) =>

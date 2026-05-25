@@ -148,7 +148,10 @@ export const FriendsListView: FC<{}> = props =>
                     <NitroCardAccordionView fullHeight overflow="hidden">
                         <NitroCardAccordionSetView className="friends-list-section" headerText={ LocalizeText('friendlist.friends') + ` (${ onlineFriends.length })` } isExpanded={ true }>
                             <Flex className="friends-list-toolbar px-2 py-1" justifyContent="end">
-                                <span className="friends-list-toolbar-link" onClick={ event => { event.stopPropagation(); toggleSelectFriends(onlineFriends.map(friend => friend.id)); } }>
+                                <span className="friends-list-toolbar-link" onClick={ event =>
+                                {
+                                    event.stopPropagation(); toggleSelectFriends(onlineFriends.map(friend => friend.id));
+                                } }>
                                     { onlineFriends.length && onlineFriends.every(friend => (selectedFriendsIds.indexOf(friend.id) >= 0))
                                         ? LocalizeText('friendlist.unselect_all')
                                         : LocalizeText('friendlist.select_all') }
@@ -158,7 +161,10 @@ export const FriendsListView: FC<{}> = props =>
                         </NitroCardAccordionSetView>
                         <NitroCardAccordionSetView headerText={ LocalizeText('friendlist.friends.offlinecaption') + ` (${ offlineFriends.length })` }>
                             <Flex className="friends-list-toolbar px-2 py-1" justifyContent="end">
-                                <span className="friends-list-toolbar-link" onClick={ event => { event.stopPropagation(); toggleSelectFriends(offlineFriends.map(friend => friend.id)); } }>
+                                <span className="friends-list-toolbar-link" onClick={ event =>
+                                {
+                                    event.stopPropagation(); toggleSelectFriends(offlineFriends.map(friend => friend.id));
+                                } }>
                                     { offlineFriends.length && offlineFriends.every(friend => (selectedFriendsIds.indexOf(friend.id) >= 0))
                                         ? LocalizeText('friendlist.unselect_all')
                                         : LocalizeText('friendlist.select_all') }

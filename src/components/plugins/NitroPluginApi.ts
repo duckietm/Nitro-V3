@@ -157,7 +157,7 @@ const pluginApi: INitroPluginApi = {
         // Create overlay container
         const overlay = document.createElement('div');
         overlay.id = `nitro-plugin-window-${id}`;
-        overlay.style.cssText = `position:fixed;z-index:500;top:50%;left:50%;transform:translate(-50%,-50%)`;
+        overlay.style.cssText = 'position:fixed;z-index:500;top:50%;left:50%;transform:translate(-50%,-50%)';
 
         // Card wrapper
         const card = document.createElement('div');
@@ -165,14 +165,14 @@ const pluginApi: INitroPluginApi = {
 
         // Header (draggable)
         const header = document.createElement('div');
-        header.style.cssText = `display:flex;align-items:center;justify-content:center;position:relative;min-height:33px;background:linear-gradient(180deg,#3c6a8e 0%,#2a4f6e 100%);cursor:move;user-select:none`;
+        header.style.cssText = 'display:flex;align-items:center;justify-content:center;position:relative;min-height:33px;background:linear-gradient(180deg,#3c6a8e 0%,#2a4f6e 100%);cursor:move;user-select:none';
 
         const titleEl = document.createElement('span');
         titleEl.textContent = title;
-        titleEl.style.cssText = `color:#fff;font-size:16px;text-shadow:0 1px 2px rgba(0,0,0,0.5)`;
+        titleEl.style.cssText = 'color:#fff;font-size:16px;text-shadow:0 1px 2px rgba(0,0,0,0.5)';
 
         const closeBtn = document.createElement('div');
-        closeBtn.style.cssText = `position:absolute;right:8px;width:20px;height:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;border-radius:50%;background:rgba(255,255,255,0.1)`;
+        closeBtn.style.cssText = 'position:absolute;right:8px;width:20px;height:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;border-radius:50%;background:rgba(255,255,255,0.1)';
         closeBtn.innerHTML = '✕';
         closeBtn.addEventListener('click', () => pluginApi.destroyWindow(id));
 
@@ -201,7 +201,10 @@ const pluginApi: INitroPluginApi = {
             overlay.style.top = (e.clientY - offsetY) + 'px';
         };
 
-        const onMouseUp = () => { isDragging = false; };
+        const onMouseUp = () =>
+        {
+            isDragging = false;
+        };
 
         header.addEventListener('mousedown', onMouseDown);
         document.addEventListener('mousemove', onMouseMove);
@@ -209,7 +212,7 @@ const pluginApi: INitroPluginApi = {
 
         // Content area
         const content = document.createElement('div');
-        content.style.cssText = `padding:16px`;
+        content.style.cssText = 'padding:16px';
 
         card.appendChild(header);
         card.appendChild(content);

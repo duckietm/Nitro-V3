@@ -58,7 +58,10 @@ export const GroupForumListView: FC<GroupForumListViewProps> = props =>
                     <select
                         className="form-select form-select-sm"
                         value={ listMode }
-                        onChange={ e => { setListMode(parseInt(e.target.value)); setStartIndex(0); } }>
+                        onChange={ e =>
+                        {
+                            setListMode(parseInt(e.target.value)); setStartIndex(0);
+                        } }>
                         <option value={ 0 }>{ LocalizeText('groupforum.list.tab.most_active') }</option>
                         <option value={ 2 }>{ LocalizeText('groupforum.list.tab.my_forums') }</option>
                     </select>
@@ -89,7 +92,10 @@ export const GroupForumListView: FC<GroupForumListViewProps> = props =>
                             <Column className="flex-shrink-0 text-end min-w-[100px]" gap={ 0 }>
                                 { (forum.lastMessageAuthorId > 0) && <>
                                     <Text small variant="muted">{ LocalizeText('messageboard.last.message') }</Text>
-                                    <Text small pointer underline onClick={ e => { e.stopPropagation(); GetUserProfile(forum.lastMessageAuthorId); } }>
+                                    <Text small pointer underline onClick={ e =>
+                                    {
+                                        e.stopPropagation(); GetUserProfile(forum.lastMessageAuthorId);
+                                    } }>
                                         { forum.lastMessageAuthorName }
                                     </Text>
                                     <Text small variant="muted">{ formatTimeAgo(forum.lastMessageTimeAsSecondsAgo) }</Text>

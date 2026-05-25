@@ -8,7 +8,8 @@ export const t = (key: string, fallback: string, params?: string[], replacements
         const value = LocalizeText(key, params ?? null, replacements ?? null);
         if(value && value !== key) return value;
     }
-    catch {}
+    catch
+    {}
 
     if(!params || !replacements) return fallback;
     let out = fallback;
@@ -22,6 +23,12 @@ export const t = (key: string, fallback: string, params?: string[], replacements
 export const interpolate = (value: string | null | undefined): string =>
 {
     if(!value) return '';
-    try { return GetConfiguration().interpolate(value); }
-    catch { return value; }
+    try
+    {
+        return GetConfiguration().interpolate(value);
+    }
+    catch
+    {
+        return value;
+    }
 };

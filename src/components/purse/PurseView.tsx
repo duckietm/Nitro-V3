@@ -8,7 +8,8 @@ import purseIcon from '../../assets/images/rightside/purse.gif';
 import { CurrencyView } from './views/CurrencyView';
 import { SeasonalView } from './views/SeasonalView';
 
-export const PurseView: FC<{}> = props => {
+export const PurseView: FC<{}> = props =>
+{
     const { purse = null, hcDisabled = false } = usePurse();
     const [ isOpen, setIsOpen ] = useState(true);
     const [ isCompact, setIsCompact ] = useState(false);
@@ -16,7 +17,8 @@ export const PurseView: FC<{}> = props => {
     const displayedCurrencies = useMemo(() => GetConfigurationValue<number[]>('system.currency.types', []), []);
     const currencyDisplayNumberShort = useMemo(() => GetConfigurationValue<boolean>('currency.display.number.short', false), []);
 
-    const getClubText = (() => {
+    const getClubText = (() =>
+    {
         if (!purse) return null;
 
         const totalDays = ((purse.clubPeriods * 31) + purse.clubDays);
@@ -27,11 +29,13 @@ export const PurseView: FC<{}> = props => {
         else return FriendlyTime.shortFormat(totalDays * 86400);
     })();
 
-    const currencyTypes = useMemo(() => {
+    const currencyTypes = useMemo(() =>
+    {
         if (!purse || !purse.activityPoints || !purse.activityPoints.size) return [];
 
         const types = Array.from(purse.activityPoints.keys()).filter(type => (displayedCurrencies.indexOf(type) >= 0));
-        types.sort((a, b) => {
+        types.sort((a, b) =>
+        {
             if (a === 0) return -1;
             if (b === 0) return 1;
             if (a === 5) return -1;
@@ -80,7 +84,8 @@ export const PurseView: FC<{}> = props => {
                 body: JSON.stringify({ ssoTicket, rememberToken })
             });
         }
-        catch { /* best-effort — proceed with local logout regardless */ }
+        catch
+        { /* best-effort — proceed with local logout regardless */ }
 
         ClearRememberLogin();
         if(window.NitroConfig) window.NitroConfig['sso.ticket'] = '';
@@ -104,13 +109,16 @@ export const PurseView: FC<{}> = props => {
                         </div>
                     </div>
                     <div className={ `nitro-purse__content ${ isOpen ? 'is-open' : 'is-closed' }` }>
-                            <div className={ `nitro-purse__summary nitro-purse__summary--compact ${ hcDisabled ? 'is-no-hc' : '' }` }>
-                                <div className="nitro-purse__primary">
-                                    <CurrencyView type={ -1 } amount={ purse.credits } short={ currencyDisplayNumberShort } />
-                                    { primaryCurrencies.map(type => <CurrencyView key={ type } type={ type } amount={ purse.activityPoints.get(type) || 0 } short={ currencyDisplayNumberShort } />) }
-                                </div>
-                                { !hcDisabled &&
-                                    <div className="nitro-purse-subscription" onClick={ event => { event.stopPropagation(); CreateLinkEvent('habboUI/open/hccenter'); } }>
+                        <div className={ `nitro-purse__summary nitro-purse__summary--compact ${ hcDisabled ? 'is-no-hc' : '' }` }>
+                            <div className="nitro-purse__primary">
+                                <CurrencyView type={ -1 } amount={ purse.credits } short={ currencyDisplayNumberShort } />
+                                { primaryCurrencies.map(type => <CurrencyView key={ type } type={ type } amount={ purse.activityPoints.get(type) || 0 } short={ currencyDisplayNumberShort } />) }
+                            </div>
+                            { !hcDisabled &&
+                                    <div className="nitro-purse-subscription" onClick={ event =>
+                                    {
+                                        event.stopPropagation(); CreateLinkEvent('habboUI/open/hccenter');
+                                    } }>
                                         <div className="nitro-purse-subscription__icon">
                                             <LayoutCurrencyIcon type="hc" />
                                         </div>
@@ -119,22 +127,31 @@ export const PurseView: FC<{}> = props => {
                                             <Text variant="white" className="nitro-purse-subscription__value">{ getClubText }</Text>
                                         </div>
                                     </div> }
-                                <div className="nitro-purse__actions">
-                                    <button type="button" className="nitro-purse__action-button nitro-purse__action-button--translate" onClick={ event => { event.stopPropagation(); CreateLinkEvent('translation-settings/toggle'); } } title="Google Translate">
-                                        <FaLanguage />
-                                    </button>
-                                    <button type="button" className="nitro-purse__action-button nitro-purse__action-button--help" onClick={ event => { event.stopPropagation(); CreateLinkEvent('help/show'); } } title={ LocalizeText('help.button.name') }>
-                                        <FaQuestionCircle />
-                                    </button>
-                                    <button type="button" className="nitro-purse__action-button nitro-purse__action-button--settings" onClick={ event => { event.stopPropagation(); CreateLinkEvent('user-settings/toggle'); } } title={ LocalizeText('widget.memenu.settings.title') }>
-                                        <i className="nitro-icon icon-cog" />
-                                    </button>
-                                    <button type="button" className="nitro-purse__action-button nitro-purse__action-button--logout" onClick={ handleLogout } title="Log out">
-                                        <FaSignOutAlt />
-                                    </button>
-                                </div>
+                            <div className="nitro-purse__actions">
+                                <button type="button" className="nitro-purse__action-button nitro-purse__action-button--translate" onClick={ event =>
+                                {
+                                    event.stopPropagation(); CreateLinkEvent('translation-settings/toggle');
+                                } } title="Google Translate">
+                                    <FaLanguage />
+                                </button>
+                                <button type="button" className="nitro-purse__action-button nitro-purse__action-button--help" onClick={ event =>
+                                {
+                                    event.stopPropagation(); CreateLinkEvent('help/show');
+                                } } title={ LocalizeText('help.button.name') }>
+                                    <FaQuestionCircle />
+                                </button>
+                                <button type="button" className="nitro-purse__action-button nitro-purse__action-button--settings" onClick={ event =>
+                                {
+                                    event.stopPropagation(); CreateLinkEvent('user-settings/toggle');
+                                } } title={ LocalizeText('widget.memenu.settings.title') }>
+                                    <i className="nitro-icon icon-cog" />
+                                </button>
+                                <button type="button" className="nitro-purse__action-button nitro-purse__action-button--logout" onClick={ handleLogout } title="Log out">
+                                    <FaSignOutAlt />
+                                </button>
                             </div>
-                            { seasonalCurrencies.length > 0 &&
+                        </div>
+                        { seasonalCurrencies.length > 0 &&
                                 <div className="nitro-purse__seasonal">
                                     { seasonalCurrencies.map(type => <SeasonalView key={ type } type={ type } amount={ purse.activityPoints.get(type) || 0 } />) }
                                 </div> }

@@ -28,15 +28,15 @@ export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = props
                                 <Button fullWidth onClick={ () => window.dispatchEvent(new CustomEvent('ads:toggle')) }>Show Ad</Button> }
                         </Column>
                     </Column>
-					<div className="alertView_nitro-coolui-logo"></div>
-					<Column size={ 12 }>
-						<Column alignItems="center" gap={ 0 }>
-							<Text center bold fontSize={ 5 }>Cool UI</Text>
-							<Text>- DuckieTM (Design)</Text>
-							<Text center bold small>v3.0.0</Text>
-							<Button fullWidth onClick={ event => window.open('https://github.com/duckietm/Nitro-Cool-UI') }>Cool UI Git</Button>
-						</Column>
-					</Column>
+                    <div className="alertView_nitro-coolui-logo"></div>
+                    <Column size={ 12 }>
+                        <Column alignItems="center" gap={ 0 }>
+                            <Text center bold fontSize={ 5 }>Cool UI</Text>
+                            <Text>- DuckieTM (Design)</Text>
+                            <Text center bold small>v3.0.0</Text>
+                            <Button fullWidth onClick={ event => window.open('https://github.com/duckietm/Nitro-Cool-UI') }>Cool UI Git</Button>
+                        </Column>
+                    </Column>
                 </Column>
 
             </Grid>

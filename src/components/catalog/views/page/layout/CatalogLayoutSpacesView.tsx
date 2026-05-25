@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react';
 import { SanitizeHtml } from '../../../../../api';
 import { Column, Grid, Text } from '../../../../../common';
-import { useCatalog } from '../../../../../hooks';
+import { useCatalogData } from '../../../../../hooks';
 import { CatalogPurchaseWidgetView } from '../widgets/CatalogPurchaseWidgetView';
 import { CatalogSpacesWidgetView } from '../widgets/CatalogSpacesWidgetView';
 import { CatalogTotalPriceWidget } from '../widgets/CatalogTotalPriceWidget';
@@ -11,7 +11,7 @@ import { CatalogLayoutProps } from './CatalogLayout.types';
 export const CatalogLayoutSpacesView: FC<CatalogLayoutProps> = props =>
 {
     const { page = null } = props;
-    const { currentOffer = null, roomPreviewer = null } = useCatalog();
+    const { currentOffer = null, roomPreviewer = null } = useCatalogData();
 
     useEffect(() =>
     {

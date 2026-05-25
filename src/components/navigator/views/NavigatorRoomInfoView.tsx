@@ -1,10 +1,10 @@
-import { CreateLinkEvent, GetCustomRoomFilterMessageComposer, GetGuestRoomMessageComposer, GetSessionDataManager, NavigatorSearchComposer, RemoveOwnRoomRightsRoomMessageComposer, RoomControllerLevel, RoomMuteComposer, RoomSettingsComposer, SecurityLevel, ToggleStaffPickMessageComposer, UpdateHomeRoomMessageComposer } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetCustomRoomFilterMessageComposer, GetGuestRoomMessageComposer, GetSessionDataManager, NavigatorSearchComposer, RemoveOwnRoomRightsRoomMessageComposer, RoomControllerLevel, RoomMuteComposer, RoomSettingsComposer, ToggleStaffPickMessageComposer, UpdateHomeRoomMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaLink, FaSignOutAlt } from 'react-icons/fa';
 import { DispatchUiEvent, GetGroupInformation, LocalizeText, ReportType, SendMessageComposer, ToggleFavoriteRoom } from '../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, LayoutRoomThumbnailView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text, UserProfileIconView } from '../../../common';
 import { RoomWidgetThumbnailEvent } from '../../../events';
-import { useHelp, useNavigator, useRoom } from '../../../hooks';
+import { useHasPermission, useHelp, useNavigator, useRoom } from '../../../hooks';
 import { classNames } from '../../../layout';
 
 export interface NavigatorRoomInfoViewProps {
@@ -19,6 +19,8 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = props =>
     const { report = null } = useHelp();
     const { navigatorData = null, favouriteRoomIds = [] } = useNavigator();
     const { roomSession = null } = useRoom();
+    const canManageAnyRoom = useHasPermission('acc_anyroomowner');
+    const canStaffPick = useHasPermission('acc_staff_pick');
 
     const enteredRoomId = navigatorData?.enteredGuestRoom?.roomId ?? 0;
 
@@ -51,9 +53,9 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = props =>
         switch(permission)
         {
             case 'settings':
-                return (GetSessionDataManager().userId === navigatorData.enteredGuestRoom.ownerId || GetSessionDataManager().isModerator);
+                return (GetSessionDataManager().userId === navigatorData.enteredGuestRoom.ownerId || canManageAnyRoom);
             case 'staff_pick':
-                return GetSessionDataManager().securityLevel >= SecurityLevel.COMMUNITY;
+                return canStaffPick;
             case 'floor':
                 return roomSession?.controllerLevel >= RoomControllerLevel.GUEST;
             case 'guest':

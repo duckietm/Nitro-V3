@@ -1,7 +1,7 @@
-import { GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
 import { CalendarItemState, ICalendarItem, LocalizeText } from '../../api';
 import { Button, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
+import { useHasPermission } from '../../hooks';
 import { CalendarItemView } from './CalendarItemView';
 
 interface CalendarViewProps
@@ -23,6 +23,7 @@ export const CalendarView: FC<CalendarViewProps> = props =>
     const { onClose = null, campaignName = null, currentDay = null, numDays = null, missedDays = null, openedDays = null, openPackage = null, receivedProducts = null } = props;
     const [ selectedDay, setSelectedDay ] = useState(currentDay);
     const [ index, setIndex ] = useState(Math.max(0, (selectedDay - 1)));
+    const isModerator = useHasPermission('acc_calendar_force');
 
     const getDayState = (day: number) =>
     {
@@ -109,7 +110,7 @@ export const CalendarView: FC<CalendarViewProps> = props =>
                                 <Text>{ dayMessage(selectedDay) }</Text>
                             </div>
                             <div>
-                                { GetSessionDataManager().isModerator &&
+                                { isModerator &&
                                     <Button variant="danger" onClick={ forceOpen }>Force open</Button> }
                             </div>
                         </div>

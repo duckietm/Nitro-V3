@@ -12,8 +12,14 @@ export const resolveNewsImage = (raw: string | null | undefined): string =>
     if(value.startsWith('//')) return window.location.protocol + value;
     if(value.startsWith('/'))
     {
-        try { return new URL(value, window.location.origin).href; }
-        catch { return window.location.origin + value; }
+        try
+        {
+            return new URL(value, window.location.origin).href;
+        }
+        catch
+        {
+            return window.location.origin + value;
+        }
     }
     if(value.startsWith('data:'))
     {
@@ -46,5 +52,8 @@ export const resolveNewsLink = (raw: string | null | undefined): string =>
         if(proto !== 'http:' && proto !== 'https:') return '';
         return url.href;
     }
-    catch { return ''; }
+    catch
+    {
+        return '';
+    }
 };

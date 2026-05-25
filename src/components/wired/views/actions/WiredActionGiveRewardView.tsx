@@ -33,12 +33,12 @@ const REWARD_TYPES: { value: RewardType, label: string }[] = [
 const SELECTABLE_REWARD_TYPES = REWARD_TYPES.filter(entry => (entry.value !== 'respect'));
 
 const createReward = (): RewardEntry =>
-({
-    rewardType: 'furni',
-    rewardValue: '',
-    probability: DEFAULT_PROBABILITY,
-    pointsType: DEFAULT_POINTS_TYPE
-});
+    ({
+        rewardType: 'furni',
+        rewardValue: '',
+        probability: DEFAULT_PROBABILITY,
+        pointsType: DEFAULT_POINTS_TYPE
+    });
 
 const getRewardValuePlaceholder = (rewardType: RewardType) =>
 {

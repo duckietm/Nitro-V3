@@ -190,10 +190,11 @@ export class AvatarInfoUtilities
         userInfo.prefixEffect = userData.prefixEffect;
         userInfo.prefixFont = userData.prefixFont;
         userInfo.displayOrder = userData.displayOrder;
-		userInfo.backgroundId = userData.background;
+        userInfo.backgroundId = userData.background;
         userInfo.standId = userData.stand;
         userInfo.overlayId = userData.overlay;
         userInfo.cardBackgroundId = userData.cardBackground ?? 0;
+        userInfo.borderId = (userData as any).borderId ?? 0;
         userInfo.achievementScore = userData.activityPoints;
         userInfo.webID = userData.webID;
         userInfo.roomIndex = userData.roomIndex;

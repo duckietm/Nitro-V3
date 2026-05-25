@@ -107,7 +107,7 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = pro
                         </Grid> }
                     { (searchResult.rooms.length === 0) &&
                         <Text className="px-3 py-2 text-sm" variant="muted">
-                            { LocalizeText(searchResult.code === 'myworld_view' ? 'navigator.no.user.rooms.to.show' : 'navigator.no.results') }
+                            { LocalizeText(searchResult.code === 'myworld_view' ? 'navigator.roomsettings.moderation.none' : 'navigator.search.returned.no.results') }
                         </Text> }
                 </> }
         </Column>

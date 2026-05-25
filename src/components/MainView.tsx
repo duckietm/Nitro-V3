@@ -1,7 +1,7 @@
 import { AddLinkEventTracker, GetCommunication, GetRoomSessionManager, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
-import { useNitroEvent } from '../hooks';
+import { useNitroEventReducer } from '../hooks';
 import { AchievementsView } from './achievements/AchievementsView';
 import { AvatarEditorView } from './avatar-editor';
 import { BadgeCreatorView } from './badge-creator';
@@ -44,11 +44,33 @@ import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
 export const MainView: FC<{}> = props =>
 {
     const [ isReady, setIsReady ] = useState(false);
-    const [ landingViewVisible, setLandingViewVisible ] = useState(true);
     const [ localizationVersion, setLocalizationVersion ] = useState(0);
 
-    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.CREATED, event => setLandingViewVisible(false));
-    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setLandingViewVisible(event.openLandingView));
+    // CREATED and ENDED can arrive out of order under flaky reconnects.
+    // Treating them as two independent setters left landingViewVisible
+    // contradicting the actual session state (stuck open in-room or
+    // stuck closed at the hotel view). The reducer carries the active
+    // session's roomId so a stale ENDED for a previous session is
+    // ignored — only an ENDED matching the tracked session (or when
+    // no session is active) is honored.
+    const { landingViewVisible } = useNitroEventReducer<{ sessionId: number | null; landingViewVisible: boolean }, RoomSessionEvent>(
+        [ RoomSessionEvent.CREATED, RoomSessionEvent.ENDED ],
+        (state, event) =>
+        {
+            if(event.type === RoomSessionEvent.CREATED)
+            {
+                return { sessionId: event.session.roomId, landingViewVisible: false };
+            }
+
+            if((state.sessionId !== null) && (event.session.roomId !== state.sessionId))
+            {
+                return state;
+            }
+
+            return { sessionId: null, landingViewVisible: event.openLandingView };
+        },
+        { sessionId: null, landingViewVisible: true }
+    );
 
     useEffect(() =>
     {
@@ -132,7 +154,7 @@ export const MainView: FC<{}> = props =>
             <AvatarEffectsView />
             <AchievementsView />
             <NavigatorView />
-			<NitrobubbleHiddenView />
+            <NitrobubbleHiddenView />
             <InventoryView />
             <CatalogView />
             <FriendsView />

@@ -129,7 +129,7 @@ export const WiredExtraVariableEchoView: FC<{}> = () =>
         if(fallbackEntry) return [ fallbackEntry, ...variableEntries ];
         if(!fallbackSourceName) return variableEntries;
 
-        return [ {
+        const namedFallback: IWiredVariablePickerEntry = {
             id: sourceVariableToken,
             token: sourceVariableToken,
             label: fallbackSourceName,
@@ -139,7 +139,9 @@ export const WiredExtraVariableEchoView: FC<{}> = () =>
             hasValue: true,
             kind: 'custom',
             target: sourceTargetType
-        }, ...variableEntries ];
+        };
+
+        return [ namedFallback, ...variableEntries ];
     }, [ fallbackSourceName, sourceTargetType, sourceVariableToken, variableEntries ]);
 
     const selectedEntry = useMemo(() => flattenWiredVariablePickerEntries(resolvedVariableEntries).find(entry => (entry.token === sourceVariableToken)) ?? null, [ resolvedVariableEntries, sourceVariableToken ]);

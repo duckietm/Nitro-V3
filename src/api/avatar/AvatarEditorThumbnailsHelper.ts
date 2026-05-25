@@ -87,7 +87,7 @@ export class AvatarEditorThumbnailsHelper
         AvatarFigurePartType.PET,
         'ptl',
         'ptr',
-		AvatarFigurePartType.MISC,
+        AvatarFigurePartType.MISC,
         'mcl',
         'mcr',
     ];

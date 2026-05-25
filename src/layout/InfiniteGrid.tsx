@@ -1,5 +1,5 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, forwardRef, useEffect, useRef, useState } from 'react';
+import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, Ref, RefObject, useEffect, useRef, useState } from 'react';
 import { classNames } from './classNames';
 import { NitroLimitedEditionStyledNumberView } from './limited-edition';
 import { styleNames } from './styleNames';
@@ -17,14 +17,10 @@ type Props<T> = {
 
 const GRID_GAP_PX = 4;
 
-const InfiniteGridRoot = <T,>(props: Props<T>) =>
+const useColumnMeasure = (itemMinWidth: number | null, columnCountProp: number): { parentRef: RefObject<HTMLDivElement | null>; columnCount: number } =>
 {
-    const { items = [], columnCount: columnCountProp = 4, overscan = 5, estimateSize = 45, squareItems = false, itemMinWidth = null, rowGap = null, itemRender = null } = props;
     const parentRef = useRef<HTMLDivElement>(null);
     const [ measuredColumnCount, setMeasuredColumnCount ] = useState<number>(columnCountProp);
-
-    const columnCount = (itemMinWidth && itemMinWidth > 0) ? measuredColumnCount : columnCountProp;
-    const rowsContainerClassName = (rowGap !== null) ? 'flex flex-col w-full relative' : 'flex flex-col w-full *:pb-1 relative';
 
     useEffect(() =>
     {
@@ -48,26 +44,46 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
         return () => observer.disconnect();
     }, [ itemMinWidth ]);
 
+    const columnCount = (itemMinWidth && itemMinWidth > 0) ? measuredColumnCount : columnCountProp;
+
+    return { parentRef, columnCount };
+};
+
+const InfiniteGridSquare = <T,>(props: Props<T>) =>
+{
+    const { items = [], columnCount: columnCountProp = 4, itemMinWidth = null, itemRender = null } = props;
+    const { parentRef } = useColumnMeasure(itemMinWidth, columnCountProp);
+
     const autoFillStyle = (itemMinWidth && itemMinWidth > 0)
         ? { gridTemplateColumns: `repeat(auto-fill, ${ itemMinWidth }px)` }
         : null;
     const fixedColsClass = (itemMinWidth && itemMinWidth > 0) ? '' : `grid-cols-${ columnCountProp }`;
 
-    if(squareItems)
-    {
-        return (
-            <div ref={ parentRef } className="overflow-y-auto size-full">
-                <div className={ `grid ${ fixedColsClass } gap-1 w-full` } style={ autoFillStyle ?? undefined }>
-                    { items.map((item, index) =>
-                    {
-                        if(!item) return <Fragment key={ `${ index }-empty` } />;
+    return (
+        <div ref={ parentRef } className="overflow-y-auto size-full">
+            <div className={ `grid ${ fixedColsClass } gap-1 w-full` } style={ autoFillStyle ?? undefined }>
+                { items.map((item, index) =>
+                {
+                    if(!item) return <Fragment key={ `${ index }-empty` } />;
 
-                        return <Fragment key={ `${ index }-item` }>{ itemRender(item, index) }</Fragment>;
-                    }) }
-                </div>
+                    return <Fragment key={ `${ index }-item` }>{ itemRender(item, index) }</Fragment>;
+                }) }
             </div>
-        );
-    }
+        </div>
+    );
+};
+
+const InfiniteGridVirtualized = <T,>(props: Props<T>) =>
+{
+    const { items = [], columnCount: columnCountProp = 4, overscan = 5, estimateSize = 45, itemMinWidth = null, rowGap = null, itemRender = null } = props;
+    const { parentRef, columnCount } = useColumnMeasure(itemMinWidth, columnCountProp);
+
+    const rowsContainerClassName = (rowGap !== null) ? 'flex flex-col w-full relative' : 'flex flex-col w-full *:pb-1 relative';
+
+    const autoFillStyle = (itemMinWidth && itemMinWidth > 0)
+        ? { gridTemplateColumns: `repeat(auto-fill, ${ itemMinWidth }px)` }
+        : null;
+    const fixedColsClass = (itemMinWidth && itemMinWidth > 0) ? '' : `grid-cols-${ columnCountProp }`;
 
     const virtualizer = useVirtualizer({
         count: Math.ceil(items.length / columnCount),
@@ -97,7 +113,7 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
         {
             window.removeEventListener('resize', checkAndApplyPadding);
         };
-    }, [ items ]);
+    }, [ items, parentRef ]);
 
     useEffect(() =>
     {
@@ -124,7 +140,7 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
                         className={ `grid ${ fixedColsClass } gap-1 absolute top-0 left-0 last:pb-0 w-full` }
                         data-index={ virtualRow.index }
                         style={ {
-                            ...(!squareItems && rowGap === null && { height: virtualRow.size }),
+                            ...(rowGap === null && { height: virtualRow.size }),
                             ...(autoFillStyle ?? {}),
                             ...(rowGap !== null && { paddingBottom: `${ rowGap }px` }),
                             transform: `translateY(${ virtualRow.start }px)`
@@ -150,7 +166,14 @@ const InfiniteGridRoot = <T,>(props: Props<T>) =>
     );
 };
 
-const InfiniteGridItem = forwardRef<HTMLDivElement, {
+const InfiniteGridRoot = <T,>(props: Props<T>) =>
+{
+    return props.squareItems
+        ? <InfiniteGridSquare<T> { ...props } />
+        : <InfiniteGridVirtualized<T> { ...props } />;
+};
+
+type InfiniteGridItemProps = {
     itemImage?: string;
     itemColor?: string;
     itemActive?: boolean;
@@ -161,9 +184,11 @@ const InfiniteGridItem = forwardRef<HTMLDivElement, {
     itemUnseen?: boolean;
     itemHighlight?: boolean;
     disabled?: boolean;
-} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>((props, ref) =>
+    ref?: Ref<HTMLDivElement>;
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+
+const InfiniteGridItem = ({ ref, itemImage = undefined, itemColor = undefined, itemActive = false, itemCount = 1, itemCountMinimum = 1, itemUniqueSoldout = false, itemUniqueNumber = -2, itemUnseen = false, itemHighlight = false, disabled = false, className = null, style = {}, children = null, ...rest }: InfiniteGridItemProps) =>
 {
-    const { itemImage = undefined, itemColor = undefined, itemActive = false, itemCount = 1, itemCountMinimum = 1, itemUniqueSoldout = false, itemUniqueNumber = -2, itemUnseen = false, itemHighlight = false, disabled = false, className = null, style = {}, children = null, ...rest } = props;
     const [ backgroundImageUrl, setBackgroundImageUrl ] = useState<string>(null);
     const disposed = useRef<boolean>(false);
 
@@ -238,9 +263,7 @@ const InfiniteGridItem = forwardRef<HTMLDivElement, {
             { children }
         </div>
     );
-});
-
-InfiniteGridItem.displayName = 'InfiniteGridItem';
+};
 
 export const InfiniteGrid = Object.assign(InfiniteGridRoot, {
     Item: InfiniteGridItem
