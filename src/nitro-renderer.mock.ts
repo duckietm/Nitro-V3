@@ -234,6 +234,94 @@ export class UserProfileComposer extends StubClass {}
 export const ChooserSelectionFilter = makeEnumProxy('ChooserSelectionFilter');
 
 // ---------------------------------------------------------------------------
+// Floor plan constants
+// ---------------------------------------------------------------------------
+
+export const FloorAction = makeEnumProxy('FloorAction');
+
+export const TILE_SIZE = 32;
+
+export const HEIGHT_SCHEME = 'x0123456789abcdefghijklmnopq';
+
+export const MAX_NUM_TILE_PER_AXIS = 64;
+
+export const COLORMAP: object = {
+    'x': '101010',
+    '0': '0065ff', '1': '0091ff', '2': '00bcff', '3': '00e8ff',
+    '4': '00ffea', '5': '00ffbf', '6': '00ff93', '7': '00ff68',
+    '8': '00ff3d', '9': '19ff00',
+    'a': '44ff00', 'b': '70ff00', 'c': '9bff00', 'd': 'f2ff00',
+    'e': 'ffe000', 'f': 'ffb500', 'g': 'ff8900', 'h': 'ff5e00',
+    'i': 'ff3200', 'j': 'ff0700', 'k': 'ff0023', 'l': 'ff007a',
+    'm': 'ff00a5', 'n': 'ff00d1', 'o': 'ff00fc',
+    'p': 'd600ff', 'q': 'aa00ff'
+};
+
+// ---------------------------------------------------------------------------
+// Floor plan editor — composer stubs and event classes
+// ---------------------------------------------------------------------------
+
+// Composer stubs for floor-plan-editor message events
+export class GetRoomEntryTileMessageComposer extends StubClass {}
+export class GetOccupiedTilesMessageComposer extends StubClass {}
+export class UpdateFloorPropertiesMessageComposer extends StubClass
+{
+    public tilemap: string;
+    public doorX: number;
+    public doorY: number;
+    public dir: number;
+    public thicknessWall: number;
+    public thicknessFloor: number;
+    public wallHeight: number;
+    constructor(tilemap: string, doorX: number, doorY: number, dir: number, thicknessWall: number, thicknessFloor: number, wallHeight: number)
+    {
+        super();
+        this.tilemap = tilemap;
+        this.doorX = doorX;
+        this.doorY = doorY;
+        this.dir = dir;
+        this.thicknessWall = thicknessWall;
+        this.thicknessFloor = thicknessFloor;
+        this.wallHeight = wallHeight;
+    }
+}
+
+// Event class stubs for useMessageEvent registration
+export class FloorHeightMapEvent extends StubClass {}
+export class RoomVisualizationSettingsEvent extends StubClass {}
+export class RoomEntryTileMessageEvent extends StubClass {}
+export class RoomOccupiedTilesMessageEvent extends StubClass {}
+export const RoomEngineEvent = makeEnumProxy('RoomEngineEvent');
+
+// Link tracker stubs
+export type ILinkEventTracker = { linkReceived: (url: string) => void; eventUrlPrefix: string };
+export const AddLinkEventTracker = vi.fn();
+export const RemoveLinkEventTracker = vi.fn();
+
+// Thickness conversion helpers — mirror the renderer's real mapping
+export const convertNumbersForSaving = (v: number): number =>
+{
+    switch(v)
+    {
+        case 0: return -2;
+        case 1: return -1;
+        case 3: return 1;
+        default: return 0;
+    }
+};
+
+export const convertSettingToNumber = (v: number): number =>
+{
+    switch(v)
+    {
+        case 0.25: return 0;
+        case 0.5: return 1;
+        case 2: return 3;
+        default: return 2;
+    }
+};
+
+// ---------------------------------------------------------------------------
 // Singleton getters
 // ---------------------------------------------------------------------------
 
@@ -267,10 +355,44 @@ export const GetCommunication = vi.fn(stubManager);
 export const GetConfiguration = vi.fn(stubManager);
 export const GetLocalizationManager = vi.fn(stubManager);
 export const GetRoomEngine = vi.fn(stubManager);
+export const GetRoomMessageHandler = vi.fn(stubManager);
 export const GetRoomSessionManager = vi.fn(stubManager);
+
+// RoomPreviewer — only the bits the editor's FloorplanRoomPreview
+// component touches. PREVIEW_COUNTER is a static field that the
+// real renderer increments to allocate unique preview-room IDs;
+// keeping it as a mutable static lets the editor mount/unmount
+// repeatedly across tests without colliding.
+export class RoomPreviewer
+{
+    static PREVIEW_COUNTER = 0;
+
+    constructor(public readonly _engine: unknown, public readonly _id: number) {}
+
+    public updatePreviewModel(_model: string, _wallHeight: number, _scale?: boolean): void {}
+    public modifyRoomCanvas(_w: number, _h: number): void {}
+    public getRoomCanvas(_w: number, _h: number): unknown { return null; }
+    public getRenderingCanvas(): unknown { return null; }
+    public updatePreviewRoomView(): void {}
+    public changeRoomObjectDirection(): void {}
+    public changeRoomObjectState(): void {}
+    public dispose(): void {}
+}
 export const GetSessionDataManager = vi.fn(stubManager);
 export const GetTickerTime = vi.fn(() => 0);
-export const TextureUtils = stubManager();
+export const GetTicker = vi.fn(stubManager);
+export const GetRenderer = vi.fn(stubManager);
+export class NitroTicker {}
+// TextureUtils — a real-enough stub of the createRenderTexture
+// roundtrip. Tests that mount LayoutRoomPreviewerView allocate a
+// texture on mount and destroy it on unmount; without a real
+// `.destroy` method the unmount cleanup throws.
+export const TextureUtils = {
+    createRenderTexture: (_w: number, _h: number) => ({
+        destroy: (_options?: unknown) => undefined
+    }),
+    generateImage: () => null
+};
 export const NitroVersion = stubManager();
 
 // ---------------------------------------------------------------------------

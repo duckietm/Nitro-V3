@@ -1,208 +1,159 @@
-import { AddLinkEventTracker, FloorHeightMapEvent, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useState } from 'react';
-import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
+import { AddLinkEventTracker, convertNumbersForSaving, convertSettingToNumber, FloorHeightMapEvent, GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FaBolt, FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../api';
-import { Button, ButtonGroup, Column, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
+import { Button, ButtonGroup, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
-import { FloorplanEditorContextProvider } from './FloorplanEditorContext';
-import { FloorplanEditor } from '@nitrots/nitro-renderer';
-import { IFloorplanSettings } from '@nitrots/nitro-renderer';
-import { IVisualizationSettings } from '@nitrots/nitro-renderer';
-import { convertNumbersForSaving, convertSettingToNumber, FloorAction, HEIGHT_SCHEME } from '@nitrots/nitro-renderer';
-import { FloorplanCanvasView } from './views/FloorplanCanvasView';
-import { FloorplanImportExportView } from './views/FloorplanImportExportView';
-import { FloorplanOptionsView } from './views/FloorplanOptionsView';
-import { FloorplanHeightSelector } from './views/FloorplanHeightSelector';
-import { FloorplanPreviewView } from './views/FloorplanPreviewView';
+import { useFloorplanLiveSync } from '../../hooks/rooms/widgets/useFloorplanLiveSync';
+import { MAX_WALL_HEIGHT, MIN_WALL_HEIGHT } from './state/constants';
+import { EntryDir, ThicknessLevel } from './state/types';
+import { areaCount } from './state/selectors';
+import { serializeTilemap } from './state/encoding';
+import { useFloorplanReducer } from './hooks/useFloorplanReducer';
+import { FloorplanCanvasSVG } from './views/FloorplanCanvasSVG';
+import { FloorplanHeightPicker } from './views/FloorplanHeightPicker';
+import { FloorplanToolbar } from './views/FloorplanToolbar';
+import { FloorplanOptionsPanel } from './views/FloorplanOptionsPanel';
+import { FloorplanImportExport } from './views/FloorplanImportExport';
 
-const MIN_WALL_HEIGHT = 0;
-const MAX_WALL_HEIGHT = 16;
+const clampThickness = (v: number): ThicknessLevel =>
+{
+    if(v <= 0) return 0;
+    if(v >= 3) return 3;
+    return (v | 0) as ThicknessLevel;
+};
 
-export const FloorplanEditorView: FC<{}> = props =>
+export const FloorplanEditorView: FC = () =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
     const [ importExportVisible, setImportExportVisible ] = useState(false);
-    const [ originalFloorplanSettings, setOriginalFloorplanSettings ] = useState<IFloorplanSettings>({
-        tilemap: '',
-        reservedTiles: [],
-        entryPoint: [ 0, 0 ],
-        entryPointDir: 2,
-        wallHeight: -1,
-        thicknessWall: 1,
-        thicknessFloor: 1
-    });
-    const [ visualizationSettings, setVisualizationSettings ] = useState<IVisualizationSettings>({
-        entryPointDir: 2,
-        wallHeight: -1,
-        thicknessWall: 1,
-        thicknessFloor: 1
-    });
-    const [ floorHeight, setFloorHeight ] = useState(0);
-    const [ floorAction, setFloorAction ] = useState(FloorAction.SET);
-    const [ tilemapVersion, setTilemapVersion ] = useState(0);
-    const [ areaInfo, setAreaInfo ] = useState({ total: 0, walkable: 0 });
+    const [ liveSync, setLiveSync ] = useState(true);
+    const [ panMode, setPanMode ] = useState(false);
+    const { state, dispatch, loadFromServer, undo, redo, canUndo, canRedo } = useFloorplanReducer();
+    const originalRef = useRef<{
+        tilemap: string;
+        entryPoint: [number, number];
+        entryPointDir: number;
+        thicknessWall: ThicknessLevel;
+        thicknessFloor: ThicknessLevel;
+        wallHeight: number;
+    } | null>(null);
 
-    const calculateArea = useCallback(() =>
-    {
-        const tilemap = FloorplanEditor.instance.tilemap;
+    const area = useMemo(() => areaCount(state.tiles), [ state.tiles ]);
 
-        if(!tilemap || tilemap.length === 0)
-        {
-            setAreaInfo({ total: 0, walkable: 0 });
+    const { setBaseline, revert: revertLivePreview } = useFloorplanLiveSync({ enabled: liveSync && isVisible, state });
 
-            return;
-        }
+    useNitroEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, () => setIsVisible(false));
 
-        let total = 0;
-        let walkable = 0;
-
-        for(let y = 0; y < tilemap.length; y++)
-        {
-            if(!tilemap[y]) continue;
-
-            for(let x = 0; x < tilemap[y].length; x++)
-            {
-                if(!tilemap[y][x] || tilemap[y][x].height === 'x') continue;
-
-                total++;
-
-                if(!tilemap[y][x].isBlocked) walkable++;
-            }
-        }
-
-        setAreaInfo({ total, walkable });
-    }, []);
-
-    // sync floorHeight/floorAction changes to the FloorplanEditor instance
-    useEffect(() =>
-    {
-        FloorplanEditor.instance.actionSettings.currentAction = floorAction;
-        FloorplanEditor.instance.actionSettings.currentHeight = floorHeight.toString(36);
-    }, [ floorHeight, floorAction ]);
-
-    // register onTilemapChange callback
     useEffect(() =>
     {
         if(!isVisible) return;
+        SendMessageComposer(new GetRoomEntryTileMessageComposer());
+        SendMessageComposer(new GetOccupiedTilesMessageComposer());
+    }, [ isVisible ]);
 
-        FloorplanEditor.instance.onTilemapChange = () =>
-        {
-            setTilemapVersion(prev => prev + 1);
-            calculateArea();
+    useMessageEvent<RoomEntryTileMessageEvent>(RoomEntryTileMessageEvent, event =>
+    {
+        const parser = event.getParser();
+        originalRef.current = {
+            tilemap: originalRef.current?.tilemap ?? '',
+            entryPoint: [ parser.x, parser.y ],
+            entryPointDir: parser.direction,
+            thicknessWall: originalRef.current?.thicknessWall ?? 1,
+            thicknessFloor: originalRef.current?.thicknessFloor ?? 1,
+            wallHeight: originalRef.current?.wallHeight ?? -1
         };
+        dispatch({ type: 'SET_DOOR', x: parser.x, y: parser.y, source: 'remote' });
+        dispatch({ type: 'SET_DOOR_DIR', dir: ((parser.direction | 0) & 7) as EntryDir, source: 'remote' });
+    });
 
-        return () =>
+    useMessageEvent<RoomOccupiedTilesMessageEvent>(RoomOccupiedTilesMessageEvent, event =>
+    {
+        const parser = event.getParser();
+        const blockedTilesMap = parser.blockedTilesMap;
+        const diffTiles: Array<{ row: number; col: number; h: number; blocked: boolean }> = [];
+        for(let row = 0; row < blockedTilesMap.length; row++)
         {
-            FloorplanEditor.instance.onTilemapChange = null;
-        };
-    }, [ isVisible, calculateArea ]);
-
-    const saveFloorChanges = () =>
-    {
-        SendMessageComposer(new UpdateFloorPropertiesMessageComposer(
-            FloorplanEditor.instance.getCurrentTilemapString(),
-            FloorplanEditor.instance.doorLocation.x,
-            FloorplanEditor.instance.doorLocation.y,
-            visualizationSettings.entryPointDir,
-            convertNumbersForSaving(visualizationSettings.thicknessWall),
-            convertNumbersForSaving(visualizationSettings.thicknessFloor),
-            (visualizationSettings.wallHeight - 1)
-        ));
-    };
-
-    const revertChanges = () =>
-    {
-        setVisualizationSettings({ wallHeight: originalFloorplanSettings.wallHeight, thicknessWall: originalFloorplanSettings.thicknessWall, thicknessFloor: originalFloorplanSettings.thicknessFloor, entryPointDir: originalFloorplanSettings.entryPointDir });
-
-        FloorplanEditor.instance.doorLocation = { x: originalFloorplanSettings.entryPoint[0], y: originalFloorplanSettings.entryPoint[1] };
-        FloorplanEditor.instance.setTilemap(originalFloorplanSettings.tilemap, originalFloorplanSettings.reservedTiles);
-        FloorplanEditor.instance.renderTiles();
-    };
-
-    const onWallHeightChange = (value: number) =>
-    {
-        if(isNaN(value) || (value <= 0)) value = MIN_WALL_HEIGHT;
-
-        if(value > MAX_WALL_HEIGHT) value = MAX_WALL_HEIGHT;
-
-        setVisualizationSettings(prevValue =>
-        {
-            const newValue = { ...prevValue };
-
-            newValue.wallHeight = value;
-
-            return newValue;
-        });
-    };
-
-    const increaseWallHeight = () =>
-    {
-        let height = (visualizationSettings.wallHeight + 1);
-
-        if(height > MAX_WALL_HEIGHT) height = MAX_WALL_HEIGHT;
-
-        onWallHeightChange(height);
-    };
-
-    const decreaseWallHeight = () =>
-    {
-        let height = (visualizationSettings.wallHeight - 1);
-
-        if(height <= 0) height = MIN_WALL_HEIGHT;
-
-        onWallHeightChange(height);
-    };
-
-    useNitroEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, event => setIsVisible(false));
+            const rowArr = blockedTilesMap[row];
+            if(!rowArr) continue;
+            for(let col = 0; col < rowArr.length; col++)
+            {
+                if(rowArr[col]) diffTiles.push({ row, col, h: 0, blocked: true });
+            }
+        }
+        dispatch({ type: 'APPLY_REMOTE_DIFF', diff: { tiles: diffTiles }, seq: 0, editorUserId: 0 });
+    });
 
     useMessageEvent<FloorHeightMapEvent>(FloorHeightMapEvent, event =>
     {
         const parser = event.getParser();
-
-        setOriginalFloorplanSettings(prevValue =>
-        {
-            const newValue = { ...prevValue };
-
-            newValue.tilemap = parser.model;
-            newValue.wallHeight = (parser.wallHeight + 1);
-
-            return newValue;
+        originalRef.current = {
+            tilemap: parser.model,
+            entryPoint: originalRef.current?.entryPoint ?? [ 0, 0 ],
+            entryPointDir: originalRef.current?.entryPointDir ?? 2,
+            thicknessWall: originalRef.current?.thicknessWall ?? 1,
+            thicknessFloor: originalRef.current?.thicknessFloor ?? 1,
+            wallHeight: parser.wallHeight + 1
+        };
+        loadFromServer({
+            tilemap: parser.model,
+            entryPoint: originalRef.current.entryPoint,
+            entryPointDir: originalRef.current.entryPointDir,
+            thicknessWall: originalRef.current.thicknessWall,
+            thicknessFloor: originalRef.current.thicknessFloor,
+            wallHeight: parser.wallHeight + 1
         });
-
-        setVisualizationSettings(prevValue =>
-        {
-            const newValue = { ...prevValue };
-
-            newValue.wallHeight = (parser.wallHeight + 1);
-
-            return newValue;
+        setBaseline({
+            tilemap: parser.model,
+            doorX: originalRef.current.entryPoint[0],
+            doorY: originalRef.current.entryPoint[1],
+            doorDir: originalRef.current.entryPointDir,
+            thicknessWall: originalRef.current.thicknessWall,
+            thicknessFloor: originalRef.current.thicknessFloor,
+            wallHeight: parser.wallHeight + 1
         });
     });
 
     useMessageEvent<RoomVisualizationSettingsEvent>(RoomVisualizationSettingsEvent, event =>
     {
         const parser = event.getParser();
-
-        setOriginalFloorplanSettings(prevValue =>
-        {
-            const newValue = { ...prevValue };
-
-            newValue.thicknessFloor = convertSettingToNumber(parser.thicknessFloor);
-            newValue.thicknessWall = convertSettingToNumber(parser.thicknessWall);
-
-            return newValue;
-        });
-
-        setVisualizationSettings(prevValue =>
-        {
-            const newValue = { ...prevValue };
-
-            newValue.thicknessFloor = convertSettingToNumber(parser.thicknessFloor);
-            newValue.thicknessWall = convertSettingToNumber(parser.thicknessWall);
-
-            return newValue;
-        });
+        const wall = clampThickness(convertSettingToNumber(parser.thicknessWall));
+        const floor = clampThickness(convertSettingToNumber(parser.thicknessFloor));
+        originalRef.current = {
+            tilemap: originalRef.current?.tilemap ?? '',
+            entryPoint: originalRef.current?.entryPoint ?? [ 0, 0 ],
+            entryPointDir: originalRef.current?.entryPointDir ?? 2,
+            thicknessWall: wall,
+            thicknessFloor: floor,
+            wallHeight: originalRef.current?.wallHeight ?? -1
+        };
+        dispatch({ type: 'SET_THICKNESS', wall, floor, source: 'remote' });
     });
+
+    useEffect(() =>
+    {
+        if(!isVisible) return;
+        const handler = (e: KeyboardEvent) =>
+        {
+            if(!(e.ctrlKey || e.metaKey)) return;
+            const target = e.target as HTMLElement | null;
+            const tag = target?.tagName;
+            if(tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
+            const key = e.key.toLowerCase();
+            if(key === 'z' && !e.shiftKey)
+            {
+                e.preventDefault();
+                undo();
+            }
+            else if((key === 'z' && e.shiftKey) || key === 'y')
+            {
+                e.preventDefault();
+                redo();
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, [ isVisible, undo, redo ]);
 
     useEffect(() =>
     {
@@ -210,75 +161,125 @@ export const FloorplanEditorView: FC<{}> = props =>
             linkReceived: (url: string) =>
             {
                 const parts = url.split('/');
-
                 if(parts.length < 2) return;
-
                 switch(parts[1])
                 {
-                    case 'show':
-                        setIsVisible(true);
-                        return;
-                    case 'hide':
-                        setIsVisible(false);
-                        return;
-                    case 'toggle':
-                        setIsVisible(prevValue => !prevValue);
-                        return;
+                    case 'show': setIsVisible(true); return;
+                    case 'hide': setIsVisible(false); return;
+                    case 'toggle': setIsVisible(v => !v); return;
                 }
             },
             eventUrlPrefix: 'floor-editor/'
         };
-
         AddLinkEventTracker(linkTracker);
-
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
+    const onWallHeightChange = (value: number) =>
+    {
+        if(isNaN(value) || value <= 0) value = MIN_WALL_HEIGHT;
+        if(value > MAX_WALL_HEIGHT) value = MAX_WALL_HEIGHT;
+        dispatch({ type: 'SET_WALL_HEIGHT', value, source: 'local' });
+    };
+
+    const saveFloorChanges = () =>
+    {
+        SendMessageComposer(new UpdateFloorPropertiesMessageComposer(
+            serializeTilemap(state.tiles),
+            state.door.x,
+            state.door.y,
+            state.door.dir,
+            convertNumbersForSaving(state.thickness.wall),
+            convertNumbersForSaving(state.thickness.floor),
+            state.wallHeight - 1
+        ));
+    };
+
+    const revertChanges = () =>
+    {
+        const o = originalRef.current;
+        if(!o) return;
+        loadFromServer(o);
+        if(liveSync) revertLivePreview();
+    };
+
     return (
-        <FloorplanEditorContextProvider value={ {
-            originalFloorplanSettings,
-            setOriginalFloorplanSettings,
-            visualizationSettings,
-            setVisualizationSettings,
-            floorHeight,
-            setFloorHeight,
-            floorAction,
-            setFloorAction,
-            tilemapVersion,
-            areaInfo
-        } }>
-            { isVisible &&
-                <NitroCardView uniqueKey="floorpan-editor" className="w-[1100px] h-[600px]" theme="primary-slim">
+        <>
+            { isVisible && (
+                <NitroCardView uniqueKey="floorpan-editor" className="w-[820px] h-[620px]" theme="primary-slim">
                     <NitroCardHeaderView headerText={ LocalizeText('floor.plan.editor.title') } onCloseClick={ () => setIsVisible(false) } />
-                    <NitroCardContentView overflow="hidden" className="flex flex-col">
-                        <FloorplanOptionsView />
+                    <NitroCardContentView overflow="hidden" className="flex flex-col gap-2">
+                        <FloorplanToolbar
+                            state={ state }
+                            dispatch={ dispatch }
+                            canUndo={ canUndo }
+                            canRedo={ canRedo }
+                            onUndo={ undo }
+                            onRedo={ redo }
+                            panMode={ panMode }
+                            setPanMode={ setPanMode }
+                        />
+                        <FloorplanOptionsPanel state={ state } dispatch={ dispatch } />
                         <Flex gap={ 2 } className="flex-1 min-h-0">
-                            <FloorplanHeightSelector />
-                            <FloorplanCanvasView overflow="hidden" />
-                            <Column gap={ 2 } className="w-[380px] min-w-[380px]">
-                                <FloorplanPreviewView />
-                                <Flex gap={ 1 } alignItems="center">
-                                    <Text bold small>{ LocalizeText('floor.editor.wall.height') }</Text>
-                                    <FaCaretLeft className="cursor-pointer fa-icon" onClick={ decreaseWallHeight } />
-                                    <input type="number" className="form-control form-control-sm w-[49px]" value={ visualizationSettings.wallHeight } onChange={ event => onWallHeightChange(event.target.valueAsNumber) } />
-                                    <FaCaretRight className="cursor-pointer fa-icon" onClick={ increaseWallHeight } />
-                                </Flex>
-                                <Text bold small className="text-center">
-                                    Area: { areaInfo.total } ({ areaInfo.walkable } caselle)
-                                </Text>
-                            </Column>
+                            <FloorplanHeightPicker selectedH={ state.brush.h } onSelect={ h => dispatch({ type: 'BRUSH_SET', h }) } />
+                            <FloorplanCanvasSVG state={ state } dispatch={ dispatch } panMode={ panMode } />
+                        </Flex>
+                        <Flex gap={ 3 } alignItems="center" className="px-1">
+                            <Flex gap={ 1 } alignItems="center">
+                                <Text bold small className="text-zinc-700">{ LocalizeText('floor.editor.wall.height') }</Text>
+                                <FaCaretLeft className="cursor-pointer fa-icon text-zinc-600" onClick={ () => onWallHeightChange(state.wallHeight - 1) } />
+                                <input
+                                    type="number"
+                                    className="form-control form-control-sm w-[49px] text-center"
+                                    value={ state.wallHeight }
+                                    onChange={ e => onWallHeightChange(e.target.valueAsNumber) }
+                                />
+                                <FaCaretRight className="cursor-pointer fa-icon text-zinc-600" onClick={ () => onWallHeightChange(state.wallHeight + 1) } />
+                            </Flex>
+                            <Text bold small className="text-zinc-700">
+                                Area: <span className="tabular-nums">{ area.total }</span> ({ area.walkable } tiles)
+                            </Text>
+                            <Flex
+                                alignItems="center"
+                                gap={ 1 }
+                                className={ `ml-auto border rounded px-2 py-1 cursor-pointer select-none ${ liveSync ? 'bg-emerald-500/15 border-emerald-500 text-emerald-700' : 'border-zinc-400 text-zinc-600' }` }
+                                onClick={ () => setLiveSync(v => !v) }
+                                title="Local in-room preview while drawing (does not save to server)"
+                            >
+                                <FaBolt className={ liveSync ? 'text-emerald-600' : 'text-zinc-500' } />
+                                <Text bold small>{ liveSync ? 'Live preview ON' : 'Live preview OFF' }</Text>
+                            </Flex>
                         </Flex>
                         <Flex justifyContent="between">
                             <Button variant="danger" onClick={ revertChanges }>{ LocalizeText('floor.plan.editor.reload') }</Button>
                             <ButtonGroup>
-                                <Button onClick={ event => setImportExportVisible(true) }>{ LocalizeText('floor.plan.editor.import.export') }</Button>
+                                <Button onClick={ () => setImportExportVisible(true) }>{ LocalizeText('floor.plan.editor.import.export') }</Button>
                                 <Button onClick={ saveFloorChanges }>{ LocalizeText('floor.plan.editor.save') }</Button>
                             </ButtonGroup>
                         </Flex>
                     </NitroCardContentView>
-                </NitroCardView> }
-            { importExportVisible &&
-                <FloorplanImportExportView onCloseClick={ () => setImportExportVisible(false) } /> }
-        </FloorplanEditorContextProvider>
+                </NitroCardView>
+            ) }
+            { importExportVisible && (
+                <FloorplanImportExport
+                    state={ state }
+                    dispatch={ dispatch }
+                    onClose={ () => setImportExportVisible(false) }
+                    onSaveFromText={ raw =>
+                    {
+                        SendMessageComposer(new UpdateFloorPropertiesMessageComposer(
+                            raw,
+                            state.door.x,
+                            state.door.y,
+                            state.door.dir,
+                            convertNumbersForSaving(state.thickness.wall),
+                            convertNumbersForSaving(state.thickness.floor),
+                            state.wallHeight - 1
+                        ));
+                    } }
+                    onRevertText={ () => originalRef.current?.tilemap ?? serializeTilemap(state.tiles) }
+                />
+            ) }
+        </>
     );
 };
