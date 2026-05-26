@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, convertNumbersForSaving, convertSettingToNumber, FloorHeightMapEvent, GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, convertNumbersForSaving, convertSettingToNumber, FloorHeightMapEvent, GetRoomEntryTileMessageComposer, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEntryTileMessageEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { FaBolt, FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../api';
@@ -49,7 +49,6 @@ export const FloorplanEditorView: FC = () =>
     {
         if(!isVisible) return;
         SendMessageComposer(new GetRoomEntryTileMessageComposer());
-        SendMessageComposer(new GetOccupiedTilesMessageComposer());
     }, [ isVisible ]);
 
     useMessageEvent<RoomEntryTileMessageEvent>(RoomEntryTileMessageEvent, event =>
@@ -65,23 +64,6 @@ export const FloorplanEditorView: FC = () =>
         };
         dispatch({ type: 'SET_DOOR', x: parser.x, y: parser.y, source: 'remote' });
         dispatch({ type: 'SET_DOOR_DIR', dir: ((parser.direction | 0) & 7) as EntryDir, source: 'remote' });
-    });
-
-    useMessageEvent<RoomOccupiedTilesMessageEvent>(RoomOccupiedTilesMessageEvent, event =>
-    {
-        const parser = event.getParser();
-        const blockedTilesMap = parser.blockedTilesMap;
-        const diffTiles: Array<{ row: number; col: number; h: number; blocked: boolean }> = [];
-        for(let row = 0; row < blockedTilesMap.length; row++)
-        {
-            const rowArr = blockedTilesMap[row];
-            if(!rowArr) continue;
-            for(let col = 0; col < rowArr.length; col++)
-            {
-                if(rowArr[col]) diffTiles.push({ row, col, h: 0, blocked: true });
-            }
-        }
-        dispatch({ type: 'APPLY_REMOTE_DIFF', diff: { tiles: diffTiles }, seq: 0, editorUserId: 0 });
     });
 
     useMessageEvent<FloorHeightMapEvent>(FloorHeightMapEvent, event =>
