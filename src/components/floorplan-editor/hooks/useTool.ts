@@ -36,6 +36,7 @@ export const useTool = (
 {
     const isDownRef = useRef(false);
     const lastTileRef = useRef<string | null>(null);
+    const squareStartRef = useRef<{ row: number; col: number } | null>(null);
 
     const apply = useCallback((e: PointerEvent<SVGSVGElement>) =>
     {
@@ -52,22 +53,49 @@ export const useTool = (
         isDownRef.current = true;
         lastTileRef.current = null;
         try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch {}
+
+        if(state.squareSelect)
+        {
+            const hit = projection.fromClient(e.clientX, e.clientY);
+            if(!hit) return;
+            squareStartRef.current = hit;
+            dispatch({ type: 'SELECT_RECT', from: [ hit.row, hit.col ], to: [ hit.row, hit.col ] });
+            return;
+        }
+
         apply(e);
-    }, [ apply ]);
+    }, [ apply, state.squareSelect, projection, dispatch ]);
 
     const onPointerMove = useCallback((e: PointerEvent<SVGSVGElement>) =>
     {
         if(!isDownRef.current) return;
-        if(state.brush.action === 'DOOR') return; // door is a single-click placement
+
+        if(state.squareSelect && squareStartRef.current)
+        {
+            const hit = projection.fromClient(e.clientX, e.clientY);
+            if(!hit) return;
+            const start = squareStartRef.current;
+            dispatch({ type: 'SELECT_RECT', from: [ start.row, start.col ], to: [ hit.row, hit.col ] });
+            return;
+        }
+
+        if(state.brush.action === 'DOOR') return;
         apply(e);
-    }, [ apply, state.brush.action ]);
+    }, [ apply, state.brush.action, state.squareSelect, projection, dispatch ]);
 
     const onPointerUp = useCallback((e: PointerEvent<SVGSVGElement>) =>
     {
         isDownRef.current = false;
         lastTileRef.current = null;
         try { e.currentTarget.releasePointerCapture?.(e.pointerId); } catch {}
-    }, []);
+
+        if(state.squareSelect && squareStartRef.current)
+        {
+            squareStartRef.current = null;
+            dispatch({ type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+            dispatch({ type: 'SQUARE_SELECT_TOGGLE' });
+        }
+    }, [ state.squareSelect, dispatch ]);
 
     return { onPointerDown, onPointerMove, onPointerUp };
 };

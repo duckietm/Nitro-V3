@@ -29,24 +29,39 @@ export const usePointerToTile = (
     viewBox: ViewBox
 ): PointerProjection =>
 {
-    const { width, height, x: viewX = 0, y: viewY = 0 } = viewBox;
+    void viewBox;
 
     const fromClient = useCallback((clientX: number, clientY: number) =>
     {
         const svg = svgRef.current;
         if(!svg) return null;
-        const rect = svg.getBoundingClientRect();
-        if(rect.width === 0 || rect.height === 0) return null;
-        // Map screen-space pointer onto the viewBox interior, then
-        // shift by the viewBox origin — when zoomed in the viewBox
-        // starts at (viewX, viewY) instead of (0, 0), so a pointer
-        // at the left edge of the SVG corresponds to viewX in
-        // local SVG units, not 0.
-        const localX = viewX + ((clientX - rect.left) / rect.width) * width;
-        const localY = viewY + ((clientY - rect.top) / rect.height) * height;
-        const [ row, col ] = screenToTile(localX, localY);
+
+        if(typeof document !== 'undefined' && typeof document.elementFromPoint === 'function')
+        {
+            const hit = document.elementFromPoint(clientX, clientY) as SVGElement | null;
+            if(hit)
+            {
+                const r = hit.getAttribute('data-row');
+                const c = hit.getAttribute('data-col');
+                if(r !== null && c !== null)
+                {
+                    const row = parseInt(r, 10);
+                    const col = parseInt(c, 10);
+                    if(Number.isFinite(row) && Number.isFinite(col)) return { row, col };
+                }
+            }
+        }
+
+        const ctm = svg.getScreenCTM();
+        if(!ctm) return null;
+        const pt = svg.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        const local = pt.matrixTransform(ctm.inverse());
+
+        const [ row, col ] = screenToTile(local.x, local.y);
         return { row: Math.round(row), col: Math.round(col) };
-    }, [ svgRef, width, height, viewX, viewY ]);
+    }, [ svgRef ]);
 
     return useMemo(() => ({ fromClient }), [ fromClient ]);
 };

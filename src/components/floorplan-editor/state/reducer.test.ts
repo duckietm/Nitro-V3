@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { reducer, initialState } from './reducer';
 import { FloorplanState } from './types';
 import { defaultEmptyTilemap } from './selectors';
+import { MAX_NUM_TILE_PER_AXIS } from './constants';
 
 const stateWith = (tiles: FloorplanState['tiles']): FloorplanState => ({
     ...initialState,
@@ -180,17 +181,32 @@ describe('reducer — BRUSH_SET', () =>
 
 describe('reducer — selection', () =>
 {
-    it('SELECT_ALL marks every non-blocked tile', () =>
+    it('SELECT_ALL marks every cell in the full editor grid (MAX × MAX)', () =>
     {
         const start = stateWith([
             [{ h: 0, blocked: false }, { h: 0, blocked: true }],
             [{ h: 0, blocked: false }, { h: 0, blocked: false }]
         ]);
         const next = reducer(start, { type: 'SELECT_ALL' });
-        expect(next.selection.size).toBe(3);
+        expect(next.selection.size).toBe(MAX_NUM_TILE_PER_AXIS * MAX_NUM_TILE_PER_AXIS);
         expect(next.selection.has('0,0')).toBe(true);
-        expect(next.selection.has('0,1')).toBe(false);
-        expect(next.selection.has('1,1')).toBe(true);
+        expect(next.selection.has('0,1')).toBe(true);
+        expect(next.selection.has(`${MAX_NUM_TILE_PER_AXIS - 1},${MAX_NUM_TILE_PER_AXIS - 1}`)).toBe(true);
+    });
+
+    it('SELECT_ALL + APPLY_BRUSH_TO_SELECTION SET fills empty cells inside the room shape', () =>
+    {
+        const start = stateWith([
+            [{ h: 0, blocked: false }, { h: 0, blocked: true }],
+            [{ h: 0, blocked: true }, { h: 0, blocked: false }]
+        ]);
+        const armed = reducer(start, { type: 'BRUSH_SET', action: 'SET', h: 2 });
+        const selected = reducer(armed, { type: 'SELECT_ALL' });
+        const next = reducer(selected, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next.tiles[0][0]).toEqual({ h: 2, blocked: false });
+        expect(next.tiles[0][1]).toEqual({ h: 2, blocked: false });
+        expect(next.tiles[1][0]).toEqual({ h: 2, blocked: false });
+        expect(next.tiles[1][1]).toEqual({ h: 2, blocked: false });
     });
 
     it('CLEAR_SELECTION empties it', () =>
@@ -203,7 +219,6 @@ describe('reducer — selection', () =>
     it('SELECT_RECT marks the rectangle inclusive', () =>
     {
         const start = stateWith(defaultEmptyTilemap(4, 4));
-        // First populate non-blocked tiles so SELECT_RECT picks them up
         const populated = {
             ...start,
             tiles: start.tiles.map(row => row.map(() => ({ h: 0, blocked: false })))
@@ -213,12 +228,134 @@ describe('reducer — selection', () =>
         expect(keys).toEqual([ '1,1', '1,2', '1,3', '2,1', '2,2', '2,3' ].sort());
     });
 
+    it('SELECT_RECT includes blocked / empty cells so the SET brush can paint into them', () =>
+    {
+        const start = stateWith([
+            [{ h: 0, blocked: true }, { h: 0, blocked: true }],
+            [{ h: 0, blocked: true }, { h: 0, blocked: false }]
+        ]);
+        const next = reducer(start, { type: 'SELECT_RECT', from: [ 0, 0 ], to: [ 1, 1 ] });
+        const keys = Array.from(next.selection).sort();
+        expect(keys).toEqual([ '0,0', '0,1', '1,0', '1,1' ].sort());
+    });
+
+    it('SELECT_RECT clamps to grid bounds when the drag goes negative or past MAX', () =>
+    {
+        const start = stateWith([[{ h: 0, blocked: false }]]);
+        const next = reducer(start, { type: 'SELECT_RECT', from: [ -5, -5 ], to: [ 999, 999 ] });
+        expect(next.selection.has('0,0')).toBe(true);
+        expect(next.selection.has('63,63')).toBe(true);
+        expect(next.selection.has('64,0')).toBe(false);
+        expect(next.selection.has('-1,0')).toBe(false);
+    });
+
     it('SQUARE_SELECT_TOGGLE flips the flag', () =>
     {
         const a = reducer(initialState, { type: 'SQUARE_SELECT_TOGGLE' });
         expect(a.squareSelect).toBe(true);
         const b = reducer(a, { type: 'SQUARE_SELECT_TOGGLE' });
         expect(b.squareSelect).toBe(false);
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION with SET fills selected tiles at brush height (including blocked ones) and clears selection', () =>
+    {
+        const populated = stateWith([
+            [{ h: 0, blocked: false }, { h: 0, blocked: false }],
+            [{ h: 0, blocked: false }, { h: 0, blocked: true }]
+        ]);
+        const withSel = reducer(populated, { type: 'SELECT_ALL' });
+        const armed = reducer(withSel, { type: 'BRUSH_SET', action: 'SET', h: 4 });
+        const next = reducer(armed, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next.tiles[0][0]).toEqual({ h: 4, blocked: false });
+        expect(next.tiles[0][1]).toEqual({ h: 4, blocked: false });
+        expect(next.tiles[1][0]).toEqual({ h: 4, blocked: false });
+        expect(next.tiles[1][1]).toEqual({ h: 4, blocked: false });
+        expect(next.selection.size).toBe(0);
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION with UNSET erases selected tiles', () =>
+    {
+        const populated = stateWith([
+            [{ h: 3, blocked: false }, { h: 3, blocked: false }]
+        ]);
+        const withSel = reducer(populated, { type: 'SELECT_ALL' });
+        const armed = reducer(withSel, { type: 'BRUSH_SET', action: 'UNSET' });
+        const next = reducer(armed, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next.tiles[0][0].blocked).toBe(true);
+        expect(next.tiles[0][1].blocked).toBe(true);
+        expect(next.selection.size).toBe(0);
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION with UP/DOWN adjusts heights', () =>
+    {
+        const populated = stateWith([[{ h: 2, blocked: false }, { h: 0, blocked: false }]]);
+        const withSel = reducer(populated, { type: 'SELECT_ALL' });
+        const armedUp = reducer(withSel, { type: 'BRUSH_SET', action: 'UP' });
+        const up = reducer(armedUp, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(up.tiles[0][0].h).toBe(3);
+        expect(up.tiles[0][1].h).toBe(1);
+
+        const withSel2 = reducer(up, { type: 'SELECT_ALL' });
+        const armedDown = reducer(withSel2, { type: 'BRUSH_SET', action: 'DOWN' });
+        const down = reducer(armedDown, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(down.tiles[0][0].h).toBe(2);
+        expect(down.tiles[0][1].h).toBe(0);
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION SET paints into blocked / empty cells (build-from-scratch UX)', () =>
+    {
+        const start = stateWith([
+            [{ h: 0, blocked: true }, { h: 0, blocked: true }],
+            [{ h: 0, blocked: true }, { h: 0, blocked: true }]
+        ]);
+        const armed = reducer(start, { type: 'BRUSH_SET', action: 'SET', h: 2 });
+        const selected = reducer(armed, { type: 'SELECT_RECT', from: [ 0, 0 ], to: [ 1, 1 ] });
+        const next = reducer(selected, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next.tiles[0][0]).toEqual({ h: 2, blocked: false });
+        expect(next.tiles[0][1]).toEqual({ h: 2, blocked: false });
+        expect(next.tiles[1][0]).toEqual({ h: 2, blocked: false });
+        expect(next.tiles[1][1]).toEqual({ h: 2, blocked: false });
+        expect(next.selection.size).toBe(0);
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION SET grows the tiles array when the rect extends beyond current bounds', () =>
+    {
+        const start = stateWith([[{ h: 0, blocked: false }]]); // 1x1 room
+        const armed = reducer(start, { type: 'BRUSH_SET', action: 'SET', h: 1 });
+        const selected = reducer(armed, { type: 'SELECT_RECT', from: [ 0, 0 ], to: [ 2, 2 ] });
+        const next = reducer(selected, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next.tiles.length).toBeGreaterThanOrEqual(3);
+        expect(next.tiles[0].length).toBeGreaterThanOrEqual(3);
+        expect(next.tiles[2][2]).toEqual({ h: 1, blocked: false });
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION UNSET still skips blocked cells (only erases painted ones)', () =>
+    {
+        const start = stateWith([
+            [{ h: 3, blocked: false }, { h: 0, blocked: true }]
+        ]);
+        const armed = reducer(start, { type: 'BRUSH_SET', action: 'UNSET' });
+        const selected = reducer(armed, { type: 'SELECT_RECT', from: [ 0, 0 ], to: [ 0, 1 ] });
+        const next = reducer(selected, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next.tiles[0][0].blocked).toBe(true);
+        expect(next.tiles[0][1]).toEqual({ h: 0, blocked: true });
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION on empty selection is a no-op', () =>
+    {
+        const start = stateWith([[{ h: 5, blocked: false }]]);
+        const next = reducer(start, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next).toBe(start);
+    });
+
+    it('APPLY_BRUSH_TO_SELECTION with DOOR clears selection without touching tiles', () =>
+    {
+        const populated = stateWith([[{ h: 1, blocked: false }, { h: 2, blocked: false }]]);
+        const withSel = reducer(populated, { type: 'SELECT_ALL' });
+        const armed = reducer(withSel, { type: 'BRUSH_SET', action: 'DOOR' });
+        const next = reducer(armed, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(next.tiles).toEqual(armed.tiles);
+        expect(next.selection.size).toBe(0);
     });
 });
 

@@ -18,7 +18,6 @@ describe('FloorplanImportExport', () =>
         render(<FloorplanImportExport state={ state } dispatch={ () => {} } onClose={ () => {} } onSaveFromText={ () => {} } onRevertText={ () => '' } />);
         const ta = document.querySelector('textarea') as HTMLTextAreaElement;
         expect(ta).toBeTruthy();
-        // Textarea normalizes \r to \n
         expect(ta.value).toBe('01\nx2');
     });
 
@@ -28,7 +27,6 @@ describe('FloorplanImportExport', () =>
         render(<FloorplanImportExport state={ initialState } dispatch={ dispatch } onClose={ () => {} } onSaveFromText={ () => {} } onRevertText={ () => '' } />);
         const ta = document.querySelector('textarea') as HTMLTextAreaElement;
         expect(ta).toBeTruthy();
-        // Textarea normalizes \r to \n
         fireEvent.change(ta, { target: { value: 'xq\n00' } });
         const button = document.querySelector('[data-testid="import-load"]') as HTMLButtonElement;
         expect(button).toBeTruthy();

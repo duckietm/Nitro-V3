@@ -41,13 +41,6 @@ export const FloorplanEditorView: FC = () =>
 
     const area = useMemo(() => areaCount(state.tiles), [ state.tiles ]);
 
-    // Live in-room preview: while the editor is open every tile /
-    // door / thickness / wallHeight change is applied immediately
-    // to the 3D room behind the editor card, CLIENT-SIDE ONLY (no
-    // server packet). The wire UpdateFloorPropertiesMessageComposer
-    // is only sent when the user clicks Save. `setBaseline` is
-    // called by the message handlers below so the hook knows what
-    // state to roll back to if the user closes without saving.
     const { setBaseline, revert: revertLivePreview } = useFloorplanLiveSync({ enabled: liveSync && isVisible, state });
 
     useNitroEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, () => setIsVisible(false));
@@ -110,9 +103,6 @@ export const FloorplanEditorView: FC = () =>
             thicknessFloor: originalRef.current.thicknessFloor,
             wallHeight: parser.wallHeight + 1
         });
-        // Anchor the live-sync baseline at the server's authoritative
-        // snapshot so the first re-render after this load doesn't
-        // bounce the same model back as an "edit".
         setBaseline({
             tilemap: parser.model,
             doorX: originalRef.current.entryPoint[0],
@@ -140,10 +130,6 @@ export const FloorplanEditorView: FC = () =>
         dispatch({ type: 'SET_THICKNESS', wall, floor, source: 'remote' });
     });
 
-    // Keyboard shortcuts: Ctrl+Z = undo, Ctrl+Shift+Z / Ctrl+Y = redo.
-    // Scoped to when the editor is visible; ignored when focus is in
-    // a text-entry field (Import/Export modal textarea, wall height
-    // input) so we don't fight the OS-native undo.
     useEffect(() =>
     {
         if(!isVisible) return;
@@ -214,9 +200,6 @@ export const FloorplanEditorView: FC = () =>
         const o = originalRef.current;
         if(!o) return;
         loadFromServer(o);
-        // Roll the live in-room preview back to the server-known
-        // baseline. No-op if live sync is off (nothing was changed
-        // in the room).
         if(liveSync) revertLivePreview();
     };
 
@@ -254,14 +237,14 @@ export const FloorplanEditorView: FC = () =>
                                 <FaCaretRight className="cursor-pointer fa-icon text-zinc-600" onClick={ () => onWallHeightChange(state.wallHeight + 1) } />
                             </Flex>
                             <Text bold small className="text-zinc-700">
-                                Area: <span className="tabular-nums">{ area.total }</span> ({ area.walkable } caselle)
+                                Area: <span className="tabular-nums">{ area.total }</span> ({ area.walkable } tiles)
                             </Text>
                             <Flex
                                 alignItems="center"
                                 gap={ 1 }
                                 className={ `ml-auto border rounded px-2 py-1 cursor-pointer select-none ${ liveSync ? 'bg-emerald-500/15 border-emerald-500 text-emerald-700' : 'border-zinc-400 text-zinc-600' }` }
                                 onClick={ () => setLiveSync(v => !v) }
-                                title="Anteprima locale nella stanza mentre disegni (non salva al server)"
+                                title="Local in-room preview while drawing (does not save to server)"
                             >
                                 <FaBolt className={ liveSync ? 'text-emerald-600' : 'text-zinc-500' } />
                                 <Text bold small>{ liveSync ? 'Live preview ON' : 'Live preview OFF' }</Text>

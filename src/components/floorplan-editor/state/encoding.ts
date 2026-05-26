@@ -1,10 +1,9 @@
 import { Tile } from './types';
 import { HEIGHT_SCHEME } from './constants';
 
-// 'x0123456789abcdefghijklmnopq' (28 chars total)
 const VALID_CHARS = HEIGHT_SCHEME;
 const HMIN = 0;
-const HMAX = VALID_CHARS.length - 2;          // 26
+const HMAX = VALID_CHARS.length - 2;
 
 export const charToTile = (ch: string): Tile =>
 {

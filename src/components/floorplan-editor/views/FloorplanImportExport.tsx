@@ -43,8 +43,8 @@ export const FloorplanImportExport: FC<Props> = ({ state, dispatch, onClose, onS
                     onChange={ e => setRaw(e.target.value) }
                 />
                 <div className="flex gap-2 justify-end">
-                    <Button data-testid="import-revert" onClick={ revert }>Annulla</Button>
-                    <Button data-testid="import-load" onClick={ load }>Carica</Button>
+                    <Button data-testid="import-revert" onClick={ revert }>Revert</Button>
+                    <Button data-testid="import-load" onClick={ load }>Load</Button>
                     <Button data-testid="import-save" onClick={ save }>{ LocalizeText('floor.plan.editor.save') }</Button>
                 </div>
             </NitroCardContentView>

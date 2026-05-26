@@ -29,7 +29,7 @@ export const FloorplanOptionsPanel: FC<Props> = ({ state, dispatch }) =>
                     <Base
                         data-testid="entry-dir-prev"
                         pointer
-                        title="Ruota a sinistra"
+                        title="Rotate left"
                         className="w-7 h-9 flex items-center justify-center text-zinc-600 hover:bg-zinc-100"
                         onClick={ () => setDir(rotateDir(state.door.dir, -1)) }
                     >
@@ -38,14 +38,14 @@ export const FloorplanOptionsPanel: FC<Props> = ({ state, dispatch }) =>
                     <Base
                         data-testid="entry-dir"
                         pointer
-                        title={ `Direzione ${ state.door.dir }/7 (click per ruotare)` }
+                        title={ `Direction ${ state.door.dir }/7 (click to rotate)` }
                         className={ `nitro-icon icon-door-direction-${ state.door.dir } mx-1` }
                         onClick={ () => setDir(rotateDir(state.door.dir, 1)) }
                     />
                     <Base
                         data-testid="entry-dir-next"
                         pointer
-                        title="Ruota a destra"
+                        title="Rotate right"
                         className="w-7 h-9 flex items-center justify-center text-zinc-600 hover:bg-zinc-100"
                         onClick={ () => setDir(rotateDir(state.door.dir, 1)) }
                     >
@@ -55,7 +55,7 @@ export const FloorplanOptionsPanel: FC<Props> = ({ state, dispatch }) =>
             </Flex>
 
             <ThicknessSegmented
-                label="Pareti"
+                label="Walls"
                 value={ state.thickness.wall }
                 onChange={ setWall }
                 testIdPrefix="wall-thickness"
@@ -63,7 +63,7 @@ export const FloorplanOptionsPanel: FC<Props> = ({ state, dispatch }) =>
             />
 
             <ThicknessSegmented
-                label="Pavimenti"
+                label="Floors"
                 value={ state.thickness.floor }
                 onChange={ setFloor }
                 testIdPrefix="floor-thickness"

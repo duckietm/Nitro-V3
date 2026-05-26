@@ -84,4 +84,37 @@ describe('useTool', () =>
         act(() => result.current.onPointerMove({ clientX: 1, clientY: 1, pointerId: 1, currentTarget: { setPointerCapture: () => {} } } as never));
         expect(dispatch).not.toHaveBeenCalled();
     });
+
+    it('square-select drag dispatches SELECT_RECT (down + move) then APPLY_BRUSH_TO_SELECTION + SQUARE_SELECT_TOGGLE on release', () =>
+    {
+        const dispatch = vi.fn();
+        let projTile: { row: number; col: number } = { row: 2, col: 3 };
+        const projection = { fromClient: () => projTile };
+        const state: FloorplanState = { ...withBrush('SET'), squareSelect: true };
+        const { result } = renderHook(() => useTool(state, dispatch as React.Dispatch<FloorplanAction>, projection));
+
+        act(() => result.current.onPointerDown({ clientX: 0, clientY: 0, pointerId: 1, currentTarget: { setPointerCapture: () => {} } } as never));
+        expect(dispatch).toHaveBeenCalledWith({ type: 'SELECT_RECT', from: [ 2, 3 ], to: [ 2, 3 ] });
+
+        projTile = { row: 5, col: 7 };
+        dispatch.mockClear();
+        act(() => result.current.onPointerMove({ clientX: 10, clientY: 10, pointerId: 1, currentTarget: { setPointerCapture: () => {} } } as never));
+        expect(dispatch).toHaveBeenCalledWith({ type: 'SELECT_RECT', from: [ 2, 3 ], to: [ 5, 7 ] });
+        expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'PAINT_TILE' }));
+
+        dispatch.mockClear();
+        act(() => result.current.onPointerUp({ clientX: 10, clientY: 10, pointerId: 1, currentTarget: { releasePointerCapture: () => {} } } as never));
+        expect(dispatch).toHaveBeenNthCalledWith(1, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+        expect(dispatch).toHaveBeenNthCalledWith(2, { type: 'SQUARE_SELECT_TOGGLE' });
+    });
+
+    it('square-select pointer up without a prior down is a no-op', () =>
+    {
+        const dispatch = vi.fn();
+        const projection = { fromClient: () => ({ row: 0, col: 0 }) };
+        const state: FloorplanState = { ...withBrush('SET'), squareSelect: true };
+        const { result } = renderHook(() => useTool(state, dispatch as React.Dispatch<FloorplanAction>, projection));
+        act(() => result.current.onPointerUp({ clientX: 0, clientY: 0, pointerId: 1, currentTarget: { releasePointerCapture: () => {} } } as never));
+        expect(dispatch).not.toHaveBeenCalled();
+    });
 });

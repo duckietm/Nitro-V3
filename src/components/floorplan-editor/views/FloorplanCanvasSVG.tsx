@@ -1,5 +1,5 @@
 import { Dispatch, FC, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react';
-import { FaCrosshairs, FaSearchMinus, FaSearchPlus } from 'react-icons/fa';
+import { FaCrosshairs, FaSearchMinus, FaSearchPlus, FaSyncAlt } from 'react-icons/fa';
 import { FloorplanAction, FloorplanState } from '../state/types';
 import { FloorplanTile } from './FloorplanTile';
 import { tileToScreen, usePointerToTile } from '../hooks/usePointerToTile';
@@ -9,12 +9,6 @@ import { TILE_SIZE, MAX_NUM_TILE_PER_AXIS } from '../state/constants';
 type Props = {
     state: FloorplanState;
     dispatch: Dispatch<FloorplanAction>;
-    /**
-     * When true, left-click + drag pans the canvas instead of
-     * brushing. Driven by the hand-tool toggle in the toolbar.
-     * Shift+drag and middle-mouse drag always pan regardless of
-     * this flag.
-     */
     panMode?: boolean;
 };
 
@@ -24,21 +18,10 @@ const VIEWBOX_H = (MAX_NUM_TILE_PER_AXIS * TILE_SIZE) / 2;
 const ZOOM_MIN = 0.4;
 const ZOOM_MAX = 6;
 const ZOOM_STEP = 0.2;
-// Slack around the room bounding box when auto-fitting, so the tiles
-// don't sit flush against the canvas edge.
 const FIT_PADDING = TILE_SIZE * 2;
 
 const clampZoom = (z: number): number => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z));
 
-/**
- * Compute the screen-space bounding box of the painted (= non-
- * blocked) tiles. Returns `null` if the room is fully blocked /
- * empty — caller can fall back to the centered default view.
- *
- * tileToScreen returns the TOP corner of the iso diamond; we
- * inflate by half a tile in every direction so the diamond's
- * extremities (left/right/bottom points) are included.
- */
 const computeRoomBounds = (state: FloorplanState): { x: number; y: number; w: number; h: number } | null =>
 {
     let minX = Infinity;
@@ -89,19 +72,12 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
     const [ zoom, setZoom ] = useState(1);
     const [ pan, setPan ] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const [ isPanning, setIsPanning ] = useState(false);
+    const [ flipped, setFlipped ] = useState(false);
     const panStartRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
-    // First-paint flag: once we've seen a non-empty room we
-    // auto-fit (zoom in/out until the room fills the canvas with
-    // a small margin) exactly once. Manual zoom/pan afterwards is
-    // preserved.
     const centeredRef = useRef(false);
 
     const roomBounds = useMemo(() => computeRoomBounds(state), [ state.tiles ]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Pan a given zoom level so the room centre sits in the
-    // viewport centre. With zoom kept, the formula reduces to
-    // `roomCenter - VIEWBOX_center` because the (VIEWBOX - visible)
-    // / 2 base offset terms cancel.
     const centerPanForRoom = useCallback((): { x: number; y: number } | null =>
     {
         if(!roomBounds) return null;
@@ -111,10 +87,6 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
         };
     }, [ roomBounds ]);
 
-    // Fit-to-room: zooms IN/OUT until the whole room is visible
-    // (with a 5 % margin), then centres the pan. This is the
-    // default view — running on first paint and on every click of
-    // the %% / 'reset' label.
     const fitToRoom = useCallback(() =>
     {
         if(!roomBounds) return;
@@ -127,12 +99,6 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
         setPan(next);
     }, [ roomBounds, centerPanForRoom ]);
 
-    // Auto-fit the FIRST time we see a non-empty room (typically
-    // right after the server-driven load). The literal 100 % zoom
-    // leaves too much empty space around small rooms, so the
-    // 'default view' is fit-to-room (~95 % of the smaller axis
-    // so tiles don't sit flush against the edge). The user's
-    // subsequent manual zoom / pan adjustments are preserved.
     useEffect(() =>
     {
         if(centeredRef.current) return;
@@ -158,17 +124,47 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
         {
             const isDoor = state.door.x === c && state.door.y === r && !tile.blocked;
             const selected = state.selection.has(`${ r },${ c }`);
-            return <FloorplanTile key={ `${ r }-${ c }` } row={ r } col={ c } tile={ tile } selected={ selected } isDoor={ isDoor } />;
+            const south = state.tiles[r]?.[c + 1];
+            const west = state.tiles[r + 1]?.[c];
+            const southH = (south && !south.blocked) ? south.h : 0;
+            const westH = (west && !west.blocked) ? west.h : 0;
+            return <FloorplanTile key={ `${ r }-${ c }` } row={ r } col={ c } tile={ tile } selected={ selected } isDoor={ isDoor } southH={ southH } westH={ westH } />;
         });
         return <g key={ `row-${ r }` }>{ cells }</g>;
     }), [ state.tiles, state.door.x, state.door.y, state.selection ]);
 
+    const outOfBoundsOverlay = useMemo(() =>
+    {
+        if(state.selection.size === 0) return null;
+        const half = TILE_SIZE / 2;
+        const quarter = TILE_SIZE / 4;
+        const tilesRows = state.tiles.length;
+        const tilesCols = state.tiles[0]?.length ?? 0;
+        const out: JSX.Element[] = [];
+        for(const key of state.selection)
+        {
+            const [ rStr, cStr ] = key.split(',');
+            const row = parseInt(rStr, 10);
+            const col = parseInt(cStr, 10);
+            if(row < tilesRows && col < tilesCols) continue;
+            const [ cx, cy ] = tileToScreen(row, col);
+            const points = `${ cx },${ cy - quarter } ${ cx + half },${ cy } ${ cx },${ cy + quarter } ${ cx - half },${ cy }`;
+            out.push(
+                <polygon
+                    key={ `oob-${ key }` }
+                    points={ points }
+                    fill="rgba(250, 204, 21, 0.45)"
+                    stroke="#facc15"
+                    strokeWidth={ 1.5 }
+                    strokeDasharray="3 2"
+                />
+            );
+        }
+        return out.length ? <g data-testid="selection-overlay">{ out }</g> : null;
+    }, [ state.selection, state.tiles ]);
+
     const zoomIn = useCallback(() => setZoom(z => clampZoom(z + ZOOM_STEP)), []);
     const zoomOut = useCallback(() => setZoom(z => clampZoom(z - ZOOM_STEP)), []);
-    // The %% label button restores the default view: fit-to-room
-    // (the same auto-fit that runs on first paint). Clicking it
-    // after manual zoom always gets you back to "room fills the
-    // canvas, room centred".
     const resetView = useCallback(() =>
     {
         fitToRoom();
@@ -211,11 +207,6 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
         };
     }, [ visW ]);
 
-    // Pan gestures: middle-mouse, Shift+left-click, and (when the
-    // hand-tool is active) plain left-click. The hand-tool toggle
-    // is the toolbar affordance — Shift / middle still work even
-    // when the hand isn't on, so power users keep their muscle
-    // memory.
     const isPanGesture = (e: ReactPointerEvent): boolean =>
         e.button === 1
         || (e.button === 0 && e.shiftKey)
@@ -228,7 +219,8 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
             <svg
                 ref={ svgRef }
                 viewBox={ viewBox }
-                className={ `w-full h-full select-none rounded-md border border-zinc-300 bg-[url('@/assets/images/floorplaneditor/canvas_floor_pattern.png')] bg-repeat [image-rendering:pixelated] ${ cursorClass }` }
+                style={ flipped ? { transform: 'scaleX(-1)' } : undefined }
+                className={ `w-full h-full select-none rounded-md border border-zinc-300 bg-[url('@/assets/images/floorplaneditor/canvas_floor_pattern.png')] bg-repeat [image-rendering:pixelated] transition-transform ${ cursorClass }` }
                 onWheel={ onWheel }
                 onPointerDown={ e =>
                 {
@@ -253,12 +245,13 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
                 } }
             >
                 { rows }
+                { outOfBoundsOverlay }
             </svg>
             <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-md bg-white/95 border border-zinc-300 shadow-sm px-1 py-1 text-zinc-700">
                 <button
                     type="button"
                     data-testid="zoom-out"
-                    title="Riduci (Ctrl+rotellina)"
+                    title="Zoom out (Ctrl+wheel)"
                     className="w-7 h-7 flex items-center justify-center rounded hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed"
                     disabled={ zoom <= ZOOM_MIN + 1e-3 }
                     onClick={ zoomOut }
@@ -268,7 +261,7 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
                 <button
                     type="button"
                     data-testid="zoom-reset"
-                    title="Inquadra la stanza"
+                    title="Fit room to view"
                     className="px-2 h-7 min-w-[3rem] flex items-center justify-center rounded hover:bg-zinc-100 text-xs font-bold tabular-nums"
                     onClick={ resetView }
                 >
@@ -277,7 +270,7 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
                 <button
                     type="button"
                     data-testid="zoom-in"
-                    title="Ingrandisci (Ctrl+rotellina)"
+                    title="Zoom in (Ctrl+wheel)"
                     className="w-7 h-7 flex items-center justify-center rounded hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed"
                     disabled={ zoom >= ZOOM_MAX - 1e-3 }
                     onClick={ zoomIn }
@@ -288,7 +281,7 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
                 <button
                     type="button"
                     data-testid="zoom-recenter"
-                    title="Centra sulla stanza (mantiene lo zoom)"
+                    title="Recenter on room (keep zoom)"
                     className="w-7 h-7 flex items-center justify-center rounded hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed"
                     disabled={ !roomBounds }
                     onClick={ () =>
@@ -298,6 +291,16 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
                     } }
                 >
                     <FaCrosshairs size={ 12 } />
+                </button>
+                <button
+                    type="button"
+                    data-testid="zoom-flip"
+                    data-active={ flipped ? 'true' : 'false' }
+                    title={ flipped ? 'Original view' : 'View from the other side' }
+                    className={ `w-7 h-7 flex items-center justify-center rounded transition-colors ${ flipped ? 'bg-amber-400 text-zinc-900 hover:bg-amber-500' : 'hover:bg-zinc-100' }` }
+                    onClick={ () => setFlipped(v => !v) }
+                >
+                    <FaSyncAlt size={ 12 } />
                 </button>
             </div>
         </div>

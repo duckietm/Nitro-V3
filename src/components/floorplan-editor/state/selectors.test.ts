@@ -34,9 +34,6 @@ describe('areaCount', () =>
 
     it('treats blocked tiles as non-tiles (per existing UI semantics)', () =>
     {
-        // In the original implementation, height === 'x' was the marker for "not a tile".
-        // total counts placed tiles only (i.e. !blocked), walkable equals total since blocked are excluded.
-        // This matches the legacy calculateArea() behaviour where blocked tiles were skipped entirely.
         const grid = [
             [{ h: 0, blocked: true }, { h: 0, blocked: true }, { h: 0, blocked: true }],
             [{ h: 0, blocked: false }, { h: 1, blocked: false }, { h: 0, blocked: true }]

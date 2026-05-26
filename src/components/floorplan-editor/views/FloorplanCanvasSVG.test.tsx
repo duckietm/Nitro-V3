@@ -15,7 +15,6 @@ describe('FloorplanCanvasSVG', () =>
             ]
         };
         const { container } = render(<FloorplanCanvasSVG state={ state } dispatch={ () => {} } />);
-        // 3 non-blocked tiles → 3 base polygons (plus possibly selection/door extras)
         const polys = container.querySelectorAll('polygon');
         expect(polys.length).toBeGreaterThanOrEqual(3);
     });
@@ -41,7 +40,6 @@ describe('FloorplanCanvasSVG', () =>
         const dispatch = vi.fn();
         const { container } = render(<FloorplanCanvasSVG state={ state } dispatch={ dispatch } />);
         const svg = container.querySelector('svg') as SVGSVGElement;
-        // jsdom getBoundingClientRect returns zeros; we need to stub it so projection works.
         svg.getBoundingClientRect = () => ({ left: 0, top: 0, right: 2048, bottom: 1024, width: 2048, height: 1024, x: 0, y: 0, toJSON: () => ({}) });
         fireEvent.pointerDown(svg, { clientX: 1024, clientY: 0, pointerId: 1 });
         expect(dispatch).toHaveBeenCalled();

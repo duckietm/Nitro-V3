@@ -22,8 +22,6 @@ describe('tileToScreen / screenToTile round-trip', () =>
 
     it('rounds to the containing diamond for jittered points', () =>
     {
-        // The diamond for tile (R, C) is centered at tileToScreen(R, C).
-        // Small jitter inside the diamond should still resolve to the same tile under round-to-nearest.
         const [ sx, sy ] = tileToScreen(7, 2);
         const [ r, c ] = screenToTile(sx + 2, sy + 1);
         expect(Math.round(r)).toBe(7);

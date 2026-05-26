@@ -116,11 +116,11 @@ export const reducer = (state: FloorplanState, action: FloorplanAction): Floorpl
         case 'SELECT_ALL':
         {
             const sel = new Set<`${number},${number}`>();
-            for(let r = 0; r < state.tiles.length; r++)
+            for(let r = 0; r < MAX_NUM_TILE_PER_AXIS; r++)
             {
-                for(let c = 0; c < (state.tiles[r]?.length ?? 0); c++)
+                for(let c = 0; c < MAX_NUM_TILE_PER_AXIS; c++)
                 {
-                    if(!state.tiles[r][c].blocked) sel.add(`${r},${c}`);
+                    sel.add(`${r},${c}`);
                 }
             }
             return { ...state, selection: sel };
@@ -131,17 +131,71 @@ export const reducer = (state: FloorplanState, action: FloorplanAction): Floorpl
         {
             const [ r0, c0 ] = action.from;
             const [ r1, c1 ] = action.to;
-            const rMin = Math.min(r0, r1), rMax = Math.max(r0, r1);
-            const cMin = Math.min(c0, c1), cMax = Math.max(c0, c1);
+            const rMin = Math.max(0, Math.min(r0, r1));
+            const rMax = Math.min(MAX_NUM_TILE_PER_AXIS - 1, Math.max(r0, r1));
+            const cMin = Math.max(0, Math.min(c0, c1));
+            const cMax = Math.min(MAX_NUM_TILE_PER_AXIS - 1, Math.max(c0, c1));
             const sel = new Set<`${number},${number}`>();
             for(let r = rMin; r <= rMax; r++)
             {
                 for(let c = cMin; c <= cMax; c++)
                 {
-                    if(state.tiles[r]?.[c] && !state.tiles[r][c].blocked) sel.add(`${r},${c}`);
+                    sel.add(`${r},${c}`);
                 }
             }
             return { ...state, selection: sel };
+        }
+        case 'APPLY_BRUSH_TO_SELECTION':
+        {
+            if(state.selection.size === 0) return state;
+            if(state.brush.action === 'DOOR') return { ...state, selection: new Set() };
+
+            let maxR = -1;
+            let maxC = -1;
+            for(const key of state.selection)
+            {
+                const [ rStr, cStr ] = key.split(',');
+                const r = parseInt(rStr, 10);
+                const c = parseInt(cStr, 10);
+                if(r > maxR) maxR = r;
+                if(c > maxC) maxC = c;
+            }
+
+            let tiles = state.tiles;
+            if(state.brush.action === 'SET' && maxR >= 0 && maxC >= 0)
+            {
+                tiles = ensureRect(tiles, maxR + 1, maxC + 1);
+            }
+
+            for(const key of state.selection)
+            {
+                const [ rStr, cStr ] = key.split(',');
+                const row = parseInt(rStr, 10);
+                const col = parseInt(cStr, 10);
+                const current = tiles[row]?.[col];
+                if(!current) continue;
+
+                switch(state.brush.action)
+                {
+                    case 'SET':
+                        tiles = setTile(tiles, row, col, { h: clampHeight(state.brush.h), blocked: false });
+                        break;
+                    case 'UNSET':
+                        if(current.blocked) continue;
+                        tiles = setTile(tiles, row, col, { h: current.h, blocked: true });
+                        break;
+                    case 'UP':
+                        if(current.blocked) continue;
+                        tiles = setTile(tiles, row, col, { h: clampHeight(current.h + 1), blocked: false });
+                        break;
+                    case 'DOWN':
+                        if(current.blocked) continue;
+                        tiles = setTile(tiles, row, col, { h: clampHeight(current.h - 1), blocked: false });
+                        break;
+                }
+            }
+
+            return { ...state, tiles, selection: new Set() };
         }
         case 'SQUARE_SELECT_TOGGLE':
             return { ...state, squareSelect: !state.squareSelect };

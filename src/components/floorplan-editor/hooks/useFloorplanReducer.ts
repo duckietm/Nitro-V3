@@ -21,10 +21,6 @@ type Api = {
     canRedo: boolean;
 };
 
-// Actions that DON'T change the room model — they only affect the
-// editor's UI state (brush selection, drag-select rectangle, …) and
-// should NOT push a new history snapshot. Brushing a tile, moving a
-// door, changing thickness, etc. all DO push history.
 const isNonHistoryAction = (action: FloorplanAction): boolean =>
 {
     switch(action.type)
@@ -40,10 +36,6 @@ const isNonHistoryAction = (action: FloorplanAction): boolean =>
     }
 };
 
-// Remote-driven actions also bypass history — they represent the
-// "true" server state, not a user edit. Treating a server push as
-// a history step would let the user "undo" a server snapshot, which
-// makes no sense.
 const isRemoteAction = (action: FloorplanAction): boolean =>
 {
     if(action.type === 'APPLY_REMOTE_DIFF' || action.type === 'APPLY_REMOTE_SNAPSHOT') return true;
@@ -56,23 +48,12 @@ export const useFloorplanReducer = (): Api =>
 {
     const [ state, dispatch ] = useReducer(reducer, initialState);
 
-    // Past / future stacks — paired with `state` to form a linear
-    // timeline (`past` ++ [state] ++ `future`). Refs because the
-    // wrappedDispatch closure needs the latest value but we don't
-    // want every push to trigger a re-render. canUndo / canRedo are
-    // separately tracked as React state so the UI buttons disable
-    // correctly.
     const pastRef = useRef<FloorplanState[]>([]);
     const futureRef = useRef<FloorplanState[]>([]);
     const [ canUndo, setCanUndo ] = useState(false);
     const [ canRedo, setCanRedo ] = useState(false);
     const stateRef = useRef<FloorplanState>(state);
 
-    // Keep stateRef in sync with the latest committed render so the
-    // history pushers (which run inside callbacks, not during
-    // render) always see the up-to-date state. Writing the ref
-    // inside an effect — not directly in the render body — is what
-    // React's `refs-during-render` rule enforces.
     useEffect(() =>
     {
         stateRef.current = state;
@@ -92,8 +73,6 @@ export const useFloorplanReducer = (): Api =>
             return;
         }
 
-        // Local edit: push current state onto past, drop future
-        // (any redo branch is invalidated by a new edit).
         pastRef.current.push(stateRef.current);
 
         if(pastRef.current.length > HISTORY_LIMIT) pastRef.current.shift();
@@ -106,7 +85,6 @@ export const useFloorplanReducer = (): Api =>
 
     const loadFromServer = useCallback((s: ServerFloorSettings) =>
     {
-        // Server load wipes history — the document is fresh.
         pastRef.current = [];
         futureRef.current = [];
         dispatch({
@@ -133,15 +111,6 @@ export const useFloorplanReducer = (): Api =>
             thickness: previous.thickness,
             wallHeight: previous.wallHeight,
             seq: previous.seq });
-        // The APPLY_REMOTE_SNAPSHOT action re-parses the tilemap;
-        // but we also want to restore brush/selection state. Wrap
-        // the dispatch in an effect-like immediate sync by writing
-        // through stateRef AFTER React commits — handled by the
-        // next render setting stateRef. The selection/brush carried
-        // by `previous` is recovered on the next mutating dispatch
-        // since the reducer's APPLY_REMOTE_SNAPSHOT path resets
-        // selection (acceptable: undoing a paint clears the
-        // selection rectangle, which matches user intuition).
         refreshCanFlags();
     }, [ refreshCanFlags ]);
 
@@ -166,12 +135,6 @@ export const useFloorplanReducer = (): Api =>
     }), [ state, wrappedDispatch, loadFromServer, undo, redo, canUndo, canRedo ]);
 };
 
-// Local serializer mirror — the reducer's APPLY_REMOTE_SNAPSHOT
-// path takes a raw tilemap string, but our history entries are
-// the live Tile[][] arrays. Re-emit `\r`-joined rows in the same
-// shape the encoding module uses for SAVES (we keep this here to
-// avoid a circular import: state/reducer already imports
-// state/encoding).
 const serializeTilesForSnapshot = (tiles: { h: number; blocked: boolean }[][]): string =>
 {
     if(!tiles || tiles.length === 0) return '';

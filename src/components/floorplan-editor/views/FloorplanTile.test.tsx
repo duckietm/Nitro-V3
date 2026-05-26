@@ -32,4 +32,25 @@ describe('FloorplanTile', () =>
         const { container } = render(svg(<FloorplanTile row={ 0 } col={ 0 } tile={ { h: 0, blocked: false } } selected={ true } isDoor={ false } />));
         expect(container.querySelector('[data-testid="selection-ring"]')).toBeTruthy();
     });
+
+    it('renders south + west side walls when h > neighbour heights', () =>
+    {
+        const { container } = render(svg(<FloorplanTile row={ 0 } col={ 0 } tile={ { h: 4, blocked: false } } selected={ false } isDoor={ false } southH={ 0 } westH={ 0 } />));
+        expect(container.querySelector('[data-testid="tile-south-wall"]')).toBeTruthy();
+        expect(container.querySelector('[data-testid="tile-west-wall"]')).toBeTruthy();
+    });
+
+    it('omits south wall when south neighbour is at or above the tile height', () =>
+    {
+        const { container } = render(svg(<FloorplanTile row={ 0 } col={ 0 } tile={ { h: 3, blocked: false } } selected={ false } isDoor={ false } southH={ 3 } westH={ 0 } />));
+        expect(container.querySelector('[data-testid="tile-south-wall"]')).toBeNull();
+        expect(container.querySelector('[data-testid="tile-west-wall"]')).toBeTruthy();
+    });
+
+    it('omits all walls for ground-level tiles', () =>
+    {
+        const { container } = render(svg(<FloorplanTile row={ 0 } col={ 0 } tile={ { h: 0, blocked: false } } selected={ false } isDoor={ false } southH={ 0 } westH={ 0 } />));
+        expect(container.querySelector('[data-testid="tile-south-wall"]')).toBeNull();
+        expect(container.querySelector('[data-testid="tile-west-wall"]')).toBeNull();
+    });
 });

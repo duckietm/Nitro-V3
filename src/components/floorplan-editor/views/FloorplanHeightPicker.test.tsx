@@ -4,9 +4,6 @@ import { afterEach, describe, it, expect, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { FloorplanHeightPicker } from './FloorplanHeightPicker';
 
-// Force a fixed track size into getBoundingClientRect so the
-// pointer-y -> height math is reproducible regardless of jsdom's
-// layout (which would otherwise hand back zeroes).
 const TRACK_HEIGHT = 260;
 
 const stubTrackGeometry = (top = 0) =>
@@ -99,8 +96,6 @@ describe('FloorplanHeightPicker', () =>
 
         fireEvent.pointerDown(track, { clientY: TRACK_HEIGHT / 2, button: 0 });
 
-        // (1 - 0.5) * 26 = 13. The exact value depends on Math.round,
-        // which here lands on 13 for a half-track click.
         expect(onSelect).toHaveBeenCalledWith(13);
 
         restore();
@@ -124,9 +119,6 @@ describe('FloorplanHeightPicker', () =>
 
     it('thumb fill matches the tile colour at the picked height', () =>
     {
-        // h=0 is solid blue (#0065ff in COLORMAP). Re-render at a
-        // different height and assert the recorded thumb colour
-        // changes — i.e., the thumb tracks the band underneath.
         const { rerender } = render(<FloorplanHeightPicker selectedH={ 0 } onSelect={ () => undefined } />);
 
         const colourAtZero = screen.getByTestId('height-thumb').getAttribute('data-thumb-color');

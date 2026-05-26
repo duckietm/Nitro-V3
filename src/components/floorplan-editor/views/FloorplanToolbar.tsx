@@ -12,13 +12,6 @@ type Props = {
     onUndo?: () => void;
     onRedo?: () => void;
     panMode?: boolean;
-    /**
-     * Imperative setter for pan mode. Receiving the explicit
-     * value (not a toggle) lets every tool button switch the
-     * hand off on click without needing to know its current
-     * state — the hand is part of the same exclusive tool group
-     * as the brushes, so picking any brush has to clear it.
-     */
     setPanMode?: (next: boolean) => void;
 };
 
@@ -32,9 +25,6 @@ const BRUSH_BUTTONS: { id: string; mode: FloorActionMode; iconClass: string }[] 
 
 export const FloorplanToolbar: FC<Props> = ({ state, dispatch, canUndo, canRedo, onUndo, onRedo, panMode, setPanMode }) =>
 {
-    // The hand and the brush buttons form a single exclusive tool
-    // group. Picking ANY other tool clears pan mode so the user
-    // never ends up in 'I clicked SET but the canvas still pans'.
     const exitPan = () =>
     {
         if(panMode && setPanMode) setPanMode(false);
@@ -48,7 +38,7 @@ export const FloorplanToolbar: FC<Props> = ({ state, dispatch, canUndo, canRedo,
                     pointer
                     data-testid="tool-pan"
                     data-active={ panMode ? 'true' : 'false' }
-                    title={ panMode ? 'Modalità mano attiva — trascina per spostare la vista' : 'Modalità mano — trascina per spostare la vista' }
+                    title={ panMode ? 'Hand mode active — drag to pan the view' : 'Hand mode — drag to pan the view' }
                     className={ `w-7 h-7 flex items-center justify-center rounded border ${ panMode ? 'bg-emerald-500 border-emerald-700 text-white shadow-inner' : 'border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700' }` }
                     onClick={ () => setPanMode(!panMode) }
                 >
@@ -77,18 +67,21 @@ export const FloorplanToolbar: FC<Props> = ({ state, dispatch, canUndo, canRedo,
             <Base
                 pointer
                 data-testid="tool-select-all"
-                className={ `nitro-icon ${ state.selection.size > 0 ? 'icon-set-deselect' : 'icon-set-select' }` }
+                className={ `nitro-icon ${ state.brush.action === 'UNSET' ? 'icon-set-deselect' : 'icon-set-select' }` }
+                title={ state.brush.action === 'UNSET' ? 'Erase all tiles' : 'Apply brush to all tiles' }
                 onClick={ () =>
                 {
                     exitPan();
                     dispatch({ type: 'SELECT_ALL' });
+                    dispatch({ type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
                 } }
             />
             <Base
                 pointer
                 data-testid="tool-square-select"
                 data-active={ state.squareSelect && !panMode ? 'true' : 'false' }
-                className={ `nitro-icon icon-set-squaresselect ${ state.squareSelect && !panMode ? 'border border-primary' : '' }` }
+                title={ state.squareSelect && !panMode ? 'Rectangular selection mode active — drag on the canvas to apply the brush' : 'Rectangular selection — apply the brush to all tiles in an area' }
+                className={ `nitro-icon icon-set-squaresselect transition-shadow ${ state.squareSelect && !panMode ? 'border-2 border-amber-500 bg-amber-400 shadow-[0_0_0_2px_rgba(245,158,11,0.45)]' : '' }` }
                 onClick={ () =>
                 {
                     exitPan();
@@ -100,7 +93,7 @@ export const FloorplanToolbar: FC<Props> = ({ state, dispatch, canUndo, canRedo,
                     <Base
                         pointer={ Boolean(canUndo) }
                         data-testid="tool-undo"
-                        title="Annulla (Ctrl+Z)"
+                        title="Undo (Ctrl+Z)"
                         className={ `w-7 h-7 flex items-center justify-center rounded border ${ canUndo ? 'border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700' : 'border-zinc-200 bg-zinc-100 text-zinc-300 cursor-not-allowed' }` }
                         onClick={ canUndo && onUndo ? onUndo : undefined }
                     >
@@ -109,7 +102,7 @@ export const FloorplanToolbar: FC<Props> = ({ state, dispatch, canUndo, canRedo,
                     <Base
                         pointer={ Boolean(canRedo) }
                         data-testid="tool-redo"
-                        title="Ripeti (Ctrl+Shift+Z)"
+                        title="Redo (Ctrl+Shift+Z)"
                         className={ `w-7 h-7 flex items-center justify-center rounded border ${ canRedo ? 'border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700' : 'border-zinc-200 bg-zinc-100 text-zinc-300 cursor-not-allowed' }` }
                         onClick={ canRedo && onRedo ? onRedo : undefined }
                     >

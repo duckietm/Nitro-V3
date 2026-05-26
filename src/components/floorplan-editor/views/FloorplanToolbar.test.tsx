@@ -27,14 +27,21 @@ describe('FloorplanToolbar', () =>
         expect(types).toEqual([ 'UNSET', 'UP', 'DOWN', 'DOOR' ]);
     });
 
-    it('select-all and square-select dispatch their actions', () =>
+    it('select-all dispatches SELECT_ALL + APPLY_BRUSH_TO_SELECTION (bulk-apply UX)', () =>
     {
         const dispatch = vi.fn();
         const { getByTestId } = render(<FloorplanToolbar state={ initialState } dispatch={ dispatch } />);
         fireEvent.click(getByTestId('tool-select-all'));
-        fireEvent.click(getByTestId('tool-square-select'));
         expect(dispatch).toHaveBeenNthCalledWith(1, { type: 'SELECT_ALL' });
-        expect(dispatch).toHaveBeenNthCalledWith(2, { type: 'SQUARE_SELECT_TOGGLE' });
+        expect(dispatch).toHaveBeenNthCalledWith(2, { type: 'APPLY_BRUSH_TO_SELECTION', source: 'local' });
+    });
+
+    it('square-select dispatches SQUARE_SELECT_TOGGLE', () =>
+    {
+        const dispatch = vi.fn();
+        const { getByTestId } = render(<FloorplanToolbar state={ initialState } dispatch={ dispatch } />);
+        fireEvent.click(getByTestId('tool-square-select'));
+        expect(dispatch).toHaveBeenCalledWith({ type: 'SQUARE_SELECT_TOGGLE' });
     });
 
     it('marks active brush button with data-active', () =>

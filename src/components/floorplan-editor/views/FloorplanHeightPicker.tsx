@@ -12,12 +12,6 @@ const TRACK_H = 260;
 const THUMB_DIAM = 28;
 const RAIL_GUTTER = 4;
 
-/**
- * Perceptual-luminance heuristic. Returns true if a hex colour is
- * 'light enough' that black text reads better than white. Uses the
- * Rec. 601 luma coefficients — good enough for a UI affordance,
- * cheap to compute, no dep on a colour lib.
- */
 const isLightColor = (hex: string): boolean =>
 {
     const c = hex.replace('#', '');
@@ -32,26 +26,6 @@ const isLightColor = (hex: string): boolean =>
     return luma > 160;
 };
 
-/**
- * Vertical brush-height slider.
- *
- * Track   - discrete-step gradient built from the real tile-fill
- *           colours, top = HEIGHT_BRUSH_MAX, bottom = HEIGHT_BRUSH_MIN.
- *           Each height owns a clear band so colour <-> height stays
- *           legible at a glance, exactly like the swatch column it
- *           replaces.
- * Min/max - small chip labels float above and below the rail so the
- *           user knows what the endpoints mean without trial and
- *           error.
- * Thumb   - amber radial gradient on a soft drop shadow, white ring
- *           when hovered, darker ring while dragging. Renders the
- *           current value in the middle so the user reads the
- *           number directly off the handle.
- * Gesture - click the rail to jump, click-and-drag the thumb (or
- *           rail) to scrub. Window-level pointer listeners keep
- *           the drag alive even when the cursor leaves the narrow
- *           strip. Vertical scroll on touch is suppressed.
- */
 export const FloorplanHeightPicker: FC<Props> = ({ selectedH, onSelect }) =>
 {
     const count = HEIGHT_BRUSH_MAX - HEIGHT_BRUSH_MIN + 1;
@@ -135,7 +109,7 @@ export const FloorplanHeightPicker: FC<Props> = ({ selectedH, onSelect }) =>
             className="relative shrink-0 select-none touch-none flex flex-col items-center"
             style={ { width: THUMB_DIAM + RAIL_GUTTER * 2, height: TRACK_H + 32 } }
             role="slider"
-            aria-label="Altezza pennello"
+            aria-label="Brush height"
             aria-valuemin={ HEIGHT_BRUSH_MIN }
             aria-valuemax={ HEIGHT_BRUSH_MAX }
             aria-valuenow={ selectedH }
@@ -164,13 +138,6 @@ export const FloorplanHeightPicker: FC<Props> = ({ selectedH, onSelect }) =>
                         width: THUMB_DIAM,
                         height: THUMB_DIAM,
                         top: `${ thumbPct }%`,
-                        // Thumb fill picks up the colour of the band
-                        // under it — visual continuity with the
-                        // gradient so users see the colour of the
-                        // height they're picking, not a generic
-                        // amber chip. Radial highlight + bottom
-                        // shadow give it a beaded look without
-                        // hiding the underlying colour.
                         background: `radial-gradient(circle at 32% 28%, ${ thumbTextDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.55)' } 0%, ${ thumbColor } 45%, ${ thumbColor } 78%, rgba(0, 0, 0, 0.25) 100%)`,
                         border: '2px solid rgba(0, 0, 0, 0.55)',
                         boxShadow: '0 2px 5px rgba(0, 0, 0, 0.35), inset 0 -2px 3px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.4)',
