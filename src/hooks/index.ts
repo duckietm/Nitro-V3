@@ -8,6 +8,7 @@ export * from './friends';
 export * from './game-center';
 export * from './groups';
 export * from './help';
+export * from './housekeeping';
 export * from './inventory';
 export * from './mod-tools';
 export * from './navigator';
