@@ -69,10 +69,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         toggleTimeoutRef.current = setTimeout(() => { toggleLockRef.current = false; }, TOGGLE_LOCK_MS);
     }, []);
 
-    const compactFramePosition = (isToolbarOpen && isInRoom) ? 'bottom-[90px] min-[1540px]:bottom-0' : 'bottom-0';
-    const mobileOnlyClasses = isTouchLayout ? '' : 'min-[1540px]:hidden';
-    const desktopBlockClasses = isTouchLayout ? 'hidden' : 'hidden min-[1540px]:block';
-    const desktopFlexClasses = isTouchLayout ? 'hidden' : 'hidden min-[1540px]:flex';
+    const compactFramePosition = (isToolbarOpen && isInRoom) ? 'bottom-[90px] min-[1700px]:bottom-0' : 'bottom-0';
+    const mobileOnlyClasses = isTouchLayout ? '' : 'min-[1700px]:hidden';
+    const desktopBlockClasses = isTouchLayout ? 'hidden' : 'hidden min-[1700px]:block';
+    const desktopFlexClasses = isTouchLayout ? 'hidden' : 'hidden min-[1700px]:flex';
     const leftNavVariants = useMemo<Variants>(() => ({
         hidden: { opacity: 0, x: isInRoom ? -10 : 0, y: isInRoom ? 0 : 8, pointerEvents: 'none' },
         visible: { opacity: 1, x: 0, y: 0, pointerEvents: 'auto' }
