@@ -1,44 +1,18 @@
 import { GetRoomEngine, GetRoomMessageHandler } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { serializeTilemap } from '../../../components/floorplan-editor/state/encoding';
+import { parseTilemap, serializeTilemap } from '../../../components/floorplan-editor/state/encoding';
 import { FloorplanState } from '../../../components/floorplan-editor/state/types';
 import { useActiveRoomSessionSnapshot } from '../../session/useSessionSnapshots';
 
-/**
- * Client-side live preview for the floor-plan editor.
- *
- * Every tile / door / thickness / wallHeight change in the editor
- * is applied IMMEDIATELY to the 3D room behind the editor card
- * via the renderer's local `RoomMessageHandler.applyFloorModelLocally`
- * (added in the renderer's `feat/floorplan-live-preview` branch).
- * Nothing is sent to the server until the user explicitly clicks
- * Save — at that point `FloorplanEditorView` fires the
- * `UpdateFloorPropertiesMessageComposer` directly.
- *
- * Closing the editor without saving leaves the live preview
- * in place visually. To restore the pre-edit room, call `revert`
- * — it re-applies the baseline payload locally. The next
- * `FloorHeightMapEvent` from the server (e.g. on room re-enter)
- * also wins and overwrites whatever preview is in place.
- *
- * Thickness changes additionally call
- * `RoomEngine.updateRoomInstancePlaneThickness` for zero-latency
- * wall/floor depth feedback (the full geometry rebuild that
- * `applyFloorModelLocally` performs already reflects the new
- * thickness in its plane data, but the dedicated thickness
- * setter is cheaper and updates instantly as a slider is dragged).
- */
+const normalizeTilemap = (raw: string): string => serializeTilemap(parseTilemap(raw));
 
 export type LivePreviewPayload = {
-    /** Newline-or-CR-separated tilemap (the renderer parser accepts \r). */
     tilemap: string;
     doorX: number;
     doorY: number;
     doorDir: number;
-    /** Editor-space (0..3). */
     thicknessWall: number;
     thicknessFloor: number;
-    /** Editor-space (1..N). Server space is `wallHeight - 1`. */
     wallHeight: number;
 };
 
@@ -48,17 +22,8 @@ export type UseFloorplanLiveSyncOptions = {
 };
 
 export type UseFloorplanLiveSyncApi = {
-    /**
-     * Mark a payload as "currently shown in the room" so subsequent
-     * state diffs are computed against it. Editors call this on
-     * every server-driven snapshot push (FloorHeightMapEvent,
-     * RoomVisualizationSettingsEvent, …).
-     */
     setBaseline: (payload: LivePreviewPayload) => void;
-    /**
-     * Restore the in-room preview to the recorded baseline.
-     * Use when the user closes the editor without saving.
-     */
+    mergeBaseline: (partial: Partial<LivePreviewPayload>) => void;
     revert: () => void;
 };
 
@@ -121,7 +86,6 @@ export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloo
 
     const baselineRef = useRef<LivePreviewPayload | null>(null);
     const lastAppliedRef = useRef<LivePreviewPayload | null>(null);
-    const wasEnabledRef = useRef(false);
 
     const { tiles, door, thickness, wallHeight } = state;
     const currentPayload = useMemo<LivePreviewPayload>(() => ({
@@ -136,8 +100,29 @@ export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloo
 
     const setBaseline = useCallback((payload: LivePreviewPayload) =>
     {
-        baselineRef.current = payload;
-        lastAppliedRef.current = payload;
+        const normalized: LivePreviewPayload = {
+            ...payload,
+            tilemap: normalizeTilemap(payload.tilemap)
+        };
+
+        baselineRef.current = normalized;
+        lastAppliedRef.current = normalized;
+    }, []);
+
+    const mergeBaseline = useCallback((partial: Partial<LivePreviewPayload>) =>
+    {
+        const previous = baselineRef.current;
+
+        if(!previous) return;
+
+        const next: LivePreviewPayload = {
+            ...previous,
+            ...partial,
+            tilemap: partial.tilemap !== undefined ? normalizeTilemap(partial.tilemap) : previous.tilemap
+        };
+
+        baselineRef.current = next;
+        lastAppliedRef.current = next;
     }, []);
 
     const revert = useCallback(() =>
@@ -151,23 +136,15 @@ export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloo
 
     useEffect(() =>
     {
-        if(!enabled)
-        {
-            wasEnabledRef.current = false;
-            return;
-        }
-
+        if(!enabled) return;
         if(!baselineRef.current) return;
-
-        const isFirstEnable = !wasEnabledRef.current;
-        wasEnabledRef.current = true;
 
         const previous = lastAppliedRef.current;
 
-        if(!isFirstEnable && previous && livePreviewPayloadsEqual(currentPayload, previous)) return;
+        if(previous && livePreviewPayloadsEqual(currentPayload, previous)) return;
 
         if(applyToRenderer(currentPayload, roomId)) lastAppliedRef.current = currentPayload;
     }, [ enabled, currentPayload, roomId ]);
 
-    return { setBaseline, revert };
+    return { setBaseline, mergeBaseline, revert };
 };

@@ -1,6 +1,6 @@
 import { AddLinkEventTracker, convertNumbersForSaving, convertSettingToNumber, FloorHeightMapEvent, GetRoomEntryTileMessageComposer, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEntryTileMessageEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { FaBolt, FaCaretLeft, FaCaretRight } from 'react-icons/fa';
+import { FaBolt, FaBoxOpen, FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../api';
 import { Button, ButtonGroup, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
@@ -29,6 +29,7 @@ export const FloorplanEditorView: FC = () =>
     const [ importExportVisible, setImportExportVisible ] = useState(false);
     const [ liveSync, setLiveSync ] = useState(true);
     const [ panMode, setPanMode ] = useState(false);
+    const [ autoPickup, setAutoPickup ] = useState(false);
     const { state, dispatch, loadFromServer, undo, redo, canUndo, canRedo } = useFloorplanReducer();
     const originalRef = useRef<{
         tilemap: string;
@@ -41,7 +42,7 @@ export const FloorplanEditorView: FC = () =>
 
     const area = useMemo(() => areaCount(state.tiles), [ state.tiles ]);
 
-    const { setBaseline, revert: revertLivePreview } = useFloorplanLiveSync({ enabled: liveSync && isVisible, state });
+    const { setBaseline, mergeBaseline, revert: revertLivePreview } = useFloorplanLiveSync({ enabled: liveSync && isVisible, state });
 
     useNitroEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, () => setIsVisible(false));
 
@@ -64,6 +65,7 @@ export const FloorplanEditorView: FC = () =>
         };
         dispatch({ type: 'SET_DOOR', x: parser.x, y: parser.y, source: 'remote' });
         dispatch({ type: 'SET_DOOR_DIR', dir: ((parser.direction | 0) & 7) as EntryDir, source: 'remote' });
+        mergeBaseline({ doorX: parser.x, doorY: parser.y, doorDir: (parser.direction | 0) & 7 });
     });
 
     useMessageEvent<FloorHeightMapEvent>(FloorHeightMapEvent, event =>
@@ -110,6 +112,7 @@ export const FloorplanEditorView: FC = () =>
             wallHeight: originalRef.current?.wallHeight ?? -1
         };
         dispatch({ type: 'SET_THICKNESS', wall, floor, source: 'remote' });
+        mergeBaseline({ thicknessWall: wall, thicknessFloor: floor });
     });
 
     useEffect(() =>
@@ -173,7 +176,8 @@ export const FloorplanEditorView: FC = () =>
             state.door.dir,
             convertNumbersForSaving(state.thickness.wall),
             convertNumbersForSaving(state.thickness.floor),
-            state.wallHeight - 1
+            state.wallHeight - 1,
+            autoPickup
         ));
     };
 
@@ -224,7 +228,17 @@ export const FloorplanEditorView: FC = () =>
                             <Flex
                                 alignItems="center"
                                 gap={ 1 }
-                                className={ `ml-auto border rounded px-2 py-1 cursor-pointer select-none ${ liveSync ? 'bg-emerald-500/15 border-emerald-500 text-emerald-700' : 'border-zinc-400 text-zinc-600' }` }
+                                className={ `ml-auto border rounded px-2 py-1 cursor-pointer select-none ${ autoPickup ? 'bg-amber-500/15 border-amber-500 text-amber-700' : 'border-zinc-400 text-zinc-600' }` }
+                                onClick={ () => setAutoPickup(v => !v) }
+                                title="On save: pick up furniture blocking the new floor plan and return it to its owner's inventory"
+                            >
+                                <FaBoxOpen className={ autoPickup ? 'text-amber-600' : 'text-zinc-500' } />
+                                <Text bold small>{ autoPickup ? 'Pick up blocking furni ON' : 'Pick up blocking furni OFF' }</Text>
+                            </Flex>
+                            <Flex
+                                alignItems="center"
+                                gap={ 1 }
+                                className={ `border rounded px-2 py-1 cursor-pointer select-none ${ liveSync ? 'bg-emerald-500/15 border-emerald-500 text-emerald-700' : 'border-zinc-400 text-zinc-600' }` }
                                 onClick={ () => setLiveSync(v => !v) }
                                 title="Local in-room preview while drawing (does not save to server)"
                             >
@@ -256,7 +270,8 @@ export const FloorplanEditorView: FC = () =>
                             state.door.dir,
                             convertNumbersForSaving(state.thickness.wall),
                             convertNumbersForSaving(state.thickness.floor),
-                            state.wallHeight - 1
+                            state.wallHeight - 1,
+                            autoPickup
                         ));
                     } }
                     onRevertText={ () => originalRef.current?.tilemap ?? serializeTilemap(state.tiles) }
