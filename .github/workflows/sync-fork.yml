@@ -1,0 +1,48 @@
+name: Safe Sync - Nitro-V3
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Sincronizza ogni giorno a mezzanotte UTC
+  workflow_dispatch: # Permette l'avvio manuale dalla scheda Actions
+
+jobs:
+  sync-safe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Scarica tutta la cronologia per poter fare il merge correttamente
+
+      - name: Configure Git Credentials
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch and Merge Upstream
+        run: |
+          # Aggiunge il repository originale
+          git remote add upstream https://github.com/duckietm/Nitro-V3.git
+          git fetch upstream
+          
+          # Cicla su tutti i branch presenti nell'upstream originale
+          for branch in $(git branch -r | grep 'upstream/' | grep -v 'HEAD'); do
+              local_branch=${branch#upstream/}
+              echo "Elaborazione branch: $local_branch"
+              
+              # Si sposta sul branch locale (se non esiste lo crea basandosi sull'upstream)
+              git checkout $local_branch || git checkout -b $local_branch upstream/$local_branch
+              
+              # Esegue il merge delle novità dell'upstream nel tuo branch locale
+              # --no-edit accetta il messaggio di commit automatico di git
+              if git merge upstream/$local_branch --no-edit; then
+                  echo "Merge completato con successo per $local_branch. Invio gli aggiornamenti..."
+                  git push origin $local_branch
+              else
+                  echo "Rilevato conflitto di merge su $local_branch! Il tuo lavoro è al sicuro. Salto il push per questo branch."
+                  git merge --abort
+              fi
+          done
