@@ -52,6 +52,7 @@ export const reducer = (state: FloorplanState, action: FloorplanAction): Floorpl
         {
             const row = clamp64(action.row);
             const col = clamp64(action.col);
+            if(state.tiles[row]?.[col]?.occupied) return state;
             const tiles = ensureRect(state.tiles, row + 1, col + 1);
             const target = { h: clampHeight(action.h), blocked: false };
             const next = setTile(tiles, row, col, target);
@@ -64,6 +65,7 @@ export const reducer = (state: FloorplanState, action: FloorplanAction): Floorpl
             const col = action.col | 0;
             if(row < 0 || col < 0 || row >= state.tiles.length || col >= (state.tiles[0]?.length ?? 0)) return state;
             const current = state.tiles[row][col];
+            if(current.occupied) return state;
             const target = { h: current.h, blocked: true };
             const next = setTile(state.tiles, row, col, target);
             if(next === state.tiles) return state;
@@ -75,7 +77,7 @@ export const reducer = (state: FloorplanState, action: FloorplanAction): Floorpl
             const col = action.col | 0;
             if(row < 0 || col < 0 || row >= state.tiles.length || col >= (state.tiles[0]?.length ?? 0)) return state;
             const current = state.tiles[row][col];
-            if(current.blocked) return state;
+            if(current.blocked || current.occupied) return state;
             const newH = clampHeight(current.h + action.delta);
             if(newH === current.h) return state;
             const next = setTile(state.tiles, row, col, { h: newH, blocked: false });
@@ -105,6 +107,22 @@ export const reducer = (state: FloorplanState, action: FloorplanAction): Floorpl
             const value = Math.max(MIN_WALL_HEIGHT, Math.min(MAX_WALL_HEIGHT, action.value | 0));
             if(value === state.wallHeight) return state;
             return { ...state, wallHeight: value };
+        }
+        case 'SET_OCCUPIED_TILES':
+        {
+            // Mark tiles that currently hold furniture (server-reported). Leaves
+            // height + blocked untouched so it never alters the saved tilemap.
+            const map = action.map ?? [];
+            let changed = false;
+            const tiles = state.tiles.map((r, ri) => r.map((tile, ci) =>
+            {
+                const occ = !!map[ri]?.[ci];
+                if((tile.occupied ?? false) === occ) return tile;
+                changed = true;
+                return { ...tile, occupied: occ };
+            }));
+            if(!changed) return state;
+            return { ...state, tiles };
         }
         case 'BRUSH_SET':
         {
@@ -174,6 +192,7 @@ export const reducer = (state: FloorplanState, action: FloorplanAction): Floorpl
                 const col = parseInt(cStr, 10);
                 const current = tiles[row]?.[col];
                 if(!current) continue;
+                if(current.occupied) continue;
 
                 switch(state.brush.action)
                 {
