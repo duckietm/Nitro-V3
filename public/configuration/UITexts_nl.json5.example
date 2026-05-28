@@ -639,6 +639,8 @@
     'wheel.free.today':     'Je hebt vandaag %count% gratis draaibeurten!',
     'wheel.extra':          'Extra draaibeurten: %count%',
     'wheel.spin':           'DRAAIEN',
+	'wheel.settings':       'Settings',
+	'wheel.settings.title': 'Rad van Fortuin Settings',
     'wheel.buy':            'Draaibeurt kopen',
     'wheel.winners':        'Laatste winnaars',
     'wheel.winners.empty':  'Nog geen winnaars',

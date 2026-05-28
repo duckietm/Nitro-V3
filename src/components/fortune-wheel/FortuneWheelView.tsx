@@ -2,8 +2,9 @@ import { AddLinkEventTracker, GetRoomEngine, ILinkEventTracker, IWheelPrize, Rem
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { LocalizeText } from '../../api';
 import { Column, Flex, LayoutAvatarImageView, LayoutBadgeImageView, LayoutCurrencyIcon, LayoutImage, Text } from '../../common';
-import { useFortuneWheel } from '../../hooks';
+import { useFortuneWheel, useHasPermission } from '../../hooks';
 import { NitroCard } from '../../layout';
+import { FortuneWheelSettingsView } from './FortuneWheelSettingsView';
 
 // Stock UI palette (white / light-blue / grey / black).
 const SLICE_COLORS = [ '#eef2f5', '#c3dcec' ];
@@ -42,7 +43,9 @@ const renderPrizeIcon = (prize: IWheelPrize) =>
 export const FortuneWheelView: FC<{}> = () =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
+    const [ isSettingsOpen, setIsSettingsOpen ] = useState(false);
     const { freeSpins, extraSpins, spinCost, spinCostType, prizes, recentWins, pendingPrizeId, isSpinning, open, spin, buySpin, finishSpin } = useFortuneWheel();
+    const canManage = useHasPermission('acc_wheeladmin');
     const [ rotation, setRotation ] = useState(0);
     const rotationRef = useRef(0);
     const prizesRef = useRef<IWheelPrize[]>([]);
@@ -164,6 +167,12 @@ export const FortuneWheelView: FC<{}> = () =>
                                 { LocalizeText('wheel.buy') } { spinCost }
                                 <LayoutCurrencyIcon type={ spinCostType } />
                             </button>
+                            { canManage &&
+                                <button
+                                    onClick={ () => setIsSettingsOpen(true) }
+                                    className="cursor-pointer rounded bg-[#8a6b3a] px-3 py-2 font-bold text-white hover:bg-[#735730]">
+                                    { LocalizeText('wheel.settings') }
+                                </button> }
                         </Flex>
                     </Column>
                     <Column gap={ 2 } className="min-w-[300px] grow rounded-lg border border-black/10 bg-black/5 p-3">
@@ -186,6 +195,8 @@ export const FortuneWheelView: FC<{}> = () =>
                     </Column>
                 </Flex>
             </NitroCard.Content>
+            { canManage && isSettingsOpen &&
+                <FortuneWheelSettingsView onClose={ () => setIsSettingsOpen(false) } /> }
         </NitroCard>
     );
 };
