@@ -72,61 +72,41 @@ jobs:
           VAR_REPO: ${{ vars.RENDERER_REPO }}
           VAR_REF:  ${{ vars.RENDERER_REF }}
         run: |
-          REPO="${{ github.event.inputs.renderer_repo }}"
-          REF="${{ github.event.inputs.renderer_ref }}"
+          # Branch-aware auto pairing — the default when neither a
+          # dispatch input nor a repo variable is supplied.
+          #
+          # Everything (including the custom features — rare values,
+          # fortune wheel, soundboard) now lives on duckietm's own
+          # `main` / `Dev` branches, so the renderer always pairs
+          # against UPSTREAM_RENDERER_REPO: `main` when the client build
+          # context is `main`, otherwise `Dev`. For PRs the context is
+          # the base ref.
+          case "${GITHUB_EVENT_NAME}" in
+            pull_request)
+              CTX="${GITHUB_BASE_REF}"
+              ;;
+            *)
+              CTX="${GITHUB_REF_NAME}"
+              ;;
+          esac
 
-          if [ -z "$REPO" ] || [ -z "$REF" ]; then
-            # For PRs we usually pair against the base ref, but the HK
-            # PR specifically needs to pair against its OWN head ref —
-            # the renderer companion PR is named identically
-            # (`feat/housekeeping-packets`) and lives on the same fork.
-            case "${GITHUB_EVENT_NAME}" in
-              pull_request)
-                if [ "${GITHUB_HEAD_REF}" = "feat/housekeeping-panel" ]; then
-                  CTX="${GITHUB_HEAD_REF}"
-                else
-                  CTX="${GITHUB_BASE_REF}"
-                fi
-                ;;
-              *)
-                CTX="${GITHUB_REF_NAME}"
-                ;;
-            esac
+          AUTO_REPO="${UPSTREAM_RENDERER_REPO}"
+          case "$CTX" in
+            main) AUTO_REF="main" ;;
+            *)    AUTO_REF="Dev" ;;
+          esac
 
-            case "$CTX" in
-              main)
-                AUTO_REPO="duckietm/Nitro_Render_V3"
-                AUTO_REF="main"
-                ;;
-              Dev)
-                # The client `Dev` branch carries the custom features
-                # (rare values, fortune wheel, soundboard); they live on
-                # the matching renderer fork branch, not upstream.
-                AUTO_REPO="medievalshell/Nitro_Render_V3"
-                AUTO_REF="dev"
-                ;;
-              feat/housekeeping-panel)
-                AUTO_REPO="simoleo89/Nitro_Render_V3"
-                AUTO_REF="feat/housekeeping-packets"
-                ;;
-              *)
-                AUTO_REPO="duckietm/Nitro_Render_V3"
-                AUTO_REF="Dev"
-                ;;
-            esac
-
-            [ -z "$REPO" ] && REPO="$AUTO_REPO"
-            [ -z "$REF" ]  && REF="$AUTO_REF"
-          fi
-
-          # Precedence: dispatch input → repo variable → upstream default.
+          # Precedence (most specific wins): dispatch input → repo
+          # variable → branch-aware auto default. The auto default is
+          # the final fallback so a Dev/feat build never silently pairs
+          # against a renderer that's missing its companion exports.
           REPO="$IN_REPO"
           [ -z "$REPO" ] && REPO="$VAR_REPO"
-          [ -z "$REPO" ] && REPO="$UPSTREAM_RENDERER_REPO"
+          [ -z "$REPO" ] && REPO="$AUTO_REPO"
 
           REF="$IN_REF"
           [ -z "$REF" ] && REF="$VAR_REF"
-          [ -z "$REF" ] && REF="$DEFAULT_REF"
+          [ -z "$REF" ] && REF="$AUTO_REF"
 
           echo "repo=$REPO" >> "$GITHUB_OUTPUT"
           echo "ref=$REF"   >> "$GITHUB_OUTPUT"
