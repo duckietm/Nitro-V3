@@ -1,4 +1,7 @@
-export type Tile = { h: number; blocked: boolean };
+// `blocked` = void tile (no floor, serialized as 'x'). `occupied` = a tile that
+// currently has furniture on it (reported by the server); kept separate so it
+// stays visible and is NOT voided on save — it just can't be edited.
+export type Tile = { h: number; blocked: boolean; occupied?: boolean };
 
 export type EntryDir = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export type ThicknessLevel = 0 | 1 | 2 | 3;
@@ -39,6 +42,7 @@ export type FloorplanAction =
     | { type: 'SET_DOOR_DIR'; dir: EntryDir; source: LocalSource }
     | { type: 'SET_THICKNESS'; wall?: ThicknessLevel; floor?: ThicknessLevel; source: LocalSource }
     | { type: 'SET_WALL_HEIGHT'; value: number; source: LocalSource }
+    | { type: 'SET_OCCUPIED_TILES'; map: boolean[][] }
     | { type: 'BRUSH_SET'; h?: number; action?: FloorActionMode }
     | { type: 'SELECT_RECT'; from: [number, number]; to: [number, number] }
     | { type: 'SELECT_ALL' }

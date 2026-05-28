@@ -1,0 +1,703 @@
+{
+    // ------------------------------------------------------------------------
+    // Friendlist
+    // ------------------------------------------------------------------------
+    'friendlist.search': 'Search friends',
+
+    // ------------------------------------------------------------------------
+    // Purse / Currency
+    // ------------------------------------------------------------------------
+    'purse.seasonal.currency.101': 'doekoes',
+
+    // ------------------------------------------------------------------------
+    // Widget: furni chooser
+    // ------------------------------------------------------------------------
+    'widget.chooser.checkall':     'Select furni',
+    'widget.chooser.btn.pickall':  'pick up the selected items!',
+
+    // ------------------------------------------------------------------------
+    // Game center
+    // ------------------------------------------------------------------------
+    'gamecenter.players':                  'Players',
+    'gamecenter.players.2to6':             '2 to 6 players',
+    'gamecenter.players.2to8':             '2 to 8 players',
+    'gamecenter.players.4to12':            '4 to 12 players',
+    'gamecenter.players.single':           'Single player',
+    'gamecenter.players.score':            'Score:',
+    'gamecenter.players.theme':            'Theme:',
+    'gamecenter.players.winner':           'Winner!',
+
+    // Game descriptions
+    'gamecenter.battleball.description':      'BattleBall is a colorful game in which you must color more surfaces than your opponent. Items appear randomly and give you unique powers to boost your chances. Tactics, skill and quick decisions are the key to victory. Will you become the champion of BattleBall?',
+    'gamecenter.tombrunner.description':      'This treasure hunter is determined to find as many old coins as possible while running through ancient corridors and leaping over enormous cracks. On your journey through this endless 3D running game you will also encounter unstable and fragile bridges. Find out how long you can survive.',
+    'gamecenter.flappybirds.description':     'Flappy Bird is an arcade-style game in which we control the Faby bird, which moves to the right. It is your task to guide Faby through pipes that have equal gaps placed at random heights.',
+    'gamecenter.bargame.description':         'Show off your skills by working in the best bar of the hotel and serving the best drinks to the most demanding customers. Try to be the waiter with the best skills, delivering glasses to win the game and demonstrate your abilities at working with cocktails.',
+    'gamecenter.roombuildergame.description': 'Are you good at building rooms? Do you have enough imagination? Take on the challenge and build a themed room in under 6 minutes. The nicest room wins!',
+
+    // Game center: voting
+    'gamecenter.vote.description':            'Vote on the rooms',
+    'gamecenter.vote.room.made.by':           'Room made by',
+    'gamecenter.vote.room.bestihaveseen':     'This is the nicest room I have ever seen!',
+    'gamecenter.vote.room.nice':              'Fine room, nicely done.',
+    'gamecenter.vote.room.normal':            'An OK room, not bad and not super cool.',
+    'gamecenter.vote.room.couldbebetter':     'This could have been a lot better',
+    'gamecenter.vote.room.bad':               'Help, where is the exit, my eyes hurt!',
+    'gamecenter.vote.room.wait':              'The other players are now voting on your room, please wait!',
+
+    // ------------------------------------------------------------------------
+    // Wired furniture
+    // ------------------------------------------------------------------------
+    'wiredfurni.params.requireall.2':                       'If one of the selected furni has an avatar',
+    'wiredfurni.params.requireall.3':                       'If all selected furni have avatars on them',
+    'wiredfurni.tooltip.select.tile':                       'Select tile',
+    'wiredfurni.tooltip.remove.tile':                       'Deselect tile',
+    'wiredfurni.tooltip.remove.5x5_tile':                   'select 5x5 tiles',
+    'wiredfurni.tooltip.remove.clear_tile':                 'Remove all selections',
+    'wiredfurni.params.furni_neighborhood.group.user':      'Players',
+    'wiredfurni.params.furni_neighborhood.group.furni':     'Furni',
+    'wiredfurni.params.selector_option.bot':                'No BOTs',
+    'wiredfurni.params.selector_option.pet':                'No Pets',
+
+    // Wired furniture: badge received
+    'wiredfurni.badgereceived.title':  'Badge received!',
+    'wiredfurni.badgereceived.body':   'You just received a new badge! Check it out in your inventory!',
+
+    // ------------------------------------------------------------------------
+    // Notifications
+    // ------------------------------------------------------------------------
+    'notification.badge.received':  'New badge!',
+
+    // ------------------------------------------------------------------------
+    // Settings widget
+    // ------------------------------------------------------------------------
+    'widget.settings.general':                    'Default',
+    'widget.settings.general.title':              'Adjust the default nitro settings',
+    'widget.settings.volume':                     'Volume',
+    'widget.settings.interface':                  'Interface',
+    'widget.settings.interface.title':            'Adjust the settings for the interface',
+    'widget.settings.interface.fps.automatic':    'Set FPS to unlimited',
+    'widget.settings.interface.fps.warning':      'Setting FPS to unlimited can cause performance problems!',
+    'widget.settings.interface.secondary':        'Change the window header color',
+    'widget.settings.interface.reset':            'Reset header color to default',
+
+    // ------------------------------------------------------------------------
+    // Room widgets: chat + youtube
+    // ------------------------------------------------------------------------
+    'widget.room.chat.hide_pets':       'Hide pets',
+    'widget.room.chat.hide_avatars':    'Hide avatars',
+    'widget.room.chat.hide_balloon':    'Hide speech bubble',
+    'widget.room.chat.show_balloon':    'Speech bubble',
+    'widget.room.chat.clear_history':   'clear history',
+    'widget.room.youtube.shared':       'YouTube is being shared',
+    'widget.room.youtube.open_video':   'Open the video',
+
+    // ------------------------------------------------------------------------
+    // Catalog
+    // ------------------------------------------------------------------------
+
+    // Catalog: general
+    'catalog.title':                  'Catalog',
+    'catalog.favorites':              'Favorites',
+    'catalog.favorites.pages':        'Pages',
+    'catalog.favorites.furni':        'Furni',
+    'catalog.favorites.empty':        'No favorites',
+    'catalog.favorites.empty.hint':   'Click the heart on furni or the star on pages to add them.',
+
+    // Catalog: admin
+    'catalog.admin':                            'Admin',
+    'catalog.admin.new':                        'New',
+    'catalog.admin.root':                       'Root',
+    'catalog.admin.new.root.category':          'New root category',
+    'catalog.admin.edit.root':                  'Edit root',
+    'catalog.admin.edit':                       'Edit:',
+    'catalog.admin.edit.page':                  'Edit page',
+    'catalog.admin.hidden':                     'hidden',
+    'catalog.admin.edit.title':                 'Edit "%name%"',
+    'catalog.admin.show':                       'Show',
+    'catalog.admin.hide':                       'Hide',
+    'catalog.admin.delete':                     'Delete',
+    'catalog.admin.delete.title':               'Delete "%name%"',
+    'catalog.admin.delete.category.confirm':    'Delete category "%name%" and all its contents?',
+    'catalog.admin.delete.page':                'Delete page',
+    'catalog.admin.delete.page.confirm':        'Delete page "%name%"?',
+    'catalog.admin.delete.offer.confirm':       'Are you sure you want to delete this offer?',
+    'catalog.admin.create':                     'Create',
+    'catalog.admin.save':                       'Save',
+    'catalog.admin.create.subpage':             'Create subpage',
+    'catalog.admin.order':                      'Order',
+    'catalog.admin.visible':                    'Visible',
+    'catalog.admin.enabled':                    'Enabled',
+
+    // Catalog admin: offer editor
+    'catalog.admin.offer.new':           'New offer',
+    'catalog.admin.offer.edit':          'Edit offer',
+    'catalog.admin.offer.name':          'Catalog name',
+    'catalog.admin.offer.general':       'General',
+    'catalog.admin.offer.quantity':      'Quantity',
+    'catalog.admin.offer.prices':        'Prices',
+    'catalog.admin.offer.credits':       'Credits',
+    'catalog.admin.offer.points':        'Points',
+    'catalog.admin.offer.points.type':   'Points type',
+    'catalog.admin.offer.options':       'Options',
+    'catalog.admin.offer.club.only':     'Club only',
+    'catalog.admin.offer.extradata':     'Extra data (optional)....',
+    'catalog.admin.offer.have.offer':    'Multi-discount (have_offer)',
+
+    // Catalog: trophies
+    'catalog.trophies.title':                  'Trophies',
+    'catalog.trophies.write.hint':             'Write a text for the trophy before buying',
+    'catalog.trophies.inscription':            'Trophy inscription',
+    'catalog.trophies.inscription.placeholder': 'Write the text that will appear on the trophy...',
+
+    // Catalog: pets
+    'catalog.pets.show.colors':    'Show colors',
+    'catalog.pets.choose.color':   'Choose color',
+    'catalog.pets.choose.breed':   'Choose breed',
+    'catalog.pets.back.breeds':    '← Breeds',
+
+    // Catalog: name prefix editor
+    'catalog.prefix.text':                   'Text',
+    'catalog.prefix.text.placeholder':       'Enter text...',
+    'catalog.prefix.icon':                   'Icon',
+    'catalog.prefix.icon.remove':            'Remove icon',
+    'catalog.prefix.effect':                 'Effect',
+    'catalog.prefix.color':                  'Color',
+    'catalog.prefix.color.single':           '🎨 Single',
+    'catalog.prefix.color.per.letter':       '🌈 Per letter',
+    'catalog.prefix.color.hint':             'Select a letter and then choose the color. Advances automatically.',
+    'catalog.prefix.color.apply.all.title':  'Apply current color to all letters',
+    'catalog.prefix.color.apply.all':        'Apply to all',
+    'catalog.prefix.color.selected':         'Selected letter:',
+    'catalog.prefix.price':                  'Price:',
+    'catalog.prefix.price.amount':           '5 Credits',
+    'catalog.prefix.purchased':              '✓ Purchased!',
+    'catalog.prefix.purchase':               'Buy',
+
+    // Catalog: gift wrapping
+    'catalog.gift_wrapping.gift_sent': 'Done!',
+
+    // ------------------------------------------------------------------------
+    // Group forum
+    // ------------------------------------------------------------------------
+    'groupforum.list.tab.most_active':   'Most active topics',
+    'groupforum.list.tab.my_forums':     'My group forums',
+    'groupforum.list.no_forums':         'There are no forums',
+    'groupforum.view.threads':           'Number of topics',
+    'groupforum.thread.pin':             'Pin topic',
+    'groupforum.thread.unpin':           'Unpin topic',
+    'groupforum.thread.lock':            'Lock topic',
+    'groupforum.thread.unlock':          'Unlock topic',
+    'groupforum.thread.hide':            'Hide topic',
+    'groupforum.thread.restore':         'Make topic visible again',
+    'groupforum.thread.delete':          'Delete topic + posts',
+    'groupforum.message.hide':           'Hide message',
+    'group.forum.enable.caption':        'Enable/disable group forum',
+    'group.forum.enable.help':           'If you disable the group forum, all posts will be deleted too!',
+    'groupforum.view.no_threads':        'There are currently no active topics',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: window
+    // ------------------------------------------------------------------------
+    'modtools.window.title':            'Mod Tools',
+    'modtools.window.tools.room':       'Room tool',
+    'modtools.window.tools.chatlog':    'Chatlog tool',
+    'modtools.window.tools.report':     'Report tool',
+    'modtools.window.select.user':      'Select a user',
+    'modtools.window.no.room':          'Enter a room first',
+    'modtools.window.user.in_room':     'Still in this room',
+    'modtools.window.user.left_room':   'No longer in this room',
+    'modtools.window.user.clear':       'Clear selection',
+    'modtools.window.tickets.open':     '%count% open ticket',
+    'modtools.window.tickets.open.many': '%count% open tickets',
+    'modtools.window.section.room':     'Room',
+    'modtools.window.section.user':     'User',
+    'modtools.window.section.reports':  'Reports',
+    'modtools.window.user.open_info':   'Open info',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: user info
+    // ------------------------------------------------------------------------
+    'modtools.userinfo.title':                      'User info: %username%',
+    'modtools.userinfo.userName':                   'Name',
+    'modtools.userinfo.cfhCount':                   'CFHs',
+    'modtools.userinfo.abusiveCfhCount':            'Abusive CFHs',
+    'modtools.userinfo.cautionCount':               'Cautions',
+    'modtools.userinfo.banCount':                   'Bans',
+    'modtools.userinfo.lastSanctionTime':           'Last sanction',
+    'modtools.userinfo.tradingLockCount':           'Trade locks',
+    'modtools.userinfo.tradingExpiryDate':          'Lock expires',
+    'modtools.userinfo.minutesSinceLastLogin':      'Last login',
+    'modtools.userinfo.lastPurchaseDate':           'Last purchase',
+    'modtools.userinfo.primaryEmailAddress':        'Email',
+    'modtools.userinfo.identityRelatedBanCount':    'Banned accounts',
+    'modtools.userinfo.registrationAgeInMinutes':   'Registered',
+    'modtools.userinfo.userClassification':         'Rank',
+    'modtools.userinfo.refresh':                    'Refresh user info',
+    'modtools.userinfo.presence.in_room':           'In room',
+    'modtools.userinfo.presence.in_room.title':     'In the room you are observing',
+    'modtools.userinfo.presence.online':            'Online',
+    'modtools.userinfo.presence.online.title':      'Online in the hotel',
+    'modtools.userinfo.presence.offline':           'Offline',
+    'modtools.userinfo.presence.offline.title':     'Offline when panel opened',
+    'modtools.userinfo.section.account':            'Account',
+    'modtools.userinfo.section.activity':           'Activity',
+    'modtools.userinfo.section.sanctions':          'Sanctions',
+    'modtools.userinfo.section.trading':            'Trading',
+    'modtools.userinfo.button.room.chat':           'Room chat',
+    'modtools.userinfo.button.send.message':        'Send message',
+    'modtools.userinfo.button.room.visits':         'Room visits',
+    'modtools.userinfo.button.mod.action':          'Mod action',
+    'modtools.userinfo.stat.cfh':                   'CFH',
+    'modtools.userinfo.stat.cautions':              'Cautions',
+    'modtools.userinfo.stat.bans':                  'Bans',
+    'modtools.userinfo.stat.trade.locks':           'Trade locks',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: room info
+    // ------------------------------------------------------------------------
+    'modtools.roominfo.title':                  'Room info',
+    'modtools.roominfo.refresh':                'Refresh room info',
+    'modtools.roominfo.loading':                'Loading…',
+    'modtools.roominfo.owner.here':             'Owner present',
+    'modtools.roominfo.owner.away':             'Owner away',
+    'modtools.roominfo.owner.title.here':       'The room owner is currently inside',
+    'modtools.roominfo.owner.title.away':       'The room owner is NOT inside',
+    'modtools.roominfo.stat.users':             'Users',
+    'modtools.roominfo.stat.owner':             'Owner',
+    'modtools.roominfo.owner.open':             'Open info of %username%',
+    'modtools.roominfo.button.visit':           'Visit room',
+    'modtools.roominfo.button.chatlog':         'Chatlog',
+    'modtools.roominfo.moderate.title':         'Moderate room',
+    'modtools.roominfo.moderate.kick':          'Kick everyone out',
+    'modtools.roominfo.moderate.doorbell':      'Enable doorbell',
+    'modtools.roominfo.moderate.rename':        'Change room name',
+    'modtools.roominfo.moderate.message.placeholder': 'Required message sent along with the action…',
+    'modtools.roominfo.moderate.send.caution':  'Send caution',
+    'modtools.roominfo.moderate.send.alert':    'Send alert',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: user message
+    // ------------------------------------------------------------------------
+    'modtools.user.message.title':       'Send message',
+    'modtools.user.message.recipient':   'Message to',
+    'modtools.user.message.label':       'Message',
+    'modtools.user.message.placeholder': 'Write something useful — the user sees it as a moderator message.',
+    'modtools.user.message.empty':       'Empty',
+    'modtools.user.message.chars':       '%count% characters',
+    'modtools.user.message.send':        'Send message',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: mod action
+    // ------------------------------------------------------------------------
+    'modtools.user.modaction.title':                  'Mod action: %username%',
+    'modtools.user.modaction.sanctioning':            'Sanctioning',
+    'modtools.user.modaction.step.topic':             '1. CFH topic',
+    'modtools.user.modaction.step.topic.placeholder': 'Select a topic…',
+    'modtools.user.modaction.step.sanction':          '2. Sanction',
+    'modtools.user.modaction.step.sanction.placeholder': 'Select a sanction…',
+    'modtools.user.modaction.step.message':           '3. Custom message',
+    'modtools.user.modaction.step.message.optional':  '(optional — overrides default)',
+    'modtools.user.modaction.message.placeholder':    'Leave empty to use the default topic message',
+    'modtools.user.modaction.preview':                'Preview',
+    'modtools.user.modaction.button.default':         'Default sanction',
+    'modtools.user.modaction.button.apply':           'Apply sanction',
+    'modtools.user.modaction.error.no.topic':         'You must select a CFH topic',
+    'modtools.user.modaction.error.no.action':        'You must select a CFH topic and sanction',
+    'modtools.user.modaction.error.no.permission':    'You do not have permission to do this',
+    'modtools.user.modaction.error.no.message':       'Write a message to the user',
+    'modtools.user.modaction.error.no.permission.alert': 'You have insufficient rights',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: user visits
+    // ------------------------------------------------------------------------
+    'modtools.user.visits.title':        'User visits',
+    'modtools.user.visits.recent':       'Recently visited rooms',
+    'modtools.user.visits.entries.one':  '%count% entry',
+    'modtools.user.visits.entries.many': '%count% entries',
+    'modtools.user.visits.empty':        'No recent visits',
+    'modtools.user.visits.time':         'Time',
+    'modtools.user.visits.room':         'Room name',
+    'modtools.user.visits.action':       'Action',
+    'modtools.user.visits.visit':        'Visit',
+    'modtools.user.visits.visit.title':  'Visit room',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: chatlog
+    // ------------------------------------------------------------------------
+    'modtools.user.chatlog.title':       'User chatlog',
+    'modtools.user.chatlog.title.with':  'User chatlog: %username%',
+    'modtools.user.chatlog.loading':     'Loading chatlog…',
+    'modtools.room.chatlog.title':       'Room chatlog',
+    'modtools.chatlog.column.time':      'Time',
+    'modtools.chatlog.column.user':      'User',
+    'modtools.chatlog.column.message':   'Message',
+    'modtools.chatlog.empty':            'No messages',
+    'modtools.chatlog.visit':            'Visit',
+    'modtools.chatlog.tools':            'Tools',
+
+    // ------------------------------------------------------------------------
+    // Mod tools: tickets
+    // ------------------------------------------------------------------------
+    'modtools.tickets.title':                'Tickets',
+    'modtools.tickets.tab.open':             'Open',
+    'modtools.tickets.tab.mine':             'Mine',
+    'modtools.tickets.tab.picked':           'All picked',
+    'modtools.tickets.column.type':          'Type',
+    'modtools.tickets.column.reported':      'Reported',
+    'modtools.tickets.column.opened':        'Opened',
+    'modtools.tickets.column.picker':        'Picked up by',
+    'modtools.tickets.empty.open':           'No open reports',
+    'modtools.tickets.empty.mine':           'No reports picked up by you',
+    'modtools.tickets.empty.picked':         'No picked-up reports',
+    'modtools.tickets.action.pick':          'Pick up',
+    'modtools.tickets.action.handle':        'Handle',
+    'modtools.tickets.action.release':       'Release',
+    'modtools.tickets.issue.title':          'Resolve report #%issueId%',
+    'modtools.tickets.issue.label':          'Report #%issueId%',
+    'modtools.tickets.issue.details':        'Details',
+    'modtools.tickets.issue.field.source':       'Source',
+    'modtools.tickets.issue.field.category':     'Category',
+    'modtools.tickets.issue.field.description':  'Description',
+    'modtools.tickets.issue.field.caller':       'Reporter',
+    'modtools.tickets.issue.field.reported':     'Reported',
+    'modtools.tickets.issue.chatlog.view':       'View chatlog',
+    'modtools.tickets.issue.chatlog.close':      'Close chatlog',
+    'modtools.tickets.issue.resolve.heading':    'Resolve as',
+    'modtools.tickets.issue.resolve.resolved':   'Resolved',
+    'modtools.tickets.issue.resolve.useless':    'Useless',
+    'modtools.tickets.issue.resolve.abusive':    'Abusive',
+    'modtools.tickets.issue.release':            'Put back in queue',
+    'modtools.tickets.cfh.chatlog.title':        'Report #%issueId% chatlog',
+
+    // ------------------------------------------------------------------------
+    // Login
+    // ------------------------------------------------------------------------
+    'login.username':                       'What is your habbo name',
+    'login.forgot_password':                'Forgot password?',
+
+    // First-time visitors card
+    'nitro.login.firsttime.title':          'First time here?',
+    'nitro.login.firsttime.text':           'Don\'t have a habbo account yet?',
+    'nitro.login.firsttime.link':           'You can create one here',
+    'nitro.login.card.title':               'Sign in to habbo',
+
+    // Server status checks
+    'nitro.login.server.offline.short':     'The game server is not running right now. Try again in a moment.',
+    'nitro.login.server.offline.long':      'The game server is not running right now, so no new accounts can be created. Try again in a moment.',
+    'nitro.login.server.checking':          'Checking…',
+    'nitro.login.server.retry':             'Try again',
+
+    // Registration flow
+    'nitro.login.register.title':                 'habbo details',
+    'nitro.login.register.next':                  'Next',
+    'nitro.login.register.finish':                'Finish',
+    'nitro.login.register.creating':              'Creating…',
+    'nitro.login.register.intro.credentials':     'Let\'s create your account. Enter your email address and choose a password — we\'ll check that this email is not already in use.',
+    'nitro.login.register.intro.avatar':          'Now it\'s time to create your own habbo character! Start by choosing your habbo name.',
+    'nitro.login.register.intro.room':            'Last step — choose a starter room, or skip this and make your own room later.',
+    'nitro.login.register.confirm.label':         'Confirm password',
+    'nitro.login.register.username.placeholder':  'HabboName',
+    'nitro.login.register.hotlooks.count':        '%count% looks available',
+    'nitro.login.register.hotlooks.none':         'No looks loaded',
+    'nitro.login.register.room.skip.title':       'Fine — I\'ll make my own rooms',
+    'nitro.login.register.room.skip.description': 'Skip this and start with an empty hotel inventory.',
+    'nitro.login.register.room.loading':          'Loading rooms…',
+    'nitro.login.register.room.error':            'Could not load room options. You can still skip this step.',
+    'nitro.login.register.success':               'Welcome aboard, %username%! Your account is ready — log in below with the password you just chose.',
+
+    // Forgot password
+    'nitro.login.forgot.title':         'Reset password',
+    'nitro.login.forgot.email.label':   'Email address',
+    'nitro.login.forgot.send':          'Send email',
+    'nitro.login.forgot.success':       'Email sent! If an account is linked to this address, you\'ll find a reset link in your inbox shortly (check your spam if you see nothing within a minute).',
+
+    // Login errors (validation + transport)
+    'nitro.login.error.missing_credentials':  'Enter both your habbo name and password.',
+    'nitro.login.error.invalid_credentials':  'Invalid habbo name or password.',
+    'nitro.login.error.too_many_attempts':    'Too many attempts. Try again in %seconds%s.',
+    'nitro.login.error.turnstile':            'Complete the security check.',
+    'nitro.login.error.server_offline':       'The game server is not running. Try again later.',
+    'nitro.login.error.login_unreachable':    'Cannot reach the login service. Try again.',
+    'nitro.login.error.register_failed':      'Cannot create your account.',
+    'nitro.login.error.register_unreachable': 'Cannot reach the registration service.',
+    'nitro.login.error.forgot_failed':        'Cannot send a reset email right now.',
+    'nitro.login.error.forgot_unreachable':   'Cannot reach the password reset service.',
+    'nitro.login.error.missing_fields':       'Fill in all fields.',
+    'nitro.login.error.invalid_email':        'Enter a valid email address.',
+    'nitro.login.error.password_too_short':   'Your password must be at least 8 characters long.',
+    'nitro.login.error.password_mismatch':    'Passwords do not match.',
+    'nitro.login.error.email_taken':          'This email address is already in use.',
+    'nitro.login.error.missing_username':     'Choose a habbo name.',
+    'nitro.login.error.username_length':      'The habbo name must be 3–16 characters.',
+    'nitro.login.error.username_taken':       'This habbo name is already in use.',
+    'nitro.login.error.missing_email':        'Enter your email address.',
+
+    // ------------------------------------------------------------------------
+    // Inventory
+    // ------------------------------------------------------------------------
+    'inventory.effects.activate': 'Use effect',
+    'inventory.effects.remove':   'remove effect',
+
+    // ------------------------------------------------------------------------
+    // Loading screen — boot-stage labels read by App.tsx (taskLabel)
+    // ------------------------------------------------------------------------
+    'loading.task.session':      'Verifying session...',
+    'loading.task.renderer':     'Initializing renderer...',
+    'loading.task.assets':       'Loading game assets...',
+    'loading.task.localization': 'Loading translations...',
+    'loading.task.avatar':       'Loading wardrobe...',
+    'loading.task.sounds':       'Loading sounds...',
+    'loading.task.startsession': 'Starting session...',
+    'loading.task.userdata':     'Loading user data...',
+    'loading.task.rooms':        'Loading rooms...',
+    'loading.task.engine':       'Loading graphics engine...',
+
+    // ------------------------------------------------------------------------
+    // Housekeeping
+    // ------------------------------------------------------------------------
+    'housekeeping.title':       'Housekeeping',
+    'housekeeping.mode.light':  'Light',
+
+    // Housekeeping: tabs
+    'housekeeping.tab.dashboard': 'Dashboard',
+    'housekeeping.tab.users':     'Users',
+    'housekeeping.tab.rooms':     'Rooms',
+    'housekeeping.tab.economy':   'Economy',
+    'housekeeping.tab.audit':     'Audit log',
+
+    // Housekeeping: confirm + status
+    'housekeeping.confirm.title':   'Confirm action',
+    'housekeeping.confirm.proceed': 'Proceed',
+    'housekeeping.confirm.cancel':  'Cancel',
+    'housekeeping.status.dismiss':  'Dismiss',
+
+    // Housekeeping: action status
+    'housekeeping.action.pending':                 'Action in progress…',
+    'housekeeping.action.success':                 'Action completed',
+    'housekeeping.action.error':                   'Action failed',
+    'housekeeping.action.reset_password.done':     'Password reset — new password below.',
+
+    // Housekeeping: generated password card
+    'housekeeping.password.title':       '%username% (#%id%) · new password',
+    'housekeeping.password.value_label': 'Generated password',
+    'housekeeping.password.copy':        'Copy',
+    'housekeeping.password.copied':      'Copied',
+    'housekeeping.password.copy_failed': 'Copy failed',
+    'housekeeping.password.dismiss':     'Dismiss',
+    'housekeeping.password.hint':        'Share this with the user outside the hotel. It is shown once — close this card when you\'re done; the password will never be displayed again.',
+
+    // Housekeeping: errors
+    'housekeeping.error.invalid_input':        'Invalid input — check the user ID and the entered value.',
+    'housekeeping.error.user_not_found':       'User not found.',
+    'housekeeping.error.user_offline':         'User is offline — this action only works on online users.',
+    'housekeeping.error.target_unkickable':    'This user cannot be kicked.',
+    'housekeeping.error.ban_failed':           'Ban could not be applied — the server refused the request.',
+    'housekeeping.error.no_active_ban':        'No active ban to lift for this user.',
+    'housekeeping.error.rank_not_found':       'Rank not found — choose a rank that exists in permission_ranks.',
+    'housekeeping.error.db_failed':            'Database error — see the emulator log for the SQL exception.',
+    'housekeeping.error.hash_failed':          'Could not hash the new password — SHA-256 not available on this JVM.',
+    'housekeeping.error.room_not_found':       'Room not found.',
+    'housekeeping.error.room_action_failed':   'Room action could not be applied.',
+    'housekeeping.error.new_owner_not_found':  'New owner not found.',
+    'housekeeping.error.economy_failed':       'Economy action could not be applied — check the user ID and the amount.',
+    'housekeeping.error.alert_empty':          'Hotel alert may not be empty.',
+
+    // Housekeeping: actions
+    'housekeeping.action.ban_h':            'Ban %h%h',
+    'housekeeping.action.mute_min':         'Mute %m%m',
+    'housekeeping.action.trade_lock_h':     'Trade lock %h%h',
+    'housekeeping.action.kick':             'Kick',
+    'housekeeping.action.unban':            'Lift ban',
+    'housekeeping.action.force_disconnect': 'Disconnect',
+    'housekeeping.action.set_rank':         'Set rank',
+    'housekeeping.action.reset_password':   'Reset password',
+
+    // Housekeeping: user panel
+    'housekeeping.user.search.placeholder': 'Search by username…',
+    'housekeeping.user.search.button':      'Search',
+    'housekeeping.user.clear':              'Clear selection',
+    'housekeeping.user.none':               'No user selected — search above to pick one.',
+    'housekeeping.user.not_found':          'User not found.',
+    'housekeeping.user.credits':            'Credits',
+    'housekeeping.user.duckets':            'Duckets / pixels',
+    'housekeeping.user.diamonds':           'Diamonds',
+    'housekeeping.user.audit_hint':         'All actions are recorded in the audit log tab.',
+    'housekeeping.user.live.label':         'Live (in current room)',
+    'housekeeping.user.live.kick':          'Kick',
+    'housekeeping.user.live.mute_2m':       'Mute 2m',
+    'housekeeping.user.live.mute_10m':      'Mute 10m',
+    'housekeeping.user.live.ban_h':         'Ban 1h',
+    'housekeeping.user.live.ban_d':         'Ban 1d',
+
+    // Housekeeping: room panel
+    'housekeeping.room.search.placeholder': 'Room ID…',
+    'housekeeping.room.search.button':      'Search',
+    'housekeeping.room.clear':              'Clear selection',
+    'housekeeping.room.none':               'No room selected — enter an ID above.',
+    'housekeeping.room.not_found':          'Room not found.',
+    'housekeeping.room.open':               'Open',
+    'housekeeping.room.close':              'Close',
+    'housekeeping.room.mute_min':           'Mute %m%m',
+    'housekeeping.room.kick_all':           'Kick everyone',
+    'housekeeping.room.kick_all.confirm':   'Kick every user currently in the room?',
+    'housekeeping.room.delete':             'Delete room',
+    'housekeeping.room.delete.confirm':     'Permanently delete this room and all its furni?',
+    'housekeeping.room.transfer':           'Transfer',
+    'housekeeping.room.transfer.label':     'Transfer ownership',
+    'housekeeping.room.transfer.new_owner': 'New owner ID',
+
+    // Housekeeping: economy
+    'housekeeping.economy.select_user':       'Pick a user in the Users tab first.',
+    'housekeeping.economy.target':            'Target: %username% (#%id%)',
+    'housekeeping.economy.give_credits':      'Give credits',
+    'housekeeping.economy.give_duckets':      'Give duckets',
+    'housekeeping.economy.give_diamonds':     'Give diamonds',
+    'housekeeping.economy.grant_item':        'Grant item',
+    'housekeeping.economy.grant_item.label':  'Grant catalog item',
+    'housekeeping.economy.item_id':           'Item ID',
+    'housekeeping.economy.item_quantity':     'Quantity',
+    'housekeeping.economy.set_hc_days':       'Set HC days',
+
+    // Housekeeping: hotel-wide alert
+    'housekeeping.hotel.alert.label':       'Hotel-wide alert',
+    'housekeeping.hotel.alert.placeholder': 'Message broadcast to every connected user…',
+    'housekeeping.hotel.alert.send':        'Send to hotel',
+    'housekeeping.hotel.alert.confirm':     'Broadcast a %count%-character alert to every connected user?',
+
+    // Housekeeping: dashboard
+    'housekeeping.dashboard.title':            'Overview',
+    'housekeeping.dashboard.refresh':          'Refresh',
+    'housekeeping.dashboard.loading':          'Loading dashboard…',
+    'housekeeping.dashboard.unavailable':      'Dashboard unavailable — check the admin endpoint.',
+    'housekeeping.dashboard.online':           'Online',
+    'housekeeping.dashboard.total_users':      '%count% total',
+    'housekeeping.dashboard.rooms_active':     'Active rooms',
+    'housekeeping.dashboard.total_rooms':      '%count% total',
+    'housekeeping.dashboard.peak_today':       'Peak today',
+    'housekeeping.dashboard.peak_alltime':     'All-time peak %count%',
+    'housekeeping.dashboard.pending_tickets':  'Tickets',
+    'housekeeping.dashboard.sanctions_24h':    '%count% sanctions / 24h',
+    'housekeeping.dashboard.server':           'Server',
+    'housekeeping.dashboard.recent_sanctions': 'Recent sanctions',
+    'housekeeping.dashboard.recent_lookups':   'Recent lookups',
+
+    // Housekeeping: audit log
+    'housekeeping.audit.title':              'Audit log',
+    'housekeeping.audit.refresh':            'Refresh',
+    'housekeeping.audit.filter.all':         'All',
+    'housekeeping.audit.filter.users':       'Users',
+    'housekeeping.audit.filter.rooms':       'Rooms',
+    'housekeeping.audit.filter.hotel':       'Hotel',
+    'housekeeping.audit.search.placeholder': 'Search actor / target / action…',
+    'housekeeping.audit.empty':              'No audit entries yet.',
+    'housekeeping.audit.no_match':           'No entries match the current filters.',
+
+    // Housekeeping: shared fields
+    'housekeeping.field.reason':             'Reason',
+    'housekeeping.field.reason.placeholder': 'Free-text reason (optional)',
+    'housekeeping.field.duration':           'Duration',
+    'housekeeping.reason.default':           'No reason given.',
+
+    // Housekeeping: context menu
+    'housekeeping.menu.send_to_hk': 'Send to housekeeping',
+
+    // Housekeeping: bulk actions
+    'housekeeping.bulk.done':    'Bulk done',
+    'housekeeping.bulk.success': 'All bulk actions succeeded.',
+    'housekeeping.bulk.partial': 'Bulk completed with some failures.',
+    'housekeeping.bulk.failed':  'Every bulk action failed.',
+    'housekeeping.bulk.confirm': 'Apply %action% to %count% selected users?',
+    'housekeeping.bulk.label':   '%count% selected',
+    'housekeeping.bulk.clear':   'Clear selection',
+    'housekeeping.bulk.apply':   'Apply to selection',
+
+    // Housekeeping: telemetry
+    'housekeeping.telemetry.title': 'Telemetry',
+    'housekeeping.telemetry.empty': 'No actions observed yet.',
+    'housekeeping.telemetry.reset': 'Reset statistics',
+
+    // Housekeeping: live room session
+    'housekeeping.live.no_room': 'No active room session.',
+    'housekeeping.live.kicked':  'Kicked from the room.',
+    'housekeeping.live.banned':  'Banned from the room.',
+    'housekeeping.live.muted':   'Muted in the room.',
+
+    // Housekeeping: validation
+    'housekeeping.validation.empty_username':   'Username may not be empty.',
+    'housekeeping.validation.invalid_user_id':  'Invalid user ID.',
+    'housekeeping.validation.invalid_room_id':  'Invalid room ID.',
+    'housekeeping.validation.invalid_amount':   'Invalid amount.',
+    'housekeeping.validation.amount_too_large': 'Amount exceeds the safety limit.',
+    'housekeeping.validation.empty_reason':     'Reason may not be empty.',
+    'housekeeping.validation.invalid_hours':    'Invalid duration in hours.',
+    'housekeeping.validation.invalid_rank':     'Invalid rank — must be between 1 and 12.',
+
+    // ------------------------------------------------------------------------
+    // Fortune Wheel
+    // ------------------------------------------------------------------------
+    'wheel.title':          'Fortune Wheel',
+    'wheel.free.today':     'You have %count% free spins today!',
+    'wheel.extra':          'Extra spins: %count%',
+    'wheel.spin':           'SPIN',
+    'wheel.buy':            'Buy spin',
+    'wheel.winners':        'Latest winners',
+    'wheel.winners.empty':  'No winners yet',
+
+    // ------------------------------------------------------------------------
+    // Soundboard
+    // ------------------------------------------------------------------------
+    'soundboard.title':              'Soundboard',
+    'soundboard.empty':              'No sounds available',
+    'soundboard.lastplayed':         'Played by %user%',
+    'soundboard.room.setting.desc':  'Let people in this room play sound effects',
+
+    // ------------------------------------------------------------------------
+    // Radio
+    // ------------------------------------------------------------------------
+    'radio.title':  'Radio',
+    'radio.empty':  'No stations',
+    'radio.error':  'Couldn\'t load stations',
+    'radio.stop':   'Stop',
+
+    // ------------------------------------------------------------------------
+    // Rare Values
+    // ------------------------------------------------------------------------
+    'rarevalues.title':             'Rare Values',
+    'rarevalues.loading':           'Loading values…',
+    'rarevalues.empty':             'No rares found',
+    'rarevalues.infostand.label':   'Value:',
+
+    // Rare Values: editor
+    'rarevalues.editor.tab':          'Edit',
+    'rarevalues.editor.type':         'Type',
+    'rarevalues.editor.value':        'Value',
+    'rarevalues.editor.weight':       'Chance',
+    'rarevalues.editor.label':        'Label',
+    'rarevalues.editor.save':         'Save',
+    'rarevalues.editor.cat.item':     'Furni (ID)',
+    'rarevalues.editor.cat.spin':     'Extra spins',
+    'rarevalues.editor.cat.nothing':  'Nothing',
+
+    // ------------------------------------------------------------------------
+    // Chat commands: client
+    // ------------------------------------------------------------------------
+    'chatcmd.client.shake':       'Shake the room',
+    'chatcmd.client.rotate':      'Rotate the room',
+    'chatcmd.client.zoom':        'Zoom in/out',
+    'chatcmd.client.flip':        'Reset zoom',
+    'chatcmd.client.iddqd':       'Turn the room upside down',
+    'chatcmd.client.screenshot':  'Screenshot of the room',
+    'chatcmd.client.togglefps':   'Toggle FPS',
+    'chatcmd.client.laugh':       'Laugh (VIP)',
+    'chatcmd.client.kiss':        'Blow a kiss (VIP)',
+    'chatcmd.client.jump':        'Jump (VIP)',
+    'chatcmd.client.idle':        'Go idle',
+    'chatcmd.client.sign':        'Show sign',
+    'chatcmd.client.furni':       'Furni chooser',
+    'chatcmd.client.chooser':     'User chooser',
+    'chatcmd.client.floor':       'Floor editor',
+    'chatcmd.client.pickall':     'Pick up all furni',
+    'chatcmd.client.ejectall':    'Eject all furni',
+    'chatcmd.client.settings':    'Room settings',
+    'chatcmd.client.info':        'Client info',
+}

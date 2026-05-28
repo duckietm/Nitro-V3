@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, convertNumbersForSaving, convertSettingToNumber, FloorHeightMapEvent, GetRoomEntryTileMessageComposer, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEntryTileMessageEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, convertNumbersForSaving, convertSettingToNumber, FloorHeightMapEvent, GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { FaBolt, FaBoxOpen, FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../api';
@@ -50,7 +50,15 @@ export const FloorplanEditorView: FC = () =>
     {
         if(!isVisible) return;
         SendMessageComposer(new GetRoomEntryTileMessageComposer());
+        // Ask the server which tiles currently hold furniture so they can be
+        // shown (and protected from editing) in the grid.
+        SendMessageComposer(new GetOccupiedTilesMessageComposer());
     }, [ isVisible ]);
+
+    useMessageEvent<RoomOccupiedTilesMessageEvent>(RoomOccupiedTilesMessageEvent, event =>
+    {
+        dispatch({ type: 'SET_OCCUPIED_TILES', map: event.getParser().blockedTilesMap });
+    });
 
     useMessageEvent<RoomEntryTileMessageEvent>(RoomEntryTileMessageEvent, event =>
     {

@@ -109,6 +109,10 @@ export const AvatarInfoWidgetRentableBotView: FC<AvatarInfoWidgetRentableBotView
                 case 'dance':
                     SendMessageComposer(new BotSkillSaveComposer(avatarInfo.webID, BotSkillsEnum.DANCE, ''));
                     break;
+                case 'rotate':
+                    SendMessageComposer(new BotSkillSaveComposer(avatarInfo.webID, BotSkillsEnum.ROTATE, ''));
+                    hideMenu = false;
+                    break;
                 case 'nux_take_tour':
                     CreateLinkEvent('help/tour');
                     SendMessageComposer(new BotSkillSaveComposer(avatarInfo.webID, BotSkillsEnum.NUX_TAKE_TOUR, ''));
@@ -169,6 +173,10 @@ export const AvatarInfoWidgetRentableBotView: FC<AvatarInfoWidgetRentableBotView
                     { (avatarInfo.botSkills.indexOf(BotSkillsEnum.DANCE) >= 0) &&
                         <ContextMenuListItemView onClick={ event => processAction('dance') }>
                             { LocalizeText('avatar.widget.dance') }
+                        </ContextMenuListItemView> }
+                    { (avatarInfo.botSkills.indexOf(BotSkillsEnum.ROTATE) >= 0) &&
+                        <ContextMenuListItemView onClick={ event => processAction('rotate') }>
+                            { LocalizeText('tooltip.roombuilding.rotate') }
                         </ContextMenuListItemView> }
                     { (avatarInfo.botSkills.indexOf(BotSkillsEnum.NO_PICK_UP) === -1) &&
                         <ContextMenuListItemView onClick={ event => processAction('pick') }>

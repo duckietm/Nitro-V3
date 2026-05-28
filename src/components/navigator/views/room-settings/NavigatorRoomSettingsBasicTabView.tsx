@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { CreateLinkEvent, GetMaxVisitorsList, IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Base, Column, Flex, Text } from '../../../../common';
-import { useMessageEvent, useNavigator, useNotification } from '../../../../hooks';
+import { useMessageEvent, useNavigatorData, useNotification } from '../../../../hooks';
 
 const ROOM_NAME_MIN_LENGTH = 3;
 const ROOM_NAME_MAX_LENGTH = 60;
@@ -27,7 +27,7 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
     const [ tagIndex, setTagIndex ] = useState(0);
     const [ typeError, setTypeError ] = useState<string>('');
     const { showConfirm = null } = useNotification();
-    const { categories = null } = useNavigator();
+    const { categories } = useNavigatorData();
 
     useMessageEvent<RoomSettingsSaveErrorEvent>(RoomSettingsSaveErrorEvent, event =>
     {

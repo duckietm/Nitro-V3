@@ -4,7 +4,7 @@ import { FaLink, FaSignOutAlt } from 'react-icons/fa';
 import { DispatchUiEvent, GetGroupInformation, LocalizeText, ReportType, SendMessageComposer, ToggleFavoriteRoom } from '../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, LayoutRoomThumbnailView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text, UserProfileIconView } from '../../../common';
 import { RoomWidgetThumbnailEvent } from '../../../events';
-import { useHasPermission, useHelp, useNavigator, useRoom } from '../../../hooks';
+import { useHasPermission, useHelp, useNavigatorData, useRoom } from '../../../hooks';
 import { classNames } from '../../../layout';
 
 export interface NavigatorRoomInfoViewProps {
@@ -17,7 +17,7 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = props =>
     const [ isRoomPicked, setIsRoomPicked ] = useState(false);
     const [ isRoomMuted, setIsRoomMuted ] = useState(false);
     const { report = null } = useHelp();
-    const { navigatorData = null, favouriteRoomIds = [] } = useNavigator();
+    const { navigatorData, favouriteRoomIds } = useNavigatorData();
     const { roomSession = null } = useRoom();
     const canManageAnyRoom = useHasPermission('acc_anyroomowner');
     const canStaffPick = useHasPermission('acc_staff_pick');

@@ -3,8 +3,8 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaCrosshairs, FaTimes } from 'react-icons/fa';
 import { GrFormNextLink, GrRotateLeft, GrRotateRight } from 'react-icons/gr';
 import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
-import { Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
-import { useHasPermission, useMessageEvent, useNitroEvent, useRoom, useWiredTools } from '../../../../../hooks';
+import { Button, Column, Flex, LayoutBadgeImageView, LayoutCurrencyIcon, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
+import { useHasPermission, useMessageEvent, useNitroEvent, useRareValues, useRoom, useWiredTools } from '../../../../../hooks';
 import { NitroInput } from '../../../../../layout';
 
 interface InfoStandWidgetFurniViewProps
@@ -23,6 +23,8 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const { roomSession = null } = useRoom();
     const { openInspectionForFurni, showInspectButton } = useWiredTools();
     const isModerator = useHasPermission('acc_anyroomowner');
+    const { getValue: getRareValue } = useRareValues();
+    const rareValue = useMemo(() => (avatarInfo ? getRareValue(avatarInfo.spriteId) : null), [ avatarInfo, getRareValue ]);
 
     const [ pickupMode, setPickupMode ] = useState(0);
     const [ canMove, setCanMove ] = useState(false);
@@ -562,6 +564,17 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                     <FaCrosshairs className="fa-icon shrink-0" />
                                     <Text small textBreak variant="white">X: { itemLocation.x } · Y: { itemLocation.y } · H: { itemLocation.z < 0.01 ? 0 : itemLocation.z }</Text>
                                 </div>
+                            </> }
+                        { (rareValue && rareValue.points > 0) &&
+                            <>
+                                <hr className="m-0 bg-[#0003] border-0 opacity-[.5] h-px" />
+                                <Flex alignItems="center" gap={ 2 }>
+                                    <Text small variant="white">{ LocalizeText('rarevalues.infostand.label') }</Text>
+                                    <Flex alignItems="center" gap={ 1 }>
+                                        <Text small variant="white">{ rareValue.points }</Text>
+                                        <LayoutCurrencyIcon type={ rareValue.pointsType } />
+                                    </Flex>
+                                </Flex>
                             </> }
                         { godMode &&
                             <>

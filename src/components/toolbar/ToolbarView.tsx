@@ -3,7 +3,7 @@ import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GetConfigurationValue, isHousekeepingEnabled, MessengerIconState, OpenMessengerChat, setYoutubeRoomEnabled, VisitDesktop } from '../../api';
 import { Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
-import { useAchievements, useFriends, useHasPermission, useInventoryUnseenTracker, useMessageEvent, useMessenger, useModTools, useNitroEvent, useSessionInfo, useWiredTools } from '../../hooks';
+import { useAchievements, useFriends, useHasPermission, useInventoryUnseenTracker, useMessageEvent, useMessenger, useModTools, useNitroEvent, useSessionInfo, useSoundboard, useWiredTools } from '../../hooks';
 import { ToolbarItemView } from './ToolbarItemView';
 import { ToolbarMeView } from './ToolbarMeView';
 import { YouTubePlayerView } from './YouTubePlayerView';
@@ -42,6 +42,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { requests = [] } = useFriends();
     const { iconState = MessengerIconState.HIDDEN } = useMessenger();
     const { openMonitor, showToolbarButton } = useWiredTools();
+    const { enabled: soundboardEnabled, reset: resetSoundboard } = useSoundboard();
     const isMod = useHasPermission('acc_supporttool');
     const isHk = useHasPermission('acc_housekeeping');
     const hkEnabled = useMemo(() => isHousekeepingEnabled(), []);
@@ -99,8 +100,9 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         {
             setYoutubeEnabled(false);
             setYoutubeRoomEnabled(false);
+            resetSoundboard();
         }
-    }, [ isInRoom ]);
+    }, [ isInRoom, resetSoundboard ]);
 
     useEffect(() =>
     {
@@ -250,6 +252,12 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         { (getFullCount > 0) &&
                             <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
                     </motion.div>
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
+                    </motion.div>
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
+                    </motion.div>
                     { (isInRoom && showToolbarButton) &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="wired-tools" onClick={ openMonitor } className="tb-icon" />
@@ -261,6 +269,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     { (isInRoom && youtubeEnabled) &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="youtube" onClick={ openYouTubePlayer } className="tb-icon" />
+                        </motion.div> }
+                    { (isInRoom && soundboardEnabled) &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="soundboard" onClick={ () => CreateLinkEvent('soundboard/toggle') } className="tb-icon" />
                         </motion.div> }
                     { isMod &&
                         <motion.div variants={ itemVariants } className="relative">
@@ -358,6 +370,12 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         { (getFullCount > 0) &&
                             <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
                     </motion.div>
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
+                    </motion.div>
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
+                    </motion.div>
                 </motion.div>
                 <motion.div
                     variants={ containerVariants }
@@ -373,6 +391,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     { (isInRoom && youtubeEnabled) &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="youtube" onClick={ openYouTubePlayer } className="tb-icon" />
+                        </motion.div> }
+                    { (isInRoom && soundboardEnabled) &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="soundboard" onClick={ () => CreateLinkEvent('soundboard/toggle') } className="tb-icon" />
                         </motion.div> }
                     { isMod &&
                         <motion.div variants={ itemVariants } className="relative">

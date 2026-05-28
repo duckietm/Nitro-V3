@@ -161,7 +161,7 @@ describe('FloorplanEditorView container', () =>
         expect(composer.thicknessFloor).toBe(1);
     });
 
-    it('RoomOccupiedTilesMessageEvent marks blockedTilesMap entries as blocked in state', () =>
+    it('RoomOccupiedTilesMessageEvent marks tiles occupied without altering the saved tilemap', () =>
     {
         openEditor();
         const fhmHandler = messageHandlers.get(FloorHeightMapEvent);
@@ -178,8 +178,9 @@ describe('FloorplanEditorView container', () =>
         fireEvent.click(saveBtn!);
         const composer = sendMessageComposer.mock.calls[0][0];
         expect(composer).toBeInstanceOf(UpdateFloorPropertiesMessageComposer);
-        // Row separator is \r per serializeTilemap; row 0 was '00', col 1 blocked → '0x'
-        expect(composer.tilemap.split(/\r/)[0]).toBe('0x');
+        // Occupied is purely informational: the tile stays walkable and the
+        // saved tilemap is unchanged (row 0 stays '00', NOT voided to '0x').
+        expect(composer.tilemap.split(/\r/)[0]).toBe('00');
     });
 
     it('RoomEngineEvent.DISPOSED hides the editor', () =>

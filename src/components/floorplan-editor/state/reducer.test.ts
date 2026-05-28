@@ -106,6 +106,36 @@ describe('reducer — ADJUST_HEIGHT', () =>
         const next = reducer(start, { type: 'ADJUST_HEIGHT', row: 0, col: 0, delta: 1, source: 'local' });
         expect(next).toBe(start);
     });
+
+    it('is a no-op on occupied tiles', () =>
+    {
+        const start = stateWith([[{ h: 5, blocked: false, occupied: true }]]);
+        const next = reducer(start, { type: 'ADJUST_HEIGHT', row: 0, col: 0, delta: 1, source: 'local' });
+        expect(next).toBe(start);
+    });
+});
+
+describe('reducer — SET_OCCUPIED_TILES', () =>
+{
+    it('marks tiles occupied per the map without touching h or blocked', () =>
+    {
+        const start = stateWith([[{ h: 2, blocked: false }, { h: 0, blocked: true }]]);
+        const next = reducer(start, { type: 'SET_OCCUPIED_TILES', map: [[true, false]] });
+        expect(next.tiles[0][0]).toEqual({ h: 2, blocked: false, occupied: true });
+        // already-unoccupied tile is left untouched (no spurious occupied key)
+        expect(next.tiles[0][1]).toEqual({ h: 0, blocked: true });
+    });
+
+    it('does not block editing of non-occupied tiles', () =>
+    {
+        const start = stateWith([[{ h: 0, blocked: false }, { h: 0, blocked: false }]]);
+        const occupied = reducer(start, { type: 'SET_OCCUPIED_TILES', map: [[false, true]] });
+        // col 0 (not occupied) can still be painted; col 1 (occupied) cannot
+        const painted = reducer(occupied, { type: 'PAINT_TILE', row: 0, col: 0, h: 5, source: 'local' });
+        expect(painted.tiles[0][0].h).toBe(5);
+        const blocked = reducer(occupied, { type: 'PAINT_TILE', row: 0, col: 1, h: 9, source: 'local' });
+        expect(blocked).toBe(occupied);
+    });
 });
 
 describe('reducer — SET_DOOR', () =>

@@ -40,11 +40,18 @@ describe('FloorplanCanvasSVG', () =>
         const dispatch = vi.fn();
         const { container } = render(<FloorplanCanvasSVG state={ state } dispatch={ dispatch } />);
         const svg = container.querySelector('svg') as SVGSVGElement;
-        svg.getBoundingClientRect = () => ({ left: 0, top: 0, right: 2048, bottom: 1024, width: 2048, height: 1024, x: 0, y: 0, toJSON: () => ({}) });
+        // usePointerToTile resolves the tile via document.elementFromPoint first
+        // (the tile polygons carry data-row/data-col). jsdom returns null and has
+        // no SVGSVGElement.getScreenCTM, so point the hit-test at the tile polygon.
+        const tilePoly = container.querySelector('polygon[data-row="0"][data-col="0"]') as Element;
+        // jsdom's document has no elementFromPoint at all — define it for this test.
+        const prevEfp = (document as { elementFromPoint?: unknown }).elementFromPoint;
+        (document as unknown as { elementFromPoint: (x: number, y: number) => Element | null }).elementFromPoint = () => tilePoly;
         fireEvent.pointerDown(svg, { clientX: 1024, clientY: 0, pointerId: 1 });
         expect(dispatch).toHaveBeenCalled();
         const call = dispatch.mock.calls[0][0];
         expect(call.type).toBe('PAINT_TILE');
+        (document as { elementFromPoint?: unknown }).elementFromPoint = prevEfp;
     });
 
     it('zoom in/out buttons adjust the viewBox', () =>

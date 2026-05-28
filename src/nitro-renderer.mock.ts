@@ -43,7 +43,19 @@ export const NitroLogger = {
 
 type Listener = (event: any) => void;
 
+// NitroEvent listeners — registered via GetEventDispatcher() / useNitroEvent.
+// Cleared by clearMockEventDispatcher() between test cases.
 const listeners = new Map<string, Set<Listener>>();
+
+// MessageEvent listeners — registered via GetCommunication().registerMessageEvent
+// (i.e. useMessageEvent). NOT cleared by clearMockEventDispatcher() so that
+// useBetween-based hooks (which register effects once and persist the
+// singleton across tests) keep their subscriptions alive throughout the
+// suite. State isolation between tests is maintained by the useBetween
+// instance preserving INITIAL values across renders (each test's renderHook
+// shares the same useBetween singleton — tests that check a specific
+// post-dispatch state rely on the event changing it, not on a reset).
+const msgListeners = new Map<string, Set<Listener>>();
 
 export const mockEventDispatcher = {
     addEventListener(type: string, handler: Listener)
@@ -64,18 +76,23 @@ export const mockEventDispatcher = {
     },
     dispatchEvent(event: { type: string })
     {
+        // Fire NitroEvent listeners first, then MessageEvent listeners.
         const bucket = listeners.get(event.type);
+        if(bucket) for(const handler of bucket) handler(event);
 
-        if(!bucket) return;
-
-        for(const handler of bucket) handler(event);
+        const msgBucket = msgListeners.get(event.type);
+        if(msgBucket) for(const handler of msgBucket) handler(event);
     },
     hasListeners(type: string)
     {
-        return (listeners.get(type)?.size ?? 0) > 0;
+        return (listeners.get(type)?.size ?? 0) > 0 ||
+               (msgListeners.get(type)?.size ?? 0) > 0;
     }
 };
 
+// Clears only the NitroEvent listener map (GetEventDispatcher / useNitroEvent
+// registrations). MessageEvent listeners (useMessageEvent / GetCommunication)
+// are intentionally preserved so useBetween-based hooks stay subscribed.
 export const clearMockEventDispatcher = () =>
 {
     listeners.clear();
@@ -188,7 +205,117 @@ export class NitroSprite extends StubClass {}
 export class NitroTexture extends StubClass {}
 export class NitroSoundEvent extends StubClass {}
 export class NitroEvent extends StubClass {}
-export class MessageEvent extends StubClass {}
+
+// MessageEvent — stores the handler so GetCommunication (below) can
+// route dispatches through mockEventDispatcher. Each concrete subclass
+// exposes a `.type` equal to its constructor name so dispatchEvent
+// can match registered listeners.
+export class MessageEvent
+{
+    private _callBack: Function | null;
+
+    constructor(callBack?: Function)
+    {
+        this._callBack = callBack ?? null;
+    }
+
+    public get callBack(): Function | null { return this._callBack; }
+
+    // Each concrete subclass is identified by its class name.
+    public get type(): string { return this.constructor.name; }
+
+    // Concrete subclasses override this; the no-arg construction path used
+    // by makeParserlessEvent in tests leaves it returning null — tests
+    // override it with (ev as any).getParser = () => parser.
+    public getParser(): any { return null; }
+}
+
+// ---------------------------------------------------------------------------
+// IMessageEvent-based event classes used by useDoorState
+//
+// The real renderer classes take a `callBack` constructor arg and store it
+// in MessageEvent._callBack. The communication manager later calls
+// `event.callBack(event)` when the matching packet arrives.
+//
+// In tests we construct them with NO args (makeParserlessEvent does
+// `new klass()`) and override `getParser`. GetCommunication (below)
+// registers `event.callBack` on mockEventDispatcher under `event.type`
+// (the class name). When the test calls
+// `mockEventDispatcher.dispatchEvent(ev)`, listeners for that class name
+// fire, receiving `ev` — and the implementation reads `ev.getParser()`.
+// ---------------------------------------------------------------------------
+
+export class DoorbellMessageEvent extends MessageEvent {}
+export class RoomDoorbellAcceptedEvent extends MessageEvent {}
+export class FlatAccessDeniedMessageEvent extends MessageEvent {}
+export class GenericErrorEvent extends MessageEvent {}
+export class GetGuestRoomResultEvent extends MessageEvent {}
+
+// ---------------------------------------------------------------------------
+// Navigator event classes — MessageEvent subclasses needed by useNavigatorStore
+// ---------------------------------------------------------------------------
+
+export class CanCreateRoomEventEvent extends MessageEvent {}
+export class FavouriteChangedEvent extends MessageEvent {}
+export class FavouritesEvent extends MessageEvent {}
+export class FlatCreatedEvent extends MessageEvent {}
+export class NavigatorHomeRoomEvent extends MessageEvent {}
+export class NavigatorMetadataEvent extends MessageEvent {}
+export class NavigatorOpenRoomCreatorEvent extends MessageEvent {}
+export class NavigatorSearchesEvent extends MessageEvent {}
+export class NavigatorSearchEvent extends MessageEvent {}
+export class RoomEnterErrorEvent extends MessageEvent {}
+export class RoomEntryInfoMessageEvent extends MessageEvent {}
+export class RoomForwardEvent extends MessageEvent {}
+export class RoomScoreEvent extends MessageEvent {}
+export class RoomSettingsUpdatedEvent extends MessageEvent {}
+export class UserEventCatsEvent extends MessageEvent {}
+export class UserFlatCatsEvent extends MessageEvent {}
+export class UserInfoEvent extends MessageEvent {}
+export class UserPermissionsEvent extends MessageEvent {}
+
+// ---------------------------------------------------------------------------
+// Notification event classes — MessageEvent subclasses needed by
+// useNotificationStore (called via useNotification() inside useNavigatorStore).
+// The real renderer classes take a `callBack` constructor arg; the pattern
+// here is the same as the Navigator event stubs above.
+// ---------------------------------------------------------------------------
+
+export class AchievementNotificationMessageEvent extends MessageEvent {}
+export class ActivityPointNotificationMessageEvent extends MessageEvent {}
+export class BadgeReceivedEvent extends MessageEvent {}
+export class ClubGiftNotificationEvent extends MessageEvent {}
+export class ClubGiftSelectedEvent extends MessageEvent {}
+export class ConnectionErrorEvent extends MessageEvent {}
+export class HabboBroadcastMessageEvent extends MessageEvent {}
+export class HotelClosedAndOpensEvent extends MessageEvent {}
+export class HotelClosesAndWillOpenAtEvent extends MessageEvent {}
+export class HotelWillCloseInMinutesEvent extends MessageEvent {}
+export class InfoFeedEnableMessageEvent extends MessageEvent {}
+export class MaintenanceStatusMessageEvent extends MessageEvent {}
+export class ModeratorCautionEvent extends MessageEvent {}
+export class ModeratorMessageEvent extends MessageEvent {}
+export class MOTDNotificationEvent extends MessageEvent {}
+export class NotificationDialogMessageEvent extends MessageEvent {}
+export class PetLevelNotificationEvent extends MessageEvent {}
+export class PetReceivedMessageEvent extends MessageEvent {}
+export class RespectReceivedEvent extends MessageEvent {}
+export class RoomEnterEvent extends MessageEvent {}
+export class SimpleAlertMessageEvent extends MessageEvent {}
+export class UserBannedMessageEvent extends MessageEvent {}
+export class WiredRewardResultMessageEvent extends MessageEvent
+{
+    static readonly PRODUCT_DONATED_CODE = 7;
+    static readonly BADGE_DONATED_CODE = 8;
+}
+
+// RoomEnterEffect — used by useNotificationStore to check if the room-enter
+// animation is still running before showing the mod disclaimer bubble.
+export const RoomEnterEffect = {
+    isRunning: () => false,
+    totalRunningTime: 0
+};
+
 export class RoomEngineObjectEvent extends StubClass {}
 export class CreateLinkEvent extends StubClass {}
 export class EventDispatcher extends StubClass {}
@@ -196,9 +323,35 @@ export class AdvancedMap extends StubClass {}
 export class AvatarFigureContainer extends StubClass {}
 export class Vector3d extends StubClass {}
 export class ObjectDataFactory extends StubClass {}
-export class RoomDataParser extends StubClass {}
+
+// RoomDataParser — real static constants needed by useDoorState and its tests.
+export class RoomDataParser
+{
+    static readonly DOORBELL_STATE = 1;
+    static readonly PASSWORD_STATE = 2;
+}
+
 export class RoomModerationSettings extends StubClass {}
 export class StringDataType extends StubClass {}
+
+// Navigator data/parser stubs
+export class NavigatorCategoryDataParser extends StubClass {}
+export class NavigatorEventCategoryDataParser extends StubClass {}
+export class NavigatorSavedSearch extends StubClass {}
+export class NavigatorSearchResultSet extends StubClass {}
+export class NavigatorTopLevelContext extends StubClass {}
+export class CantConnectMessageParser extends StubClass
+{
+    static readonly REASON_FULL = 1;
+    static readonly REASON_QUEUE_ERROR = 2;
+    static readonly REASON_BANNED = 3;
+}
+
+export class LegacyExternalInterface
+{
+    static readonly available = false;
+    static call(..._args: unknown[]): void {}
+}
 export class SellablePetPaletteData extends StubClass {}
 export class PetFigureData extends StubClass {}
 export class PetData extends StubClass {}
@@ -220,6 +373,10 @@ export class HabboWebTools extends StubClass {}
 // codebase ("did the SUT call SendMessageComposer(new FooComposer(args))").
 export class AddFavouriteRoomMessageComposer extends StubClass {}
 export class DeleteFavouriteRoomMessageComposer extends StubClass {}
+export class FollowFriendMessageComposer extends StubClass {}
+export class GetUserEventCatsMessageComposer extends StubClass {}
+export class GetUserFlatCatsMessageComposer extends StubClass {}
+export class NavigatorSearchComposer extends StubClass {}
 export class DesktopViewComposer extends StubClass {}
 export class FurniturePlacePaintComposer extends StubClass {}
 export class GetGuestRoomMessageComposer extends StubClass {}
@@ -351,7 +508,35 @@ const stubManager = () =>
 
 export const GetAssetManager = vi.fn(stubManager);
 export const GetAvatarRenderManager = vi.fn(stubManager);
-export const GetCommunication = vi.fn(stubManager);
+// GetCommunication — routes IMessageEvent registration through the
+// msgListeners map (separate from the NitroEvent listeners map) so that
+// clearMockEventDispatcher() does NOT wipe these subscriptions. This
+// keeps useBetween-based hooks (like useDoorState) subscribed across
+// test cases without needing to recreate the useBetween singleton.
+//
+// A WeakMap stores the wrapper fn keyed by the MessageEvent instance so
+// that removeMessageEvent can remove the exact listener added by
+// registerMessageEvent.
+const _msgEventWrappers = new WeakMap<MessageEvent, (ev: any) => void>();
+
+export const GetCommunication = vi.fn(() => ({
+    registerMessageEvent(event: MessageEvent)
+    {
+        if(!event.callBack) return;
+        const wrapper = (ev: any) => event.callBack!(ev);
+        _msgEventWrappers.set(event, wrapper);
+        let bucket = msgListeners.get(event.type);
+        if(!bucket) { bucket = new Set(); msgListeners.set(event.type, bucket); }
+        bucket.add(wrapper);
+    },
+    removeMessageEvent(event: MessageEvent)
+    {
+        const wrapper = _msgEventWrappers.get(event);
+        if(wrapper) msgListeners.get(event.type)?.delete(wrapper);
+    },
+    // Stub for SendMessageComposer which calls GetCommunication().connection.send(...)
+    connection: { send: vi.fn() }
+}));
 export const GetConfiguration = vi.fn(stubManager);
 export const GetLocalizationManager = vi.fn(stubManager);
 export const GetRoomEngine = vi.fn(stubManager);

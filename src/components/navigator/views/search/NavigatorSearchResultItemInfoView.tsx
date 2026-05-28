@@ -4,7 +4,7 @@ import React, { FC, useRef, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { GetGroupInformation, GetSessionDataManager, GetUserProfile, LocalizeText, ReportType, SendMessageComposer, ToggleFavoriteRoom } from '../../../../api';
 import { Column, Flex, LayoutBadgeImageView, LayoutRoomThumbnailView, NitroCardContentView, Text, UserProfileIconView } from '../../../../common';
-import { useHelp, useNavigator } from '../../../../hooks';
+import { useHelp, useNavigatorData } from '../../../../hooks';
 import { classNames } from '../../../../layout';
 
 interface NavigatorSearchResultItemInfoViewProps
@@ -20,7 +20,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
     const { roomData = null, isVisible = undefined, onToggle, setIsPopoverActive } = props;
     const elementRef = useRef<HTMLDivElement>(null);
     const [ internalVisible, setInternalVisible ] = useState(false);
-    const { navigatorData = null, favouriteRoomIds = [] } = useNavigator();
+    const { navigatorData, favouriteRoomIds } = useNavigatorData();
     const { report = null } = useHelp();
 
     const isControlled = isVisible !== undefined;

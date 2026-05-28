@@ -2,37 +2,17 @@ import { FC, KeyboardEvent, useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { INavigatorSearchFilter, LocalizeText, SearchFilterOptions } from '../../../../api';
 import { Button } from '../../../../common';
-import { useNavigator } from '../../../../hooks';
+import { useNavigatorData, useNavigatorSearch, useNavigatorUiStore } from '../../../../hooks';
 
-export const NavigatorSearchView: FC<{
-    sendSearch: (searchValue: string, contextCode: string) => void;
-}> = props =>
+export const NavigatorSearchView: FC<{}> = props =>
 {
-    const { sendSearch = null } = props;
     const [ searchFilterIndex, setSearchFilterIndex ] = useState(0);
-    const [ searchValue, setSearchValue ] = useState('');
-    const { topLevelContext = null, searchResult = null } = useNavigator();
+    const [ inputText, setInputText ] = useState('');
+    const { topLevelContext } = useNavigatorData();
+    const { searchResult } = useNavigatorSearch();
 
-    const processSearch = () =>
-    {
-        if(!topLevelContext) return;
-
-        let searchFilter = SearchFilterOptions[searchFilterIndex];
-
-        if(!searchFilter) searchFilter = SearchFilterOptions[0];
-
-        const searchQuery = ((searchFilter.query ? (searchFilter.query + ':') : '') + searchValue);
-
-        sendSearch((searchQuery || ''), topLevelContext.code);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) =>
-    {
-        if(event.key !== 'Enter') return;
-
-        processSearch();
-    };
-
+    // Sync the input text display when a server result arrives (e.g. on tab switch
+    // or deep-link navigation that sets the filter through the store directly).
     useEffect(() =>
     {
         if(!searchResult) return;
@@ -57,8 +37,38 @@ export const NavigatorSearchView: FC<{
         if(!filter) filter = SearchFilterOptions[0];
 
         setSearchFilterIndex(SearchFilterOptions.findIndex(option => (option === filter)));
-        setSearchValue(value);
+        setInputText(value);
     }, [ searchResult ]);
+
+    // Debounced filter — 300ms after the user stops typing, push to the store
+    // which updates the query key and triggers a refetch.
+    useEffect(() =>
+    {
+        const timer = setTimeout(() =>
+        {
+            const searchFilter = SearchFilterOptions[searchFilterIndex] ?? SearchFilterOptions[0];
+            const searchQuery = (searchFilter.query ? (searchFilter.query + ':') : '') + inputText;
+            useNavigatorUiStore.getState().setFilter(searchQuery);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [ inputText, searchFilterIndex ]);
+
+    const processSearch = () =>
+    {
+        if(!topLevelContext) return;
+        // Immediate submit — skip the debounce timer
+        const searchFilter = SearchFilterOptions[searchFilterIndex] ?? SearchFilterOptions[0];
+        const searchQuery = (searchFilter.query ? (searchFilter.query + ':') : '') + inputText;
+        useNavigatorUiStore.getState().setFilter(searchQuery);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) =>
+    {
+        if(event.key !== 'Enter') return;
+
+        processSearch();
+    };
 
     return (
         <div className="flex w-full gap-1">
@@ -71,7 +81,7 @@ export const NavigatorSearchView: FC<{
                 </select>
             </div>
             <div className="flex w-full gap-1">
-                <input className="w-full form-control" placeholder={ LocalizeText('navigator.filter.input.placeholder') } type="text" value={ searchValue } onChange={ event => setSearchValue(event.target.value) } onKeyDown={ event => handleKeyDown(event) } />
+                <input className="w-full form-control" placeholder={ LocalizeText('navigator.filter.input.placeholder') } type="text" value={ inputText } onChange={ event => setInputText(event.target.value) } onKeyDown={ event => handleKeyDown(event) } />
                 <Button variant="primary" onClick={ processSearch }>
                     <FaSearch className="fa-icon" />
                 </Button>

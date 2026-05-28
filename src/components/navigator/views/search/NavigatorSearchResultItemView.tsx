@@ -3,7 +3,7 @@ import React, { FC, MouseEvent, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { CreateRoomSession, DoorStateType, TryVisitRoom } from '../../../../api';
 import { Column, Flex, LayoutBadgeImageView, LayoutGridItemProps, LayoutRoomThumbnailView, Text } from '../../../../common';
-import { useNavigator } from '../../../../hooks';
+import { useDoorState } from '../../../../hooks';
 import { NavigatorSearchResultItemInfoView } from './NavigatorSearchResultItemInfoView';
 
 export interface NavigatorSearchResultItemViewProps extends LayoutGridItemProps
@@ -19,7 +19,7 @@ export interface NavigatorSearchResultItemViewProps extends LayoutGridItemProps
 export const NavigatorSearchResultItemView: FC<NavigatorSearchResultItemViewProps> = props =>
 {
     const { roomData = null, children = null, thumbnail = false, selectedRoomId, setSelectedRoomId, isPopoverActive, setIsPopoverActive, ...rest } = props;
-    const { setDoorData = null } = useNavigator();
+    const { setSnapshot: setDoorData } = useDoorState();
 
     const handleMouseEnter = () =>
     {

@@ -2,7 +2,7 @@ import { UpdateRoomFilterMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
-import { useFilterWordsWidget, useNavigator } from '../../../../hooks';
+import { useFilterWordsWidget, useNavigatorData } from '../../../../hooks';
 import { NitroInput, classNames } from '../../../../layout';
 
 export const RoomFilterWordsWidgetView: FC<{}> = props =>
@@ -11,7 +11,7 @@ export const RoomFilterWordsWidgetView: FC<{}> = props =>
     const [ selectedWord, setSelectedWord ] = useState<string>('');
     const [ isSelectingWord, setIsSelectingWord ] = useState<boolean>(false);
     const { wordsFilter = [], isVisible = null, setWordsFilter, onClose = null } = useFilterWordsWidget();
-    const { navigatorData = null } = useNavigator();
+    const { navigatorData } = useNavigatorData();
 
     const processAction = (isAddingWord: boolean) =>
     {
