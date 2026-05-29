@@ -65,7 +65,9 @@ const useSoundboardState = () =>
         if(!enabled || serverSounds.length || fileLoadStartedRef.current) return;
         fileLoadStartedRef.current = true;
 
-        const url = GetConfigurationValue<string>('soundboard.sounds.url') || 'configuration/soundboard-sounds.json5';
+        const url = GetConfigurationValue<string>('soundboard.url')
+            || GetConfigurationValue<string>('soundboard.sounds.url')
+            || 'configuration/soundboard-sounds.json5';
 
         (async () =>
         {

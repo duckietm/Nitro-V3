@@ -31,7 +31,9 @@ const useRadioState = () =>
         if(loadStartedRef.current) return;
         loadStartedRef.current = true;
 
-        const url = GetConfigurationValue<string>('radio.stations.url') || 'configuration/radio-stations.json5';
+        const url = GetConfigurationValue<string>('radio.url')
+            || GetConfigurationValue<string>('radio.stations.url')
+            || 'configuration/radio-stations.json5';
 
         (async () =>
         {
