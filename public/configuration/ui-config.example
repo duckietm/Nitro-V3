@@ -28,6 +28,7 @@
 	"housekeeping.enabled": true,
     "toolbar.hide.quests": true,
     "show.google.ads": false,
+    "catalog.classic.style": false,
     "loginview": {
         "images": {
             "background": "${asset.url}/c_images/reception/stretch_blue.png",

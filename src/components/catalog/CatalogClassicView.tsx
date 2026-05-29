@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { FaBars, FaCog, FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa';
 import { CatalogType, GetConfigurationValue, LocalizeShortNumber, LocalizeText } from '../../api';
 import { Column, Grid, LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
-import { useCatalogActions, useCatalogData, useCatalogUiState, useHasPermission, usePurse } from '../../hooks';
+import { useCatalogActions, useCatalogClassicStyle, useCatalogData, useCatalogUiState, useHasPermission, usePurse } from '../../hooks';
 import { CatalogAdminProvider, useCatalogAdmin } from './CatalogAdminContext';
 import { CatalogAdminOfferEditView } from './views/admin/CatalogAdminOfferEditView';
 import { CatalogAdminPageEditView } from './views/admin/CatalogAdminPageEditView';
@@ -31,6 +31,7 @@ const CatalogClassicViewInner: FC<{}> = () =>
     const loading = catalogAdmin?.loading ?? false;
 
     const isMod = useHasPermission('acc_catalogfurni');
+    const [ catalogClassicStyle ] = useCatalogClassicStyle();
     const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false);
     const { purse = null } = usePurse();
     const displayedCurrencies = GetConfigurationValue<number[]>('system.currency.types', []);
@@ -122,8 +123,9 @@ const CatalogClassicViewInner: FC<{}> = () =>
     return (
         <>
             { isVisible &&
-                <NitroCardView classNames={ [ 'nitro-catalog-classic-window' ] } isResizable={ false } uniqueKey="catalog">
+                <NitroCardView classNames={ [ 'nitro-catalog-classic-window', catalogClassicStyle ? 'catalog-skin-legacy' : 'catalog-skin-modern' ] } isResizable={ false } uniqueKey="catalog">
                     <NitroCardHeaderView className={ currentType === CatalogType.BUILDER ? 'builders-club-card-header' : '' } headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } style={ buildersClubHeaderStyle } />
+                    { !catalogClassicStyle &&
                     <div className="nitro-catalog-classic-mobile-header">
                         { isMod &&
                             <div className="nitro-catalog-classic-mobile-burger">
@@ -159,7 +161,7 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                 </div>
                             )) }
                         </div>
-                    </div>
+                    </div> }
                     { adminMode &&
                         <div className="nitro-catalog-classic-admin-banner flex items-center justify-between text-[10px] font-bold px-3 py-0.5 uppercase tracking-wider">
                             <span>Admin Mode</span>
