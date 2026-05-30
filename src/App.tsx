@@ -31,6 +31,11 @@ const preloadUrl = async (url: string): Promise<void> =>
 {
     if(!url) return;
 
+    // Split gamedata URLs are directories (end with '/'); fetching them as a
+    // file just 404s and wastes a connection at startup. The real split loader
+    // handles those — only warm up actual file URLs here.
+    if(url.split('?')[0].split('#')[0].endsWith('/')) return;
+
     try
     {
         const response = await fetch(url, { cache: 'force-cache' });

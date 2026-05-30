@@ -37,6 +37,10 @@ const CatalogModernViewInner: FC<{}> = () =>
     const buildersClubHeaderStyle = (currentType === CatalogType.BUILDER)
         ? { borderColor: '#d79d2e', borderBottomColor: '#000', background: 'linear-gradient(180deg, #d89f2d 0%, #c68515 100%)' }
         : undefined;
+    // Desktop = fixed 780x520. On mobile the window clamps below the viewport so
+    // it reads as a dialog (with margins) instead of filling the whole phone
+    // screen — applies to both the normal catalog and the Builders Club.
+    const catalogCardSize = 'w-[780px] h-[520px] max-w-[96vw] max-h-[72vh] sm:max-w-[100vw] sm:max-h-[92vh]';
 
     useEffect(() =>
     {
@@ -122,7 +126,7 @@ const CatalogModernViewInner: FC<{}> = () =>
     return (
         <>
             { isVisible &&
-                <NitroCardView className="nitro-catalog w-[780px] h-[520px]" uniqueKey="catalog">
+                <NitroCardView className={ `nitro-catalog ${ catalogCardSize }` } uniqueKey="catalog">
                     <NitroCardHeaderView className={ currentType === CatalogType.BUILDER ? 'builders-club-card-header' : '' } headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } style={ buildersClubHeaderStyle } />
                     <NitroCardContentView classNames={ [ 'p-0!', 'overflow-hidden!' ] }>
                         { /* Admin banner */ }
@@ -141,7 +145,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                         <CatalogBuildersClubStatusView />
                         <div className="flex min-h-0 flex-1">
                             { /* === LEFT SIDEBAR === */ }
-                            <div className="group/rail flex flex-col w-[52px] hover:w-[175px] min-w-[52px] bg-card-grid-item border-r-2 border-card-grid-item-border py-1.5 gap-px overflow-y-auto overflow-x-hidden transition-[width] duration-200 ease-in-out">
+                            <div className="group/rail flex flex-col w-[52px] sm:hover:w-[175px] min-w-[52px] bg-card-grid-item border-r-2 border-card-grid-item-border py-1.5 gap-px overflow-y-auto overflow-x-hidden transition-[width] duration-200 ease-in-out [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
                                 { /* Favorites toggle */ }
                                 <div
@@ -279,7 +283,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                                             : <span className="text-muted">{ LocalizeText('catalog.title') }</span> }
                                     </div>
 
-                                    <div className="w-[180px] shrink-0">
+                                    <div className="w-[110px] sm:w-[180px] shrink-0">
                                         <CatalogSearchView />
                                     </div>
 
@@ -301,7 +305,7 @@ const CatalogModernViewInner: FC<{}> = () =>
                                         </div>
                                         : <>
                                             { !navigationHidden && activeNodes && activeNodes.length > 0 &&
-                                                <div className="w-[170px] min-w-[170px] border-r-2 border-card-grid-item-border bg-card-grid-item overflow-y-auto py-1">
+                                                <div className="w-[120px] min-w-[120px] sm:w-[170px] sm:min-w-[170px] border-r-2 border-card-grid-item-border bg-card-grid-item overflow-y-auto py-1">
                                                     <CatalogNavigationView node={ activeNodes[0] } />
                                                 </div> }
                                             <div className="flex-1 overflow-auto p-2 nitro-card-content-shell">

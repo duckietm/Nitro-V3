@@ -1,14 +1,29 @@
-import { NavigatorSearchComposer, NavigatorSearchEvent, NavigatorSearchResultSet } from '@nitrots/nitro-renderer';
+import { FlatCreatedEvent, NavigatorSearchComposer, NavigatorSearchEvent, NavigatorSearchResultSet } from '@nitrots/nitro-renderer';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
 import { useNavigatorUiStore } from './navigatorUiStore';
 
-
+/**
+ * Navigator search hook.
+ *
+ * Fires NavigatorSearchComposer(tabCode, filter) whenever the active tab
+ * or filter changes (skipped when tabCode is '' — initial state, before
+ * metadata arrives). Holds the latest NavigatorSearchResultSet that
+ * matches the active tab.
+ *
+ * The TanStack Query variant (see useNitroQuery) was tried earlier but
+ * its one-shot listener doesn't always reach NavigatorSearchEvent in
+ * production builds with older renderer SDKs; the persistent
+ * useMessageEvent listener used here matches the rest of the codebase
+ * and reliably catches every server push.
+ */
 export const useNavigatorSearch = () =>
 {
     const tabCode = useNavigatorUiStore(s => s.currentTabCode);
     const filter  = useNavigatorUiStore(s => s.currentFilter);
+    const queryClient = useQueryClient();
 
     const [ searchResult, setSearchResult ] = useState<NavigatorSearchResultSet | null>(null);
     const [ isFetching, setIsFetching ] = useState(false);
@@ -26,10 +41,23 @@ export const useNavigatorSearch = () =>
         const result = event.getParser()?.result;
         if(!result) return;
 
-        if(tabCode && result.code !== tabCode) return;
+        // No active tab → the search query is disabled, ignore any event.
+        // Otherwise only accept the event whose code matches the active tab.
+        if(!tabCode || (result.code !== tabCode)) return;
 
         setSearchResult(result);
         setIsFetching(false);
+    });
+
+    // A newly created room invalidates the current search so it refetches.
+    useMessageEvent<FlatCreatedEvent>(FlatCreatedEvent, () =>
+    {
+        queryClient.invalidateQueries({ queryKey: [ 'navigator', 'search' ] });
+
+        if(!tabCode) return;
+
+        setIsFetching(true);
+        SendMessageComposer(new NavigatorSearchComposer(tabCode, filter));
     });
 
     return {

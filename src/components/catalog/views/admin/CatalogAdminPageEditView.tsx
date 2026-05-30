@@ -67,8 +67,14 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
     {
         if(!editingPageData || !targetNode) return;
 
-        setCaption(targetNode.localization || '');
-        setCaptionSave(targetNode.pageName || targetNode.localization || '');
+        // The server appends " (pageId)" to the caption for mods/admins (see
+        // CatalogPagesListComposer). Strip that exact suffix before seeding the
+        // edit field, otherwise saving folds the id back into the stored
+        // caption and it multiplies on every edit ("Wired (1114) (1114) ...").
+        const rawCaption = (targetNode.localization || '').replace(new RegExp(`\\s*\\(${ targetNode.pageId }\\)\\s*$`), '');
+
+        setCaption(rawCaption);
+        setCaptionSave(targetNode.pageName || rawCaption);
         setCatalogMode(currentType === CatalogType.BUILDER ? 'BUILDER' : 'NORMAL');
         setPageLayout(currentPage?.layoutCode || 'default_3x3');
         setIconImage(targetNode.iconId ?? 0);

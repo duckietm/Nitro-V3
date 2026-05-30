@@ -69,8 +69,10 @@ export const InventoryBotView: FC<{
             <div className="flex flex-col col-span-7 gap-1 overflow-hidden">
                 <InfiniteGrid<IBotItem>
                     columnCount={ 4 }
+                    estimateSize={ 110 }
                     itemRender={ item => <InventoryBotItemView botItem={ item } /> }
-                    items={ botItems } />
+                    items={ botItems }
+                    rowGap={ 4 } />
             </div>
             <div className="flex flex-col col-span-5">
                 <div className="relative flex flex-col">
@@ -80,7 +82,7 @@ export const InventoryBotView: FC<{
                         <div className="flex flex-col justify-between gap-2 grow">
                             <span className="truncate grow">{ selectedBot.botData.name }</span>
                             { !!roomSession &&
-                                <NitroButton onClick={ event => attemptBotPlacement(selectedBot) }>
+                                <NitroButton className="nitro-inventory-btn-place" onClick={ event => attemptBotPlacement(selectedBot) }>
                                     { LocalizeText('inventory.furni.placetoroom') }
                                 </NitroButton> }
                         </div> }

@@ -84,6 +84,8 @@ export const InventoryPetView: FC<{
             <div className="flex flex-col col-span-7 gap-1 overflow-hidden">
                 <InfiniteGrid<IPetItem>
                     columnCount={ 6 }
+                    estimateSize={ 46 }
+                    itemMinWidth={ 46 }
                     itemRender={ item => <InventoryPetItemView petItem={ item } /> }
                     items={ petItems } />
             </div>
@@ -101,7 +103,7 @@ export const InventoryPetView: FC<{
                         <div className="flex flex-col justify-between gap-2 grow">
                             <span className="text-sm truncate grow">{ selectedPet.petData.name }</span>
                             { !!roomSession &&
-                                <NitroButton onClick={ event => attemptPetPlacement(selectedPet) }>
+                                <NitroButton className="nitro-inventory-btn-place" onClick={ event => attemptPetPlacement(selectedPet) }>
                                     { LocalizeText('inventory.furni.placetoroom') }
                                 </NitroButton> }
                         </div> }

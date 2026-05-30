@@ -22,7 +22,7 @@ export const NavigatorView: FC<{}> = props =>
 {
     const { topLevelContext, topLevelContexts, navigatorData, navigatorSearches } = useNavigatorData();
     const { searchResult, isFetching } = useNavigatorSearch();
-    const { isVisible, isCreatorOpen, isRoomInfoOpen, isRoomLinkOpen, isOpenSavesSearches, needsInit } = useNavigatorUiState();
+    const { isVisible, isCreatorOpen, isRoomInfoOpen, isRoomLinkOpen, isOpenSavesSearches, needsInit, currentTabCode } = useNavigatorUiState();
     const elementRef = useRef<HTMLDivElement>(null);
 
     useNitroEvent<RoomSessionEvent>(RoomSessionEvent.CREATED, event =>
@@ -122,7 +122,7 @@ export const NavigatorView: FC<{}> = props =>
                         { topLevelContexts && topLevelContexts.length > 0 && topLevelContexts.map((context, index) =>
                             <NitroCard.TabItem
                                 key={ index }
-                                isActive={ topLevelContext === context && !isCreatorOpen }
+                                isActive={ (currentTabCode ? currentTabCode === context.code : topLevelContext === context) && !isCreatorOpen }
                                 onClick={ () => useNavigatorUiStore.getState().setTab(context.code) }>
                                 { LocalizeText('navigator.toplevelview.' + context.code) }
                             </NitroCard.TabItem>) }

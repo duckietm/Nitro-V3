@@ -6,6 +6,7 @@ import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer
 import { Button, Column, Flex, LayoutBadgeImageView, LayoutCurrencyIcon, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
 import { useHasPermission, useMessageEvent, useNitroEvent, useRareValues, useRoom, useWiredTools } from '../../../../../hooks';
 import { NitroInput } from '../../../../../layout';
+import { ImagePositionEditorView } from './ImagePositionEditorView';
 
 interface InfoStandWidgetFurniViewProps
 {
@@ -43,6 +44,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const [ isJukeBox, setIsJukeBox ] = useState<boolean>(false);
     const [ isSongDisk, setIsSongDisk ] = useState<boolean>(false);
     const [ isBranded, setIsBranded ] = useState<boolean>(false);
+    const [ showPositionEditor, setShowPositionEditor ] = useState<boolean>(false);
     const [ songId, setSongId ] = useState<number>(-1);
     const [ songName, setSongName ] = useState<string>('');
     const [ songCreator, setSongCreator ] = useState<string>('');
@@ -392,6 +394,45 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
         return data;
     }, [ furniKeys, furniValues ]);
+
+    const getBrandingOffset = useCallback((key: string): number =>
+    {
+        const index = furniKeys.indexOf(key);
+        if(index < 0) return 0;
+        const value = parseInt(furniValues[index]);
+        return isNaN(value) ? 0 : value;
+    }, [ furniKeys, furniValues ]);
+
+    const hasBrandingOffsets = isBranded && (furniKeys.indexOf('offsetX') >= 0);
+
+    // Persist the position from the editor: rebuild the branding map with the
+    // new offsets and send it (same path as Save), then reflect it in the fields.
+    const savePositionEditor = useCallback((x: number, y: number, z: number, scale: number) =>
+    {
+        const map = new Map<string, string>();
+        const clone = Array.from(furniValues);
+        let hasScale = false;
+
+        for(let i = 0; i < furniKeys.length; i++)
+        {
+            const key = furniKeys[i];
+            let value = furniValues[i];
+
+            if(key === 'offsetX') value = String(x);
+            else if(key === 'offsetY') value = String(y);
+            else if(key === 'offsetZ') value = String(z);
+            else if(key === 'scale') { value = String(scale); hasScale = true; }
+
+            clone[i] = value;
+            map.set(key, value);
+        }
+
+        // older branding furni may not carry a scale key yet — always send it
+        if(!hasScale) map.set('scale', String(scale));
+
+        GetRoomEngine().modifyRoomObjectDataWithMap(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_SAVE_STUFF_DATA, map);
+        setFurniValues(clone);
+    }, [ avatarInfo, furniKeys, furniValues ]);
 
     const processButtonAction = useCallback((action: string) =>
     {
@@ -749,6 +790,10 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     <Button variant="dark" onClick={ event => processButtonAction('use') }>
                         { LocalizeText('infostand.button.use') }
                     </Button> }
+                { hasBrandingOffsets &&
+                    <Button variant="dark" onClick={ () => setShowPositionEditor(true) }>
+                        { LocalizeText('image.position.editor.button') }
+                    </Button> }
                 { ((furniKeys.length > 0 && furniValues.length > 0) && (furniKeys.length === furniValues.length)) &&
                     <Button variant="dark" onClick={ () => processButtonAction('save_branding_configuration') }>
                         { LocalizeText('save') }
@@ -758,6 +803,17 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                         { LocalizeText('save') }
                     </Button> }
             </Flex>
+            { showPositionEditor &&
+                <ImagePositionEditorView
+                    roomId={ roomSession.roomId }
+                    objectId={ avatarInfo.id }
+                    isWallItem={ avatarInfo.isWallItem }
+                    initialX={ getBrandingOffset('offsetX') }
+                    initialY={ getBrandingOffset('offsetY') }
+                    initialZ={ getBrandingOffset('offsetZ') }
+                    initialScale={ getBrandingOffset('scale') || 100 }
+                    onClose={ () => setShowPositionEditor(false) }
+                    onSave={ savePositionEditor } /> }
         </Column>
     );
 };

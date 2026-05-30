@@ -37,6 +37,8 @@ import './css/login/LoginView.css';
 
 import './css/icons/icons.css';
 
+import './css/inventory/InventoryView.css';
+
 
 import './css/layout/LayoutTrophy.css';
 

@@ -1,6 +1,6 @@
 import { RelationshipStatusEnum, RelationshipStatusInfoMessageParser } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { GetUserProfile, LocalizeText } from '../../api';
+import { CreateLinkEvent, GetUserProfile, LocalizeText } from '../../api';
 import { Flex, LayoutAvatarImageView } from '../../common';
 
 interface RelationshipsContainerViewProps
@@ -29,7 +29,7 @@ export const RelationshipsContainerView: FC<RelationshipsContainerViewProps> = p
                 </Flex>
                 <div className="nitro-extended-profile__relationship-copy">
                     <div className="nitro-extended-profile__relationship-box">
-                        <p className="nitro-extended-profile__relationship-name" onClick={ event => (relationshipInfo && (relationshipInfo.randomFriendId >= 1) && GetUserProfile(relationshipInfo.randomFriendId)) }>
+                        <p className="nitro-extended-profile__relationship-name" onClick={ event => ((relationshipInfo && (relationshipInfo.randomFriendId >= 1)) ? GetUserProfile(relationshipInfo.randomFriendId) : CreateLinkEvent('friends/toggle')) }>
                             { (!relationshipInfo || (relationshipInfo.friendCount === 0)) &&
                                 LocalizeText('extendedprofile.add.friends') }
                             { (relationshipInfo && (relationshipInfo.friendCount >= 1)) &&
@@ -37,7 +37,7 @@ export const RelationshipsContainerView: FC<RelationshipsContainerViewProps> = p
                         </p>
                         { (relationshipInfo && (relationshipInfo.friendCount >= 1)) &&
                             <div className="nitro-extended-profile__relationship-head">
-                                <LayoutAvatarImageView direction={ 4 } figure={ relationshipInfo.randomFriendFigure } headOnly={ true } classNames={ [ '!w-auto', '!h-auto', '!left-0' ] } />
+                                <LayoutAvatarImageView direction={ 2 } figure={ relationshipInfo.randomFriendFigure } headOnly={ true } />
                             </div> }
                     </div>
                     <p className="nitro-extended-profile__relationship-subcopy">

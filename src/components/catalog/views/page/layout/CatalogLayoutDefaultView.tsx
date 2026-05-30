@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { FaEdit, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaPowerOff, FaSyncAlt } from 'react-icons/fa';
 import { GetConfigurationValue, LocalizeText, ProductTypeEnum, SanitizeHtml } from '../../../../../api';
 import { Text } from '../../../../../common';
 import { useCatalogData } from '../../../../../hooks';
@@ -17,13 +17,12 @@ import { CatalogLayoutProps } from './CatalogLayout.types';
 export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
 {
     const { page = null } = props;
-    const { currentOffer = null, currentPage = null } = useCatalogData();
+    const { currentOffer = null, currentPage = null, roomPreviewer = null } = useCatalogData();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
 
     return (
         <div className="nitro-catalog-classic-default-layout flex flex-col h-full gap-2">
-            { /* Admin: quick actions */ }
             { adminMode && !catalogAdmin.editingPageData &&
                 <div className="flex gap-2 nitro-catalog-classic-default-admin">
                     <button
@@ -42,23 +41,24 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
                         <FaPlus className="text-[10px]" /> { LocalizeText('catalog.admin.offer.new') }
                     </button>
                 </div> }
-
-            { /* Product detail card */ }
             { currentOffer &&
-                <div className="nitro-catalog-classic-offer-panel flex gap-0 overflow-hidden">
-                    { /* Preview area */ }
+                <div className="nitro-catalog-classic-offer-panel flex gap-0 shrink-0">
                     <div className="nitro-catalog-classic-offer-preview relative flex items-center justify-center">
                         { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
                             <>
+                                <button className="nitro-catalog-classic-preview-btn nitro-catalog-classic-preview-rotate" onClick={ () => roomPreviewer?.changeRoomObjectDirection() }>
+                                    <FaSyncAlt /> Rotate
+                                </button>
+                                <button className="nitro-catalog-classic-preview-btn nitro-catalog-classic-preview-state" onClick={ () => roomPreviewer?.changeRoomObjectState() }>
+                                    <FaPowerOff /> Toggle State
+                                </button>
                                 <CatalogViewProductWidgetView />
                                 <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 right-1 absolute" />
                             </> }
                         { (currentOffer.product.productType === ProductTypeEnum.BADGE) &&
                             <CatalogAddOnBadgeWidgetView className="scale-2" /> }
                     </div>
-                    { /* Product info + purchase */ }
                     <div className="nitro-catalog-classic-offer-info flex flex-col flex-1 min-w-0 gap-2">
-                        { /* Title row */ }
                         <div>
                             <div className="flex items-start justify-between gap-2">
                                 <Text className="text-[13px]! font-bold text-dark leading-tight">{ currentOffer.localizationName }</Text>
@@ -77,19 +77,16 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
                                 </div> }
                             <CatalogLimitedItemWidgetView />
                         </div>
-                        { /* Price */ }
                         <CatalogTotalPriceWidget />
-                        { /* Spinner */ }
                         <CatalogSpinnerWidgetView />
-                        { /* Actions */ }
-                        <div className="flex gap-1.5 mt-auto">
+                        <div className="nitro-catalog-classic-offer-actions flex gap-1.5">
                             <CatalogPurchaseWidgetView />
                         </div>
                     </div>
                 </div> }
 
             { !currentOffer &&
-                <div className="nitro-catalog-classic-welcome flex items-center gap-3">
+                <div className="nitro-catalog-classic-welcome flex items-center gap-3 shrink-0">
                     { !!page.localization.getImage(1) &&
                         <img className="w-[70px] h-[70px] object-contain rounded shrink-0" src={ page.localization.getImage(1) } /> }
                     <Text className="text-[11px]! text-muted" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />

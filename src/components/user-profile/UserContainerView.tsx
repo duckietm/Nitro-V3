@@ -60,18 +60,12 @@ export const UserContainerView: FC<UserContainerViewProps> = props =>
                                 prefixText={ userProfile.prefixText }
                                 username={ userProfile.username } />
                             <p className="nitro-extended-profile__motto">{ userProfile.motto || '\u00A0' }</p>
-                            <p
-                                className="nitro-extended-profile__meta"
-                                dangerouslySetInnerHTML={ {
-                                    __html: LocalizeText('extendedprofile.created', [ 'created' ], [ userProfile.registration ])
-                                } }
-                            />
-                            <p
-                                className="nitro-extended-profile__meta"
-                                dangerouslySetInnerHTML={ {
-                                    __html: LocalizeText('extendedprofile.last.login', [ 'lastlogin' ], [ FriendlyTime.format(userProfile.secondsSinceLastVisit, '.ago', 2) ])
-                                } }
-                            />
+                            <p className="nitro-extended-profile__meta">
+                                <b>{ LocalizeText('extendedprofile.created').replace(/%\w+%/g, '').trim() }</b> { userProfile.registration }
+                            </p>
+                            <p className="nitro-extended-profile__meta">
+                                <b>{ LocalizeText('extendedprofile.last.login').replace(/%\w+%/g, '').trim() }</b> { FriendlyTime.format(userProfile.secondsSinceLastVisit, '.ago', 2) }
+                            </p>
                             <p className="nitro-extended-profile__meta nitro-extended-profile__meta--strong">
                                 <b>{ LocalizeText('extendedprofile.achievementscore') }</b> { userProfile.achievementPoints }
                             </p>
@@ -100,10 +94,10 @@ export const UserContainerView: FC<UserContainerViewProps> = props =>
 
                     { isOwnProfile &&
                         <div className="nitro-extended-profile__actions">
-                            <button className="nitro-extended-profile__link" type="button">
+                            <button className="nitro-extended-profile__link" type="button" onClick={ () => CreateLinkEvent('avatar-editor/show') }>
                                 { LocalizeText('extended.profile.change.looks') }
                             </button>
-                            <button className="nitro-extended-profile__link" type="button" onClick={ () => CreateLinkEvent('inventory/open/badges') }>
+                            <button className="nitro-extended-profile__link" type="button" onClick={ () => CreateLinkEvent('inventory/show/badges') }>
                                 { LocalizeText('extended.profile.change.badges') }
                             </button>
                         </div> }
@@ -148,11 +142,11 @@ export const UserContainerView: FC<UserContainerViewProps> = props =>
                     <span className="nitro-extended-profile__summary-label">{ LocalizeText('inventory.badges') }</span>
                     <span className="nitro-extended-profile__summary-value">{ totalBadges }</span>
                 </button>
-                <div className="nitro-extended-profile__summary-button">
+                <button className="nitro-extended-profile__summary-button nitro-extended-profile__summary-button--center" type="button" onClick={ () => CreateLinkEvent('achievements/toggle') }>
                     <img className="nitro-extended-profile__summary-icon" src={ profileLevelIcon } alt="" />
                     <span className="nitro-extended-profile__summary-label">{ LocalizeText('extendedprofile.achievementscore') }</span>
                     <span className="nitro-extended-profile__summary-value">{ userProfile.achievementPoints }</span>
-                </div>
+                </button>
             </div>
         </div>
     );

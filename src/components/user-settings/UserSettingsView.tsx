@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { FaUserCog, FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import { DispatchMainEvent, DispatchUiEvent, LocalizeText, SendMessageComposer } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useChatWindow, useMessageEvent } from '../../hooks';
+import { useCatalogClassicStyle, useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useChatWindow, useMessageEvent } from '../../hooks';
 import { classNames } from '../../layout';
 
 export const UserSettingsView: FC<{}> = props =>
@@ -13,6 +13,7 @@ export const UserSettingsView: FC<{}> = props =>
     const [ catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects ] = useCatalogPlaceMultipleItems();
     const [ catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation ] = useCatalogSkipPurchaseConfirmation();
     const [ chatWindowEnabled, setChatWindowEnabled ] = useChatWindow();
+    const [ catalogClassicStyle, setCatalogClassicStyle ] = useCatalogClassicStyle();
 
     const processAction = (type: string, value?: boolean | number | string) =>
     {
@@ -155,6 +156,10 @@ export const UserSettingsView: FC<{}> = props =>
                     <div className="flex items-center gap-1">
                         <input checked={ chatWindowEnabled } className="form-check-input" type="checkbox" onChange={ event => setChatWindowEnabled(event.target.checked) } />
                         <Text>Enable chat window</Text>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <input checked={ catalogClassicStyle } className="form-check-input" type="checkbox" onChange={ event => setCatalogClassicStyle(event.target.checked) } />
+                        <Text>Catalogo: stile classico</Text>
                     </div>
                 </div>
                 <div className="flex flex-col">

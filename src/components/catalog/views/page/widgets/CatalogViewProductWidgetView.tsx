@@ -19,6 +19,8 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
         if(!product) return;
 
         roomPreviewer.reset(false);
+        roomPreviewer.updateObjectRoom('default', 'default', 'default');
+        roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
         switch(product.productType)
         {
@@ -67,6 +69,8 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
             }
             case ProductTypeEnum.WALL: {
                 if(!product.furnitureData) return;
+
+                roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
                 switch(product.furnitureData.specialType)
                 {

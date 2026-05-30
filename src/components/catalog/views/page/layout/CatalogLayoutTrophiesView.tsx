@@ -58,9 +58,11 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
                     </button>
                 </div> }
 
-            { /* Selected trophy card */ }
+            { /* Selected trophy card. shrink-0 + no overflow-hidden so the
+                 Buy button stays inside the panel even when the grid below
+                 holds many trophies. */ }
             { currentOffer
-                ? <div className="flex gap-0 bg-white rounded border-2 border-warning/40 overflow-hidden" style={ { boxShadow: '0 0 8px rgba(255,193,7,0.15)' } }>
+                ? <div className="flex gap-0 bg-white rounded border-2 border-warning/40 shrink-0" style={ { boxShadow: '0 0 8px rgba(255,193,7,0.15)' } }>
                     { /* Preview */ }
                     <div className="w-[120px] min-w-[120px] relative flex items-center justify-center border-r-2 border-warning/30" style={ { background: 'linear-gradient(180deg, #fff9e6 0%, #fff3cc 100%)' } }>
                         { (currentOffer.product.productType !== ProductTypeEnum.BADGE)
@@ -90,7 +92,7 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
                         <CatalogTotalPriceWidget />
                         { !canPurchase &&
                             <span className="text-[9px] text-warning italic">{ LocalizeText('catalog.trophies.write.hint') }</span> }
-                        <div className="flex gap-1.5 mt-auto">
+                        <div className="flex gap-1.5">
                             <CatalogPurchaseWidgetView />
                         </div>
                     </div>

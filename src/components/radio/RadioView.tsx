@@ -76,7 +76,7 @@ export const RadioView: FC<{}> = () =>
                     <div className="mt-0.5 flex items-center gap-1.5">
                         { selectedPlaying &&
                             <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-sky-400">
-                                <span className="h-1.5 w-1.5 rounded-full bg-sky-400" /> Live
+                                <span className="h-1.5 w-1.5 rounded-full bg-sky-400" /> { LocalizeText('radio.live') }
                             </span> }
                         { selected?.genre &&
                             <span className="truncate text-[10px] text-white/45">{ selected.genre }</span> }

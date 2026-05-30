@@ -4,6 +4,9 @@ import { CommandDefinition, LocalizeText } from '../../../api';
 import { createNitroStore } from '../../../state/createNitroStore';
 import { useMessageEvent } from '../../events';
 
+// Client-only commands are static; safe to keep at module scope. The
+// `descriptionKey` is a LocalizeText slot resolved at merge time so
+// hotels in different locales see the right language.
 const CLIENT_COMMANDS: { key: string; descriptionKey: string }[] = [
     // Room effects
     { key: 'shake',       descriptionKey: 'chatcmd.client.shake' },

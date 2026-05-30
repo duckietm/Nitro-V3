@@ -212,3 +212,11 @@
         }
     }
 }
+
+@media (max-width: 640px) {
+    .draggable-window {
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+    }
+}

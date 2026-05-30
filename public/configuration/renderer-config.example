@@ -27,7 +27,7 @@
     "avatar.asset.effect.url": "${asset.url}/effect/%libname%.nitro",
     "furni.asset.url": "${asset.url}/furniture/%libname%.nitro",
     "furni.asset.icon.url": "${hof.furni.url}/icons/%libname%%param%_icon.png",
-    "pet.asset.url": "${asset.url}/pets/%libname%.nitro",
+    "pet.asset.url": "${asset.url}/pet/%libname%.nitro",
     "generic.asset.url": "${asset.url}/generic/%libname%.nitro",
     "badge.asset.url": "${image.library.url}album1584/%badgename%.gif",
 	"radio.url": "${gamedata.url}/radio-stations.json5?t=%timestamp%",

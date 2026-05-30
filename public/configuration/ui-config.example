@@ -27,8 +27,8 @@
     "guides.enabled": true,
 	"housekeeping.enabled": true,
     "toolbar.hide.quests": true,
-    "catalog.style.new": true,
     "show.google.ads": false,
+    "catalog.classic.style": false,
     "loginview": {
         "images": {
             "background": "${asset.url}/c_images/reception/stretch_blue.png",
@@ -39,28 +39,6 @@
             "right": "${asset.url}/c_images/reception/US_right.png",
             "right.repeat": "${asset.url}/c_images/reception/US_top_right.png"
         },
-        "widgets": {
-            "slot.1.widget": "promoarticle",
-            "slot.1.conf": {},
-            "slot.2.widget": "widgetcontainer",
-            "slot.2.conf": {
-                "image": "${image.library.url}web_promo_small/spromo_Canal_Bundle.png",
-                "texts": "2021NitroPromo",
-                "btnLink": ""
-            },
-            "slot.3.widget": "",
-            "slot.3.conf": {},
-            "slot.4.widget": "",
-            "slot.4.conf": {},
-            "slot.5.widget": "",
-            "slot.5.conf": {},
-            "slot.6.widget": "",
-            "slot.6.conf": {
-                "campaign": ""
-            },
-            "slot.7.widget": "",
-            "slot.7.conf": {}
-        }
     },
     "navigator.room.models": [
         {

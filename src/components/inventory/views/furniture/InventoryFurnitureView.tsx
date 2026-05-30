@@ -1,7 +1,7 @@
 import { InfiniteGrid } from '@layout/InfiniteGrid';
 import { GetRoomEngine, GetSessionDataManager, IRoomSession, RoomObjectVariable, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaPowerOff, FaSyncAlt, FaTrashAlt } from 'react-icons/fa';
 import { DispatchUiEvent, FurniCategory, GroupItem, LocalizeText, UnseenItemCategory, attemptItemPlacement } from '../../../../api';
 import { LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomPreviewerView } from '../../../../common';
 import { CatalogPostMarketplaceOfferEvent, DeleteItemConfirmEvent } from '../../../../events';
@@ -49,22 +49,24 @@ export const InventoryFurnitureView: FC<{
 
         if(!furnitureItem) return;
 
-        const roomEngine = GetRoomEngine();
-
-        let wallType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
-        let floorType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
-        let landscapeType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
-
-        wallType = (wallType && wallType.length) ? wallType : '101';
-        floorType = (floorType && floorType.length) ? floorType : '101';
-        landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
-
         roomPreviewer.reset(false);
-        roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
-        roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
-        if((furnitureItem.category === FurniCategory.WALL_PAPER) || (furnitureItem.category === FurniCategory.FLOOR) || (furnitureItem.category === FurniCategory.LANDSCAPE))
+        const isRoomDecoration = (furnitureItem.category === FurniCategory.WALL_PAPER) || (furnitureItem.category === FurniCategory.FLOOR) || (furnitureItem.category === FurniCategory.LANDSCAPE);
+
+        if(isRoomDecoration)
         {
+            const roomEngine = GetRoomEngine();
+
+            let wallType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
+            let floorType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
+            let landscapeType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
+
+            wallType = (wallType && wallType.length) ? wallType : '101';
+            floorType = (floorType && floorType.length) ? floorType : '101';
+            landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
+
+            roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
+
             floorType = ((furnitureItem.category === FurniCategory.FLOOR) ? selectedItem.stuffData.getLegacyString() : floorType);
             wallType = ((furnitureItem.category === FurniCategory.WALL_PAPER) ? selectedItem.stuffData.getLegacyString() : wallType);
             landscapeType = ((furnitureItem.category === FurniCategory.LANDSCAPE) ? selectedItem.stuffData.getLegacyString() : landscapeType);
@@ -77,17 +79,20 @@ export const InventoryFurnitureView: FC<{
 
                 if(data) roomPreviewer.addWallItemIntoRoom(data.id, new Vector3d(90, 0, 0), data.customParams);
             }
+
+            return;
+        }
+
+        roomPreviewer.updateObjectRoom('default', 'default', 'default');
+        roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
+
+        if(selectedItem.isWallItem)
+        {
+            roomPreviewer.addWallItemIntoRoom(selectedItem.type, new Vector3d(90), furnitureItem.stuffData.getLegacyString());
         }
         else
         {
-            if(selectedItem.isWallItem)
-            {
-                roomPreviewer.addWallItemIntoRoom(selectedItem.type, new Vector3d(90), furnitureItem.stuffData.getLegacyString());
-            }
-            else
-            {
-                roomPreviewer.addFurnitureIntoRoom(selectedItem.type, new Vector3d(90), selectedItem.stuffData, (furnitureItem.extra.toString()));
-            }
+            roomPreviewer.addFurnitureIntoRoom(selectedItem.type, new Vector3d(90), selectedItem.stuffData, (furnitureItem.extra.toString()));
         }
     }, [ roomPreviewer, selectedItem ]);
 
@@ -130,6 +135,15 @@ export const InventoryFurnitureView: FC<{
                 <div className="relative flex flex-col">
                     <LayoutRoomPreviewerView height={ 140 } roomPreviewer={ roomPreviewer } />
                     { selectedItem &&
+                        <>
+                            <button className="nitro-inventory-preview-btn nitro-inventory-preview-rotate" onClick={ () => roomPreviewer?.changeRoomObjectDirection() }>
+                                <FaSyncAlt /> Rotate
+                            </button>
+                            <button className="nitro-inventory-preview-btn nitro-inventory-preview-state" onClick={ () => roomPreviewer?.changeRoomObjectState() }>
+                                <FaPowerOff /> Toggle State
+                            </button>
+                        </> }
+                    { selectedItem &&
                         <NitroButton
                             className="bg-danger! hover:bg-danger/80! absolute bottom-2 inset-e-2 p-1"
                             onClick={ () => attemptDeleteItem(selectedItem) }>
@@ -147,11 +161,11 @@ export const InventoryFurnitureView: FC<{
                             <span className="text-xs truncate">{ selectedItem.description }</span> }
                         <div className="flex flex-col gap-1">
                             { !!roomSession &&
-                                <NitroButton onClick={ event => attemptItemPlacement(selectedItem) }>
+                                <NitroButton className="nitro-inventory-btn-place" onClick={ event => attemptItemPlacement(selectedItem) }>
                                     { LocalizeText('inventory.furni.placetoroom') }
                                 </NitroButton> }
                             { selectedItem.isSellable &&
-                                <NitroButton onClick={ event => attemptPlaceMarketplaceOffer(selectedItem) }>
+                                <NitroButton className="nitro-inventory-btn-sell" onClick={ event => attemptPlaceMarketplaceOffer(selectedItem) }>
                                     { LocalizeText('inventory.marketplace.sell') }
                                 </NitroButton> }
                         </div>
