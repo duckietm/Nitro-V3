@@ -142,6 +142,10 @@
     border-radius: 4px;
     background: var(--cat-panel);
     overflow: auto;
+    /* Reserve the scrollbar space at all times so the rows (and the active
+       highlight) keep the same width/proportions whether or not the list
+       overflows into a scrollbar (e.g. many sub-pages). */
+    scrollbar-gutter: stable;
 }
 
 .nitro-catalog-classic-navigation-list {
