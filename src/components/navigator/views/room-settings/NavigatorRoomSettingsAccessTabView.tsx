@@ -58,12 +58,12 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
                         { (isTryingPassword || (roomData.lockState === RoomDataParser.PASSWORD_STATE)) &&
                             <Column gap={ 1 }>
                                 <Text>{ LocalizeText('navigator.roomsettings.doormode.password') }</Text>
-                                <input type="password" className="form-control form-control-sm col-4" value={ password } onChange={ event => setPassword(event.target.value) } placeholder={ LocalizeText('navigator.roomsettings.password') } onFocus={ event => setIsTryingPassword(true) } />
+                                <input type="password" className="form-control form-control-sm" value={ password } onChange={ event => setPassword(event.target.value) } placeholder={ LocalizeText('navigator.roomsettings.password') } onFocus={ event => setIsTryingPassword(true) } />
                                 { isTryingPassword && (password.length <= 0) &&
                                     <Text bold small variant="danger">
                                         { LocalizeText('navigator.roomsettings.passwordismandatory') }
                                     </Text> }
-                                <input type="password" className="form-control form-control-sm col-4" value={ confirmPassword } onChange={ event => setConfirmPassword(event.target.value) } onBlur={ saveRoomPassword } placeholder={ LocalizeText('navigator.roomsettings.passwordconfirm') } />
+                                <input type="password" className="form-control form-control-sm" value={ confirmPassword } onChange={ event => setConfirmPassword(event.target.value) } onBlur={ saveRoomPassword } placeholder={ LocalizeText('navigator.roomsettings.passwordconfirm') } />
                                 { isTryingPassword && ((password.length > 0) && (password !== confirmPassword)) &&
                                     <Text bold small variant="danger">
                                         { LocalizeText('navigator.roomsettings.invalidconfirm') }
