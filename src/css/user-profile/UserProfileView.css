@@ -1,7 +1,3 @@
-.nitro-extended-profile-window {
-  border-radius: 0 !important;
-}
-
 .nitro-extended-profile-window .nitro-card-header-shell {
   min-height: 34px;
   max-height: 34px;
@@ -46,32 +42,31 @@
 
 .nitro-extended-profile__identity {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 10px;
 }
 
+/* Mirror the room infostand exactly: a 68x135 flex column (= profile-background)
+   that centres the avatar horizontally and clips it; the stand/overlay sit on
+   top as absolute layers. The avatar keeps its component default classes
+   (relative w-[90px] h-[130px] left-[-2px]) so it lines up with bg + stand and
+   isn't crooked. Do NOT absolutely position or force width/height on it. */
 .nitro-extended-profile__avatar-shell {
-  width: 56px;
-  height: 113px;
+  width: 68px;
+  height: 135px;
   position: relative;
   overflow: hidden;
-  background-size: cover;
-  background-position: center;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .nitro-extended-profile__avatar-stand,
 .nitro-extended-profile__avatar-overlay {
   position: absolute;
-  inset: 0;
-}
-
-.nitro-extended-profile__avatar-image {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: -4px;
-  transform: translateX(-50%);
-  width: auto !important;
-  height: auto !important;
+  top: 0;
+  left: 0;
 }
 
 .nitro-extended-profile__identity-copy {
@@ -253,14 +248,27 @@
 
 .nitro-extended-profile__relationship-head {
   position: absolute;
-  right: -2px;
+  right: 3px;
   top: 50%;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 32px;
   transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+}
+
+/* Same proven recipe as the messenger head: clip a small box and centre a
+   54x54 avatar in it. `inset: auto` cancels the component's `inset-0` so the
+   width/position take effect (otherwise the head overflows huge). */
+.nitro-extended-profile__relationship-head .avatar-image {
+  position: absolute !important;
+  inset: auto !important;
+  left: 50% !important;
+  top: 54% !important;
+  width: 50px !important;
+  height: 50px !important;
+  margin: 0 !important;
+  background-position: center center !important;
+  transform: translate(-50%, -50%) scale(.95) !important;
 }
 
 .nitro-extended-profile__relationship-subcopy {

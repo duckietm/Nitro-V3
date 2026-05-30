@@ -19,6 +19,13 @@ const TAB_PETS: string = 'inventory.furni.tab.pets';
 const TAB_BADGES: string = 'inventory.badges';
 const TAB_PREFIXES: string = 'inventory.prefixes';
 const TABS = [ TAB_FURNITURE, TAB_PETS, TAB_BADGES, TAB_PREFIXES, TAB_BOTS ];
+// Maps an optional link code (inventory/show/<code>) to a tab so other views
+// (e.g. the profile "Change Badges" button) can deep-link to a specific tab.
+const TAB_BY_CODE: Record<string, string> = {
+    furni: TAB_FURNITURE, furniture: TAB_FURNITURE,
+    pets: TAB_PETS, badges: TAB_BADGES,
+    prefixes: TAB_PREFIXES, bots: TAB_BOTS
+};
 const UNSEEN_CATEGORIES = [ UnseenItemCategory.FURNI, UnseenItemCategory.PET, UnseenItemCategory.BADGE, UnseenItemCategory.PREFIX, UnseenItemCategory.BOT ];
 const TAB_ICONS: Record<string, ReactNode> = {
     [TAB_FURNITURE]: <FaCouch />,
@@ -94,12 +101,14 @@ export const InventoryView: FC<{}> = props =>
                 {
                     case 'show':
                         setIsVisible(true);
+                        if(parts[2] && TAB_BY_CODE[parts[2]]) setCurrentTab(TAB_BY_CODE[parts[2]]);
                         return;
                     case 'hide':
                         setIsVisible(false);
                         return;
                     case 'toggle':
                         setIsVisible(prevValue => !prevValue);
+                        if(parts[2] && TAB_BY_CODE[parts[2]]) setCurrentTab(TAB_BY_CODE[parts[2]]);
                         return;
                 }
             },

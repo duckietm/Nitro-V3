@@ -11,6 +11,7 @@ export const CatalogView: FC<{}> = () =>
     // Default = upstream rebuilt catalog (CatalogClassicView, latest release theme).
     // The "stile classico" toggle (or global catalog.classic.style flag) switches
     // to the Hippiehotel.nl catalog (CatalogModernView, self-contained tailwind).
+    // Both the normal catalog and the Builders Club follow this toggle.
     if(catalogClassicStyle) return (
         <>
             <div className="hidden" data-catalog-localization-version={ catalogLocalizationVersion } />

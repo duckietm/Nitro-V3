@@ -252,7 +252,8 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                 <div className="nitro-catalog-classic-layout-header-shell">
                                     <CatalogBreadcrumbView />
                                     <div className="nitro-catalog-classic-layout-hero">
-                                        { !!currentPage?.localization?.getImage(0) && <img src={ currentPage.localization.getImage(0) } /> }
+                                        { /* info_duckets renders its own logo in the body (BcInfoView) — don't duplicate it in the hero */ }
+                                        { (currentPage?.layoutCode !== 'info_duckets') && !!currentPage?.localization?.getImage(0) && <img src={ currentPage.localization.getImage(0) } /> }
                                     </div>
                                 </div>
                                 <div className="nitro-catalog-classic-layout-container">

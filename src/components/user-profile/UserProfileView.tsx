@@ -1,6 +1,6 @@
-import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, NavigatorSearchComposer, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
+import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
+import { CreateLinkEvent, GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
 import { NitroCard } from '../../layout';
 import { GroupsContainerView } from './GroupsContainerView';
@@ -28,10 +28,11 @@ export const UserProfileView: FC<{}> = () =>
 
     const onOpenRooms = () =>
     {
-        if(userProfile)
-        {
-            SendMessageComposer(new NavigatorSearchComposer('hotel_view', `owner:${ userProfile.username }`));
-        }
+        if(!userProfile) return;
+
+        // Open the navigator AND run the owner search (the composer alone never
+        // showed the navigator window, so the button looked dead).
+        CreateLinkEvent(`navigator/search/hotel_view/owner:${ userProfile.username }`);
     };
 
     useMessageEvent<UserCurrentBadgesEvent>(UserCurrentBadgesEvent, event =>
@@ -100,7 +101,7 @@ export const UserProfileView: FC<{}> = () =>
     if(!userProfile) return null;
 
     return (
-        <NitroCard className="nitro-extended-profile-window w-[521px] h-[537px]" uniqueKey="nitro-user-profile">
+        <NitroCard className="nitro-extended-profile-window w-[600px] h-[600px] max-w-[96vw] max-h-[92vh]" uniqueKey="nitro-user-profile">
             <NitroCard.Header
                 headerText={ LocalizeText('extendedprofile.caption') }
                 onCloseClick={ onClose } />

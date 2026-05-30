@@ -176,9 +176,15 @@
         border: 0 !important;
     }
 
-    & .nitro-card-accordion-set-header span {
-        font-size: 12px;
+    /* The header title is rendered by the shared <Text> component, which is a
+       <div> (not a <span>) — so target the div too, otherwise it keeps the app
+       default size and shows as oversized "testoni". */
+    & .nitro-card-accordion-set-header span,
+    & .nitro-card-accordion-set-header > div {
+        font-size: 12px !important;
+        font-weight: 700;
         color: #111 !important;
+        line-height: 1.1;
     }
 
     & .nitro-card-accordion-set-header .fa-icon {
@@ -799,4 +805,44 @@
             }
         }
     }
+}
+
+/* ------------------------------------------------------------------ *
+ * Flat (non-nested) overrides. The rules above live inside a nested
+ * `.nitro-friends { & ... }` block; these are written flat so they
+ * apply reliably and win by source order. They fix two things the
+ * nested rules didn't: the oversized/overflowing friend-list heads and
+ * the oversized accordion section titles ("testoni").
+ * ------------------------------------------------------------------ */
+
+/* Friend-list avatar: clip a small box and centre the head, same proven
+   recipe as the messenger head. `inset: auto` cancels the component's
+   `inset-0`, otherwise the 130px head fills the row and overflows. */
+.nitro-friends .friends-list-avatar {
+    position: relative !important;
+    width: 34px;
+    height: 36px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.nitro-friends .friends-list-avatar .avatar-image {
+    position: absolute !important;
+    inset: auto !important;
+    left: 50% !important;
+    top: 56% !important;
+    width: 54px !important;
+    height: 54px !important;
+    margin: 0 !important;
+    background-position: center center !important;
+    transform: translate(-50%, -50%) scale(.95) !important;
+}
+
+/* Accordion section titles are rendered by <Text> (a <div>, not a <span>),
+   so size the div too — otherwise they show oversized. */
+.nitro-friends .nitro-card-accordion-set-header > div,
+.nitro-friends .nitro-card-accordion-set-header span {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
 }
