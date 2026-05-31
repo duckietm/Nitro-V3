@@ -3,7 +3,7 @@ import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GetConfigurationValue, isHousekeepingEnabled, MessengerIconState, OpenMessengerChat, setYoutubeRoomEnabled, VisitDesktop } from '../../api';
 import { Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
-import { useAchievements, useFriends, useHasPermission, useInventoryUnseenTracker, useMessageEvent, useMessenger, useModTools, useNitroEvent, useSessionInfo, useSoundboard, useWiredTools } from '../../hooks';
+import { useAchievements, useFriends, useHasPermission, useInventoryUnseenTracker, useMentionsSnapshot, useMessageEvent, useMessenger, useModTools, useNitroEvent, useSessionInfo, useSoundboard, useWiredTools } from '../../hooks';
 import { ToolbarItemView } from './ToolbarItemView';
 import { ToolbarMeView } from './ToolbarMeView';
 import { YouTubePlayerView } from './YouTubePlayerView';
@@ -42,6 +42,8 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { getTotalUnseen = 0 } = useAchievements();
     const { requests = [] } = useFriends();
     const { iconState = MessengerIconState.HIDDEN } = useMessenger();
+    const { unreadCount: mentionsUnread = 0 } = useMentionsSnapshot();
+    const mentionsEnabled = useMemo(() => GetConfigurationValue<boolean>('mentions_ui.enabled', true), []);
     const { openMonitor, showToolbarButton } = useWiredTools();
     const { enabled: soundboardEnabled, reset: resetSoundboard } = useSoundboard();
     const isMod = useHasPermission('acc_supporttool');
@@ -332,6 +334,12 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         { (requests.length > 0) &&
                             <LayoutItemCountView count={ requests.length } className="absolute -right-2 -top-1" /> }
                     </motion.div>
+                    { mentionsEnabled &&
+                        <motion.div variants={ itemVariants } className="relative">
+                            <ToolbarItemView icon="message" onClick={ () => CreateLinkEvent('mentions/toggle') } className="tb-icon" />
+                            { (mentionsUnread > 0) &&
+                                <LayoutItemCountView count={ mentionsUnread } className="absolute -right-2 -top-1" /> }
+                        </motion.div> }
                     { ((iconState === MessengerIconState.SHOW) || (iconState === MessengerIconState.UNREAD)) &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView className={ `tb-icon ${ iconState === MessengerIconState.UNREAD ? 'is-unseen animate-pulse' : '' }` } icon="message" onClick={ () => OpenMessengerChat() } />
@@ -422,6 +430,12 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         { (requests.length > 0) &&
                             <LayoutItemCountView count={ requests.length } className="absolute -right-2 -top-1" /> }
                     </motion.div>
+                    { mentionsEnabled &&
+                        <motion.div variants={ itemVariants } className="relative">
+                            <ToolbarItemView icon="message" onClick={ () => CreateLinkEvent('mentions/toggle') } className="tb-icon" />
+                            { (mentionsUnread > 0) &&
+                                <LayoutItemCountView count={ mentionsUnread } className="absolute -right-2 -top-1" /> }
+                        </motion.div> }
                 </motion.div>
             </motion.div>
             { /* Mobile side tools — moved out of the bottom bar into a

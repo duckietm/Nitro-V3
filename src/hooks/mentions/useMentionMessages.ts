@@ -1,13 +1,9 @@
-import { MarkMentionsReadComposer, MentionReceivedEvent, MentionsListEvent, RequestMentionsComposer } from '@nitrots/nitro-renderer';
+import { MentionReceivedEvent, MentionsListEvent, RequestMentionsComposer } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect } from 'react';
 import { GetConfigurationValue, IMentionEntry, LocalizeText, NotificationBubbleType, PlaySound, SendMessageComposer, SoundNames } from '../../api';
 import { useMessageEvent } from '../events';
 import { useNotificationActions } from '../notification';
 import { addMention, setMentions } from './mentionsStore';
-
-// MarkMentionsReadComposer is part of the mentions wire contract; it is sent by
-// the UI layer (later phase) when the user opens / clears the mentions window.
-void MarkMentionsReadComposer;
 
 export const useMentionMessages = (): void =>
 {

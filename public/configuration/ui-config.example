@@ -25,6 +25,8 @@
     "wired.action.mute.user.max.length": 100,
     "game.center.enabled": false,
     "radio_ui.enabled": false,
+    "mentions_ui.enabled": true,
+    "mentions_ui.sound": true,
     "guides.enabled": true,
 	"housekeeping.enabled": true,
     "toolbar.hide.quests": true,

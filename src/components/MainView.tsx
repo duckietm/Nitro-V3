@@ -1,8 +1,9 @@
-import { AddLinkEventTracker, GetCommunication, GetRoomSessionManager, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GetCommunication, GetRoomSessionManager, HabboWebTools, ILinkEventTracker, MarkMentionsReadComposer, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
-import { GetConfigurationValue } from '../api';
-import { useNitroEventReducer } from '../hooks';
+import { GetConfigurationValue, SendMessageComposer } from '../api';
+import { useMentionMessages, useNitroEventReducer } from '../hooks';
+import { markAllRead } from '../hooks/mentions/mentionsStore';
 import { AchievementsView } from './achievements/AchievementsView';
 import { AvatarEditorView } from './avatar-editor';
 import { BadgeCreatorView } from './badge-creator';
@@ -47,11 +48,15 @@ import { UserAccountSettingsView } from './user-settings/UserAccountSettingsView
 import { UserSettingsView } from './user-settings/UserSettingsView';
 import { WiredView } from './wired/WiredView';
 import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
+import { MentionsView } from './mentions';
 
 export const MainView: FC<{}> = props =>
 {
     const [ isReady, setIsReady ] = useState(false);
     const [ localizationVersion, setLocalizationVersion ] = useState(0);
+    const [ mentionsVisible, setMentionsVisible ] = useState(false);
+
+    useMentionMessages();
 
     // CREATED and ENDED can arrive out of order under flaky reconnects.
     // Treating them as two independent setters left landingViewVisible
@@ -126,6 +131,54 @@ export const MainView: FC<{}> = props =>
 
     useEffect(() =>
     {
+        // Opening the inbox clears the unread badge both locally and
+        // server-side so the toolbar count resets immediately.
+        const clearMentionsBadge = () =>
+        {
+            markAllRead();
+            SendMessageComposer(new MarkMentionsReadComposer(0, 0));
+        };
+
+        const linkTracker: ILinkEventTracker = {
+            linkReceived: (url: string) =>
+            {
+                const parts = url.split('/');
+
+                if(parts.length < 2) return;
+
+                switch(parts[1])
+                {
+                    case 'show':
+                        setMentionsVisible(true);
+                        clearMentionsBadge();
+                        return;
+                    case 'hide':
+                        setMentionsVisible(false);
+                        return;
+                    case 'toggle':
+                        setMentionsVisible(prevValue =>
+                        {
+                            if(prevValue) return false;
+
+                            // Side-effect-free in the updater: defer the
+                            // badge-clear to a microtask so React's
+                            // double-invoke (StrictMode) can't fire it twice.
+                            queueMicrotask(clearMentionsBadge);
+                            return true;
+                        });
+                        return;
+                }
+            },
+            eventUrlPrefix: 'mentions/'
+        };
+
+        AddLinkEventTracker(linkTracker);
+
+        return () => RemoveLinkEventTracker(linkTracker);
+    }, []);
+
+    useEffect(() =>
+    {
         const refreshLocalization = () => setLocalizationVersion(value => (value + 1));
 
         window.addEventListener('nitro-localization-updated', refreshLocalization);
@@ -187,6 +240,8 @@ export const MainView: FC<{}> = props =>
             <FortuneWheelView />
             <SoundboardView />
             { GetConfigurationValue<boolean>('radio_ui.enabled', false) && <RadioView /> }
+            { (GetConfigurationValue<boolean>('mentions_ui.enabled', true) && mentionsVisible) &&
+                <MentionsView onClose={ () => setMentionsVisible(false) } /> }
             <ExternalPluginLoader />
         </>
     );

@@ -772,4 +772,13 @@
     'usersettings.success.password':                    "Password aggiornata con successo.",
     'usersettings.success.email':                       "Email aggiornata con successo.",
     'usersettings.success.username':                    "Nome utente aggiornato. Accedi di nuovo con il tuo nuovo nome.",
+
+    // ------------------------------------------------------------------------
+    // Mentions
+    // ------------------------------------------------------------------------
+    'mentions.window.title':    'Menzioni',
+    'mentions.window.empty':    'Nessuna menzione',
+    'mentions.window.markall':  'Segna tutte come lette',
+    'mentions.tab.title':       'Menzioni',
+    'mentions.notification':    '%sender% ti ha menzionato in %room%',
 }

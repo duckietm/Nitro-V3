@@ -1,15 +1,22 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatEntryType, LocalizeText } from '../../api';
-import { Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useChatHistory, useOnClickChat } from '../../hooks';
+import { Flex, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../common';
+import { useChatHistory, useMentionsSnapshot, useOnClickChat } from '../../hooks';
 import { NitroInput } from '../../layout';
+import { MentionRowView, useMentionRowClick } from '../mentions';
+
+const TAB_CHAT = 'chat';
+const TAB_MENTIONS = 'mentions';
 
 export const ChatHistoryView: FC<{}> = props =>
 {
     const [isVisible, setIsVisible] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
+    const [activeTab, setActiveTab] = useState<string>(TAB_CHAT);
     const { chatHistory = [] } = useChatHistory();
+    const { mentions } = useMentionsSnapshot();
+    const onMentionRowClick = useMentionRowClick();
     const { onClickChat } = useOnClickChat();
     const elementRef = useRef<HTMLDivElement>(null);
     const isFirstRender = useRef(true);
@@ -87,7 +94,25 @@ export const ChatHistoryView: FC<{}> = props =>
     return (
         <NitroCardView className="w-[400px] h-[400px] bg-[#f0f0f0]" theme="primary-slim" uniqueKey="chat-history">
             <NitroCardHeaderView headerText={LocalizeText('room.chathistory.button.text')} onCloseClick={event => setIsVisible(false)} />
+            <NitroCardTabsView>
+                <NitroCardTabsItemView isActive={ activeTab === TAB_CHAT } onClick={ () => setActiveTab(TAB_CHAT) }>
+                    { LocalizeText('room.chathistory.button.text') }
+                </NitroCardTabsItemView>
+                <NitroCardTabsItemView count={ mentions.reduce((n, m) => n + (m.read ? 0 : 1), 0) } isActive={ activeTab === TAB_MENTIONS } onClick={ () => setActiveTab(TAB_MENTIONS) }>
+                    { LocalizeText('mentions.tab.title') }
+                </NitroCardTabsItemView>
+            </NitroCardTabsView>
             <NitroCardContentView className="h-full bg-[#f0f0f0] bg-[url('@/assets/images/chat/chathistory_background.png')] bg-repeat bg-auto" gap={2} overflow="hidden" style={{ height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
+                { activeTab === TAB_MENTIONS ? (
+                    <div style={{ flex: 1, overflowY: 'auto', background: 'inherit' }}>
+                        { (mentions.length === 0)
+                            ? <Text center variant="gray">{ LocalizeText('mentions.window.empty') }</Text>
+                            : mentions.map(mention => (
+                                <MentionRowView key={ mention.mentionId } mention={ mention } onClick={ onMentionRowClick } />
+                            )) }
+                    </div>
+                ) : (
+                  <>
                 <NitroInput placeholder={LocalizeText('generic.search')} type="text" value={searchText} onChange={event => setSearchText(event.target.value)} />
                 <div ref={elementRef} style={{ flex: 1, overflowY: 'auto', background: 'inherit' }}>
                     {filteredChatHistory.map((row, index) => (
@@ -119,6 +144,8 @@ export const ChatHistoryView: FC<{}> = props =>
                         </Flex>
                     ))}
                 </div>
+                  </>
+                ) }
             </NitroCardContentView>
         </NitroCardView>
     );
