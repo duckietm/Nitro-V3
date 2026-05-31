@@ -24,6 +24,7 @@
     "wired.action.kick.from.room.max.length": 100,
     "wired.action.mute.user.max.length": 100,
     "game.center.enabled": false,
+    "radio_ui.enabled": false,
     "guides.enabled": true,
 	"housekeeping.enabled": true,
     "toolbar.hide.quests": true,
