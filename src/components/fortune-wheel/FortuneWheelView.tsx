@@ -206,7 +206,7 @@ export const FortuneWheelView: FC<{}> = () =>
     const canSpin = ((freeSpins + extraSpins) > 0) && !isSpinning && (prizes.length > 0);
 
     return (
-        <NitroCard className="w-[780px] max-w-[96vw]" uniqueKey="fortune-wheel">
+        <NitroCard className="wheel-card w-[780px] max-w-[96vw]" uniqueKey="fortune-wheel">
             <NitroCard.Header headerText={ LocalizeText('wheel.title') } onCloseClick={ () => setIsVisible(false) } />
             <NitroCard.Content>
                 <div className="relative">
@@ -237,7 +237,7 @@ export const FortuneWheelView: FC<{}> = () =>
                                                     key={ prize.id }
                                                     className="absolute left-1/2 top-1/2"
                                                     style={ { transform: `rotate(${ centerAngle }deg) translateY(-${ ICON_RADIUS }px) rotate(-${ centerAngle }deg)` } }>
-                                                    <div className="-translate-x-1/2 -translate-y-1/2">
+                                                    <div className="wheel-slice-icon -translate-x-1/2 -translate-y-1/2">
                                                         { renderPrizeIcon(prize) }
                                                     </div>
                                                 </div>);
