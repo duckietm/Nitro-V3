@@ -1,10 +1,10 @@
 import { CreateLinkEvent, GetCustomRoomFilterMessageComposer, GetGuestRoomMessageComposer, GetSessionDataManager, NavigatorSearchComposer, RemoveOwnRoomRightsRoomMessageComposer, RoomControllerLevel, RoomMuteComposer, RoomSettingsComposer, ToggleStaffPickMessageComposer, UpdateHomeRoomMessageComposer } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { FaLink, FaSignOutAlt } from 'react-icons/fa';
-import { DispatchUiEvent, GetGroupInformation, LocalizeText, ReportType, SendMessageComposer, ToggleFavoriteRoom } from '../../../api';
+import { DispatchUiEvent, GetGroupInformation, LocalizeText, ReportType, SendMessageComposer } from '../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, LayoutRoomThumbnailView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text, UserProfileIconView } from '../../../common';
 import { RoomWidgetThumbnailEvent } from '../../../events';
-import { useHasPermission, useHelp, useNavigatorData, useRoom } from '../../../hooks';
+import { useHasPermission, useHelp, useNavigatorData, useNavigatorFavourite, useRoom } from '../../../hooks';
 import { classNames } from '../../../layout';
 
 export interface NavigatorRoomInfoViewProps {
@@ -17,34 +17,19 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = props =>
     const [ isRoomPicked, setIsRoomPicked ] = useState(false);
     const [ isRoomMuted, setIsRoomMuted ] = useState(false);
     const { report = null } = useHelp();
-    const { navigatorData, favouriteRoomIds } = useNavigatorData();
+    const { navigatorData } = useNavigatorData();
     const { roomSession = null } = useRoom();
     const canManageAnyRoom = useHasPermission('acc_anyroomowner');
     const canStaffPick = useHasPermission('acc_staff_pick');
 
     const enteredRoomId = navigatorData?.enteredGuestRoom?.roomId ?? 0;
+    const { isFavourite: isRoomInFavouritesList, toggle: toggleFavourite } = useNavigatorFavourite(enteredRoomId);
 
     useEffect(() =>
     {
         if(!enteredRoomId) return;
         SendMessageComposer(new GetGuestRoomMessageComposer(enteredRoomId, false, false));
     }, [ enteredRoomId ]);
-
-    const isRoomInFavouritesList = useMemo(() =>
-    {
-        if(!enteredRoomId) return false;
-
-        return favouriteRoomIds.some((id: any) =>
-        {
-            if(id && typeof id === 'object')
-            {
-                if('roomId' in id) return Number(id.roomId) === enteredRoomId;
-                if('id' in id) return Number(id.id) === enteredRoomId;
-            }
-
-            return String(id) === String(enteredRoomId);
-        });
-    }, [ favouriteRoomIds, enteredRoomId ]);
 
     const hasPermission = (permission: string) =>
     {
@@ -115,7 +100,7 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = props =>
                 report(ReportType.ROOM, { roomId, roomName: navigatorData.enteredGuestRoom.roomName });
                 return;
             case 'room_favourite':
-                ToggleFavoriteRoom(roomId, isRoomInFavouritesList);
+                toggleFavourite();
                 SendMessageComposer(new GetGuestRoomMessageComposer(roomId, false, false));
                 return;
             case 'remove_rights':

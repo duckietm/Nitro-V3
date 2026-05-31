@@ -2,6 +2,7 @@ import { RoomDataParser } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { IRoomData, LocalizeText } from '../../../../api';
 import { Column, Flex, Text } from '../../../../common';
+import { NavigatorRoomSettingsSectionView } from './NavigatorRoomSettingsSectionView';
 
 interface NavigatorRoomSettingsTabViewProps
 {
@@ -36,9 +37,8 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
                 <Text bold>{ LocalizeText('navigator.roomsettings.roomaccess.caption') }</Text>
                 <Text>{ LocalizeText('navigator.roomsettings.roomaccess.info') }</Text>
             </Column>
-            <Column overflow="auto">
-                <Column gap={ 1 }>
-                    <Text bold>{ LocalizeText('navigator.roomsettings.doormode') }</Text>
+            <Column overflow="auto" gap={ 2 }>
+                <NavigatorRoomSettingsSectionView title={ LocalizeText('navigator.roomsettings.doormode') } gap={ 1 }>
                     <Flex alignItems="center" gap={ 1 }>
                         <input className="form-check-input" type="radio" name="lockState" checked={ (roomData.lockState === RoomDataParser.OPEN_STATE) && !isTryingPassword } onChange={ event => handleChange('lock_state', RoomDataParser.OPEN_STATE) } />
                         <Text>{ LocalizeText('navigator.roomsettings.doormode.open') }</Text>
@@ -58,21 +58,20 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
                         { (isTryingPassword || (roomData.lockState === RoomDataParser.PASSWORD_STATE)) &&
                             <Column gap={ 1 }>
                                 <Text>{ LocalizeText('navigator.roomsettings.doormode.password') }</Text>
-                                <input type="password" className="form-control form-control-sm col-4" value={ password } onChange={ event => setPassword(event.target.value) } placeholder={ LocalizeText('navigator.roomsettings.password') } onFocus={ event => setIsTryingPassword(true) } />
+                                <input type="password" className="form-control form-control-sm" value={ password } onChange={ event => setPassword(event.target.value) } placeholder={ LocalizeText('navigator.roomsettings.password') } onFocus={ event => setIsTryingPassword(true) } />
                                 { isTryingPassword && (password.length <= 0) &&
                                     <Text bold small variant="danger">
                                         { LocalizeText('navigator.roomsettings.passwordismandatory') }
                                     </Text> }
-                                <input type="password" className="form-control form-control-sm col-4" value={ confirmPassword } onChange={ event => setConfirmPassword(event.target.value) } onBlur={ saveRoomPassword } placeholder={ LocalizeText('navigator.roomsettings.passwordconfirm') } />
+                                <input type="password" className="form-control form-control-sm" value={ confirmPassword } onChange={ event => setConfirmPassword(event.target.value) } onBlur={ saveRoomPassword } placeholder={ LocalizeText('navigator.roomsettings.passwordconfirm') } />
                                 { isTryingPassword && ((password.length > 0) && (password !== confirmPassword)) &&
                                     <Text bold small variant="danger">
                                         { LocalizeText('navigator.roomsettings.invalidconfirm') }
                                     </Text> }
                             </Column> }
                     </Flex>
-                </Column>
-                <Column gap={ 1 }>
-                    <Text bold>{ LocalizeText('navigator.roomsettings.pets') }</Text>
+                </NavigatorRoomSettingsSectionView>
+                <NavigatorRoomSettingsSectionView title={ LocalizeText('navigator.roomsettings.pets') } gap={ 1 }>
                     <Flex alignItems="center" gap={ 1 }>
                         <input className="form-check-input" type="checkbox" checked={ roomData.allowPets } onChange={ event => handleChange('allow_pets', event.target.checked) } />
                         <Text>{ LocalizeText('navigator.roomsettings.allowpets') }</Text>
@@ -81,7 +80,7 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
                         <input className="form-check-input" type="checkbox" checked={ roomData.allowPetsEat } onChange={ event => handleChange('allow_pets_eat', event.target.checked) } />
                         <Text>{ LocalizeText('navigator.roomsettings.allowfoodconsume') }</Text>
                     </Flex>
-                </Column>
+                </NavigatorRoomSettingsSectionView>
             </Column>
         </>
     );

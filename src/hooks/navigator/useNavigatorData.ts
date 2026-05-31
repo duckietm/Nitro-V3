@@ -4,13 +4,13 @@ import { useNavigatorStore } from './useNavigatorStore';
 export const useNavigatorData = () =>
 {
     const {
-        categories, eventCategories, favouriteRoomIds,
+        categories, eventCategories,
         topLevelContext, topLevelContexts,
         navigatorSearches, navigatorData
     } = useBetween(useNavigatorStore);
 
     return {
-        categories, eventCategories, favouriteRoomIds,
+        categories, eventCategories,
         topLevelContext, topLevelContexts,
         navigatorSearches, navigatorData
     };

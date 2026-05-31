@@ -44,3 +44,4 @@ Thumbs.db
 # the dev server takes minutes to start with 100k+ files under public/.
 /public/nitro-assets
 /public/swf
+.superpowers/

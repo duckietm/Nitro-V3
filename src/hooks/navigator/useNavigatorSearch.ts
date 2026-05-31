@@ -1,5 +1,4 @@
 import { FlatCreatedEvent, NavigatorSearchComposer, NavigatorSearchEvent, NavigatorSearchResultSet } from '@nitrots/nitro-renderer';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
@@ -23,7 +22,6 @@ export const useNavigatorSearch = () =>
 {
     const tabCode = useNavigatorUiStore(s => s.currentTabCode);
     const filter  = useNavigatorUiStore(s => s.currentFilter);
-    const queryClient = useQueryClient();
 
     const [ searchResult, setSearchResult ] = useState<NavigatorSearchResultSet | null>(null);
     const [ isFetching, setIsFetching ] = useState(false);
@@ -49,11 +47,9 @@ export const useNavigatorSearch = () =>
         setIsFetching(false);
     });
 
-    // A newly created room invalidates the current search so it refetches.
+    // A newly created room refetches the current search.
     useMessageEvent<FlatCreatedEvent>(FlatCreatedEvent, () =>
     {
-        queryClient.invalidateQueries({ queryKey: [ 'navigator', 'search' ] });
-
         if(!tabCode) return;
 
         setIsFetching(true);

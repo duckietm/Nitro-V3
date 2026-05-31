@@ -2,9 +2,9 @@ import { RoomDataParser, RoomSettingsComposer, UpdateHomeRoomMessageComposer } f
 import * as Popover from '@radix-ui/react-popover';
 import React, { FC, useRef, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
-import { GetGroupInformation, GetSessionDataManager, GetUserProfile, LocalizeText, ReportType, SendMessageComposer, ToggleFavoriteRoom } from '../../../../api';
+import { GetGroupInformation, GetSessionDataManager, GetUserProfile, LocalizeText, ReportType, SendMessageComposer } from '../../../../api';
 import { Column, Flex, LayoutBadgeImageView, LayoutRoomThumbnailView, NitroCardContentView, Text, UserProfileIconView } from '../../../../common';
-import { useHelp, useNavigatorData } from '../../../../hooks';
+import { useHelp, useNavigatorData, useNavigatorFavourite } from '../../../../hooks';
 import { classNames } from '../../../../layout';
 
 interface NavigatorSearchResultItemInfoViewProps
@@ -20,7 +20,8 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
     const { roomData = null, isVisible = undefined, onToggle, setIsPopoverActive } = props;
     const elementRef = useRef<HTMLDivElement>(null);
     const [ internalVisible, setInternalVisible ] = useState(false);
-    const { navigatorData, favouriteRoomIds } = useNavigatorData();
+    const { navigatorData } = useNavigatorData();
+    const { isFavourite, toggle: toggleFavourite } = useNavigatorFavourite(roomData?.roomId);
     const { report = null } = useHelp();
 
     const isControlled = isVisible !== undefined;
@@ -63,7 +64,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
                 report(ReportType.ROOM, { roomId: roomData.roomId, roomName: roomData.roomName });
                 return;
             case 'room_favourite':
-                ToggleFavoriteRoom(roomData.roomId, favouriteRoomIds.includes(roomData.roomId));
+                toggleFavourite();
                 return;
         }
     };
@@ -163,7 +164,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
                                 </Column>
                                 <Column alignItems="start" gap={ 2 } className="w-2/5">
                                     <Flex pointer alignItems="center" gap={ 2 } onClick={ () => processAction('room_favourite') }>
-                                        <i className={ classNames('icon icon-navigator-favorite-room', favouriteRoomIds.includes(roomData.roomId) ? 'active' : '') } />
+                                        <i className={ classNames('icon icon-navigator-favorite-room', isFavourite ? 'active' : '') } />
                                         <Text className="text-xs">{ LocalizeText('navigator.room.popup.room.info.favorite') }</Text>
                                     </Flex>
                                     <Flex pointer alignItems="center" gap={ 2 } onClick={ () => processAction('set_home_room') }>

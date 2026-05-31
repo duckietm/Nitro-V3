@@ -8,7 +8,7 @@ describe('navigator filter shapes (smoke)', () =>
     {
         const { result } = renderHook(() => useNavigatorData());
         expect(Object.keys(result.current).sort()).toEqual([
-            'categories', 'eventCategories', 'favouriteRoomIds',
+            'categories', 'eventCategories',
             'navigatorData', 'navigatorSearches',
             'topLevelContext', 'topLevelContexts'
         ].sort());

@@ -476,6 +476,24 @@ body {
         border-color: #aeb7aa !important;
     }
 
+    .navigator-grid .navigator-item {
+        border-radius: 6px;
+        transition: background-color .15s ease;
+    }
+
+    .navigator-grid .navigator-item:hover {
+        background: rgba(0, 0, 0, 0.07);
+    }
+
+    .nitro-navigator-search-saves-result .saved-search-row {
+        border-radius: 6px;
+        transition: background-color .15s ease;
+    }
+
+    .nitro-navigator-search-saves-result .saved-search-row:hover {
+        background: rgba(0, 0, 0, 0.07);
+    }
+
     .nitro-card-divider {
         border-color: #c4cabf !important;
         box-shadow: none !important;
@@ -523,6 +541,9 @@ body {
         flex-wrap: wrap;
         gap: 3px;
         padding: 4px 6px 0;
+        max-height: none;
+        height: auto;
+        flex: 0 0 auto;
     }
 
     .nitro-card-tab-item {

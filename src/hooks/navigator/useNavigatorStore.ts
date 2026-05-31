@@ -18,13 +18,13 @@ import { CreateRoomSession, GetConfigurationValue, INavigatorData,
     TryVisitRoom, VisitDesktop } from '../../api';
 import { useMessageEvent, useNitroEvent } from '../events';
 import { useNotification } from '../notification';
+import { useNavigatorFavouritesStore } from './navigatorFavouritesStore';
 import { useNavigatorUiStore } from './navigatorUiStore';
 
 export const useNavigatorStore = () =>
 {
     const [ categories, setCategories ] = useState<NavigatorCategoryDataParser[]>(null);
     const [ eventCategories, setEventCategories ] = useState<NavigatorEventCategoryDataParser[]>(null);
-    const [ favouriteRoomIds, setFavouriteRoomIds ] = useState<number[]>([]);
     const [ topLevelContext, setTopLevelContext ] = useState<NavigatorTopLevelContext>(null);
     const [ topLevelContexts, setTopLevelContexts ] = useState<NavigatorTopLevelContext[]>(null);
     const [ navigatorSearches, setNavigatorSearches ] = useState<NavigatorSavedSearch[]>(null);
@@ -48,21 +48,13 @@ export const useNavigatorStore = () =>
     useMessageEvent<FavouritesEvent>(FavouritesEvent, useCallback(event =>
     {
         const parser = event.getParser();
-        const favoriteIds = (parser.favoriteRoomIds || []).map((x: any) => Number(x));
-        setFavouriteRoomIds(favoriteIds);
+        useNavigatorFavouritesStore.getState().setAll(parser.favoriteRoomIds || []);
     }, []));
 
     useMessageEvent<FavouriteChangedEvent>(FavouriteChangedEvent, useCallback(event =>
     {
         const parser = event.getParser();
-        const roomId = Number(parser.flatId);
-        const added = !!parser.added;
-        setFavouriteRoomIds(prev =>
-        {
-            const ids = (prev || []).map((x: any) => Number(x));
-            if(added) return ids.includes(roomId) ? ids : [ ...ids, roomId ];
-            return ids.filter(id => id !== roomId);
-        });
+        useNavigatorFavouritesStore.getState().apply(parser.flatId, !!parser.added);
     }, []));
 
     useMessageEvent<CanCreateRoomEventEvent>(CanCreateRoomEventEvent, useCallback(event =>
@@ -280,7 +272,7 @@ export const useNavigatorStore = () =>
     }, []));
 
     return {
-        categories, eventCategories, favouriteRoomIds,
+        categories, eventCategories,
         topLevelContext, topLevelContexts,
         navigatorSearches, navigatorData
     };
