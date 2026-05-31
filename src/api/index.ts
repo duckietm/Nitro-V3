@@ -17,6 +17,7 @@ export * from './hc-center';
 export * from './help';
 export * from './housekeeping';
 export * from './inventory';
+export * from './mentions';
 export * from './mod-tools';
 export * from './navigator';
 export * from './nitro';
