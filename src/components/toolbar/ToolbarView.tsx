@@ -372,7 +372,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                     animate={ { opacity: 1, y: 0, scale: 1 } }
                                     exit={ { opacity: 0, y: 6, scale: 0.97 } }
                                     transition={ ME_POPOVER_TRANSITION }
-                                    className="pointer-events-auto absolute bottom-[calc(100%+10px)] left-1/2 z-[70] -translate-x-1/2">
+                                    className="pointer-events-auto fixed bottom-[calc(100%+10px)] left-1/2 z-[70] -translate-x-1/2">
                                     <ToolbarMeView setMeExpanded={ setMeExpanded } unseenAchievementCount={ getTotalUnseen } useGuideTool={ useGuideTool } />
                                 </motion.div> }
                         </AnimatePresence>
