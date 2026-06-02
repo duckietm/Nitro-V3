@@ -8,7 +8,7 @@ import { ChatInputCommandSelectorView } from './ChatInputCommandSelectorView';
 import { ChatInputEmojiSelectorView } from './ChatInputEmojiSelectorView';
 import { ChatInputStyleSelectorView } from './ChatInputStyleSelectorView';
 
-export const ChatInputView: FC<{}> = props =>
+export const ChatInputView: FC = () =>
 {
     const [ chatValue, setChatValue ] = useState<string>('');
     const { chatStyleId = 0, updateChatStyleId = null } = useSessionInfo();
@@ -41,6 +41,23 @@ export const ChatInputView: FC<{}> = props =>
 
         inputRef.current.setSelectionRange((inputRef.current.value.length * 2), (inputRef.current.value.length * 2));
     }, [ inputRef ]);
+
+    const setChatInputValue = useCallback((value: string, markTyping: boolean = true) =>
+    {
+        setChatValue(value);
+
+        if(markTyping)
+        {
+            setIsTyping(!!value.length);
+            setIsIdle(!!value.length);
+        }
+
+        requestAnimationFrame(() =>
+        {
+            inputRef.current?.focus();
+            inputRef.current?.setSelectionRange(value.length, value.length);
+        });
+    }, [ setIsTyping, setIsIdle ]);
 
     const checkSpecialKeywordForInput = useCallback(() =>
     {
@@ -157,7 +174,7 @@ export const ChatInputView: FC<{}> = props =>
                     if(selected)
                     {
                         event.preventDefault();
-                        setChatValue(':' + selected.key + ' ');
+                        setChatInputValue(':' + selected.key + ' ');
                         return;
                     }
                     break;
@@ -194,12 +211,15 @@ export const ChatInputView: FC<{}> = props =>
                 return;
         }
 
-    }, [ floodBlocked, inputRef, chatModeIdWhisper, anotherInputHasFocus, setInputFocus, checkSpecialKeywordForInput, sendChatValue, commandSelectorVisible, moveUp, moveDown, selectCurrent, closeCommandSelector ]);
+    }, [ floodBlocked, inputRef, chatModeIdWhisper, anotherInputHasFocus, setInputFocus, checkSpecialKeywordForInput, sendChatValue, commandSelectorVisible, moveUp, moveDown, selectCurrent, setChatInputValue, closeCommandSelector ]);
 
     useUiEvent<RoomWidgetUpdateChatInputContentEvent>(RoomWidgetUpdateChatInputContentEvent.CHAT_INPUT_CONTENT, event =>
     {
         switch(event.chatMode)
         {
+            case RoomWidgetUpdateChatInputContentEvent.TEXT:
+                setChatInputValue(event.userName);
+                return;
             case RoomWidgetUpdateChatInputContentEvent.WHISPER: {
                 setChatValue(`${ chatModeIdWhisper } ${ event.userName } `);
                 return;
@@ -286,7 +306,7 @@ export const ChatInputView: FC<{}> = props =>
                         selectedIndex={ selectedIndex }
                         onSelect={ (cmd) =>
                         {
-                            setChatValue(':' + cmd.key + ' '); inputRef.current?.focus();
+                            setChatInputValue(':' + cmd.key + ' ');
                         } }
                         onHover={ setSelectedIndex }
                     /> }
