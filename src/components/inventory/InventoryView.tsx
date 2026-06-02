@@ -1,5 +1,6 @@
 import { AddLinkEventTracker, BadgePointLimitsEvent, GetLocalizationManager, GetRoomEngine, ILinkEventTracker, IRoomSession, RemoveLinkEventTracker, RoomEngineObjectEvent, RoomEngineObjectPlacedEvent, RoomPreviewer, RoomSessionEvent } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
+import { FaAward, FaCouch, FaPaw, FaRobot, FaTag } from 'react-icons/fa';
 import { GroupItem, LocalizeText, UnseenItemCategory, isObjectMoverRequested, setObjectMoverRequested } from '../../api';
 import { NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useInventoryBadges, useInventoryFurni, useInventoryPrefixes, useInventoryTrade, useInventoryUnseenTracker, useMessageEvent, useNitroEvent } from '../../hooks';
@@ -18,7 +19,21 @@ const TAB_PETS: string = 'inventory.furni.tab.pets';
 const TAB_BADGES: string = 'inventory.badges';
 const TAB_PREFIXES: string = 'inventory.prefixes';
 const TABS = [ TAB_FURNITURE, TAB_PETS, TAB_BADGES, TAB_PREFIXES, TAB_BOTS ];
+// Maps an optional link code (inventory/show/<code>) to a tab so other views
+// (e.g. the profile "Change Badges" button) can deep-link to a specific tab.
+const TAB_BY_CODE: Record<string, string> = {
+    furni: TAB_FURNITURE, furniture: TAB_FURNITURE,
+    pets: TAB_PETS, badges: TAB_BADGES,
+    prefixes: TAB_PREFIXES, bots: TAB_BOTS
+};
 const UNSEEN_CATEGORIES = [ UnseenItemCategory.FURNI, UnseenItemCategory.PET, UnseenItemCategory.BADGE, UnseenItemCategory.PREFIX, UnseenItemCategory.BOT ];
+const TAB_ICONS: Record<string, ReactNode> = {
+    [TAB_FURNITURE]: <FaCouch />,
+    [TAB_PETS]: <FaPaw />,
+    [TAB_BADGES]: <FaAward />,
+    [TAB_PREFIXES]: <FaTag />,
+    [TAB_BOTS]: <FaRobot />
+};
 
 export const InventoryView: FC<{}> = props =>
 {
@@ -86,12 +101,14 @@ export const InventoryView: FC<{}> = props =>
                 {
                     case 'show':
                         setIsVisible(true);
+                        if(parts[2] && TAB_BY_CODE[parts[2]]) setCurrentTab(TAB_BY_CODE[parts[2]]);
                         return;
                     case 'hide':
                         setIsVisible(false);
                         return;
                     case 'toggle':
                         setIsVisible(prevValue => !prevValue);
+                        if(parts[2] && TAB_BY_CODE[parts[2]]) setCurrentTab(TAB_BY_CODE[parts[2]]);
                         return;
                 }
             },
@@ -129,13 +146,13 @@ export const InventoryView: FC<{}> = props =>
 
     return (
         <>
-            <NitroCardView className="w-[528px] h-[420px] min-w-[528px] min-h-[420px]" uniqueKey="inventory">
+            <NitroCardView className="nitro-inventory-window w-[528px] h-[420px] min-w-[528px] min-h-[420px]" uniqueKey="inventory">
                 <NitroCardHeaderView
                     headerText={ LocalizeText('inventory.title') }
                     onCloseClick={ onClose } />
                 { !isTrading &&
                     <>
-                        <NitroCardTabsView>
+                        <NitroCardTabsView classNames={ [ 'nitro-inventory-tabs-shell' ] }>
                             { TABS.map((name, index) =>
                             {
                                 return (
@@ -144,12 +161,13 @@ export const InventoryView: FC<{}> = props =>
                                         count={ getCount(UNSEEN_CATEGORIES[index]) }
                                         isActive={ (currentTab === name) }
                                         onClick={ event => setCurrentTab(name) }>
-                                        { LocalizeText(name) }
+                                        <span className="nitro-inventory-tab-icon" title={ LocalizeText(name) }>{ TAB_ICONS[name] }</span>
+                                        <span className="nitro-inventory-tab-label">{ LocalizeText(name) }</span>
                                     </NitroCardTabsItemView>
                                 );
                             }) }
                         </NitroCardTabsView>
-                        <div className="flex flex-col overflow-hidden bg-[#DFDFDF] p-2 h-full gap-2">
+                        <div className="nitro-inventory-body flex flex-col overflow-hidden p-2 h-full gap-2">
                             { showFilter &&
                                 <InventoryCategoryFilterView
                                     badgeCodes={ badgeCodes }
@@ -175,7 +193,7 @@ export const InventoryView: FC<{}> = props =>
                         </div>
                     </> }
                 { isTrading &&
-                    <div className="flex flex-col overflow-hidden bg-[#DFDFDF] p-2 h-full">
+                    <div className="nitro-inventory-body flex flex-col overflow-hidden p-2 h-full">
                         <InventoryTradeView cancelTrade={ onClose } />
                     </div> }
             </NitroCardView>

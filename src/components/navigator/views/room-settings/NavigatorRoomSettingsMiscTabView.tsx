@@ -1,7 +1,7 @@
 import { YouTubeRoomSettingsComposer, YouTubeRoomSettingsEvent } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
 import { getYoutubeRoomEnabled, IRoomData, LocalizeText, SendMessageComposer, setYoutubeRoomEnabled } from '../../../../api';
-import { useMessageEvent } from '../../../../hooks';
+import { useMessageEvent, useSoundboard } from '../../../../hooks';
 
 interface NavigatorRoomSettingsMiscTabViewProps
 {
@@ -13,6 +13,7 @@ export const NavigatorRoomSettingsMiscTabView: FC<NavigatorRoomSettingsMiscTabVi
     const { roomData = null } = props;
     const [ youtubeEnabled, setYoutubeEnabled ] = useState(getYoutubeRoomEnabled());
     const [ cooldown, setCooldown ] = useState(false);
+    const { enabled: soundboardEnabled, setRoomEnabled: setSoundboardEnabled } = useSoundboard();
 
     useMessageEvent<YouTubeRoomSettingsEvent>(YouTubeRoomSettingsEvent, event =>
     {
@@ -25,6 +26,14 @@ export const NavigatorRoomSettingsMiscTabView: FC<NavigatorRoomSettingsMiscTabVi
         setYoutubeEnabled(enabled);
         setYoutubeRoomEnabled(enabled);
         SendMessageComposer(new YouTubeRoomSettingsComposer(enabled));
+        setCooldown(true);
+        setTimeout(() => setCooldown(false), 300);
+    };
+
+    const toggleSoundboard = (enabled: boolean) =>
+    {
+        if (cooldown) return;
+        setSoundboardEnabled(enabled);
         setCooldown(true);
         setTimeout(() => setCooldown(false), 300);
     };
@@ -47,6 +56,23 @@ export const NavigatorRoomSettingsMiscTabView: FC<NavigatorRoomSettingsMiscTabVi
                                 checked={ youtubeEnabled }
                                 disabled={ cooldown }
                                 onChange={ e => toggleYouTube(e.target.checked) }
+                                className="w-5 h-5"
+                            />
+                        </label>
+                    </div>
+                </div>
+                <div className={`p-3 rounded transition-colors ${cooldown ? 'bg-gray-200 opacity-60' : 'bg-gray-100'}`}>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="font-bold text-sm">🔊 { LocalizeText('soundboard.title') }</div>
+                            <div className="text-xs text-gray-500">{ LocalizeText('soundboard.room.setting.desc') }</div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={ soundboardEnabled }
+                                disabled={ cooldown }
+                                onChange={ e => toggleSoundboard(e.target.checked) }
                                 className="w-5 h-5"
                             />
                         </label>

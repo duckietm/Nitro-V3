@@ -6,19 +6,27 @@ the ground running.
 
 ## TL;DR
 
-This branch — **`feat/react19-modernization`** — is a long-running modernization
-of the Nitro V3 client: bump to React 19.2 idioms, add the supporting
-infrastructure (TanStack Query, Zustand, Vitest, React Compiler, error
-boundaries), split a few god-hooks, and audit logic bugs along the way.
-PR is **#2** on `simoleo89/Nitro-V3`.
+This client carries a long-running React 19.2 modernization: React 19
+idioms + supporting infrastructure (TanStack Query, Zustand, Vitest,
+React Compiler, error boundaries), god-hook splits, and logic-bug audits.
 
-Upstream `duckietm/Nitro-V3` (`origin/Dev`) is merged in through
-`b2318b9` as of 2026-05-18 (merge commit `779a98c`). That brings in
-JSON5 config support, user-settings (reset password / email / change
-username), wear-badge popup fix, login screen fix, About update, and
-the offer-selection refactor. When syncing the next batch of upstream
-commits, expect conflicts in `App.tsx` / `bootstrap.ts` / `LoginView.tsx`
-on React 19 imports — always keep the modernized local version.
+**Working base is now `main`** (tracking `duckietm/Nitro-V3`). The earlier
+`feat/react19-modernization` long-running branch was superseded — feature
+work now ships as small focused PRs against `duckietm:Dev`, staged through
+Dev then merged to main. (`feat/react19-modernization` still exists on the
+fork as backup; do not force-push it.)
+
+**Navigator modernization landed** (merged to main 2026-05-28, PRs
+#168/#169/#170): the 492-line `useNavigator` god-hook was split into
+`useNavigatorStore` + `useNavigatorData`/`useNavigatorUiState`/
+`useNavigatorSearch` filters (wired-tools layout), door lifecycle extracted
+to `src/hooks/rooms/widgets/useDoorState.ts`, 9 UI flags moved to a Zustand
+`navigatorUiStore`, search migrated to a query hook, and 5 sub-views wrapped
+in `WidgetErrorBoundary`. **Caveat**: duckietm patched `useNavigatorSearch`
+post-merge (`05d71dd1`) — see the `useNitroQuery` fragility note below.
+
+When syncing upstream, expect conflicts in `App.tsx` / `bootstrap.ts` /
+`LoginView.tsx` on React 19 imports — always keep the modernized version.
 
 Local-dev game assets are served by a small Vite plugin (`sirv` middleware
 mounted on `/nitro-assets` and `/swf`, reading from
@@ -236,6 +244,20 @@ and invalidates the query slot on every push, so server-driven
 refresh paths work the same as the initial request/response (e.g.
 ClubGiftInfoEvent firing again after the user claims a gift).
 
+**⚠️ Fragility — do NOT use `useNitroQuery` for primary visible data.**
+The one-shot listener inside `awaitNitroResponse` (register listener →
+await one matching response → remove itself) is fragile against
+renderer-bundle quirks: for some parsers the event fires but the listener
+never matches, so the promise never resolves and `query.data` stays
+`undefined` forever — the UI shows the server's response arriving in logs
+but renders blank. This bit **ModTools Room/CFH chatlog** (reverted to
+`useMessageEvent + useEffect`) and then **Navigator search** (P2 shipped
+with `useNitroQuery`, duckietm reverted it in `05d71dd1` to the god-hook
+pattern). **Rule: reserve `useNitroQuery` for config / secondary fetches
+where a brief blank is tolerable. For anything that is the primary visible
+content of a panel, use `useMessageEvent + useState/useEffect`** — that's
+what the rest of the codebase does and it's robust.
+
 ### Singleton-filter split for `useBetween`-based hooks
 
 When a hook backs many consumers but most only need either state OR
@@ -339,6 +361,7 @@ into `configurePreviewServer` so `yarn preview` keeps working.
 | Zustand | `NavigatorRoomCreatorView` (`useRoomCreatorStore`), `WiredCreatorToolsView` (`useWiredCreatorToolsUiStore` — every panel-lifecycle-relevant flag, snapshot, selection, highlight, inline editor, picker chain hoisted; what's left in the component as `useState` is genuinely transient: keepSelected, globalClock, roomEnteredAt, selectedMonitorErrorType, selectedMonitorLogDetails) |
 | God-hook split (state + actions + shim) | `doorbell`, `poll`, `furni-chooser`, `user-chooser`, `friend-request`, `chat-input` |
 | God-hook split (`useBetween` singleton + state filter + actions filter + shim) | `wired-tools`, `translation`, `notification`, `friends`, `catalog` (three-way: `useCatalogData` / `useCatalogUiState` / `useCatalogActions` — all 48 consumers migrated, deprecated `useCatalog` shim removed) |
+| Navigator modernization (merged to main 2026-05-28, PRs #168/#169/#170) | 492-line `useNavigator` god-hook split into `useNavigatorStore` (internal `useBetween` closure) + flat filters `useNavigatorData` / `useNavigatorUiState` / `useNavigatorSearch`; door bell/password lifecycle extracted to `src/hooks/rooms/widgets/useDoorState.ts` (dual-subscribes `GetGuestRoomResultEvent` + `GenericErrorEvent` alongside the nav store, each filtering by branch/errorCode); 9 UI flags + `currentTabCode`/`currentFilter` in Zustand `navigatorUiStore` (`src/hooks/navigator/navigatorUiStore.ts`); all 5 Navigator sub-views wrapped in `WidgetErrorBoundary`; old shim deleted. **`useNavigatorSearch` was reverted by duckietm (`05d71dd1`) from `useNitroQuery` to `useMessageEvent + useEffect`** — see the useNitroQuery fragility note. Specs/plans under `docs/superpowers/`. |
 | `WidgetErrorBoundary` | `RoomWidgetsView` umbrella + per-widget wrap on all 13 room widgets and all 20 furniture widgets (so a crash in one widget no longer takes down its siblings) |
 | Vitest | 207/207 cases — pure helpers (incl. 4 new on `getPetPackageNameError`) + 2 Zustand store suites (`navigatorRoomCreatorStore`, `wiredCreatorToolsUiStore` with 45 cases including the picker-chain hoists) + 2 component-/hook-level pilots (WidgetErrorBoundary, useDoorbellState) on top of the renderer-SDK mock at `src/nitro-renderer.mock.ts`, 34 cases on the catalog pure helpers, 4 contract cases on the catalog filters. **Tests are co-located** under `src/`, alongside their subject. |
 | Form Actions | Login / Register / Forgot (LoginView.tsx) |
@@ -412,6 +435,11 @@ See `docs/ARCHITECTURE.md` "Recently fixed" for fix shapes.
   `useCatalogUiState` / `useCatalogActions` in
   `src/hooks/catalog/useCatalog.ts` (all 48 consumers migrated;
   deprecated `useCatalog` shim removed)
+- Navigator hooks: `src/hooks/navigator/` — `useNavigatorStore.ts`
+  (internal closure), `useNavigatorData.ts` / `useNavigatorUiState.ts` /
+  `useNavigatorSearch.ts` (filters), `navigatorUiStore.ts` (Zustand UI
+  flags + `setTab`/`setFilter`). Door lifecycle: `src/hooks/rooms/widgets/useDoorState.ts`.
+  Specs/plans: `docs/superpowers/specs/2026-05-2*-navigator-*.md`
 - Renderer-SDK mock for Vitest: `src/nitro-renderer.mock.ts`
   (aliased over `@nitrots/nitro-renderer` via `vitest.config.mts`).
   Hosts the explicit `NitroLogger` mock, the `mockEventDispatcher` /

@@ -104,6 +104,17 @@ const FloorplanTileImpl: FC<Props> = ({ row, col, tile, selected, isDoor, southH
                 stroke="#222"
                 strokeWidth={ 0.5 }
             />
+            { tile.occupied && (
+                <polygon
+                    data-testid="occupied-marker"
+                    points={ points }
+                    fill="rgba(249, 115, 22, 0.40)"
+                    stroke="#f97316"
+                    strokeWidth={ 1 }
+                    strokeDasharray="2 2"
+                    pointerEvents="none"
+                />
+            ) }
             { selected && (
                 <polygon
                     data-testid="selection-ring"

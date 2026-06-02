@@ -1,4 +1,4 @@
-import { Dispatch, FC, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react';
+import { Dispatch, FC, PointerEvent as ReactPointerEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react';
 import { FaCrosshairs, FaSearchMinus, FaSearchPlus, FaSyncAlt } from 'react-icons/fa';
 import { FloorplanAction, FloorplanState } from '../state/types';
 import { FloorplanTile } from './FloorplanTile';
@@ -140,7 +140,7 @@ export const FloorplanCanvasSVG: FC<Props> = ({ state, dispatch, panMode }) =>
         const quarter = TILE_SIZE / 4;
         const tilesRows = state.tiles.length;
         const tilesCols = state.tiles[0]?.length ?? 0;
-        const out: JSX.Element[] = [];
+        const out: ReactElement[] = [];
         for(const key of state.selection)
         {
             const [ rStr, cStr ] = key.split(',');

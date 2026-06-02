@@ -1,9 +1,9 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
-import { FC, useEffect } from 'react';
-import { FaCog, FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa';
-import { CatalogType, GetConfigurationValue, LocalizeText } from '../../api';
-import { Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
-import { useCatalogActions, useCatalogData, useCatalogUiState, useHasPermission } from '../../hooks';
+import { FC, useEffect, useState } from 'react';
+import { FaBars, FaCog, FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa';
+import { CatalogType, GetConfigurationValue, LocalizeShortNumber, LocalizeText } from '../../api';
+import { Column, Grid, LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
+import { useCatalogActions, useCatalogData, useCatalogUiState, useHasPermission, usePurse } from '../../hooks';
 import { CatalogAdminProvider, useCatalogAdmin } from './CatalogAdminContext';
 import { CatalogAdminOfferEditView } from './views/admin/CatalogAdminOfferEditView';
 import { CatalogAdminPageEditView } from './views/admin/CatalogAdminPageEditView';
@@ -31,6 +31,9 @@ const CatalogClassicViewInner: FC<{}> = () =>
     const loading = catalogAdmin?.loading ?? false;
 
     const isMod = useHasPermission('acc_catalogfurni');
+    const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false);
+    const { purse = null } = usePurse();
+    const displayedCurrencies = GetConfigurationValue<number[]>('system.currency.types', []);
     const buildersClubHeaderStyle = (currentType === CatalogType.BUILDER)
         ? { borderColor: '#d79d2e', borderBottomColor: '#000', background: 'linear-gradient(180deg, #d89f2d 0%, #c68515 100%)' }
         : undefined;
@@ -121,6 +124,42 @@ const CatalogClassicViewInner: FC<{}> = () =>
             { isVisible &&
                 <NitroCardView classNames={ [ 'nitro-catalog-classic-window' ] } isResizable={ false } uniqueKey="catalog">
                     <NitroCardHeaderView className={ currentType === CatalogType.BUILDER ? 'builders-club-card-header' : '' } headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } style={ buildersClubHeaderStyle } />
+                    <div className="nitro-catalog-classic-mobile-header">
+                        { isMod &&
+                            <div className="nitro-catalog-classic-mobile-burger">
+                                <button className="nitro-catalog-classic-burger-btn" onClick={ () => setMobileMenuOpen(value => !value) }>
+                                    <FaBars />
+                                </button>
+                                { mobileMenuOpen &&
+                                    <div className="nitro-catalog-classic-burger-menu">
+                                        <button onClick={ () =>
+                                        {
+                                            setAdminMode(!adminMode); setMobileMenuOpen(false);
+                                        } }>
+                                            { adminMode ? 'Exit Admin' : 'Admin' }
+                                        </button>
+                                        { adminMode &&
+                                            <button disabled={ loading } onClick={ () =>
+                                            {
+                                                publishCatalog(); setMobileMenuOpen(false);
+                                            } }>
+                                                { loading ? '...' : 'Publish' }
+                                            </button> }
+                                    </div> }
+                            </div> }
+                        <div className="nitro-catalog-classic-mobile-currency">
+                            <div className="nitro-catalog-classic-coin">
+                                <span>{ LocalizeShortNumber(purse?.credits ?? 0) }</span>
+                                <LayoutCurrencyIcon type={ -1 } />
+                            </div>
+                            { displayedCurrencies.map(type => (
+                                <div key={ type } className="nitro-catalog-classic-coin">
+                                    <span>{ LocalizeShortNumber(purse?.activityPoints?.get(type) ?? 0) }</span>
+                                    <LayoutCurrencyIcon type={ type } />
+                                </div>
+                            )) }
+                        </div>
+                    </div>
                     { adminMode &&
                         <div className="nitro-catalog-classic-admin-banner flex items-center justify-between text-[10px] font-bold px-3 py-0.5 uppercase tracking-wider">
                             <span>Admin Mode</span>
@@ -148,7 +187,7 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                 } }>
                                     <div className={ `flex items-center gap-1 ${ isHidden ? 'opacity-40' : '' }` }>
                                         <CatalogIconView icon={ child.iconId } />
-                                        <span className="truncate">{ child.localization }</span>
+                                        <span className="nitro-catalog-classic-tab-label truncate">{ child.localization }</span>
                                         { adminMode && isHidden && <FaEyeSlash className="text-[8px] text-danger ml-1" /> }
                                         { adminMode &&
                                             <div className="flex items-center gap-0.5 ml-1" onClick={ e => e.stopPropagation() }>
@@ -172,7 +211,7 @@ const CatalogClassicViewInner: FC<{}> = () =>
                             );
                         }) }
                         { isMod &&
-                            <NitroCardTabsItemView isActive={ adminMode } onClick={ () => setAdminMode(!adminMode) }>
+                            <NitroCardTabsItemView classNames={ [ 'nitro-catalog-classic-admin-tab' ] } isActive={ adminMode } onClick={ () => setAdminMode(!adminMode) }>
                                 <FaCog className={ `text-[10px] ${ adminMode ? 'animate-spin' : '' }` } style={ adminMode ? { animationDuration: '3s' } : {} } />
                             </NitroCardTabsItemView> }
                     </NitroCardTabsView>
@@ -213,7 +252,8 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                 <div className="nitro-catalog-classic-layout-header-shell">
                                     <CatalogBreadcrumbView />
                                     <div className="nitro-catalog-classic-layout-hero">
-                                        { !!currentPage?.localization?.getImage(0) && <img src={ currentPage.localization.getImage(0) } /> }
+                                        { /* info_duckets renders its own logo in the body (BcInfoView) — don't duplicate it in the hero */ }
+                                        { (currentPage?.layoutCode !== 'info_duckets') && !!currentPage?.localization?.getImage(0) && <img src={ currentPage.localization.getImage(0) } /> }
                                     </div>
                                 </div>
                                 <div className="nitro-catalog-classic-layout-container">

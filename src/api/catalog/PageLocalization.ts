@@ -27,7 +27,15 @@ export class PageLocalization implements IPageLocalization
 
         if(!imageName || !imageName.length) return null;
 
+        // Already a full URL (any extension) -> use it directly.
+        if(/^https?:\/\//i.test(imageName)) return imageName;
+
         let assetUrl = GetConfigurationValue<string>('catalog.asset.image.url');
+
+        // The template forces ".gif" (.../%name%.gif). If the image name
+        // already carries its own extension (png/jpg/webp/gif), don't append
+        // the forced .gif so non-gif catalog images work too.
+        if(/\.[a-z0-9]+$/i.test(imageName)) assetUrl = assetUrl.replace(/\.gif(?=$|\?)/i, '');
 
         assetUrl = assetUrl.replace('%name%', imageName);
 

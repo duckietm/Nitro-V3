@@ -1,38 +1,26 @@
-import { FC, KeyboardEvent, useEffect, useState } from 'react';
+import { NavigatorSearchResultSet } from '@nitrots/nitro-renderer';
+import { FC, useEffect, useRef, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { INavigatorSearchFilter, LocalizeText, SearchFilterOptions } from '../../../../api';
 import { Button } from '../../../../common';
-import { useNavigator } from '../../../../hooks';
+import { useNavigatorData, useNavigatorUiStore } from '../../../../hooks';
+import { NavigatorFilterChipsView } from './NavigatorFilterChipsView';
 
-export const NavigatorSearchView: FC<{
-    sendSearch: (searchValue: string, contextCode: string) => void;
-}> = props =>
+interface NavigatorSearchViewProps
 {
-    const { sendSearch = null } = props;
+    searchResult: NavigatorSearchResultSet | null;
+}
+
+export const NavigatorSearchView: FC<NavigatorSearchViewProps> = props =>
+{
+    const { searchResult } = props;
     const [ searchFilterIndex, setSearchFilterIndex ] = useState(0);
-    const [ searchValue, setSearchValue ] = useState('');
-    const { topLevelContext = null, searchResult = null } = useNavigator();
+    const [ inputText, setInputText ] = useState('');
+    const formRef = useRef<HTMLFormElement>(null);
+    const { topLevelContext } = useNavigatorData();
 
-    const processSearch = () =>
-    {
-        if(!topLevelContext) return;
-
-        let searchFilter = SearchFilterOptions[searchFilterIndex];
-
-        if(!searchFilter) searchFilter = SearchFilterOptions[0];
-
-        const searchQuery = ((searchFilter.query ? (searchFilter.query + ':') : '') + searchValue);
-
-        sendSearch((searchQuery || ''), topLevelContext.code);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) =>
-    {
-        if(event.key !== 'Enter') return;
-
-        processSearch();
-    };
-
+    // Sync the input text display when a server result arrives (e.g. on tab switch
+    // or deep-link navigation that sets the filter through the store directly).
     useEffect(() =>
     {
         if(!searchResult) return;
@@ -57,25 +45,44 @@ export const NavigatorSearchView: FC<{
         if(!filter) filter = SearchFilterOptions[0];
 
         setSearchFilterIndex(SearchFilterOptions.findIndex(option => (option === filter)));
-        setSearchValue(value);
+        setInputText(value);
     }, [ searchResult ]);
 
+    // Debounced filter — 300ms after the user stops typing, push to the store
+    // which updates the query key and triggers a refetch.
+    useEffect(() =>
+    {
+        const timer = setTimeout(() =>
+        {
+            const searchFilter = SearchFilterOptions[searchFilterIndex] ?? SearchFilterOptions[0];
+            const searchQuery = (searchFilter.query ? (searchFilter.query + ':') : '') + inputText;
+            useNavigatorUiStore.getState().setFilter(searchQuery);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [ inputText, searchFilterIndex ]);
+
+    // React 19 form action — fires on Enter or the submit button, skipping the
+    // debounce timer for an immediate search.
+    const submitSearch = (formData: FormData) =>
+    {
+        if(!topLevelContext) return;
+        const raw = formData.get('q');
+        const value = (typeof raw === 'string') ? raw : inputText;
+        const searchFilter = SearchFilterOptions[searchFilterIndex] ?? SearchFilterOptions[0];
+        const searchQuery = (searchFilter.query ? (searchFilter.query + ':') : '') + value;
+        useNavigatorUiStore.getState().setFilter(searchQuery);
+    };
+
     return (
-        <div className="flex w-full gap-1">
-            <div className="flex shrink-0">
-                <select className="form-select" value={ searchFilterIndex } onChange={ event => setSearchFilterIndex(parseInt(event.target.value)) }>
-                    { SearchFilterOptions.map((filter, index) =>
-                    {
-                        return <option key={ index } value={ index }>{ LocalizeText('navigator.filter.' + filter.name) }</option>;
-                    }) }
-                </select>
-            </div>
-            <div className="flex w-full gap-1">
-                <input className="w-full form-control" placeholder={ LocalizeText('navigator.filter.input.placeholder') } type="text" value={ searchValue } onChange={ event => setSearchValue(event.target.value) } onKeyDown={ event => handleKeyDown(event) } />
-                <Button variant="primary" onClick={ processSearch }>
+        <div className="flex w-full flex-col gap-1">
+            <NavigatorFilterChipsView value={ searchFilterIndex } onChange={ setSearchFilterIndex } />
+            <form ref={ formRef } action={ submitSearch } className="flex w-full gap-1">
+                <input className="w-full form-control" name="q" placeholder={ LocalizeText('navigator.filter.input.placeholder') } type="text" value={ inputText } onChange={ event => setInputText(event.target.value) } />
+                <Button variant="primary" onClick={ () => formRef.current?.requestSubmit() }>
                     <FaSearch className="fa-icon" />
                 </Button>
-            </div>
+            </form>
         </div>
     );
 };

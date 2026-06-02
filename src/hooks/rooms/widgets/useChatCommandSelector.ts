@@ -1,39 +1,41 @@
 import { AvailableCommandsEvent, GetCommunication } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { CommandDefinition } from '../../../api';
+import { CommandDefinition, LocalizeText } from '../../../api';
 import { createNitroStore } from '../../../state/createNitroStore';
 import { useMessageEvent } from '../../events';
 import { getChatCommandQuery, getRankedCommandSuggestions } from './useChatCommandSelector.helpers';
 
 const MAX_VISIBLE_COMMANDS = 8;
 
-// Client-only commands are static; safe to keep at module scope.
-const CLIENT_COMMANDS: CommandDefinition[] = [
-    // Effetti stanza
-    { key: 'shake', description: 'Scuoti la stanza' },
-    { key: 'rotate', description: 'Ruota la stanza' },
-    { key: 'zoom', description: 'Zoom stanza' },
-    { key: 'flip', description: 'Reset zoom' },
-    { key: 'iddqd', description: 'Reset zoom' },
-    { key: 'screenshot', description: 'Screenshot stanza' },
-    { key: 'togglefps', description: 'Toggle FPS' },
-    // Espressioni
-    { key: 'd', description: 'Ridi (VIP)' },
-    { key: 'kiss', description: 'Manda un bacio (VIP)' },
-    { key: 'jump', description: 'Salta (VIP)' },
-    { key: 'idle', description: 'Vai in idle' },
-    { key: 'sign', description: 'Mostra cartello' },
-    // Gestione stanza
-    { key: 'furni', description: 'Furni chooser' },
-    { key: 'chooser', description: 'User chooser' },
-    { key: 'floor', description: 'Floor editor' },
-    { key: 'bcfloor', description: 'Floor editor' },
-    { key: 'pickall', description: 'Raccogli tutti i furni' },
-    { key: 'ejectall', description: 'Espelli tutti i furni' },
-    { key: 'settings', description: 'Impostazioni stanza' },
+// Client-only commands are static; safe to keep at module scope. The
+// `descriptionKey` is a LocalizeText slot resolved at merge time so
+// hotels in different locales see the right language.
+const CLIENT_COMMANDS: { key: string; descriptionKey: string }[] = [
+    // Room effects
+    { key: 'shake',       descriptionKey: 'chatcmd.client.shake' },
+    { key: 'rotate',      descriptionKey: 'chatcmd.client.rotate' },
+    { key: 'zoom',        descriptionKey: 'chatcmd.client.zoom' },
+    { key: 'flip',        descriptionKey: 'chatcmd.client.flip' },
+    { key: 'iddqd',       descriptionKey: 'chatcmd.client.iddqd' },
+    { key: 'screenshot',  descriptionKey: 'chatcmd.client.screenshot' },
+    { key: 'togglefps',   descriptionKey: 'chatcmd.client.togglefps' },
+    // Expressions
+    { key: 'd',           descriptionKey: 'chatcmd.client.laugh' },
+    { key: 'kiss',        descriptionKey: 'chatcmd.client.kiss' },
+    { key: 'jump',        descriptionKey: 'chatcmd.client.jump' },
+    { key: 'idle',        descriptionKey: 'chatcmd.client.idle' },
+    { key: 'sign',        descriptionKey: 'chatcmd.client.sign' },
+    // Room management
+    { key: 'furni',       descriptionKey: 'chatcmd.client.furni' },
+    { key: 'chooser',     descriptionKey: 'chatcmd.client.chooser' },
+    { key: 'floor',       descriptionKey: 'chatcmd.client.floor' },
+    { key: 'bcfloor',     descriptionKey: 'chatcmd.client.floor' },
+    { key: 'pickall',     descriptionKey: 'chatcmd.client.pickall' },
+    { key: 'ejectall',    descriptionKey: 'chatcmd.client.ejectall' },
+    { key: 'settings',    descriptionKey: 'chatcmd.client.settings' },
     // Info
-    { key: 'client', description: 'Info client' },
-    { key: 'nitro', description: 'Info client' },
+    { key: 'client',      descriptionKey: 'chatcmd.client.info' },
+    { key: 'nitro',       descriptionKey: 'chatcmd.client.info' },
 ];
 
 /**
@@ -113,11 +115,12 @@ export const useChatCommandSelector = (chatValue: string) =>
 
     const allCommands = useMemo(() =>
     {
-        const merged = [ ...serverCommands ];
+        const merged: CommandDefinition[] = [ ...serverCommands ];
 
         for(const clientCmd of CLIENT_COMMANDS)
         {
-            if(!merged.some(cmd => cmd.key === clientCmd.key)) merged.push(clientCmd);
+            if(merged.some(cmd => cmd.key === clientCmd.key)) continue;
+            merged.push({ key: clientCmd.key, description: LocalizeText(clientCmd.descriptionKey) });
         }
 
         return merged.sort((a, b) => a.key.localeCompare(b.key));

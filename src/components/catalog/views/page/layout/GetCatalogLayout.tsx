@@ -1,6 +1,7 @@
 import { ICatalogPage } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 import { CatalogLayoutBadgeDisplayView } from './CatalogLayoutBadgeDisplayView';
+import { CatalogLayoutBcInfoView } from './CatalogLayoutBcInfoView';
 import { CatalogLayoutBuildersClubBuyView } from './CatalogLayoutBuildersClubBuyView';
 import { CatalogLayoutColorGroupingView } from './CatalogLayoutColorGroupingView';
 import { CatalogLayoutCustomPrefixView } from './CatalogLayoutCustomPrefixView';
@@ -34,6 +35,8 @@ export const GetCatalogLayout = (page: ICatalogPage, hideNavigation: () => void)
     {
         case 'frontpage_featured':
             return null;
+        case 'info_duckets':
+            return <CatalogLayoutBcInfoView { ...layoutProps } />;
         case 'frontpage4':
             return <CatalogLayoutFrontpage4View { ...layoutProps } />;
         case 'pets':

@@ -45,7 +45,7 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
 
     const getAvailableSymbols = () =>
     {
-        const symbols = groupCustomize.badgeSymbols || [];
+        const symbols = groupCustomize?.badgeSymbols || [];
 
         if(selectedIndex < 0) return symbols;
 
@@ -69,7 +69,7 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
         }
     };
 
-    if(!badgeParts || !badgeParts.length) return null;
+    if(!groupCustomize || !badgeParts || !badgeParts.length) return null;
 
     return (
         <>

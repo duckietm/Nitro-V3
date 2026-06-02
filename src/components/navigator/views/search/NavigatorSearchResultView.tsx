@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { FaBars, FaMinus, FaPlus, FaTh, FaWindowMaximize, FaWindowRestore } from 'react-icons/fa';
 import { LocalizeText, NavigatorSearchResultViewDisplayMode, SendMessageComposer } from '../../../../api';
 import { AutoGrid, AutoGridProps, Column, Flex, Grid, LayoutSearchSavesView, Text } from '../../../../common';
-import { useNavigator } from '../../../../hooks';
+import { useNavigatorData } from '../../../../hooks';
 import { NavigatorSearchResultItemView } from './NavigatorSearchResultItemView';
 
 export interface NavigatorSearchResultViewProps extends AutoGridProps
@@ -19,7 +19,7 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = pro
     const [ selectedRoomId, setSelectedRoomId ] = useState<number | null>(null);
     const [ isPopoverActive, setIsPopoverActive ] = useState<boolean>(false);
 
-    const { topLevelContext = null } = useNavigator();
+    const { topLevelContext } = useNavigatorData();
 
     const getResultTitle = () =>
     {

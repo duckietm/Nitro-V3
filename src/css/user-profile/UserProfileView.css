@@ -1,7 +1,3 @@
-.nitro-extended-profile-window {
-  border-radius: 0 !important;
-}
-
 .nitro-extended-profile-window .nitro-card-header-shell {
   min-height: 34px;
   max-height: 34px;
@@ -46,32 +42,26 @@
 
 .nitro-extended-profile__identity {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 10px;
 }
 
 .nitro-extended-profile__avatar-shell {
-  width: 56px;
-  height: 113px;
+  width: 68px;
+  height: 135px;
   position: relative;
   overflow: hidden;
-  background-size: cover;
-  background-position: center;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .nitro-extended-profile__avatar-stand,
 .nitro-extended-profile__avatar-overlay {
   position: absolute;
-  inset: 0;
-}
-
-.nitro-extended-profile__avatar-image {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: -4px;
-  transform: translateX(-50%);
-  width: auto !important;
-  height: auto !important;
+  top: 0;
+  left: 0;
 }
 
 .nitro-extended-profile__identity-copy {
@@ -253,14 +243,23 @@
 
 .nitro-extended-profile__relationship-head {
   position: absolute;
-  right: -2px;
+  right: 3px;
   top: 50%;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 32px;
   transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+}
+
+.nitro-extended-profile__relationship-head .avatar-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  background-size: 60px auto !important;
+  background-position: -14px -21px !important;
+  transform: none !important;
 }
 
 .nitro-extended-profile__relationship-subcopy {
@@ -293,6 +292,7 @@
   border-right: 1px solid #afafaf;
   color: #111;
   font-size: 11px;
+  cursor: pointer;
 }
 
 .nitro-extended-profile__summary-button:first-child {
@@ -330,6 +330,10 @@
 
 .nitro-extended-profile-window__body {
   background: #ece8dc;
+}
+
+.nitro-extended-profile-window__content.profile-card-background .nitro-extended-profile-window__body {
+  background: transparent;
 }
 
 .nitro-extended-profile-window__body--groups {
@@ -379,10 +383,8 @@
 .nitro-extended-profile-groups__details {
   min-width: 0;
   min-height: 236px;
-  border: 1px solid #9e9e9e;
-  border-radius: 14px;
-  background: #bdbbbb;
-  padding: 11px;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .nitro-extended-profile-group-info {
@@ -391,7 +393,7 @@
   gap: 12px;
   min-height: 100%;
   border: 1px solid #9f9f9f;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #efede4;
   padding: 12px 14px;
 }
@@ -409,6 +411,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .nitro-extended-profile-group-info__meta {
@@ -459,9 +462,14 @@
   margin-top: auto;
 }
 
-.nitro-extended-profile-group-info .group-badge .badge-image {
-  transform: scale(2.1);
-  transform-origin: center;
+.nitro-extended-profile-group-info__badge-wrap .group-badge {
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  image-rendering: pixelated;
 }
 
 .nitro-extended-profile-window .layout-grid-item.active {
@@ -481,7 +489,94 @@
   justify-content: center;
 }
 
-.nitro-extended-profile-window .layout-grid-item .badge-image.group-badge {
-  width: auto !important;
-  height: auto !important;
+.nitro-extended-profile-groups__item {
+  overflow: hidden;
+}
+
+.nitro-extended-profile-groups__item .group-badge {
+  width: 40px !important;
+  height: 40px !important;
+  transform: none !important;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  image-rendering: pixelated;
+}
+
+@media (max-width: 575.98px) {
+  .nitro-extended-profile-window__content {
+    overflow-y: auto;
+  }
+
+  .nitro-extended-profile-window__body--groups {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .nitro-extended-profile-window__panel {
+    height: auto;
+  }
+
+  .nitro-extended-profile__top {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .nitro-extended-profile__separator {
+    display: none;
+  }
+
+  .nitro-extended-profile-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: auto;
+    min-height: 0;
+  }
+
+  .nitro-extended-profile-groups__sidebar {
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+
+  .nitro-extended-profile-groups__list {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-right: 0;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+
+  .nitro-extended-profile-groups__item {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+
+  .nitro-extended-profile-groups__details {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .nitro-extended-profile-group-info {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .nitro-extended-profile-group-info__badge-wrap {
+    width: 64px;
+    height: 64px;
+  }
+
+  .nitro-extended-profile-group-info__button {
+    min-width: 0;
+    width: 100%;
+  }
 }

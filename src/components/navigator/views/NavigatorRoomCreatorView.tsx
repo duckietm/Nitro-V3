@@ -3,7 +3,7 @@ import { CreateFlatMessageComposer, HabboClubLevelEnum } from '@nitrots/nitro-re
 import { FC, useEffect, useState } from 'react';
 import { GetClubMemberLevel, GetConfigurationValue, IRoomModel, LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, Text } from '../../../common';
-import { useNavigator } from '../../../hooks';
+import { useNavigatorData } from '../../../hooks';
 import { NitroInput } from '../../../layout';
 import { useRoomCreatorStore } from './navigatorRoomCreatorStore';
 
@@ -25,7 +25,7 @@ export const NavigatorRoomCreatorView: FC = () =>
     });
     const isCreating = useRoomCreatorStore(s => s.isCreating);
     const beginCreate = useRoomCreatorStore(s => s.beginCreate);
-    const { categories = null } = useNavigator();
+    const { categories } = useNavigatorData();
 
     const hcDisabled = GetConfigurationValue<boolean>('hc.disabled', false);
 

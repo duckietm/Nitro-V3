@@ -3,7 +3,7 @@ import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GetConfigurationValue, isHousekeepingEnabled, MessengerIconState, OpenMessengerChat, setYoutubeRoomEnabled, VisitDesktop } from '../../api';
 import { Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
-import { useAchievements, useFriends, useHasPermission, useInventoryUnseenTracker, useMessageEvent, useMessenger, useModTools, useNitroEvent, useSessionInfo, useWiredTools } from '../../hooks';
+import { useAchievements, useFriends, useHasPermission, useInventoryUnseenTracker, useMessageEvent, useMessenger, useModTools, useNitroEvent, useSessionInfo, useSoundboard, useWiredTools } from '../../hooks';
 import { ToolbarItemView } from './ToolbarItemView';
 import { ToolbarMeView } from './ToolbarMeView';
 import { YouTubePlayerView } from './YouTubePlayerView';
@@ -34,6 +34,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const [ isMeExpanded, setMeExpanded ] = useState(false);
     const [ isToolbarOpen, setIsToolbarOpen ] = useState(false);
     const [ isTouchLayout, setIsTouchLayout ] = useState(false);
+    const [ staffStackBottom, setStaffStackBottom ] = useState<number | null>(null);
     const [ useGuideTool, setUseGuideTool ] = useState(false);
     const [ youtubeEnabled, setYoutubeEnabled ] = useState(false);
     const { userFigure = null } = useSessionInfo();
@@ -42,6 +43,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { requests = [] } = useFriends();
     const { iconState = MessengerIconState.HIDDEN } = useMessenger();
     const { openMonitor, showToolbarButton } = useWiredTools();
+    const { enabled: soundboardEnabled, reset: resetSoundboard } = useSoundboard();
     const isMod = useHasPermission('acc_supporttool');
     const isHk = useHasPermission('acc_housekeeping');
     const hkEnabled = useMemo(() => isHousekeepingEnabled(), []);
@@ -69,10 +71,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         toggleTimeoutRef.current = setTimeout(() => { toggleLockRef.current = false; }, TOGGLE_LOCK_MS);
     }, []);
 
-    const compactFramePosition = (isToolbarOpen && isInRoom) ? 'bottom-[90px] min-[1540px]:bottom-0' : 'bottom-0';
-    const mobileOnlyClasses = isTouchLayout ? '' : 'min-[1540px]:hidden';
-    const desktopBlockClasses = isTouchLayout ? 'hidden' : 'hidden min-[1540px]:block';
-    const desktopFlexClasses = isTouchLayout ? 'hidden' : 'hidden min-[1540px]:flex';
+    const compactFramePosition = (isToolbarOpen && isInRoom) ? 'bottom-[90px] min-[1700px]:bottom-0' : 'bottom-0';
+    const mobileOnlyClasses = isTouchLayout ? '' : 'min-[1700px]:hidden';
+    const desktopBlockClasses = isTouchLayout ? 'hidden' : 'hidden min-[1700px]:block';
+    const desktopFlexClasses = isTouchLayout ? 'hidden' : 'hidden min-[1700px]:flex';
     const leftNavVariants = useMemo<Variants>(() => ({
         hidden: { opacity: 0, x: isInRoom ? -10 : 0, y: isInRoom ? 0 : 8, pointerEvents: 'none' },
         visible: { opacity: 1, x: 0, y: 0, pointerEvents: 'auto' }
@@ -99,8 +101,9 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         {
             setYoutubeEnabled(false);
             setYoutubeRoomEnabled(false);
+            resetSoundboard();
         }
-    }, [ isInRoom ]);
+    }, [ isInRoom, resetSoundboard ]);
 
     useEffect(() =>
     {
@@ -112,6 +115,33 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 
         return () => query.removeEventListener('change', updateTouchLayout);
     }, []);
+
+    // Keep the left staff-tools stack pinned 15px above the room tools rail
+    // (its height is dynamic, so measure it). Falls back to null (CSS
+    // default) when the room tools aren't present, e.g. outside a room.
+    useEffect(() =>
+    {
+        const measure = () =>
+        {
+            const roomTools = document.querySelector('.nitro-room-tools-container') as HTMLElement | null;
+            const next = roomTools
+                ? Math.max(8, Math.round(window.innerHeight - roomTools.getBoundingClientRect().top + 15))
+                : null;
+
+            setStaffStackBottom(prevValue => (prevValue === next ? prevValue : next));
+        };
+
+        measure();
+
+        const interval = window.setInterval(measure, 400);
+        window.addEventListener('resize', measure);
+
+        return () =>
+        {
+            window.clearInterval(interval);
+            window.removeEventListener('resize', measure);
+        };
+    }, [ isInRoom ]);
 
     const openYouTubePlayer = () => window.dispatchEvent(new CustomEvent('youtube:toggle'));
 
@@ -216,14 +246,6 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     <motion.div variants={ itemVariants }>
                         <ToolbarItemView icon="catalog" onClick={ () => CreateLinkEvent('catalog/toggle/normal') } className="tb-icon" />
                     </motion.div>
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
-                    </motion.div>
-                    <motion.div variants={ itemVariants } className="relative">
-                        <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
-                        { (getFullCount > 0) &&
-                            <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
-                    </motion.div>
                     <motion.div variants={ itemVariants } className="relative">
                         <AnimatePresence>
                             { isMeExpanded &&
@@ -237,7 +259,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 </motion.div> }
                         </AnimatePresence>
                         <motion.div
-                            className="cursor-pointer"
+                            className="cursor-pointer relative h-[40px] w-[40px] overflow-hidden"
                             whileHover={ { scale: 1.08 } }
                             whileTap={ { scale: 0.95 } }
                             onClick={ event =>
@@ -245,10 +267,24 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 setMeExpanded(value => !value);
                                 event.stopPropagation();
                             } }>
-                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon !h-[64px] !w-[32px] !bg-center !bg-no-repeat" style={ { marginTop: "8px" } } />
+                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon" style={ { backgroundSize: 'auto', backgroundPosition: '-25px -38px' } } />
                         </motion.div>
                         { (getTotalUnseen > 0) &&
                             <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
+                    </motion.div>
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
+                    </motion.div>
+                    <motion.div variants={ itemVariants } className="relative">
+                        <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
+                        { (getFullCount > 0) &&
+                            <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
+                    </motion.div>
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
+                    </motion.div>
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
                     </motion.div>
                     { (isInRoom && showToolbarButton) &&
                         <motion.div variants={ itemVariants }>
@@ -262,19 +298,23 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="youtube" onClick={ openYouTubePlayer } className="tb-icon" />
                         </motion.div> }
+                    { (isInRoom && soundboardEnabled) &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="soundboard" onClick={ () => CreateLinkEvent('soundboard/toggle') } className="tb-icon" />
+                        </motion.div> }
                     { isMod &&
                         <motion.div variants={ itemVariants } className="relative">
                             <ToolbarItemView icon="modtools" onClick={ () => CreateLinkEvent('mod-tools/toggle') } className="tb-icon" />
                             { (openTicketsCount > 0) &&
                                 <LayoutItemCountView count={ openTicketsCount } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
                         </motion.div> }
-                    { isMod &&
-                        <motion.div variants={ itemVariants }>
-                            <ToolbarItemView icon="furnieditor" onClick={ () => CreateLinkEvent('furni-editor/toggle') } className="tb-icon" />
-                        </motion.div> }
                     { (isHk && hkEnabled) &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="housekeeping" onClick={ () => CreateLinkEvent('housekeeping/toggle') } className="tb-icon" />
+                        </motion.div> }
+                    { isMod &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="furnieditor" onClick={ () => CreateLinkEvent('furni-editor/toggle') } className="tb-icon" />
                         </motion.div> }
                 </motion.div>
             </motion.div>
@@ -324,40 +364,43 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     <motion.div variants={ itemVariants }>
                         <ToolbarItemView icon="catalog" onClick={ () => CreateLinkEvent('catalog/toggle/normal') } className="tb-icon" />
                     </motion.div>
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
+                    <motion.div variants={ itemVariants } className="relative shrink-0">
+                        <AnimatePresence>
+                            { isMeExpanded &&
+                                <motion.div
+                                    initial={ { opacity: 0, y: 6, scale: 0.97 } }
+                                    animate={ { opacity: 1, y: 0, scale: 1 } }
+                                    exit={ { opacity: 0, y: 6, scale: 0.97 } }
+                                    transition={ ME_POPOVER_TRANSITION }
+                                    className="pointer-events-auto fixed bottom-[calc(100%+10px)] left-1/2 z-[70] -translate-x-1/2">
+                                    <ToolbarMeView setMeExpanded={ setMeExpanded } unseenAchievementCount={ getTotalUnseen } useGuideTool={ useGuideTool } />
+                                </motion.div> }
+                        </AnimatePresence>
+                        <motion.div
+                            className="cursor-pointer relative h-[40px] w-[40px] overflow-hidden"
+                            whileHover={ { scale: 1.08 } }
+                            whileTap={ { scale: 0.95 } }
+                            onClick={ event =>
+                            {
+                                setMeExpanded(value => !value);
+                                event.stopPropagation();
+                            } }>
+                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon" style={ { backgroundSize: 'auto', backgroundPosition: '-25px -38px' } } />
+                        </motion.div>
+                        { (getTotalUnseen > 0) &&
+                            <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
                     </motion.div>
                     <motion.div variants={ itemVariants } className="relative">
                         <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
                         { (getFullCount > 0) &&
                             <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
                     </motion.div>
-                </motion.div>
-                <motion.div variants={ itemVariants } className="relative mx-[2px] shrink-0">
-                    <AnimatePresence>
-                        { isMeExpanded &&
-                            <motion.div
-                                initial={ { opacity: 0, y: 6, scale: 0.97 } }
-                                animate={ { opacity: 1, y: 0, scale: 1 } }
-                                exit={ { opacity: 0, y: 6, scale: 0.97 } }
-                                transition={ ME_POPOVER_TRANSITION }
-                                className="pointer-events-auto absolute bottom-[calc(100%+10px)] left-1/2 z-[70] -translate-x-1/2">
-                                <ToolbarMeView setMeExpanded={ setMeExpanded } unseenAchievementCount={ getTotalUnseen } useGuideTool={ useGuideTool } />
-                            </motion.div> }
-                    </AnimatePresence>
-                    <motion.div
-                        className="cursor-pointer"
-                        whileHover={ { scale: 1.08 } }
-                        whileTap={ { scale: 0.95 } }
-                        onClick={ event =>
-                        {
-                            setMeExpanded(value => !value);
-                            event.stopPropagation();
-                        } }>
-                        <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon !h-[64px] !w-[32px] !bg-center !bg-no-repeat" style={ { marginTop: "8px" } } />
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
                     </motion.div>
-                    { (getTotalUnseen > 0) &&
-                        <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
+                    </motion.div>
                 </motion.div>
                 <motion.div
                     variants={ containerVariants }
@@ -366,27 +409,13 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="wired-tools" onClick={ openMonitor } className="tb-icon" />
                         </motion.div> }
-                    { isInRoom &&
-                        <motion.div variants={ itemVariants }>
-                            <ToolbarItemView icon="camera" onClick={ () => CreateLinkEvent('camera/toggle') } className="tb-icon" />
-                        </motion.div> }
                     { (isInRoom && youtubeEnabled) &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="youtube" onClick={ openYouTubePlayer } className="tb-icon" />
                         </motion.div> }
-                    { isMod &&
-                        <motion.div variants={ itemVariants } className="relative">
-                            <ToolbarItemView icon="modtools" onClick={ () => CreateLinkEvent('mod-tools/toggle') } className="tb-icon" />
-                            { (openTicketsCount > 0) &&
-                                <LayoutItemCountView count={ openTicketsCount } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
-                        </motion.div> }
-                    { isMod &&
+                    { (isInRoom && soundboardEnabled) &&
                         <motion.div variants={ itemVariants }>
-                            <ToolbarItemView icon="furnieditor" onClick={ () => CreateLinkEvent('furni-editor/toggle') } className="tb-icon" />
-                        </motion.div> }
-                    { (isHk && hkEnabled) &&
-                        <motion.div variants={ itemVariants }>
-                            <ToolbarItemView icon="housekeeping" onClick={ () => CreateLinkEvent('housekeeping/toggle') } className="tb-icon" />
+                            <ToolbarItemView icon="soundboard" onClick={ () => CreateLinkEvent('soundboard/toggle') } className="tb-icon" />
                         </motion.div> }
                     <motion.div variants={ itemVariants } className="relative">
                         <ToolbarItemView icon="friendall" onClick={ () => CreateLinkEvent('friends/toggle') } className="tb-icon" />
@@ -394,6 +423,39 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                             <LayoutItemCountView count={ requests.length } className="absolute -right-2 -top-1" /> }
                     </motion.div>
                 </motion.div>
+            </motion.div>
+            { /* Mobile side tools — moved out of the bottom bar into a
+                 vertical pill stack on the left edge so the bottom bar has
+                 room. Always present (Builders Club), plus camera in-room
+                 and the staff-only tools when permitted. */ }
+            <motion.div
+                initial="hidden"
+                animate={ visibilityVariant }
+                variants={ mobileNavVariants }
+                transition={ NAV_TRANSITION }
+                style={ staffStackBottom != null ? { top: 'auto', bottom: `${ staffStackBottom }px` } : undefined }
+                className={ `fixed left-1 z-40 flex flex-col items-center gap-2 rounded-[12px] border border-white/8 bg-[rgba(10,10,12,0.58)] px-[4px] py-[6px] shadow-[0_6px_18px_rgba(0,0,0,0.18)] ${ staffStackBottom == null ? 'top-1/2 -translate-y-1/2' : '' } ${ mobileOnlyClasses }` }>
+                <motion.div variants={ itemVariants }>
+                    <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
+                </motion.div>
+                { isInRoom &&
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="camera" onClick={ () => CreateLinkEvent('camera/toggle') } className="tb-icon" />
+                    </motion.div> }
+                { isMod &&
+                    <motion.div variants={ itemVariants } className="relative">
+                        <ToolbarItemView icon="modtools" onClick={ () => CreateLinkEvent('mod-tools/toggle') } className="tb-icon" />
+                        { (openTicketsCount > 0) &&
+                            <LayoutItemCountView count={ openTicketsCount } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
+                    </motion.div> }
+                { (isHk && hkEnabled) &&
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="housekeeping" onClick={ () => CreateLinkEvent('housekeeping/toggle') } className="tb-icon" />
+                    </motion.div> }
+                { isMod &&
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="furnieditor" onClick={ () => CreateLinkEvent('furni-editor/toggle') } className="tb-icon" />
+                    </motion.div> }
             </motion.div>
         </>
     );
@@ -470,6 +532,14 @@ const TOOLBAR_STYLES = `
     scrollbar-width: none;
     -ms-overflow-style: none;
     flex-wrap: nowrap;
+  }
+
+  /* Keep each icon at its natural size so the mobile bar scrolls
+     horizontally instead of squashing the items into each other.
+     (Default flex-shrink:1 let the fixed-size icon backgrounds overlap
+     once enough icons were present to exceed the bar width.) */
+  .tb-bar-scroll > * {
+    flex-shrink: 0;
   }
 
   .tb-bar-scroll::-webkit-scrollbar {

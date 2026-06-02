@@ -87,7 +87,7 @@ export const InventoryCategoryFilterView: FC<InventoryCategoryFilterViewProps> =
 
     return (
         <div
-            className="flex gap-1 rounded p-1 bg-[#C9C9C9] shrink-0"
+            className="nitro-inventory-filter-bar flex gap-1 rounded p-1 shrink-0"
             style={ { width: currentTab === TAB_BADGES ? '320px' : '100%' } }>
             <div className="relative flex flex-1 items-center">
                 <NitroInput

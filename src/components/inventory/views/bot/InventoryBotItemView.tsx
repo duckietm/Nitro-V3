@@ -38,8 +38,8 @@ export const InventoryBotItemView: FC<PropsWithChildren<{
     };
 
     return (
-        <InfiniteGrid.Item itemActive={ (selectedBot === botItem) } itemUnseen={ unseen } onDoubleClick={ onMouseEvent } onMouseDown={ onMouseEvent } onMouseOut={ onMouseEvent } onMouseUp={ onMouseEvent } { ...rest } className="*:[background-position-y:-32px]">
-            <LayoutAvatarImageView direction={ 3 } figure={ botItem.botData.figure } headOnly={ true } />
+        <InfiniteGrid.Item itemActive={ (selectedBot === botItem) } itemUnseen={ unseen } onDoubleClick={ onMouseEvent } onMouseDown={ onMouseEvent } onMouseOut={ onMouseEvent } onMouseUp={ onMouseEvent } { ...rest } className="aspect-[2/3]">
+            <LayoutAvatarImageView direction={ 2 } figure={ botItem.botData.figure } fit />
             { children }
         </InfiniteGrid.Item>
     );

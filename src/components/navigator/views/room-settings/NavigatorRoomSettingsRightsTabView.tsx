@@ -3,6 +3,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, Text, UserProfileIconView } from '../../../../common';
 import { useFriends, useMessageEvent } from '../../../../hooks';
+import { NavigatorRoomSettingsSectionView } from './NavigatorRoomSettingsSectionView';
 
 interface NavigatorRoomSettingsTabViewProps
 {
@@ -105,74 +106,72 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
     return (
         <Grid>
             <Column size={ 6 }>
-                <Text bold>
-                    { LocalizeText(
+                <NavigatorRoomSettingsSectionView gap={ 1 } className="h-full"
+                    title={ LocalizeText(
                         'navigator.flatctrls.userswithrights',
                         [ 'displayed', 'total' ],
                         [
                             filteredUsersWithRights.size.toString(),
                             filteredUsersWithRights.size.toString()
                         ]
-                    ) }
-                </Text>
+                    ) }>
+                    <Flex overflow="hidden" className="nitro-card-panel p-2 list-container">
+                        <Column fullWidth overflow="auto" gap={ 1 }>
+                            { Array.from(filteredUsersWithRights.entries()).map(([ id, name ], index) =>
+                            {
+                                return (
+                                    <Flex key={ `${id}-${index}` } shrink alignItems="center" gap={ 1 } overflow="hidden">
+                                        <UserProfileIconView userId={ id } />
+                                        <Text
+                                            pointer
+                                            grow
+                                            onClick={ () => guardedSend(`take_${id}`, new RoomTakeRightsComposer(id)) }>
+                                            { name }
+                                        </Text>
+                                    </Flex>
+                                );
+                            }) }
+                        </Column>
+                    </Flex>
 
-                <Flex overflow="hidden" className="nitro-card-panel p-2 list-container">
-                    <Column fullWidth overflow="auto" gap={ 1 }>
-                        { Array.from(filteredUsersWithRights.entries()).map(([ id, name ], index) =>
-                        {
-                            return (
-                                <Flex key={ `${id}-${index}` } shrink alignItems="center" gap={ 1 } overflow="hidden">
-                                    <UserProfileIconView userId={ id } />
-                                    <Text
-                                        pointer
-                                        grow
-                                        onClick={ () => guardedSend(`take_${id}`, new RoomTakeRightsComposer(id)) }>
-                                        { name }
-                                    </Text>
-                                </Flex>
-                            );
-                        }) }
-                    </Column>
-                </Flex>
-
-                <Button
-                    variant="danger"
-                    disabled={ !filteredUsersWithRights.size }
-                    onClick={ () => roomData && guardedSend('removeAll', new RemoveAllRightsMessageComposer(roomData.roomId)) }>
-                    { LocalizeText('navigator.flatctrls.clear') }
-                </Button>
+                    <Button
+                        variant="danger"
+                        disabled={ !filteredUsersWithRights.size }
+                        onClick={ () => roomData && guardedSend('removeAll', new RemoveAllRightsMessageComposer(roomData.roomId)) }>
+                        { LocalizeText('navigator.flatctrls.clear') }
+                    </Button>
+                </NavigatorRoomSettingsSectionView>
             </Column>
 
             <Column size={ 6 }>
-                <Text bold>
-                    { LocalizeText(
+                <NavigatorRoomSettingsSectionView gap={ 1 } className="h-full"
+                    title={ LocalizeText(
                         'navigator.flatctrls.friends',
                         [ 'displayed', 'total' ],
                         [
                             friendsWithoutRights.length.toString(),
                             allFriends.length.toString()
                         ]
-                    ) }
-                </Text>
-
-                <Flex overflow="hidden" className="nitro-card-panel p-2 list-container">
-                    <Column fullWidth overflow="auto" gap={ 1 }>
-                        { friendsWithoutRights.map((friend, index) =>
-                        {
-                            return (
-                                <Flex key={ `${friend.id}-${index}` } shrink alignItems="center" gap={ 1 } overflow="hidden">
-                                    <UserProfileIconView userId={ friend.id } />
-                                    <Text
-                                        pointer
-                                        grow
-                                        onClick={ () => guardedSend(`give_${friend.id}`, new RoomGiveRightsComposer(friend.id)) }>
-                                        { friend.name }
-                                    </Text>
-                                </Flex>
-                            );
-                        }) }
-                    </Column>
-                </Flex>
+                    ) }>
+                    <Flex overflow="hidden" className="nitro-card-panel p-2 list-container">
+                        <Column fullWidth overflow="auto" gap={ 1 }>
+                            { friendsWithoutRights.map((friend, index) =>
+                            {
+                                return (
+                                    <Flex key={ `${friend.id}-${index}` } shrink alignItems="center" gap={ 1 } overflow="hidden">
+                                        <UserProfileIconView userId={ friend.id } />
+                                        <Text
+                                            pointer
+                                            grow
+                                            onClick={ () => guardedSend(`give_${friend.id}`, new RoomGiveRightsComposer(friend.id)) }>
+                                            { friend.name }
+                                        </Text>
+                                    </Flex>
+                                );
+                            }) }
+                        </Column>
+                    </Flex>
+                </NavigatorRoomSettingsSectionView>
             </Column>
         </Grid>
     );

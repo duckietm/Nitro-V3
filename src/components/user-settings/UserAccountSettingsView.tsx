@@ -1,7 +1,7 @@
 import { AddLinkEventTracker, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, useEffect, useMemo, useState } from 'react';
 import { FaArrowLeft, FaCheckCircle, FaChevronRight, FaEnvelope, FaExclamationTriangle, FaEye, FaEyeSlash, FaIdBadge, FaInfoCircle, FaKey, FaShieldAlt, FaUserCog } from 'react-icons/fa';
-import { GetConfigurationValue, getAccessToken } from '../../api';
+import { GetConfigurationValue, LocalizeText, getAccessToken } from '../../api';
 import { Button, LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -17,9 +17,9 @@ const MAX_USERNAME_LENGTH = 25;
 type FeedbackKind = 'error' | 'success';
 type Section = 'menu' | 'password' | 'email' | 'username';
 
-const passwordStrength = (value: string): { score: number; label: string; color: string } =>
+const passwordStrength = (value: string): { score: number; labelKey: string; color: string } =>
 {
-    if(!value) return { score: 0, label: '', color: 'bg-black/10' };
+    if(!value) return { score: 0, labelKey: '', color: 'bg-black/10' };
 
     let score = 0;
     if(value.length >= MIN_PASSWORD_LENGTH) score++;
@@ -28,10 +28,10 @@ const passwordStrength = (value: string): { score: number; label: string; color:
     if(/\d/.test(value)) score++;
     if(/[^A-Za-z0-9]/.test(value)) score++;
 
-    if(score <= 1) return { score: 1, label: 'Weak', color: 'bg-[#a81a12]' };
-    if(score === 2) return { score: 2, label: 'Fair', color: 'bg-[#ffc107]' };
-    if(score === 3) return { score: 3, label: 'Good', color: 'bg-[#1e7295]' };
-    return { score: 4, label: 'Strong', color: 'bg-[#00800b]' };
+    if(score <= 1) return { score: 1, labelKey: 'usersettings.strength.weak', color: 'bg-[#a81a12]' };
+    if(score === 2) return { score: 2, labelKey: 'usersettings.strength.fair', color: 'bg-[#ffc107]' };
+    if(score === 3) return { score: 3, labelKey: 'usersettings.strength.good', color: 'bg-[#1e7295]' };
+    return { score: 4, labelKey: 'usersettings.strength.strong', color: 'bg-[#00800b]' };
 };
 
 export const UserAccountSettingsView: FC<{}> = () =>
@@ -131,38 +131,38 @@ export const UserAccountSettingsView: FC<{}> = () =>
 
         if(!currentPassword || !newPassword || !confirmPassword)
         {
-            setFeedback({ kind: 'error', message: 'All fields are required.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.fields_required') });
             return;
         }
 
         if(newPassword.length < MIN_PASSWORD_LENGTH)
         {
-            setFeedback({ kind: 'error', message: `Password must be at least ${ MIN_PASSWORD_LENGTH } characters.` });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.password_min', [ 'count' ], [ MIN_PASSWORD_LENGTH.toString() ]) });
             return;
         }
 
         if(newPassword.length > MAX_PASSWORD_LENGTH)
         {
-            setFeedback({ kind: 'error', message: 'Password is too long.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.password_long') });
             return;
         }
 
         if(newPassword !== confirmPassword)
         {
-            setFeedback({ kind: 'error', message: 'New passwords do not match.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.password_mismatch') });
             return;
         }
 
         if(newPassword === currentPassword)
         {
-            setFeedback({ kind: 'error', message: 'New password must be different from the current password.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.password_same') });
             return;
         }
 
         const token = getAccessToken();
         if(!token)
         {
-            setFeedback({ kind: 'error', message: 'You are not authenticated. Please log in again.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.not_authenticated') });
             return;
         }
 
@@ -191,14 +191,14 @@ export const UserAccountSettingsView: FC<{}> = () =>
             {
                 const message = typeof payload.error === 'string' && payload.error
                     ? payload.error
-                    : `Request failed (${ response.status }).`;
+                    : LocalizeText('usersettings.error.request_failed', [ 'status' ], [ response.status.toString() ]);
                 setFeedback({ kind: 'error', message });
                 return;
             }
 
             const message = typeof payload.message === 'string' && payload.message
                 ? payload.message
-                : 'Password updated successfully.';
+                : LocalizeText('usersettings.success.password');
             setFeedback({ kind: 'success', message });
             setCurrentPassword('');
             setNewPassword('');
@@ -208,7 +208,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
         }
         catch
         {
-            setFeedback({ kind: 'error', message: 'Could not reach the server. Please try again.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.network') });
         }
         finally
         {
@@ -224,26 +224,26 @@ export const UserAccountSettingsView: FC<{}> = () =>
 
         if(!emailCurrentPassword || !newEmail)
         {
-            setFeedback({ kind: 'error', message: 'All fields are required.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.fields_required') });
             return;
         }
 
         if(newEmail.length > MAX_EMAIL_LENGTH)
         {
-            setFeedback({ kind: 'error', message: 'Email address is too long.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.email_long') });
             return;
         }
 
         if(!EMAIL_RE.test(newEmail))
         {
-            setFeedback({ kind: 'error', message: 'Please enter a valid email address.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.email_invalid') });
             return;
         }
 
         const token = getAccessToken();
         if(!token)
         {
-            setFeedback({ kind: 'error', message: 'You are not authenticated. Please log in again.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.not_authenticated') });
             return;
         }
 
@@ -272,14 +272,14 @@ export const UserAccountSettingsView: FC<{}> = () =>
             {
                 const message = typeof payload.error === 'string' && payload.error
                     ? payload.error
-                    : `Request failed (${ response.status }).`;
+                    : LocalizeText('usersettings.error.request_failed', [ 'status' ], [ response.status.toString() ]);
                 setFeedback({ kind: 'error', message });
                 return;
             }
 
             const message = typeof payload.message === 'string' && payload.message
                 ? payload.message
-                : 'Email updated successfully.';
+                : LocalizeText('usersettings.success.email');
             setFeedback({ kind: 'success', message });
             setEmailCurrentPassword('');
             setNewEmail('');
@@ -287,7 +287,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
         }
         catch
         {
-            setFeedback({ kind: 'error', message: 'Could not reach the server. Please try again.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.network') });
         }
         finally
         {
@@ -303,32 +303,32 @@ export const UserAccountSettingsView: FC<{}> = () =>
 
         if(!usernameCurrentPassword || !newUsername)
         {
-            setFeedback({ kind: 'error', message: 'All fields are required.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.fields_required') });
             return;
         }
 
         if(newUsername.length < MIN_USERNAME_LENGTH || newUsername.length > MAX_USERNAME_LENGTH)
         {
-            setFeedback({ kind: 'error', message: `Username must be between ${ MIN_USERNAME_LENGTH } and ${ MAX_USERNAME_LENGTH } characters.` });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.username_length', [ 'min', 'max' ], [ MIN_USERNAME_LENGTH.toString(), MAX_USERNAME_LENGTH.toString() ]) });
             return;
         }
 
         if(!USERNAME_RE.test(newUsername))
         {
-            setFeedback({ kind: 'error', message: 'Username may only contain letters, numbers, dot, underscore and dash.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.username_invalid') });
             return;
         }
 
         if(newUsername === session.username)
         {
-            setFeedback({ kind: 'error', message: 'New username must be different from the current one.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.username_same') });
             return;
         }
 
         const token = getAccessToken();
         if(!token)
         {
-            setFeedback({ kind: 'error', message: 'You are not authenticated. Please log in again.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.not_authenticated') });
             return;
         }
 
@@ -357,14 +357,14 @@ export const UserAccountSettingsView: FC<{}> = () =>
             {
                 const message = typeof payload.error === 'string' && payload.error
                     ? payload.error
-                    : `Request failed (${ response.status }).`;
+                    : LocalizeText('usersettings.error.request_failed', [ 'status' ], [ response.status.toString() ]);
                 setFeedback({ kind: 'error', message });
                 return;
             }
 
             const message = typeof payload.message === 'string' && payload.message
                 ? payload.message
-                : 'Username updated. Please log in again with your new name.';
+                : LocalizeText('usersettings.success.username');
             setFeedback({ kind: 'success', message });
             setUsernameCurrentPassword('');
             setNewUsername('');
@@ -382,7 +382,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
         }
         catch
         {
-            setFeedback({ kind: 'error', message: 'Could not reach the server. Please try again.' });
+            setFeedback({ kind: 'error', message: LocalizeText('usersettings.error.network') });
         }
         finally
         {
@@ -394,7 +394,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
 
     return (
         <NitroCardView className="user-account-settings-window w-[360px]" theme="primary-slim" uniqueKey="user-account-settings">
-            <NitroCardHeaderView headerText="User Settings" onCloseClick={ close } />
+            <NitroCardHeaderView headerText={ LocalizeText('usersettings.title') } onCloseClick={ close } />
 
             <div className="relative flex items-center gap-3 px-3 py-2 bg-[linear-gradient(180deg,#2e8fb8_0%,#1e7295_100%)] text-white">
                 <div className="absolute inset-0 opacity-20 pointer-events-none [background-image:radial-gradient(rgba(255,255,255,0.5)_1px,transparent_1px)] [background-size:6px_6px]" />
@@ -405,21 +405,21 @@ export const UserAccountSettingsView: FC<{}> = () =>
                             direction={ 2 }
                             headOnly={ true }
                             scale={ 1 }
-                            classNames={ [ '!absolute !left-1/2 !top-[56%] !w-[64px] !h-[64px] !-translate-x-1/2 !-translate-y-1/2 !bg-center !bg-no-repeat' ] }
+                            style={ { backgroundSize: '112px auto', backgroundPosition: '-24px -38px' } }
                         />
                     </div>
                 ) }
                 <div className="relative flex flex-col leading-tight">
-                    <Text small className="text-white/80 uppercase tracking-wider">My account</Text>
-                    <Text bold className="text-white text-[15px]">{ session.username || 'Guest' }</Text>
-                    <Text small className="text-white/80">Manage your account and security</Text>
+                    <Text small className="text-white/80 uppercase tracking-wider">{ LocalizeText('usersettings.account.label') }</Text>
+                    <Text bold className="text-white text-[15px]">{ session.username || LocalizeText('usersettings.guest') }</Text>
+                    <Text small className="text-white/80">{ LocalizeText('usersettings.subtitle') }</Text>
                 </div>
             </div>
 
             <NitroCardContentView className="flex flex-col gap-2 text-black">
                 { section === 'menu' && (
                     <div className="flex flex-col gap-2">
-                        <Text small className="text-black/60 uppercase tracking-wider px-1">Account</Text>
+                        <Text small className="text-black/60 uppercase tracking-wider px-1">{ LocalizeText('usersettings.menu.section') }</Text>
                         <button
                             type="button"
                             className="group flex items-center gap-3 rounded-md border border-black/10 bg-white px-3 py-2 hover:bg-[#f5fbfd] hover:border-[#1e7295] transition-colors cursor-pointer text-left"
@@ -428,8 +428,8 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaKey />
                             </div>
                             <div className="flex flex-col flex-1 leading-tight">
-                                <Text bold>Reset password</Text>
-                                <Text small className="text-black/60">Change the password used to log in.</Text>
+                                <Text bold>{ LocalizeText('usersettings.menu.password.title') }</Text>
+                                <Text small className="text-black/60">{ LocalizeText('usersettings.menu.password.desc') }</Text>
                             </div>
                             <FaChevronRight className="text-black/40 group-hover:text-[#1e7295]" />
                         </button>
@@ -442,8 +442,8 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaEnvelope />
                             </div>
                             <div className="flex flex-col flex-1 leading-tight">
-                                <Text bold>Change email</Text>
-                                <Text small className="text-black/60">Update the email address on your account.</Text>
+                                <Text bold>{ LocalizeText('usersettings.menu.email.title') }</Text>
+                                <Text small className="text-black/60">{ LocalizeText('usersettings.menu.email.desc') }</Text>
                             </div>
                             <FaChevronRight className="text-black/40 group-hover:text-[#1e7295]" />
                         </button>
@@ -456,8 +456,8 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaIdBadge />
                             </div>
                             <div className="flex flex-col flex-1 leading-tight">
-                                <Text bold>Change username</Text>
-                                <Text small className="text-black/60">Pick a new name. You'll need to log in again.</Text>
+                                <Text bold>{ LocalizeText('usersettings.menu.username.title') }</Text>
+                                <Text small className="text-black/60">{ LocalizeText('usersettings.menu.username.desc') }</Text>
                             </div>
                             <FaChevronRight className="text-black/40 group-hover:text-[#a37800]" />
                         </button>
@@ -467,8 +467,8 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaShieldAlt />
                             </div>
                             <div className="flex flex-col flex-1 leading-tight">
-                                <Text bold className="text-black/60">More coming soon</Text>
-                                <Text small className="text-black/50">Two-factor authentication and more.</Text>
+                                <Text bold className="text-black/60">{ LocalizeText('usersettings.menu.soon.title') }</Text>
+                                <Text small className="text-black/50">{ LocalizeText('usersettings.menu.soon.desc') }</Text>
                             </div>
                         </div>
                     </div>
@@ -485,16 +485,16 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaArrowLeft size={ 11 } />
                             </button>
                             <FaUserCog className="text-[#1e7295]" />
-                            <Text bold>Reset password</Text>
+                            <Text bold>{ LocalizeText('usersettings.menu.password.title') }</Text>
                         </div>
 
                         <div className="flex items-start gap-2 rounded-md border border-[#1e7295]/30 bg-[#1e7295]/10 px-2 py-2 text-[11px] leading-4 text-[#0d3d52]">
                             <FaInfoCircle className="mt-[2px] shrink-0 text-[#1e7295]" />
-                            <span>Use at least <strong>{ MIN_PASSWORD_LENGTH } characters</strong>. Mix upper &amp; lowercase, numbers and symbols for a stronger password.</span>
+                            <span>{ LocalizeText('usersettings.password.hint', [ 'count' ], [ MIN_PASSWORD_LENGTH.toString() ]) }</span>
                         </div>
 
                         <label className="flex flex-col gap-1 text-[12px]">
-                            <span className="font-bold">Current password</span>
+                            <span className="font-bold">{ LocalizeText('usersettings.field.current_password') }</span>
                             <div className="relative flex items-center">
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
@@ -508,7 +508,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 />
                                 <button
                                     type="button"
-                                    aria-label={ showCurrent ? 'Hide password' : 'Show password' }
+                                    aria-label={ showCurrent ? LocalizeText('usersettings.aria.hide_password') : LocalizeText('usersettings.aria.show_password') }
                                     onClick={ () => setShowCurrent(prev => !prev) }
                                     className="absolute right-2 text-black/40 hover:text-black/70">
                                     { showCurrent ? <FaEyeSlash size={ 12 } /> : <FaEye size={ 12 } /> }
@@ -517,7 +517,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                         </label>
 
                         <label className="flex flex-col gap-1 text-[12px]">
-                            <span className="font-bold">New password</span>
+                            <span className="font-bold">{ LocalizeText('usersettings.field.new_password') }</span>
                             <div className="relative flex items-center">
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
@@ -531,7 +531,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 />
                                 <button
                                     type="button"
-                                    aria-label={ showNew ? 'Hide password' : 'Show password' }
+                                    aria-label={ showNew ? LocalizeText('usersettings.aria.hide_password') : LocalizeText('usersettings.aria.show_password') }
                                     onClick={ () => setShowNew(prev => !prev) }
                                     className="absolute right-2 text-black/40 hover:text-black/70">
                                     { showNew ? <FaEyeSlash size={ 12 } /> : <FaEye size={ 12 } /> }
@@ -542,13 +542,13 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                     <div className="flex-1 h-1.5 rounded-full bg-black/10 overflow-hidden">
                                         <div className={ `h-full ${ strength.color } transition-all` } style={ { width: `${ (strength.score / 4) * 100 }%` } } />
                                     </div>
-                                    <span className="text-[10px] text-black/60 w-12 text-right">{ strength.label }</span>
+                                    <span className="text-[10px] text-black/60 w-12 text-right">{ strength.labelKey ? LocalizeText(strength.labelKey) : '' }</span>
                                 </div>
                             ) }
                         </label>
 
                         <label className="flex flex-col gap-1 text-[12px]">
-                            <span className="font-bold">Retype new password</span>
+                            <span className="font-bold">{ LocalizeText('usersettings.field.retype_password') }</span>
                             <div className="relative flex items-center">
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
@@ -577,10 +577,10 @@ export const UserAccountSettingsView: FC<{}> = () =>
 
                         <div className="flex justify-end gap-2 pt-1">
                             <Button variant="secondary" disabled={ submitting } onClick={ () => { resetForm(); setSection('menu'); } }>
-                                Cancel
+                                { LocalizeText('usersettings.btn.cancel') }
                             </Button>
                             <Button variant="success" disabled={ submitting } onClick={ () => submitPasswordChange() }>
-                                { submitting ? 'Saving…' : 'Save password' }
+                                { submitting ? LocalizeText('usersettings.btn.saving') : LocalizeText('usersettings.btn.save_password') }
                             </Button>
                         </div>
                     </div>
@@ -597,16 +597,16 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaArrowLeft size={ 11 } />
                             </button>
                             <FaEnvelope className="text-[#185d79]" />
-                            <Text bold>Change email</Text>
+                            <Text bold>{ LocalizeText('usersettings.menu.email.title') }</Text>
                         </div>
 
                         <div className="flex items-start gap-2 rounded-md border border-[#1e7295]/30 bg-[#1e7295]/10 px-2 py-2 text-[11px] leading-4 text-[#0d3d52]">
                             <FaInfoCircle className="mt-[2px] shrink-0 text-[#1e7295]" />
-                            <span>For security we ask you to confirm your <strong>current password</strong> before changing the email on your account.</span>
+                            <span>{ LocalizeText('usersettings.email.hint') }</span>
                         </div>
 
                         <label className="flex flex-col gap-1 text-[12px]">
-                            <span className="font-bold">Current password</span>
+                            <span className="font-bold">{ LocalizeText('usersettings.field.current_password') }</span>
                             <div className="relative flex items-center">
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
@@ -620,7 +620,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 />
                                 <button
                                     type="button"
-                                    aria-label={ showEmailPassword ? 'Hide password' : 'Show password' }
+                                    aria-label={ showEmailPassword ? LocalizeText('usersettings.aria.hide_password') : LocalizeText('usersettings.aria.show_password') }
                                     onClick={ () => setShowEmailPassword(prev => !prev) }
                                     className="absolute right-2 text-black/40 hover:text-black/70">
                                     { showEmailPassword ? <FaEyeSlash size={ 12 } /> : <FaEye size={ 12 } /> }
@@ -629,7 +629,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                         </label>
 
                         <label className="flex flex-col gap-1 text-[12px]">
-                            <span className="font-bold">New email address</span>
+                            <span className="font-bold">{ LocalizeText('usersettings.field.new_email') }</span>
                             <div className="relative flex items-center">
                                 <FaEnvelope className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
@@ -660,10 +660,10 @@ export const UserAccountSettingsView: FC<{}> = () =>
 
                         <div className="flex justify-end gap-2 pt-1">
                             <Button variant="secondary" disabled={ submitting } onClick={ () => { resetForm(); setSection('menu'); } }>
-                                Cancel
+                                { LocalizeText('usersettings.btn.cancel') }
                             </Button>
                             <Button variant="success" disabled={ submitting } onClick={ () => submitEmailChange() }>
-                                { submitting ? 'Saving…' : 'Save email' }
+                                { submitting ? LocalizeText('usersettings.btn.saving') : LocalizeText('usersettings.btn.save_email') }
                             </Button>
                         </div>
                     </div>
@@ -680,16 +680,16 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaArrowLeft size={ 11 } />
                             </button>
                             <FaIdBadge className="text-[#a37800]" />
-                            <Text bold>Change username</Text>
+                            <Text bold>{ LocalizeText('usersettings.menu.username.title') }</Text>
                         </div>
 
                         <div className="flex items-start gap-2 rounded-md border border-[#ffc107]/50 bg-[#fff8e1] px-2 py-2 text-[11px] leading-4 text-[#5c4400]">
                             <FaExclamationTriangle className="mt-[2px] shrink-0 text-[#a37800]" />
-                            <span>Renaming will <strong>log you out</strong> and you can only rename again after 30 days. Make sure your friends know your new name!</span>
+                            <span>{ LocalizeText('usersettings.username.hint') }</span>
                         </div>
 
                         <label className="flex flex-col gap-1 text-[12px]">
-                            <span className="font-bold">Current password</span>
+                            <span className="font-bold">{ LocalizeText('usersettings.field.current_password') }</span>
                             <div className="relative flex items-center">
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
@@ -703,7 +703,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 />
                                 <button
                                     type="button"
-                                    aria-label={ showUsernamePassword ? 'Hide password' : 'Show password' }
+                                    aria-label={ showUsernamePassword ? LocalizeText('usersettings.aria.hide_password') : LocalizeText('usersettings.aria.show_password') }
                                     onClick={ () => setShowUsernamePassword(prev => !prev) }
                                     className="absolute right-2 text-black/40 hover:text-black/70">
                                     { showUsernamePassword ? <FaEyeSlash size={ 12 } /> : <FaEye size={ 12 } /> }
@@ -712,7 +712,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                         </label>
 
                         <label className="flex flex-col gap-1 text-[12px]">
-                            <span className="font-bold">New username</span>
+                            <span className="font-bold">{ LocalizeText('usersettings.field.new_username') }</span>
                             <div className="relative flex items-center">
                                 <FaIdBadge className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
@@ -730,7 +730,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                     <FaCheckCircle className="absolute right-2 text-[#00800b]" size={ 12 } />
                                 ) }
                             </div>
-                            <span className="text-[10px] text-black/50">{ MIN_USERNAME_LENGTH }-{ MAX_USERNAME_LENGTH } characters. Letters, numbers, dot, underscore and dash only.</span>
+                            <span className="text-[10px] text-black/50">{ LocalizeText('usersettings.username.rules', [ 'min', 'max' ], [ MIN_USERNAME_LENGTH.toString(), MAX_USERNAME_LENGTH.toString() ]) }</span>
                         </label>
 
                         { feedback && (
@@ -744,10 +744,10 @@ export const UserAccountSettingsView: FC<{}> = () =>
 
                         <div className="flex justify-end gap-2 pt-1">
                             <Button variant="secondary" disabled={ submitting } onClick={ () => { resetForm(); setSection('menu'); } }>
-                                Cancel
+                                { LocalizeText('usersettings.btn.cancel') }
                             </Button>
                             <Button variant="warning" disabled={ submitting } onClick={ () => submitUsernameChange() }>
-                                { submitting ? 'Renaming…' : 'Rename me' }
+                                { submitting ? LocalizeText('usersettings.btn.renaming') : LocalizeText('usersettings.btn.rename') }
                             </Button>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import { CreateLinkEvent, GetRoomEngine, GetSessionDataManager, MouseEventType, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetRoomEngine, GetSessionDataManager, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useRef } from 'react';
 import { DispatchUiEvent, GetConfigurationValue, GetRoomSession, GetUserProfile, LocalizeText } from '../../api';
 import { Flex, LayoutItemCountView } from '../../common';
@@ -24,11 +24,20 @@ export const ToolbarMeView: FC<PropsWithChildren<{
 
     useEffect(() =>
     {
-        const onClick = (event: MouseEvent) => setMeExpanded(false);
+        const onClick = (event: MouseEvent) =>
+        {
+            if(elementRef.current && elementRef.current.contains(event.target as Node)) return;
 
-        document.addEventListener('click', onClick);
+            setMeExpanded(false);
+        };
 
-        return () => document.removeEventListener(MouseEventType.MOUSE_CLICK, onClick);
+        const timeout = window.setTimeout(() => document.addEventListener('click', onClick), 0);
+
+        return () =>
+        {
+            window.clearTimeout(timeout);
+            document.removeEventListener('click', onClick);
+        };
     }, [ setMeExpanded ]);
 
     return (

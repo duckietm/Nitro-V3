@@ -306,7 +306,7 @@ body {
 
     .nitro-card-shell:not(.nitro-wired) .nitro-card-header-shell {
         border: 2px solid #3c88a6;
-        border-bottom-color: #000;
+        border-bottom-color: #30728c;
         border-radius: 8px 8px 0 0;
         background: #30728c;
         padding: 5px;
@@ -314,7 +314,7 @@ body {
 
     .nitro-card-shell:not(.nitro-wired) .nitro-card-header-shell.builders-club-card-header {
         border-color: #d79d2e;
-        border-bottom-color: #000;
+        border-bottom-color: #c68515;
         background: linear-gradient(180deg, #d89f2d 0%, #c68515 100%);
     }
 

@@ -77,6 +77,20 @@
     height: 34px;
 }
 
+.nitro-icon.icon-rare-values {
+    background-image: url("@/assets/images/toolbar/icons/catalog.png");
+    width: 37px;
+    height: 36px;
+    filter: hue-rotate(280deg) saturate(1.4);
+}
+
+.nitro-icon.icon-fortune-wheel {
+    background-image: url("@/assets/images/toolbar/icons/game.png");
+    width: 44px;
+    height: 25px;
+    filter: hue-rotate(300deg) saturate(1.6);
+}
+
 .nitro-icon.icon-housekeeping {
     background-image: url("@/assets/images/toolbar/icons/modtools.png");
     width: 29px;
@@ -200,6 +214,13 @@
     background-size: contain;
     width: 36px;
     height: 36px;
+}
+
+.nitro-icon.icon-soundboard {
+    background-image: url("@/assets/images/toolbar/icons/game.png");
+    width: 44px;
+    height: 25px;
+    filter: hue-rotate(90deg) saturate(1.5);
 }
 
 .nitro-icon.icon-message {

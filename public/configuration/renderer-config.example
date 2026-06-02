@@ -12,7 +12,7 @@
     "sounds.url": "${asset.url}/sounds/%sample%.mp3",
     "external.texts.url": [
         "${gamedata.url}/ExternalTexts.json?t=%timestamp%",
-        "${gamedata.url}/UITexts.json?t=%timestamp%"
+        "${gamedata.url}/UITexts.json5?t=%timestamp%"
     ],
     "external.texts.translation.url": "${gamedata.url}/text_translate/ExternalTexts_%locale%.json?t=%timestamp%",
     "external.samples.url": "${hof.furni.url}/mp3/sound_machine_sample_%sample%.mp3",
@@ -27,9 +27,11 @@
     "avatar.asset.effect.url": "${asset.url}/effect/%libname%.nitro",
     "furni.asset.url": "${asset.url}/furniture/%libname%.nitro",
     "furni.asset.icon.url": "${hof.furni.url}/icons/%libname%%param%_icon.png",
-    "pet.asset.url": "${asset.url}/pets/%libname%.nitro",
+    "pet.asset.url": "${asset.url}/pet/%libname%.nitro",
     "generic.asset.url": "${asset.url}/generic/%libname%.nitro",
     "badge.asset.url": "${image.library.url}album1584/%badgename%.gif",
+	"radio.url": "${gamedata.url}/radio-stations.json5?t=%timestamp%",
+	"soundboard.url": "${gamedata.url}/soundboard-sounds.json5?t=%timestamp%",
     "furni.rotation.bounce.steps": 20,
 	"furni.rotation.bounce.height": 0.0625,
 	"enable.avatar.arrow": false,

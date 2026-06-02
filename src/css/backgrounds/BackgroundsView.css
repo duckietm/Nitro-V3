@@ -1629,9 +1629,6 @@
 .infostand-border.border-15 { border-color: #cbd5e1; } /* Silver */
 .infostand-border.border-16 { border-color: #1f2937; } /* Black */
 
-/* Image-based borders (17-25). These override the colour-border insets and
-   strip the CSS border so the artwork sits ~22px outside the card and
-   stretches to fill the frame area. */
 .infostand-border.border-17,
 .infostand-border.border-18,
 .infostand-border.border-19,
@@ -1662,8 +1659,6 @@
 .infostand-border.border-24 { background-image: url('@/assets/images/backgrounds/borders/border_24.webp'); }
 .infostand-border.border-25 { background-image: url('@/assets/images/backgrounds/borders/border_25.webp'); }
 
-/* Picker thumbnails inside the BackgroundsView "Borders" tab.
-   Each thumbnail is a small rounded box outlined in its border colour. */
 .profile-border {
   width: 60px;
   height: 76px;
@@ -1674,9 +1669,7 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* border-0 = no border (default) — show as a dashed translucent outline */
 .profile-border.border-0  { border: 2px dashed rgba(255, 255, 255, 0.25); }
-
 .profile-border.border-1  { border-color: #ef4444; }
 .profile-border.border-2  { border-color: #f97316; }
 .profile-border.border-3  { border-color: #eab308; }
@@ -1693,8 +1686,6 @@
 .profile-border.border-14 { border-color: #d4a020; }
 .profile-border.border-15 { border-color: #cbd5e1; }
 .profile-border.border-16 { border-color: #1f2937; }
-
-/* Image-border picker thumbnails — drop the CSS frame and show the artwork. */
 .profile-border.border-17,
 .profile-border.border-18,
 .profile-border.border-19,
@@ -1720,3 +1711,60 @@
 .profile-border.border-23 { background-image: url('@/assets/images/backgrounds/borders/border_23.webp'); }
 .profile-border.border-24 { background-image: url('@/assets/images/backgrounds/borders/border_24.webp'); }
 .profile-border.border-25 { background-image: url('@/assets/images/backgrounds/borders/border_25.webp'); }
+
+.card-background-2,
+.card-background-3,
+.card-background-4,
+.card-background-5,
+.card-background-6,
+.card-background-7,
+.card-background-12,
+.card-background-13,
+.card-background-28,
+.card-background-30,
+.card-background-35,
+.card-background-52,
+.card-background-55,
+.card-background-56,
+.card-background-58,
+.card-background-60,
+.card-background-95,
+.card-background-116,
+.card-background-122,
+.card-background-127,
+.card-background-129,
+.card-background-131,
+.card-background-144,
+.card-background-149,
+.card-background-150,
+.card-background-161,
+.card-background-185,
+.card-background-187 {
+  --profile-card-text: #1a1a1a;
+  --profile-card-shadow: 0 1px 1px rgba(255, 255, 255, 0.65);
+}
+
+[class*="card-background-"] .nitro-extended-profile__username .username,
+[class*="card-background-"] .nitro-extended-profile__motto,
+[class*="card-background-"] .nitro-extended-profile__meta,
+[class*="card-background-"] .nitro-extended-profile__meta b,
+[class*="card-background-"] .nitro-extended-profile__meta span,
+[class*="card-background-"] .nitro-extended-profile__status-text,
+[class*="card-background-"] .nitro-extended-profile__relationships-label,
+[class*="card-background-"] .nitro-extended-profile__relationship-subcopy,
+[class*="card-background-"] .nitro-extended-profile__link,
+[class*="card-background-"] .nitro-extended-profile__right > p,
+[class*="card-background-"] .nitro-extended-profile__right > p b {
+  color: var(--profile-card-text, #fff) !important;
+  text-shadow: var(--profile-card-shadow, 0 1px 2px rgba(0, 0, 0, 0.55));
+}
+
+.profile-card-background[class*="card-background-"]:not(.nitro-extended-profile-window__content) {
+  color: var(--profile-card-text, #fff);
+  text-shadow: var(--profile-card-shadow, 0 1px 2px rgba(0, 0, 0, 0.55));
+}
+
+.profile-card-background[class*="card-background-"]:not(.nitro-extended-profile-window__content) .text-white {
+  color: var(--profile-card-text, #fff) !important;
+}
+

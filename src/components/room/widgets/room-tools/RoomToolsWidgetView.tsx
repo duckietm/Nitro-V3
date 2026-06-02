@@ -4,7 +4,7 @@ import { classNames } from '../../../../layout';
 import { FC, useEffect, useState } from 'react';
 import { GetConfigurationValue, LocalizeText, SendMessageComposer, SetLocalStorage, TryVisitRoom } from '../../../../api';
 import { Text } from '../../../../common';
-import { useMessageEvent, useNavigator, useRoom } from '../../../../hooks';
+import { useMessageEvent, useNavigatorData, useRoom } from '../../../../hooks';
 import { getRegisteredPlugins, INitroPlugin, subscribePlugins } from '../../../plugins/NitroPluginApi';
 
 export const RoomToolsWidgetView: FC<{}> = props =>
@@ -18,7 +18,7 @@ export const RoomToolsWidgetView: FC<{}> = props =>
     const [isOpenHistory, setIsOpenHistory] = useState<boolean>(false);
     const [roomHistory, setRoomHistory] = useState<{ roomId: number, roomName: string }[]>([]);
     const [plugins, setPlugins] = useState<INitroPlugin[]>([]);
-    const { navigatorData = null } = useNavigator();
+    const { navigatorData } = useNavigatorData();
     const { roomSession = null } = useRoom();
 
     // Subscribe to external plugin changes

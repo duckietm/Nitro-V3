@@ -68,7 +68,9 @@ export const GroupTabBadgeView: FC<GroupTabBadgeViewProps> = props =>
 
     useEffect(() =>
     {
-        if(groupData.groupBadgeParts) return;
+        if(groupData.groupBadgeParts && groupData.groupBadgeParts.length) return;
+
+        if(!groupCustomize?.badgeBases?.length || !groupCustomize?.badgePartColors?.length) return;
 
         const badgeParts = [
             new GroupBadgePart(GroupBadgePart.BASE, groupCustomize.badgeBases[0].id, groupCustomize.badgePartColors[0].id),

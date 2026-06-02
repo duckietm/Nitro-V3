@@ -3,16 +3,19 @@ import { FC, useEffect, useState } from 'react';
 import { FaUserCog, FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import { DispatchMainEvent, DispatchUiEvent, LocalizeText, SendMessageComposer } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useChatWindow, useMessageEvent } from '../../hooks';
+import { useCatalogClassicStyle, useCatalogPlaceMultipleItems, useCatalogSkipPurchaseConfirmation, useChatWindow, useMessageEvent, useThemes } from '../../hooks';
 import { classNames } from '../../layout';
 
 export const UserSettingsView: FC<{}> = props =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
+    const [ activeTab, setActiveTab ] = useState<'general' | 'themes'>('general');
     const [ userSettings, setUserSettings ] = useState<NitroSettingsEvent>(null);
+    const { themes, activeThemeId, manifest, activeEnabled, selectTheme, togglePiece } = useThemes();
     const [ catalogPlaceMultipleObjects, setCatalogPlaceMultipleObjects ] = useCatalogPlaceMultipleItems();
     const [ catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation ] = useCatalogSkipPurchaseConfirmation();
     const [ chatWindowEnabled, setChatWindowEnabled ] = useChatWindow();
+    const [ catalogClassicStyle, setCatalogClassicStyle ] = useCatalogClassicStyle();
 
     const processAction = (type: string, value?: boolean | number | string) =>
     {
@@ -131,6 +134,11 @@ export const UserSettingsView: FC<{}> = props =>
         <NitroCardView className="user-settings-window" theme="primary-slim" uniqueKey="user-settings">
             <NitroCardHeaderView headerText={ LocalizeText('widget.memenu.settings.title') } onCloseClick={ event => processAction('close_view') } />
             <NitroCardContentView className="text-black">
+                <div className="flex items-center gap-1 mb-2 border-b border-black/10 pb-1">
+                    <button type="button" onClick={ () => setActiveTab('general') } className={ classNames('px-3 py-1 rounded text-xs font-bold cursor-pointer transition-colors', activeTab === 'general' ? 'bg-[#1e7295] text-white' : 'bg-black/5 hover:bg-black/10') }>{ LocalizeText('usersettings.tab.general') }</button>
+                    <button type="button" onClick={ () => setActiveTab('themes') } className={ classNames('px-3 py-1 rounded text-xs font-bold cursor-pointer transition-colors', activeTab === 'themes' ? 'bg-[#1e7295] text-white' : 'bg-black/5 hover:bg-black/10') }>{ LocalizeText('usersettings.tab.themes') }</button>
+                </div>
+                { activeTab === 'general' && <>
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-1">
                         <input checked={ userSettings.oldChat } className="form-check-input" type="checkbox" onChange={ event => processAction('oldchat', event.target.checked) } />
@@ -154,7 +162,11 @@ export const UserSettingsView: FC<{}> = props =>
                     </div>
                     <div className="flex items-center gap-1">
                         <input checked={ chatWindowEnabled } className="form-check-input" type="checkbox" onChange={ event => setChatWindowEnabled(event.target.checked) } />
-                        <Text>Enable chat window</Text>
+                        <Text>{ LocalizeText('memenu.settings.other.enable.chat.window') }</Text>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <input checked={ catalogClassicStyle } className="form-check-input" type="checkbox" onChange={ event => setCatalogClassicStyle(event.target.checked) } />
+                        <Text>{ LocalizeText('memenu.settings.other.catalog.classic.style') }</Text>
                     </div>
                 </div>
                 <div className="flex flex-col">
@@ -196,12 +208,41 @@ export const UserSettingsView: FC<{}> = props =>
                             <FaUserCog size={ 12 } />
                         </div>
                         <div className="flex flex-col flex-1 leading-tight">
-                            <Text bold>User settings</Text>
-                            <Text small className="text-black/60">Password &amp; account</Text>
+                            <Text bold>{ LocalizeText('usersettings.open.title') }</Text>
+                            <Text small className="text-black/60">{ LocalizeText('usersettings.open.subtitle') }</Text>
                         </div>
                         <span className="text-black/30 group-hover:text-[#1e7295] text-[10px]">›</span>
                     </button>
                 </div>
+                </> }
+                { activeTab === 'themes' && <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1">
+                        <Text bold>{ LocalizeText('usersettings.themes.custom') }</Text>
+                        <select
+                            value={ activeThemeId }
+                            onChange={ event => selectTheme(event.target.value) }
+                            className="form-select rounded border border-black/15 px-2 py-1 text-sm">
+                            <option value="">{ LocalizeText('usersettings.themes.default_option') }</option>
+                            { themes.map(theme => (
+                                <option key={ theme.id } value={ theme.id }>{ theme.name }{ theme.author ? ` — ${ theme.author }` : '' }</option>
+                            )) }
+                        </select>
+                    </div>
+                    { activeThemeId && manifest && manifest.pieces.length > 0 &&
+                        <div className="flex flex-col gap-1 pt-1 border-t border-black/10">
+                            <Text bold>{ LocalizeText('usersettings.themes.active_pieces') }</Text>
+                            { manifest.pieces.map(piece => (
+                                <div key={ piece.id } className="flex items-center gap-1">
+                                    <input className="form-check-input" type="checkbox" checked={ activeEnabled.includes(piece.id) } onChange={ () => togglePiece(piece.id) } />
+                                    <Text>{ piece.name }</Text>
+                                </div>
+                            )) }
+                        </div> }
+                    { activeThemeId && !manifest &&
+                        <Text small className="text-black/60">{ LocalizeText('usersettings.themes.invalid') }</Text> }
+                    { !themes.length &&
+                        <Text small className="text-black/60">{ LocalizeText('usersettings.themes.none') }</Text> }
+                </div> }
             </NitroCardContentView>
         </NitroCardView>
     );

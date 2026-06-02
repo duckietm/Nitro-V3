@@ -76,7 +76,7 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
             { iconUrl && !(offer.product.productType === ProductTypeEnum.ROBOT) &&
                 <div className="nitro-catalog-classic-grid-offer-icon" style={ { backgroundImage: `url(${ iconUrl })` } } /> }
             { (offer.product.productType === ProductTypeEnum.ROBOT) &&
-                <LayoutAvatarImageView direction={ 3 } figure={ offer.product.extraParam } headOnly={ true } /> }
+                <LayoutAvatarImageView direction={ 2 } figure={ offer.product.extraParam } fit /> }
             <div
                 className={ `absolute top-0 right-0 z-10 p-0.5 cursor-pointer transition-opacity duration-100 ${ isFav ? 'opacity-100' : 'opacity-0 group-hover/tile:opacity-100' }` }
                 onClick={ e =>

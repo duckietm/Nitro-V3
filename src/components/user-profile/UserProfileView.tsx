@@ -1,6 +1,6 @@
-import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, NavigatorSearchComposer, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
+import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
+import { CreateLinkEvent, GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
 import { NitroCard } from '../../layout';
 import { GroupsContainerView } from './GroupsContainerView';
@@ -28,10 +28,9 @@ export const UserProfileView: FC<{}> = () =>
 
     const onOpenRooms = () =>
     {
-        if(userProfile)
-        {
-            SendMessageComposer(new NavigatorSearchComposer('hotel_view', `owner:${ userProfile.username }`));
-        }
+        if(!userProfile) return;
+
+        CreateLinkEvent(`navigator/search/hotel_view/owner:${ userProfile.username }`);
     };
 
     useMessageEvent<UserCurrentBadgesEvent>(UserCurrentBadgesEvent, event =>
@@ -99,12 +98,15 @@ export const UserProfileView: FC<{}> = () =>
 
     if(!userProfile) return null;
 
+    const cardBackgroundId = userProfile.cardBackgroundId ?? 0;
+    const cardBackgroundClass = cardBackgroundId ? `profile-card-background card-background-${ cardBackgroundId }` : '';
+
     return (
-        <NitroCard className="nitro-extended-profile-window w-[521px] h-[537px]" uniqueKey="nitro-user-profile">
+        <NitroCard className="nitro-extended-profile-window w-[640px] h-[720px] max-w-[96vw] max-h-[92vh]" uniqueKey="nitro-user-profile">
             <NitroCard.Header
                 headerText={ LocalizeText('extendedprofile.caption') }
                 onCloseClick={ onClose } />
-            <NitroCard.Content className="nitro-extended-profile-window__content overflow-hidden !p-0 flex flex-col">
+            <NitroCard.Content className={ `nitro-extended-profile-window__content overflow-hidden !p-0 flex flex-col ${ cardBackgroundClass }` }>
                 <div className="px-[10px] pt-[8px]">
                     <UserContainerView
                         userBadges={ userBadges }
