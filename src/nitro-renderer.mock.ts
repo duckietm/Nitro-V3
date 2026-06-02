@@ -384,6 +384,7 @@ export class GetUserFlatCatsMessageComposer extends StubClass {}
 export class NavigatorSearchComposer extends StubClass {}
 export class RequestMentionsComposer extends StubClass {}
 export class MarkMentionsReadComposer extends StubClass {}
+export class DeleteMentionComposer extends StubClass {}
 export class DesktopViewComposer extends StubClass {}
 export class FurniturePlacePaintComposer extends StubClass {}
 export class GetGuestRoomMessageComposer extends StubClass {}

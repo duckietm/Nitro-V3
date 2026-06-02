@@ -1,4 +1,4 @@
-import { CreateLinkEvent, MarkMentionsReadComposer } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, DeleteMentionComposer, MarkMentionsReadComposer } from '@nitrots/nitro-renderer';
 import { useMemo } from 'react';
 import { IMentionEntry, SendMessageComposer } from '../../api';
 import { markRead, removeMention } from '../../hooks/mentions/mentionsStore';
@@ -9,9 +9,8 @@ export interface MentionActions
     open: (mention: IMentionEntry) => void;
     /** Explicit "go to room" action: mark read, then jump to the origin room. */
     goto: (mention: IMentionEntry) => void;
-    /** Remove from the list (client-side). Marks read on the server so it does
-     *  not reappear as unread after a relog. A true server-side delete packet
-     *  is a follow-up. */
+    /** Permanently delete the mention server-side (DeleteMentionComposer) and
+     *  drop it from the local list, so it does not reappear after a relog. */
     remove: (mention: IMentionEntry) => void;
 }
 
@@ -33,7 +32,8 @@ export const useMentionActions = (): MentionActions => useMemo(() => ({
     },
     remove: (mention) =>
     {
-        if(!mention.read) SendMessageComposer(new MarkMentionsReadComposer(1, mention.mentionId));
+        // Permanent server-side delete, then drop it from the local list.
+        SendMessageComposer(new DeleteMentionComposer(mention.mentionId));
         removeMention(mention.mentionId);
     }
 }), []);
