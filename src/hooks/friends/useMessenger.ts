@@ -1,4 +1,4 @@
-import { ConsoleReadReceiptEvent, GetSessionDataManager, MarkConsoleReadComposer, NewConsoleMessageEvent, RoomInviteErrorEvent, RoomInviteEvent, SendMessageComposer as SendMessageComposerPacket } from '@nitrots/nitro-renderer';
+import { ConsoleReadReceiptEvent, ConsoleTypingComposer, FriendIsTypingEvent, GetSessionDataManager, MarkConsoleReadComposer, NewConsoleMessageEvent, RoomInviteErrorEvent, RoomInviteEvent, SendMessageComposer as SendMessageComposerPacket } from '@nitrots/nitro-renderer';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { CloneObject, LocalizeText, MessengerIconState, MessengerThread, MessengerThreadChat, NotificationAlertType, PlaySound, SendMessageComposer, SoundNames } from '../../api';
@@ -16,6 +16,9 @@ const useMessengerState = () =>
     const { getFriend = null } = useFriends();
     const { simpleAlert = null } = useNotification();
     const { settings, translateIncoming } = useTranslation();
+
+    const [typingUserIds, setTypingUserIds] = useState<number[]>([]);
+    const typingTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
     const messageThreadsRef = useRef(messageThreads);
     messageThreadsRef.current = messageThreads;
@@ -151,6 +154,13 @@ const useMessengerState = () =>
         });
     };
 
+    const sendTypingStatus = (peerId: number, isTyping: boolean) =>
+    {
+        if (!peerId || (peerId <= 0)) return;
+
+        SendMessageComposer(new ConsoleTypingComposer(peerId, isTyping));
+    };
+
     useMessageEvent<NewConsoleMessageEvent>(NewConsoleMessageEvent, event =>
     {
         const parser = event.getParser();
@@ -177,6 +187,38 @@ const useMessengerState = () =>
         const parser = event.getParser();
 
         simpleAlert(`Received room invite error: ${ parser.errorCode },recipients: ${ parser.failedRecipients.join(',') }`, NotificationAlertType.DEFAULT, null, null, LocalizeText('friendlist.alert.title'));
+    });
+
+    useMessageEvent<FriendIsTypingEvent>(FriendIsTypingEvent, event =>
+    {
+        const parser = event.getParser();
+        const senderId = parser.senderId;
+
+        if (senderId <= 0) return;
+
+        const timers = typingTimersRef.current;
+        const existing = timers.get(senderId);
+
+        if (existing)
+        {
+            clearTimeout(existing);
+            timers.delete(senderId);
+        }
+
+        if (parser.isTyping)
+        {
+            setTypingUserIds(prev => (prev.indexOf(senderId) >= 0) ? prev : [...prev, senderId]);
+
+            timers.set(senderId, setTimeout(() =>
+            {
+                typingTimersRef.current.delete(senderId);
+                setTypingUserIds(prev => prev.filter(id => (id !== senderId)));
+            }, 6000));
+        }
+        else
+        {
+            setTypingUserIds(prev => prev.filter(id => (id !== senderId)));
+        }
     });
 
     useMessageEvent<ConsoleReadReceiptEvent>(ConsoleReadReceiptEvent, event =>
@@ -247,7 +289,7 @@ const useMessengerState = () =>
         });
     }, [visibleThreads]);
 
-    return { messageThreads, activeThread, iconState, visibleThreads, getMessageThread, setActiveThreadId, closeThread, sendMessage };
+    return { messageThreads, activeThread, iconState, visibleThreads, getMessageThread, setActiveThreadId, closeThread, sendMessage, typingUserIds, sendTypingStatus };
 };
 
 export const useMessenger = () => useBetween(useMessengerState);
