@@ -8,9 +8,13 @@ import { FortuneWheelSettingsView } from './FortuneWheelSettingsView';
 import { WheelWinReveal } from './WheelWinReveal';
 import { renderPrizeIcon } from './wheelPrizeIcon';
 
-// Stock UI palette (white / light-blue / grey / black).
-const SLICE_COLORS = [ '#eef2f5', '#c3dcec' ];
-const RIM = '#4c606c';
+// Stock UI palette (white / light-blue / grey / black). Exposed as CSS custom
+// properties so a runtime theme can recolor the wheel without changing defaults
+// (the fallback values keep the stock look when no theme overrides them).
+const SLICE_COLORS = [ 'var(--wheel-slice-1, #eef2f5)', 'var(--wheel-slice-2, #c3dcec)' ];
+const RIM = 'var(--wheel-rim, #4c606c)';
+const DIVIDER = 'var(--wheel-divider, rgba(76,96,108,0.3))';
+const HUB = 'var(--wheel-hub, #eef2f5)';
 const WHEEL_SIZE = 420;
 const ICON_RADIUS = 150;
 const FULL_TURNS = 5;
@@ -202,7 +206,7 @@ export const FortuneWheelView: FC<{}> = () =>
     const canSpin = ((freeSpins + extraSpins) > 0) && !isSpinning && (prizes.length > 0);
 
     return (
-        <NitroCard className="w-[780px] max-w-[96vw]" uniqueKey="fortune-wheel">
+        <NitroCard className="wheel-card w-[780px] max-w-[96vw]" uniqueKey="fortune-wheel">
             <NitroCard.Header headerText={ LocalizeText('wheel.title') } onCloseClick={ () => setIsVisible(false) } />
             <NitroCard.Content>
                 <div className="relative">
@@ -223,7 +227,7 @@ export const FortuneWheelView: FC<{}> = () =>
                                             <div
                                                 key={ `divider-${ i }` }
                                                 className="absolute bottom-1/2 left-1/2 origin-bottom"
-                                                style={ { width: '2px', height: `${ WHEEL_SIZE / 2 }px`, transform: `translateX(-1px) rotate(${ i * sliceAngle }deg)`, background: 'rgba(76,96,108,0.3)' } } />
+                                                style={ { width: '2px', height: `${ WHEEL_SIZE / 2 }px`, transform: `translateX(-1px) rotate(${ i * sliceAngle }deg)`, background: DIVIDER } } />
                                         )) }
                                         { prizes.map((prize, i) =>
                                         {
@@ -233,13 +237,13 @@ export const FortuneWheelView: FC<{}> = () =>
                                                     key={ prize.id }
                                                     className="absolute left-1/2 top-1/2"
                                                     style={ { transform: `rotate(${ centerAngle }deg) translateY(-${ ICON_RADIUS }px) rotate(-${ centerAngle }deg)` } }>
-                                                    <div className="-translate-x-1/2 -translate-y-1/2">
+                                                    <div className="wheel-slice-icon -translate-x-1/2 -translate-y-1/2">
                                                         { renderPrizeIcon(prize) }
                                                     </div>
                                                 </div>);
                                         }) }
                                     </div>
-                                    <div className="absolute left-1/2 top-1/2 z-10 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#eef2f5] shadow-[0_0_8px_rgba(0,0,0,0.25)]" style={ { border: `4px solid ${ RIM }` } } />
+                                    <div className="absolute left-1/2 top-1/2 z-10 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.25)]" style={ { border: `4px solid ${ RIM }`, background: HUB } } />
                                 </div>
                             </div>
                             <Text bold className="text-[#2f6f95]">{ LocalizeText('wheel.free.today', [ 'count' ], [ freeSpins.toString() ]) }</Text>
