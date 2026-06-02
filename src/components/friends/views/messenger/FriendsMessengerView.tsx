@@ -148,12 +148,7 @@ export const FriendsMessengerView: FC<{}> = props =>
     {
         return () =>
         {
-            if(typingTimeoutRef.current)
-            {
-                clearTimeout(typingTimeoutRef.current);
-                typingTimeoutRef.current = null;
-            }
-            isTypingRef.current = false;
+            stopTyping();
         };
     }, [ activeThread ]);
 
