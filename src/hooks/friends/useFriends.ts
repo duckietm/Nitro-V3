@@ -1,4 +1,4 @@
-import { AcceptFriendMessageComposer, DeclineFriendMessageComposer, FollowFriendFailedEvent, FollowFriendMessageComposer, FriendListFragmentEvent, FriendListUpdateComposer, FriendListUpdateEvent, FriendParser, FriendRequestsEvent, GetFriendRequestsComposer, GetSessionDataManager, MessengerInitComposer, MessengerInitEvent, NewFriendRequestEvent, RequestFriendComposer, SetRelationshipStatusComposer } from '@nitrots/nitro-renderer';
+import { AcceptFriendMessageComposer, AddFriendCategoryComposer, DeclineFriendMessageComposer, FollowFriendFailedEvent, FollowFriendMessageComposer, FriendListFragmentEvent, FriendListUpdateComposer, FriendListUpdateEvent, FriendParser, FriendRequestsEvent, GetFriendRequestsComposer, GetSessionDataManager, MessengerInitComposer, MessengerInitEvent, MoveFriendToCategoryComposer, NewFriendRequestEvent, RemoveFriendCategoryComposer, RenameFriendCategoryComposer, RequestFriendComposer, SetRelationshipStatusComposer } from '@nitrots/nitro-renderer';
 import { useEffect, useMemo, useState } from 'react';
 import { useBetween } from 'use-between';
 import { CloneObject, LocalizeText, MessengerFriend, MessengerRequest, MessengerSettings, NotificationAlertType, SendMessageComposer } from '../../api';
@@ -42,6 +42,38 @@ const useFriendsStore = () =>
     const followFriend = (friend: MessengerFriend) => SendMessageComposer(new FollowFriendMessageComposer(friend.id));
 
     const updateRelationship = (friend: MessengerFriend, type: number) => ((type !== friend.relationshipStatus) && SendMessageComposer(new SetRelationshipStatusComposer(friend.id, type)));
+
+    const addCategory = (name: string) =>
+    {
+        const trimmed = (name ?? '').trim();
+
+        if(!trimmed.length || (trimmed.length > 25)) return;
+
+        SendMessageComposer(new AddFriendCategoryComposer(trimmed));
+    };
+
+    const renameCategory = (categoryId: number, name: string) =>
+    {
+        const trimmed = (name ?? '').trim();
+
+        if(!categoryId || !trimmed.length || (trimmed.length > 25)) return;
+
+        SendMessageComposer(new RenameFriendCategoryComposer(categoryId, trimmed));
+    };
+
+    const removeCategory = (categoryId: number) =>
+    {
+        if(!categoryId) return;
+
+        SendMessageComposer(new RemoveFriendCategoryComposer(categoryId));
+    };
+
+    const moveFriendToCategory = (friendId: number, categoryId: number) =>
+    {
+        if(!friendId) return;
+
+        SendMessageComposer(new MoveFriendToCategoryComposer(friendId, categoryId));
+    };
 
     const getFriend = (userId: number) =>
     {
@@ -259,7 +291,7 @@ const useFriendsStore = () =>
         };
     }, []);
 
-    return { friends, requests, sentRequests, dismissedRequestIds, setDismissedRequestIds, settings, onlineFriends, offlineFriends, getFriend, canRequestFriend, requestFriend, requestResponse, followFriend, updateRelationship };
+    return { friends, requests, sentRequests, dismissedRequestIds, setDismissedRequestIds, settings, onlineFriends, offlineFriends, getFriend, canRequestFriend, requestFriend, requestResponse, followFriend, updateRelationship, addCategory, renameCategory, removeCategory, moveFriendToCategory };
 };
 
 /**
@@ -312,14 +344,22 @@ export const useFriendsActions = () =>
         requestFriend,
         requestResponse,
         followFriend,
-        updateRelationship
+        updateRelationship,
+        addCategory,
+        renameCategory,
+        removeCategory,
+        moveFriendToCategory
     } = useBetween(useFriendsStore);
 
     return {
         requestFriend,
         requestResponse,
         followFriend,
-        updateRelationship
+        updateRelationship,
+        addCategory,
+        renameCategory,
+        removeCategory,
+        moveFriendToCategory
     };
 };
 
