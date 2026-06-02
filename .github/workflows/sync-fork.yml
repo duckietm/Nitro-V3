@@ -1,0 +1,67 @@
+name: Safe Sync - Nitro-V3
+
+on:
+  schedule:
+    # GitHub non offre trigger cross-repo: non possiamo "ascoltare" i push
+    # sull'upstream senza esserne collaboratori. Per avvicinarci a un
+    # "automatico quando cambia" facciamo polling frequente: ogni run fa
+    # fetch dell'upstream e lavora SOLO sui branch effettivamente avanzati
+    # (guard "skip se invariato" sotto). Alza/abbassa la frequenza qui.
+    # NB: i cron possono partire con qualche minuto di ritardo e GitHub li
+    # disabilita dopo 60 giorni di inattività del repo.
+    - cron: '*/30 * * * *' # ogni 30 minuti
+  workflow_dispatch: # avvio manuale dalla scheda Actions
+
+concurrency:
+  group: safe-sync
+  cancel-in-progress: false
+
+jobs:
+  sync-safe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git Credentials
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch and Merge Upstream
+        run: |
+          set -euo pipefail
+
+          git remote add upstream https://github.com/duckietm/Nitro-V3.git 2>/dev/null || \
+            git remote set-url upstream https://github.com/duckietm/Nitro-V3.git
+          git fetch upstream --prune
+
+          for branch in $(git branch -r | grep 'upstream/' | grep -v 'HEAD'); do
+              local_branch=${branch#upstream/}
+              echo "::group::$local_branch"
+
+              git checkout "$local_branch" 2>/dev/null || \
+                git checkout -b "$local_branch" "upstream/$local_branch"
+
+              upstream_sha=$(git rev-parse "upstream/$local_branch")
+              if git merge-base --is-ancestor "$upstream_sha" HEAD; then
+                  echo "Nessun cambiamento per $local_branch, salto."
+                  echo "::endgroup::"
+                  continue
+              fi
+
+              echo "Novità rilevate su $local_branch, provo il merge..."
+              if git merge "upstream/$local_branch" --no-edit; then
+                  echo "Merge ok per $local_branch. Invio gli aggiornamenti..."
+                  git push origin "$local_branch"
+              else
+                  echo "Conflitto di merge su $local_branch! Il tuo lavoro è al sicuro: salto il push e annullo il merge."
+                  git merge --abort
+              fi
+              echo "::endgroup::"
+          done

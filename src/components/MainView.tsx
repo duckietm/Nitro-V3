@@ -186,7 +186,7 @@ export const MainView: FC<{}> = props =>
             <RareValuesView />
             <FortuneWheelView />
             <SoundboardView />
-            { GetConfigurationValue<boolean>('radio_ui.enabled', false) && <RadioView /> }
+            <RadioView />
             <ExternalPluginLoader />
         </>
     );
