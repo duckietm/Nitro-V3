@@ -387,22 +387,14 @@ See `docs/ARCHITECTURE.md` "Recently fixed" for fix shapes.
 
 ## House rules
 
-- **Commit author**: `simoleo89 <simoleo89@users.noreply.github.com>`.
-  When committing, pass these via per-command overrides
-  (`git -c user.name=simoleo89 -c user.email=...`) — do NOT modify the
-  global git config.
-- **No `claude/...` branch names** — auto-generated names should be
-  renamed before pushing. Prefer `feat/<description>`.
 - **Never merge a branch that violates the layout convention** above.
-  The `feat/react19-hooks-adapter` branch (deleted) put hooks under
-  `src/components/...`; that's wrong and a recurring temptation.
+  The hooks-adapter approach that put hooks under `src/components/...` is
+  wrong and a recurring temptation.
 - **Skip-motivated god-hook splits are fine** — when a hook's actions
-  mutate internal state, document the reason in the commit message and
-  move on rather than forcing a bad split.
-- **`yarn test` must stay green** on every commit. Currently 193/193.
-  The GitHub Actions workflow at `.github/workflows/ci.yml` runs
-  `yarn typecheck` + `yarn test --run` on every push to `main` /
-  `feat/**` and on every PR — both must pass.
+  mutate internal state, document the reason and move on rather than
+  forcing a bad split.
+- **`yarn test` must stay green**. `yarn typecheck` + `yarn test --run`
+  must both pass.
 - **Lint baseline**: don't regress. Some pre-existing errors (`FC<{}>`,
   `IMessageEvent | undefined` redundant union in the local sandbox where
   the renderer SDK isn't installed) are out of scope here.
