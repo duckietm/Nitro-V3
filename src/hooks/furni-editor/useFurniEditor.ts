@@ -49,6 +49,22 @@ export interface CatalogRef
     pageName: string;
 }
 
+export interface FurniResolverPreviewField
+{
+    key: string;
+    label: string;
+    jsonValue: string;
+    dbValue: string;
+    resolvedValue: string;
+    source: string;
+    different: boolean;
+}
+
+export interface FurniResolverPreview
+{
+    fields: FurniResolverPreviewField[];
+}
+
 export const useFurniEditor = () =>
 {
     const [ items, setItems ] = useState<FurniItem[]>([]);
@@ -60,6 +76,7 @@ export const useFurniEditor = () =>
     const [ catalogItems, setCatalogItems ] = useState<CatalogRef[]>([]);
     const [ interactions, setInteractions ] = useState<string[]>([]);
     const [ furniDataEntry, setFurniDataEntry ] = useState<Record<string, unknown> | null>(null);
+    const [ resolverPreview, setResolverPreview ] = useState<FurniResolverPreview | null>(null);
     const pendingActionRef = useRef<{ action: string; itemId: number } | null>(null);
     const { simpleAlert = null } = useNotification();
 
@@ -150,6 +167,23 @@ export const useFurniEditor = () =>
         {}
 
         setFurniDataEntry(furniData);
+
+        let parsedResolverPreview: FurniResolverPreview | null = null;
+
+        try
+        {
+            if(parser.resolverPreviewJson && parser.resolverPreviewJson !== '')
+            {
+                const parsed = JSON.parse(parser.resolverPreviewJson);
+                parsedResolverPreview = {
+                    fields: Array.isArray(parsed?.fields) ? parsed.fields : []
+                };
+            }
+        }
+        catch(e)
+        {}
+
+        setResolverPreview(parsedResolverPreview);
     });
 
     // Handle interaction types list
@@ -201,6 +235,7 @@ export const useFurniEditor = () =>
             setSelectedItem(null);
             setCatalogItems([]);
             setFurniDataEntry(null);
+            setResolverPreview(null);
 
             if(simpleAlert)
             {
@@ -254,6 +289,7 @@ export const useFurniEditor = () =>
     return {
         items, total, page, loading, error, clearError,
         selectedItem, setSelectedItem, catalogItems, furniDataEntry,
+        resolverPreview,
         interactions,
         searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions
     };

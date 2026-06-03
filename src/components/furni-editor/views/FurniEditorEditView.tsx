@@ -1,11 +1,12 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Column, Flex, LayoutFurniIconImageView, Text } from '../../../common';
-import { FurniDetail } from '../../../hooks/furni-editor';
+import { FurniDetail, FurniResolverPreview } from '../../../hooks/furni-editor';
 
 interface FurniEditorEditViewProps
 {
     item: FurniDetail;
     furniDataEntry: Record<string, unknown> | null;
+    resolverPreview: FurniResolverPreview | null;
     interactions: string[];
     loading: boolean;
     onUpdate: (id: number, fields: Record<string, unknown>) => void;
@@ -65,7 +66,7 @@ const Tip: FC<{ field: string }> = ({ field }) =>
 
 export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 {
-    const { item, furniDataEntry, interactions, loading, onUpdate, onDelete, onBack } = props;
+    const { item, furniDataEntry, resolverPreview, interactions, loading, onUpdate, onDelete, onBack } = props;
     const saveRef = useRef<() => void>(null);
 
     const [ form, setForm ] = useState({
@@ -319,6 +320,27 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                     <input className={ inputClass() } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
                 </div>
             </Section>
+
+            { resolverPreview?.fields?.length > 0 &&
+                <Section title="Resolver Preview" defaultOpen={ true }>
+                    <div className="grid grid-cols-[88px_1fr_1fr_1fr_72px] gap-1 text-[10px]">
+                        <span className="font-bold text-[#555]">Field</span>
+                        <span className="font-bold text-[#555]">Data</span>
+                        <span className="font-bold text-[#555]">DB</span>
+                        <span className="font-bold text-[#555]">Resolved</span>
+                        <span className="font-bold text-[#555] text-right">Source</span>
+                        { resolverPreview.fields.map(field => (
+                            <Fragment key={ field.key }>
+                                <span className="text-[#333] truncate">{ field.label }</span>
+                                <span className="bg-[#f5f5f5] px-1 py-0.5 rounded truncate">{ field.jsonValue || '-' }</span>
+                                <span className={ `px-1 py-0.5 rounded truncate ${ field.different ? 'bg-[#fff0d6] text-[#8a4b00]' : 'bg-[#f5f5f5]' }` }>{ field.dbValue || '-' }</span>
+                                <span className="bg-[#eef7ed] px-1 py-0.5 rounded truncate">{ field.resolvedValue || '-' }</span>
+                                <span className="text-[#666] text-right truncate">{ field.source }</span>
+                            </Fragment>
+                        )) }
+                    </div>
+                </Section>
+            }
 
             { furniDataEntry &&
                 <Section title="FurniData.json" defaultOpen={ false }>
