@@ -148,6 +148,23 @@ export const ChatInputView: FC<{}> = props =>
         inputRef.current.setSelectionRange((inputRef.current.value.length * 2), (inputRef.current.value.length * 2));
     }, [ inputRef ]);
 
+    const setChatInputValue = useCallback((value: string, markTyping: boolean = true) =>
+    {
+        setChatValue(value);
+
+        if(markTyping)
+        {
+            setIsTyping(!!value.length);
+            setIsIdle(!!value.length);
+        }
+
+        requestAnimationFrame(() =>
+        {
+            inputRef.current?.focus();
+            inputRef.current?.setSelectionRange(value.length, value.length);
+        });
+    }, [ setIsTyping, setIsIdle ]);
+
     const checkSpecialKeywordForInput = useCallback(() =>
     {
         setChatValue(prevValue =>
@@ -262,7 +279,7 @@ export const ChatInputView: FC<{}> = props =>
                     if(selected)
                     {
                         event.preventDefault();
-                        setChatValue(':' + selected.key + ' ');
+                        setChatInputValue(':' + selected.key + ' ');
                         return;
                     }
                     break;
@@ -344,6 +361,9 @@ export const ChatInputView: FC<{}> = props =>
     {
         switch(event.chatMode)
         {
+            case RoomWidgetUpdateChatInputContentEvent.TEXT:
+                setChatInputValue(event.userName);
+                return;
             case RoomWidgetUpdateChatInputContentEvent.WHISPER: {
                 setChatValue(`${ chatModeIdWhisper } ${ event.userName } `);
                 return;
@@ -430,7 +450,7 @@ export const ChatInputView: FC<{}> = props =>
                         selectedIndex={ selectedIndex }
                         onSelect={ (cmd) =>
                         {
-                            setChatValue(':' + cmd.key + ' '); inputRef.current?.focus();
+                            setChatInputValue(':' + cmd.key + ' ');
                         } }
                         onHover={ setSelectedIndex }
                     /> }
