@@ -640,6 +640,8 @@
     'wheel.extra':          'Giri extra: %count%',
     'wheel.spin':           'GIRA',
     'wheel.buy':            'Acquista giro',
+	'wheel.settings':       'Configurações',
+	'wheel.settings.title': 'Configuração de Sistema da Roleta',
     'wheel.winners':        'Ultimi vincitori',
     'wheel.winners.empty':  'Ancora nessun vincitore',
     'wheel.win.title':      'Hai vinto!',
@@ -707,24 +709,6 @@
     'chatcmd.client.info':        'Info client',
 
     // ------------------------------------------------------------------------
-    // Mentions
-    // ------------------------------------------------------------------------
-    'mentions.window.title':    'Menzioni',
-    'mentions.window.empty':    'Nessuna menzione',
-    'mentions.window.markall':  'Segna tutte come lette',
-    'mentions.tab.title':       'Menzioni',
-    'mentions.notification':    '%sender% ti ha menzionato in %room%',
-    'mentions.filter.all':      'Tutte',
-    'mentions.filter.unread':   'Non lette',
-    'mentions.filter.direct':   'Dirette',
-    'mentions.filter.room':     'Stanza',
-    'mentions.group.today':     'Oggi',
-    'mentions.group.yesterday': 'Ieri',
-    'mentions.group.older':     'Precedenti',
-    'mentions.type.direct':     'Menzione diretta',
-    'mentions.type.room':       'Menzione di stanza',
-    'mentions.action.goto':     'Vai alla stanza',
-    'mentions.action.remove':   'Rimuovi',
     // Me-menu settings + User account settings window
     // ------------------------------------------------------------------------
     'usersettings.tab.general':                         "Generale",
@@ -790,4 +774,27 @@
     'usersettings.success.password':                    "Password aggiornata con successo.",
     'usersettings.success.email':                       "Email aggiornata con successo.",
     'usersettings.success.username':                    "Nome utente aggiornato. Accedi di nuovo con il tuo nuovo nome.",
+
+    // ------------------------------------------------------------------------
+    // @-mention autocomplete (chat input)
+    // ------------------------------------------------------------------------
+    'mentions.window.title':                            "Menzioni",
+    'mentions.window.empty':                            "Nessuna menzione",
+    'mentions.window.markall':                          "Segna tutte come lette",
+    'mentions.tab.title':                               "Menzioni",
+    'mentions.notification':                            "%sender% ti ha menzionato in %room%",
+    'mentions.filter.all':                              "Tutte",
+    'mentions.filter.unread':                           "Non lette",
+    'mentions.filter.direct':                           "Dirette",
+    'mentions.filter.room':                             "Stanza",
+    'mentions.group.today':                             "Oggi",
+    'mentions.group.yesterday':                         "Ieri",
+    'mentions.group.older':                             "Precedenti",
+    'mentions.type.direct':                             "Menzione diretta",
+    'mentions.type.room':                               "Menzione di stanza",
+    'mentions.action.goto':                             "Vai alla stanza",
+    'mentions.action.remove':                           "Rimuovi",
+    'mentions.alias.description.everyone':              "Tutti nell'hotel",
+    'mentions.alias.description.friends':               "I tuoi amici online",
+    'mentions.alias.description.room':                  "Tutti in questa stanza",
 }

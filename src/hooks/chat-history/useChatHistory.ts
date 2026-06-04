@@ -12,11 +12,14 @@ const MESSENGER_HISTORY_MAX = 1000;
 let CHAT_HISTORY_COUNTER: number = 0;
 let MESSENGER_HISTORY_COUNTER: number = 0;
 
+const slimChatEntriesForStorage = (entries: IChatEntry[]): IChatEntry[] =>
+    entries.map(entry => entry.imageUrl ? { ...entry, imageUrl: undefined } : entry);
+
 const useChatHistoryState = () =>
 {
-    const [ chatHistory, setChatHistory ] = useLocalStorage<IChatEntry[]>('chatHistory', []);
+    const [ chatHistory, setChatHistory ] = useLocalStorage<IChatEntry[]>('chatHistory', [], { toStorage: slimChatEntriesForStorage });
     const [ roomHistory, setRoomHistory ] = useLocalStorage<IRoomHistoryEntry[]>('roomHistory', []);
-    const [ messengerHistory, setMessengerHistory ] = useLocalStorage<IChatEntry[]>('messengerHistory', []);
+    const [ messengerHistory, setMessengerHistory ] = useLocalStorage<IChatEntry[]>('messengerHistory', [], { toStorage: slimChatEntriesForStorage });
     const [ needsRoomInsert, setNeedsRoomInsert ] = useLocalStorage('needsRoomInsert', false);
 
     const addChatEntry = (entry: IChatEntry) =>

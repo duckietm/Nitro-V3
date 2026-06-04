@@ -3,7 +3,7 @@ import { addMention, setMentions, markAllRead, markRead, getMentionsSnapshot, ge
 import { IMentionEntry } from '../../../api/mentions';
 
 const make = (id: number, read = false): IMentionEntry => ({
-    mentionId: id, senderId: 1, senderUsername: 'Bob', roomId: 9, roomName: 'R',
+    mentionId: id, senderId: 1, senderUsername: 'Bob', senderFigure: '', roomId: 9, roomName: 'R',
     message: '@me hi', mentionType: 0, timestamp: 0, read
 });
 

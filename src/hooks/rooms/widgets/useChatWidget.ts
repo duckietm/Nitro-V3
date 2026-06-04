@@ -23,11 +23,6 @@ const useChatWidgetState = () =>
     const { addChatEntry, updateChatEntry } = useChatHistory();
     const { settings, translateIncoming, consumeOutgoingTranslation } = useTranslation();
     const isDisposed = useRef(false);
-    // Reactive: re-renders if the session-data snapshot flips (e.g.
-    // reconnect under a different user id). Safe to call here —
-    // useChatWidget is NOT wrapped in useBetween (see export below),
-    // so the real React dispatcher is in scope and
-    // useSyncExternalStore installs correctly.
     const ownUserId = (useUserDataSnapshot().userId || -1);
 
     const applyTranslationToBubble = useCallback((chatMessage: ChatBubbleMessage, originalText: string, translatedText: string, detectedLanguage: string, targetLanguage: string) =>
@@ -230,22 +225,25 @@ const useChatWidgetState = () =>
 
             return newValue;
         });
-        const chatEntryId = addChatEntry({
-            id: -1,
-            webId: userData.webID,
-            entityId: userData.roomIndex,
-            name: username,
-            imageUrl,
-            style: styleId,
-            chatType: chatType,
-            entityType: userData.type,
-            message: formattedText,
-            timestamp: ChatHistoryCurrentDate(),
-            type: ChatEntryType.TYPE_CHAT,
-            roomId: roomSession.roomId,
-            color,
-            ...(outgoingTranslation ? buildTranslatedEntryPatch(outgoingTranslation.originalText, outgoingTranslation.translatedText, outgoingTranslation.detectedLanguage, outgoingTranslation.targetLanguage) : {})
-        });
+
+        const chatEntryId = (userType === RoomObjectType.USER)
+            ? addChatEntry({
+                id: -1,
+                webId: userData.webID,
+                entityId: userData.roomIndex,
+                name: username,
+                imageUrl,
+                style: styleId,
+                chatType: chatType,
+                entityType: userData.type,
+                message: formattedText,
+                timestamp: ChatHistoryCurrentDate(),
+                type: ChatEntryType.TYPE_CHAT,
+                roomId: roomSession.roomId,
+                color,
+                ...(outgoingTranslation ? buildTranslatedEntryPatch(outgoingTranslation.originalText, outgoingTranslation.translatedText, outgoingTranslation.detectedLanguage, outgoingTranslation.targetLanguage) : {})
+            })
+            : -1;
 
         if(!settings.enabled || outgoingTranslation || !isTranslatableChatType || !text.trim().length) return;
 

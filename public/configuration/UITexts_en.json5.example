@@ -640,6 +640,8 @@
     'wheel.extra':          'Extra spins: %count%',
     'wheel.spin':           'SPIN',
     'wheel.buy':            'Buy spin',
+	'wheel.settings':       'Settings',
+	'wheel.settings.title': 'Wheel of Fortune Settings',
     'wheel.winners':        'Latest winners',
     'wheel.winners.empty':  'No winners yet',
     'wheel.win.title':      'You won!',
@@ -707,24 +709,6 @@
     'chatcmd.client.info':        'Client info',
 
     // ------------------------------------------------------------------------
-    // Mentions
-    // ------------------------------------------------------------------------
-    'mentions.window.title':    'Mentions',
-    'mentions.window.empty':    'No mentions',
-    'mentions.window.markall':  'Mark all as read',
-    'mentions.tab.title':       'Mentions',
-    'mentions.notification':    '%sender% mentioned you in %room%',
-    'mentions.filter.all':      'All',
-    'mentions.filter.unread':   'Unread',
-    'mentions.filter.direct':   'Direct',
-    'mentions.filter.room':     'Room',
-    'mentions.group.today':     'Today',
-    'mentions.group.yesterday': 'Yesterday',
-    'mentions.group.older':     'Earlier',
-    'mentions.type.direct':     'Direct mention',
-    'mentions.type.room':       'Room mention',
-    'mentions.action.goto':     'Go to room',
-    'mentions.action.remove':   'Remove',
     // Me-menu settings + User account settings window
     // ------------------------------------------------------------------------
     'usersettings.tab.general':                         "General",
@@ -790,4 +774,27 @@
     'usersettings.success.password':                    "Password updated successfully.",
     'usersettings.success.email':                       "Email updated successfully.",
     'usersettings.success.username':                    "Username updated. Please log in again with your new name.",
+
+    // ------------------------------------------------------------------------
+    // @-mention autocomplete (chat input)
+    // ------------------------------------------------------------------------
+    'mentions.window.title':                            "Mentions",
+    'mentions.window.empty':                            "No mentions",
+    'mentions.window.markall':                          "Mark all as read",
+    'mentions.tab.title':                               "Mentions",
+    'mentions.notification':                            "%sender% mentioned you in %room%",
+    'mentions.filter.all':                              "All",
+    'mentions.filter.unread':                           "Unread",
+    'mentions.filter.direct':                           "Direct",
+    'mentions.filter.room':                             "Room",
+    'mentions.group.today':                             "Today",
+    'mentions.group.yesterday':                         "Yesterday",
+    'mentions.group.older':                             "Earlier",
+    'mentions.type.direct':                             "Direct mention",
+    'mentions.type.room':                               "Room mention",
+    'mentions.action.goto':                             "Go to room",
+    'mentions.action.remove':                           "Remove",
+    'mentions.alias.description.everyone':              "Everyone in the hotel",
+    'mentions.alias.description.friends':               "Your online friends",
+    'mentions.alias.description.room':                  "Everyone in this room",
 }
