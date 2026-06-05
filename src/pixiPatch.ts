@@ -1,5 +1,3 @@
-actly once, idempotent across HMR reloads.
- */
 import * as PIXI from 'pixi.js';
 
 type AnyFn = (...args: unknown[]) => unknown;
