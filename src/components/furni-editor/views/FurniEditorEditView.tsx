@@ -38,13 +38,13 @@ const Section: FC<SectionProps> = ({ title, children, defaultOpen = true }) =>
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <button
                 type="button"
-                className="w-full flex items-center justify-between px-3 py-2.5 cursor-pointer hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-slate-50 transition-colors"
                 onClick={ () => setOpen(p => !p) }
             >
                 <Text className="text-[12px] font-semibold text-slate-700">{ title }</Text>
                 <span className="text-[11px] text-slate-400 transition-transform duration-200" style={ { transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' } }>▾</span>
             </button>
-            { open && <div className="px-3 pb-3 pt-0.5">{ children }</div> }
+            { open && <div className="px-3 pb-2.5 pt-0.5">{ children }</div> }
         </div>
     );
 };
@@ -220,16 +220,16 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     const readonlyClass = 'w-full px-3 py-1.5 text-sm font-mono rounded-lg border border-slate-200 bg-slate-50 text-slate-500 select-all';
 
     return (
-        <Column gap={ 2 } className="h-full overflow-auto bg-[#f6f7f9] p-3">
+        <Column gap={ 1 } className="h-full overflow-auto bg-[#f6f7f9] p-2">
             { /* Header */ }
-            <Flex alignItems="center" gap={ 3 } className="px-1">
-                <div className="shrink-0 w-16 h-16 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
-                    <LayoutFurniIconImageView productType={ item.type } productClassId={ item.spriteId } className="scale-[1.8]" />
+            <Flex alignItems="center" gap={ 2 } className="px-1">
+                <div className="shrink-0 w-14 h-14 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
+                    <LayoutFurniIconImageView productType={ item.type } productClassId={ item.spriteId } className="scale-[1.6]" />
                 </div>
                 <Flex column gap={ 0 } className="min-w-0 flex-1">
-                    <Text bold className="truncate text-slate-800 text-[16px] leading-tight">{ furniName || form.publicName || form.itemName }</Text>
+                    <Text bold className="truncate text-slate-800 text-[15px] leading-tight">{ furniName || form.publicName || form.itemName }</Text>
                     <Text className="truncate text-slate-400 text-[11px] font-mono">{ form.itemName }</Text>
-                    <Flex alignItems="center" gap={ 1 } className="mt-1.5 flex-wrap">
+                    <Flex alignItems="center" gap={ 1 } className="mt-1 flex-wrap">
                         <span className="text-[10px] text-slate-500 bg-slate-100 rounded-md px-1.5 py-0.5">ID { item.id }</span>
                         <span className="text-[10px] text-slate-500 bg-slate-100 rounded-md px-1.5 py-0.5">Sprite { item.spriteId }</span>
                         <span className="text-[10px] text-slate-500 bg-slate-100 rounded-md px-1.5 py-0.5">{ item.usageCount } in use</span>
@@ -240,29 +240,27 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
             </Flex>
 
             { /* Primary edit surface: furnidata display name + description (server-authoritative, live) */ }
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3">
-                <div className="flex items-center gap-2 mb-2">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-2.5">
+                <div className="flex items-center gap-2 mb-1.5">
                     <Text className="text-[12px] font-semibold text-slate-700">Display name &amp; description</Text>
                     <span className="text-[9px] font-semibold text-primary bg-primary/10 rounded-md px-1.5 py-0.5">LIVE</span>
                     { (furniName !== String(furniDataEntry?.name ?? '') || furniDescription !== String(furniDataEntry?.description ?? '')) &&
                         <span className="ml-auto text-[10px] text-amber-600 font-medium">Unsaved</span> }
                 </div>
-                <div>
-                    <Column gap={ 1 }>
-                        <div>
-                            <label className={ labelClass }>Display Name (furnidata)</label>
-                            <input className={ inputClass() } value={ furniName } onChange={ e => setFurniName(e.target.value) } maxLength={ 256 } />
-                        </div>
-                        <div>
-                            <label className={ labelClass }>Description</label>
-                            <textarea className={ inputClass() } rows={ 2 } value={ furniDescription } onChange={ e => setFurniDescription(e.target.value) } maxLength={ 256 } />
-                        </div>
-                        <Flex gap={ 1 }>
-                            <Button variant="success" disabled={ loading } onClick={ () => setConfirmFurnidata(true) }>Save name/desc</Button>
-                            <Button variant="secondary" disabled={ loading } onClick={ () => onRevertFurnidata(item.id) }>Revert</Button>
-                        </Flex>
-                    </Column>
+                <div className="grid grid-cols-2 gap-2">
+                    <div>
+                        <label className={ labelClass }>Display Name (furnidata)</label>
+                        <input className={ inputClass() } value={ furniName } onChange={ e => setFurniName(e.target.value) } maxLength={ 256 } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Description</label>
+                        <input className={ inputClass() } value={ furniDescription } onChange={ e => setFurniDescription(e.target.value) } maxLength={ 256 } />
+                    </div>
                 </div>
+                <Flex gap={ 1 } className="mt-1.5">
+                    <Button variant="success" disabled={ loading } onClick={ () => setConfirmFurnidata(true) }>Save name/desc</Button>
+                    <Button variant="secondary" disabled={ loading } onClick={ () => onRevertFurnidata(item.id) }>Revert</Button>
+                </Flex>
             </div>
 
             <Section title="Basic Info">
