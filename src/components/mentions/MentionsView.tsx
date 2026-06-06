@@ -73,7 +73,7 @@ export const MentionsView: FC<MentionsViewProps> = props =>
     const hasAny = groups.length > 0;
 
     return (
-        <NitroCardView className="w-[360px] h-[440px]" theme="primary-slim" uniqueKey="mentions">
+        <NitroCardView className="w-[360px] h-[440px] has-classic-scrollbar" theme="primary-slim" uniqueKey="mentions">
             <NitroCardHeaderView headerText={ LocalizeText('mentions.window.title') } onCloseClick={ onClose } />
             <NitroCardContentView gap={ 1 }>
                 <Flex alignItems="center" className="flex-wrap" gap={ 1 }>

@@ -22,7 +22,6 @@ export const InventoryBotView: FC<{
         if(!selectedBot || !roomPreviewer) return;
 
         const botData = selectedBot.botData;
-
         roomPreviewer.reset(false);
         roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
         roomPreviewer.updateObjectRoom('111', '217', '1.1');

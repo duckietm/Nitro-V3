@@ -27,6 +27,7 @@ import './css/chat/ChatInputMentionSelectorView.css';
 import './css/mentions/MentionToasts.css';
 
 import './css/common/Buttons.css';
+import './css/common/ClassicScrollbar.css';
 
 
 import './css/forms/form_select.css';

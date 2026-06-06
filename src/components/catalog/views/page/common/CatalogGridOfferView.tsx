@@ -40,7 +40,17 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
 
             if(className?.length)
             {
-                const param = (product.productType === ProductTypeEnum.WALL && product.extraParam?.length) ? `_${ product.extraParam }` : '';
+                let param = '';
+
+                if(product.productType === ProductTypeEnum.WALL && product.extraParam?.length)
+                {
+                    param = `_${ product.extraParam }`;
+                }
+                else if(product.productType === ProductTypeEnum.FLOOR && product.furnitureData?.hasIndexedColor && (product.furnitureData.colorIndex > 0))
+                {
+                    param = `_${ product.furnitureData.colorIndex }`;
+                }
+
                 const configuredIconUrl = GetConfigurationValue<string>('furni.asset.icon.url', '');
 
                 if(configuredIconUrl?.length)
@@ -104,6 +114,7 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
     return (
         <LayoutGridItem
             className={ `group/tile relative ${ itemActive ? 'is-active' : '' }` }
+            gap={ 1 }
             itemActive={ itemActive }
             itemCount={ ((offer.pricingModel === Offer.PRICING_MODEL_MULTI) ? product.productCount : 1) }
             itemUniqueNumber={ product.uniqueLimitedItemSeriesSize }

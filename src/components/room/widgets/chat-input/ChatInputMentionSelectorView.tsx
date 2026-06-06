@@ -99,7 +99,7 @@ export const ChatInputMentionSelectorView: FC<ChatInputMentionSelectorViewProps>
                 <span className="chat-input-mention-popover-header-dot" aria-hidden />
                 <span>@ Mention</span>
             </div>
-            <div ref={ listRef } className="chat-input-mention-popover-list">
+            <div ref={ listRef } className="chat-input-mention-popover-list has-classic-scrollbar">
                 { suggestions.map((suggestion, index) =>
                 {
                     const isSelected = (index === selectedIndex);
