@@ -211,6 +211,14 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
         return cn ? (cn === itemCn) : true;
     }, [ furniDataEntry, item ]);
 
+    // True only when the name/description actually differ from the stored furnidata
+    // entry. Used to gate the Save button: saving an unchanged value makes the
+    // server writer return false, which the handler misreports as "Classname not
+    // found in furnidata" — so we never let an unchanged save fire.
+    const furnidataDirty = useMemo(() =>
+        furniName !== String(furniDataEntry?.name ?? '') || furniDescription !== String(furniDataEntry?.description ?? ''),
+    [ furniName, furniDescription, furniDataEntry ]);
+
     const handleSave = useCallback(() =>
     {
         if(!isValid) return;
@@ -294,7 +302,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                     { furnidataEditable
                         ? <span className="text-[9px] font-semibold text-primary bg-primary/10 rounded-md px-1.5 py-0.5">LIVE</span>
                         : <span className="text-[9px] font-semibold text-amber-700 bg-amber-100 rounded-md px-1.5 py-0.5">NO FURNIDATA</span> }
-                    { furnidataEditable && (furniName !== String(furniDataEntry?.name ?? '') || furniDescription !== String(furniDataEntry?.description ?? '')) &&
+                    { furnidataEditable && furnidataDirty &&
                         <span className="ml-auto text-[10px] text-amber-600 font-medium">Unsaved</span> }
                 </div>
                 { furnidataEditable ? (
@@ -310,7 +318,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                             </div>
                         </div>
                         <Flex gap={ 1 } className="mt-1.5">
-                            <Button variant="success" disabled={ loading } onClick={ () => setConfirmFurnidata(true) }>Save name/desc</Button>
+                            <Button variant="success" disabled={ loading || !furnidataDirty } onClick={ () => setConfirmFurnidata(true) }>Save name/desc</Button>
                             <Button variant="secondary" disabled={ loading } onClick={ () => onRevertFurnidata(item.id) }>Revert</Button>
                         </Flex>
                     </>
