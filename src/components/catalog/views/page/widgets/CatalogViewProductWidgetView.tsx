@@ -1,4 +1,4 @@
-import { GetAvatarRenderManager, GetSessionDataManager, Vector3d } from '@nitrots/nitro-renderer';
+import { GetAvatarRenderManager, GetRoomEngine, GetSessionDataManager, RoomObjectVariable, Vector3d } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
 import { BuildPurchasableClothingFigure, FurniCategory, Offer, ProductTypeEnum } from '../../../../../api';
 import { AutoGrid, Column, LayoutGridItem, LayoutRoomPreviewerView } from '../../../../../common';
@@ -19,7 +19,25 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
         if(!product) return;
 
         roomPreviewer.reset(false);
-        roomPreviewer.updateObjectRoom('default', 'default', 'default');
+
+        // Mirror the user's current room so the catalog preview shows
+        // the item against the wallpaper / floor / landscape they
+        // actually have decorated. Same approach as
+        // InventoryFurnitureView - read the active room's pattern ids
+        // off the room engine, fall back to '101' / '101' / '1.1' if
+        // the user isn't in a room yet (those are real Habbo pattern
+        // ids, the literal 'default' we used before is not and made
+        // the previewer fall back to blank white surfaces).
+        const roomEngine = GetRoomEngine();
+        let floorType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
+        let wallType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
+        let landscapeType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
+
+        floorType = (floorType && floorType.length) ? floorType : '3002';
+        wallType = (wallType && wallType.length) ? wallType : '3001';
+        landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
+
+        roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
         roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
         const populate = () =>
@@ -91,7 +109,7 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
                             return;
                         }
                         default:
-                            roomPreviewer.updateObjectRoom('default', 'default', 'default');
+                            roomPreviewer.updateObjectRoom('101', '101', '1.1');
                             roomPreviewer.addWallItemIntoRoom(product.productClassId, new Vector3d(90), product.extraParam);
                             return;
                     }

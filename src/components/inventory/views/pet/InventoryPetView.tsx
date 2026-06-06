@@ -44,8 +44,8 @@ export const InventoryPetView: FC<{
         let floorType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
         let landscapeType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
 
-        wallType = (wallType && wallType.length) ? wallType : '101';
-        floorType = (floorType && floorType.length) ? floorType : '101';
+        wallType = (wallType && wallType.length) ? wallType : '3001';
+        floorType = (floorType && floorType.length) ? floorType : '3002';
         landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
 
         roomPreviewer.reset(false);

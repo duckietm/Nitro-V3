@@ -12,10 +12,19 @@
     --catalog-swf-select-outer: #82d1ed;
     --catalog-swf-bc: #ff8d00;
     --catalog-swf-bc-outer: #ffb53c;
+    /* Light gray secondary button - cropped from catalog_skin1.png
+       at (10, 190, 25x22). Drives the gift button "Cadeau", the
+       preview-room control button and the generic .nitro-catalog-swf-
+       button via border-image-slice 3 3 3 3 fill. */
     --habbo-slice-button-default: url("../../assets/images/catalog/buttons/btn_secondary.png");
     --habbo-slice-button-hover: url("../../assets/images/catalog/buttons/btn_secondary_hover.png");
     --habbo-slice-button-pressed: url("../../assets/images/catalog/buttons/btn_secondary_pressed.png");
     --habbo-slice-button-disabled: url("../../assets/images/catalog/buttons/btn_secondary_disabled.png");
+    /* Classic Habbo "Osta!" Buy button - cropped from catalog_skin3.png
+       yellow band. The historical name says "green" but the user's
+       skin sheet ships yellow for the action colour, so that's what
+       we paint. The 27x34 sprite border-image-slices nicely at 6px
+       since the rounded corner is ~5px. */
     --habbo-slice-button-buy: url("../../assets/images/catalog/buttons/buy.png");
     --habbo-slice-button-large: url("../../assets/images/catalog/buttons/buy.png");
     --habbo-slice-button-large-hover: url("../../assets/images/catalog/buttons/buy_hover.png");
@@ -39,6 +48,9 @@
     --habbo-stepper-minus-hover: url("../../assets/images/catalog/buttons/minus_hover.png");
     --habbo-stepper-minus-pressed: url("../../assets/images/catalog/buttons/minus_pressed.png");
     --habbo-stepper-minus-disabled: url("../../assets/images/catalog/buttons/minus_disabled.png");
+    /* Scrollbar sprites cropped from catalog_skin1.png. The single-piece
+       thumb has caps + grip baked into one 17x34 image - stretch it
+       full-height with background-size: 17px 100%. */
     --habbo-scrollbar-up: url("../../assets/images/catalog/scrollbar/scroll_v_up.png");
     --habbo-scrollbar-up-pressed: url("../../assets/images/catalog/scrollbar/scroll_v_up_pressed.png");
     --habbo-scrollbar-down: url("../../assets/images/catalog/scrollbar/scroll_v_down.png");
@@ -877,6 +889,11 @@
 }
 
 .nitro-catalog-classic-window .layout-grid-item {
+    /* Let the tile flex to whatever min/max width the AutoGrid sets
+       via repeat(auto-fill, minmax(N, 1fr)) - hard-pinning 53x74 was
+       overriding the layout's columnMinWidth prop, so the row count
+       never changed when we reduced it. Width is now 100% of the
+       column cell, height tracks --nitro-grid-column-min-height. */
     width: 100% !important;
     height: var(--nitro-grid-column-min-height, 70px) !important;
     min-width: 0 !important;
@@ -888,10 +905,19 @@
     overflow: visible !important;
 }
 
+/* Furni tiles drive their look from the icon image and need a clear
+   background. Color-grouping swatches use itemHighlight (.has-highlight)
+   to ask LayoutGridItem for a solid colour via inline backgroundColor -
+   keep the transparent override off those so the swatch is visible. */
 .nitro-catalog-classic-window .layout-grid-item:not(.has-highlight) {
     background-color: transparent !important;
 }
 
+/* Pets breed picker: the pet-head image renders at its native ~81x69px
+   regardless of the grid cell size. The old grid-cols-6 stretched
+   each .layout-grid-item to ~150-200px so the head looked huge in
+   acres of empty tile. Pin each tile just big enough to host the
+   head and let the container flex-wrap. */
 .nitro-catalog-classic-window .nitro-catalog-classic-pet-breeds .layout-grid-item {
     width: 84px !important;
     min-width: 84px !important;
@@ -912,6 +938,12 @@
         inset -2px -2px 0 #ecece4 !important;
 }
 
+/* Habbo-classic colour swatches: small chip with a 1px dark border
+   and a subtle inner highlight so light tones still read as buttons.
+   Hover lifts the border; the selected swatch is "pressed" with a
+   sunken inner shadow and a bright cyan ring matching the catalog
+   selection accent. The cream inset from the generic .is-active rule
+   above would wash out the swatch colour, so we replace it here. */
 .nitro-catalog-classic-window .layout-grid-item.has-highlight {
     width: 26px !important;
     height: 26px !important;
@@ -975,10 +1007,18 @@
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
+/* When the tile shows a full-tile bot/pet avatar (instead of a small
+   icon), pin the price strip to the bottom of the tile and give it a
+   translucent backdrop so it doesn't overlap with the avatar body. */
 .nitro-catalog-classic-grid .layout-grid-item:has(.avatar-image) .nitro-catalog-classic-grid-price,
 .nitro-catalog-classic-grid .layout-grid-item:has(> .avatar-image) > .nitro-catalog-classic-grid-price,
 .nitro-catalog-classic-grid .avatar-image ~ .nitro-catalog-classic-grid-price {
     top: auto !important;
+    /* Re-anchor horizontally too: the parent rule's left: 2px /
+       right: 2px combined with content-sized inner flex was visually
+       parking the pill at the left side of the tile. Center it via
+       explicit left/right + transform so it lands smack in the
+       middle regardless of inner content width. */
     left: 50% !important;
     right: auto !important;
     bottom: 4px !important;
@@ -996,6 +1036,10 @@
     z-index: 5 !important;
 }
 
+/* Tighten the price entry inside the avatar-tile pill so the number
+   and currency icon center on the same baseline (the global
+   .grid-price-entry height: 13px clipped the 15px wallet icon and
+   pushed it visually below the number). */
 .nitro-catalog-classic-grid .layout-grid-item:has(.avatar-image) .nitro-catalog-classic-grid-price-entry,
 .nitro-catalog-classic-grid .avatar-image ~ .nitro-catalog-classic-grid-price .nitro-catalog-classic-grid-price-entry {
     height: auto !important;
@@ -1048,6 +1092,8 @@
 .nitro-catalog-classic-price-row {
     position: absolute;
     left: 0;
+    /* Anchored from the bottom so the Aantal/Prezzo row sits just
+       above the Cadeau/Koop buttons regardless of layout height. */
     bottom: 38px;
     width: 360px;
     height: 25px;
@@ -1065,6 +1111,8 @@
 
 .nitro-catalog-classic-total-price-slot {
     position: absolute;
+    /* Anchored to the right of the now-100% wide price row so the
+       Prezzo + amount stays flush with the right edge of the panel. */
     right: 2px;
     top: 0;
     width: auto;
@@ -1087,6 +1135,9 @@
 .nitro-catalog-classic-purchase-row {
     position: absolute;
     left: 0;
+    /* Anchored to the bottom of the panel with a 4px breathing strip
+       so the Cadeau / Koop buttons stay flush at the bottom of the
+       window no matter how tall the catalog is. */
     bottom: 4px;
     width: 360px;
     height: 30px;
@@ -1100,6 +1151,9 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px !important;
+    /* Fill the now-100% wide purchase row instead of staying pinned at
+       330px (which used to match the old 360px column - 15px each
+       side). */
     width: auto;
     height: 24px;
     margin-left: 15px;
@@ -1159,6 +1213,13 @@
     opacity: 1 !important;
 }
 
+/* Buy / Gift buttons - pure CSS. border-image-slicing the bitmap
+   sprites produced thin highlight/shadow stripes at the top and
+   bottom because the source rounded corners are ~5-6px tall but the
+   buttons render at 22-24px, so the slice rows stretched into a
+   visible band. CSS gradients give a crisp pixel-art classic-habbo
+   look without those artefacts. */
+
 .nitro-catalog-classic-window .nitro-catalog-swf-buy-button {
     width: 160px !important;
     min-width: 160px !important;
@@ -1168,6 +1229,8 @@
     border-radius: 4px !important;
     border-image: none !important;
     border-image-source: none !important;
+    /* Yellow body with the same #f0a318 / #ffd54d tones as the
+       skin3-yellow Buy sprite. */
     background:
         linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%) !important;
     box-shadow:
@@ -1194,6 +1257,9 @@
 
 .nitro-catalog-classic-window .nitro-catalog-swf-buy-button.pointer-events-none,
 .nitro-catalog-classic-window .nitro-catalog-swf-buy-button:disabled {
+    /* Stay yellow when disabled - the user wants the action colour
+       to be recognisable regardless of state. Drop opacity + flip
+       the cursor so it still reads as non-interactive. */
     background:
         linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%) !important;
     color: #4a2b00 !important;
@@ -1211,6 +1277,7 @@
     border-radius: 4px !important;
     border-image: none !important;
     border-image-source: none !important;
+    /* Cream / light-gray body matching the catalog cardstock. */
     background:
         linear-gradient(180deg, #ececec 0%, #cfcfc4 100%) !important;
     box-shadow:
@@ -1243,12 +1310,19 @@
     text-shadow: none !important;
 }
 
+/* Pet purchase card lives in a tight flex row alongside the price,
+   so the main 160px Buy button doesn't fit. Shrink it down here. */
 .nitro-catalog-classic-pet-card .nitro-catalog-swf-buy-button {
     width: auto !important;
     min-width: 0 !important;
     padding: 0 14px !important;
 }
 
+/* All catalog grids must scroll vertically only - horizontal overflow
+   produces a stray horizontal scrollbar at the bottom of the items
+   strip on narrow columns (e.g. guild_furni). minmax(N, 1fr) usually
+   contains content but the safety net stops any odd item from
+   triggering a horizontal bar. */
 .nitro-catalog-classic-window .layout-grid,
 .nitro-catalog-classic-window [class*="grid-cols-["] {
     overflow-x: hidden !important;
@@ -1295,6 +1369,8 @@
     image-rendering: pixelated !important;
 }
 
+/* react-icons FaMinus/FaPlus glyphs ride inside these buttons; hide
+   them - the sprite already contains the +/- mark. */
 .nitro-catalog-classic-window button.nitro-catalog-swf-spinner-button svg {
     display: none !important;
 }
@@ -1390,6 +1466,9 @@
     min-width: 25px;
     padding: 0 !important;
     overflow: hidden;
+    /* font-size: 0 was killing the SVG: react-icons emits
+       <svg width="1em" height="1em">, so 0em -> 0x0. Use a real
+       font-size and pin the SVG to explicit pixels below. */
     font-size: 14px !important;
     line-height: 1 !important;
     display: inline-flex !important;
@@ -1416,6 +1495,13 @@
     right: 6px;
 }
 
+/* Bulletproof override for the rotate/state buttons. The shared SWF
+   button rule above lays a transparent body + border-image skin on
+   top, which works only when the catalog/buttons/btn_secondary*.png
+   sprites resolve - if they're missing the button renders 0x0
+   invisible. Pin the box and paint a visible gradient + outline so
+   the controls are always discoverable, and force z-index above the
+   room-previewer DIV so they sit on top of the rendered scene. */
 .nitro-catalog-classic-window button.nitro-catalog-classic-preview-btn {
     width: 28px !important;
     height: 26px !important;
@@ -1456,6 +1542,12 @@
     height: 17px;
 }
 
+/* ===== Classic catalog scrollbar (pure CSS, no sprites) =====
+   Drew this with CSS gradients instead of stretching the 17x34
+   skin1 thumb sprite. The sprite version pixelated into visible
+   horizontal bands on tall scroll areas because every source row
+   stretched 5-10x. CSS gradients stay crisp at any height. */
+
 .nitro-catalog-classic-window * {
     scrollbar-color: auto !important;
     scrollbar-width: auto;
@@ -1474,6 +1566,10 @@
     border: 0 !important;
 }
 
+/* Habbo thumb: symmetric light-edges -> darker-middle gradient (the
+   "pinched in the middle" look of the classic Ubuntu scrollbar),
+   1px near-black outline, three central grip lines via SVG centered
+   no-repeat. */
 .nitro-catalog-classic-window *::-webkit-scrollbar-thumb {
     min-height: 28px !important;
     border: 1px solid #2a2a26 !important;
@@ -1503,6 +1599,8 @@
         inset 0 -1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
+/* Arrow buttons: cream cap with a 1px black outline + dark inset
+   chevron. SVG glyphs so they stay crisp at any zoom. */
 .nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:vertical:decrement {
     display: block !important;
     width: 17px !important;
