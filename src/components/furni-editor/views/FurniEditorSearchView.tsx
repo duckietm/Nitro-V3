@@ -118,7 +118,7 @@ export const FurniEditorSearchView: FC<FurniEditorSearchViewProps> = props =>
             <Flex gap={ 2 } alignItems="center">
                 <div className="relative flex-1">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.2-3.2" /></svg>
+                        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="8.5" cy="8.5" r="5.5" /><line x1="12.7" y1="12.7" x2="18" y2="18" /></svg>
                     </span>
                     <input
                         type="text"
