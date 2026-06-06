@@ -1,6 +1,6 @@
 import { FC, MouseEvent } from 'react';
 import { IMentionEntry, LocalizeText, MentionType } from '../../api';
-import { Flex, Text } from '../../common';
+import { Flex, LayoutAvatarImageView, Text } from '../../common';
 import { MentionMessageView } from './MentionMessageView';
 import { formatMentionTime } from './mentionsFormat';
 
@@ -32,11 +32,13 @@ export const MentionRowView: FC<MentionRowViewProps> = props =>
             <span
                 className={ `inline-block w-[8px] h-[8px] rounded-full shrink-0 ${ mention.read ? 'bg-transparent' : 'bg-[#1e7295]' }` }
                 title={ mention.read ? '' : LocalizeText('mentions.filter.unread') } />
-            <span
-                title={ typeTitle }
-                className={ `flex items-center justify-center shrink-0 w-[18px] h-[18px] rounded text-[10px] font-bold leading-none text-white ${ isRoom ? 'bg-[#d08a1e]' : 'bg-[#1e7295]' }` }>
-                { isRoom ? '@∗' : '@' }
-            </span>
+            <div className="relative shrink-0 w-[32px] h-[32px] overflow-hidden rounded bg-black/10" title={ typeTitle }>
+                <LayoutAvatarImageView headOnly direction={ 2 } figure={ mention.senderFigure } style={ { backgroundSize: '80px auto', backgroundPosition: '-24px -18px' } } />
+                <span
+                    className={ `absolute bottom-0 right-0 flex items-center justify-center w-[14px] h-[14px] rounded-full text-[8px] font-bold leading-none text-white ring-2 ring-white ${ isRoom ? 'bg-[#d08a1e]' : 'bg-[#1e7295]' }` }>
+                    { isRoom ? '∗' : '@' }
+                </span>
+            </div>
             <Flex grow column className="min-w-0" gap={ 0 }>
                 <Flex alignItems="center" gap={ 1 } className="min-w-0">
                     <Text bold={ !mention.read } truncate variant="primary">{ mention.senderUsername }</Text>
