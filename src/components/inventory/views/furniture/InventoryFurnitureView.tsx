@@ -1,5 +1,5 @@
 import { InfiniteGrid } from '@layout/InfiniteGrid';
-import { GetRoomEngine, GetSessionDataManager, IRoomSession, RoomObjectVariable, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, IRoomSession, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaPowerOff, FaSyncAlt, FaTrashAlt } from 'react-icons/fa';
 import { DispatchUiEvent, FurniCategory, GroupItem, LocalizeText, UnseenItemCategory, attemptItemPlacement } from '../../../../api';
@@ -53,24 +53,17 @@ export const InventoryFurnitureView: FC<{
 
         const isRoomDecoration = (furnitureItem.category === FurniCategory.WALL_PAPER) || (furnitureItem.category === FurniCategory.FLOOR) || (furnitureItem.category === FurniCategory.LANDSCAPE);
 
+        let floorType = '111';
+        let wallType = '217';
+        let landscapeType = '1.1';
+
         if(isRoomDecoration)
         {
-            const roomEngine = GetRoomEngine();
-
-            let wallType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
-            let floorType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
-            let landscapeType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
-
-            wallType = (wallType && wallType.length) ? wallType : '3001';
-            floorType = (floorType && floorType.length) ? floorType : '3002';
-            landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
-
-            roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
-
             floorType = ((furnitureItem.category === FurniCategory.FLOOR) ? selectedItem.stuffData.getLegacyString() : floorType);
             wallType = ((furnitureItem.category === FurniCategory.WALL_PAPER) ? selectedItem.stuffData.getLegacyString() : wallType);
             landscapeType = ((furnitureItem.category === FurniCategory.LANDSCAPE) ? selectedItem.stuffData.getLegacyString() : landscapeType);
 
+            roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
             roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
 
             if(furnitureItem.category === FurniCategory.LANDSCAPE)
@@ -83,24 +76,7 @@ export const InventoryFurnitureView: FC<{
             return;
         }
 
-        // Mirror the active room's pattern ids so the furniture
-        // preview lands on the same wallpaper / floor / landscape the
-        // user is decorated with. Same fallback as the
-        // isRoomDecoration branch above; 'default' isn't a real
-        // pattern id, so passing it made the previewer fall back to
-        // blank white surfaces.
-        {
-            const roomEngine = GetRoomEngine();
-            let wallType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
-            let floorType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
-            let landscapeType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
-
-            wallType = (wallType && wallType.length) ? wallType : '3001';
-            floorType = (floorType && floorType.length) ? floorType : '3002';
-            landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
-
-            roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
-        }
+        roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
         roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
         if(selectedItem.isWallItem)

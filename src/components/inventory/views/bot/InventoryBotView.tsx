@@ -1,4 +1,4 @@
-import { GetRoomEngine, IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
+import { IRoomSession, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { IBotItem, LocalizeText, UnseenItemCategory, attemptBotPlacement } from '../../../../api';
 import { LayoutRoomPreviewerView } from '../../../../common';
@@ -23,19 +23,9 @@ export const InventoryBotView: FC<{
 
         const botData = selectedBot.botData;
 
-        const roomEngine = GetRoomEngine();
-
-        let wallType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
-        let floorType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
-        let landscapeType = roomEngine.getRoomInstanceVariable<string>(roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
-
-        wallType = (wallType && wallType.length) ? wallType : '3001';
-        floorType = (floorType && floorType.length) ? floorType : '3002';
-        landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
-
         roomPreviewer.reset(false);
         roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
-        roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
+        roomPreviewer.updateObjectRoom('111', '217', '1.1');
         roomPreviewer.addAvatarIntoRoom(botData.figure, 0);
     }, [ roomPreviewer, selectedBot ]);
 
