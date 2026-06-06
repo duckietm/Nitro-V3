@@ -34,10 +34,10 @@ const Section: FC<SectionProps> = ({ title, children, defaultOpen = true }) =>
     const [ open, setOpen ] = useState(defaultOpen);
 
     return (
-        <div className="bg-[#ffffff] rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-[#ffffff] rounded-xl border border-slate-200 shadow-sm">
             <button
                 type="button"
-                className="w-full flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-slate-50 transition-colors"
+                className={ `w-full flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-slate-50 transition-colors rounded-t-xl ${ open ? '' : 'rounded-b-xl' }` }
                 onClick={ () => setOpen(p => !p) }
             >
                 <Text className="text-[12px] font-semibold text-slate-700">{ title }</Text>
@@ -57,7 +57,7 @@ const Tip: FC<{ field: string }> = ({ field }) =>
     return (
         <span className="relative group ml-0.5 inline-flex">
             <span className="w-3 h-3 rounded-full bg-[#1e7295] text-white text-[8px] flex items-center justify-center cursor-help font-bold">?</span>
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-[#333] text-white text-[10px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-[#333] text-white text-[10px] rounded w-44 whitespace-normal text-center leading-snug opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-20 shadow-lg">
                 { tip }
             </span>
         </span>
