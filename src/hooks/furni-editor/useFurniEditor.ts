@@ -209,11 +209,11 @@ export const useFurniEditor = () =>
         }
     });
 
-    const searchItems = useCallback((query: string, type: string, pg: number) =>
+    const searchItems = useCallback((query: string, type: string, pg: number, sortField: string = 'id', sortDir: string = 'asc') =>
     {
         setLoading(true);
         setError(null);
-        SendMessageComposer(new FurniEditorSearchComposer(query, type, pg));
+        SendMessageComposer(new FurniEditorSearchComposer(query, type, pg, sortField, sortDir));
     }, []);
 
     const loadDetail = useCallback((id: number) =>
