@@ -215,8 +215,8 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     }, []);
 
     const inputClass = (field?: string) =>
-        `w-full px-2 py-1 text-xs leading-normal rounded-sm border border-[#ccc] min-h-[calc(1.5em+0.5rem+2px)] ${ field && validation[field] ? 'border-red-500 bg-red-50' : '' }`;
-    const labelClass = 'text-[11px] font-bold text-[#333] mb-0 flex items-center gap-0.5';
+        `w-full px-2 py-1 text-sm leading-normal rounded-sm border border-[#bbb] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/40 min-h-[calc(1.5em+0.5rem+2px)]${ field && validation[field] ? ' border-red-500 bg-red-50' : '' }`;
+    const labelClass = 'text-[10px] font-bold text-secondary uppercase tracking-wider mb-0.5 flex items-center gap-0.5';
     const readonlyClass = 'w-full px-2 py-1 text-sm font-mono rounded-sm border border-[#ddd] bg-[#f2f2eb] text-[#555] select-all';
 
     return (
@@ -229,9 +229,9 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                 </div>
                 <Flex column gap={ 0 }>
                     <Flex alignItems="center" gap={ 1 }>
-                        <Text bold className="text-[12px]">ID: { item.id }</Text>
+                        <Text bold className="text-[12px] font-mono text-[#555]">ID: { item.id }</Text>
                         <span className="text-[#999]">|</span>
-                        <Text bold className="text-[12px]">Sprite: { item.spriteId }</Text>
+                        <Text bold className="text-[12px] font-mono text-[#555]">Sprite: { item.spriteId }</Text>
                     </Flex>
                     <Text small variant="gray">({ item.usageCount } in use)</Text>
                 </Flex>
