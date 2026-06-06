@@ -220,7 +220,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     const readonlyClass = 'w-full px-3 py-1.5 text-sm font-mono rounded-lg border border-slate-200 bg-slate-50 text-slate-500 select-all';
 
     return (
-        <Column gap={ 1 } className="h-full overflow-auto bg-[#f6f7f9] p-2">
+        <Column gap={ 1 }>
             { /* Header */ }
             <Flex alignItems="center" gap={ 2 } className="px-1">
                 <div className="shrink-0 w-14 h-14 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
