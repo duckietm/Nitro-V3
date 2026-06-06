@@ -23,9 +23,8 @@ const FIELD_TIPS: Record<string, string> = {
 };
 
 const PERM_GROUPS = [
-    { label: 'Gameplay', keys: [ 'allowStack', 'allowWalk', 'allowSit', 'allowLay' ] },
+    { label: 'Gameplay', keys: [ 'allowStack', 'allowWalk', 'allowSit', 'allowLay', 'allowInventoryStack' ] },
     { label: 'Trading', keys: [ 'allowGift', 'allowTrade', 'allowRecycle', 'allowMarketplaceSell' ] },
-    { label: 'Inventory', keys: [ 'allowInventoryStack' ] },
 ];
 
 interface SectionProps { title: string; children: React.ReactNode; defaultOpen?: boolean }
@@ -267,10 +266,22 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                     <Text bold className="truncate text-slate-800 text-[15px] leading-tight">{ furniName || form.publicName || form.itemName }</Text>
                     <Text className="truncate text-slate-400 text-[11px] font-mono">{ form.itemName }</Text>
                     <Flex alignItems="center" gap={ 1 } className="mt-1 flex-wrap">
-                        <span className="text-[10px] text-slate-500 bg-slate-100 rounded-md px-1.5 py-0.5">ID { item.id }</span>
-                        <span className="text-[10px] text-slate-500 bg-slate-100 rounded-md px-1.5 py-0.5">Sprite { item.spriteId }</span>
-                        <span className="text-[10px] text-slate-500 bg-slate-100 rounded-md px-1.5 py-0.5">{ item.usageCount } in use</span>
-                        { isDirty && <span className="text-[10px] font-medium text-amber-700 bg-amber-100 rounded-md px-1.5 py-0.5">Unsaved</span> }
+                        <span className="inline-flex items-center gap-1 text-[10px] rounded-md border border-slate-200 bg-slate-50 pl-1.5 pr-2 py-0.5">
+                            <span className="text-[8px] font-semibold uppercase tracking-wide text-slate-400">ID</span>
+                            <span className="font-mono text-slate-600">{ item.id }</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[10px] rounded-md border border-slate-200 bg-slate-50 pl-1.5 pr-2 py-0.5">
+                            <span className="text-[8px] font-semibold uppercase tracking-wide text-slate-400">Sprite</span>
+                            <span className="font-mono text-slate-600">{ item.spriteId }</span>
+                        </span>
+                        <span className={ `inline-flex items-center gap-1 text-[10px] rounded-md border px-2 py-0.5 ${ item.usageCount > 0 ? 'border-[#a7f3d0] bg-[#ecfdf5] text-[#047857]' : 'border-slate-200 bg-slate-50 text-slate-500' }` }>
+                            <span className={ `w-1.5 h-1.5 rounded-full ${ item.usageCount > 0 ? 'bg-[#10b981]' : 'bg-slate-300' }` } />
+                            { item.usageCount } in use
+                        </span>
+                        { isDirty && <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded-md px-2 py-0.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" />
+                            Unsaved
+                        </span> }
                     </Flex>
                 </Flex>
                 <Button variant="secondary" onClick={ handleBack } className="shrink-0">Back</Button>
