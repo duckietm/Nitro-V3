@@ -32,8 +32,8 @@ export const MentionRowView: FC<MentionRowViewProps> = props =>
             <span
                 className={ `inline-block w-[8px] h-[8px] rounded-full shrink-0 ${ mention.read ? 'bg-transparent' : 'bg-[#1e7295]' }` }
                 title={ mention.read ? '' : LocalizeText('mentions.filter.unread') } />
-            <div className="relative shrink-0 w-[32px] h-[32px] overflow-hidden rounded bg-black/10" title={ typeTitle }>
-                <LayoutAvatarImageView headOnly direction={ 2 } figure={ mention.senderFigure } style={ { backgroundSize: '80px auto', backgroundPosition: '-24px -18px' } } />
+            <div className="relative shrink-0 w-[36px] h-[36px] overflow-hidden rounded bg-black/10" title={ typeTitle }>
+                <LayoutAvatarImageView headOnly direction={ 2 } figure={ mention.senderFigure } style={ { backgroundSize: 'auto', backgroundPosition: '-22px -32px' } } />
                 <span
                     className={ `absolute bottom-0 right-0 flex items-center justify-center w-[14px] h-[14px] rounded-full text-[8px] font-bold leading-none text-white ring-2 ring-white ${ isRoom ? 'bg-[#d08a1e]' : 'bg-[#1e7295]' }` }>
                     { isRoom ? '∗' : '@' }
