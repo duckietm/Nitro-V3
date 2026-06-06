@@ -275,14 +275,11 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                     </div>
                     <div>
                         <label className={ labelClass }>Sprite ID</label>
-                        <input type="number" className={ inputClass() } value={ form.spriteId } onChange={ e => setField('spriteId', Number(e.target.value)) } />
+                        <div className={ readonlyClass }>{ form.spriteId }</div>
                     </div>
                     <div>
                         <label className={ labelClass }>Type</label>
-                        <select className="w-full px-2 py-1 text-sm leading-normal rounded-sm border border-[#bbb] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/40 pr-8" value={ form.type } onChange={ e => setField('type', e.target.value) }>
-                            <option value="s">Floor (s)</option>
-                            <option value="i">Wall (i)</option>
-                        </select>
+                        <div className={ readonlyClass }>{ form.type === 's' ? 'Floor (s)' : 'Wall (i)' }</div>
                     </div>
                 </div>
             </Section>
