@@ -35,7 +35,7 @@ const Section: FC<SectionProps> = ({ title, children, defaultOpen = true }) =>
     const [ open, setOpen ] = useState(defaultOpen);
 
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-[#ffffff] rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <button
                 type="button"
                 className="w-full flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-slate-50 transition-colors"
@@ -240,14 +240,14 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     }, []);
 
     const inputClass = (field?: string) =>
-        `w-full px-3 py-1.5 text-sm leading-normal rounded-lg border border-slate-300 bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 transition${ field && validation[field] ? ' border-red-400 bg-red-50' : '' }`;
+        `w-full px-3 py-1.5 text-sm leading-normal rounded-lg border border-slate-300 bg-[#ffffff] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 transition${ field && validation[field] ? ' border-red-400 bg-red-50' : '' }`;
     const labelClass = 'text-[11px] font-medium text-slate-500 mb-1 flex items-center gap-0.5';
 
     return (
         <Column gap={ 1 }>
             { /* Header */ }
             <Flex alignItems="center" gap={ 2 } className="px-1">
-                <div className="shrink-0 w-14 h-14 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
+                <div className="shrink-0 w-14 h-14 rounded-xl bg-[#ffffff] border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
                     <LayoutFurniIconImageView productType={ item.type } productClassId={ item.spriteId } className="scale-[1.6]" />
                 </div>
                 <Flex column gap={ 0 } className="min-w-0 flex-1">
@@ -264,7 +264,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
             </Flex>
 
             { /* Primary edit surface: furnidata display name + description (server-authoritative, live) */ }
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-2.5">
+            <div className="bg-[#ffffff] rounded-xl border border-slate-200 shadow-sm p-2.5">
                 <div className="flex items-center gap-2 mb-1.5">
                     <Text className="text-[12px] font-semibold text-slate-700">Display name &amp; description</Text>
                     <span className="text-[9px] font-semibold text-primary bg-primary/10 rounded-md px-1.5 py-0.5">LIVE</span>
@@ -341,7 +341,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                                             key={ key }
                                             type="button"
                                             onClick={ () => setField(key, !on) }
-                                            className={ `text-[11px] px-2.5 py-1 rounded-lg border transition ${ on ? 'bg-primary/10 border-primary/40 text-primary font-medium' : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300' }` }
+                                            className={ `text-[11px] px-2.5 py-1 rounded-lg border transition ${ on ? 'bg-primary/10 border-primary/40 text-primary font-medium' : 'bg-[#ffffff] border-slate-200 text-slate-400 hover:border-slate-300' }` }
                                         >
                                             { key.replace('allow', '') }
                                         </button>
@@ -394,8 +394,8 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 
             { /* Delete Confirmation Dialog */ }
             { showDeleteDialog &&
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={ () => setShowDeleteDialog(false) }>
-                    <div className="bg-white rounded-lg shadow-xl p-4 w-[320px]" onClick={ e => e.stopPropagation() }>
+                <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-[60]" onClick={ () => setShowDeleteDialog(false) }>
+                    <div className="bg-[#ffffff] rounded-lg shadow-xl p-4 w-[320px]" onClick={ e => e.stopPropagation() }>
                         <Text bold className="text-[14px] mb-2 block">Delete Item?</Text>
                         <Text small className="mb-3 block text-[#666]">
                             Are you sure you want to delete <strong>{ item.publicName || item.itemName }</strong> (ID: { item.id })?
@@ -411,8 +411,8 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 
             { /* Furnidata Confirmation Dialog */ }
             { confirmFurnidata &&
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={ () => setConfirmFurnidata(false) }>
-                    <div className="bg-white rounded-lg shadow-xl p-4 w-[320px]" onClick={ e => e.stopPropagation() }>
+                <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-[60]" onClick={ () => setConfirmFurnidata(false) }>
+                    <div className="bg-[#ffffff] rounded-lg shadow-xl p-4 w-[320px]" onClick={ e => e.stopPropagation() }>
                         <Text bold className="text-[14px] mb-2 block">Apply furnidata change to ALL clients?</Text>
                         <div className="text-xs mb-1"><b>Name:</b> { String(furniDataEntry?.name ?? '') } → { furniName }</div>
                         <div className="text-xs mb-3"><b>Desc:</b> { String(furniDataEntry?.description ?? '') } → { furniDescription }</div>
