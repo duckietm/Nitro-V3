@@ -25,6 +25,15 @@
             ],
             "@/*": [
                 "./src/*"
+            ],
+            "pixi.js": [
+                "../Nitro_Render_V3/node_modules/pixi.js"
+            ],
+            "@nitrots/nitro-renderer": [
+                "../Nitro_Render_V3/index.ts"
+            ],
+            "@nitrots/*": [
+                "../Nitro_Render_V3/packages/*/src/index.ts"
             ]
         }
     },

@@ -236,6 +236,10 @@ export const ChatInputView: FC<{}> = props =>
     {
         switch(event.chatMode)
         {
+            case RoomWidgetUpdateChatInputContentEvent.TEXT:
+                setChatValue(event.userName);
+                inputRef.current?.focus();
+                return;
             case RoomWidgetUpdateChatInputContentEvent.WHISPER: {
                 setChatValue(`${ chatModeIdWhisper } ${ event.userName } `);
                 return;
