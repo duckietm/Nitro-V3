@@ -32,44 +32,8 @@
             "@nitrots/nitro-renderer": [
                 "../Nitro_Render_V3/index.ts"
             ],
-            "@nitrots/api": [
-                "../Nitro_Render_V3/packages/api/src/index.ts"
-            ],
-            "@nitrots/assets": [
-                "../Nitro_Render_V3/packages/assets/src/index.ts"
-            ],
-            "@nitrots/avatar": [
-                "../Nitro_Render_V3/packages/avatar/src/index.ts"
-            ],
-            "@nitrots/camera": [
-                "../Nitro_Render_V3/packages/camera/src/index.ts"
-            ],
-            "@nitrots/communication": [
-                "../Nitro_Render_V3/packages/communication/src/index.ts"
-            ],
-            "@nitrots/configuration": [
-                "../Nitro_Render_V3/packages/configuration/src/index.ts"
-            ],
-            "@nitrots/events": [
-                "../Nitro_Render_V3/packages/events/src/index.ts"
-            ],
-            "@nitrots/localization": [
-                "../Nitro_Render_V3/packages/localization/src/index.ts"
-            ],
-            "@nitrots/room": [
-                "../Nitro_Render_V3/packages/room/src/index.ts"
-            ],
-            "@nitrots/session": [
-                "../Nitro_Render_V3/packages/session/src/index.ts"
-            ],
-            "@nitrots/sound": [
-                "../Nitro_Render_V3/packages/sound/src/index.ts"
-            ],
-            "@nitrots/utils/src": [
-                "../Nitro_Render_V3/packages/utils/src"
-            ],
-            "@nitrots/utils": [
-                "../Nitro_Render_V3/packages/utils/src/index.ts"
+            "@nitrots/*": [
+                "../Nitro_Render_V3/packages/*/src/index.ts"
             ]
         }
     },
