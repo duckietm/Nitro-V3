@@ -8,6 +8,14 @@ export const LayoutRoomPreviewerView: FC<{
 {
     const { roomPreviewer = null, height = 0 } = props;
     const elementRef = useRef<HTMLDivElement>(null);
+    // Counter that disables further renders once Pixi throws in this
+    // previewer too many times in a row. The Pixi v8 null-texture bug
+    // (see src/pixiPatch.ts) is mostly absorbed at the prototype level,
+    // but any stray throw still cascades every animation frame. Allow
+    // a small number of consecutive failures so a transient bad frame
+    // self-recovers; permanently disable only if the previewer is truly
+    // wedged, which is what produces the "disabling further renders"
+    // log the user sees.
     const renderFailuresRef = useRef(0);
     const MAX_RENDER_FAILURES = 6;
 
@@ -62,6 +70,8 @@ export const LayoutRoomPreviewerView: FC<{
                 canvas.height = 0;
 
                 elementRef.current.style.backgroundImage = `url(${ base64 })`;
+                // A successful paint is the signal we've recovered from
+                // a transient bad frame; reset the failure counter.
                 renderFailuresRef.current = 0;
             }
             catch(error)

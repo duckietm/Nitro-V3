@@ -3,49 +3,11 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
 import { Text } from '../../../../common';
-import { useCatalogClassicStyle, useChatCommandSelector, useChatInputWidget, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
-import { useRoomUserListSnapshot } from '../../../../hooks/session/useSessionSnapshots';
+import { useCatalogClassicStyle, useChatCommandSelector, useChatInputWidget, useChatMentions, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
 import { ChatInputCommandSelectorView } from './ChatInputCommandSelectorView';
 import { ChatInputEmojiSelectorView } from './ChatInputEmojiSelectorView';
-import { ChatInputMentionSelectorView, MentionSuggestion } from './ChatInputMentionSelectorView';
+import { ChatInputMentionSelectorView } from './ChatInputMentionSelectorView';
 import { ChatInputStyleSelectorView } from './ChatInputStyleSelectorView';
-
-const USER_TYPE_REAL_USER = 1;
-const MAX_MENTION_SUGGESTIONS = 8;
-
-type MentionAliasScope = 'everyone' | 'friends' | 'room';
-
-const MENTION_ALIAS_CONFIG_KEY: Record<MentionAliasScope, string> = {
-    everyone: 'mentions_ui.aliases.everyone',
-    friends:  'mentions_ui.aliases.friends',
-    room:     'mentions_ui.aliases.room'
-};
-
-const MENTION_ALIAS_DEFAULTS: Record<MentionAliasScope, string[]> = {
-    everyone: [ 'all', 'everyone', 'tutti' ],
-    friends:  [ 'friends', 'amici' ],
-    room:     [ 'room', 'stanza' ]
-};
-
-const MENTION_ALIAS_DESCRIPTION_KEY: Record<MentionAliasScope, string> = {
-    everyone: 'mentions.alias.description.everyone',
-    friends:  'mentions.alias.description.friends',
-    room:     'mentions.alias.description.room'
-};
-
-const sanitizeAliasList = (raw: unknown, fallback: string[]): string[] =>
-{
-    if(!Array.isArray(raw)) return fallback;
-    const out: string[] = [];
-    for(const entry of raw)
-    {
-        if(typeof entry !== 'string') continue;
-        const trimmed = entry.trim();
-        if(!trimmed) continue;
-        out.push(trimmed);
-    }
-    return out;
-};
 
 export const ChatInputView: FC<{}> = props =>
 {
@@ -56,129 +18,13 @@ export const ChatInputView: FC<{}> = props =>
     const inputRef = useRef<HTMLInputElement>(null);
     const { isVisible: commandSelectorVisible, filteredCommands, selectedIndex, setSelectedIndex, moveUp, moveDown, selectCurrent, close: closeCommandSelector } = useChatCommandSelector(chatValue);
 
-    const roomUserList = useRoomUserListSnapshot();
-    const [ mentionSelectedIndex, setMentionSelectedIndex ] = useState<number>(0);
     // The "New style" user-setting (memenu.settings.other.catalog.classic.style)
     // drives BOTH the catalog layout and the mention-picker chrome:
     //   false (default) = Habbo old-school NitroCard cardstock look
     //   true            = flat minimalist gray look
     const [ newStyle ] = useCatalogClassicStyle();
 
-    const mentionContext = useMemo(() =>
-    {
-        if(!chatValue) return null;
-        if(commandSelectorVisible) return null;
-
-        const caret = inputRef.current?.selectionStart ?? chatValue.length;
-        const upToCaret = chatValue.slice(0, caret);
-        const at = upToCaret.lastIndexOf('@');
-        if(at < 0) return null;
-
-        if(at > 0 && !/\s/.test(upToCaret.charAt(at - 1))) return null;
-
-        const query = upToCaret.slice(at + 1);
-        if(/\s/.test(query)) return null;
-
-        return { atIndex: at, replaceFrom: at, replaceTo: caret, query };
-    }, [ chatValue, commandSelectorVisible ]);
-
-    const mentionAliases = useMemo<ReadonlyArray<{ key: string; scope: MentionAliasScope; description: string }>>(() =>
-    {
-        const out: { key: string; scope: MentionAliasScope; description: string }[] = [];
-        const seen = new Set<string>();
-
-        const scopes: MentionAliasScope[] = [ 'everyone', 'friends', 'room' ];
-        for(const scope of scopes)
-        {
-            const list = sanitizeAliasList(
-                GetConfigurationValue<unknown>(MENTION_ALIAS_CONFIG_KEY[scope], MENTION_ALIAS_DEFAULTS[scope]),
-                MENTION_ALIAS_DEFAULTS[scope]
-            );
-
-            for(const key of list)
-            {
-                const lower = key.toLowerCase();
-
-                if(seen.has(lower)) continue;
-                seen.add(lower);
-
-                out.push({ key, scope, description: LocalizeText(MENTION_ALIAS_DESCRIPTION_KEY[scope]) });
-            }
-        }
-
-        return out;
-    }, []);
-
-    const mentionSuggestions = useMemo<MentionSuggestion[]>(() =>
-    {
-        if(!mentionContext) return [];
-
-        const query = mentionContext.query.toLowerCase();
-        const out: MentionSuggestion[] = [];
-
-        for(const user of roomUserList)
-        {
-            if(!user || user.type !== USER_TYPE_REAL_USER) continue;
-            if(!user.name) continue;
-            if(query.length > 0 && !user.name.toLowerCase().startsWith(query)) continue;
-
-            out.push({
-                key: `user:${ user.webID }`,
-                kind: 'user',
-                name: user.name,
-                insertToken: user.name,
-                figure: user.figure || ''
-            });
-
-            if(out.length >= MAX_MENTION_SUGGESTIONS) break;
-        }
-
-        for(const alias of mentionAliases)
-        {
-            if(query.length > 0 && !alias.key.toLowerCase().startsWith(query)) continue;
-
-            out.push({
-                key: `alias:${ alias.key }`,
-                kind: 'alias',
-                name: alias.key,
-                insertToken: alias.key,
-                description: alias.description
-            });
-
-            if(out.length >= MAX_MENTION_SUGGESTIONS) break;
-        }
-
-        return out;
-    }, [ mentionContext, roomUserList, mentionAliases ]);
-
-    const mentionSelectorVisible = mentionSuggestions.length > 0;
-
-    useEffect(() =>
-    {
-        if(mentionSelectedIndex >= mentionSuggestions.length) setMentionSelectedIndex(0);
-    }, [ mentionSuggestions.length, mentionSelectedIndex ]);
-
-    const applyMentionSuggestion = useCallback((suggestion: MentionSuggestion) =>
-    {
-        if(!suggestion || !mentionContext) return;
-
-        const before = chatValue.slice(0, mentionContext.replaceFrom);
-        const after = chatValue.slice(mentionContext.replaceTo);
-        const inserted = `@${ suggestion.insertToken } `;
-        const next = `${ before }${ inserted }${ after }`;
-
-        setChatValue(next);
-
-        requestAnimationFrame(() =>
-        {
-            if(!inputRef.current) return;
-            const caret = before.length + inserted.length;
-            inputRef.current.focus();
-            inputRef.current.setSelectionRange(caret, caret);
-        });
-
-        setMentionSelectedIndex(0);
-    }, [ chatValue, mentionContext ]);
+    const mention = useChatMentions(chatValue, setChatValue, inputRef, commandSelectorVisible);
 
     const chatModeIdWhisper = useMemo(() => LocalizeText('widgets.chatinput.mode.whisper'), []);
     const chatModeIdShout = useMemo(() => LocalizeText('widgets.chatinput.mode.shout'), []);
@@ -331,41 +177,30 @@ export const ChatInputView: FC<{}> = props =>
             }
         }
 
-        if(mentionSelectorVisible)
+        if(mention.visible)
         {
             switch(event.key)
             {
                 case 'ArrowUp':
                     event.preventDefault();
-                    setMentionSelectedIndex(prev => (prev <= 0) ? (mentionSuggestions.length - 1) : (prev - 1));
+                    mention.moveUp();
                     return;
                 case 'ArrowDown':
                     event.preventDefault();
-                    setMentionSelectedIndex(prev => (prev >= mentionSuggestions.length - 1) ? 0 : (prev + 1));
+                    mention.moveDown();
                     return;
                 case 'Tab':
                 case 'NumpadEnter':
-                case 'Enter': {
-                    const picked = mentionSuggestions[mentionSelectedIndex] ?? mentionSuggestions[0];
-
-                    if(picked)
+                case 'Enter':
+                    if(mention.applyCurrent())
                     {
                         event.preventDefault();
-                        applyMentionSuggestion(picked);
                         return;
                     }
                     break;
-                }
                 case 'Escape':
                     event.preventDefault();
-                    setMentionSelectedIndex(0);
-					
-                    if(mentionContext)
-                    {
-                        const before = chatValue.slice(0, mentionContext.replaceFrom);
-                        const after = chatValue.slice(mentionContext.replaceTo);
-                        setChatValue(before + after);
-                    }
+                    mention.cancel();
                     return;
             }
         }
@@ -395,7 +230,7 @@ export const ChatInputView: FC<{}> = props =>
                 return;
         }
 
-    }, [ floodBlocked, inputRef, chatModeIdWhisper, anotherInputHasFocus, setInputFocus, checkSpecialKeywordForInput, sendChatValue, commandSelectorVisible, moveUp, moveDown, selectCurrent, closeCommandSelector, mentionSelectorVisible, mentionSuggestions, mentionSelectedIndex, applyMentionSuggestion, mentionContext, chatValue ]);
+    }, [ floodBlocked, inputRef, chatModeIdWhisper, anotherInputHasFocus, setInputFocus, checkSpecialKeywordForInput, sendChatValue, commandSelectorVisible, moveUp, moveDown, selectCurrent, closeCommandSelector, mention, chatValue ]);
 
     useUiEvent<RoomWidgetUpdateChatInputContentEvent>(RoomWidgetUpdateChatInputContentEvent.CHAT_INPUT_CONTENT, event =>
     {
@@ -492,12 +327,12 @@ export const ChatInputView: FC<{}> = props =>
                         onHover={ setSelectedIndex }
                         newStyle={ newStyle }
                     /> }
-                { mentionSelectorVisible && !commandSelectorVisible &&
+                { mention.visible && !commandSelectorVisible &&
                     <ChatInputMentionSelectorView
-                        suggestions={ mentionSuggestions }
-                        selectedIndex={ mentionSelectedIndex }
-                        onSelect={ applyMentionSuggestion }
-                        onHover={ setMentionSelectedIndex }
+                        suggestions={ mention.suggestions }
+                        selectedIndex={ mention.selectedIndex }
+                        onSelect={ mention.apply }
+                        onHover={ mention.setSelectedIndex }
                         newStyle={ newStyle }
                     /> }
                 <div className="flex-1 items-center input-sizer">

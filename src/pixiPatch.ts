@@ -65,7 +65,6 @@ const installPatch = (): void =>
         if(!proto) continue;
 
         if(guardMethod(proto, 'break', name)) patched = true;
-
         if(guardMethod(proto, 'checkAndUpdateTexture', name)) patched = true;
     }
 

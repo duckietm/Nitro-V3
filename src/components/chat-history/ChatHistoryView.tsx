@@ -2,10 +2,10 @@ import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatEntryType, LocalizeText } from '../../api';
 import { Flex, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../common';
-import { useChatHistory, useMentionsSnapshot, useOnClickChat } from '../../hooks';
+import { useChatHistory, useMentionActions, useMentionsSnapshot, useOnClickChat } from '../../hooks';
 import { useUserDataSnapshot } from '../../hooks/session/useSessionSnapshots';
 import { NitroInput } from '../../layout';
-import { MentionRowView, useMentionActions } from '../mentions';
+import { MentionRowView } from '../mentions';
 
 const TAB_CHAT = 'chat';
 const TAB_MENTIONS = 'mentions';

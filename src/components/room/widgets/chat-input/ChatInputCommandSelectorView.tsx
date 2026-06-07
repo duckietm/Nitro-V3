@@ -62,7 +62,7 @@ export const ChatInputCommandSelectorView: FC<ChatInputCommandSelectorViewProps>
                 <span className="chat-input-command-popover-header-dot" aria-hidden />
                 <span>: Command</span>
             </div>
-            <div ref={ listRef } className="chat-input-command-popover-list">
+            <div ref={ listRef } className="chat-input-command-popover-list has-classic-scrollbar">
                 { commands.map((cmd, index) =>
                 {
                     const isSelected = (index === selectedIndex);

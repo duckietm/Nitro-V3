@@ -2,14 +2,16 @@ import { MentionReceivedEvent, MentionsListEvent, RequestMentionsComposer } from
 import { useCallback, useEffect } from 'react';
 import { GetConfigurationValue, IMentionEntry, PlaySound, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
+import { useNotification } from '../notification/useNotification';
 import { addMention, setMentions } from './mentionsStore';
-import { pushMentionToast } from './mentionToastsStore';
 
 // Dedicated mention chime served from nitro-assets/sounds/<sample>.mp3.
 const MENTION_SOUND_SAMPLE = 'mentions_notification';
 
 export const useMentionMessages = (): void =>
 {
+    const { showMentionBubble } = useNotification();
+
     const onMentionsList = useCallback((event: MentionsListEvent) =>
     {
         const list = event.getParser().mentions;
@@ -51,9 +53,10 @@ export const useMentionMessages = (): void =>
 
         if(GetConfigurationValue<boolean>('mentions_ui.sound', true)) PlaySound(MENTION_SOUND_SAMPLE);
 
-        // Notifica laterale custom (avatar + messaggio + dismiss) invece del bubble generico.
-        pushMentionToast(entry);
-    }, []);
+        // Surface it through the client's standard notification stream, using the
+        // dedicated mention bubble layout (avatar + actions).
+        showMentionBubble(entry);
+    }, [ showMentionBubble ]);
 
     useMessageEvent<MentionsListEvent>(MentionsListEvent, onMentionsList);
     useMessageEvent<MentionReceivedEvent>(MentionReceivedEvent, onMentionReceived);

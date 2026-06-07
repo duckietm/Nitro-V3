@@ -36,6 +36,13 @@
     height: 36px;
 }
 
+.nitro-icon.icon-mentions {
+    background-image: url("@/assets/images/toolbar/icons/mentions.png");
+    background-size: contain;
+    width: 36px;
+    height: 32px;
+}
+
 .nitro-icon.icon-buildersclub {
     background-image: url("@/assets/images/toolbar/icons/buildersclub.png");
     background-size: contain;

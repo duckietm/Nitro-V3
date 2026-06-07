@@ -2,10 +2,13 @@ import { GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, useMemo } from 'react';
 import { GetGroupChatData, LocalizeText, MessengerGroupType, MessengerThread, MessengerThreadChat, MessengerThreadChatGroup } from '../../../../../api';
 import { Base, Flex, LayoutAvatarImageView } from '../../../../../common';
+import { useFriends } from '../../../../../hooks';
+import { resolveAvatarFigure } from '../../friends-list/resolveAvatarFigure';
 
 export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread, group: MessengerThreadChatGroup }> = props =>
 {
     const { thread = null, group = null } = props;
+    const { getFriend = null } = useFriends();
 
     const groupChatData = useMemo(() => ((group.type === MessengerGroupType.GROUP_CHAT) && GetGroupChatData(group.chats[0].extraData)), [ group ]);
 
@@ -50,7 +53,7 @@ export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread, group: M
         <Flex fullWidth gap={ 2 } justifyContent={ isOwnChat ? 'end' : 'start' } className={ 'messenger-message-row ' + (isOwnChat ? 'own' : '') }>
             <Base shrink className="message-avatar">
                 { ((group.type === MessengerGroupType.PRIVATE_CHAT) && !isOwnChat) &&
-                    <LayoutAvatarImageView direction={ 2 } figure={ thread.participant.figure } headOnly={ true } /> }
+                    <LayoutAvatarImageView direction={ 2 } figure={ resolveAvatarFigure(getFriend?.(thread.participant.id)?.figure || thread.participant.figure, getFriend?.(thread.participant.id)?.gender ?? thread.participant.gender) } headOnly={ true } /> }
                 { (groupChatData && !isOwnChat) &&
                     <LayoutAvatarImageView direction={ 2 } figure={ groupChatData.figure } headOnly={ true } /> }
             </Base>

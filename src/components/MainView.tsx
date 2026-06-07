@@ -48,7 +48,7 @@ import { UserAccountSettingsView } from './user-settings/UserAccountSettingsView
 import { UserSettingsView } from './user-settings/UserSettingsView';
 import { WiredView } from './wired/WiredView';
 import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
-import { MentionsView, MentionToastsView } from './mentions';
+import { MentionsView } from './mentions';
 
 export const MainView: FC<{}> = props =>
 {
@@ -242,8 +242,6 @@ export const MainView: FC<{}> = props =>
             { GetConfigurationValue<boolean>('radio_ui.enabled', false) && <RadioView /> }
             { (GetConfigurationValue<boolean>('mentions_ui.enabled', true) && mentionsVisible) &&
                 <MentionsView onClose={ () => setMentionsVisible(false) } /> }
-            { GetConfigurationValue<boolean>('mentions_ui.enabled', true) &&
-                <MentionToastsView /> }
             <ExternalPluginLoader />
         </>
     );

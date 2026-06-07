@@ -1,7 +1,7 @@
 import { AddLinkEventTracker, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { BadgeLeaderboardBoard, BadgeLeaderboardEntry, BadgeRarityKey, fetchBadgeLeaderboard, getCachedBadgeLeaderboard, LocalizeText } from '../../api';
-import { Column, DraggableWindow, DraggableWindowPosition, Flex, Text } from '../../common';
+import { Column, DraggableWindow, DraggableWindowPosition, Flex, LayoutAvatarImageView, Text } from '../../common';
 import {
     badgeEmblemAchievement,
     badgeEmblemCommon,
@@ -40,12 +40,6 @@ const RARITY_ASSETS: Record<BadgeRarityKey, { frame: string; emblem: string }> =
 
 const RARITY_ORDER: BadgeRarityKey[] = [ 'common', 'rare', 'epic', 'legendary', 'mythical', 'unique' ];
 const PAGE_SIZE = 10;
-const getAvatarHeadUrl = (figure: string): string =>
-{
-    if(!figure) return '';
-
-    return `https://www.habbo.com/habbo-imaging/avatarimage?figure=${ encodeURIComponent(figure) }&direction=2&head_direction=2&gesture=sml&size=m&headonly=1`;
-};
 
 export const BadgeLeaderboardView: FC<{}> = props =>
 {
@@ -310,7 +304,7 @@ const LeaderboardRow: FC<LeaderboardRowProps> = props =>
         <div className={ `nitro-badge-leaderboard__row ${ isCurrentUser ? 'is-current-user' : '' } ${ ((rowIndex % 2) === 0) ? 'is-even' : 'is-odd' }` }>
             <div className={ `nitro-badge-leaderboard__rank ${ rankClassName }` }>{ entry.rank }</div>
             <div className="nitro-badge-leaderboard__avatar">
-                <img className="nitro-badge-leaderboard__avatar-image" src={ getAvatarHeadUrl(entry.figure) } alt="" loading="lazy" />
+                <LayoutAvatarImageView figure={ entry.figure } headOnly direction={ 2 } />
             </div>
             <Text className="nitro-badge-leaderboard__username" bold>{ entry.username }</Text>
             <Text className="nitro-badge-leaderboard__score" bold>{ entry.score }</Text>

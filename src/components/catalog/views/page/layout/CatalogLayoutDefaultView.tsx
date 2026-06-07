@@ -103,7 +103,7 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
             <div className="nitro-catalog-classic-grid-shell flex-1 overflow-auto min-h-0">
                 { GetConfigurationValue('catalog.headers') &&
                     <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) } /> }
-                <CatalogItemGridWidgetView className="nitro-catalog-classic-grid" columnCount={ 7 } columnMinHeight={ 70 } columnMinWidth={ 45 } />
+                <CatalogItemGridWidgetView className="nitro-catalog-classic-grid" columnCount={ 6 } columnMinHeight={ 80 } columnMinWidth={ 55 } />
             </div>
 
             { currentOffer &&

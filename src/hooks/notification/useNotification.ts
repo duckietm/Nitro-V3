@@ -1,7 +1,7 @@
 import { AchievementNotificationMessageEvent, ActivityPointNotificationMessageEvent, BadgeReceivedEvent, ClubGiftNotificationEvent, ClubGiftSelectedEvent, ConnectionErrorEvent, GetLocalizationManager, GetRoomEngine, GetSessionDataManager, HabboBroadcastMessageEvent, HotelClosedAndOpensEvent, HotelClosesAndWillOpenAtEvent, HotelWillCloseInMinutesEvent, InfoFeedEnableMessageEvent, MaintenanceStatusMessageEvent, ModeratorCautionEvent, ModeratorMessageEvent, MOTDNotificationEvent, NotificationDialogMessageEvent, PetLevelNotificationEvent, PetReceivedMessageEvent, RespectReceivedEvent, RoomEnterEffect, RoomEnterEvent, SimpleAlertMessageEvent, UserBannedMessageEvent, Vector3d, WiredRewardResultMessageEvent } from '@nitrots/nitro-renderer';
 import { useCallback, useState } from 'react';
 import { useBetween } from 'use-between';
-import { GetConfigurationValue, LocalizeBadgeName, LocalizeText, NotificationAlertItem, NotificationAlertType, NotificationBubbleItem, NotificationBubbleType, NotificationConfirmItem, PlaySound, ProductImageUtility, TradingNotificationType } from '../../api';
+import { GetConfigurationValue, IMentionEntry, LocalizeBadgeName, LocalizeText, MentionNotificationBubbleItem, NotificationAlertItem, NotificationAlertType, NotificationBubbleItem, NotificationBubbleType, NotificationConfirmItem, PlaySound, ProductImageUtility, TradingNotificationType } from '../../api';
 import { useMessageEvent } from '../events';
 
 const cleanText = (text: string) => (text && text.length) ? text.replace(/\\r/g, '\r') : '';
@@ -85,6 +85,16 @@ const useNotificationStore = () =>
             return [ notificationItem, ...prevValue ];
         });
     }, [ bubblesDisabled ]);
+
+    const showMentionBubble = useCallback((mention: IMentionEntry) =>
+    {
+        // Mentions always surface: they have their own `mentions_ui.enabled` gate
+        // (checked in useMentionMessages) and are intentionally independent of the
+        // generic info-feed toggle, so EVERY received mention shows a bubble.
+        const item = new MentionNotificationBubbleItem(mention);
+
+        setBubbleAlerts(prevValue => [ item, ...prevValue ]);
+    }, []);
 
     const showNotification = (type: string, options: Map<string, string> = null) =>
     {
@@ -490,7 +500,7 @@ const useNotificationStore = () =>
 
     useMessageEvent<RoomEnterEvent>(RoomEnterEvent, onRoomEnterEvent);
 
-    return { alerts, bubbleAlerts, confirms, simpleAlert, showNitroAlert, showTradeAlert, showConfirm, showSingleBubble, closeAlert, closeBubbleAlert, closeConfirm };
+    return { alerts, bubbleAlerts, confirms, simpleAlert, showNitroAlert, showTradeAlert, showConfirm, showSingleBubble, showMentionBubble, closeAlert, closeBubbleAlert, closeConfirm };
 };
 
 export const useNotificationState = () =>
@@ -508,6 +518,7 @@ export const useNotificationActions = () =>
         showTradeAlert,
         showConfirm,
         showSingleBubble,
+        showMentionBubble,
         closeAlert,
         closeBubbleAlert,
         closeConfirm
@@ -519,6 +530,7 @@ export const useNotificationActions = () =>
         showTradeAlert,
         showConfirm,
         showSingleBubble,
+        showMentionBubble,
         closeAlert,
         closeBubbleAlert,
         closeConfirm

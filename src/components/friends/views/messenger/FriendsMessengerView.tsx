@@ -3,7 +3,8 @@ import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { GetUserProfile, LocalizeText, ReportType, SendMessageComposer } from '../../../../api';
 import { DraggableWindowPosition, LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
-import { useHelp, useMessenger, useTranslation } from '../../../../hooks';
+import { useFriends, useHelp, useMessenger, useTranslation } from '../../../../hooks';
+import { resolveAvatarFigure } from '../friends-list/resolveAvatarFigure';
 import { FriendsMessengerThreadView } from './messenger-thread/FriendsMessengerThreadView';
 
 export const FriendsMessengerView: FC<{}> = props =>
@@ -12,6 +13,7 @@ export const FriendsMessengerView: FC<{}> = props =>
     const [ lastThreadId, setLastThreadId ] = useState(-1);
     const [ messageText, setMessageText ] = useState('');
     const { visibleThreads = [], activeThread = null, getMessageThread = null, sendMessage = null, setActiveThreadId = null, closeThread = null, typingUserIds = [], sendTypingStatus = null } = useMessenger();
+    const { getFriend = null } = useFriends();
     const { report = null } = useHelp();
     const { settings, translateOutgoing } = useTranslation();
     const messagesBox = useRef<HTMLDivElement>(null);
@@ -185,12 +187,22 @@ export const FriendsMessengerView: FC<{}> = props =>
                     <div className="messenger-avatar-bar">
                         { visibleThreads && (visibleThreads.length > 0) && visibleThreads.map(thread =>
                         {
+                            const isStaff = (thread.participant.id <= 0);
+                            // Read the live look from the friend list (same source the friends
+                            // list renders) so offline friends show their real avatar instead
+                            // of the standard/anonymous one; resolveAvatarFigure is the final
+                            // fallback when the look is genuinely missing.
+                            const liveFriend = isStaff ? null : getFriend(thread.participant.id);
+                            const figure = isStaff
+                                ? (thread.participant.figure === 'ADM' ? 'ha-3409-1413-70.lg-285-89.ch-3032-1334-109.sh-3016-110.hd-185-1359.ca-3225-110-62.wa-3264-62-62.fa-1206-90.hr-3322-1403' : thread.participant.figure)
+                                : resolveAvatarFigure(liveFriend?.figure || thread.participant.figure, liveFriend?.gender ?? thread.participant.gender);
+
                             return (
                                 <button key={ thread.threadId } className={ 'messenger-avatar-tab' + ((activeThread === thread) ? ' active' : '') + (thread.unread ? ' unread' : '') } onClick={ event => setActiveThreadId(thread.threadId) }>
                                     <LayoutAvatarImageView
-                                        figure={ thread.participant.id > 0 ? thread.participant.figure : thread.participant.figure === 'ADM' ? 'ha-3409-1413-70.lg-285-89.ch-3032-1334-109.sh-3016-110.hd-185-1359.ca-3225-110-62.wa-3264-62-62.fa-1206-90.hr-3322-1403' : thread.participant.figure }
+                                        figure={ figure }
                                         headOnly={ true }
-                                        direction={ thread.participant.id > 0 ? 2 : 3 }
+                                        direction={ isStaff ? 3 : 2 }
                                     />
                                 </button>
                             );

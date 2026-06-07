@@ -1,17 +1,6 @@
 import { FC, useEffect, useRef } from 'react';
 import { LayoutAvatarImageView } from '../../../../common';
-
-export type MentionSuggestionKind = 'user' | 'alias';
-
-export interface MentionSuggestion
-{
-    key: string;
-    kind: MentionSuggestionKind;
-    name: string;
-    insertToken: string;
-    figure?: string;
-    description?: string;
-}
+import { MentionSuggestion } from '../../../../hooks/rooms/widgets/useChatMentions.helpers';
 
 interface ChatInputMentionSelectorViewProps
 {
@@ -99,7 +88,7 @@ export const ChatInputMentionSelectorView: FC<ChatInputMentionSelectorViewProps>
                 <span className="chat-input-mention-popover-header-dot" aria-hidden />
                 <span>@ Mention</span>
             </div>
-            <div ref={ listRef } className="chat-input-mention-popover-list">
+            <div ref={ listRef } className="chat-input-mention-popover-list has-classic-scrollbar">
                 { suggestions.map((suggestion, index) =>
                 {
                     const isSelected = (index === selectedIndex);

@@ -1,3 +1,3 @@
 export * from './useMentionsSnapshot';
 export * from './useMentionMessages';
-export * from './useMentionAutocomplete';
+export * from './useMentionActions';

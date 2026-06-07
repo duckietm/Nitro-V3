@@ -19,7 +19,7 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
         if(!product) return;
 
         roomPreviewer.reset(false);
-        roomPreviewer.updateObjectRoom('default', 'default', 'default');
+        roomPreviewer.updateObjectRoom('111', '217', '1.1');
         roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
         const populate = () =>
@@ -91,7 +91,7 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
                             return;
                         }
                         default:
-                            roomPreviewer.updateObjectRoom('default', 'default', 'default');
+                            roomPreviewer.updateObjectRoom('101', '101', '1.1');
                             roomPreviewer.addWallItemIntoRoom(product.productClassId, new Vector3d(90), product.extraParam);
                             return;
                     }
@@ -106,13 +106,6 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
         };
 
         populate();
-
-        // RoomPreviewer.addFurnitureIntoRoom / addAvatarIntoRoom flip
-        // _automaticStateChange to true, which makes the ticker advance
-        // the room object's state every AUTOMATIC_STATE_CHANGE_INTERVAL.
-        // In the catalog we want the preview to sit still until the
-        // user clicks the state button explicitly - turn it back off
-        // after populate() runs.
         roomPreviewer.setAutomaticStateChange(false);
     }, [ currentOffer, previewStuffData, roomPreviewer ]);
 
@@ -132,11 +125,5 @@ export const CatalogViewProductWidgetView: FC<{}> = props =>
         );
     }
 
-    // Re-mount the previewer whenever the offer changes so the render
-    // latch / texture handle in LayoutRoomPreviewerView resets cleanly.
-    // Without this a single broken offer (e.g. blackhole's Pixi filter
-    // crash) latches the previewer permanently and every following
-    // offer paints nothing - the singleton roomPreviewer + 240px height
-    // keep the same component mounted otherwise.
     return <LayoutRoomPreviewerView key={ currentOffer?.offerId } height={ 240 } roomPreviewer={ roomPreviewer } />;
 };

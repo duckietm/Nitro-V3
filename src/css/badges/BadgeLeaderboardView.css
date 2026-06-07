@@ -258,30 +258,28 @@
 }
 
 .nitro-badge-leaderboard__avatar {
-    width: 54px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: visible;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
     margin: 0 auto;
     align-self: center;
 }
 
-.nitro-badge-leaderboard__avatar .avatar-image,
-.nitro-badge-leaderboard__avatar-image {
-    display: block;
-    width: auto !important;
-    height: auto !important;
-    max-width: 54px;
-    max-height: 62px;
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    bottom: auto !important;
-    margin: 0 auto;
+/* The renderer-backed LayoutAvatarImageView (headOnly) draws the avatar head as
+   an absolutely-positioned background div (`.avatar-image`), not an <img>. Frame
+   it the same way the friends list does, scaled up for the larger row. */
+.nitro-badge-leaderboard__avatar .avatar-image {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    background-repeat: no-repeat;
+    background-size: 82px auto !important;
+    background-position: -20px -24px !important;
+    transform: none !important;
     image-rendering: pixelated;
-    object-fit: contain;
 }
 
 .nitro-badge-leaderboard__username {

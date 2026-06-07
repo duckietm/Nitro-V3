@@ -1,8 +1,8 @@
 import { FC, MouseEvent } from 'react';
-import { IMentionEntry, LocalizeText, MentionType } from '../../api';
-import { Flex, Text } from '../../common';
+import { FaArrowRight, FaTimes } from 'react-icons/fa';
+import { formatMentionTime, IMentionEntry, LocalizeText, MentionType } from '../../api';
+import { LayoutAvatarImageView } from '../../common';
 import { MentionMessageView } from './MentionMessageView';
-import { formatMentionTime } from './mentionsFormat';
 
 interface MentionRowViewProps
 {
@@ -28,39 +28,31 @@ export const MentionRowView: FC<MentionRowViewProps> = props =>
     };
 
     return (
-        <Flex pointer alignItems="center" className="group relative px-1 py-[3px] rounded hover:bg-black/5" gap={ 2 } onClick={ () => onOpen(mention) }>
-            <span
-                className={ `inline-block w-[8px] h-[8px] rounded-full shrink-0 ${ mention.read ? 'bg-transparent' : 'bg-[#1e7295]' }` }
-                title={ mention.read ? '' : LocalizeText('mentions.filter.unread') } />
-            <span
-                title={ typeTitle }
-                className={ `flex items-center justify-center shrink-0 w-[18px] h-[18px] rounded text-[10px] font-bold leading-none text-white ${ isRoom ? 'bg-[#d08a1e]' : 'bg-[#1e7295]' }` }>
-                { isRoom ? '@∗' : '@' }
-            </span>
-            <Flex grow column className="min-w-0" gap={ 0 }>
-                <Flex alignItems="center" gap={ 1 } className="min-w-0">
-                    <Text bold={ !mention.read } truncate variant="primary">{ mention.senderUsername }</Text>
-                    { (mention.roomName && mention.roomName.length > 0) &&
-                        <Text small truncate variant="gray">· { mention.roomName }</Text> }
-                </Flex>
-                <MentionMessageView className="block truncate text-black text-sm" ownUsername={ ownUsername } text={ mention.message } />
-            </Flex>
-            <Flex alignItems="center" gap={ 1 } className="shrink-0">
+        <div className={ `mention-row ${ mention.read ? '' : 'is-unread' }` } onClick={ () => onOpen(mention) }>
+            { !mention.read &&
+                <span className="mention-row-unread-dot" aria-hidden /> }
+            <div className="mention-row-avatar" title={ typeTitle }>
+                <LayoutAvatarImageView headOnly direction={ 2 } figure={ mention.senderFigure } />
+                <span className={ `mention-row-type ${ isRoom ? 'is-room' : 'is-direct' }` }>{ isRoom ? '∗' : '@' }</span>
+            </div>
+            <div className="mention-row-body">
+                <div className="mention-row-head">
+                    <span className="mention-row-name">{ mention.senderUsername }</span>
+                    { (mention.roomName && (mention.roomName.length > 0)) &&
+                        <span className="mention-row-room">· { mention.roomName }</span> }
+                </div>
+                <MentionMessageView className="mention-row-msg" ownUsername={ ownUsername } text={ mention.message } />
+            </div>
+            <div className="mention-row-meta">
                 { (time.length > 0) &&
-                    <Text small variant="gray" className="tabular-nums group-hover:hidden">{ time }</Text> }
-                <Flex alignItems="center" gap={ 1 } className="hidden group-hover:flex">
+                    <span className="mention-row-time">{ time }</span> }
+                <div className="mention-row-actions">
                     { onGoto &&
-                        <span
-                            title={ LocalizeText('mentions.action.goto') }
-                            className="flex items-center justify-center w-[18px] h-[18px] rounded bg-black/10 hover:bg-black/20 text-[12px] leading-none"
-                            onClick={ event => stop(event, () => onGoto(mention)) }>→</span> }
+                        <button type="button" className="mention-row-action" title={ LocalizeText('mentions.action.goto') } onClick={ event => stop(event, () => onGoto(mention)) }><FaArrowRight /></button> }
                     { onRemove &&
-                        <span
-                            title={ LocalizeText('mentions.action.remove') }
-                            className="flex items-center justify-center w-[18px] h-[18px] rounded bg-black/10 hover:bg-red-500 hover:text-white text-[11px] leading-none"
-                            onClick={ event => stop(event, () => onRemove(mention)) }>✕</span> }
-                </Flex>
-            </Flex>
-        </Flex>
+                        <button type="button" className="mention-row-action is-remove" title={ LocalizeText('mentions.action.remove') } onClick={ event => stop(event, () => onRemove(mention)) }><FaTimes /></button> }
+                </div>
+            </div>
+        </div>
     );
 };

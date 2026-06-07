@@ -151,10 +151,6 @@
     display: none !important;
 }
 
-/* Publish button: lives inside the catalog window, absolutely
-   positioned in the header just to the left of the close X. Renders
-   only when adminMode is true (see CatalogClassicView.tsx). Uses the
-   Habbo yellow buy-button skin so it matches the Koop button. */
 .nitro-catalog-classic-window .nitro-catalog-classic-header-publish {
     position: absolute !important;
     top: 5px !important;
@@ -179,17 +175,7 @@
     50%      { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(140, 75, 0, 0.35), 0 0 8px rgba(255, 200, 0, 0.75); }
 }
 
-/* Catalog default-layout admin row (Pagina bewerken / Nieuwe
-   aanbieding / Aanbieding bewerken). These are inline text buttons
-   but the .habbo-swf-window button + .habbo-swf-window
-   button[class*="success"] global rules were dressing them up as
-   SWF skin buttons (one yellow!) and forcing min-height: 22px which
-   broke the layout. Reset and re-skin as compact pill chips. */
 .nitro-catalog-classic-window .nitro-catalog-classic-default-admin {
-    /* Keep all admin buttons on one row so the product-view doesn't
-       get pushed down into the absolutely-positioned grid-shell. If
-       a future label makes them overflow, the row scrolls
-       horizontally instead of wrapping. */
     flex-wrap: nowrap !important;
     align-items: center !important;
     gap: 6px !important;
@@ -239,8 +225,6 @@
     box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 0 0 rgba(0, 0, 0, 0) !important;
 }
 
-/* The "Nieuwe aanbieding" button uses text-success - give it the
-   habbo-yellow buy-button palette to mark it as the create action. */
 .nitro-catalog-classic-window .nitro-catalog-classic-default-admin button.text-success,
 .nitro-catalog-classic-window .nitro-catalog-classic-default-admin button[class*="success"] {
     border-color: #8a5b00 !important;
@@ -270,10 +254,6 @@
     margin-left: 4px !important;
 }
 
-/* Admin cog tab at the end of the tab strip - only renders when the
-   user is a mod, so leaving it visible at all times is safe. Style
-   it as a compact square that sits flush with the other tabs
-   instead of stretching to flex: 1 like a category tab. */
 .nitro-catalog-classic-tabs-shell .nitro-card-tab-item.nitro-catalog-classic-admin-tab {
     flex: 0 0 auto !important;
     width: 32px !important;
@@ -343,9 +323,6 @@
 }
 
 .nitro-catalog-classic-tabs-shell {
-    /* Strip just tall enough to hold the 36px tab + 4px of breathing
-       room above. Trims the dead blue band between the header and
-       the tabs so the catalog body doesn't lose vertical space. */
     flex: 0 0 40px;
     height: 40px;
     min-height: 40px;
@@ -353,8 +330,6 @@
     gap: 0;
     padding: 4px 6px 0 !important;
     align-items: flex-end;
-    /* Horizontal scroll so every category tab stays reachable when the
-       card is narrower than the total tab width. */
     overflow-x: auto;
     overflow-y: hidden;
     flex-wrap: nowrap;
@@ -365,8 +340,6 @@
     border-bottom: 1px solid #c8c8bf;
 }
 
-/* The tabs strip uses a slim 6px scrollbar - opt it out of the
-   17px Habbo-sprite scrollbar applied to the rest of the catalog. */
 .nitro-catalog-classic-tabs-shell::-webkit-scrollbar {
     width: 6px !important;
     height: 6px !important;
@@ -397,18 +370,11 @@
     gap: 4px;
     height: 36px;
     min-width: 0;
-    /* Equal-width tabs that share the strip exactly - the right
-       edge of the last tab now lines up with the right edge of the
-       catalog window, no trailing gap. */
     flex: 1 1 0;
     max-width: none;
     padding: 6px 6px 7px;
     margin: 0 2px 0 0;
     flex-shrink: 1;
-    /* Classic Habbo tab: gray rounded-top rectangle with a 1px black
-       outline. ubuntu_tab3_*.png isn't shipped, so we draw the
-       habbo-look ourselves instead of border-image-slicing a missing
-       sprite. */
     border: 1px solid #000 !important;
     border-bottom: 0 !important;
     border-radius: 6px 6px 0 0 !important;
@@ -425,9 +391,6 @@
     border-image-source: none !important;
 }
 
-/* Bring the last tab flush with whatever follows (admin cog, edge),
-   instead of leaving the negative right margin tugging on empty
-   space. */
 .nitro-catalog-classic-tabs-shell .nitro-card-tab-item:last-of-type {
     margin-right: 0;
 }
@@ -442,9 +405,6 @@
     line-height: 17px;
 }
 
-/* Category icon that sits before the label. The blanket "hide every
-   img/svg inside a tab" rule is gone - we explicitly size the
-   classic tab icon and let everything else fall through. */
 .nitro-catalog-classic-tab-icon {
     width: 18px;
     height: 18px;
@@ -460,9 +420,6 @@
 
 .nitro-catalog-classic-tabs-shell .nitro-card-tab-item-active {
     z-index: 2;
-    /* Active tab: the catalog-header habbo-blue with the cream catalog
-       body bleeding up into it. Drop the bottom border so the tab
-       "merges" with the panel below. */
     background:
         linear-gradient(180deg, #4fb3ff 0%, var(--catalog-swf-blue) 100%) !important;
     color: #ffffff !important;
@@ -490,10 +447,6 @@
 
 .nitro-catalog-classic-stage {
     display: grid;
-    /* Sidebar pinned at 184px; the layout column takes the rest of
-       the stage row so the right edge of the right column lines up
-       with the right edge of the catalog window instead of leaving a
-       wide cream strip. */
     grid-template-columns: 184px 1fr;
     gap: 8px;
     width: 100%;
@@ -515,14 +468,9 @@
 
 .nitro-catalog-classic-search-shell {
     position: relative;
-    /* Use flex so the input vertically centers inside the 24px shell
-       regardless of the input's own intrinsic baseline. */
     display: flex;
     align-items: center;
     height: 24px;
-    /* Outer padding 0, negative horizontal margin bleeds the shell a
-       couple of pixels past its sidebar column on each side without
-       touching the grid template - cheap way to look ~4px wider. */
     padding: 0;
     margin: -2px -1px 0 -1px;
     border: 1px solid #b7b7ae;
@@ -530,10 +478,6 @@
     background: #f7f7f2;
 }
 
-/* Clear the magnifying-glass on the left and the X-clear button on the
-   right. The shell's own outer padding is essentially zero, so the
-   input claims the full sidebar column width minus just enough to
-   keep the icons from overlapping the text. */
 .nitro-catalog-classic-search-shell input {
     flex: 1 1 auto;
     width: 100% !important;
@@ -550,8 +494,6 @@
     vertical-align: middle !important;
 }
 
-/* The wrapping div the React component renders is 100% wide so the
-   input fills the shell instead of shrinking to content. */
 .nitro-catalog-classic-search-shell > div {
     width: 100% !important;
     height: 100% !important;
@@ -562,13 +504,10 @@
     font-size: 11px !important;
 }
 
-/* The search icon ships with absolute + left-2; nudge it tight to the
-   shell edge so the input can keep its left padding small. */
 .nitro-catalog-classic-search-shell svg:first-child {
     left: 4px !important;
 }
 
-/* X-clear button on the right edge - keep it tight too. */
 .nitro-catalog-classic-search-shell button {
     right: 4px !important;
 }
@@ -703,20 +642,11 @@
 .nitro-catalog-classic-default-layout {
     position: relative;
     display: block !important;
-    /* Fill the layout container in both axes - the stage was
-       previously 552px wide and this column was pinned at 360px, but
-       now that the stage uses 1fr, hardcoding 360px would leave a
-       wide blank strip on the right of every default-layout catalog
-       page. */
     width: 100%;
     height: 100%;
     min-height: 460px;
 }
 
-/* The product-view, grid-shell, price-row and purchase-row inside
-   the default-layout were each pinned at 360px to match the old
-   stage width. Widen them in lockstep so they fill the new
-   1fr-sized container. */
 .nitro-catalog-classic-product-view,
 .nitro-catalog-classic-grid-shell,
 .nitro-catalog-classic-price-row,
@@ -756,12 +686,6 @@
     height: 100%;
 }
 
-/* Default-3x3 layout: .offer-info is rendered but hidden via the
-   display: none rule below, so the panel reserved the full width
-   while only the 360px preview was visible (empty strip on the
-   right). Center the preview inside the panel instead so the gap
-   becomes symmetric padding on both sides. Color-grouping doesn't
-   render .offer-info so its panel keeps the existing layout. */
 .nitro-catalog-classic-offer-panel:has(> .nitro-catalog-classic-offer-info) {
     justify-content: center;
 }
@@ -774,13 +698,6 @@
     background: #000;
 }
 
-/* The default-3x3 layout puts the preview next to .offer-info inside
-   .offer-panel and needs the 360px column. Scope the pin to that
-   context so other layouts (color-grouping, etc.) can put the same
-   preview class inside a flex/grid column and let it track the
-   container width. Without this scoping the absolute-positioned
-   rotate/state buttons sit past the column's right edge and get
-   clipped by overflow: hidden. */
 .nitro-catalog-classic-offer-panel > .nitro-catalog-classic-offer-preview {
     width: 360px;
     min-width: 360px;
@@ -846,8 +763,6 @@
     position: absolute;
     left: 0;
     top: 245px;
-    /* Stretch down to just above the price + purchase rows so the
-       grid soaks up any extra height the bigger window gives us. */
     bottom: 68px;
     width: 360px;
     min-height: 0;
@@ -855,20 +770,12 @@
     overflow: auto;
 }
 
-/* When the admin row is rendered above the product-view it adds
-   ~30px (22px button + flex gap) to the flex column, but the
-   grid-shell is absolutely positioned and doesn't shift on its own.
-   Push it (and the bottom-anchored price/purchase rows stay put)
-   down so the preview panel no longer bleeds into the grid. */
 .nitro-catalog-classic-default-layout:has(.nitro-catalog-classic-default-admin) .nitro-catalog-classic-grid-shell {
     top: 280px !important;
 }
 
 .nitro-catalog-classic-grid {
-    /* Don't pin a fixed column track here - AutoGrid sets the inline
-       grid-template-columns from its columnMinWidth prop. The earlier
-       `repeat(6, 53px) !important` was clobbering that and freezing
-       the row at 6 tiles regardless of what the React layout passed. */
+    grid-template-columns: repeat(6, 1fr) !important;
     grid-auto-rows: var(--nitro-grid-column-min-height, 70px);
     align-content: start;
     justify-content: start;
@@ -943,30 +850,20 @@
 }
 
 .nitro-catalog-classic-grid-offer-icon {
-    position: absolute;
-    left: 50%;
-    top: 20px;
     width: auto !important;
     height: auto !important;
-    max-width: 36px;
-    max-height: 36px;
+    image-rendering: pixelated;
     object-fit: contain;
-    transform: translate(-50%, -50%);
     pointer-events: none;
 }
 
 .nitro-catalog-classic-grid-price {
-    position: absolute;
-    left: 2px;
-    right: 2px;
-    top: 36px;
-    bottom: auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
-    gap: 0;
-    min-height: 24px;
+    justify-content: center;
+    gap: 3px;
+    width: 100%;
     color: #000;
     font-size: 11px;
     font-weight: 700;
@@ -1015,11 +912,15 @@
 }
 
 .nitro-catalog-classic-grid-price.is-single-price {
-    height: 19px;
+    height: auto;
+    min-height: 0;
 }
 
 .nitro-catalog-classic-grid-price.is-multi-price {
-    height: 38px;
+    height: auto;
+    min-height: 0;
+    flex-wrap: wrap;
+    row-gap: 1px;
 }
 
 .nitro-catalog-classic-grid-price-entry {
@@ -1452,8 +1353,8 @@
 .nitro-catalog-classic-window .nitro-catalog-classic-grid-shell::-webkit-scrollbar,
 .nitro-catalog-classic-window .nitro-catalog-classic-grid::-webkit-scrollbar,
 .nitro-catalog-classic-window .nitro-catalog-classic-layout-container::-webkit-scrollbar {
-    width: 17px;
-    height: 17px;
+    width: 18px;
+    height: 18px;
 }
 
 .nitro-catalog-classic-window * {
@@ -1462,116 +1363,120 @@
 }
 
 .nitro-catalog-classic-window *::-webkit-scrollbar {
-    width: 17px !important;
-    height: 17px !important;
-    background-color: #e7e5d8 !important;
+    width: 18px !important;
+    height: 18px !important;
+    background-color: #bdbbb3 !important;
 }
 
 .nitro-catalog-classic-window *::-webkit-scrollbar-track {
     background-image: none !important;
-    background-color: #e7e5d8 !important;
-    box-shadow: inset 1px 0 0 #b9b6a5, inset -1px 0 0 #ffffff !important;
+    background-color: #bdbbb3 !important;
+    box-shadow: inset 1px 0 0 #000000 !important;
     border: 0 !important;
 }
 
 .nitro-catalog-classic-window *::-webkit-scrollbar-thumb {
-    min-height: 28px !important;
-    border: 1px solid #2a2a26 !important;
-    border-radius: 2px !important;
+    /* Grip: a single 2px #a0a0a0 stripe in an 8px-wide centered band,
+       repeated every 5px (2px stripe + 3px body gap).
+       Outline: 1px black border, then a 2px white inset frame inside it. */
+    min-height: 24px !important;
     background:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='9'><line x1='1' y1='1' x2='9' y2='1' stroke='%23dcdcd2' stroke-width='1'/><line x1='1' y1='3' x2='9' y2='3' stroke='%235e5e58' stroke-width='1'/><line x1='1' y1='5' x2='9' y2='5' stroke='%23dcdcd2' stroke-width='1'/><line x1='1' y1='7' x2='9' y2='7' stroke='%235e5e58' stroke-width='1'/></svg>") center center / 10px 9px no-repeat,
-        linear-gradient(180deg, #d6d6cc 0%, #b4b4aa 30%, #9a9a90 50%, #b4b4aa 70%, #d6d6cc 100%) !important;
-    background-color: #a8a89e !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.55),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.4) !important;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5'><rect x='0' y='0' width='8' height='2' fill='%23a0a0a0'/></svg>") center top / 8px 5px repeat-y,
+        #d9d9d9 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 3px !important;
+    box-shadow: inset 0 0 0 2px #ffffff !important;
 }
 
 .nitro-catalog-classic-window *::-webkit-scrollbar-thumb:hover {
     background:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='9'><line x1='1' y1='1' x2='9' y2='1' stroke='%23ececea' stroke-width='1'/><line x1='1' y1='3' x2='9' y2='3' stroke='%235e5e58' stroke-width='1'/><line x1='1' y1='5' x2='9' y2='5' stroke='%23ececea' stroke-width='1'/><line x1='1' y1='7' x2='9' y2='7' stroke='%235e5e58' stroke-width='1'/></svg>") center center / 10px 9px no-repeat,
-        linear-gradient(180deg, #e0e0d6 0%, #bebeb4 30%, #a4a49a 50%, #bebeb4 70%, #e0e0d6 100%) !important;
-    background-color: #b2b2a8 !important;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5'><rect x='0' y='0' width='8' height='2' fill='%23ababab'/></svg>") center top / 8px 5px repeat-y,
+        #e3e3e3 !important;
 }
 
 .nitro-catalog-classic-window *::-webkit-scrollbar-thumb:active {
     background:
-        linear-gradient(180deg, #c6c6bc 0%, #a4a49a 30%, #8a8a82 50%, #a4a49a 70%, #c6c6bc 100%) !important;
-    background-color: #9a9a90 !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.25) !important;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5'><rect x='0' y='0' width='8' height='2' fill='%23606060'/></svg>") center top / 8px 5px repeat-y,
+        #bcbcbc !important;
 }
 
+/* Arrow buttons: light grey cap with rounded OUTER corners (up button
+   rounded at the top, down button rounded at the bottom), 1px black
+   border, dark chevron via inline SVG. */
 .nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:vertical:decrement {
     display: block !important;
-    width: 17px !important;
-    height: 16px !important;
+    width: 18px !important;
+    height: 18px !important;
     background:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6'><polygon points='4.5,0 9,6 0,6' fill='%23142536'/></svg>") center center / 9px 6px no-repeat,
-        linear-gradient(180deg, #f3f1e6 0%, #d8d6c8 100%) !important;
-    background-color: #e7e5d8 !important;
-    border: 1px solid #0b2d3a !important;
-    border-radius: 2px !important;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6'><polygon points='4.5,0 9,6 0,6' fill='%23222'/></svg>") center center / 9px 6px no-repeat,
+        #d9d9d9 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 3px 3px 0 0 !important;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.18) !important;
+        inset 0 1px 0 #ffffff,
+        inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
 }
 .nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:vertical:decrement:active {
     background:
         url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6'><polygon points='4.5,0 9,6 0,6' fill='%23000'/></svg>") center center / 9px 6px no-repeat,
-        linear-gradient(180deg, #c7c5b8 0%, #aeaca0 100%) !important;
-    background-color: #c7c5b8 !important;
+        #bcbcbc !important;
 }
 
 .nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:vertical:increment {
     display: block !important;
-    width: 17px !important;
-    height: 16px !important;
+    width: 18px !important;
+    height: 18px !important;
     background:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6'><polygon points='0,0 9,0 4.5,6' fill='%23142536'/></svg>") center center / 9px 6px no-repeat,
-        linear-gradient(180deg, #f3f1e6 0%, #d8d6c8 100%) !important;
-    background-color: #e7e5d8 !important;
-    border: 1px solid #0b2d3a !important;
-    border-radius: 2px !important;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6'><polygon points='0,0 9,0 4.5,6' fill='%23222'/></svg>") center center / 9px 6px no-repeat,
+        #d9d9d9 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 0 3px 3px !important;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.18) !important;
+        inset 0 1px 0 #ffffff,
+        inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
 }
 .nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:vertical:increment:active {
     background:
         url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='6'><polygon points='0,0 9,0 4.5,6' fill='%23000'/></svg>") center center / 9px 6px no-repeat,
-        linear-gradient(180deg, #c7c5b8 0%, #aeaca0 100%) !important;
-    background-color: #c7c5b8 !important;
+        #bcbcbc !important;
 }
 
 .nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:horizontal:decrement {
     display: block !important;
-    width: 16px !important;
-    height: 17px !important;
+    width: 18px !important;
+    height: 18px !important;
     background:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='9'><polygon points='0,4.5 6,0 6,9' fill='%23142536'/></svg>") center center / 6px 9px no-repeat,
-        linear-gradient(180deg, #f3f1e6 0%, #d8d6c8 100%) !important;
-    background-color: #e7e5d8 !important;
-    border: 1px solid #0b2d3a !important;
-    border-radius: 2px !important;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='9'><polygon points='0,4.5 6,0 6,9' fill='%23222'/></svg>") center center / 6px 9px no-repeat,
+        #d9d9d9 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 3px 0 0 3px !important;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.18) !important;
+        inset 0 1px 0 #ffffff,
+        inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
 }
+.nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:horizontal:decrement:active {
+    background:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='9'><polygon points='0,4.5 6,0 6,9' fill='%23000'/></svg>") center center / 6px 9px no-repeat,
+        #bcbcbc !important;
+}
+
 .nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:horizontal:increment {
     display: block !important;
-    width: 16px !important;
-    height: 17px !important;
+    width: 18px !important;
+    height: 18px !important;
     background:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='9'><polygon points='6,4.5 0,0 0,9' fill='%23142536'/></svg>") center center / 6px 9px no-repeat,
-        linear-gradient(180deg, #f3f1e6 0%, #d8d6c8 100%) !important;
-    background-color: #e7e5d8 !important;
-    border: 1px solid #0b2d3a !important;
-    border-radius: 2px !important;
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='9'><polygon points='6,4.5 0,0 0,9' fill='%23222'/></svg>") center center / 6px 9px no-repeat,
+        #d9d9d9 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 3px 3px 0 !important;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.18) !important;
+        inset 0 1px 0 #ffffff,
+        inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
+}
+.nitro-catalog-classic-window *::-webkit-scrollbar-button:single-button:horizontal:increment:active {
+    background:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='9'><polygon points='6,4.5 0,0 0,9' fill='%23000'/></svg>") center center / 6px 9px no-repeat,
+        #bcbcbc !important;
 }
 
 .nitro-catalog-classic-breadcrumb {
@@ -1604,12 +1509,6 @@
         padding: 6px !important;
     }
 
-    /* Mobile: drop the per-page welcome row (image + localization
-       blurb shown when no offer is selected). On a narrow viewport
-       it eats most of the visible space and pushes the actual grid
-       off-screen. Hide it and also collapse the surrounding
-       product-view (otherwise its 240px height reservation stays
-       and leaves a blank strip above the grid). */
     .nitro-catalog-classic-welcome {
         display: none !important;
     }

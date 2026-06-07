@@ -1,44 +1,9 @@
-export const MENTION_ROOM_ALIASES: ReadonlyArray<string> = [
-    'all', 'everyone', 'tutti',
-    'friends', 'amici',
-    'room', 'stanza'
-];
+import { classifyMentionToken, MENTION_ROOM_ALIASES } from '../../../../api/mentions/mentionTokens';
 
-const NON_NICK_CHARS = /[^A-Za-z0-9_]/g;
+const TAG_CLASS = 'mention-tag';
+const SELF_CLASS = 'mention-tag mention-tag--self';
 
-const normalizeToken = (token: string): string =>
-{
-    if(!token || token.length < 2 || token.charAt(0) !== '@') return '';
-
-    return token.substring(1).replace(NON_NICK_CHARS, '').toLowerCase();
-};
-
-
-const isMentionToken = (token: string, ownUsernameLower: string, aliases: ReadonlySet<string>): boolean =>
-{
-    const nick = normalizeToken(token);
-
-    if(!nick) return false;
-
-    if(ownUsernameLower && nick === ownUsernameLower) return true;
-
-    return aliases.has(nick);
-};
-
-export const tokenIsMention = (
-    token: string,
-    ownUsername: string,
-    aliases: ReadonlyArray<string> = MENTION_ROOM_ALIASES
-): boolean =>
-{
-    const ownUsernameLower = (ownUsername || '').replace(NON_NICK_CHARS, '').toLowerCase();
-    return isMentionToken(token, ownUsernameLower, new Set(aliases.map(a => a.toLowerCase())));
-};
-
-const HIGHLIGHT_OPEN = '<span class="mention-highlight">';
-const HIGHLIGHT_CLOSE = '</span>';
-
-const highlightTextChunk = (chunk: string, ownUsernameLower: string, aliases: ReadonlySet<string>): string =>
+const highlightTextChunk = (chunk: string, ownUsername: string, aliases: ReadonlyArray<string>): string =>
 {
     if(chunk.indexOf('@') < 0) return chunk;
 
@@ -50,18 +15,26 @@ const highlightTextChunk = (chunk: string, ownUsernameLower: string, aliases: Re
     {
         if(segment.length === 0) continue;
 
-        if(/^\s+$/.test(segment) || !isMentionToken(segment, ownUsernameLower, aliases))
+        const kind = (/^\s+$/.test(segment)) ? '' : classifyMentionToken(segment, ownUsername, aliases);
+
+        if(!kind)
         {
             result += segment;
             continue;
         }
 
-        result += `${ HIGHLIGHT_OPEN }${ segment }${ HIGHLIGHT_CLOSE }`;
+        result += `<span class="${ (kind === 'self') ? SELF_CLASS : TAG_CLASS }">${ segment }</span>`;
     }
 
     return result;
 };
 
+/**
+ * Wrap every @mention token in chat HTML with a `.mention-tag` span. Tokens
+ * that target the viewer or a broadcast alias additionally get the
+ * `.mention-tag--self` modifier so "I was mentioned" stands out. Walks around
+ * formatter HTML (`<...>`) so tags inside markup are never touched.
+ */
 export const highlightMentions = (
     formattedHtml: string,
     ownUsername: string,
@@ -69,11 +42,6 @@ export const highlightMentions = (
 ): string =>
 {
     if(!formattedHtml || formattedHtml.indexOf('@') < 0) return formattedHtml;
-
-    const ownUsernameLower = (ownUsername || '').replace(NON_NICK_CHARS, '').toLowerCase();
-    const aliasSet = new Set(aliases.map(a => a.toLowerCase()));
-
-    if(!ownUsernameLower && aliasSet.size === 0) return formattedHtml;
 
     let result = '';
     let cursor = 0;
@@ -84,13 +52,13 @@ export const highlightMentions = (
 
         if(tagStart < 0)
         {
-            result += highlightTextChunk(formattedHtml.slice(cursor), ownUsernameLower, aliasSet);
+            result += highlightTextChunk(formattedHtml.slice(cursor), ownUsername, aliases);
             break;
         }
 
         if(tagStart > cursor)
         {
-            result += highlightTextChunk(formattedHtml.slice(cursor, tagStart), ownUsernameLower, aliasSet);
+            result += highlightTextChunk(formattedHtml.slice(cursor, tagStart), ownUsername, aliases);
         }
 
         const tagEnd = formattedHtml.indexOf('>', tagStart);

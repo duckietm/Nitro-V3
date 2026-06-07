@@ -1,4 +1,3 @@
-/* ── Friends spritesheet icons ── */
 .nitro-friends-spritesheet {
     background: url('@/assets/images/friends/friends-spritesheet.png') transparent no-repeat;
 
@@ -537,14 +536,18 @@
         }
 
         & .avatar-image {
-            position: absolute;
-            left: 50% !important;
-            top: -31px !important;
-            width: 90px !important;
-            height: 130px !important;
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
             margin: 0 !important;
-            background-position: center -8px !important;
-            transform: translateX(-50%) !important;
+            /* head-only image at native size (no scaling -> never grainy),
+               centred in the tab. Tweak the 2nd value of background-position
+               to raise (smaller %) or lower (larger %) the face. */
+            background-size: auto !important;
+            background-position: center 35% !important;
+            transform: none !important;
+            image-rendering: pixelated !important;
         }
     }
 

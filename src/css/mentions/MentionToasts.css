@@ -1,72 +1,88 @@
-.mention-toasts {
-    position: fixed;
-    top: 130px;
-    right: 12px;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-width: 320px;
-    pointer-events: none;
-}
-
-.mention-toast {
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 300px;
-    padding: 8px 10px;
-    background: #2b2f3a;
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-left: 3px solid #1e7295;
-    border-radius: 8px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.42);
-    cursor: pointer;
-    animation: mention-toast-in 0.22s ease;
-}
-
-@keyframes mention-toast-in {
-    from { opacity: 0; transform: translateX(22px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-
+/* Mention notification bubble — rendered through the client's standard
+   notification stream (LayoutNotificationBubbleView, NotificationMentionBubbleView),
+   so it inherits the default chrome/position. Only the mention-specific bits
+   live here: the avatar head crop, type chip, time, room, message clamp and
+   action buttons. */
 .mention-toast-avatar {
     position: relative;
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 36px;
     flex-shrink: 0;
     overflow: hidden;
     border-radius: 6px;
     background: rgba(0, 0, 0, 0.25);
 }
 
-/* ricetta testa headOnly: l'avatar-image riempie il box (inset-0) e si croppa
-   sulla testa via background-position (come l'avatar-testa della toolbar),
-   invece di scalare il corpo. */
+/* Exact friends-list head crop — a matched set: 32x36 box + 66px width-scale +
+   -16/-21 offset (deterministic, starts above the hairline) so the full head
+   shows and isn't clipped. */
 .mention-toast-avatar .avatar-image {
     position: absolute !important;
     inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background-size: auto !important;
-    background-position: -23px -32px !important;
+    background-size: 66px auto !important;
+    background-position: -16px -21px !important;
 }
 
-.mention-toast-body {
-    flex: 1 1 auto;
-    min-width: 0;
-}
-
-.mention-toast-title {
+.mention-toast-chip {
+    flex: none;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 9px;
     font-weight: 700;
-    font-size: 12px;
-    line-height: 1.2;
-    color: #6cb6e0;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #fff;
+}
+
+.mention-toast-chip.is-direct { background: #1e7295; }
+.mention-toast-chip.is-room { background: #d08a1e; }
+
+.mention-toast-spacer {
+    flex: 1 1 auto;
+}
+
+.mention-toast-time {
+    flex: none;
+    font-size: 11px;
+    color: #aeb3bd;
+    font-variant-numeric: tabular-nums;
+}
+
+.mention-toast-dismiss {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.10);
+    color: #c9ccd3;
+    font-size: 9px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mention-toast-dismiss:hover {
+    background: rgba(255, 255, 255, 0.20);
+    color: #fff;
+}
+
+.mention-toast-room {
+    margin-top: 1px;
+    font-size: 11px;
+    color: #aeb3bd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .mention-toast-message {
+    margin-top: 3px;
     font-size: 12px;
     line-height: 1.3;
     color: #e6e8ec;
@@ -78,24 +94,26 @@
     word-break: break-word;
 }
 
-.mention-toast-dismiss {
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    color: #c9ccd3;
-    cursor: pointer;
-    font-size: 10px;
-    line-height: 1;
+.mention-toast-actions {
+    margin-top: 6px;
 }
 
-.mention-toast-dismiss:hover {
-    background: rgba(255, 255, 255, 0.18);
+.mention-toast-btn {
+    padding: 3px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #eef0f4;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.mention-toast-btn:hover {
+    background: #1e7295;
+    border-color: #2a90bd;
     color: #fff;
 }
 

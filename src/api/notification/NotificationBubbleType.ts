@@ -16,4 +16,5 @@ export class NotificationBubbleType
     public static BUYFURNI: string = 'buyfurni';
     public static VIP: string = 'vip';
     public static ROOMMESSAGESPOSTED: string = 'roommessagesposted';
+    public static MENTION: string = 'mention';
 }

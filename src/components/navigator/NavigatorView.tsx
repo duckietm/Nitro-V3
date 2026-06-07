@@ -109,7 +109,7 @@ export const NavigatorView: FC<{}> = props =>
         <>
             { isVisible &&
                 <NitroCard
-                    className={ `${ isOpenSavesSearches ? 'w-[600px] sm:min-w-[600px]' : 'w-navigator-w sm:min-w-navigator-w' } max-w-[calc(100vw-1rem)] h-navigator-h min-h-navigator-h` }
+                    className={ `${ isOpenSavesSearches ? 'w-[600px] sm:min-w-[600px]' : 'w-navigator-w sm:min-w-navigator-w' } max-w-[calc(100vw-1rem)] h-navigator-h min-h-navigator-h has-classic-scrollbar` }
                     uniqueKey="navigator">
                     <NitroCard.Header
                         headerText={ LocalizeText(isCreatorOpen ? 'navigator.createroom.title' : 'navigator.title') }

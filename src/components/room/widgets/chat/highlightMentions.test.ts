@@ -1,33 +1,49 @@
 import { describe, expect, it } from 'vitest';
-import { highlightMentions, MENTION_ROOM_ALIASES } from './highlightMentions';
+import { MENTION_ROOM_ALIASES } from '../../../../api/mentions/mentionTokens';
+import { highlightMentions } from './highlightMentions';
 
-const OPEN = '<span class="mention-highlight">';
-const CLOSE = '</span>';
+// A generic @user tag, and a self/alias mention (strong).
+const TAG = (s: string) => `<span class="mention-tag">${ s }</span>`;
+const SELF = (s: string) => `<span class="mention-tag mention-tag--self">${ s }</span>`;
 
 describe('highlightMentions', () =>
 {
-    it('highlights the own-nick token', () =>
+    it('marks the own-nick token as a self mention', () =>
     {
         const out = highlightMentions('hello @Bob how are you', 'Bob');
 
-        expect(out).toBe(`hello ${ OPEN }@Bob${ CLOSE } how are you`);
+        expect(out).toBe(`hello ${ SELF('@Bob') } how are you`);
     });
 
-    it('highlights a room-broadcast alias token', () =>
+    it('marks a room-broadcast alias token as a self mention', () =>
     {
         const out = highlightMentions('@all party time', 'Bob');
 
-        expect(out).toBe(`${ OPEN }@all${ CLOSE } party time`);
+        expect(out).toBe(`${ SELF('@all') } party time`);
     });
 
-    it('highlights every configured room alias', () =>
+    it('marks every configured room alias as a self mention', () =>
     {
         for(const alias of MENTION_ROOM_ALIASES)
         {
             const out = highlightMentions(`hey @${ alias }!`, 'Bob');
 
-            expect(out).toBe(`hey ${ OPEN }@${ alias }!${ CLOSE }`);
+            expect(out).toBe(`hey ${ SELF(`@${ alias }!`) }`);
         }
+    });
+
+    it('tags other users (not me, not an alias) as generic mentions', () =>
+    {
+        const out = highlightMentions('hi @Charlie and @Dave', 'Bob');
+
+        expect(out).toBe(`hi ${ TAG('@Charlie') } and ${ TAG('@Dave') }`);
+    });
+
+    it('tags a cross-room user even when own username is empty', () =>
+    {
+        const out = highlightMentions('hi @Charlie', '');
+
+        expect(out).toBe(`hi ${ TAG('@Charlie') }`);
     });
 
     it('leaves non-mention text untouched', () =>
@@ -37,42 +53,32 @@ describe('highlightMentions', () =>
         expect(highlightMentions(text, 'Bob')).toBe(text);
     });
 
-    it('returns the message unchanged when there is no mention of me or an alias', () =>
-    {
-        const text = 'hi @Charlie and @Dave';
-
-        // Neither @Charlie nor @Dave is the local user or a room alias.
-        expect(highlightMentions(text, 'Bob')).toBe(text);
-    });
-
-    it('matches a token with trailing punctuation (mirrors server stripping)', () =>
+    it('keeps trailing punctuation inside the span (mirrors server stripping)', () =>
     {
         const out = highlightMentions('watch out @Bob! seriously', 'Bob');
 
-        // The original token text (including the `!`) is kept inside the span.
-        expect(out).toBe(`watch out ${ OPEN }@Bob!${ CLOSE } seriously`);
+        expect(out).toBe(`watch out ${ SELF('@Bob!') } seriously`);
     });
 
     it('matches case-insensitively but preserves the original casing', () =>
     {
         const out = highlightMentions('yo @bOb whatup', 'BOB');
 
-        expect(out).toBe(`yo ${ OPEN }@bOb${ CLOSE } whatup`);
+        expect(out).toBe(`yo ${ SELF('@bOb') } whatup`);
     });
 
     it('preserves the original spacing verbatim', () =>
     {
         const out = highlightMentions('a   @Bob\tb', 'Bob');
 
-        expect(out).toBe(`a   ${ OPEN }@Bob${ CLOSE }\tb`);
+        expect(out).toBe(`a   ${ SELF('@Bob') }\tb`);
     });
 
-    it('does not highlight inside HTML tags produced by the formatter', () =>
+    it('does not tag inside HTML tags produced by the formatter', () =>
     {
-        // Formatter output: wired bold markup around a mention.
         const out = highlightMentions('<strong>hi @Bob</strong>', 'Bob');
 
-        expect(out).toBe(`<strong>hi ${ OPEN }@Bob${ CLOSE }</strong>`);
+        expect(out).toBe(`<strong>hi ${ SELF('@Bob') }</strong>`);
     });
 
     it('leaves font-colour spans and line breaks intact', () =>
@@ -80,14 +86,14 @@ describe('highlightMentions', () =>
         const html = '<span style="color:red">hi @Bob</span><br />bye';
         const out = highlightMentions(html, 'Bob');
 
-        expect(out).toBe(`<span style="color:red">hi ${ OPEN }@Bob${ CLOSE }</span><br />bye`);
+        expect(out).toBe(`<span style="color:red">hi ${ SELF('@Bob') }</span><br />bye`);
     });
 
-    it('highlights multiple distinct mentions in one message', () =>
+    it('handles a self mention and a generic tag in one message', () =>
     {
-        const out = highlightMentions('@Bob and @all listen', 'Bob');
+        const out = highlightMentions('@Bob and @Charlie listen', 'Bob');
 
-        expect(out).toBe(`${ OPEN }@Bob${ CLOSE } and ${ OPEN }@all${ CLOSE } listen`);
+        expect(out).toBe(`${ SELF('@Bob') } and ${ TAG('@Charlie') } listen`);
     });
 
     it('ignores a bare @ with no nick', () =>
@@ -102,19 +108,5 @@ describe('highlightMentions', () =>
         const text = 'plain message';
 
         expect(highlightMentions(text, 'Bob')).toBe(text);
-    });
-
-    it('returns input verbatim when own username is empty and no alias matches', () =>
-    {
-        const text = 'hi @Charlie';
-
-        expect(highlightMentions(text, '')).toBe(text);
-    });
-
-    it('still highlights aliases when own username is empty', () =>
-    {
-        const out = highlightMentions('@everyone hi', '');
-
-        expect(out).toBe(`${ OPEN }@everyone${ CLOSE } hi`);
     });
 });

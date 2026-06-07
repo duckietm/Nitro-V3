@@ -1,5 +1,5 @@
 import { FC, Fragment, ReactNode } from 'react';
-import { tokenIsMention } from '../room/widgets/chat/highlightMentions';
+import { classifyMentionToken } from '../../api/mentions/mentionTokens';
 
 interface MentionMessageViewProps
 {
@@ -9,10 +9,11 @@ interface MentionMessageViewProps
 }
 
 /**
- * Renders a mention's message text as React nodes, wrapping the token(s) that
- * mention the local user or a room-broadcast alias in a `.mention-highlight`
- * span. Pure text segmentation (no innerHTML) → no XSS risk from other users'
- * chat content. Original spacing is preserved verbatim.
+ * Renders a mention's message text as React nodes, wrapping every @user token
+ * in a `.mention-tag` span (with the `.mention-tag--self` modifier when the
+ * token targets the local user or a broadcast alias). Pure text segmentation
+ * (no innerHTML) → no XSS risk from other users' chat content. Original spacing
+ * is preserved verbatim.
  */
 export const MentionMessageView: FC<MentionMessageViewProps> = props =>
 {
@@ -24,12 +25,11 @@ export const MentionMessageView: FC<MentionMessageViewProps> = props =>
     {
         if(segment.length === 0) return null;
 
-        if(/^\s+$/.test(segment) || !tokenIsMention(segment, ownUsername))
-        {
-            return <Fragment key={ index }>{ segment }</Fragment>;
-        }
+        const kind = (/^\s+$/.test(segment)) ? '' : classifyMentionToken(segment, ownUsername);
 
-        return <span key={ index } className="mention-highlight">{ segment }</span>;
+        if(!kind) return <Fragment key={ index }>{ segment }</Fragment>;
+
+        return <span key={ index } className={ (kind === 'self') ? 'mention-tag mention-tag--self' : 'mention-tag' }>{ segment }</span>;
     });
 
     return <span className={ className }>{ nodes }</span>;

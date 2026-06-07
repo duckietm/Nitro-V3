@@ -716,7 +716,7 @@
     'memenu.settings.other.place.multiple.objects':     "Meerdere objecten plaatsen",
     'memenu.settings.other.skip.purchase.confirmation': "Aankoopbevestiging overslaan",
     'memenu.settings.other.enable.chat.window':         "Chatvenster inschakelen",
-    'memenu.settings.other.catalog.classic.style':      "Catalogus: klassieke stijl",
+    'memenu.settings.other.catalog.classic.style':      "Nieuwe stijl",
     'usersettings.open.title':                          "Gebruikersinstellingen",
     'usersettings.open.subtitle':                       "Wachtwoord & account",
     'usersettings.themes.custom':                       "Aangepast thema",
