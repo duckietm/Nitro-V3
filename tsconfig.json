@@ -25,6 +25,9 @@
             ],
             "@/*": [
                 "./src/*"
+            ],
+            "pixi.js": [
+                "../Nitro_Render_V3/node_modules/pixi.js"
             ]
         }
     },
