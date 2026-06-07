@@ -1,4 +1,4 @@
-import { FurniEditorBySpriteComposer, FurniEditorDeleteComposer, FurniEditorDetailComposer, FurniEditorDetailResultEvent, FurniEditorInteractionsComposer, FurniEditorInteractionsResultEvent, FurniEditorResultEvent, FurniEditorSearchComposer, FurniEditorSearchResultEvent, FurniEditorUpdateComposer } from '@nitrots/nitro-renderer';
+import { FurniEditorBySpriteComposer, FurniEditorDeleteComposer, FurniEditorDetailComposer, FurniEditorDetailResultEvent, FurniEditorInteractionsComposer, FurniEditorInteractionsResultEvent, FurniEditorResultEvent, FurniEditorRevertFurnidataComposer, FurniEditorSearchComposer, FurniEditorSearchResultEvent, FurniEditorUpdateComposer, FurniEditorUpdateFurnidataComposer, FurniEditorImportTextComposer, FurniEditorImportTextResultEvent } from '@nitrots/nitro-renderer';
 import { useCallback, useRef, useState } from 'react';
 import { NotificationAlertType, SendMessageComposer } from '../../api';
 import { useMessageEvent, useNotification } from '../../hooks';
@@ -61,6 +61,8 @@ export const useFurniEditor = () =>
     const [ interactions, setInteractions ] = useState<string[]>([]);
     const [ furniDataEntry, setFurniDataEntry ] = useState<Record<string, unknown> | null>(null);
     const pendingActionRef = useRef<{ action: string; itemId: number } | null>(null);
+    const [ importResult, setImportResult ] = useState<{ found: boolean; name: string; description: string; classname: string; nonce: number } | null>(null);
+    const importNonceRef = useRef(0);
     const { simpleAlert = null } = useNotification();
 
     const clearError = useCallback(() => setError(null), []);
@@ -209,11 +211,11 @@ export const useFurniEditor = () =>
         }
     });
 
-    const searchItems = useCallback((query: string, type: string, pg: number) =>
+    const searchItems = useCallback((query: string, type: string, pg: number, sortField: string = 'id', sortDir: string = 'asc') =>
     {
         setLoading(true);
         setError(null);
-        SendMessageComposer(new FurniEditorSearchComposer(query, type, pg));
+        SendMessageComposer(new FurniEditorSearchComposer(query, type, pg, sortField, sortDir));
     }, []);
 
     const loadDetail = useCallback((id: number) =>
@@ -246,6 +248,46 @@ export const useFurniEditor = () =>
         SendMessageComposer(new FurniEditorDeleteComposer(id));
     }, []);
 
+    const updateFurnidata = useCallback((id: number, name: string, description: string) =>
+    {
+        pendingActionRef.current = { action: 'update', itemId: id };
+        // Optimistic: the server now mirrors the furnidata display name into
+        // items_base.public_name, so reflect it immediately in the read-only
+        // "Public Name" field. The auto re-fetch that follows will agree (no flicker).
+        setSelectedItem(prev => (prev && prev.id === id ? { ...prev, publicName: name } : prev));
+        setLoading(true);
+        SendMessageComposer(new FurniEditorUpdateFurnidataComposer(id, JSON.stringify({ name, description })));
+    }, []);
+
+    const revertFurnidata = useCallback((id: number) =>
+    {
+        pendingActionRef.current = { action: 'update', itemId: id };
+        setLoading(true);
+        SendMessageComposer(new FurniEditorRevertFurnidataComposer(id));
+    }, []);
+
+    const importText = useCallback((id: number) =>
+    {
+        setLoading(true);
+        setError(null);
+        SendMessageComposer(new FurniEditorImportTextComposer(id));
+    }, []);
+
+    useMessageEvent(FurniEditorImportTextResultEvent, (event: FurniEditorImportTextResultEvent) =>
+    {
+        const parser = event.getParser();
+
+        setLoading(false);
+        importNonceRef.current += 1;
+        setImportResult({
+            found: parser.found,
+            name: parser.name,
+            description: parser.description,
+            classname: parser.classname,
+            nonce: importNonceRef.current
+        });
+    });
+
     const loadInteractions = useCallback(() =>
     {
         SendMessageComposer(new FurniEditorInteractionsComposer());
@@ -255,6 +297,7 @@ export const useFurniEditor = () =>
         items, total, page, loading, error, clearError,
         selectedItem, setSelectedItem, catalogItems, furniDataEntry,
         interactions,
-        searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions
+        searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions,
+        updateFurnidata, revertFurnidata, importText, importResult
     };
 };

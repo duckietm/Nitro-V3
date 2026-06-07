@@ -1,4 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button, Column, Flex, LayoutFurniIconImageView, Text } from '../../../common';
 import { FurniDetail } from '../../../hooks/furni-editor';
 
@@ -11,6 +12,10 @@ interface FurniEditorEditViewProps
     onUpdate: (id: number, fields: Record<string, unknown>) => void;
     onDelete: (id: number) => void;
     onBack: () => void;
+    onUpdateFurnidata: (id: number, name: string, description: string) => void;
+    onRevertFurnidata: (id: number) => void;
+    onImportText: (id: number) => void;
+    importResult: { found: boolean; name: string; description: string; classname: string; nonce: number } | null;
 }
 
 const FIELD_TIPS: Record<string, string> = {
@@ -21,9 +26,8 @@ const FIELD_TIPS: Record<string, string> = {
 };
 
 const PERM_GROUPS = [
-    { label: 'Gameplay', keys: [ 'allowStack', 'allowWalk', 'allowSit', 'allowLay' ] },
+    { label: 'Gameplay', keys: [ 'allowStack', 'allowWalk', 'allowSit', 'allowLay', 'allowInventoryStack' ] },
     { label: 'Trading', keys: [ 'allowGift', 'allowTrade', 'allowRecycle', 'allowMarketplaceSell' ] },
-    { label: 'Inventory', keys: [ 'allowInventoryStack' ] },
 ];
 
 interface SectionProps { title: string; children: React.ReactNode; defaultOpen?: boolean }
@@ -33,16 +37,16 @@ const Section: FC<SectionProps> = ({ title, children, defaultOpen = true }) =>
     const [ open, setOpen ] = useState(defaultOpen);
 
     return (
-        <div className="bg-white rounded border border-[#ccc]">
+        <div className="bg-[#ffffff] rounded-xl border border-slate-200 shadow-sm">
             <button
                 type="button"
-                className="w-full flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-[#f5f5f5] transition-colors"
+                className={ `w-full flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-slate-50 transition-colors rounded-t-xl ${ open ? '' : 'rounded-b-xl' }` }
                 onClick={ () => setOpen(p => !p) }
             >
-                <Text small bold variant="primary">{ title }</Text>
-                <span className="text-[10px] text-[#999]">{ open ? '▼' : '▶' }</span>
+                <Text className="text-[12px] font-semibold text-slate-700">{ title }</Text>
+                <span className="text-[11px] text-slate-400 transition-transform duration-200" style={ { transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' } }>▾</span>
             </button>
-            { open && <div className="px-2 pb-2">{ children }</div> }
+            { open && <div className="px-3 pb-2.5 pt-0.5">{ children }</div> }
         </div>
     );
 };
@@ -50,22 +54,74 @@ const Section: FC<SectionProps> = ({ title, children, defaultOpen = true }) =>
 const Tip: FC<{ field: string }> = ({ field }) =>
 {
     const tip = FIELD_TIPS[field];
+    const ref = useRef<HTMLSpanElement>(null);
+    const [ pos, setPos ] = useState<{ left: number; top: number } | null>(null);
+
+    const show = useCallback(() =>
+    {
+        const r = ref.current?.getBoundingClientRect();
+        if(r) setPos({ left: r.left + (r.width / 2), top: r.top - 6 });
+    }, []);
+    const hide = useCallback(() => setPos(null), []);
 
     if(!tip) return null;
 
     return (
-        <span className="relative group ml-0.5 inline-flex">
-            <span className="w-3 h-3 rounded-full bg-[#1e7295] text-white text-[8px] flex items-center justify-center cursor-help font-bold">?</span>
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-[#333] text-white text-[10px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
-                { tip }
-            </span>
+        <span
+            ref={ ref }
+            onMouseEnter={ show }
+            onMouseLeave={ hide }
+            className="ml-0.5 inline-flex w-3 h-3 rounded-full bg-[#1e7295] text-white text-[8px] items-center justify-center cursor-help font-bold align-middle"
+        >
+            ?
+            { pos && createPortal(
+                <span
+                    style={ { position: 'fixed', left: pos.left, top: pos.top, transform: 'translate(-50%, -100%)', zIndex: 9999 } }
+                    className="px-2 py-1 bg-[#333] text-white text-[10px] rounded w-44 whitespace-normal text-center leading-snug shadow-lg pointer-events-none"
+                >
+                    { tip }
+                </span>, document.body) }
         </span>
+    );
+};
+
+const CopyValue: FC<{ value: string | number }> = ({ value }) =>
+{
+    const [ copied, setCopied ] = useState(false);
+
+    const copy = useCallback(() =>
+    {
+        const text = String(value);
+        if(navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(() => setCopied(true)).catch(() => setCopied(true));
+        else setCopied(true);
+    }, [ value ]);
+
+    // Reset the "copied!" flag after 1s, with cleanup so the timer never fires after unmount.
+    useEffect(() =>
+    {
+        if(!copied) return;
+
+        const handle = window.setTimeout(() => setCopied(false), 1000);
+
+        return () => window.clearTimeout(handle);
+    }, [ copied ]);
+
+    return (
+        <div
+            role="button"
+            title="Click to copy"
+            onClick={ copy }
+            className={ `group relative cursor-pointer w-full px-3 py-1.5 text-sm font-mono rounded-lg border transition ${ copied ? 'border-primary/50 bg-primary/5 text-primary' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-slate-100' }` }
+        >
+            <span className="block truncate pr-12">{ String(value) }</span>
+            <span className={ `absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-semibold uppercase tracking-wide pointer-events-none ${ copied ? 'text-primary' : 'text-slate-300 group-hover:text-slate-400' }` }>{ copied ? 'copied!' : 'copy' }</span>
+        </div>
     );
 };
 
 export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 {
-    const { item, furniDataEntry, interactions, loading, onUpdate, onDelete, onBack } = props;
+    const { item, furniDataEntry, interactions, loading, onUpdate, onDelete, onBack, onUpdateFurnidata, onRevertFurnidata, onImportText, importResult } = props;
     const saveRef = useRef<() => void>(null);
 
     const [ form, setForm ] = useState({
@@ -91,6 +147,11 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     });
 
     const [ showDeleteDialog, setShowDeleteDialog ] = useState(false);
+    const [ furniName, setFurniName ] = useState('');
+    const [ furniDescription, setFurniDescription ] = useState('');
+    const [ confirmFurnidata, setConfirmFurnidata ] = useState(false);
+    const [ importNote, setImportNote ] = useState('');
+    const appliedImportNonce = useRef(0);
 
     useEffect(() =>
     {
@@ -119,7 +180,11 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
         });
 
         setShowDeleteDialog(false);
-    }, [ item ]);
+        setFurniName(String(furniDataEntry?.name ?? ''));
+        setFurniDescription(String(furniDataEntry?.description ?? ''));
+        setConfirmFurnidata(false);
+        setImportNote('');
+    }, [ item, furniDataEntry ]);
 
     const setField = useCallback((key: string, value: unknown) =>
     {
@@ -166,6 +231,48 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 
     const isValid = useMemo(() => Object.keys(validation).length === 0, [ validation ]);
 
+    // Furnidata name editing only works when the furni has a matching furnidata
+    // entry: the server writer is edit-only and refuses classnames absent from
+    // furnidata (pets, custom items, …). furniDataEntry is the entry resolved by
+    // the server (by id); guard on it + a classname match so we never trigger the
+    // cryptic "Classname not found in furnidata" error on save.
+    const furnidataEditable = useMemo(() =>
+    {
+        if(!furniDataEntry) return false;
+        const cn = String((furniDataEntry as { classname?: unknown }).classname ?? '').trim().toLowerCase();
+        const itemCn = String(item?.itemName ?? '').trim().toLowerCase();
+        return cn ? (cn === itemCn) : true;
+    }, [ furniDataEntry, item ]);
+
+    // True only when the name/description actually differ from the stored furnidata
+    // entry. Used to gate the Save button: saving an unchanged value makes the
+    // server writer return false, which the handler misreports as "Classname not
+    // found in furnidata" — so we never let an unchanged save fire.
+    const furnidataDirty = useMemo(() =>
+        furniName !== String(furniDataEntry?.name ?? '') || furniDescription !== String(furniDataEntry?.description ?? ''),
+    [ furniName, furniDescription, furniDataEntry ]);
+
+    // Apply an "Import from Habbo" result into the editable fields (review then Save).
+    useEffect(() =>
+    {
+        if(!importResult || importResult.nonce === appliedImportNonce.current) return;
+        appliedImportNonce.current = importResult.nonce;
+
+        // Ignore a result that belongs to a different furni (user navigated away).
+        if(importResult.classname && importResult.classname.trim().toLowerCase() !== String(item?.itemName ?? '').trim().toLowerCase()) return;
+
+        if(importResult.found)
+        {
+            setFurniName(importResult.name);
+            setFurniDescription(importResult.description);
+            setImportNote('Imported from Habbo — review and Save');
+        }
+        else
+        {
+            setImportNote('Not found on Habbo for this classname');
+        }
+    }, [ importResult, item ]);
+
     const handleSave = useCallback(() =>
     {
         if(!isValid) return;
@@ -207,53 +314,115 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     }, []);
 
     const inputClass = (field?: string) =>
-        `w-full px-2 py-1 text-xs leading-normal rounded-sm border border-[#ccc] min-h-[calc(1.5em+0.5rem+2px)] ${ field && validation[field] ? 'border-red-500 bg-red-50' : '' }`;
-    const labelClass = 'text-[11px] font-bold text-[#333] mb-0 flex items-center gap-0.5';
+        `w-full px-3 py-1.5 text-sm leading-normal rounded-lg border border-slate-300 bg-[#ffffff] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 transition${ field && validation[field] ? ' border-red-400 bg-red-50' : '' }`;
+    const labelClass = 'text-[11px] font-medium text-slate-500 mb-1 flex items-center gap-0.5';
 
     return (
-        <Column gap={ 1 } className="h-full overflow-auto">
+        <Column gap={ 1 }>
             { /* Header */ }
-            <Flex gap={ 2 } alignItems="center" className="mb-1">
-                <Button variant="secondary" onClick={ handleBack }>Back</Button>
-                <div className="bg-[#e9ecef] rounded border border-[#ccc] flex items-center justify-center w-[48px] h-[48px]">
-                    <LayoutFurniIconImageView productType={ item.type } productClassId={ item.spriteId } className="scale-150" />
+            <Flex alignItems="center" gap={ 2 } className="px-1">
+                <div className="shrink-0 w-14 h-14 rounded-xl bg-[#ffffff] border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
+                    <LayoutFurniIconImageView productType={ item.type } productClassId={ item.spriteId } className="scale-[1.6]" />
                 </div>
-                <Flex column gap={ 0 }>
-                    <Flex alignItems="center" gap={ 1 }>
-                        <Text bold className="text-[12px]">ID: { item.id }</Text>
-                        <span className="text-[#999]">|</span>
-                        <Text bold className="text-[12px]">Sprite: { item.spriteId }</Text>
+                <Flex column gap={ 0 } className="min-w-0 flex-1">
+                    <Text bold className="truncate text-slate-800 text-[15px] leading-tight">{ furniName || form.publicName || form.itemName }</Text>
+                    <Text className="truncate text-slate-400 text-[11px] font-mono">{ form.itemName }</Text>
+                    <Flex alignItems="center" gap={ 1 } className="mt-1 flex-wrap">
+                        <span className="inline-flex items-center gap-1 text-[10px] rounded-md border border-slate-200 bg-slate-50 pl-1.5 pr-2 py-0.5">
+                            <span className="text-[8px] font-semibold uppercase tracking-wide text-slate-400">ID</span>
+                            <span className="font-mono text-slate-600">{ item.id }</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[10px] rounded-md border border-slate-200 bg-slate-50 pl-1.5 pr-2 py-0.5">
+                            <span className="text-[8px] font-semibold uppercase tracking-wide text-slate-400">Sprite</span>
+                            <span className="font-mono text-slate-600">{ item.spriteId }</span>
+                        </span>
+                        <span className={ `inline-flex items-center gap-1 text-[10px] rounded-md border px-2 py-0.5 ${ item.usageCount > 0 ? 'border-[#a7f3d0] bg-[#ecfdf5] text-[#047857]' : 'border-slate-200 bg-slate-50 text-slate-500' }` }>
+                            <span className={ `w-1.5 h-1.5 rounded-full ${ item.usageCount > 0 ? 'bg-[#10b981]' : 'bg-slate-300' }` } />
+                            { item.usageCount } in use
+                        </span>
+                        { isDirty && <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-100 border border-amber-200 rounded-md px-2 py-0.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" />
+                            Unsaved
+                        </span> }
                     </Flex>
-                    <Text small variant="gray">({ item.usageCount } in use)</Text>
                 </Flex>
-                { isDirty && <span className="text-[10px] text-orange-500 font-bold ml-auto">Unsaved changes</span> }
+                <Button variant="secondary" onClick={ handleBack } className="shrink-0">Back</Button>
             </Flex>
+
+            { /* Primary edit surface: furnidata display name + description (server-authoritative, live) */ }
+            <div className="bg-[#ffffff] rounded-xl border border-slate-200 shadow-sm p-2.5">
+                <div className="flex items-center gap-2 mb-1.5">
+                    <Text className="text-[12px] font-semibold text-slate-700">Display name &amp; description</Text>
+                    { furnidataEditable
+                        ? <span className="text-[9px] font-semibold text-primary bg-primary/10 rounded-md px-1.5 py-0.5">LIVE</span>
+                        : <span className="text-[9px] font-semibold text-amber-700 bg-amber-100 rounded-md px-1.5 py-0.5">NO FURNIDATA</span> }
+                    { furnidataEditable && furnidataDirty &&
+                        <span className="ml-auto text-[10px] text-amber-600 font-medium">Unsaved</span> }
+                </div>
+                { furnidataEditable ? (
+                    <>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>
+                                <label className={ labelClass }>Display Name (furnidata)</label>
+                                <input className={ inputClass() } value={ furniName } onChange={ e => setFurniName(e.target.value) } maxLength={ 256 } />
+                            </div>
+                            <div>
+                                <label className={ labelClass }>Description</label>
+                                <input className={ inputClass() } value={ furniDescription } onChange={ e => setFurniDescription(e.target.value) } maxLength={ 256 } />
+                            </div>
+                        </div>
+                        <Flex gap={ 1 } className="mt-1.5" alignItems="center">
+                            <Button variant="success" disabled={ loading || !furnidataDirty } onClick={ () => setConfirmFurnidata(true) }>Save name/desc</Button>
+                            <Button variant="secondary" disabled={ loading } onClick={ () => onRevertFurnidata(item.id) }>Revert</Button>
+                            <button
+                                type="button"
+                                disabled={ loading }
+                                onClick={ () => onImportText(item.id) }
+                                title="Fetch the official name &amp; description from Habbo"
+                                className="ml-auto inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-slate-300 bg-[#ffffff] text-slate-600 hover:bg-slate-50 hover:border-slate-400 disabled:opacity-50 transition"
+                            >
+                                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9" /><path d="m6.5 8.5 3.5 3.5 3.5-3.5" /><path d="M4 16h12" /></svg>
+                                Import from Habbo
+                            </button>
+                        </Flex>
+                        { importNote &&
+                            <Text className={ `mt-1 text-[10px] ${ importNote.startsWith('Not found') ? 'text-amber-600' : 'text-primary' }` }>{ importNote }</Text> }
+                    </>
+                ) : (
+                    <div className="flex items-start gap-2 text-[11px] text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 leading-snug">
+                        <span className="text-[#f59e0b] text-sm leading-none mt-px">⚠</span>
+                        <span>This furni has no matching <b>furnidata</b> entry (e.g. a pet or custom item), so its display name can&apos;t be edited here. Clients fall back to the DB <b>Public Name</b> below.</span>
+                    </div>
+                ) }
+            </div>
 
             <Section title="Basic Info">
                 <div className="grid grid-cols-2 gap-2">
                     <div>
-                        <label className={ labelClass }>Item Name</label>
-                        <input className={ inputClass('itemName') } value={ form.itemName } onChange={ e => setField('itemName', e.target.value) } />
-                        { validation.itemName && <span className="text-[9px] text-red-500">{ validation.itemName }</span> }
+                        <label className={ labelClass }>Classname</label>
+                        <CopyValue value={ form.itemName } />
                     </div>
                     <div>
-                        <label className={ labelClass }>Public Name</label>
-                        <input className={ inputClass('publicName') } value={ form.publicName } onChange={ e => setField('publicName', e.target.value) } />
-                        { validation.publicName && <span className="text-[9px] text-red-500">{ validation.publicName }</span> }
+                        <label className={ labelClass }>Public Name (DB fallback)</label>
+                        <CopyValue value={ form.publicName } />
                     </div>
                     <div>
                         <label className={ labelClass }>Sprite ID</label>
-                        <input type="number" className={ inputClass() } value={ form.spriteId } onChange={ e => setField('spriteId', Number(e.target.value)) } />
+                        <CopyValue value={ form.spriteId } />
                     </div>
                     <div>
                         <label className={ labelClass }>Type</label>
-                        <select className="w-full px-2 py-1 text-xs leading-normal rounded-sm border border-[#ccc] pr-8" value={ form.type } onChange={ e => setField('type', e.target.value) }>
-                            <option value="s">Floor (s)</option>
-                            <option value="i">Wall (i)</option>
-                        </select>
+                        <CopyValue value={ form.type === 's' ? 'Floor (s)' : 'Wall (i)' } />
                     </div>
                 </div>
             </Section>
+
+            { furniDataEntry &&
+                <Section title="FurniData.json" defaultOpen={ false }>
+                    <Text className="text-[10px] text-slate-400 mb-1 block">Read-only — how this furni resolves from the furnidata JSON (source of truth for the display name).</Text>
+                    <pre className="text-[10px] leading-snug text-slate-600 bg-slate-50 border border-slate-200 rounded-lg p-2 overflow-auto max-h-52 whitespace-pre-wrap break-all font-mono">{ JSON.stringify(furniDataEntry, null, 2) }</pre>
+                </Section>
+            }
 
             <Section title="Dimensions">
                 <div className="grid grid-cols-3 gap-2">
@@ -279,19 +448,24 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                 <div className="flex flex-col gap-2">
                     { PERM_GROUPS.map(group => (
                         <div key={ group.label }>
-                            <Text className="text-[10px] font-bold text-[#666] uppercase tracking-wider mb-0.5 block">{ group.label }</Text>
-                            <div className="grid grid-cols-4 gap-x-3 gap-y-1">
-                                { group.keys.map(key => (
-                                    <label key={ key } className="flex items-center gap-1 text-[11px] cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            className="mt-1"
-                                            checked={ (form as any)[key] }
-                                            onChange={ e => setField(key, e.target.checked) }
-                                        />
-                                        { key.replace('allow', '') }
-                                    </label>
-                                )) }
+                            <Text className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1.5 block">{ group.label }</Text>
+                            <div className="flex flex-wrap gap-1.5">
+                                { group.keys.map(key => {
+                                    const on = (form as any)[key];
+                                    return (
+                                        <button
+                                            key={ key }
+                                            type="button"
+                                            onClick={ () => setField(key, !on) }
+                                            aria-pressed={ on }
+                                            title={ on ? 'Enabled — click to disable' : 'Disabled — click to enable' }
+                                            className={ `inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border font-medium transition ${ on ? 'bg-[#1E7295] border-[#1E7295] text-[#ffffff] shadow-sm' : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-200 hover:text-slate-600' }` }
+                                        >
+                                            <span className={ `inline-block w-2 h-2 rounded-full ring-1 ${ on ? 'bg-[#22c55e] ring-[#ffffff]/70' : 'bg-[#ef4444] ring-[#00000014]' }` } />
+                                            { key.replace('allow', '') }
+                                        </button>
+                                    );
+                                }) }
                             </div>
                         </div>
                     )) }
@@ -302,7 +476,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                 <div className="grid grid-cols-3 gap-2">
                     <div className="col-span-2">
                         <label className={ labelClass }>Type<Tip field="interactionType" /></label>
-                        <select className="w-full px-2 py-1 text-xs leading-normal rounded-sm border border-[#ccc] pr-8" value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
+                        <select className="w-full px-2 py-1 text-sm leading-normal rounded-sm border border-[#bbb] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/40 pr-8" value={ form.interactionType } onChange={ e => setField('interactionType', e.target.value) }>
                             <option value="">none</option>
                             { interactions.map(i => (
                                 <option key={ i } value={ i }>{ i }</option>
@@ -319,19 +493,6 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                     <input className={ inputClass() } value={ form.customparams } onChange={ e => setField('customparams', e.target.value) } />
                 </div>
             </Section>
-
-            { furniDataEntry &&
-                <Section title="FurniData.json" defaultOpen={ false }>
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
-                        { Object.entries(furniDataEntry).map(([ key, value ]) => (
-                            <div key={ key } className="flex justify-between bg-[#f5f5f5] px-2 py-0.5 rounded">
-                                <span className="font-bold text-[#555]">{ key }</span>
-                                <span className="text-[#333] truncate ml-1 max-w-[120px] text-right">{ String(value ?? '') }</span>
-                            </div>
-                        )) }
-                    </div>
-                </Section>
-            }
 
             { /* Actions */ }
             <Flex gap={ 1 } justifyContent="between" alignItems="center" className="mt-1">
@@ -352,8 +513,8 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 
             { /* Delete Confirmation Dialog */ }
             { showDeleteDialog &&
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={ () => setShowDeleteDialog(false) }>
-                    <div className="bg-white rounded-lg shadow-xl p-4 w-[320px]" onClick={ e => e.stopPropagation() }>
+                <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-[60]" onClick={ () => setShowDeleteDialog(false) }>
+                    <div className="bg-[#ffffff] rounded-lg shadow-xl p-4 w-[320px]" onClick={ e => e.stopPropagation() }>
                         <Text bold className="text-[14px] mb-2 block">Delete Item?</Text>
                         <Text small className="mb-3 block text-[#666]">
                             Are you sure you want to delete <strong>{ item.publicName || item.itemName }</strong> (ID: { item.id })?
@@ -362,6 +523,21 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                         <Flex gap={ 1 } justifyContent="end">
                             <Button variant="secondary" onClick={ () => setShowDeleteDialog(false) }>Cancel</Button>
                             <Button variant="danger" onClick={ handleDeleteConfirm }>Delete</Button>
+                        </Flex>
+                    </div>
+                </div>
+            }
+
+            { /* Furnidata Confirmation Dialog */ }
+            { confirmFurnidata &&
+                <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-[60]" onClick={ () => setConfirmFurnidata(false) }>
+                    <div className="bg-[#ffffff] rounded-lg shadow-xl p-4 w-[320px]" onClick={ e => e.stopPropagation() }>
+                        <Text bold className="text-[14px] mb-2 block">Apply furnidata change to ALL clients?</Text>
+                        <div className="text-xs mb-1"><b>Name:</b> { String(furniDataEntry?.name ?? '') } → { furniName }</div>
+                        <div className="text-xs mb-3"><b>Desc:</b> { String(furniDataEntry?.description ?? '') } → { furniDescription }</div>
+                        <Flex gap={ 1 } justifyContent="end">
+                            <Button variant="secondary" onClick={ () => setConfirmFurnidata(false) }>Cancel</Button>
+                            <Button variant="success" onClick={ () => { onUpdateFurnidata(item.id, furniName, furniDescription); setConfirmFurnidata(false); } }>Confirm</Button>
                         </Flex>
                     </div>
                 </div>
