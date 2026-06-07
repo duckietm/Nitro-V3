@@ -115,7 +115,11 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
             {
                 const element = await TextureUtils.generateImage(new NitroSprite(event.image));
 
-                element.onload = () => setImageElement(element);
+                // The generated image carries an already-decoded data-URL, so
+                // `onload` may have fired before we attach it and never run.
+                // Set immediately when complete; otherwise wait for load.
+                if(element.complete && element.naturalWidth) setImageElement(element);
+                else element.onload = () => setImageElement(element);
             }
             else
             {
@@ -143,7 +147,8 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
                 {
                     const element = await TextureUtils.generateImage(new NitroSprite(texture));
 
-                    element.onload = () => setImageElement(element);
+                    if(element.complete && element.naturalWidth) setImageElement(element);
+                    else element.onload = () => setImageElement(element);
                 })();
             }
             else
