@@ -22,8 +22,8 @@ export const LayoutGiftTagView: FC<LayoutGiftTagViewProps> = props =>
         <Flex className="nitro-gift-card text-black" overflow="hidden">
             <div className="flex items-center justify-center gift-face shrink-0">
                 { !userName && <div className="gift-incognito"></div> }
-                { figure && <div className="gift-avatar">
-                    <LayoutAvatarImageView direction={ 2 } figure={ figure } headOnly={ true } />
+                { figure && <div className="gift-avatar relative w-[52px] h-[52px] shrink-0 overflow-hidden rounded-full bg-[#dfe6ea]">
+                    <LayoutAvatarImageView direction={ 2 } figure={ figure } headOnly={ true } style={ { backgroundSize: '100px auto', backgroundPosition: '-24px -33px' } } />
                 </div> }
             </div>
             <Flex className="w-full pt-4 pb-4 pe-4 ps-3" overflow="hidden">

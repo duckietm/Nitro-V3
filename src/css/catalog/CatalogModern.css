@@ -1,0 +1,102 @@
+/* ============================================================================
+   Catalogo MODERN (Hippiehotel) — override CSS scopati a .nitro-catalog.
+   Il CSS catalogo condiviso (CatalogClassicView.css) e' SWF-style block/absolute,
+   pensato per la struttura del catalogo CLASSICO. Il catalogo modern
+   (CatalogModernView + CatalogLayoutDefaultView in ../catalog-modern/) usa un
+   layout FLEX: questi override ripristinano il flex e adattano gli elementi SOLO
+   per la finestra modern (.nitro-catalog), lasciando intatto il classico
+   (.nitro-catalog-classic-window).
+   ============================================================================ */
+
+/* Variabili SWF: definite solo su .nitro-catalog-classic-window → replicate sulla modern */
+.nitro-catalog {
+    --catalog-swf-bg: #ecece4;
+    --catalog-swf-panel: #f7f7f2;
+    --catalog-swf-panel-2: #e7e7df;
+    --catalog-swf-border: #9d9d96;
+    --catalog-swf-border-dark: #6f6f6a;
+    --catalog-swf-text: #222222;
+    --catalog-swf-muted: #666666;
+    --catalog-swf-blue: #2f8097;
+    --catalog-swf-blue-dark: #1c596c;
+    --catalog-swf-select: #63c5e9;
+    --catalog-swf-select-outer: #82d1ed;
+    --catalog-swf-bc: #ff8d00;
+    --catalog-swf-bc-outer: #ffb53c;
+}
+
+/* Layout flex (il CSS condiviso forza display:block + posizionamento assoluto) */
+.nitro-catalog .nitro-catalog-classic-default-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+}
+
+.nitro-catalog .nitro-catalog-classic-offer-panel {
+    height: auto !important;
+    flex: 0 0 auto !important;
+}
+
+.nitro-catalog .nitro-catalog-classic-offer-preview,
+.nitro-catalog .nitro-catalog-classic-offer-panel > .nitro-catalog-classic-offer-preview {
+    position: relative !important;
+    height: 200px !important;
+    width: 300px !important;
+    min-width: 300px !important;
+}
+
+.nitro-catalog .nitro-catalog-classic-offer-info {
+    display: flex !important;
+    padding-left: 22px !important;
+    padding-right: 14px !important;
+    justify-content: center !important;
+}
+
+.nitro-catalog .nitro-catalog-classic-grid-shell {
+    position: static !important;
+    inset: auto !important;
+    left: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: auto !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+}
+
+/* Bottoni Rotate/Toggle State: pill leggibili agli angoli del preview, icone bianche */
+.nitro-catalog .nitro-catalog-classic-preview-btn {
+    position: absolute !important;
+    top: 8px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 3px 9px !important;
+    background: rgba(0, 0, 0, 0.58) !important;
+    color: #ffffff !important;
+    border: 0 !important;
+    border-radius: 4px !important;
+    border-image: none !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    gap: 4px !important;
+    z-index: 4;
+}
+
+.nitro-catalog .nitro-catalog-classic-preview-btn svg,
+.nitro-catalog .nitro-catalog-classic-preview-btn path {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+.nitro-catalog .nitro-catalog-classic-preview-rotate { left: 8px !important; right: auto !important; }
+.nitro-catalog .nitro-catalog-classic-preview-state  { right: 8px !important; left: auto !important; }
+
+/* Nome doppio sul preview rimosso → resta quello nell'info (a destra) */
+.nitro-catalog .nitro-catalog-classic-preview-title { display: none !important; }
+
+/* Show pieno senza preview: niente welcome/intro → la griglia prende tutta la pagina */
+.nitro-catalog .nitro-catalog-classic-welcome { display: none !important; }

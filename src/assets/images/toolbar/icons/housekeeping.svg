@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <!-- Habbo-style housekeeping: hotel building + gear -->
+  <g stroke="#3a2a14" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- building body -->
+    <rect x="7.5" y="12.5" width="19" height="21.5" rx="1.5" fill="#ffd24d"/>
+    <!-- roof band / sign -->
+    <rect x="5.5" y="8.5" width="23" height="5" rx="1.5" fill="#e0552e"/>
+    <!-- windows (light glass) -->
+    <g fill="#bfe8ff" stroke-width="1.1">
+      <rect x="10" y="16" width="4.5" height="4.5" rx="0.6"/>
+      <rect x="19.5" y="16" width="4.5" height="4.5" rx="0.6"/>
+      <rect x="10" y="22" width="4.5" height="4.5" rx="0.6"/>
+      <rect x="19.5" y="22" width="4.5" height="4.5" rx="0.6"/>
+    </g>
+    <!-- door -->
+    <path d="M14.5 34 L14.5 29.5 Q17 27.5 19.5 29.5 L19.5 34 Z" fill="#a86a2d"/>
+    <!-- gear -->
+    <g fill="#c4ccd4">
+      <path d="M30 23.5 l2.1 .55 .9 -1.5 1.7 1 -.4 2.1 1.6 1.4 -1.6 1.4 .4 2.1 -1.7 1 -.9 -1.5 -2.1 .55 -2.1 -.55 -.9 1.5 -1.7 -1 .4 -2.1 -1.6 -1.4 1.6 -1.4 -.4 -2.1 1.7 -1 .9 1.5 z"/>
+    </g>
+    <circle cx="30" cy="28.5" r="2.6" fill="#eef2f5"/>
+    <circle cx="30" cy="28.5" r="1.1" fill="#3a2a14" stroke="none"/>
+  </g>
+</svg>
