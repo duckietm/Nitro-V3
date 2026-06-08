@@ -12,11 +12,53 @@ export const FriendsMessengerView: FC<{}> = props =>
     const [ isVisible, setIsVisible ] = useState(false);
     const [ lastThreadId, setLastThreadId ] = useState(-1);
     const [ messageText, setMessageText ] = useState('');
-    const { visibleThreads = [], activeThread = null, getMessageThread = null, sendMessage = null, setActiveThreadId = null, closeThread = null } = useMessenger();
+    const { visibleThreads = [], activeThread = null, getMessageThread = null, sendMessage = null, setActiveThreadId = null, closeThread = null, typingUserIds = [], sendTypingStatus = null } = useMessenger();
     const { getFriend = null } = useFriends();
     const { report = null } = useHelp();
     const { settings, translateOutgoing } = useTranslation();
     const messagesBox = useRef<HTMLDivElement>(null);
+    const isTypingRef = useRef<boolean>(false);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+    const stopTyping = () =>
+    {
+        if(typingTimeoutRef.current)
+        {
+            clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = null;
+        }
+
+        if(isTypingRef.current && activeThread && activeThread.participant && (activeThread.participant.id > 0))
+        {
+            sendTypingStatus(activeThread.participant.id, false);
+        }
+
+        isTypingRef.current = false;
+    };
+
+    const handleInputChange = (value: string) =>
+    {
+        setMessageText(value);
+
+        const peerId = (activeThread && activeThread.participant) ? activeThread.participant.id : 0;
+
+        if(peerId <= 0) return;
+
+        if(!value.length)
+        {
+            stopTyping();
+            return;
+        }
+
+        if(!isTypingRef.current)
+        {
+            sendTypingStatus(peerId, true);
+            isTypingRef.current = true;
+        }
+
+        if(typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => stopTyping(), 4000);
+    };
 
     const followFriend = () => (activeThread && activeThread.participant && SendMessageComposer(new FollowFriendMessageComposer(activeThread.participant.id)));
     const openProfile = () => (activeThread && activeThread.participant && GetUserProfile(activeThread.participant.id));
@@ -24,6 +66,8 @@ export const FriendsMessengerView: FC<{}> = props =>
     const send = async () =>
     {
         if(!activeThread || !messageText.length) return;
+
+        stopTyping();
 
         const trimmedText = messageText.trimStart();
         const shouldTranslateOutgoing = settings.enabled && !!trimmedText.length && (trimmedText.charAt(0) !== ':');
@@ -101,6 +145,14 @@ export const FriendsMessengerView: FC<{}> = props =>
 
         messagesBox.current.scrollTop = messagesBox.current.scrollHeight;
     }, [ isVisible, activeThread ]);
+
+    useEffect(() =>
+    {
+        return () =>
+        {
+            stopTyping();
+        };
+    }, [ activeThread ]);
 
     useEffect(() =>
     {
@@ -184,8 +236,13 @@ export const FriendsMessengerView: FC<{}> = props =>
                                 <FriendsMessengerThreadView thread={ activeThread } />
                             </div>
 
+                            { activeThread.participant && (activeThread.participant.id > 0) && (typingUserIds.indexOf(activeThread.participant.id) >= 0) &&
+                                <div className="messenger-typing-indicator">
+                                    { LocalizeText('messenger.typing', [ 'FRIEND_NAME' ], [ activeThread.participant.name ]) }
+                                </div> }
+
                             <div className="messenger-input-row">
-                                <input maxLength={ 255 } placeholder={ LocalizeText('messenger.window.input.default', [ 'FRIEND_NAME' ], [ activeThread.participant.name ]) } type="text" value={ messageText } onChange={ event => setMessageText(event.target.value) } onKeyDown={ onKeyDown } />
+                                <input maxLength={ 255 } placeholder={ LocalizeText('messenger.window.input.default', [ 'FRIEND_NAME' ], [ activeThread.participant.name ]) } type="text" value={ messageText } onChange={ event => handleInputChange(event.target.value) } onKeyDown={ onKeyDown } />
                                 <button className="messenger-btn send" onClick={ () => void send() }>
                                     { LocalizeText('widgets.chatinput.say') }
                                 </button>

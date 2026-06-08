@@ -9,7 +9,9 @@ export const FriendsListGroupItemView: FC<{ friend: MessengerFriend, selected: b
 {
     const { friend = null, selected = false, selectFriend = null } = props;
     const [ isRelationshipOpen, setIsRelationshipOpen ] = useState<boolean>(false);
-    const { followFriend = null, updateRelationship = null } = useFriends();
+    const { followFriend = null, updateRelationship = null, moveFriendToCategory = null, settings = null } = useFriends();
+    const [ isGroupMenuOpen, setIsGroupMenuOpen ] = useState<boolean>(false);
+    const categories = settings?.categories ?? [];
 
     const clickFollowFriend = (event: MouseEvent<HTMLDivElement>) =>
     {
@@ -74,6 +76,21 @@ export const FriendsListGroupItemView: FC<{ friend: MessengerFriend, selected: b
                             <div className="nitro-friends-spritesheet icon-follow cursor-pointer" title={ LocalizeText('friendlist.tip.follow') } onClick={ clickFollowFriend } /> }
                         { friend.online &&
                             <div className="nitro-friends-spritesheet icon-chat cursor-pointer" title={ LocalizeText('friendlist.tip.im') } onClick={ openMessengerChat } /> }
+                        { (friend.id > 0) && (categories.length > 0) &&
+                            <div className="friends-list-group-assign position-relative">
+                                <div className="friends-list-group-toggle cursor-pointer" title={ LocalizeText('friendlist.friends') } onClick={ event => { event.stopPropagation(); setIsGroupMenuOpen(prev => !prev); } }>{ '📁' }</div>
+                                { isGroupMenuOpen &&
+                                    <div className="friends-list-group-menu">
+                                        <div className={ `friends-list-group-menu-item${ (friend.categoryId === 0) ? ' active' : '' }` } onClick={ event => { event.stopPropagation(); moveFriendToCategory(friend.id, 0); setIsGroupMenuOpen(false); } }>
+                                            { LocalizeText('friendlist.friends') }
+                                        </div>
+                                        { categories.map(category => (
+                                            <div key={ category.id } className={ `friends-list-group-menu-item${ (friend.categoryId === category.id) ? ' active' : '' }` } onClick={ event => { event.stopPropagation(); moveFriendToCategory(friend.id, category.id); setIsGroupMenuOpen(false); } }>
+                                                { category.name }
+                                            </div>
+                                        )) }
+                                    </div> }
+                            </div> }
                         { (friend.id > 0) &&
                             <div className={ `nitro-friends-spritesheet icon-${ getCurrentRelationshipName() } cursor-pointer` } title={ LocalizeText('infostand.link.relationship') } onClick={ openRelationship } /> }
                     </> }

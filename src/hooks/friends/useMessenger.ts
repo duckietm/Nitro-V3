@@ -1,5 +1,5 @@
-import { GetSessionDataManager, NewConsoleMessageEvent, RoomInviteErrorEvent, RoomInviteEvent, SendMessageComposer as SendMessageComposerPacket } from '@nitrots/nitro-renderer';
-import { useEffect, useMemo, useState } from 'react';
+import { ConsoleReadReceiptEvent, ConsoleTypingComposer, FriendIsTypingEvent, GetSessionDataManager, MarkConsoleReadComposer, NewConsoleMessageEvent, RoomInviteErrorEvent, RoomInviteEvent, SendMessageComposer as SendMessageComposerPacket } from '@nitrots/nitro-renderer';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { CloneObject, LocalizeText, MessengerIconState, MessengerThread, MessengerThreadChat, NotificationAlertType, PlaySound, SendMessageComposer, SoundNames } from '../../api';
 import { useMessageEvent } from '../events';
@@ -16,6 +16,12 @@ const useMessengerState = () =>
     const { getFriend = null } = useFriends();
     const { simpleAlert = null } = useNotification();
     const { settings, translateIncoming } = useTranslation();
+
+    const [typingUserIds, setTypingUserIds] = useState<number[]>([]);
+    const typingTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+
+    const messageThreadsRef = useRef(messageThreads);
+    messageThreadsRef.current = messageThreads;
 
     const visibleThreads = useMemo(() => messageThreads.filter(thread => (hiddenThreadIds.indexOf(thread.threadId) === -1)), [messageThreads, hiddenThreadIds]);
     const activeThread = useMemo(() => ((activeThreadId > 0) && visibleThreads.find(thread => (thread.threadId === activeThreadId) || null)), [activeThreadId, visibleThreads]);
@@ -148,6 +154,13 @@ const useMessengerState = () =>
         });
     };
 
+    const sendTypingStatus = (peerId: number, isTyping: boolean) =>
+    {
+        if (!peerId || (peerId <= 0)) return;
+
+        SendMessageComposer(new ConsoleTypingComposer(peerId, isTyping));
+    };
+
     useMessageEvent<NewConsoleMessageEvent>(NewConsoleMessageEvent, event =>
     {
         const parser = event.getParser();
@@ -156,6 +169,7 @@ const useMessengerState = () =>
         if (!thread) return;
 
         sendMessage(thread, parser.senderId, parser.messageText, parser.secondsSinceSent, parser.extraData);
+        if ((thread.threadId === activeThreadId) && (parser.senderId > 0)) SendMessageComposer(new MarkConsoleReadComposer(parser.senderId));
     });
 
     useMessageEvent<RoomInviteEvent>(RoomInviteEvent, event =>
@@ -175,9 +189,64 @@ const useMessengerState = () =>
         simpleAlert(`Received room invite error: ${ parser.errorCode },recipients: ${ parser.failedRecipients.join(',') }`, NotificationAlertType.DEFAULT, null, null, LocalizeText('friendlist.alert.title'));
     });
 
+    useMessageEvent<FriendIsTypingEvent>(FriendIsTypingEvent, event =>
+    {
+        const parser = event.getParser();
+        const senderId = parser.senderId;
+
+        if (senderId <= 0) return;
+
+        const timers = typingTimersRef.current;
+        const existing = timers.get(senderId);
+
+        if (existing)
+        {
+            clearTimeout(existing);
+            timers.delete(senderId);
+        }
+
+        if (parser.isTyping)
+        {
+            setTypingUserIds(prev => (prev.indexOf(senderId) >= 0) ? prev : [...prev, senderId]);
+
+            timers.set(senderId, setTimeout(() =>
+            {
+                typingTimersRef.current.delete(senderId);
+                setTypingUserIds(prev => prev.filter(id => (id !== senderId)));
+            }, 6000));
+        }
+        else
+        {
+            setTypingUserIds(prev => prev.filter(id => (id !== senderId)));
+        }
+    });
+
+    useMessageEvent<ConsoleReadReceiptEvent>(ConsoleReadReceiptEvent, event =>
+    {
+        const parser = event.getParser();
+        const ownUserId = GetSessionDataManager().userId;
+
+        setMessageThreads(prevValue =>
+        {
+            const index = prevValue.findIndex(thread => (thread.participant && (thread.participant.id === parser.readerId)));
+
+            if (index === -1) return prevValue;
+
+            const newValue = [...prevValue];
+
+            newValue[index] = CloneObject(newValue[index]);
+            newValue[index].setMessagesReadFromUser(ownUserId);
+
+            return newValue;
+        });
+    });
+
     useEffect(() =>
     {
         if (activeThreadId <= 0) return;
+
+        const activeThreadValue = messageThreadsRef.current.find(thread => (thread.threadId === activeThreadId));
+        const participantId = activeThreadValue?.participant?.id ?? 0;
 
         setMessageThreads(prevValue =>
         {
@@ -187,12 +256,13 @@ const useMessengerState = () =>
             if (index >= 0)
             {
                 newValue[index] = CloneObject(newValue[index]);
-
                 newValue[index].setRead();
             }
 
             return newValue;
         });
+
+        if (participantId > 0) SendMessageComposer(new MarkConsoleReadComposer(participantId));
     }, [activeThreadId]);
 
     useEffect(() =>
@@ -219,7 +289,7 @@ const useMessengerState = () =>
         });
     }, [visibleThreads]);
 
-    return { messageThreads, activeThread, iconState, visibleThreads, getMessageThread, setActiveThreadId, closeThread, sendMessage };
+    return { messageThreads, activeThread, iconState, visibleThreads, getMessageThread, setActiveThreadId, closeThread, sendMessage, typingUserIds, sendTypingStatus };
 };
 
 export const useMessenger = () => useBetween(useMessengerState);

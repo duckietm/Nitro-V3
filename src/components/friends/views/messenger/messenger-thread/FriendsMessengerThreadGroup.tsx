@@ -68,7 +68,13 @@ export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread, group: M
                     {
                         if(!chat.showTranslation)
                         {
-                            return <Base key={ index } className="text-break">{ chat.message }</Base>;
+                            return (
+                                <Base key={ index } className="text-break">
+                                    { chat.message }
+                                    { chat.offlineDelivered &&
+                                        <span className="messenger-offline-tag">{ LocalizeText('messenger.offline.delivered') }</span> }
+                                </Base>
+                            );
                         }
 
                         return (
@@ -86,6 +92,10 @@ export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread, group: M
                     }) }
                 </Base>
                 <Base className="messenger-message-time">{ group.chats[0].date.toLocaleTimeString() }</Base>
+                { isOwnChat && (group.type === MessengerGroupType.PRIVATE_CHAT) && (group.chats[group.chats.length - 1].type === MessengerThreadChat.CHAT) &&
+                    <Base className={ 'messenger-message-status ' + ((group.chats[group.chats.length - 1].status === MessengerThreadChat.READ) ? 'read' : '') }>
+                        { (group.chats[group.chats.length - 1].status === MessengerThreadChat.READ) ? '✓✓' : '✓' }
+                    </Base> }
             </Base>
             { isOwnChat &&
                 <Base shrink className="message-avatar">

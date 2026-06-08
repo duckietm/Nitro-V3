@@ -1,11 +1,13 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveFriendComposer, RemoveLinkEventTracker, SendRoomInviteComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, MessengerFriend, SendMessageComposer } from '../../../../api';
+import { LocalizeText, MessengerFriend, SendMessageComposer, filterFriendsByCategory } from '../../../../api';
 import { Button, Flex, NitroCardAccordionSetView, NitroCardAccordionView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFriends } from '../../../../hooks';
+import { FriendsCategoryManagerView } from './FriendsCategoryManagerView';
 import { FriendsRemoveConfirmationView } from './FriendsListRemoveConfirmationView';
 import { FriendsRoomInviteView } from './FriendsListRoomInviteView';
 import { FriendsSearchView } from './FriendsListSearchView';
+import { FriendsListGroupChipsView } from './FriendsListGroupChipsView';
 import { FriendsListGroupView } from './friends-list-group/FriendsListGroupView';
 import { FriendsListRequestView } from './friends-list-request/FriendsListRequestView';
 
@@ -15,7 +17,13 @@ export const FriendsListView: FC<{}> = props =>
     const [ selectedFriendsIds, setSelectedFriendsIds ] = useState<number[]>([]);
     const [ showRoomInvite, setShowRoomInvite ] = useState<boolean>(false);
     const [ showRemoveFriendsConfirmation, setShowRemoveFriendsConfirmation ] = useState<boolean>(false);
-    const { onlineFriends = [], offlineFriends = [], requests = [], requestFriend = null } = useFriends();
+    const [ selectedCategoryId, setSelectedCategoryId ] = useState<number>(0);
+    const [ showCategoryManager, setShowCategoryManager ] = useState<boolean>(false);
+    const { friends = [], onlineFriends = [], offlineFriends = [], requests = [], requestFriend = null, settings = null } = useFriends();
+
+    const categories = settings?.categories ?? [];
+    const filteredOnlineFriends = filterFriendsByCategory(onlineFriends, selectedCategoryId);
+    const filteredOfflineFriends = filterFriendsByCategory(offlineFriends, selectedCategoryId);
 
     const removeFriendsText = useMemo(() =>
     {
@@ -145,32 +153,38 @@ export const FriendsListView: FC<{}> = props =>
             <NitroCardView className="nitro-friends" theme="primary-slim" uniqueKey="nitro-friends">
                 <NitroCardHeaderView headerText={ LocalizeText('friendlist.friends') } onCloseClick={ event => setIsVisible(false) } />
                 <NitroCardContentView className="text-black p-0" gap={ 1 } overflow="hidden">
+                    <FriendsListGroupChipsView
+                        categories={ categories }
+                        friends={ friends }
+                        selectedCategoryId={ selectedCategoryId }
+                        setSelectedCategoryId={ setSelectedCategoryId }
+                        onManageClick={ () => setShowCategoryManager(true) } />
                     <NitroCardAccordionView fullHeight overflow="hidden">
-                        <NitroCardAccordionSetView className="friends-list-section" headerText={ LocalizeText('friendlist.friends') + ` (${ onlineFriends.length })` } isExpanded={ true }>
+                        <NitroCardAccordionSetView className="friends-list-section" headerText={ LocalizeText('friendlist.friends') + ` (${ filteredOnlineFriends.length })` } isExpanded={ true }>
                             <Flex className="friends-list-toolbar px-2 py-1" justifyContent="end">
                                 <span className="friends-list-toolbar-link" onClick={ event =>
                                 {
-                                    event.stopPropagation(); toggleSelectFriends(onlineFriends.map(friend => friend.id));
+                                    event.stopPropagation(); toggleSelectFriends(filteredOnlineFriends.map(friend => friend.id));
                                 } }>
-                                    { onlineFriends.length && onlineFriends.every(friend => (selectedFriendsIds.indexOf(friend.id) >= 0))
+                                    { filteredOnlineFriends.length && filteredOnlineFriends.every(friend => (selectedFriendsIds.indexOf(friend.id) >= 0))
                                         ? LocalizeText('friendlist.unselect_all')
                                         : LocalizeText('friendlist.select_all') }
                                 </span>
                             </Flex>
-                            <FriendsListGroupView list={ onlineFriends } selectedFriendsIds={ selectedFriendsIds } selectFriend={ selectFriend } />
+                            <FriendsListGroupView list={ filteredOnlineFriends } selectedFriendsIds={ selectedFriendsIds } selectFriend={ selectFriend } />
                         </NitroCardAccordionSetView>
-                        <NitroCardAccordionSetView headerText={ LocalizeText('friendlist.friends.offlinecaption') + ` (${ offlineFriends.length })` }>
+                        <NitroCardAccordionSetView headerText={ LocalizeText('friendlist.friends.offlinecaption') + ` (${ filteredOfflineFriends.length })` }>
                             <Flex className="friends-list-toolbar px-2 py-1" justifyContent="end">
                                 <span className="friends-list-toolbar-link" onClick={ event =>
                                 {
-                                    event.stopPropagation(); toggleSelectFriends(offlineFriends.map(friend => friend.id));
+                                    event.stopPropagation(); toggleSelectFriends(filteredOfflineFriends.map(friend => friend.id));
                                 } }>
-                                    { offlineFriends.length && offlineFriends.every(friend => (selectedFriendsIds.indexOf(friend.id) >= 0))
+                                    { filteredOfflineFriends.length && filteredOfflineFriends.every(friend => (selectedFriendsIds.indexOf(friend.id) >= 0))
                                         ? LocalizeText('friendlist.unselect_all')
                                         : LocalizeText('friendlist.select_all') }
                                 </span>
                             </Flex>
-                            <FriendsListGroupView list={ offlineFriends } selectedFriendsIds={ selectedFriendsIds } selectFriend={ selectFriend } />
+                            <FriendsListGroupView list={ filteredOfflineFriends } selectedFriendsIds={ selectedFriendsIds } selectFriend={ selectFriend } />
                         </NitroCardAccordionSetView>
                         <FriendsListRequestView headerText={ LocalizeText('friendlist.tab.friendrequests') + ` (${ requests.length })` } isExpanded={ true } />
                         <FriendsSearchView headerText={ LocalizeText('people.search.title') } />
@@ -186,6 +200,8 @@ export const FriendsListView: FC<{}> = props =>
                 <FriendsRoomInviteView selectedFriendsIds={ selectedFriendsIds } sendRoomInvite={ sendRoomInvite } onCloseClick={ () => setShowRoomInvite(false) } /> }
             { showRemoveFriendsConfirmation &&
                 <FriendsRemoveConfirmationView removeFriendsText={ removeFriendsText } removeSelectedFriends={ removeSelectedFriends } selectedFriendsIds={ selectedFriendsIds } onCloseClick={ () => setShowRemoveFriendsConfirmation(false) } /> }
+            { showCategoryManager &&
+                <FriendsCategoryManagerView categories={ categories } onCloseClick={ () => setShowCategoryManager(false) } /> }
         </>
     );
 };

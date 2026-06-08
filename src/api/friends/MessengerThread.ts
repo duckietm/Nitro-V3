@@ -99,6 +99,16 @@ export class MessengerThread
         this._unreadCount = 0;
     }
 
+    public setMessagesReadFromUser(userId: number): void
+    {
+        for(const group of this._groups)
+        {
+            if(group.userId !== userId) continue;
+
+            for(const chat of group.chats) chat.setStatus(MessengerThreadChat.READ);
+        }
+    }
+
     public get threadId(): number
     {
         return this._threadId;

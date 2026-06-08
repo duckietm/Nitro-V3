@@ -16,7 +16,7 @@ export const FurniEditorView: FC<{}> = () =>
 
     const {
         items, total, page, loading, error, clearError,
-        selectedItem, setSelectedItem, furniDataEntry,
+        selectedItem, setSelectedItem, furniDataEntry, furniDataDiagnostic,
         interactions,
         searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions,
         updateFurnidata, revertFurnidata, importText, importResult
@@ -151,6 +151,7 @@ export const FurniEditorView: FC<{}> = () =>
                     <FurniEditorEditView
                         item={ selectedItem }
                         furniDataEntry={ furniDataEntry }
+                        furniDataDiagnostic={ furniDataDiagnostic }
                         interactions={ interactions }
                         loading={ loading }
                         onUpdate={ updateItem }

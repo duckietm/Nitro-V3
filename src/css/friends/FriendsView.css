@@ -804,6 +804,127 @@
     }
 }
 
+/* Friend group chip filter row */
+.friends-group-chips {
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.friends-group-chips-scroll {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+.friends-group-chips-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.friends-group-chips-scroll::-webkit-scrollbar-thumb {
+    background: #c0c0b8;
+    border-radius: 2px;
+}
+
+.friends-group-chip {
+    flex: 0 0 auto;
+    padding: 1px 8px;
+    border: 1px solid #d0d0c8;
+    border-radius: 10px;
+    background: #f3f3ef;
+    font-size: 11px;
+    line-height: 16px;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+}
+
+.friends-group-chip:hover {
+    background: #efefef;
+}
+
+.friends-group-chip.active {
+    background: #bfe7f6;
+    border-color: #7fb9d6;
+}
+
+.friends-group-chip-manage {
+    flex: 0 0 auto;
+    padding: 1px 6px;
+}
+
+/* Per-friend assign-to-group dropdown */
+.friends-list-group-assign {
+    display: inline-flex;
+}
+
+.friends-list-group-toggle {
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    user-select: none;
+}
+
+.friends-list-group-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: 20;
+    min-width: 120px;
+    max-height: 180px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #c0c0b8;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.friends-list-group-menu-item {
+    padding: 3px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.friends-list-group-menu-item:hover {
+    background: #efefef;
+}
+
+.friends-list-group-menu-item.active {
+    background: #bfe7f6;
+}
+
+/* Category manager: keep the list scrollable */
+.nitro-friends-category-manager .friends-category-list {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.messenger-offline-tag {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    font-style: italic;
+    opacity: 0.6;
+}
+
+.messenger-message-status {
+    margin-top: 1px;
+    font-size: 10px;
+    line-height: 10px;
+    text-align: right;
+    opacity: 0.6;
+}
+.messenger-message-status.read {
+    color: #4fc3f7;
+    opacity: 1;
+}
+
+.messenger-typing-indicator {
+    padding: 2px 8px;
+    font-size: 11px;
+    font-style: italic;
+    opacity: 0.7;
+}
+
 .nitro-friends .friends-list-avatar {
     position: relative !important;
     width: 32px;

@@ -795,4 +795,8 @@
     'mentions.alias.description.everyone':              "Tutti nell'hotel",
     'mentions.alias.description.friends':               "I tuoi amici online",
     'mentions.alias.description.room':                  "Tutti in questa stanza",
+    // Messenger (offline delivery + typing)
+    // ------------------------------------------------------------------------
+    'messenger.offline.delivered':                      'Inviato mentre eri offline',
+    'messenger.typing':                                 '%FRIEND_NAME% sta scrivendo...',
 }

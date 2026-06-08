@@ -60,6 +60,7 @@ export const useFurniEditor = () =>
     const [ catalogItems, setCatalogItems ] = useState<CatalogRef[]>([]);
     const [ interactions, setInteractions ] = useState<string[]>([]);
     const [ furniDataEntry, setFurniDataEntry ] = useState<Record<string, unknown> | null>(null);
+    const [ furniDataDiagnostic, setFurniDataDiagnostic ] = useState<Record<string, unknown> | null>(null);
     const pendingActionRef = useRef<{ action: string; itemId: number } | null>(null);
     const [ importResult, setImportResult ] = useState<{ found: boolean; name: string; description: string; classname: string; nonce: number } | null>(null);
     const importNonceRef = useRef(0);
@@ -152,6 +153,20 @@ export const useFurniEditor = () =>
         {}
 
         setFurniDataEntry(furniData);
+
+        let diagnostic: Record<string, unknown> | null = null;
+
+        try
+        {
+            if(parser.furniDataDiagnosticJson && parser.furniDataDiagnosticJson !== '{}' && parser.furniDataDiagnosticJson !== '')
+            {
+                diagnostic = JSON.parse(parser.furniDataDiagnosticJson);
+            }
+        }
+        catch(e)
+        {}
+
+        setFurniDataDiagnostic(diagnostic);
     });
 
     // Handle interaction types list
@@ -203,6 +218,7 @@ export const useFurniEditor = () =>
             setSelectedItem(null);
             setCatalogItems([]);
             setFurniDataEntry(null);
+            setFurniDataDiagnostic(null);
 
             if(simpleAlert)
             {
@@ -295,7 +311,7 @@ export const useFurniEditor = () =>
 
     return {
         items, total, page, loading, error, clearError,
-        selectedItem, setSelectedItem, catalogItems, furniDataEntry,
+        selectedItem, setSelectedItem, catalogItems, furniDataEntry, furniDataDiagnostic,
         interactions,
         searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions,
         updateFurnidata, revertFurnidata, importText, importResult

@@ -440,3 +440,13 @@ See `docs/ARCHITECTURE.md` "Recently fixed" for fix shapes.
   classes/enums kept around just so the `src/api/*` barrel cascade
   imports without throwing. **Grow this file when a new test needs a
   symbol; prefer real deterministic stubs over `vi.fn()`.**
+
+## Furni names (furnidata-driven)
+
+Furni name/description are furnidata-driven (`FurnitureData` by classname) — the
+client does NOT get furni display names from the server. The 3 furni surfaces
+refresh live on the window event `nitro-localization-updated`: catalog
+(`useCatalog.ts`), inventory (`useInventoryFurni.ts`), infostand
+(`useAvatarInfoWidget.ts`). The renderer's `FurnitureDataReload` packet (header
+10047) dispatches that event on server-pushed furnidata changes — no client code
+needed.

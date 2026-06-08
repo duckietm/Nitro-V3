@@ -7,6 +7,7 @@ interface FurniEditorEditViewProps
 {
     item: FurniDetail;
     furniDataEntry: Record<string, unknown> | null;
+    furniDataDiagnostic: Record<string, unknown> | null;
     interactions: string[];
     loading: boolean;
     onUpdate: (id: number, fields: Record<string, unknown>) => void;
@@ -121,7 +122,7 @@ const CopyValue: FC<{ value: string | number }> = ({ value }) =>
 
 export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
 {
-    const { item, furniDataEntry, interactions, loading, onUpdate, onDelete, onBack, onUpdateFurnidata, onRevertFurnidata, onImportText, importResult } = props;
+    const { item, furniDataEntry, furniDataDiagnostic, interactions, loading, onUpdate, onDelete, onBack, onUpdateFurnidata, onRevertFurnidata, onImportText, importResult } = props;
     const saveRef = useRef<() => void>(null);
 
     const [ form, setForm ] = useState({
@@ -251,6 +252,14 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
     const furnidataDirty = useMemo(() =>
         furniName !== String(furniDataEntry?.name ?? '') || furniDescription !== String(furniDataEntry?.description ?? ''),
     [ furniName, furniDescription, furniDataEntry ]);
+
+    const furnidataMissReason = useMemo(() =>
+    {
+        const reason = String(furniDataDiagnostic?.reason ?? '');
+        return reason || 'not_found';
+    }, [ furniDataDiagnostic ]);
+
+    const furnidataSourcePath = String(furniDataDiagnostic?.sourcePath ?? '');
 
     // Apply an "Import from Habbo" result into the editable fields (review then Save).
     useEffect(() =>
@@ -391,7 +400,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                 ) : (
                     <div className="flex items-start gap-2 text-[11px] text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 leading-snug">
                         <span className="text-[#f59e0b] text-sm leading-none mt-px">⚠</span>
-                        <span>This furni has no matching <b>furnidata</b> entry (e.g. a pet or custom item), so its display name can&apos;t be edited here. Clients fall back to the DB <b>Public Name</b> below.</span>
+                        <span>This furni has no matching <b>furnidata</b> entry ({ furnidataMissReason.replace(/_/g, ' ') }), so its display name can&apos;t be edited here. Clients fall back to the DB <b>Public Name</b> below.</span>
                     </div>
                 ) }
             </div>
@@ -423,6 +432,20 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = props =>
                     <pre className="text-[10px] leading-snug text-slate-600 bg-slate-50 border border-slate-200 rounded-lg p-2 overflow-auto max-h-52 whitespace-pre-wrap break-all font-mono">{ JSON.stringify(furniDataEntry, null, 2) }</pre>
                 </Section>
             }
+
+            <Section title="Furnidata Debug" defaultOpen={ false }>
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                    <div>
+                        <label className={ labelClass }>Resolution</label>
+                        <CopyValue value={ furnidataMissReason } />
+                    </div>
+                    <div>
+                        <label className={ labelClass }>Source</label>
+                        <CopyValue value={ furnidataSourcePath || 'unresolved' } />
+                    </div>
+                </div>
+                <pre className="text-[10px] leading-snug text-slate-600 bg-slate-50 border border-slate-200 rounded-lg p-2 overflow-auto max-h-40 whitespace-pre-wrap break-all font-mono">{ JSON.stringify(furniDataDiagnostic ?? {}, null, 2) }</pre>
+            </Section>
 
             <Section title="Dimensions">
                 <div className="grid grid-cols-3 gap-2">
