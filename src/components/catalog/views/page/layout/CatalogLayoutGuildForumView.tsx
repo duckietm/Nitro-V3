@@ -1,7 +1,8 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { SanitizeHtml } from '../../../../../api';
-import { Column, Grid, Text } from '../../../../../common';
-import { useCatalogData, useCatalogUiState, useUserGroups } from '../../../../../hooks';
+import { Column, Flex, Grid } from '../../../../../common';
+import { LayoutImage } from '../../../../../common/layout/LayoutImage';
+import { useCatalogData, useUserGroups } from '../../../../../hooks';
 import { CatalogFirstProductSelectorWidgetView } from '../widgets/CatalogFirstProductSelectorWidgetView';
 import { CatalogGuildSelectorWidgetView } from '../widgets/CatalogGuildSelectorWidgetView';
 import { CatalogPurchaseWidgetView } from '../widgets/CatalogPurchaseWidgetView';
@@ -11,32 +12,31 @@ import { CatalogLayoutProps } from './CatalogLayout.types';
 export const CatalogLayouGuildForumView: FC<CatalogLayoutProps> = props =>
 {
     const { page = null } = props;
-    const [ selectedGroupIndex, setSelectedGroupIndex ] = useState<number>(0);
     const { currentOffer = null } = useCatalogData();
-    const { setCurrentOffer = null } = useCatalogUiState();
     const { data: groups = null } = useUserGroups();
+
+    const teaserImage = page.localization.getImage(1);
+    const hasGroups = !!(groups && groups.length);
 
     return (
         <>
             <CatalogFirstProductSelectorWidgetView />
-            <Grid>
-                <Column className="bg-muted rounded p-2 text-black" overflow="hidden" size={ 7 }>
-                    <div className="overflow-auto" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(1)) } } />
-                </Column>
-                <Column gap={ 1 } overflow="hidden" size={ 5 }>
+            <Grid overflow="hidden">
+                <Column overflow="hidden" size={ 8 }>
+                    <div className="nitro-catalog-forum-text grow! min-h-0 overflow-auto text-black" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(1)) } } />
                     { !!currentOffer &&
-                        <>
-                            <Column grow gap={ 1 }>
-                                <Text truncate>{ currentOffer.localizationName }</Text>
-                                <div className="grow!">
-                                    <CatalogGuildSelectorWidgetView />
-                                </div>
-                                <div className="flex justify-end">
-                                    <CatalogTotalPriceWidget alignItems="end" />
-                                </div>
-                                <CatalogPurchaseWidgetView noGiftOption={ true } />
-                            </Column>
-                        </> }
+                        <Flex alignItems="center" className="shrink-0" gap={ 2 }>
+                            <CatalogTotalPriceWidget />
+                            <div className="grow!">
+                                <CatalogGuildSelectorWidgetView />
+                            </div>
+                            { hasGroups &&
+                                <CatalogPurchaseWidgetView noGiftOption={ true } /> }
+                        </Flex> }
+                </Column>
+                <Column alignItems="center" overflow="hidden" size={ 4 }>
+                    { !!teaserImage &&
+                        <LayoutImage className="max-w-full" imageUrl={ teaserImage } /> }
                 </Column>
             </Grid>
         </>

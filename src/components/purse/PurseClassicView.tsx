@@ -84,7 +84,8 @@ export const PurseClassicView: FC<{}> = props =>
                 body: JSON.stringify({ ssoTicket, rememberToken })
             });
         }
-        catch {}
+        catch
+        { /* best-effort — proceed with local logout regardless */ }
 
         ClearRememberLogin();
         if(window.NitroConfig) window.NitroConfig['sso.ticket'] = '';

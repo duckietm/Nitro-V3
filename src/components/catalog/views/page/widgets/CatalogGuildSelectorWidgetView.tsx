@@ -1,4 +1,4 @@
-import { StringDataType } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, StringDataType } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { LocalizeText } from '../../../../../api';
 import { Button, Flex } from '../../../../../common';
@@ -45,11 +45,13 @@ export const CatalogGuildSelectorWidgetView: FC<{}> = props =>
     if(!groups || !groups.length)
     {
         return (
-            <div className="bg-muted rounded p-1 text-black text-center">
+            <div className="bg-[#5da0aa] rounded-lg p-2 text-black text-center">
                 { LocalizeText('catalog.guild_selector.members_only') }
-                <Button fullWidth classNames={ [ 'mt-1', 'nitro-catalog-swf-button', 'nitro-catalog-swf-buy-button', 'whitespace-normal!', 'text-[10px]!', 'leading-tight!', 'py-1!' ] }>
-                    { LocalizeText('catalog.guild_selector.find_groups') }
-                </Button>
+                <div className="mt-1">
+                    <Button classNames={ [ 'nitro-catalog-guild-join-btn' ] } onClick={ () => CreateLinkEvent('navigator/search/hotel_view/group:') }>
+                        { LocalizeText('catalog.guild_selector.find_groups') }
+                    </Button>
+                </div>
             </div>
         );
     }

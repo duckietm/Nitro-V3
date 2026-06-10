@@ -20,7 +20,6 @@ import './css/index.css';
 import './css/backgrounds/BackgroundsView.css';
 import './css/badges/BadgeLeaderboardView.css';
 import './css/catalog/CatalogClassicView.css';
-import './css/catalog/CatalogModern.css';
 import './css/emustats/EmuStatsView.css';
 
 import './css/chat/Chats.css';
@@ -55,8 +54,6 @@ import './css/nitrocard/NitroCardView.css';
 import './css/notification/NotificationCenterView.css';
 
 import './css/purse/PurseView.css';
-
-import './css/purse/PurseClassicView.css';
 
 import './css/room/InfoStand.css';
 import './css/room/NavigatorRoomSettings.css';

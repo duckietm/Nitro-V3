@@ -16,6 +16,7 @@
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
 }
 
+/* ---- Body: 3 columns (currencies | Join+Earnings | actions) ---- */
 .nitro-purse__body {
     display: flex;
     gap: 6px;
@@ -23,6 +24,7 @@
     padding: 6px;
 }
 
+/* ---- Currencies (left) ---- */
 .nitro-purse__currencies {
     display: flex;
     flex: 1 1 0;
@@ -62,6 +64,7 @@
     color: #df95ff !important;
 }
 
+/* ---- Button columns (Join+Earnings and actions) ---- */
 .nitro-purse__col {
     display: flex;
     flex: 0 0 auto;

@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
 import { Text } from '../../../../common';
-import { useCatalogClassicStyle, useChatCommandSelector, useChatInputWidget, useChatMentions, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
+import { useChatCommandSelector, useChatInputWidget, useChatMentions, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
 import { ChatInputCommandSelectorView } from './ChatInputCommandSelectorView';
 import { ChatInputEmojiSelectorView } from './ChatInputEmojiSelectorView';
 import { ChatInputMentionSelectorView } from './ChatInputMentionSelectorView';
@@ -17,12 +17,6 @@ export const ChatInputView: FC<{}> = props =>
     const { roomSession = null } = useRoom();
     const inputRef = useRef<HTMLInputElement>(null);
     const { isVisible: commandSelectorVisible, filteredCommands, selectedIndex, setSelectedIndex, moveUp, moveDown, selectCurrent, close: closeCommandSelector } = useChatCommandSelector(chatValue);
-
-    // The "New style" user-setting (memenu.settings.other.catalog.classic.style)
-    // drives BOTH the catalog layout and the mention-picker chrome:
-    //   false (default) = Habbo old-school NitroCard cardstock look
-    //   true            = flat minimalist gray look
-    const [ newStyle ] = useCatalogClassicStyle();
 
     const mention = useChatMentions(chatValue, setChatValue, inputRef, commandSelectorVisible);
 
@@ -329,7 +323,6 @@ export const ChatInputView: FC<{}> = props =>
                             setChatValue(':' + cmd.key + ' '); inputRef.current?.focus();
                         } }
                         onHover={ setSelectedIndex }
-                        newStyle={ newStyle }
                     /> }
                 { mention.visible && !commandSelectorVisible &&
                     <ChatInputMentionSelectorView
@@ -337,7 +330,6 @@ export const ChatInputView: FC<{}> = props =>
                         selectedIndex={ mention.selectedIndex }
                         onSelect={ mention.apply }
                         onHover={ mention.setSelectedIndex }
-                        newStyle={ newStyle }
                     /> }
                 <div className="flex-1 items-center input-sizer">
                     { !floodBlocked &&

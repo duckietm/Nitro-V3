@@ -1,11 +1,19 @@
+/* Classic (original) purse style. All selectors are scoped under
+   .nitro-purse-classic so they never collide with the modern PurseView.css
+   rules that share class names like .nitro-purse. */
+
 .nitro-purse-classic {
     width: 100%;
 }
 
+/* Extra (seasonal) currency in classic mode reuses the modern boxed
+   .nitro-purse__other styling, just constrained to the classic purse width. */
 .nitro-purse__other--classic {
     max-width: 125px;
 }
 
+/* The #41403c border on the extra-currency box is new-style-only;
+   classic mode has no border. */
 .nitro-purse__other--classic .nitro-purse-seasonal-currency {
     border: 0;
 }

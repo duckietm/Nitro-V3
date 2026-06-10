@@ -7,25 +7,16 @@ interface ChatInputCommandSelectorViewProps
     selectedIndex: number;
     onSelect: (command: CommandDefinition) => void;
     onHover: (index: number) => void;
-    /**
-     * When true, render the flat minimalist look (gray list, dark-blue
-     * selection). When false / undefined (default) the picker wears the
-     * Habbo NitroCard chrome with the green :command header strip.
-     */
-    newStyle?: boolean;
 }
 
 /**
- * :command autocomplete popover. Two visual modes, both driven by the
- * "New style" toggle in user settings (memenu.settings.other.catalog.classic.style):
- *
- *   - newStyle = false (default): cream cardstock, habbo-green header,
- *     UbuntuCondensed names, green ":" tile, custom Habbo scrollbar.
- *   - newStyle = true: flat gray list, dark-blue selection, plain text rows.
+ * :command autocomplete popover. Wears the Habbo NitroCard chrome: cream
+ * cardstock, habbo-green header, UbuntuCondensed names, green ":" tile and
+ * the custom Habbo scrollbar.
  */
 export const ChatInputCommandSelectorView: FC<ChatInputCommandSelectorViewProps> = props =>
 {
-    const { commands = [], selectedIndex = 0, onSelect = null, onHover = null, newStyle = false } = props;
+    const { commands = [], selectedIndex = 0, onSelect = null, onHover = null } = props;
     const listRef = useRef<HTMLDivElement>(null);
 
     useEffect(() =>
@@ -36,25 +27,6 @@ export const ChatInputCommandSelectorView: FC<ChatInputCommandSelectorViewProps>
 
         if(selected) selected.scrollIntoView({ block: 'nearest' });
     }, [ selectedIndex ]);
-
-    if(newStyle)
-    {
-        return (
-            <div ref={ listRef } className="absolute bottom-full left-0 w-full bg-[#e8e8e8] border-2 border-black border-b-0 rounded-t-lg max-h-[240px] overflow-y-auto z-[1070]">
-                { commands.map((cmd, index) => (
-                    <div
-                        key={ cmd.key }
-                        className={ `px-3 py-1.5 cursor-pointer text-sm flex items-center gap-2 ${ index === selectedIndex ? 'bg-[#283F5D] text-white' : 'hover:bg-gray-300' }` }
-                        onClick={ () => onSelect(cmd) }
-                        onMouseEnter={ () => onHover(index) }
-                    >
-                        <span className="font-bold">:{ cmd.key }</span>
-                        <span className={ `text-xs ${ index === selectedIndex ? 'text-gray-300' : 'text-gray-500' }` }>{ cmd.description }</span>
-                    </div>
-                )) }
-            </div>
-        );
-    }
 
     return (
         <div className="chat-input-command-popover">

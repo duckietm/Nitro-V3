@@ -29,7 +29,6 @@ export * from './room';
 export * from './room/events';
 export * from './room/widgets';
 export * from './soundboard';
-export * from './theme';
 export * from './ui-settings';
 export * from './user';
 export * from './utils';

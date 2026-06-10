@@ -25,6 +25,12 @@ export const NavigatorSearchSavesResultItemView: FC<NavigatorSearchSavesResultIt
         return ('navigator.searchcode.title.' + name);
     };
 
+    // Drive the search through the navigator store so useNavigatorSearch
+    // both fires the request AND accepts the response. Sending the
+    // composer directly didn't work: the search hook only keeps a
+    // NavigatorSearchEvent whose result.code matches the active tab, so a
+    // raw search whose code differed from the current tab was discarded
+    // (clicking a saved search appeared to do nothing).
     const openSearch = () =>
     {
         const code = search.code.split('.').reverse()[0];
