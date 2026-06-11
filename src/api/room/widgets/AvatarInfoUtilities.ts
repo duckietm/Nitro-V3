@@ -102,16 +102,20 @@ export class AvatarInfoUtilities
         else
         {
             let furnitureData: IFurnitureData = null;
-            const className = roomObject.type;
 
-            if(category === RoomObjectCategory.FLOOR)
-            {
-                furnitureData = GetSessionDataManager().getFloorItemDataByName(className);
-            }
+            const typeId = model.getValue<number>(RoomObjectVariable.FURNITURE_TYPE_ID);
 
-            else if(category === RoomObjectCategory.WALL)
+            if(typeId > 0)
             {
-                furnitureData = GetSessionDataManager().getWallItemDataByName(className);
+                if(category === RoomObjectCategory.FLOOR)
+                {
+                    furnitureData = GetSessionDataManager().getFloorItemData(typeId);
+                }
+
+                else if(category === RoomObjectCategory.WALL)
+                {
+                    furnitureData = GetSessionDataManager().getWallItemData(typeId);
+                }
             }
 
             if(furnitureData)
