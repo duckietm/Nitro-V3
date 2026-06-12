@@ -47,7 +47,7 @@
             "left": "${asset.url}/c_images/reception/ts.png",
             "right": "${asset.url}/c_images/reception/US_right.png",
             "right.repeat": "${asset.url}/c_images/reception/US_top_right.png"
-        },
+        }
     },
     "navigator.room.models": [
         {

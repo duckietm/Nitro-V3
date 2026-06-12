@@ -2,15 +2,21 @@
 import { spawn } from 'node:child_process';
 import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { platform } from 'node:os';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const RENDERER_REPO_URL = 'https://github.com/duckietm/Nitro_Render_V3.git';
-const RENDERER_DIR = resolve(ROOT, '..', 'Nitro_Render_V3');
+const DEFAULT_RENDERER_REPO_URL = 'https://github.com/duckietm/Nitro_Render_V3.git';
+// Sibling folder names the client's vite.config / tsconfig already know how to resolve.
+// Auto-detection walks these in order; a fresh clone defaults to the first one.
+const RENDERER_DIR_CANDIDATES = ['Nitro_Render_V3', 'renderer'];
+const DEFAULT_RENDERER_DIR_NAME = RENDERER_DIR_CANDIDATES[0];
+// Resolved in main() from --renderer-repo / --renderer-dir / NITRO_RENDERER_DIR / auto-detection.
+let RENDERER_REPO_URL = DEFAULT_RENDERER_REPO_URL;
+let RENDERER_DIR = resolve(ROOT, '..', DEFAULT_RENDERER_DIR_NAME);
 const CONFIG_DIR = join(ROOT, 'public', 'configuration');
 const NITRO_BUILD_FILE = join(ROOT, '.nitro-build.json');
 const IS_WINDOWS = platform() === 'win32';
@@ -57,7 +63,7 @@ const CONFIG_FILES = [
 
 const STEPS = [
     'Check prerequisites',
-    'Clone Nitro_Render_V3',
+    'Resolve / clone renderer',
     'Setup renderer (yarn install + yarn link)',
     'Setup client (yarn install + yarn link)',
     'Copy config files',
@@ -161,6 +167,8 @@ function parseArgs() {
         skipLink: false,
         help: false,
         jsonMode: null,
+        rendererDir: null,
+        rendererRepo: null,
         urlOverrides: {}
     };
     const builtinFlags = new Set([
@@ -193,6 +201,16 @@ function parseArgs() {
                 opts.jsonMode = value;
                 continue;
             }
+            if (flagName === 'renderer-dir') {
+                if (value.length === 0) { warn('Empty --renderer-dir ignored'); continue; }
+                opts.rendererDir = value;
+                continue;
+            }
+            if (flagName === 'renderer-repo') {
+                if (value.length === 0) { warn('Empty --renderer-repo ignored'); continue; }
+                opts.rendererRepo = value;
+                continue;
+            }
             const key = FLAG_TO_KEY[flagName];
             if (key) {
                 opts.urlOverrides[key] = value;
@@ -216,8 +234,11 @@ function printUsage() {
         'Workflow flags:',
         '  --non-interactive, --skip-prompts   Keep default URLs unless overridden by --<key>=<value>',
         '  --json-mode=<json5|legacy|auto>     Choose the JSON parsing mode without prompting',
+        '  --renderer-dir=<path>               Renderer folder (absolute, or relative to the parent dir).',
+        '                                      Default: auto-detect ' + RENDERER_DIR_CANDIDATES.join(' / ') + ', else "' + DEFAULT_RENDERER_DIR_NAME + '". Env: NITRO_RENDERER_DIR',
+        '  --renderer-repo=<url>               Git URL to clone the renderer from (default: duckietm Nitro_Render_V3)',
         '  --skip-build                        Skip the final yarn build',
-        '  --skip-clone                        Skip cloning Nitro_Render_V3',
+        '  --skip-clone                        Skip cloning the renderer',
         '  --skip-link                         Skip yarn link calls (useful when re-running)',
         '  --help, -h                          Show this help and exit',
         '',
@@ -226,7 +247,7 @@ function printUsage() {
         '',
         'Steps performed:',
         '  1. Check Node >= ' + MIN_NODE_MAJOR + ', yarn, git',
-        '  2. Clone Nitro_Render_V3 to ../Nitro_Render_V3',
+        '  2. Resolve the renderer dir (--renderer-dir / NITRO_RENDERER_DIR / interactive prompt / auto-detect ' + RENDERER_DIR_CANDIDATES.join(' or ') + '), cloning to ../' + DEFAULT_RENDERER_DIR_NAME + ' if absent',
         '  3. yarn install + yarn link in the renderer',
         '  4. yarn install + yarn link "@nitrots/nitro-renderer" in this project',
         '  5. Copy public/configuration/*.example -> *.json (keeps existing files)',
@@ -262,16 +283,66 @@ async function checkPrereqs() {
     }
 }
 
+// Resolve which sibling folder is the renderer SDK, honouring (in priority order):
+//   1. --renderer-dir=<path>      2. NITRO_RENDERER_DIR env   (both skip the prompt)
+//   3. interactive prompt — the operator chooses (default = a detected folder, else ./Nitro_Render_V3)
+//   4. --non-interactive: first existing folder among RENDERER_DIR_CANDIDATES, else ./Nitro_Render_V3
+// A chosen/explicit path may be absolute or relative to the parent of the client.
+async function resolveRendererDir(opts) {
+    const parent = resolve(ROOT, '..');
+    const toAbs = p => (isAbsolute(p) ? resolve(p) : resolve(parent, p));
+
+    if (opts.rendererDir) {
+        const dir = toAbs(opts.rendererDir);
+        info('Renderer dir from --renderer-dir: ' + dir);
+        return dir;
+    }
+    if (process.env.NITRO_RENDERER_DIR) {
+        const dir = toAbs(process.env.NITRO_RENDERER_DIR);
+        info('Renderer dir from NITRO_RENDERER_DIR: ' + dir);
+        return dir;
+    }
+
+    let detected = null;
+    for (const name of RENDERER_DIR_CANDIDATES) {
+        const candidate = resolve(parent, name);
+        if (existsSync(candidate)) { detected = candidate; break; }
+    }
+    const suggested = detected || resolve(parent, DEFAULT_RENDERER_DIR_NAME);
+
+    if (!opts.interactive) {
+        info(detected ? 'Using detected renderer: ' + detected : 'Renderer will be cloned to: ' + suggested);
+        return suggested;
+    }
+
+    if (detected) info('Found an existing renderer at ' + detected + ' (press Enter to reuse it).');
+    info('Choose where the renderer SDK lives — a folder name (relative to ' + parent + ') or an absolute path.');
+    const rl = readline.createInterface({ input, output });
+    activeReadline = rl;
+    try {
+        const answer = (await rl.question('  Renderer folder [' + suggested + ']: ')).trim();
+        return answer.length === 0 ? suggested : toAbs(answer);
+    } finally {
+        activeReadline = null;
+        rl.close();
+    }
+}
+
 async function cloneRenderer(opts) {
-    if (opts.skipClone) { info('--skip-clone: not cloning Nitro_Render_V3'); summary.rendererSkipped = true; return; }
+    RENDERER_DIR = await resolveRendererDir(opts);
+    ok('Renderer dir: ' + RENDERER_DIR);
+    if (!RENDERER_DIR_CANDIDATES.includes(basename(RENDERER_DIR))) {
+        warn('Custom renderer folder "' + basename(RENDERER_DIR) + '": vite.config resolves it via path alias, but ui/tsconfig.json only lists [' + RENDERER_DIR_CANDIDATES.join(', ') + ']. Add this path under "paths" there so tsc/IDE type-resolution works.');
+    }
+    if (opts.skipClone) { info('--skip-clone: not cloning the renderer'); summary.rendererSkipped = true; return; }
     if (existsSync(RENDERER_DIR)) {
-        warn('Nitro_Render_V3 already exists at ' + RENDERER_DIR + ' - skipping clone (yarn install/link will still run).');
+        warn('Renderer already present at ' + RENDERER_DIR + ' - skipping clone (yarn install/link will still run).');
         summary.rendererSkipped = true;
         return;
     }
     await runShell('git clone ' + RENDERER_REPO_URL + ' "' + RENDERER_DIR + '"', dirname(RENDERER_DIR));
     summary.rendererCloned = true;
-    ok('Cloned Nitro_Render_V3 to ' + RENDERER_DIR);
+    ok('Cloned renderer to ' + RENDERER_DIR);
 }
 
 async function setupRenderer(opts) {
@@ -521,6 +592,8 @@ function printSummary() {
 async function main() {
     const opts = parseArgs();
     if (opts.help) { printUsage(); process.exit(0); }
+
+    RENDERER_REPO_URL = opts.rendererRepo || DEFAULT_RENDERER_REPO_URL;
 
     console.log(c.bold + 'Nitro-V3 installer' + c.reset + ' (' + (IS_WINDOWS ? 'Windows' : platform()) + ')');
     console.log('Project root: ' + ROOT);
