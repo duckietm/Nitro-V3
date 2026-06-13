@@ -183,8 +183,8 @@ const useModToolsState = () =>
     {
         const parser = event.getParser();
 
-        if(parser.success) simpleAlert('Moderation action was successfull', NotificationAlertType.MODERATION, null, null, 'Success');
-        else simpleAlert('There was a problem applying tht moderation action', NotificationAlertType.MODERATION, null, null, 'Error');
+        if(parser.success) simpleAlert('Moderation action was successful', NotificationAlertType.MODERATION, null, null, 'Success');
+        else simpleAlert('There was a problem applying the moderation action', NotificationAlertType.MODERATION, null, null, 'Error');
     });
 
     useMessageEvent<CfhTopicsInitEvent>(CfhTopicsInitEvent, event =>
