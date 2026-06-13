@@ -63,7 +63,10 @@ const useInventoryUnseenTrackerState = () =>
             const newValue = new Map(prevValue);
             const existing = newValue.get(category);
 
-            if(existing) for(const itemId of itemIds) existing.splice(existing.indexOf(itemId), 1);
+            // Replace the per-category array instead of splicing the one still
+            // referenced by the previous Map, and filter (an absent id used to
+            // splice(indexOf=-1) and drop the wrong last element).
+            if(existing) newValue.set(category, existing.filter(id => !itemIds.includes(id)));
 
             sendResetItemsMessage(category, itemIds);
 
@@ -90,9 +93,9 @@ const useInventoryUnseenTrackerState = () =>
 
             const newValue = new Map(prevValue);
             const items = newValue.get(category);
-            const index = items.indexOf(itemId);
 
-            if(index >= 0) items.splice(index, 1);
+            // Clone the array rather than splicing the one shared with prevValue.
+            if(items && items.indexOf(itemId) >= 0) newValue.set(category, items.filter(id => id !== itemId));
 
             return newValue;
         });
@@ -108,18 +111,15 @@ const useInventoryUnseenTrackerState = () =>
 
             for(const category of parser.categories)
             {
-                let existing = newValue.get(category);
-
-                if(!existing)
-                {
-                    existing = [];
-
-                    newValue.set(category, existing);
-                }
+                // Clone the existing array so we never push into the one still
+                // referenced by the previous (shallow-copied) Map.
+                const merged = [ ...(newValue.get(category) ?? []) ];
 
                 const itemIds = parser.getItemsByCategory(category);
 
-                for(const itemId of itemIds) ((existing.indexOf(itemId) === -1) && existing.push(itemId));
+                for(const itemId of itemIds) if(merged.indexOf(itemId) === -1) merged.push(itemId);
+
+                newValue.set(category, merged);
             }
 
             return newValue;

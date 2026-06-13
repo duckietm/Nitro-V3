@@ -78,25 +78,29 @@ const useInventoryPrefixesState = () =>
 
         setPrefixes(prevValue =>
         {
-            return prevValue.map(p => ({
+            const next = prevValue.map(p => ({
                 ...p,
                 active: p.id === parser.prefixId
             }));
-        });
 
-        if(parser.prefixId === 0)
-        {
-            setActivePrefix(null);
-        }
-        else
-        {
-            setActivePrefix(prev =>
+            // Derive the active prefix from the freshly-mapped list, not from
+            // the `prefixes` closure (which lags a render and is stale when the
+            // prefix was added earlier in the same event batch).
+            if(parser.prefixId === 0)
             {
-                const found = prefixes.find(p => p.id === parser.prefixId);
-                if(found) return { ...found, active: true, font: parser.font || found.font || '' };
-                return { id: parser.prefixId, text: parser.text, color: parser.color, icon: parser.icon || '', effect: parser.effect || '', font: parser.font || '', active: true };
-            });
-        }
+                setActivePrefix(null);
+            }
+            else
+            {
+                const found = next.find(p => p.id === parser.prefixId);
+
+                setActivePrefix(found
+                    ? { ...found, active: true, font: parser.font || found.font || '' }
+                    : { id: parser.prefixId, text: parser.text, color: parser.color, icon: parser.icon || '', effect: parser.effect || '', font: parser.font || '', active: true });
+            }
+
+            return next;
+        });
     });
 
     const activatePrefix = (prefixId: number) =>
