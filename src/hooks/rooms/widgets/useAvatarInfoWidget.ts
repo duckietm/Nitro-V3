@@ -361,7 +361,7 @@ const useAvatarInfoWidgetState = () =>
         {
             let index = nameBubbles.findIndex(bubble => (bubble.roomIndex === event.id));
 
-            if(index > -1) setNameBubbles(prevValue => prevValue.filter(bubble => (bubble.roomIndex === event.id)));
+            if(index > -1) setNameBubbles(prevValue => prevValue.filter(bubble => (bubble.roomIndex !== event.id)));
 
             index = productBubbles.findIndex(bubble => (bubble.id === event.id));
 
