@@ -112,19 +112,21 @@ const useWordQuizWidgetState = () =>
         {
             setUserAnswers(prevValue =>
             {
-                const keysToRemove: number[] = [];
+                if(prevValue.size === 0) return prevValue;
 
-                prevValue.forEach((value, key) =>
+                // Build new value objects + a new Map — don't decrement
+                // secondsLeft on the objects still referenced by prevValue
+                // (in-place mutation breaks memoization / StrictMode replay).
+                const next = new Map(prevValue);
+
+                next.forEach((value, key) =>
                 {
-                    value.secondsLeft--;
+                    const secondsLeft = value.secondsLeft - 1;
 
-                    if(value.secondsLeft <= 0) keysToRemove.push(key);
+                    if(secondsLeft <= 0) next.delete(key);
+                    else next.set(key, { ...value, secondsLeft });
                 });
 
-                if(keysToRemove.length === 0) return prevValue;
-
-                const next = new Map(prevValue);
-                keysToRemove.forEach(key => next.delete(key));
                 return next;
             });
         };
