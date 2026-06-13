@@ -75,14 +75,16 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
     {
         if(isSendingRef.current) return;
 
+        if(selectedTopic === -1) return sendAlert(LocalizeText('modtools.user.modaction.error.no.topic'));
+
         const category = topics[selectedTopic];
 
-        if(selectedTopic === -1) return sendAlert(LocalizeText('modtools.user.modaction.error.no.topic'));
+        if(!category) return sendAlert(LocalizeText('modtools.user.modaction.error.no.topic'));
 
         const messageOrDefault = (message.trim().length === 0) ? LocalizeText(`help.cfh.topic.${ category.id }`) : message;
 
         isSendingRef.current = true;
-        SendMessageComposer(new DefaultSanctionMessageComposer(user.userId, selectedTopic, messageOrDefault));
+        SendMessageComposer(new DefaultSanctionMessageComposer(user.userId, category.id, messageOrDefault));
         onCloseClick();
     };
 
