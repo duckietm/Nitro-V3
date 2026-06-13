@@ -67,6 +67,10 @@ export const CatalogLayoutMarketplaceOwnItemsView: FC<CatalogLayoutProps> = prop
             return prevValue.filter(value => (idsToDelete.indexOf(value.offerId) === -1));
         });
 
+        // Without this the redeem panel stays visible (creditsWaiting > 0) after
+        // the sold offers are optimistically removed, showing "get 0 sold items".
+        setCreditsWaiting(0);
+
         SendMessageComposer(new RedeemMarketplaceOfferCreditsMessageComposer());
 
         setTimeout(() => isRedeemingRef.current = false, 3000);

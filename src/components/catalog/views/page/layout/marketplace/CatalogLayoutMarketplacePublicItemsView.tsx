@@ -115,13 +115,18 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
                     const item = newVal.get(parser.requestedOfferId);
                     if(item)
                     {
+                        // Delete the OLD key first, then set under the (possibly
+                        // unchanged) new id. The old code did set()-then-delete(),
+                        // so when the server returned the same id for the re-priced
+                        // offer the set was immediately undone and the offer vanished.
+                        newVal.delete(parser.requestedOfferId);
+
                         item.offerId = parser.offerId;
                         item.price = parser.newPrice;
                         item.offerCount--;
                         newVal.set(item.offerId, item);
                     }
 
-                    newVal.delete(parser.requestedOfferId);
                     return newVal;
                 });
 
