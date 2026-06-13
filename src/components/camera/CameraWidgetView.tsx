@@ -14,7 +14,7 @@ export const CameraWidgetView: FC<{}> = props =>
 {
     const [ mode, setMode ] = useState<number>(MODE_NONE);
     const [ base64Url, setSavedPictureUrl ] = useState<string>(null);
-    const { availableEffects = [], selectedPictureIndex = -1, cameraRoll = [], setCameraRoll = null, myLevel = 0, price = { credits: 0, duckets: 0, publishDucketPrice: 0 } } = useCamera();
+    const { availableEffects = [], selectedPictureIndex = -1, setSelectedPictureIndex = null, cameraRoll = [], setCameraRoll = null, myLevel = 0, price = { credits: 0, duckets: 0, publishDucketPrice: 0 } } = useCamera();
 
 
     const processAction = (type: string) =>
@@ -28,14 +28,11 @@ export const CameraWidgetView: FC<{}> = props =>
                 setMode(MODE_EDITOR);
                 return;
             case 'delete':
-                setCameraRoll(prevValue =>
-                {
-                    const clone = [ ...prevValue ];
-
-                    clone.splice(selectedPictureIndex, 1);
-
-                    return clone;
-                });
+                setCameraRoll(prevValue => prevValue.filter((_, index) => (index !== selectedPictureIndex)));
+                // Without this the index keeps pointing at the slot the deleted
+                // photo vacated (now a different picture, or past the end) — move
+                // the selection back one so the preview stays in sync.
+                if(setSelectedPictureIndex) setSelectedPictureIndex(prev => (prev > 0 ? (prev - 1) : 0));
                 return;
             case 'editor_cancel':
                 setMode(MODE_CAPTURE);
