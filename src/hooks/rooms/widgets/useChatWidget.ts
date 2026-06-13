@@ -148,7 +148,7 @@ const useChatWidgetState = () =>
 
                 if(chatType === RoomSessionChatEvent.CHAT_TYPE_PET_REBREED_FERTILIZE)
                 {
-                    textKey = 'widget.chatbubble.petrefertilized;';
+                    textKey = 'widget.chatbubble.petrefertilized';
                 }
 
                 else if(chatType === RoomSessionChatEvent.CHAT_TYPE_PET_SPEED_FERTILIZE)
@@ -162,7 +162,7 @@ const useChatWidgetState = () =>
 
                 if(newRoomObject)
                 {
-                    const newUserData = roomSession.userDataManager.getUserDataByIndex(roomObject.id);
+                    const newUserData = roomSession.userDataManager.getUserDataByIndex(newRoomObject.id);
 
                     if(newUserData) targetUserName = newUserData.name;
                 }
