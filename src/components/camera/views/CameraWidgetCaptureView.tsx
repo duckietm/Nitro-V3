@@ -46,9 +46,11 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
 
         if(clone.length >= CAMERA_ROLL_LIMIT)
         {
+            // Roll is full — block the shot (the old code did clone.pop(), which
+            // discarded the NEWEST photo and pinned the roll at the limit forever).
             simpleAlert(LocalizeText('camera.full.body'));
 
-            clone.pop();
+            return;
         }
 
         PlaySound(SoundNames.CAMERA_SHUTTER);
