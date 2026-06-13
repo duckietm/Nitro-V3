@@ -13,7 +13,7 @@ const usePurseState = () =>
     {
         if(hcDisabled || (purse.clubDays > 0)) return ClubStatus.ACTIVE;
 
-        if((purse.pastVipDays > 0) || (purse.pastVipDays > 0)) return ClubStatus.EXPIRED;
+        if((purse.pastClubDays > 0) || (purse.pastVipDays > 0)) return ClubStatus.EXPIRED;
 
         return ClubStatus.NONE;
     }, [ purse, hcDisabled ]);
