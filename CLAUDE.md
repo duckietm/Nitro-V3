@@ -86,6 +86,17 @@ link to a sibling working tree — `../Nitro_Render_V3` (preferred) or
 the codebase — that's expected on a sandbox without the renderer, not a
 regression.
 
+## Runtime verification
+
+This client can't be driven **headless** — the room renders via PixiJS/WebGL,
+which hangs in a headless browser, and login needs an SSO session. To verify a
+change at runtime, use the **Claude-in-Chrome extension** against the user's
+real, logged-in `localhost:5173` session: it shares the browser's SSO cookie
+(auto-login) and uses the real GPU. Toolbar buttons are canvas (not in the
+accessibility tree) — locate them by screenshot/zoom, then click by coordinate.
+The `preview_*` (headless) tools can't bind 5173 here and won't get past
+login/WebGL, so they're not usable for in-game verification.
+
 ## Stack snapshot
 
 - React 19.2.5, `react-dom` 19.2.5, `@types/react` 19.2.x.
