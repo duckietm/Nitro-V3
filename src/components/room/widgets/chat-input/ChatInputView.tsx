@@ -313,7 +313,7 @@ export const ChatInputView: FC<{}> = props =>
 
     return (
         createPortal(
-            <div className="nitro-chat-input-container relative flex h-[38px] w-full items-center justify-between overflow-visible rounded-[12px] border-2 border-black bg-white pr-[8px]">
+            <div className="nitro-chat-input-container relative flex h-[38px] w-full items-center justify-between gap-[6px] overflow-visible rounded-[12px] border-2 border-black bg-white pl-[8px] pr-[8px]">
                 { commandSelectorVisible &&
                     <ChatInputCommandSelectorView
                         commands={ filteredCommands }
@@ -331,6 +331,7 @@ export const ChatInputView: FC<{}> = props =>
                         onSelect={ mention.apply }
                         onHover={ mention.setSelectedIndex }
                     /> }
+                <ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
                 <div className="flex-1 items-center input-sizer">
                     { !floodBlocked &&
                         <input ref={ inputRef } className="w-full border-none bg-transparent px-[10px] text-[0.86rem] text-black placeholder:text-[#6c757d] focus:border-current focus:shadow-none focus:ring-0" maxLength={ maxChatLength } placeholder={ LocalizeText('widgets.chatinput.default') } type="text" value={ chatValue } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
@@ -338,7 +339,6 @@ export const ChatInputView: FC<{}> = props =>
                         <Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
                 </div>
                 <ChatInputEmojiSelectorView addChatEmoji={ addChatEmoji } />
-                <ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
             </div>, document.getElementById('toolbar-chat-input-container'))
     );
 };
