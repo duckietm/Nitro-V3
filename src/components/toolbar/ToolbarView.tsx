@@ -56,7 +56,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     );
     const visibilityVariant = 'visible';
 
-    const compactFramePosition = 'bottom-[90px] min-[1700px]:bottom-0';
+    const compactFramePosition = 'bottom-[90px] min-[1700px]:bottom-[7px]';
     const mobileOnlyClasses = isTouchLayout ? '' : 'min-[1700px]:hidden';
     const desktopBlockClasses = isTouchLayout ? 'hidden' : 'hidden min-[1700px]:block';
     const desktopFlexClasses = isTouchLayout ? 'hidden' : 'hidden min-[1700px]:flex';
