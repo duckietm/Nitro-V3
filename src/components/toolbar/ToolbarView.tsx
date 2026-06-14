@@ -191,7 +191,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 animate={ visibilityVariant }
                 variants={ shellVariants }
                 transition={ SHELL_TRANSITION }
-                className={ `pointer-events-none fixed bottom-0 left-0 right-0 z-[39] h-[52px] rounded-t-[12px] border border-b-0 border-white/8 bg-[rgba(112,114,122,0.80)] shadow-[0_-6px_18px_rgba(0,0,0,0.18)] ${ desktopBlockClasses }` } />
+                className={ `pointer-events-none fixed bottom-0 left-0 right-0 z-[39] h-[52px] rounded-t-[12px] border border-b-0 border-white/8 bg-[rgba(62,64,72,0.55)] shadow-[0_-6px_18px_rgba(0,0,0,0.18)] ${ desktopBlockClasses }` } />
 
             <motion.div
                 initial="visible"
@@ -205,7 +205,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     aria-label="Mostra/Nascondi icone"
                     className="tb-collapse pointer-events-auto mt-[6px] mr-[3px]">
                     <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 3 } d={ leftCollapsed ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7' } />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 3 } d={ leftCollapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7' } />
                     </svg>
                 </button>
                 { !leftCollapsed &&
@@ -333,7 +333,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     aria-label="Mostra/Nascondi icone"
                     className="tb-collapse pointer-events-auto mt-[6px] ml-[3px]">
                     <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 3 } d={ rightCollapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7' } />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 3 } d={ rightCollapsed ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7' } />
                     </svg>
                 </button>
             </motion.div>
@@ -342,7 +342,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 animate={ visibilityVariant }
                 variants={ mobileNavVariants }
                 transition={ NAV_TRANSITION }
-                className={ `fixed left-1/2 bottom-0 z-40 flex w-[95vw] -translate-x-1/2 items-center overflow-visible ${ mobileOnlyClasses } ${ isInRoom ? 'rounded-[12px] border border-white/8 bg-[rgba(112,114,122,0.80)] px-[6px] py-[4px] mb-[3px] shadow-[0_-6px_18px_rgba(0,0,0,0.18)]' : '' }` }>
+                className={ `fixed left-1/2 bottom-0 z-40 flex w-[95vw] -translate-x-1/2 items-center overflow-visible ${ mobileOnlyClasses } ${ isInRoom ? 'rounded-[12px] border border-white/8 bg-[rgba(62,64,72,0.55)] px-[6px] py-[4px] mb-[3px] shadow-[0_-6px_18px_rgba(0,0,0,0.18)]' : '' }` }>
                 <motion.div
                     variants={ containerVariants }
                     className="tb-bar-scroll flex h-full min-w-0 flex-1 items-center gap-2 overflow-x-auto overflow-y-visible px-1">
@@ -437,7 +437,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 variants={ mobileNavVariants }
                 transition={ NAV_TRANSITION }
                 style={ staffStackBottom != null ? { top: 'auto', bottom: `${ staffStackBottom }px` } : undefined }
-                className={ `fixed left-1 z-40 flex flex-col items-center gap-2 rounded-[12px] border border-white/8 bg-[rgba(112,114,122,0.80)] px-[4px] py-[6px] shadow-[0_6px_18px_rgba(0,0,0,0.18)] ${ staffStackBottom == null ? 'top-1/2 -translate-y-1/2' : '' } ${ mobileOnlyClasses }` }>
+                className={ `fixed left-1 z-40 flex flex-col items-center gap-2 rounded-[12px] border border-white/8 bg-[rgba(62,64,72,0.55)] px-[4px] py-[6px] shadow-[0_6px_18px_rgba(0,0,0,0.18)] ${ staffStackBottom == null ? 'top-1/2 -translate-y-1/2' : '' } ${ mobileOnlyClasses }` }>
                 <motion.div variants={ itemVariants }>
                     <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
                 </motion.div>
