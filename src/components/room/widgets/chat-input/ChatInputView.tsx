@@ -332,12 +332,14 @@ export const ChatInputView: FC<{}> = props =>
                         onHover={ mention.setSelectedIndex }
                     /> }
                 <ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
-                <div className="flex-1 items-center input-sizer">
-                    { !floodBlocked &&
-                        <input ref={ inputRef } className="w-full border-none bg-transparent px-[10px] text-[0.86rem] text-black placeholder:text-[#6c757d] focus:border-current focus:shadow-none focus:ring-0" maxLength={ maxChatLength } placeholder={ LocalizeText('widgets.chatinput.default') } type="text" value={ chatValue } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
-                    { floodBlocked &&
-                        <Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
-                </div>
+                { !floodBlocked &&
+                    <div className="flex-1 items-center input-sizer">
+                        <input ref={ inputRef } className="w-full border-none bg-transparent px-[10px] text-[0.86rem] text-black placeholder:text-[#6c757d] focus:border-current focus:shadow-none focus:ring-0" maxLength={ maxChatLength } placeholder={ LocalizeText('widgets.chatinput.default') } type="text" value={ chatValue } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } />
+                    </div> }
+                { floodBlocked &&
+                    <div className="flex min-w-0 flex-1 items-center px-[10px]">
+                        <Text variant="danger" className="w-full truncate whitespace-nowrap text-[0.8rem] font-bold leading-none">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) }</Text>
+                    </div> }
                 <ChatInputEmojiSelectorView addChatEmoji={ addChatEmoji } />
             </div>, document.getElementById('toolbar-chat-input-container'))
     );
