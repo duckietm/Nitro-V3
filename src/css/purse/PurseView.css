@@ -230,45 +230,6 @@
     object-fit: contain;
 }
 
-/* ---- Settings dropdown (gear menu) ---- */
-.nitro-purse-menu {
-    width: 100%;
-    max-width: 200px;
-    margin-top: 4px;
-    margin-left: auto;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border: 2px solid #41403c;
-    border-radius: 8px;
-    background: rgba(10, 10, 12, 0.92);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
-    pointer-events: all;
-}
-
-.nitro-purse-menu__item {
-    padding: 6px 10px;
-    text-align: left;
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-    background: transparent;
-    border: 0;
-    cursor: pointer;
-    transition: background 0.12s ease;
-}
-
-.nitro-purse-menu__item:hover {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.nitro-purse-menu__item--disabled,
-.nitro-purse-menu__item--disabled:hover {
-    color: rgba(255, 255, 255, 0.35);
-    background: transparent;
-    cursor: default;
-}
-
 @media (max-width: 640px) {
     .nitro-purse {
         max-width: 100%;
