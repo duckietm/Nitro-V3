@@ -37,6 +37,8 @@ import './css/friends/FriendsView.css';
 
 import './css/habbo/HabboSwfSkin.css';
 
+import './css/help/HelpView.css';
+
 import './css/hotelview/HotelView.css';
 
 import './css/login/LoginView.css';

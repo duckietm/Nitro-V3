@@ -1,0 +1,83 @@
+/* Aiuto (Help) + Sanctions windows — custom hotel restyle.
+   Global (not an inline <style>) so it applies to BOTH the HelpView card and
+   the separate SanctionStatusView card, regardless of which is mounted. */
+
+/* Classic blue header + light-grey body (the shared 'primary-slim' theme is
+   teal + cream). Higher specificity than the theme so it wins. The body element
+   renders `.nitro-card-content-shell`, NOT `.content-area`. */
+.nitro-card.nitro-help .nitro-card-header {
+    background: linear-gradient(180deg, #5a80b8 0%, #3f63a0 100%);
+    border-color: #34548a;
+}
+
+.nitro-card.nitro-help,
+.nitro-card.nitro-help .content-area,
+.nitro-card.nitro-help .nitro-card-content-shell {
+    background: #ebebe3 !important;
+}
+
+/* Beveled Habbo green button (matches the reference screenshots — the flat
+   Bootstrap 'success' variant did not). Reused by the Help action buttons and
+   the Sanctions "Ho capito" button. */
+.habbo-btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 14px;
+    border: 1px solid #4f7a22;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #72b03a 0%, #5a8c2a 100%);
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    cursor: pointer;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.16);
+    transition: filter 0.15s ease;
+}
+
+.habbo-btn-green:hover { filter: brightness(1.06); }
+.habbo-btn-green:active { filter: brightness(0.95); }
+
+.habbo-btn-green:disabled {
+    background: linear-gradient(180deg, #cfcfcf 0%, #b6b6b6 100%);
+    border-color: #9a9a9a;
+    color: #f0f0f0;
+    cursor: default;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Auto-width variant for footer buttons (e.g. "Ho capito"). */
+.habbo-btn-green--auto {
+    width: auto;
+    min-width: 96px;
+}
+
+/* Green-arrow safety/status links at the bottom of the help windows. */
+.help-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    color: #2f2f2f;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-align: left;
+    cursor: pointer;
+}
+
+.help-link:hover { filter: brightness(1.15); }
+
+.help-link__icon {
+    flex: 0 0 auto;
+    color: #46a01e;
+    font-size: 0.95rem;
+}
