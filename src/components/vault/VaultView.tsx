@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { IconType } from 'react-icons';
 import { FaArrowUp, FaBoxOpen, FaBriefcase, FaCrown, FaGamepad, FaGift, FaHandHoldingHeart, FaShoppingBag, FaStore, FaTrophy } from 'react-icons/fa';
 import { LocalizeText } from '../../api';
-import { Button, LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
+import { LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 
 const localizeWithFallback = (key: string, fallback: string) =>
 {
@@ -20,7 +20,8 @@ interface EarningRow
 }
 
 // Currency ids: 5 = diamonds, 0 = duckets. Amounts are placeholders (0) until
-// the emulator exposes the earnings data + claim packets.
+// the emulator exposes the earnings data + claim packets. The category icons
+// are FontAwesome placeholders — swap in the exact pixel icons once available.
 const EARNINGS: EarningRow[] = [
     { key: 'daily', label: 'Regalo giornaliero', Icon: FaGift, currencies: [ 5 ] },
     { key: 'games', label: 'Giochi', Icon: FaGamepad, currencies: [ 0 ] },
@@ -74,31 +75,37 @@ export const VaultView: FC<{}> = props =>
     return (
         <NitroCardView className="nitro-vault w-[430px]" theme="primary-slim" uniqueKey="vault">
             <NitroCardHeaderView headerText={ localizeWithFallback('earnings.title', 'Guadagni') } onCloseClick={ () => setIsVisible(false) } />
-            <NitroCardContentView className="flex flex-col gap-1 text-black">
+            <NitroCardContentView className="flex flex-col gap-[5px] text-black">
                 { EARNINGS.map(row =>
                 {
                     const RowIcon = row.Icon;
 
                     return (
-                        <div key={ row.key } className="flex items-center gap-2 rounded-md border border-black/10 bg-white px-2 py-1.5">
-                            <span className="flex items-center justify-center w-6 h-6 shrink-0 rounded-full bg-[#1e7295]/10 text-[#1e7295]">
-                                <RowIcon size={ 13 } />
-                            </span>
-                            <Text bold className="flex-1 truncate">{ localizeWithFallback('earnings.' + row.key, row.label) }</Text>
-                            <div className="flex items-center gap-2 shrink-0">
+                        <div key={ row.key } className="flex items-center gap-2">
+                            <div className="flex min-w-0 flex-1 items-center gap-2 rounded-[5px] border-2 border-[#b3b3b3] bg-white px-1.5 py-1">
+                                <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded border border-black/15 bg-white text-[#1e7295]">
+                                    <RowIcon size={ 12 } />
+                                </span>
+                                <Text bold className="truncate">{ localizeWithFallback('earnings.' + row.key, row.label) }</Text>
+                            </div>
+                            <div className="flex min-w-[78px] shrink-0 items-center justify-end gap-2">
                                 { row.currencies.map((currency, index) => (
                                     <span key={ index } className="flex items-center gap-1">
                                         <LayoutCurrencyIcon type={ currency } />
-                                        <Text small>0</Text>
+                                        <Text bold small>0</Text>
                                     </span>
                                 )) }
                             </div>
-                            <Button variant="success" disabled>{ localizeWithFallback('earnings.claim', 'Riscatta') }</Button>
+                            <button type="button" disabled className="shrink-0 cursor-default rounded border border-black/20 bg-[#cfcfcf] px-2 py-[3px] text-[0.7rem] font-bold text-black/45">
+                                { localizeWithFallback('earnings.claim', 'Riscatta') }
+                            </button>
                         </div>
                     );
                 }) }
                 <div className="flex justify-center pt-1">
-                    <Button variant="success" disabled>{ localizeWithFallback('earnings.claim.all', 'Richiedili Tutti') }</Button>
+                    <button type="button" disabled className="cursor-default rounded border border-black/20 bg-[#cfcfcf] px-7 py-1 text-[0.78rem] font-bold text-black/45">
+                        { localizeWithFallback('earnings.claim.all', 'Richiedili Tutti') }
+                    </button>
                 </div>
             </NitroCardContentView>
         </NitroCardView>
