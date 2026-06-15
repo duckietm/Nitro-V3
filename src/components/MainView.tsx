@@ -45,6 +45,7 @@ import { TranslationSettingsView } from './translation/TranslationSettingsView';
 import { UserProfileView } from './user-profile/UserProfileView';
 import { UserAccountSettingsView } from './user-settings/UserAccountSettingsView';
 import { UserSettingsView } from './user-settings/UserSettingsView';
+import { VaultView } from './vault/VaultView';
 import { WiredView } from './wired/WiredView';
 import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
 import { MentionsView } from './mentions';
@@ -221,6 +222,7 @@ export const MainView: FC<{}> = props =>
             <RightSideView />
             <UserSettingsView />
             <UserAccountSettingsView />
+            <VaultView />
             <TranslationSettingsView />
             <UserProfileView />
             <GroupsView />
