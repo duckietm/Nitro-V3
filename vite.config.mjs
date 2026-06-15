@@ -93,7 +93,9 @@ const resolveJsonMode = () =>
 };
 
 const nitroJsonMode = resolveJsonMode();
+const nitroSingleBundle = process.env.NITRO_SINGLE_BUNDLE === '1';
 process.stdout.write(`[vite] __NITRO_JSON_MODE__ = ${ nitroJsonMode }\n`);
+process.stdout.write(`[vite] NITRO_SINGLE_BUNDLE = ${ nitroSingleBundle ? '1' : '0' }\n`);
 
 export default defineConfig({
     base: process.env.VITE_BASE || './',
@@ -165,7 +167,11 @@ export default defineConfig({
             checks: {
                 pluginTimings: false
             },
-            output: {
+            output: nitroSingleBundle ? {
+                assetFileNames: 'src/assets/[name]-[hash].[ext]',
+                entryFileNames: 'assets/app.js',
+                inlineDynamicImports: true
+            } : {
                 assetFileNames: 'src/assets/[name]-[hash].[ext]',
                 // Granular chunking: split the monolithic vendor / nitro-renderer
                 // bundles into smaller chunks so the browser can fetch them in
