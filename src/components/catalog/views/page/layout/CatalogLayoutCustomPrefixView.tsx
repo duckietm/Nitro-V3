@@ -2,8 +2,7 @@ import { PurchasePrefixComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { LocalizeText, SanitizeHtml, SendMessageComposer, PRESET_PREFIX_EFFECTS, parsePrefixColors, getPrefixEffectStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
+import { LazyEmojiPicker } from '../../../../../common/LazyEmojiPicker';
 
 const PRESET_COLORS: string[] = [
     '#FF0000', '#FF6600', '#FFCC00', '#33CC00', '#00CCFF',
@@ -222,8 +221,7 @@ export const CatalogLayoutCustomPrefixView: FC<CatalogLayoutProps> = props =>
                 <>
                     <div className="fixed inset-0" style={ { zIndex: 999, background: 'rgba(0,0,0,0.5)' } } onClick={ () => setShowIconPicker(false) } />
                     <div className="fixed rounded-xl overflow-hidden" style={ { zIndex: 1000, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' } }>
-                        <Picker
-                            data={ data }
+                        <LazyEmojiPicker
                             locale="it"
                             onEmojiSelect={ (emoji: { native: string }) =>
                             {

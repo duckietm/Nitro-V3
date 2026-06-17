@@ -1,6 +1,5 @@
 import { AddLinkEventTracker, CustomPrefixPurchaseFailedEvent, ILinkEventTracker, PurchaseCatalogPrefixComposer, PurchaseNickIconComposer, PurchasePrefixComposer, RemoveLinkEventTracker, RequestNickIconsComposer, SetActiveNickIconComposer, SetActivePrefixComposer, SetDisplayOrderComposer, UserNickIconsEvent } from '@nitrots/nitro-renderer';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
+import { LazyEmojiPicker } from '../../common/LazyEmojiPicker';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { INickIconItem, IPrefixItem, PRESET_PREFIX_EFFECTS, PRESET_PREFIX_FONTS, SendMessageComposer, getPrefixEffectStyle, getPrefixFontStyle, parsePrefixColors } from '../../api';
 import { GetNickIconUrl } from '../../assets/images/user_custom/nick_icons';
@@ -575,8 +574,7 @@ export const CustomizeNickIconView: FC<{}> = () =>
                 <>
                     <div className="fixed inset-0 z-[999]" onClick={ () => setShowEmojiPicker(false) } />
                     <div className="fixed left-1/2 top-1/2 z-[1000] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl shadow-2xl">
-                        <Picker
-                            data={ data }
+                        <LazyEmojiPicker
                             locale="en"
                             onEmojiSelect={ (emoji: { native: string }) =>
                             {

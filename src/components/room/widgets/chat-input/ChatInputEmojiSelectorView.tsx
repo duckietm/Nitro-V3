@@ -1,6 +1,5 @@
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
 import * as Popover from '@radix-ui/react-popover';
+import { LazyEmojiPicker } from '../../../../common/LazyEmojiPicker';
 import { FC, useState } from 'react';
 
 interface ChatInputEmojiSelectorViewProps
@@ -26,7 +25,7 @@ export const ChatInputEmojiSelectorView: FC<ChatInputEmojiSelectorViewProps> = p
             </Popover.Trigger>
             <Popover.Portal>
                 <Popover.Content className="z-[1070]" side="top" sideOffset={ 8 }>
-                    <Picker data={ data } onEmojiSelect={ handleEmojiSelect } />
+                    <LazyEmojiPicker onEmojiSelect={ handleEmojiSelect } />
                 </Popover.Content>
             </Popover.Portal>
         </Popover.Root>
