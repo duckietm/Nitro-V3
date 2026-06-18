@@ -95,7 +95,7 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
                 { !currentOffer &&
                     <div className="nitro-catalog-classic-welcome flex items-center gap-3">
                         { !!page.localization.getImage(1) &&
-                            <img className="w-[70px] h-[70px] object-contain rounded shrink-0" src={ page.localization.getImage(1) } /> }
+                            <img alt="" className="w-[70px] h-[70px] object-contain rounded shrink-0" src={ page.localization.getImage(1) } /> }
                         <Text className="text-[11px]! text-muted" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
                     </div> }
             </div>

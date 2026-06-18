@@ -40,7 +40,7 @@ export const GameView = () =>
     return <Flex fullHeight className="game-view py-4" style={ { backgroundColor: getBgColour(), backgroundImage: getBgImage(), color: getColor() } }>
         <Flex column alignItems="center" className="w-75" gap={ 2 }>
             <Text bold>{ LocalizeText(`gamecenter.${ selectedGame.gameNameId }.description_title`) }</Text>
-            <img src={ selectedGame.assetUrl + selectedGame.gameNameId + '_logo.png' }/>
+            <img alt="" src={ selectedGame.assetUrl + selectedGame.gameNameId + '_logo.png' }/>
             { (accountStatus.hasUnlimitedGames || accountStatus.freeGamesLeft > 0) && <>
                 <Button className="px-4" position="relative" variant="light" onClick={ onPlay }>
                     { LocalizeText('gamecenter.play_now') }

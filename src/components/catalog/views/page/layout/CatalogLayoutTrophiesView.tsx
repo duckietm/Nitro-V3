@@ -99,7 +99,7 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
                 </div>
                 : <div className="flex items-start gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
                     { !!page.localization.getImage(1) &&
-                        <img className="w-[50px] h-[50px] object-contain rounded shrink-0 mt-0.5" src={ page.localization.getImage(1) } /> }
+                        <img alt="" className="w-[50px] h-[50px] object-contain rounded shrink-0 mt-0.5" src={ page.localization.getImage(1) } /> }
                     <div className="min-w-0">
                         <div className="flex items-center gap-1.5 mb-1">
                             <FaTrophy className="text-warning text-[11px]" />

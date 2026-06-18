@@ -96,7 +96,7 @@ export const FurnitureCraftingView: FC<{}> = props =>
                                     <div className="py-1 text-center">{ LocalizeText('crafting.result') }</div>
                                     <div className="flex items-center justify-center flex-col h-full pb-1 gap-1">
                                         <div className="flex flex-col h-full">
-                                            <img src={ selectedRecipe.iconUrl } />
+                                            <img alt="" src={ selectedRecipe.iconUrl } />
                                         </div>
                                         <div className="text-black">{ selectedRecipe.localizedName }</div>
                                     </div>

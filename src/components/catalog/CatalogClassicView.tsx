@@ -271,7 +271,7 @@ const CatalogClassicViewInner: FC<{}> = () =>
                                 <div className="nitro-catalog-classic-layout-header-shell">
                                     <CatalogBreadcrumbView />
                                     <div className="nitro-catalog-classic-layout-hero">
-                                        { !!currentPage?.localization?.getImage(0) && <img src={ currentPage.localization.getImage(0) } /> }
+                                        { !!currentPage?.localization?.getImage(0) && <img alt="" src={ currentPage.localization.getImage(0) } /> }
                                     </div>
                                 </div>
                                 <div className="nitro-catalog-classic-layout-container">

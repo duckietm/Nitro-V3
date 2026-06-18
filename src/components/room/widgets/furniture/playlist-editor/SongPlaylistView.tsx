@@ -29,7 +29,7 @@ export const SongPlaylistView: FC<SongPlaylistViewProps> = props =>
 
     return (<>
         <div className="bg-primary py-3 container-fluid justify-center flex rounded">
-            <img className="playlist-img" src={ GetConfigurationValue('image.library.url') + 'playlist/title_playlist.gif' } />
+            <img alt="" className="playlist-img" src={ GetConfigurationValue('image.library.url') + 'playlist/title_playlist.gif' } />
             <h2 className="ms-4">{ LocalizeText('playlist.editor.playlist') }</h2>
         </div>
         <div className="h-full overflow-y-scroll py-2">
@@ -49,7 +49,7 @@ export const SongPlaylistView: FC<SongPlaylistViewProps> = props =>
                 <h5>{ LocalizeText('playlist.editor.add.songs.to.your.playlist') }</h5>
                 <div>{ LocalizeText('playlist.editor.text.click.song.to.choose.click.again.to.move') }</div>
             </div>
-            <img className="add-songs" src={ GetConfigurationValue('image.library.url') + 'playlist/background_add_songs.gif' } /></>
+            <img alt="" className="add-songs" src={ GetConfigurationValue('image.library.url') + 'playlist/background_add_songs.gif' } /></>
         }
         { (playlist && playlist.length > 0) &&
             <>

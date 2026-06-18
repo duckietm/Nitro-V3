@@ -53,7 +53,7 @@ export const DiskInventoryView: FC<DiskInventoryViewProps> = props =>
 
     return (<>
         <div className="flex justify-center py-3 rounded bg-success container-fluid">
-            <img className="my-music" src={ GetConfigurationValue('image.library.url') + 'playlist/title_mymusic.gif' } />
+            <img alt="" className="my-music" src={ GetConfigurationValue('image.library.url') + 'playlist/title_mymusic.gif' } />
             <h2 className="ms-4">{ LocalizeText('playlist.editor.my.music') }</h2>
         </div>
         <div className="h-full py-2 mt-4 overflow-y-scroll">
@@ -89,6 +89,6 @@ export const DiskInventoryView: FC<DiskInventoryViewProps> = props =>
             <div>{ LocalizeText('playlist.editor.text.you.can.buy.some.from.the.catalogue') }</div>
             <button className="btn btn-primary btn-sm" onClick={ () => openCatalogPage() }>{ LocalizeText('playlist.editor.button.open.catalogue') }</button>
         </div>
-        <img className="get-more" src={ `${ GetConfigurationValue('image.library.url') }playlist/background_get_more_music.gif` } />
+        <img alt="" className="get-more" src={ `${ GetConfigurationValue('image.library.url') }playlist/background_get_more_music.gif` } />
     </>);
 };
