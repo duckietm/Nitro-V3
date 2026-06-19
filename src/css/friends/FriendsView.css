@@ -121,15 +121,6 @@
         font-family: Ubuntu, sans-serif !important;
     }
 
-    & .nitro-card-title {
-        font-family: UbuntuCondensed, Ubuntu, sans-serif !important;
-        font-size: 15px !important;
-    }
-
-    & .nitro-card-header {
-        border-bottom: 1px solid rgba(0, 0, 0, .18);
-    }
-
     & .nitro-card-content-shell {
         padding: 0 !important;
         gap: 0 !important;
@@ -481,15 +472,6 @@
         background: linear-gradient(180deg, #93b6c6 0%, #688fa2 100%);
         border: 1px solid #476a7a;
         border-radius: 2px;
-    }
-
-    & .nitro-card-header {
-        border-bottom: 1px solid rgba(0, 0, 0, .18);
-    }
-
-    & .nitro-card-title {
-        font-family: UbuntuCondensed, Ubuntu, sans-serif !important;
-        font-size: 15px !important;
     }
 
     & .messenger-card-body {

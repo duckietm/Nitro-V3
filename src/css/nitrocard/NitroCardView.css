@@ -44,6 +44,7 @@
         .nitro-card-header-text,
         .nitro-card-title {
             display: block;
+            margin: 0 auto;
             max-width: 100%;
             overflow: hidden;
             color: #fff;
@@ -84,6 +85,33 @@
                 filter: brightness(0.94);
             }
         }
+
+        .nitro-card-close-button::before,
+        .nitro-card-close-button::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 10px;
+            height: 2px;
+            border-radius: 2px;
+            background: #fff;
+            transform-origin: center;
+        }
+
+        .nitro-card-close-button::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .nitro-card-close-button::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+    }
+
+    .nitro-card-header-shell.builders-club-card-header {
+        border-color: #d79d2e;
+        border-bottom-color: var(--nitro-card-border);
+        background: linear-gradient(180deg, #d89f2d 0%, #c68515 100%);
     }
 
     .nitro-card-tabs,
@@ -144,6 +172,56 @@
         font-family: Ubuntu, sans-serif;
         color: var(--nitro-card-text);
     }
+}
+
+.builders-club-status-shell {
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    border-bottom: 2px solid var(--nitro-card-border);
+    background: linear-gradient(180deg, rgba(84, 62, 46, 0.95) 0%, rgba(50, 38, 29, 0.97) 100%);
+}
+
+.builders-club-status-icon-shell {
+    background: rgba(255, 193, 70, 0.12);
+    border: 1px solid rgba(255, 193, 70, 0.26);
+}
+
+.nitro-card-panel {
+    background: rgba(0, 0, 0, 0.045) !important;
+    border: 1px solid #c4cabf !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+
+.nitro-card-row {
+    background: rgba(0, 0, 0, 0.035) !important;
+    border: 1px solid #c4cabf !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+.nitro-card-row:hover {
+    background: rgba(0, 0, 0, 0.07) !important;
+    border-color: #aeb7aa !important;
+}
+
+.nitro-card-divider {
+    border-color: #c4cabf !important;
+    box-shadow: none !important;
+}
+
+.nitro-card-shell :where(.bg-muted, .bg-light, .bg-light-dark, .bg-white, .bg-white\/50, .bg-white\/80) {
+    background: rgba(0, 0, 0, 0.045) !important;
+    box-shadow: none !important;
+}
+
+.nitro-card-shell :where(.border, .border-muted, .border-card-grid-item-border, .border-card-grid-item-border-active, .border-white, .border-white\/10, .border-white\/20, .border-white\/30) {
+    border-color: #c4cabf !important;
+    box-shadow: none !important;
+}
+
+.nitro-card-shell :where(.shadow, .shadow-md, .shadow-lg, .shadow-inner, .shadow-inner1px) {
+    box-shadow: none !important;
 }
 
 .content-area,
@@ -267,6 +345,10 @@
         button {
             font-size: 11.5px;
         }
+    }
+
+    .builders-club-status-shell {
+        padding: 10px 12px;
     }
 }
 

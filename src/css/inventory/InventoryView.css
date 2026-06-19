@@ -15,41 +15,8 @@
     background: var(--inv-beige) !important;
 }
 
-.nitro-inventory-window .nitro-card-header {
-    background: var(--inv-blue);
-    border-color: var(--inv-blue);
-    border-bottom-color: var(--inv-border);
-    box-shadow: inset 0 2px 0 #709da9, inset 0 -2px 0 #315863;
-}
-
 .nitro-inventory-window .nitro-inventory-tabs-shell {
-    background: var(--inv-beige);
     gap: 4px;
-    padding: 6px 8px 0;
-    border-bottom: 1px solid #b9c4ca;
-}
-
-.nitro-inventory-window .nitro-inventory-tabs-shell .nitro-card-tab-item {
-    background: var(--inv-tab);
-    border: 1px solid #aeb9bf;
-    border-bottom: 0;
-    border-radius: 6px 6px 0 0;
-    color: #8a9aa2;
-    font-weight: 600;
-    box-shadow: inset 1px 1px 0 #fff;
-}
-
-.nitro-inventory-window .nitro-inventory-tabs-shell .nitro-card-tab-item:hover {
-    background: #d2d0c6;
-    color: #6b7d86;
-}
-
-.nitro-inventory-window .nitro-inventory-tabs-shell .nitro-card-tab-item-active {
-    background: #fff;
-    color: #566a74;
-    border-color: #93a1a8;
-    position: relative;
-    top: 1px;
 }
 
 .nitro-inventory-window .nitro-inventory-tab-icon {
