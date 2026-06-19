@@ -17,7 +17,7 @@ export const NitroCardHeaderView: FC<NitroCardHeaderViewProps> = props =>
 {
     const { headerText = null, isGalleryPhoto = false, noCloseButton = false, isInfoToHabboPages = false, onReportPhoto = null, onClickInfoHabboPages = null, onCloseClick = null, justifyContent = 'center', alignItems = 'center', classNames = [], className = '', children = null, ...rest } = props;
 
-    const onMouseDown = (event: MouseEvent<HTMLDivElement>) =>
+    const onMouseDown = (event: MouseEvent<HTMLElement>) =>
     {
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
@@ -39,8 +39,12 @@ export const NitroCardHeaderView: FC<NitroCardHeaderViewProps> = props =>
                 { isInfoToHabboPages &&
                     <Base className="absolute right-8 nitro-card-header-info-habbopages cursor-pointer" position="absolute" onClick={ onClickInfoHabboPages } />
                 }
-                <div className="absolute flex items-center justify-center cursor-pointer right-2 nitro-card-close-button" onClick={ onCloseClick } onMouseDownCapture={ onMouseDown }>
-                </div>
+                <button
+                    type="button"
+                    aria-label="Close window"
+                    className="absolute flex items-center justify-center cursor-pointer right-2 nitro-card-close-button"
+                    onClick={ onCloseClick }
+                    onMouseDownCapture={ onMouseDown } />
 
             </Flex>
         </Column>
