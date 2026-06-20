@@ -69,6 +69,7 @@ import './css/toolbar/ToolBar.css';
 import './css/user-profile/UserProfileView.css';
 
 import './css/widgets/FurnitureWidgets.css';
+import './css/WiredView.css';
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>

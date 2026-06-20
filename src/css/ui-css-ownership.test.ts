@@ -52,6 +52,7 @@ describe('UI CSS ownership', () =>
         const friendsCss = readSource('src/css/friends/FriendsView.css');
         const roomSettingsCss = readSource('src/css/room/NavigatorRoomSettings.css');
         const indexCss = readSource('src/css/index.css');
+        const wiredCss = readSource('src/css/WiredView.css');
         const modToolsView = readSource('src/components/mod-tools/ModToolsView.tsx');
         const modToolsRoomView = readSource('src/components/mod-tools/views/room/ModToolsRoomView.tsx');
         const modToolsTicketsView = readSource('src/components/mod-tools/views/tickets/ModToolsTicketsView.tsx');
@@ -120,11 +121,13 @@ describe('UI CSS ownership', () =>
         expect(friendsCss).toContain('width: min(270px, calc(100vw - 16px))');
         expect(roomSettingsCss).toContain('.nitro-room-settings');
         expect(roomSettingsCss).toContain(':where(input, select, textarea)');
-        expect(indexCss).toContain('.nitro-wired :where(select, input[type=\'text\'], input[type=\'number\'], textarea)');
+        expect(indexCss).not.toContain('.nitro-wired :where(select, input[type=\'text\'], input[type=\'number\'], textarea)');
+        expect(wiredCss).toContain('.nitro-wired :where(select, input[type=\'text\'], input[type=\'number\'], textarea)');
+        expect(wiredCss).toContain('.nitro-wired__variable-picker-portal');
         expect(indexCss).toContain('.nitro-mod-tools :where(input, select, textarea)');
         expect(indexCss).toContain('[class*="nitro-mod-tools-"] :where(.bg-white, .bg-light, .bg-muted, .bg-card-grid-item, .bg-white\\/70)');
-        expect(indexCss).toContain('.nitro-wired__body');
-        expect(indexCss).toContain('overflow-y: auto');
+        expect(wiredCss).toContain('.nitro-wired__body');
+        expect(wiredCss).toContain('overflow-y: auto');
         expect(modToolsView).toContain('max-w-[calc(100vw-16px)]');
         expect(modToolsRoomView).toContain('max-w-[calc(100vw-16px)]');
         expect(modToolsTicketsView).toContain('max-w-[calc(100vw-16px)]');
