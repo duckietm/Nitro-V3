@@ -155,7 +155,7 @@
 }
 
 .habbo-swf-window .nitro-card-tabs-shell,
-.habbo-swf-window .nitro-catalog-classic-tabs-shell {
+.habbo-swf-window .nitro-catalog-tabs-shell {
     background: var(--habbo-swf-bg) !important;
     border-bottom: 1px solid #000 !important;
 }

@@ -190,7 +190,7 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
             <CatalogAdminQuickActionsView />
 
             { /* Top card: preview + name + purchase */ }
-            <div className="nitro-catalog-classic-pet-card flex gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
+            <div className="nitro-catalog-pet-card flex gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
                 { /* Pet preview */ }
                 <div className="w-[160px] min-w-[160px] h-[140px] rounded overflow-hidden bg-card-grid-item relative flex items-center justify-center border border-card-grid-item-border">
                     <CatalogViewProductWidgetView />
@@ -275,7 +275,7 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
                             { LocalizeText('catalog.pets.back.breeds') }
                         </button> }
                 </div>
-                <div className={ colorsShowing ? 'nitro-catalog-classic-color-swatches flex flex-wrap gap-1 p-2 overflow-auto' : 'nitro-catalog-classic-pet-breeds flex flex-wrap gap-1 p-1 overflow-auto' }>
+                <div className={ colorsShowing ? 'nitro-catalog-color-swatches flex flex-wrap gap-1 p-2 overflow-auto' : 'nitro-catalog-pet-breeds flex flex-wrap gap-1 p-1 overflow-auto' }>
                     { !colorsShowing && (sellablePalettes.length > 0) && sellablePalettes.map((palette, index) => (
                         <LayoutGridItem
                             key={ index }

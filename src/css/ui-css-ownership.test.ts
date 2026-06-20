@@ -43,7 +43,7 @@ describe('UI CSS ownership', () =>
         const catalogLayoutPetView = readSource('src/components/catalog/views/page/layout/pets/CatalogLayoutPetView.tsx');
         const catalogLayoutTrophiesView = readSource('src/components/catalog/views/page/layout/CatalogLayoutTrophiesView.tsx');
         const getCatalogLayout = readSource('src/components/catalog/views/page/layout/GetCatalogLayout.tsx');
-        const catalogClassicCss = readSource('src/css/catalog/CatalogClassicView.css');
+        const catalogCss = readSource('src/css/catalog/CatalogView.css');
         const inventoryCss = readSource('src/css/inventory/InventoryView.css');
         const friendsCss = readSource('src/css/friends/FriendsView.css');
         const roomSettingsCss = readSource('src/css/room/NavigatorRoomSettings.css');
@@ -82,9 +82,9 @@ describe('UI CSS ownership', () =>
         expect(catalogAdminPageEditView).toContain('widthClassName="w-[520px]"');
         expect(getCatalogLayout).not.toContain('custom_prefix');
         expect(getCatalogLayout).not.toContain('CatalogLayoutCustomPrefixView');
-        expect(catalogClassicCss).toContain('.nitro-catalog-classic-window :where(.bg-white, .bg-gray-50, .bg-card-grid-item)');
-        expect(catalogClassicCss).toContain('.nitro-catalog-classic-window :where(input, select, textarea)');
-        expect(catalogClassicCss).toContain('.nitro-catalog-classic-window :where(.text-muted, .text-dark)');
+        expect(catalogCss).toContain('.nitro-catalog-window :where(.bg-white, .bg-gray-50, .bg-card-grid-item)');
+        expect(catalogCss).toContain('.nitro-catalog-window :where(input, select, textarea)');
+        expect(catalogCss).toContain('.nitro-catalog-window :where(.text-muted, .text-dark)');
         expect(inventoryCategoryFilterView).not.toContain('style={ { width: currentTab === TAB_BADGES');
         expect(inventoryCategoryFilterView).toContain('nitro-inventory-filter-bar');
         expect(inventoryCss).toContain('.nitro-inventory-window .nitro-inventory-filter-bar.is-badges');

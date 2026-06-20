@@ -128,7 +128,7 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
         >
             { iconUrl && !(offer.product.productType === ProductTypeEnum.ROBOT) &&
                 <img
-                    className="nitro-catalog-classic-grid-offer-icon"
+                    className="nitro-catalog-grid-offer-icon"
                     src={ iconUrl }
                     draggable={ false }
                     style={ tintColor ? { filter: 'url(#guild-furni-recolor)', transform: 'translateZ(0)' } : undefined }
@@ -141,13 +141,13 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = props =>
             { (offer.product.productType === ProductTypeEnum.ROBOT) &&
                 <LayoutAvatarImageView direction={ 2 } figure={ offer.product.extraParam } fit /> }
             { (prices.length > 0) &&
-                <span className={ `nitro-catalog-classic-grid-price ${ prices.length > 1 ? 'is-multi-price' : 'is-single-price' }` }>
+                <span className={ `nitro-catalog-grid-price ${ prices.length > 1 ? 'is-multi-price' : 'is-single-price' }` }>
                     { prices.map((price, index) =>
-                        <span key={ `${ price.type }-${ index }` } className="nitro-catalog-classic-grid-price-entry">
-                            { index > 0 && <span className="nitro-catalog-classic-grid-price-plus">+</span> }
-                            <span className="nitro-catalog-classic-grid-price-amount">{ price.amount }</span>
+                        <span key={ `${ price.type }-${ index }` } className="nitro-catalog-grid-price-entry">
+                            { index > 0 && <span className="nitro-catalog-grid-price-plus">+</span> }
+                            <span className="nitro-catalog-grid-price-amount">{ price.amount }</span>
                             <img
-                                className="nitro-catalog-classic-grid-price-currency"
+                                className="nitro-catalog-grid-price-currency"
                                 src={ getCurrencyIconUrl(price.type) }
                                 draggable={ false } />
                         </span>) }

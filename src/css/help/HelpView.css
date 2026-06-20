@@ -2,20 +2,6 @@
    Global (not an inline <style>) so it applies to BOTH the HelpView card and
    the separate SanctionStatusView card, regardless of which is mounted. */
 
-/* Classic blue header + light-grey body (the shared 'primary-slim' theme is
-   teal + cream). Higher specificity than the theme so it wins. The body element
-   renders `.nitro-card-content-shell`, NOT `.content-area`. */
-.nitro-card.nitro-help .nitro-card-header {
-    background: linear-gradient(180deg, #5a80b8 0%, #3f63a0 100%);
-    border-color: #34548a;
-}
-
-.nitro-card.nitro-help,
-.nitro-card.nitro-help .content-area,
-.nitro-card.nitro-help .nitro-card-content-shell {
-    background: #ebebe3 !important;
-}
-
 /* Beveled Habbo green button (matches the reference screenshots — the flat
    Bootstrap 'success' variant did not). Reused by the Help action buttons and
    the Sanctions "Ho capito" button. */

@@ -57,10 +57,10 @@ export const CatalogLayouGuildCustomFurniView: FC<CatalogLayoutProps> = () =>
             <Column fullHeight gap={ 1 } overflow="hidden">
                 { !!currentOffer &&
                     <div className="relative shrink-0 overflow-hidden">
-                        <button className="nitro-catalog-classic-preview-btn nitro-catalog-classic-preview-rotate" onClick={ () => roomPreviewer?.changeRoomObjectDirection() }>
+                        <button className="nitro-catalog-preview-btn nitro-catalog-preview-rotate" onClick={ () => roomPreviewer?.changeRoomObjectDirection() }>
                             <FaSyncAlt />
                         </button>
-                        <button className="nitro-catalog-classic-preview-btn nitro-catalog-classic-preview-state" onClick={ () => roomPreviewer?.changeRoomObjectState() }>
+                        <button className="nitro-catalog-preview-btn nitro-catalog-preview-state" onClick={ () => roomPreviewer?.changeRoomObjectState() }>
                             <FaExchangeAlt />
                         </button>
                         <CatalogViewProductWidgetView height={ 210 } />
@@ -72,7 +72,7 @@ export const CatalogLayouGuildCustomFurniView: FC<CatalogLayoutProps> = () =>
                         </div>
                     </div> }
                 <div className="grow! min-h-0 overflow-auto">
-                    <CatalogItemGridWidgetView className="nitro-catalog-classic-grid" columnCount={ 6 } columnMinHeight={ 80 } columnMinWidth={ 55 } tintColor={ tintColor } />
+                    <CatalogItemGridWidgetView className="nitro-catalog-grid" columnCount={ 6 } columnMinHeight={ 80 } columnMinWidth={ 55 } tintColor={ tintColor } />
                 </div>
                 { !!currentOffer &&
                     <div className="flex shrink-0 flex-col gap-1">

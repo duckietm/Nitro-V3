@@ -78,10 +78,10 @@ export const CatalogNavigationItemView: FC<CatalogNavigationItemViewProps> = pro
     }, [ adminMode, node, catalogAdmin ]);
 
     return (
-        <div className={ `nitro-catalog-classic-navigation-node ${ child ? 'is-child' : '' }` }>
+        <div className={ `nitro-catalog-navigation-node ${ child ? 'is-child' : '' }` }>
             <div
                 ref={ dragRef }
-                className={ `nitro-catalog-classic-navigation-item group/nav ${ node.isActive ? 'is-active' : '' } ${ node.isBranch ? 'is-branch' : 'is-leaf' } ${ node.isOpen ? 'is-open' : '' } ${ isDragOver ? 'is-drag-over' : '' }` }
+                className={ `nitro-catalog-navigation-item group/nav ${ node.isActive ? 'is-active' : '' } ${ node.isBranch ? 'is-branch' : 'is-leaf' } ${ node.isOpen ? 'is-open' : '' } ${ isDragOver ? 'is-drag-over' : '' }` }
                 draggable={ adminMode }
                 onClick={ () => activateNode(node) }
                 onDragLeave={ adminMode ? handleDragLeave : undefined }
@@ -90,13 +90,13 @@ export const CatalogNavigationItemView: FC<CatalogNavigationItemViewProps> = pro
                 onDrop={ adminMode ? handleDrop : undefined }
             >
                 { adminMode &&
-                    <FaArrowsAlt className="nitro-catalog-classic-navigation-drag text-[7px] text-muted cursor-grab shrink-0 opacity-0 group-hover/nav:opacity-60" /> }
-                <div className="nitro-catalog-classic-navigation-icon">
+                    <FaArrowsAlt className="nitro-catalog-navigation-drag text-[7px] text-muted cursor-grab shrink-0 opacity-0 group-hover/nav:opacity-60" /> }
+                <div className="nitro-catalog-navigation-icon">
                     <CatalogIconView icon={ node.iconId } />
                 </div>
-                <span className="nitro-catalog-classic-navigation-label" title={ adminMode ? `Page ID: ${ node.pageId }` : undefined }>{ swfLabel }</span>
+                <span className="nitro-catalog-navigation-label" title={ adminMode ? `Page ID: ${ node.pageId }` : undefined }>{ swfLabel }</span>
                 { adminMode &&
-                    <div className="nitro-catalog-classic-navigation-admin flex items-center gap-1 opacity-0 group-hover/nav:opacity-100 transition-opacity">
+                    <div className="nitro-catalog-navigation-admin flex items-center gap-1 opacity-0 group-hover/nav:opacity-100 transition-opacity">
                         <FaPlus
                             className="text-[8px] text-success hover:text-green-800"
                             title={ LocalizeText('catalog.admin.create.subpage') }
@@ -139,7 +139,7 @@ export const CatalogNavigationItemView: FC<CatalogNavigationItemViewProps> = pro
                         } }
                     /> }
                 { node.isBranch &&
-                    <span className="nitro-catalog-classic-navigation-caret text-[9px] text-muted shrink-0">
+                    <span className="nitro-catalog-navigation-caret text-[9px] text-muted shrink-0">
                         { node.isOpen ? <FaCaretUp /> : <FaCaretDown /> }
                     </span> }
             </div>
