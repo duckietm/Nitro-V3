@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -10,6 +10,7 @@ const userProfileCssPath = join(process.cwd(), 'src/css/user-profile/UserProfile
 const helpCssPath = join(process.cwd(), 'src/css/help/HelpView.css');
 const indexTsxPath = join(process.cwd(), 'src/index.tsx');
 const vaultViewPath = join(process.cwd(), 'src/components/vault/VaultView.tsx');
+const legacyHabboSwfSkinPath = join(process.cwd(), 'src/css/habbo/HabboSwfSkin.css');
 
 describe('NitroCardView.css', () =>
 {
@@ -45,7 +46,9 @@ describe('NitroCardView.css', () =>
         const legacySwfWindowClass = [ 'habbo', 'swf', 'window' ].join('-');
 
         expect(catalogView).not.toContain(legacySwfWindowClass);
+        expect(catalogView).not.toContain('buildersClubHeaderStyle');
         expect(indexTsx).not.toContain([ 'Habbo', 'Swf', 'Skin', 'css' ].join('.'));
+        expect(existsSync(legacyHabboSwfSkinPath)).toBe(false);
         expect(catalogCss).not.toMatch(/\.nitro-catalog-window\s+\.nitro-card-(?:header|header-shell|title|close-button)/);
         expect(catalogCss).not.toMatch(/\.nitro-catalog-tabs-shell\s+\.nitro-card-tab-item:hover/);
         expect(catalogCss).not.toMatch(/\.nitro-catalog-tabs-shell\s+\.nitro-card-tab-item-active/);

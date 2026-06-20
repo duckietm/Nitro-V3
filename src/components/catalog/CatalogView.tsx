@@ -39,9 +39,6 @@ const CatalogViewInner: FC<{}> = () =>
     // pageId hint the gameserver appends when the viewer has
     // ACC_CATALOG_IDS - that's a pure-numeric "(6)" trailer.
     const getSwfTabLabel = (label: string) => (label || '').replace(/\s*\(\D[^)]*\)\s*$/g, '').trim();
-    const buildersClubHeaderStyle = (currentType === CatalogType.BUILDER)
-        ? { borderColor: '#d79d2e', borderBottomColor: '#000', background: 'linear-gradient(180deg, #d89f2d 0%, #c68515 100%)' }
-        : undefined;
 
     useEffect(() =>
     {
@@ -128,7 +125,7 @@ const CatalogViewInner: FC<{}> = () =>
         <>
             { isVisible &&
                 <NitroCardView classNames={ [ 'nitro-catalog-window' ] } isResizable={ false } uniqueKey="catalog">
-                    <NitroCardHeaderView className={ currentType === CatalogType.BUILDER ? 'builders-club-card-header' : '' } headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } style={ buildersClubHeaderStyle } />
+                    <NitroCardHeaderView className={ currentType === CatalogType.BUILDER ? 'builders-club-card-header' : '' } headerText={ LocalizeText('catalog.title') } onCloseClick={ () => setIsVisible(false) } />
                     <div className="nitro-catalog-mobile-header">
                         { isMod &&
                             <div className="nitro-catalog-mobile-burger">
