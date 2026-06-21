@@ -32,7 +32,7 @@ export const ModToolsChatlogView: FC<ModToolsChatlogViewProps> = props =>
     }, [ roomId ]);
 
     return (
-        <NitroCardView className="nitro-mod-tools-chatlog min-w-[460px] max-w-[520px] max-h-[500px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+        <NitroCardView className="nitro-mod-tools-chatlog min-w-0 w-[min(520px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <NitroCardHeaderView headerText={ LocalizeText('modtools.room.chatlog.title') } onCloseClick={ onCloseClick } />
             <NitroCardContentView className="text-black" gap={ 1 } overflow="auto">
                 { roomChatlog

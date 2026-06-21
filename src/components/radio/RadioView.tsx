@@ -4,21 +4,6 @@ import { LocalizeText } from '../../api';
 import { LayoutImage } from '../../common';
 import { RadioStation, useRadio } from '../../hooks';
 
-const RADIO_STYLES = `
-.radio-widget { font-feature-settings: "tnum"; }
-.radio-eq { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
-.radio-eq span { width: 3px; height: 30%; border-radius: 2px; background: #38bdf8; opacity: .55; }
-.radio-eq.is-live span { opacity: 1; animation: radioEq .9s ease-in-out infinite; }
-.radio-eq span:nth-child(2) { animation-delay: .18s; }
-.radio-eq span:nth-child(3) { animation-delay: .36s; }
-.radio-eq span:nth-child(4) { animation-delay: .12s; }
-@keyframes radioEq { 0%, 100% { height: 22%; } 50% { height: 100%; } }
-.radio-scroll::-webkit-scrollbar { width: 6px; }
-.radio-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 3px; }
-.radio-scroll::-webkit-scrollbar-track { background: transparent; }
-.radio-vol { accent-color: #38bdf8; }
-`;
-
 // Compact, polished top-left radio widget. Shows the selected station with a
 // dropdown (3 visible, scrolls if more) to switch. Nudged down so it clears the
 // CMS top bar most hotels render there.
@@ -52,8 +37,6 @@ export const RadioView: FC<{}> = () =>
 
     return (
         <div className="radio-widget fixed left-2 top-12 z-40 w-[244px] max-w-[64vw] select-none overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-[rgba(22,24,30,0.94)] to-[rgba(10,11,14,0.94)] text-white shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-sm">
-            <style>{ RADIO_STYLES }</style>
-
             <div className="flex items-center gap-2 border-b border-white/10 px-3 py-1.5">
                 <FaBroadcastTower className={ `text-[11px] ${ isPlaying ? 'text-sky-400' : 'text-white/45' }` } />
                 <span className="grow text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">{ LocalizeText('radio.title') }</span>

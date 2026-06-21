@@ -96,7 +96,7 @@ export const HelpView: FC<{}> = props =>
     return (
         <>
             { isVisible &&
-                <NitroCardView className={ `nitro-help${ activeReport ? '' : ' w-[420px]' }` } theme="primary-slim">
+                <NitroCardView className={ `nitro-help min-w-0 max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]${ activeReport ? '' : ' w-[min(420px,calc(100vw-16px))]' }` } theme="primary-slim">
                     <NitroCardHeaderView headerText={ LocalizeText('help.button.cfh') } onCloseClick={ onClose } />
                     <NitroCardContentView className="text-black">
                         { activeReport

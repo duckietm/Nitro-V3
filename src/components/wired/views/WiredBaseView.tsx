@@ -131,7 +131,7 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
     resolvedCardStyle.resize = 'none';
 
     return (
-        <NitroCardView className="nitro-wired" theme="primary-slim" uniqueKey="nitro-wired" isResizable={ false } style={ resolvedCardStyle }>
+        <NitroCardView className="nitro-wired max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="nitro-wired" isResizable={ false } style={ resolvedCardStyle }>
             <NitroCardHeaderView classNames={ [ 'nitro-wired__header' ] } headerText={ LocalizeText('wiredfurni.title') } onCloseClick={ onClose } />
             <NitroCardContentView classNames={ [ 'nitro-wired__content' ] } gap={ 0 }>
                 <div className="nitro-wired__section nitro-wired__summary">

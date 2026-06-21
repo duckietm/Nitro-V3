@@ -42,7 +42,7 @@ export const ModToolsIssueInfoView: FC<IssueInfoViewProps> = props =>
 
     return (
         <>
-            <NitroCardView className="nitro-mod-tools-handle-issue min-w-[440px] max-w-[500px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+            <NitroCardView className="nitro-mod-tools-handle-issue min-w-0 w-[min(500px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
                 <NitroCardHeaderView headerText={ LocalizeText('modtools.tickets.issue.title', [ 'issueId' ], [ issueId.toString() ]) } onCloseClick={ () => onIssueInfoClosed(issueId) } />
                 <NitroCardContentView className="text-black" gap={ 2 }>
                     {/* Issue header */}

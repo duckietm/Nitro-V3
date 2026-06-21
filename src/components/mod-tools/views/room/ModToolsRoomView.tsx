@@ -79,7 +79,7 @@ export const ModToolsRoomView: FC<ModToolsRoomViewProps> = props =>
     const ownerDotClass = ownerInRoom ? 'bg-emerald-500' : 'bg-zinc-400';
 
     return (
-        <NitroCardView className="nitro-mod-tools-room min-w-[400px] max-w-[460px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+        <NitroCardView className="nitro-mod-tools-room min-w-0 w-[min(460px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <NitroCardHeaderView headerText={ LocalizeText('modtools.roominfo.title') } onCloseClick={ () => onCloseClick() } />
             <NitroCardContentView className="text-black" gap={ 2 }>
                 {/* Identity header */}

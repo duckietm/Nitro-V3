@@ -5,7 +5,6 @@ export type PrefixFontOption = {
     family: string;
     tier: PrefixFontTier;
 };
-
 export const PRESET_PREFIX_FONTS: PrefixFontOption[] = [
     { id: '', label: 'Default', family: 'Ubuntu, sans-serif', tier: 'basic' },
     { id: 'pixel', label: 'Pixelify Sans', family: '"Pixelify Sans", cursive', tier: 'premium' },
@@ -45,7 +44,6 @@ export const parsePrefixColors = (text: string, colorStr: string): string[] =>
     const colors = colorStr.split(',');
     return [ ...text ].map((_, i) => colors[Math.min(i, colors.length - 1)]);
 };
-
 export const getPrefixFontStyle = (font: string): Record<string, string> =>
 {
     const option = PRESET_PREFIX_FONTS.find(entry => entry.id === font);
@@ -165,63 +163,3 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
             return {};
     }
 };
-
-export const PREFIX_EFFECT_KEYFRAMES = `
-@keyframes prefix-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-@keyframes prefix-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
-}
-
-@keyframes prefix-wave {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-5deg); }
-    75% { transform: rotate(5deg); }
-}
-
-@keyframes prefix-shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-1px); }
-    40% { transform: translateX(1px); }
-    60% { transform: translateX(-1px); }
-    80% { transform: translateX(1px); }
-}
-
-@keyframes prefix-rainbow {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-}
-
-@keyframes prefix-gold {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.25) saturate(1.2); }
-}
-
-@keyframes prefix-glitch {
-    0%, 100% { transform: translate(0, 0); }
-    20% { transform: translate(-1px, 0); }
-    40% { transform: translate(1px, 0); }
-    60% { transform: translate(-1px, 1px); }
-    80% { transform: translate(1px, -1px); }
-}
-
-@keyframes prefix-fire {
-    0%, 100% { transform: translateY(0); filter: brightness(1); }
-    50% { transform: translateY(-1px); filter: brightness(1.15); }
-}
-
-@keyframes prefix-matrix {
-    0% { opacity: 0.85; letter-spacing: 0; }
-    50% { opacity: 1; letter-spacing: 0.4px; }
-    100% { opacity: 0.85; letter-spacing: 0; }
-}
-
-@keyframes prefix-sparkle {
-    0%, 100% { opacity: 1; filter: brightness(1); }
-    50% { opacity: 0.92; filter: brightness(1.35); }
-}
-`;

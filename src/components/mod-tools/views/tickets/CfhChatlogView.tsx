@@ -32,7 +32,7 @@ export const CfhChatlogView: FC<CfhChatlogViewProps> = props =>
     }, [ issueId ]);
 
     return (
-        <NitroCardView className="nitro-mod-tools-chatlog min-w-[460px] max-w-[520px] max-h-[500px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+        <NitroCardView className="nitro-mod-tools-chatlog min-w-0 w-[min(520px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <NitroCardHeaderView headerText={ LocalizeText('modtools.tickets.cfh.chatlog.title', [ 'issueId' ], [ issueId.toString() ]) } onCloseClick={ onCloseClick } />
             <NitroCardContentView className="text-black" gap={ 1 }>
                 { chatlogData

@@ -84,7 +84,7 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
                         </> }
                     { currentOffer &&
                         <>
-                            <div className="flex items-center justify-center overflow-hidden" style={ { height: 140 } }>
+                            <div className="nitro-catalog-sound-preview flex items-center justify-center overflow-hidden">
                                 { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
                                     <>
                                         <CatalogViewProductWidgetView />

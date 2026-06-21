@@ -34,7 +34,7 @@ export const ModToolsUserChatlogView: FC<ModToolsUserChatlogViewProps> = props =
     }, [ userId ]);
 
     return (
-        <NitroCardView className="nitro-mod-tools-chatlog min-w-[460px] max-w-[520px] max-h-[500px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+        <NitroCardView className="nitro-mod-tools-chatlog min-w-0 w-[min(520px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <NitroCardHeaderView headerText={ username ? LocalizeText('modtools.user.chatlog.title.with', [ 'username' ], [ username ]) : LocalizeText('modtools.user.chatlog.title') } onCloseClick={ onCloseClick } />
             <NitroCardContentView className="text-black h-full" gap={ 1 }>
                 { userChatlog

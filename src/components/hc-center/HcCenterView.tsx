@@ -130,7 +130,7 @@ export const HcCenterView: FC<{}> = props =>
     );
 
     return (
-        <NitroCardView className="w-[430px] resize-none" theme="primary-slim">
+        <NitroCardView className="min-w-0 w-[min(430px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)] resize-none" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('generic.hccenter') } onCloseClick={ () => setIsVisible(false) } />
             <Flex className="bg-muted/50 p-3" position="relative">
                 <Column gap={ 2 }>

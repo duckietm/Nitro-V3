@@ -40,7 +40,7 @@ export const ModToolsUserRoomVisitsView: FC<ModToolsUserRoomVisitsViewProps> = p
         : LocalizeText('modtools.user.visits.entries.many', [ 'count' ], [ rows.length.toString() ]);
 
     return (
-        <NitroCardView className="nitro-mod-tools-user-visits min-w-[400px] max-w-[460px] max-h-[460px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+        <NitroCardView className="nitro-mod-tools-user-visits min-w-0 w-[min(460px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <NitroCardHeaderView headerText={ LocalizeText('modtools.user.visits.title') } onCloseClick={ onCloseClick } />
             <NitroCardContentView className="text-black" gap={ 1 }>
                 {/* Header strip */}

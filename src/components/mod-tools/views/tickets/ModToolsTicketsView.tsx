@@ -96,7 +96,7 @@ export const ModToolsTicketsView: FC<ModToolsTicketsViewProps> = props =>
 
     return (
         <>
-            <NitroCardView className="nitro-mod-tools-tickets min-w-[520px] max-w-[640px] max-h-[520px]">
+            <NitroCardView className="nitro-mod-tools-tickets min-w-0 w-[min(640px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]">
                 <NitroCardHeaderView headerText={ LocalizeText('modtools.tickets.title') } onCloseClick={ onCloseClick } />
                 <NitroCardTabsView>
                     <NitroCardTabsItemView isActive={ currentTab === 0 } onClick={ () => setCurrentTab(0) }>

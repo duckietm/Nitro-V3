@@ -136,13 +136,13 @@ export const CatalogLayoutColorGroupingView: FC<CatalogLayoutColorGroupViewProps
             { /* Top: two visible rows of furni tiles. Tile is 70px tall
                and the AutoGrid handles its own overflow if there are
                more than two rows worth of offers. */ }
-            <div className="shrink-0" style={ { maxHeight: 154 } }>
+            <div className="nitro-catalog-color-grid-shell shrink-0">
                 { (!colorsShowing || !currentOffer || !colorableItems.has(currentOffer.product.furnitureData.className)) &&
                     <AutoGrid columnCount={ 7 } columnMinHeight={ 70 } columnMinWidth={ 45 }>
                         { offers.map((offer, index) => <CatalogGridOfferView key={ index } itemActive={ (currentOffer && (currentOffer.product.furnitureData.hasIndexedColor ? currentOffer.product.furnitureData.className === offer.product.furnitureData.className : currentOffer.offerId === offer.offerId)) } offer={ offer } selectOffer={ selectOffer } />) }
                     </AutoGrid> }
                 { (colorsShowing && currentOffer && colorableItems.has(currentOffer.product.furnitureData.className)) &&
-                    <div className="nitro-catalog-classic-color-swatches flex flex-wrap gap-1 p-2 overflow-auto">
+                    <div className="nitro-catalog-color-swatches flex flex-wrap gap-1 p-2 overflow-auto">
                         { colorableItems.get(currentOffer.product.furnitureData.className).map((color, index) => <LayoutGridItem key={ index } itemHighlight className="clear-bg" itemActive={ (currentOffer.product.furnitureData.colorIndex === index) } itemColor={ ColorConverter.int2rgb(color) } onClick={ event => selectColor(index, currentOffer.product.furnitureData.className) } />) }
                     </div> }
             </div>
@@ -157,14 +157,14 @@ export const CatalogLayoutColorGroupingView: FC<CatalogLayoutColorGroupViewProps
                     <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
                 </Column> }
             { currentOffer &&
-                <div className="nitro-catalog-classic-offer-panel flex flex-col items-center grow overflow-hidden gap-2">
-                    <div className="nitro-catalog-classic-offer-preview relative flex items-center justify-center overflow-hidden">
+                <div className="nitro-catalog-offer-panel flex flex-col items-center grow overflow-hidden gap-2">
+                    <div className="nitro-catalog-offer-preview relative flex items-center justify-center overflow-hidden">
                         { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
                             <>
-                                <button className="nitro-catalog-classic-preview-btn nitro-catalog-classic-preview-rotate" onClick={ () => roomPreviewer?.changeRoomObjectDirection() }>
+                                <button className="nitro-catalog-preview-btn nitro-catalog-preview-rotate" onClick={ () => roomPreviewer?.changeRoomObjectDirection() }>
                                     <FaSyncAlt />
                                 </button>
-                                <button className="nitro-catalog-classic-preview-btn nitro-catalog-classic-preview-state" onClick={ () => roomPreviewer?.changeRoomObjectState() }>
+                                <button className="nitro-catalog-preview-btn nitro-catalog-preview-state" onClick={ () => roomPreviewer?.changeRoomObjectState() }>
                                     <FaExchangeAlt />
                                 </button>
                             </> }

@@ -1,6 +1,6 @@
 import { FC, Fragment, ReactNode, useMemo } from 'react';
 import { GetNickIconUrl } from '../assets/images/user_custom/nick_icons';
-import { PREFIX_EFFECT_KEYFRAMES, getPrefixEffectStyle, getPrefixFontStyle, parseFontSegments, parsePrefixColors } from '../api';
+import { getPrefixEffectStyle, getPrefixFontStyle, parseFontSegments, parsePrefixColors } from '../api';
 
 const renderInlineFontMarkup = (text: string): ReactNode =>
 {
@@ -112,7 +112,6 @@ export const UserIdentityView: FC<UserIdentityViewProps> = ({
 
     return (
         <span className={ `inline-flex items-center whitespace-nowrap align-middle ${ className }` }>
-            { !!prefixEffect && <style>{ PREFIX_EFFECT_KEYFRAMES }</style> }
             { parts }
         </span>
     );

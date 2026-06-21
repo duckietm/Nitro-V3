@@ -47,7 +47,7 @@ export const CatalogLayoutMarketplaceItemView: FC<MarketplaceItemViewProps> = pr
 
     return (
         <LayoutGridItem shrink alignItems="center" center={ false } className="p-1" column={ false }>
-            <Column style={ { width: 40, height: 40 } }>
+            <Column className="nitro-catalog-marketplace-item-icon">
                 <LayoutGridItem column={ false } itemImage={ GetImageIconUrlForProduct(((offerData.furniType === MarketplaceOfferData.TYPE_FLOOR) ? ProductTypeEnum.FLOOR : ProductTypeEnum.WALL), offerData.furniId, offerData.extraData) } itemUniqueNumber={ offerData.isUniqueLimitedItem ? offerData.stuffData.uniqueNumber : 0 } />
             </Column>
             <Column grow gap={ 0 }>

@@ -150,7 +150,7 @@ export const FriendsListView: FC<{}> = props =>
 
     return (
         <>
-            <NitroCardView className="nitro-friends" theme="primary-slim" uniqueKey="nitro-friends">
+            <NitroCardView className="nitro-friends min-w-0 w-[min(310px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="nitro-friends">
                 <NitroCardHeaderView headerText={ LocalizeText('friendlist.friends') } onCloseClick={ event => setIsVisible(false) } />
                 <NitroCardContentView className="text-black p-0" gap={ 1 } overflow="hidden">
                     <FriendsListGroupChipsView

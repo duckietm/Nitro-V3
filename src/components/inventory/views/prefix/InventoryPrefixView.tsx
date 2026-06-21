@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
-import { IPrefixItem, LocalizeText, parsePrefixColors, getPrefixEffectStyle, getPrefixFontStyle, PREFIX_EFFECT_KEYFRAMES } from '../../../../api';
+import { IPrefixItem, LocalizeText, parsePrefixColors, getPrefixEffectStyle, getPrefixFontStyle } from '../../../../api';
 import { Button } from '../../../../common';
 import { GetNickIconUrl } from '../../../../assets/images/user_custom/nick_icons';
 import { useInventoryNickIcons, useInventoryPrefixes, useNotification } from '../../../../hooks';
@@ -17,7 +17,6 @@ const PrefixPreview: FC<{ text: string; color: string; icon: string; effect?: st
 
     return (
         <span className={ `font-bold ${ textSize } ${ className }` } style={ { ...fontStyle, ...fxStyle } }>
-            { !!effect && <style>{ PREFIX_EFFECT_KEYFRAMES }</style> }
             { icon && <span className="mr-0.5">{ icon }</span> }
             <span style={ hasMultiColor ? { ...fontStyle, ...fxStyle } : { ...fontStyle, ...fxStyle, color: colors[0] || '#FFFFFF' } }>
                 {'{'}

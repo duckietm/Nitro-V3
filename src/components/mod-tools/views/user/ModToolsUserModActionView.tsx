@@ -150,7 +150,7 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
     const canSubmit = (selectedTopic !== -1);
 
     return (
-        <NitroCardView className="nitro-mod-tools-user-action min-w-[420px] max-w-[460px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+        <NitroCardView className="nitro-mod-tools-user-action min-w-0 w-[min(460px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <NitroCardHeaderView headerText={ LocalizeText('modtools.user.modaction.title', [ 'username' ], [ user.username ]) } onCloseClick={ () => onCloseClick() } />
             <NitroCardContentView className="text-black" gap={ 2 }>
                 {/* Target header */}

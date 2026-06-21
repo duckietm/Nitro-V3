@@ -1,8 +1,9 @@
 import { FC, useEffect, useState } from 'react';
-import { FaLanguage, FaSave, FaSpinner, FaTimes, FaTrash } from 'react-icons/fa';
+import { FaLanguage, FaSave, FaSpinner, FaTrash } from 'react-icons/fa';
 import { CatalogType, LocalizeText } from '../../../../api';
 import { useCatalogData, useCatalogUiState, useTranslationActions, useTranslationState } from '../../../../hooks';
 import { IPageEditData, useCatalogAdmin } from '../../CatalogAdminContext';
+import { CatalogAdminModalView } from './CatalogAdminModalView';
 
 const LAYOUT_OPTIONS = [
     'default_3x3', 'frontpage4', 'pets', 'pets2', 'pets3',
@@ -11,7 +12,7 @@ const LAYOUT_OPTIONS = [
     'vip_buy', 'builders_club_frontpage', 'builders_club_addons', 'builders_club_loyalty', 'marketplace', 'marketplace_own_items',
     'recycler', 'recycler_info', 'recycler_prizes',
     'info_loyalty', 'badge_display', 'bots', 'single_bundle',
-    'color_grouping', 'recent_purchases', 'custom_prefix'
+    'color_grouping', 'recent_purchases'
 ];
 
 const MODE_OPTIONS = [
@@ -116,7 +117,7 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
 
     if(!editingPageData || !targetNode) return null;
 
-    const inputClass = 'text-[11px] border-2 border-card-grid-item-border rounded px-2 py-1 bg-white focus:outline-none focus:border-primary transition-colors';
+    const inputClass = 'nitro-catalog-admin-input';
 
     const handleSave = async () =>
     {
@@ -194,66 +195,62 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
     };
 
     return (
-        <div className="bg-white rounded border-2 border-card-grid-item-border p-2.5 mb-2">
-            <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold text-primary uppercase tracking-wide">
-                    { isRoot ? LocalizeText('catalog.admin.edit.root') : `${ LocalizeText('catalog.admin.edit') } ${ editingPageDetails?.caption ?? '' }` }
-                </span>
-                <FaTimes className="text-muted cursor-pointer hover:text-danger text-[10px]" onClick={ closeForm } />
-            </div>
-
-            <div className="grid grid-cols-3 gap-1.5">
+        <CatalogAdminModalView
+            title={ isRoot ? LocalizeText('catalog.admin.edit.root') : `${ LocalizeText('catalog.admin.edit') } ${ editingPageDetails?.caption ?? '' }` }
+            widthClassName="w-[520px]"
+            onClose={ closeForm }>
+                    <div className="grid grid-cols-3 gap-1.5">
                 <div className="flex flex-col gap-0.5 col-span-2">
-                    <label className="text-[9px] text-muted uppercase font-bold">Caption</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">Caption</label>
                     <input className={ inputClass } value={ caption } onChange={ e => setCaption(e.target.value) } />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="text-[9px] text-muted uppercase font-bold">Min Rank</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">Min Rank</label>
                     <input className={ inputClass } min={ 1 } type="number" value={ minRank } onChange={ e => setMinRank(parseInt(e.target.value) || 1) } />
                 </div>
                 <div className="flex flex-col gap-0.5 col-span-2">
-                    <label className="text-[9px] text-muted uppercase font-bold">Caption Save (Localisation Key)</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">Caption Save (Localisation Key)</label>
                     <input className={ inputClass } value={ captionSave } onChange={ e => setCaptionSave(e.target.value) } />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="text-[9px] text-muted uppercase font-bold">Icon Image</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">Icon Image</label>
                     <input className={ inputClass } min={ 0 } type="number" value={ iconImage } onChange={ e => setIconImage(parseInt(e.target.value) || 0) } />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="text-[9px] text-muted uppercase font-bold">Mode</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">Mode</label>
                     <select className={ inputClass } value={ catalogMode } onChange={ e => setCatalogMode(e.target.value) }>
                         { MODE_OPTIONS.map(option => <option key={ option.value } value={ option.value }>{ option.label }</option>) }
                     </select>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="text-[9px] text-muted uppercase font-bold">Layout</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">Layout</label>
                     <select className={ inputClass } value={ pageLayout } onChange={ e => setPageLayout(e.target.value) }>
                         { LAYOUT_OPTIONS.map(l => <option key={ l } value={ l }>{ l }</option>) }
                     </select>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="text-[9px] text-muted uppercase font-bold">{ LocalizeText('catalog.admin.order') }</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">{ LocalizeText('catalog.admin.order') }</label>
                     <input className={ inputClass } min={ 0 } type="number" value={ orderNum } onChange={ e => setOrderNum(parseInt(e.target.value) || 0) } />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="text-[9px] text-muted uppercase font-bold">Parent ID</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">Parent ID</label>
                     <input className={ inputClass } disabled={ isRoot } type="number" value={ parentId } onChange={ e => setParentId(parseInt(e.target.value) || -1) } />
                 </div>
                 <div className="flex items-end gap-2 pb-0.5">
-                    <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                    <label className="flex items-center gap-1 nitro-catalog-admin-check-label">
                         <input className="accent-primary" checked={ visible === '1' } type="checkbox" onChange={ e => setVisible(e.target.checked ? '1' : '0') } />
                         { LocalizeText('catalog.admin.visible') }
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                    <label className="flex items-center gap-1 nitro-catalog-admin-check-label">
                         <input className="accent-primary" checked={ enabled === '1' } type="checkbox" onChange={ e => setEnabled(e.target.checked ? '1' : '0') } />
                         { LocalizeText('catalog.admin.enabled') }
                     </label>
                 </div>
                 <div className="flex flex-col gap-0.5 col-span-3">
                     <div className="flex items-center justify-between">
-                        <label className="text-[9px] text-muted uppercase font-bold">Page Text 1 <span className="text-muted normal-case font-normal opacity-70">(leave blank to keep current)</span></label>
+                        <label className="nitro-catalog-admin-label is-uppercase">Page Text 1 <span className="text-muted normal-case font-normal opacity-70">(leave blank to keep current)</span></label>
                         <button
-                            className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold text-primary border border-primary/40 hover:bg-primary/10 transition-colors cursor-pointer disabled:opacity-50"
+                            className="nitro-catalog-admin-button is-ghost is-compact"
                             disabled={ isTranslating || !pageText1.trim().length }
                             title="Translate via Google Translate"
                             type="button"
@@ -276,14 +273,14 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
                                 )) }
                             </select>
                             <button
-                                className="px-2 py-1 rounded text-[10px] font-bold bg-primary text-white hover:bg-secondary transition-colors cursor-pointer disabled:opacity-50"
+                                className="nitro-catalog-admin-button is-primary"
                                 disabled={ isTranslating || !translateTargetLanguage || !pageText1.trim().length }
                                 type="button"
                                 onClick={ runTranslate }>
                                 { isTranslating ? <FaSpinner className="text-[8px] animate-spin" /> : 'Apply' }
                             </button>
                             <button
-                                className="px-2 py-1 rounded text-[10px] font-bold text-muted border border-card-grid-item-border hover:bg-gray-100 transition-colors cursor-pointer"
+                                className="nitro-catalog-admin-button is-muted"
                                 disabled={ isTranslating }
                                 type="button"
                                 onClick={ () => { setShowTranslate(false); setTranslateError(null); } }>
@@ -293,18 +290,18 @@ export const CatalogAdminPageEditView: FC<{}> = () =>
                     { translateError && <span className="text-[9px] text-danger">{ translateError }</span> }
                     <textarea className={ `${ inputClass } min-h-[60px] resize-y` } value={ pageText1 } onChange={ e => setPageText1(e.target.value) } />
                 </div>
-            </div>
+                    </div>
 
-            <div className="flex justify-between mt-2">
-                { !isRoot
-                    ? <button className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-bold bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20 transition-colors cursor-pointer" onClick={ handleDelete }>
-                        <FaTrash className="text-[8px]" /> { LocalizeText('catalog.admin.delete') }
-                    </button>
-                    : <div /> }
-                <button className="flex items-center gap-1 px-3 py-1 rounded text-[10px] font-bold bg-primary text-white hover:bg-secondary transition-colors cursor-pointer disabled:opacity-50" disabled={ loading } onClick={ handleSave }>
-                    { loading ? <FaSpinner className="text-[8px] animate-spin" /> : <FaSave className="text-[8px]" /> } { LocalizeText('catalog.admin.save') }
-                </button>
-            </div>
-        </div>
+                    <div className="flex justify-between">
+                        { !isRoot
+                            ? <button className="nitro-catalog-admin-button is-danger" onClick={ handleDelete }>
+                                <FaTrash className="text-[8px]" /> { LocalizeText('catalog.admin.delete') }
+                            </button>
+                            : <div /> }
+                        <button className="nitro-catalog-admin-button is-primary" disabled={ loading } onClick={ handleSave }>
+                            { loading ? <FaSpinner className="text-[8px] animate-spin" /> : <FaSave className="text-[8px]" /> } { LocalizeText('catalog.admin.save') }
+                        </button>
+                    </div>
+        </CatalogAdminModalView>
     );
 };

@@ -393,7 +393,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
     if(!isVisible) return null;
 
     return (
-        <NitroCardView className="user-account-settings-window w-[360px]" theme="primary-slim" uniqueKey="user-account-settings">
+        <NitroCardView className="user-account-settings-window min-w-0 w-[min(360px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="user-account-settings">
             <NitroCardHeaderView headerText={ LocalizeText('usersettings.title') } onCloseClick={ close } />
 
             <div className="relative flex items-center gap-3 px-3 py-2 bg-[linear-gradient(180deg,#2e8fb8_0%,#1e7295_100%)] text-white">

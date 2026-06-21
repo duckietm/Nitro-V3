@@ -1,11 +1,12 @@
 import { ApproveNameMessageComposer, ApproveNameMessageEvent, ColorConverter, PurchaseFromCatalogComposer, SellablePetPaletteData } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { FaCheck, FaEdit, FaFillDrip, FaPaw, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaEdit, FaFillDrip, FaPaw, FaTimes } from 'react-icons/fa';
 import { DispatchUiEvent, GetPetAvailableColors, GetPetIndexFromLocalization, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../../api';
 import { LayoutGridItem, LayoutPetImageView } from '../../../../../../common';
 import { CatalogPurchaseFailureEvent } from '../../../../../../events';
 import { useCatalogData, useCatalogUiState, useMessageEvent, useSellablePetPalette } from '../../../../../../hooks';
 import { useCatalogAdmin } from '../../../../CatalogAdminContext';
+import { CatalogAdminQuickActionsView } from '../../../admin/CatalogAdminQuickActionsView';
 import { CatalogAddOnBadgeWidgetView } from '../../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogTotalPriceWidget } from '../../widgets/CatalogTotalPriceWidget';
 import { CatalogViewProductWidgetView } from '../../widgets/CatalogViewProductWidgetView';
@@ -186,27 +187,10 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
     return (
         <div className="flex flex-col h-full gap-2">
             { /* Admin: quick actions */ }
-            { adminMode && !catalogAdmin.editingPageData &&
-                <div className="flex gap-2">
-                    <button
-                        className="flex items-center gap-1 text-[10px] text-primary hover:text-dark transition-colors cursor-pointer"
-                        onClick={ () =>
-                        {
-                            catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(false); catalogAdmin.setEditingPageData(true);
-                        } }
-                    >
-                        <FaEdit className="text-[10px]" /> { LocalizeText('catalog.admin.edit.page') }
-                    </button>
-                    <button
-                        className="flex items-center gap-1 text-[10px] text-success hover:text-green-800 transition-colors cursor-pointer"
-                        onClick={ () => catalogAdmin.setEditingOffer({ offerId: -1, product: { productClassId: 0, productType: 'i', productCount: 1, extraParam: '' } } as any) }
-                    >
-                        <FaPlus className="text-[10px]" /> { LocalizeText('catalog.admin.offer.new') }
-                    </button>
-                </div> }
+            <CatalogAdminQuickActionsView />
 
             { /* Top card: preview + name + purchase */ }
-            <div className="nitro-catalog-classic-pet-card flex gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
+            <div className="nitro-catalog-pet-card flex gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
                 { /* Pet preview */ }
                 <div className="w-[160px] min-w-[160px] h-[140px] rounded overflow-hidden bg-card-grid-item relative flex items-center justify-center border border-card-grid-item-border">
                     <CatalogViewProductWidgetView />
@@ -291,7 +275,7 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
                             { LocalizeText('catalog.pets.back.breeds') }
                         </button> }
                 </div>
-                <div className={ colorsShowing ? 'nitro-catalog-classic-color-swatches flex flex-wrap gap-1 p-2 overflow-auto' : 'nitro-catalog-classic-pet-breeds flex flex-wrap gap-1 p-1 overflow-auto' }>
+                <div className={ colorsShowing ? 'nitro-catalog-color-swatches flex flex-wrap gap-1 p-2 overflow-auto' : 'nitro-catalog-pet-breeds flex flex-wrap gap-1 p-1 overflow-auto' }>
                     { !colorsShowing && (sellablePalettes.length > 0) && sellablePalettes.map((palette, index) => (
                         <LayoutGridItem
                             key={ index }

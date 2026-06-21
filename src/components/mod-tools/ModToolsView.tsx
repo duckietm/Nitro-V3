@@ -143,7 +143,7 @@ export const ModToolsView: FC<{}> = props =>
     return (
         <>
             { isVisible &&
-                <NitroCardView className="nitro-mod-tools min-w-[240px] max-w-[260px]" theme="primary-slim" uniqueKey="mod-tools" windowPosition={ DraggableWindowPosition.TOP_LEFT } >
+                <NitroCardView className="nitro-mod-tools min-w-0 w-[min(260px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="mod-tools" windowPosition={ DraggableWindowPosition.TOP_LEFT } >
                     <NitroCardHeaderView headerText={ LocalizeText('modtools.window.title') } onCloseClick={ event => setIsVisible(false) } />
                     <NitroCardContentView className="text-black" gap={ 2 }>
                         {/* Room tools */}

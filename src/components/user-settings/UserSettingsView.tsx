@@ -154,7 +154,7 @@ export const UserSettingsView: FC<{}> = props =>
                 : LocalizeText('widget.memenu.settings.title');
 
     return (
-        <NitroCardView className="user-settings-window" theme="primary-slim" uniqueKey="user-settings">
+        <NitroCardView className="user-settings-window min-w-0 max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="user-settings">
             <NitroCardHeaderView headerText={ headerText } onCloseClick={ event => processAction('close_view') } />
             <NitroCardContentView className="text-black">
                 { showChat &&

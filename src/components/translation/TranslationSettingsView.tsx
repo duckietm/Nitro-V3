@@ -60,7 +60,7 @@ export const TranslationSettingsView: FC<{}> = () =>
     if(!isVisible) return null;
 
     return (
-        <NitroCardView className="translation-settings-window w-[360px]" theme="primary-slim" uniqueKey="translation-settings">
+        <NitroCardView className="translation-settings-window min-w-0 w-[min(360px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="translation-settings">
             <NitroCardHeaderView headerText="Google Translate" onCloseClick={ () => setIsVisible(false) } />
             <NitroCardContentView className="flex flex-col gap-3 text-black">
                 <div className="flex items-center gap-2">

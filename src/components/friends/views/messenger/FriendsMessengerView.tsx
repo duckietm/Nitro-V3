@@ -180,7 +180,7 @@ export const FriendsMessengerView: FC<{}> = props =>
     if(!isVisible) return null;
 
     return (
-        <NitroCardView className="messenger-card" theme="primary-slim" uniqueKey={ null } windowPosition={ DraggableWindowPosition.TOP_CENTER } offsetTop={ 8 } isResizable={ false }>
+        <NitroCardView className="messenger-card min-w-0 w-[min(440px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey={ null } windowPosition={ DraggableWindowPosition.TOP_CENTER } offsetTop={ 8 } isResizable={ false }>
             <NitroCardHeaderView headerText={ LocalizeText('messenger.window.title', [ 'OPEN_CHAT_COUNT' ], [ visibleThreads.length.toString() ]) } onCloseClick={ event => setIsVisible(false) } />
             <NitroCardContentView className="text-black p-0" gap={ 0 } overflow="hidden">
                 <div className="messenger-card-body">

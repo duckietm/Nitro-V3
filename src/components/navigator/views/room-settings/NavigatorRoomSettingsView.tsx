@@ -188,7 +188,7 @@ export const NavigatorRoomSettingsView: FC<{}> = props =>
     if(!roomData) return null;
 
     return (
-        <NitroCardView className="nitro-room-settings" uniqueKey="nitro-room-settings">
+        <NitroCardView className="nitro-room-settings min-w-0 w-[min(420px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" uniqueKey="nitro-room-settings">
             <NitroCardHeaderView headerText={ LocalizeText('navigator.roomsettings') } isInfoToHabboPages={ currentTab === TABS[3] } onClickInfoHabboPages={ () =>
             {
                 if(currentTab === TABS[3]) CreateLinkEvent('habbopages/chat/options');
@@ -199,7 +199,7 @@ export const NavigatorRoomSettingsView: FC<{}> = props =>
                     return <NitroCardTabsItemView key={ tab } isActive={ (currentTab === tab) } onClick={ event => setCurrentTab(tab) }>{ LocalizeText(tab) }</NitroCardTabsItemView>;
                 }) }
             </NitroCardTabsView>
-            <NitroCardContentView>
+            <NitroCardContentView overflow="auto">
                 { (currentTab === TABS[0]) &&
                     <NavigatorRoomSettingsBasicTabView handleChange={ handleChange } roomData={ roomData } onClose={ onClose } /> }
                 { (currentTab === TABS[1]) &&

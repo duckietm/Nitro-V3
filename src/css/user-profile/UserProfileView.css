@@ -1,20 +1,5 @@
-.nitro-extended-profile-window .nitro-card-header-shell {
-  min-height: 34px;
-  max-height: 34px;
-}
-
-.nitro-extended-profile-window .nitro-card-title {
-  font-size: 25px;
-  line-height: 1;
-  text-shadow: 1px 1px 0 #4f4f4f;
-}
-
 .nitro-extended-profile-window__content {
   background: #ece8dc;
-}
-
-.nitro-extended-profile-window .nitro-card-close-button {
-  right: 6px;
 }
 
 .nitro-extended-profile {

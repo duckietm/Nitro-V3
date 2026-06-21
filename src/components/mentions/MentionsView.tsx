@@ -94,7 +94,7 @@ export const MentionsView: FC<MentionsViewProps> = props =>
     const title = `${ LocalizeText('mentions.window.title') }${ (unreadCount > 0) ? ` (${ unreadCount })` : '' }`;
 
     return (
-        <NitroCardView className="mentions-window w-[360px] has-classic-scrollbar" theme="primary-slim" uniqueKey="mentions">
+        <NitroCardView className="mentions-window min-w-0 w-[min(360px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)] has-classic-scrollbar" theme="primary-slim" uniqueKey="mentions">
             <NitroCardHeaderView headerText={ title } onCloseClick={ onClose } />
             <NitroCardContentView gap={ 1 }>
                 <div className="mentions-search">

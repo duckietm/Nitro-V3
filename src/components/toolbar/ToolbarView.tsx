@@ -12,7 +12,6 @@ const containerVariants: Variants = {
     hidden: { transition: { staggerChildren: 0.015, staggerDirection: -1 } },
     visible: { transition: { staggerChildren: 0.025 } }
 };
-
 const itemVariants: Variants = {
     hidden: { opacity: 0, y: 10, scale: 0.8 },
     visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 22 } }
@@ -44,6 +43,9 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { iconState = MessengerIconState.HIDDEN } = useMessenger();
     const { unreadCount: mentionsUnread = 0 } = useMentionsSnapshot();
     const mentionsEnabled = useMemo(() => GetConfigurationValue<boolean>('mentions_ui.enabled', true), []);
+    const buildersClubEnabled = useMemo(() => GetConfigurationValue<boolean>('buildersclub.enabled', GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true)), []);
+    const rareValuesEnabled = useMemo(() => GetConfigurationValue<boolean>('toolbar.rarevalues.enabled', true), []);
+    const fortuneWheelEnabled = useMemo(() => GetConfigurationValue<boolean>('toolbar.fortunewheel.enabled', true), []);
     const { openMonitor, showToolbarButton } = useWiredTools();
     const { enabled: soundboardEnabled, reset: resetSoundboard } = useSoundboard();
     const isMod = useHasPermission('acc_supporttool');
@@ -174,7 +176,6 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 
     return (
         <>
-            <style>{ TOOLBAR_STYLES }</style>
             { youtubeEnabled && <YouTubePlayerView /> }
 
             { isInRoom &&
@@ -249,26 +250,29 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 setMeExpanded(value => !value);
                                 event.stopPropagation();
                             } }>
-                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon" style={ { backgroundSize: 'auto', backgroundPosition: '-25px -38px' } } />
+                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon tb-avatar-head" />
                         </motion.div>
                         { (getTotalUnseen > 0) &&
                             <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
                     </motion.div>
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
-                    </motion.div>
+                    { buildersClubEnabled &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
+                        </motion.div> }
                     <motion.div variants={ itemVariants } className="relative">
                         <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
                         { (getFullCount > 0) &&
                             <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
                     </motion.div>
                     { !leftCollapsed && (<>
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
-                    </motion.div>
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
-                    </motion.div>
+                    { rareValuesEnabled &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
+                        </motion.div> }
+                    { fortuneWheelEnabled &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
+                        </motion.div> }
                     { (isInRoom && showToolbarButton) &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="wired-tools" onClick={ openMonitor } className="tb-icon" />
@@ -392,7 +396,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 setMeExpanded(value => !value);
                                 event.stopPropagation();
                             } }>
-                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon" style={ { backgroundSize: 'auto', backgroundPosition: '-25px -38px' } } />
+                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon tb-avatar-head" />
                         </motion.div>
                         { (getTotalUnseen > 0) &&
                             <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
@@ -402,12 +406,14 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         { (getFullCount > 0) &&
                             <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
                     </motion.div>
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
-                    </motion.div>
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
-                    </motion.div>
+                    { rareValuesEnabled &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="rare-values" onClick={ () => CreateLinkEvent('rare-values/toggle') } className="tb-icon" />
+                        </motion.div> }
+                    { fortuneWheelEnabled &&
+                        <motion.div variants={ itemVariants }>
+                            <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
+                        </motion.div> }
                 </motion.div>
                 <motion.div
                     variants={ containerVariants }
@@ -439,7 +445,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
             </motion.div>
             { /* Mobile side tools — moved out of the bottom bar into a
                  vertical pill stack on the left edge so the bottom bar has
-                 room. Always present (Builders Club), plus camera in-room
+                 room. Optional Builders Club, plus camera in-room
                  and the staff-only tools when permitted. */ }
             <motion.div
                 initial="visible"
@@ -448,9 +454,10 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 transition={ NAV_TRANSITION }
                 style={ staffStackBottom != null ? { top: 'auto', bottom: `${ staffStackBottom }px` } : undefined }
                 className={ `fixed left-1 z-40 flex flex-col items-center gap-2 rounded-[12px] border border-white/8 bg-[rgba(62,64,72,0.55)] px-[4px] py-[6px] shadow-[0_6px_18px_rgba(0,0,0,0.18)] ${ staffStackBottom == null ? 'top-1/2 -translate-y-1/2' : '' } ${ mobileOnlyClasses }` }>
-                <motion.div variants={ itemVariants }>
-                    <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
-                </motion.div>
+                { buildersClubEnabled &&
+                    <motion.div variants={ itemVariants }>
+                        <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
+                    </motion.div> }
                 { isInRoom &&
                     <motion.div variants={ itemVariants }>
                         <ToolbarItemView icon="camera" onClick={ () => CreateLinkEvent('camera/toggle') } className="tb-icon" />
@@ -473,94 +480,3 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         </>
     );
 };
-
-const TOOLBAR_STYLES = `
-  /* The frame's background / border / shadow swap when the toolbar
-     toggles is a plain class change, so without an explicit
-     transition the visuals snap instantly while framer-motion is
-     still animating the nav children — looked broken on rapid
-     toggles. Easing it over the same timing as the spring smooths
-     the burst-click case out. (No 'will-change' here — those props
-     change about once per toggle, but a permanent compositor layer
-     would be re-rasterised on every browser-window resize tick,
-     which is what made dragging the window corner feel sluggish.) */
-  .tb-frame {
-    transition: background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease, border-radius 220ms ease;
-  }
-
-  /* Left + right nav containers shrink with the viewport, but the icons
-     inside don't. Without horizontal clipping they overflow into the
-     centred chat input around the md breakpoint. 'overflow-x: clip'
-     clips horizontally WITHOUT creating a scroll container the way
-     'overflow-x: hidden' would — so the Me popover that animates
-     upwards from the avatar still escapes vertically, and the browser
-     doesn't render a stray vertical scrollbar thumb on the nav.
-     Negative inset margins on the clip path keep vertical breathing
-     room for the popover even on engines that fall back to 'hidden'. */
-  .tb-nav-clip {
-    overflow: visible;
-  }
-
-  .tb-icon {
-    opacity: 1;
-    transition: transform 0.15s ease;
-    cursor: pointer;
-  }
-
-  .tb-icon:hover {
-    transform: translateY(-2px);
-  }
-
-  .tb-icon:active {
-    transform: translateY(0);
-  }
-
-  .tb-collapse {
-    width: 15px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 6px;
-    background: rgba(62, 64, 72, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    color: rgba(255, 255, 255, 0.70);
-    cursor: pointer;
-    transition: color 0.15s, background 0.15s;
-  }
-
-  .tb-collapse:hover {
-    color: #fff;
-    background: rgba(80, 82, 90, 0.65);
-  }
-
-  .tb-bar-scroll {
-    overflow-x: auto;
-    overflow-y: visible;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    flex-wrap: nowrap;
-  }
-
-  /* Keep each icon at its natural size so the mobile bar scrolls
-     horizontally instead of squashing the items into each other.
-     (Default flex-shrink:1 let the fixed-size icon backgrounds overlap
-     once enough icons were present to exceed the bar width.) */
-  .tb-bar-scroll > * {
-    flex-shrink: 0;
-  }
-
-  .tb-bar-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tb-open-shell {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .tb-open-shell::-webkit-scrollbar {
-    display: none;
-  }
-`;

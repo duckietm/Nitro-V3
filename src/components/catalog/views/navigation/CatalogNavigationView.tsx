@@ -15,7 +15,7 @@ export const CatalogNavigationView: FC<CatalogNavigationViewProps> = props =>
     const { searchResult = null } = useCatalogData();
 
     return (
-        <div className="nitro-catalog-classic-navigation-list">
+        <div className="nitro-catalog-navigation-list">
             { searchResult && (searchResult.filteredNodes.length > 0) && searchResult.filteredNodes.map((n, index) =>
             {
                 return <CatalogNavigationItemView key={ index } node={ n } />;

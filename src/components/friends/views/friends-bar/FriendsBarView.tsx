@@ -167,38 +167,6 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
                     <FaChevronRight className="text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
                 </div>
             </motion.div>
-
-            <style>{FRIENDBAR_STYLES}</style>
         </motion.div>
     );
 };
-
-const FRIENDBAR_STYLES = `
-  .tbme-panel {
-    background: rgba(18, 16, 14, 0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    padding: 10px 12px;
-    box-shadow:
-      0 10px 36px rgba(0, 0, 0, 0.65),
-      0 1px 0 rgba(255, 255, 255, 0.05) inset;
-  }
-
-  .tbme-icon {
-    opacity: 0.72;
-    cursor: pointer;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-  }
-
-  .tbme-icon:hover {
-    opacity: 1;
-    transform: translateY(-2px);
-  }
-
-  .tbme-icon:active {
-    opacity: 0.85;
-    transform: translateY(0);
-  }
-`;

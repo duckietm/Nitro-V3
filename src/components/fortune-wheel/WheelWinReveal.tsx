@@ -42,10 +42,10 @@ export const WheelWinReveal: FC<WheelWinRevealProps> = ({ prize, onDismiss }) =>
     if(tier === 'none')
     {
         return (
-            <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/35" onClick={ onDismiss }>
-                <div className="rounded-xl bg-white px-6 py-4 text-center shadow-2xl" style={ { animation: 'wheelPop .45s cubic-bezier(.18,.89,.32,1.28)' } }>
-                    <div className="text-3xl">🍀</div>
-                    <div className="mt-1 font-bold text-[#33424c]">{ LocalizeText('wheel.win.nothing') }</div>
+            <div className="wheel-win-reveal is-quiet absolute inset-0 z-40" onClick={ onDismiss }>
+                <div className="wheel-win-card is-quiet">
+                    <div className="wheel-win-icon is-empty">?</div>
+                    <div className="wheel-win-title">{ LocalizeText('wheel.win.nothing') }</div>
                 </div>
             </div>
         );
@@ -55,20 +55,8 @@ export const WheelWinReveal: FC<WheelWinRevealProps> = ({ prize, onDismiss }) =>
 
     return (
         <div
-            className={ `absolute inset-0 z-40 flex flex-col items-center justify-center gap-2 ${ isRare ? 'bg-black/70' : 'bg-black/40' }` }
+            className={ `wheel-win-reveal absolute inset-0 z-40 ${ isRare ? 'is-rare' : '' }` }
             onClick={ onDismiss }>
-            <style>{ `
-                @keyframes wheelPop { from { transform: scale(.35); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-                @keyframes wheelConfettiFall {
-                    0%   { transform: translate(0, -10%) rotate(0deg); opacity: 1; }
-                    100% { transform: translate(var(--drift), 320px) rotate(720deg); opacity: 0; }
-                }
-                @keyframes wheelGlow {
-                    0%,100% { box-shadow: 0 0 18px 4px rgba(255,211,77,.55); }
-                    50%     { box-shadow: 0 0 30px 10px rgba(255,211,77,.9); }
-                }
-            ` }</style>
-
             { isRare && CONFETTI.map((piece, i) => (
                 <span
                     key={ i }
@@ -85,17 +73,19 @@ export const WheelWinReveal: FC<WheelWinRevealProps> = ({ prize, onDismiss }) =>
             )) }
 
             { isRare &&
-                <div className="text-sm font-black uppercase tracking-[0.2em] text-[#ffd34d] drop-shadow">{ LocalizeText('wheel.win.jackpot') }</div> }
+                <div className="wheel-win-jackpot">{ LocalizeText('wheel.win.jackpot') }</div> }
 
-            <div
-                className="flex h-32 w-32 items-center justify-center rounded-full bg-white shadow-2xl"
-                style={ { animation: `wheelPop .5s cubic-bezier(.18,.89,.32,1.28)${ isRare ? ', wheelGlow 1.4s ease-in-out .5s infinite' : '' }` } }>
-                { renderPrizeIcon(prize, true) }
+            <div className={ `wheel-win-card ${ isRare ? 'is-rare' : '' }` }>
+                <div className="wheel-win-icon">
+                    { renderPrizeIcon(prize, true) }
+                </div>
+
+                <div className="wheel-win-copy">
+                    <div className="wheel-win-title">{ LocalizeText('wheel.win.title') }</div>
+                    { !!prize.label &&
+                        <div className="wheel-win-prize">{ prize.label }</div> }
+                </div>
             </div>
-
-            <div className="mt-1 text-lg font-black text-white drop-shadow">{ LocalizeText('wheel.win.title') }</div>
-            { !!prize.label &&
-                <div className="rounded-full bg-white/95 px-4 py-1 text-sm font-bold text-[#20313a] shadow">{ prize.label }</div> }
         </div>
     );
 };

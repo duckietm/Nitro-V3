@@ -121,15 +121,6 @@
         font-family: Ubuntu, sans-serif !important;
     }
 
-    & .nitro-card-title {
-        font-family: UbuntuCondensed, Ubuntu, sans-serif !important;
-        font-size: 15px !important;
-    }
-
-    & .nitro-card-header {
-        border-bottom: 1px solid rgba(0, 0, 0, .18);
-    }
-
     & .nitro-card-content-shell {
         padding: 0 !important;
         gap: 0 !important;
@@ -308,12 +299,12 @@
 }
 
 .nitro-friends-room-invite {
-    width: 270px;
-    height: 225px;
-    min-width: 270px;
-    min-height: 225px;
-    max-width: 270px;
-    max-height: 225px;
+    width: min(270px, calc(100vw - 16px));
+    height: min(225px, calc(100vh - 16px));
+    min-width: 0;
+    min-height: 0;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
     resize: none !important;
 
     & .nitro-card-content-shell {
@@ -372,12 +363,12 @@
 }
 
 .nitro-friends-remove-confirmation {
-    width: 270px;
-    height: 225px;
-    min-width: 270px;
-    min-height: 225px;
-    max-width: 270px;
-    max-height: 225px;
+    width: min(270px, calc(100vw - 16px));
+    height: min(225px, calc(100vh - 16px));
+    min-width: 0;
+    min-height: 0;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
     resize: none !important;
 }
 
@@ -481,15 +472,6 @@
         background: linear-gradient(180deg, #93b6c6 0%, #688fa2 100%);
         border: 1px solid #476a7a;
         border-radius: 2px;
-    }
-
-    & .nitro-card-header {
-        border-bottom: 1px solid rgba(0, 0, 0, .18);
-    }
-
-    & .nitro-card-title {
-        font-family: UbuntuCondensed, Ubuntu, sans-serif !important;
-        font-size: 15px !important;
     }
 
     & .messenger-card-body {
@@ -893,6 +875,45 @@
 }
 
 /* Category manager: keep the list scrollable */
+.nitro-friends-category-manager {
+    width: min(270px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    resize: none !important;
+}
+
+.nitro-friends-category-manager .nitro-card-content-shell {
+    color: #111;
+    background: #f3f3ef;
+}
+
+.nitro-friends-category-manager :where(input, select, textarea),
+.nitro-friends-room-invite :where(input, select, textarea),
+.nitro-friends-remove-confirmation :where(input, select, textarea) {
+    min-height: 22px;
+    border: 1px solid #858585 !important;
+    border-radius: 3px !important;
+    background: #fffdf4 !important;
+    color: #111111 !important;
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.72) !important;
+    font-size: 11px !important;
+}
+
+.nitro-friends-category-manager :where(input:focus, select:focus, textarea:focus),
+.nitro-friends-room-invite :where(input:focus, select:focus, textarea:focus),
+.nitro-friends-remove-confirmation :where(input:focus, select:focus, textarea:focus) {
+    border-color: #4a7d8c !important;
+    box-shadow: 0 0 0 2px rgba(74, 125, 140, 0.24), inset 0 1px 0 rgba(0, 0, 0, 0.14) !important;
+    outline: none !important;
+}
+
+.nitro-friends-category-manager :where(.text-muted, .text-dark),
+.nitro-friends-room-invite :where(.text-muted, .text-dark),
+.nitro-friends-remove-confirmation :where(.text-muted, .text-dark) {
+    color: #565656 !important;
+}
+
 .nitro-friends-category-manager .friends-category-list {
     max-height: 220px;
     overflow-y: auto;

@@ -44,7 +44,7 @@ export const FriendsCategoryManagerView: FC<FriendsCategoryManagerViewProps> = p
     };
 
     return (
-        <NitroCardView className="nitro-friends-category-manager" theme="primary-slim" uniqueKey="nitro-friends-category-manager" isResizable={ false } style={ { width: 270, minWidth: 270 } }>
+        <NitroCardView className="nitro-friends-category-manager min-w-0 max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="nitro-friends-category-manager" isResizable={ false }>
             <NitroCardHeaderView headerText={ LocalizeText('friendlist.friends') } onCloseClick={ onCloseClick } />
             <NitroCardContentView className="text-black" gap={ 1 }>
                 <Flex gap={ 1 } alignItems="center">

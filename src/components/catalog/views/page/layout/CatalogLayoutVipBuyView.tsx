@@ -202,7 +202,7 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = props =>
                             <div key={ index } className={ 'nitro-vip-buy-offer flex flex-col gap-1.5 p-2 rounded-md border-2 cursor-pointer ' + (isActive ? 'active border-[#7a5500] bg-[#ffe066]' : 'border-[#b48a18] bg-[#fffbe7] hover:bg-[#fff5c4] hover:border-[#9c7610]') } onClick={ () => setOffer(offer) }>
                                 <div className="vip-offer-header flex items-center gap-2 pb-1.5 border-b border-dashed border-[#b48a18]">
                                     <span className="vip-offer-banner inline-flex items-center justify-center shrink-0 w-[34px] h-[20px]">
-                                        <i className="nitro-icon icon-hc-banner" style={ { width: '34px', height: '20px', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' } } />
+                                        <i className="nitro-icon icon-hc-banner nitro-catalog-vip-hc-banner" />
                                     </span>
                                     <span className="vip-offer-title flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap font-bold text-[1.05rem] leading-tight text-[#2c2a25]">{ getOfferText(offer) }</span>
                                 </div>

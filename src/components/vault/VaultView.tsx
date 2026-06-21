@@ -66,22 +66,6 @@ const rewardCurrencyType = (reward: IEarningsReward): number | string | null =>
     }
 };
 
-// Scoped colour override for the Guadagni window only: classic blue header +
-// cool grey body (the shared 'primary-slim' theme is teal + cream). Higher
-// specificity (.nitro-card.nitro-vault ...) than the theme so it wins. The body
-// element renders `.nitro-card-content-shell`, NOT `.content-area`.
-const VAULT_STYLES = `
-  .nitro-card.nitro-vault .nitro-card-header {
-    background: linear-gradient(180deg, #5a80b8 0%, #3f63a0 100%);
-    border-color: #34548a;
-  }
-  .nitro-card.nitro-vault,
-  .nitro-card.nitro-vault .content-area,
-  .nitro-card.nitro-vault .nitro-card-content-shell {
-    background: #dde1e6 !important;
-  }
-`;
-
 export const VaultView: FC<{}> = props =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
@@ -182,10 +166,9 @@ export const VaultView: FC<{}> = props =>
     if(!isVisible) return null;
 
     return (
-        <NitroCardView className="nitro-vault w-[430px]" theme="primary-slim" uniqueKey="vault">
+        <NitroCardView className="nitro-vault min-w-0 w-[min(430px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="vault">
             <NitroCardHeaderView headerText={ localizeWithFallback('earnings.title', 'Guadagni') } onCloseClick={ () => setIsVisible(false) } />
-            <NitroCardContentView className="flex flex-col gap-[3px] text-black">
-                <style>{ VAULT_STYLES }</style>
+            <NitroCardContentView className="nitro-vault-content flex flex-col gap-[3px] text-black">
                 { CATEGORIES.map(category =>
                 {
                     const entry = entriesByKey.get(category.key) ?? null;

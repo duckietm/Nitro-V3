@@ -126,7 +126,7 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
 
     return (
         <>
-            <NitroCardView className="nitro-mod-tools-user min-w-[420px] max-w-[480px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
+            <NitroCardView className="nitro-mod-tools-user min-w-0 w-[min(480px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
                 <NitroCardHeaderView headerText={ LocalizeText('modtools.userinfo.title', [ 'username' ], [ userInfo.userName ]) } onCloseClick={ () => onCloseClick() } />
                 <NitroCardContentView className="text-black" gap={ 2 }>
                     {/* Identity header: name + presence pill + manual refresh */}

@@ -1,0 +1,8 @@
+.user-settings-window {
+    width: min(360px, calc(100vw - 16px));
+}
+
+.user-settings-window .nitro-card-content {
+    min-height: 0;
+    overflow-y: auto;
+}

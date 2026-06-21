@@ -18,7 +18,7 @@ export const FriendsRemoveConfirmationView: FC<FriendsRemoveConfirmationViewProp
     const removeFriendsNamesText = (separatorIndex >= 0) ? removeFriendsText.substring(separatorIndex + 1).trimStart() : '';
 
     return (
-        <NitroCardView className="nitro-friends-remove-confirmation" theme="primary-slim" isResizable={ false } style={ { width: 270, height: 225, minWidth: 270, minHeight: 225, maxWidth: 270, maxHeight: 225 } }>
+        <NitroCardView className="nitro-friends-remove-confirmation min-w-0 max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" isResizable={ false }>
             <NitroCardHeaderView headerText={ LocalizeText('friendlist.removefriendconfirm.title') } onCloseClick={ onCloseClick } />
             <NitroCardContentView className="nitro-friends-remove-confirmation-content text-black">
                 <div className="nitro-friends-remove-confirmation-text">

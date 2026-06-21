@@ -1,9 +1,10 @@
 import { FC, useEffect, useState } from 'react';
-import { FaEdit, FaPen, FaPlus, FaTrophy } from 'react-icons/fa';
+import { FaEdit, FaPen, FaTrophy } from 'react-icons/fa';
 import { LocalizeText, ProductTypeEnum, SanitizeHtml } from '../../../../../api';
 import { Text } from '../../../../../common';
 import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
 import { useCatalogAdmin } from '../../../CatalogAdminContext';
+import { CatalogAdminQuickActionsView } from '../../admin/CatalogAdminQuickActionsView';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogItemGridWidgetView } from '../widgets/CatalogItemGridWidgetView';
 import { CatalogPurchaseWidgetView } from '../widgets/CatalogPurchaseWidgetView';
@@ -39,32 +40,15 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
     return (
         <div className="flex flex-col h-full gap-2">
             { /* Admin: quick actions */ }
-            { adminMode && !catalogAdmin.editingPageData &&
-                <div className="flex gap-2">
-                    <button
-                        className="flex items-center gap-1 text-[10px] text-primary hover:text-dark transition-colors cursor-pointer"
-                        onClick={ () =>
-                        {
-                            catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(false); catalogAdmin.setEditingPageData(true);
-                        } }
-                    >
-                        <FaEdit className="text-[10px]" /> { LocalizeText('catalog.admin.edit.page') }
-                    </button>
-                    <button
-                        className="flex items-center gap-1 text-[10px] text-success hover:text-green-800 transition-colors cursor-pointer"
-                        onClick={ () => catalogAdmin.setEditingOffer({ offerId: -1, product: { productClassId: 0, productType: 'i', productCount: 1, extraParam: '' } } as any) }
-                    >
-                        <FaPlus className="text-[10px]" /> { LocalizeText('catalog.admin.offer.new') }
-                    </button>
-                </div> }
+            <CatalogAdminQuickActionsView />
 
             { /* Selected trophy card. shrink-0 + no overflow-hidden so the
                  Buy button stays inside the panel even when the grid below
                  holds many trophies. */ }
             { currentOffer
-                ? <div className="flex gap-0 bg-white rounded border-2 border-warning/40 shrink-0" style={ { boxShadow: '0 0 8px rgba(255,193,7,0.15)' } }>
+                ? <div className="nitro-catalog-trophy-card flex gap-0 bg-white rounded border-2 border-warning/40 shrink-0">
                     { /* Preview */ }
-                    <div className="w-[120px] min-w-[120px] relative flex items-center justify-center border-r-2 border-warning/30" style={ { background: 'linear-gradient(180deg, #fff9e6 0%, #fff3cc 100%)' } }>
+                    <div className="nitro-catalog-trophy-preview w-[120px] min-w-[120px] relative flex items-center justify-center border-r-2 border-warning/30">
                         { (currentOffer.product.productType !== ProductTypeEnum.BADGE)
                             ? <>
                                 <CatalogViewProductWidgetView />
@@ -118,13 +102,9 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
                 </div>
                 <div className="relative">
                     <textarea
-                        className="w-full h-[60px] text-[11px] rounded p-2 pr-3 resize-none focus:outline-none transition-all border-2"
+                        className={ `nitro-catalog-trophy-inscription w-full h-[60px] text-[11px] rounded p-2 pr-3 resize-none focus:outline-none transition-all border-2 ${ trophyText.length > 0 ? 'has-text' : '' }` }
                         maxLength={ 200 }
                         placeholder={ LocalizeText('catalog.trophies.inscription.placeholder') }
-                        style={ {
-                            background: trophyText.length > 0 ? 'linear-gradient(180deg, #fffdf5 0%, #fff8e8 100%)' : '#fff',
-                            borderColor: trophyText.length > 0 ? 'rgba(255,193,7,0.4)' : undefined
-                        } }
                         value={ trophyText }
                         onChange={ event => setTrophyText(event.target.value) }
                     />

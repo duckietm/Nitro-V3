@@ -19,23 +19,25 @@ import './css/index.css';
 
 import './css/backgrounds/BackgroundsView.css';
 import './css/badges/BadgeLeaderboardView.css';
-import './css/catalog/CatalogClassicView.css';
+import './css/catalog/CatalogView.css';
 import './css/emustats/EmuStatsView.css';
 
 import './css/chat/Chats.css';
+import './css/chat/ChatHistoryView.css';
 import './css/chat/ChatInputMentionSelectorView.css';
 import './css/mentions/MentionToasts.css';
 import './css/mentions/MentionsPanel.css';
 
 import './css/common/Buttons.css';
 import './css/common/ClassicScrollbar.css';
+import './css/common/PrefixEffects.css';
 
 
 import './css/forms/form_select.css';
 
 import './css/friends/FriendsView.css';
+import './css/fortune-wheel/FortuneWheelView.css';
 
-import './css/habbo/HabboSwfSkin.css';
 
 import './css/help/HelpView.css';
 
@@ -56,6 +58,7 @@ import './css/nitrocard/NitroCardView.css';
 import './css/notification/NotificationCenterView.css';
 
 import './css/purse/PurseView.css';
+import './css/radio/RadioView.css';
 
 import './css/room/InfoStand.css';
 import './css/room/NavigatorRoomSettings.css';
@@ -65,8 +68,11 @@ import './css/slider.css';
 
 import './css/toolbar/ToolBar.css';
 import './css/user-profile/UserProfileView.css';
+import './css/user-settings/UserSettingsView.css';
 
+import './css/vault/VaultView.css';
 import './css/widgets/FurnitureWidgets.css';
+import './css/WiredView.css';
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>

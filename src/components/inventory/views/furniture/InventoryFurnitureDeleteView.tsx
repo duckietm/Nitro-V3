@@ -65,7 +65,7 @@ export const InventoryFurnitureDeleteView: FC<{}> = props =>
     const furniTitle = LocalizeText(item.isWallItem ? 'wallItem.name.' + item.type : 'roomItem.name.' + item.type);
 
     return (
-        <NitroCardView className="w-[340px]" uniqueKey="inventory-delete">
+        <NitroCardView className="min-w-0 w-[min(340px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" uniqueKey="inventory-delete">
             <NitroCardHeaderView
                 headerText={ LocalizeText('inventory.delete.confirm_delete.title') }
                 onCloseClick={ onClose } />
