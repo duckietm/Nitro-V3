@@ -13,7 +13,7 @@ import {
 } from '@nitrots/nitro-renderer';
 import { FC, ReactNode, useEffect, useState } from 'react';
 import { FaAward, FaCouch, FaPaw, FaRobot, FaTag } from 'react-icons/fa';
-import { GroupItem, LocalizeText, UnseenItemCategory, isObjectMoverRequested, setObjectMoverRequested } from '../../api';
+import { GroupItem, isObjectMoverRequested, LocalizeText, setObjectMoverRequested, UnseenItemCategory } from '../../api';
 import { NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import {
     useInventoryBadges,
@@ -24,12 +24,12 @@ import {
     useMessageEvent,
     useNitroEvent
 } from '../../hooks';
-import { InventoryCategoryFilterView } from './views/InventoryCategoryFilterView';
 import { InventoryBadgeView } from './views/badge/InventoryBadgeView';
 import { InventoryBotView } from './views/bot/InventoryBotView';
 import { InventoryFurnitureDeleteView } from './views/furniture/InventoryFurnitureDeleteView';
 import { InventoryFurnitureView } from './views/furniture/InventoryFurnitureView';
 import { InventoryTradeView } from './views/furniture/InventoryTradeView';
+import { InventoryCategoryFilterView } from './views/InventoryCategoryFilterView';
 import { InventoryPetView } from './views/pet/InventoryPetView';
 import { InventoryPrefixView } from './views/prefix/InventoryPrefixView';
 

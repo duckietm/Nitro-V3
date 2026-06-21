@@ -12,7 +12,6 @@ import { DispatchUiEvent, GroupItem, SendMessageComposer, UnseenItemCategory } f
 import { InventoryFurniAddedEvent } from '../../events';
 import { useMessageEvent } from '../events';
 import { useSharedVisibility } from '../useSharedVisibility';
-import { useInventoryUnseenTracker } from './useInventoryUnseenTracker';
 import {
     applyFurnitureList,
     applyFurnitureListAddOrUpdate,
@@ -21,6 +20,7 @@ import {
     FurniReducerContext,
     refreshGroupItemsLocalization
 } from './useInventoryFurni.reducers';
+import { useInventoryUnseenTracker } from './useInventoryUnseenTracker';
 
 const useInventoryFurniState = () => {
     const [needsUpdate, setNeedsUpdate] = useState(true);

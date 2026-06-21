@@ -1,5 +1,5 @@
-import { Tile } from './types';
 import { HEIGHT_SCHEME } from './constants';
+import { Tile } from './types';
 
 const VALID_CHARS = HEIGHT_SCHEME;
 const HMIN = 0;

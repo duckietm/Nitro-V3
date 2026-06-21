@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { areaCount, brushChar, tileFill, defaultEmptyTilemap } from './selectors';
+import { describe, expect, it } from 'vitest';
 import { HEIGHT_SCHEME } from './constants';
+import { areaCount, brushChar, defaultEmptyTilemap, tileFill } from './selectors';
 
 describe('areaCount', () => {
     it('returns zeros for empty grid', () => {

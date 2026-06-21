@@ -1,9 +1,9 @@
 import { CreateLinkEvent, GetSessionDataManager, RelationshipStatusInfoMessageParser, RequestFriendComposer, UserProfileParser } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FriendlyTime, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../api';
-import { LayoutAvatarImageView, LayoutBadgeImageView, Text, UserIdentityView } from '../../common';
 import { badgeEmblemDefault } from '../../assets/images/leaderboard_badge';
 import { level as profileLevelIcon, rooms as profileRoomsIcon } from '../../assets/images/user-profile';
+import { LayoutAvatarImageView, LayoutBadgeImageView, Text, UserIdentityView } from '../../common';
 import { RelationshipsContainerView } from './RelationshipsContainerView';
 
 interface UserContainerViewProps {

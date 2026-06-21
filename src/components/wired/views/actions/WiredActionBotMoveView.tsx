@@ -3,8 +3,8 @@ import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { BOT_SOURCES, WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 const normalizeBotSource = (value: number, hasBotName = false) => (BOT_SOURCES.some((option) => option.value === value) ? value : hasBotName ? 100 : 0);
 

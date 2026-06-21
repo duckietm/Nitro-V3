@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 const EFFECT_OPTIONS = [
     { value: 218, label: 'fx_218' },

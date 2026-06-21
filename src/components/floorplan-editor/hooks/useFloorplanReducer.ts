@@ -1,6 +1,6 @@
 import { Dispatch, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { FloorplanAction, FloorplanState, EntryDir, ThicknessLevel } from '../state/types';
 import { initialState, reducer } from '../state/reducer';
+import { EntryDir, FloorplanAction, FloorplanState, ThicknessLevel } from '../state/types';
 
 export type ServerFloorSettings = {
     tilemap: string;

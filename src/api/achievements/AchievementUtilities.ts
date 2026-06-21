@@ -20,7 +20,7 @@ export class AchievementUtilities {
 
         imageName += category.code;
 
-        if (progress !== null) imageName += `_${(progress > 0) ? 'active' : 'inactive'}`;
+        if (progress !== null) imageName += `_${progress > 0 ? 'active' : 'inactive'}`;
 
         return imageUrl.replace('%image%', imageName);
     }

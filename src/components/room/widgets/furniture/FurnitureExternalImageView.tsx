@@ -1,5 +1,5 @@
-import { FC } from 'react';
 import { GetSessionDataManager } from '@nitrots/nitro-renderer';
+import { FC } from 'react';
 import { GetConfigurationValue, isSafeExternalUrl, LocalizeText, ReportType } from '../../../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFurnitureExternalImageWidget, useHelp } from '../../../../hooks';

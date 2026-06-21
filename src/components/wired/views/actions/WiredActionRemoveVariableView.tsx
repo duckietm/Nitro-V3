@@ -7,7 +7,6 @@ import userVariableIcon from '../../../../assets/images/wired/var/icon_source_us
 import { Button, Slider, Text } from '../../../../common';
 import { useWired, useWiredTools } from '../../../../hooks';
 import { CLICKED_USER_SOURCE, FURNI_SOURCES, sortWiredSourceOptions, USER_SOURCES, useAvailableUserSources } from '../WiredSourcesSelector';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { WiredVariablePicker } from '../WiredVariablePicker';
 import {
     buildWiredVariablePickerEntries,
@@ -16,6 +15,7 @@ import {
     getCustomVariableItemId,
     normalizeVariableTokenFromWire
 } from '../WiredVariablePickerData';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 type VariableTargetType = 'user' | 'furni' | 'context';
 

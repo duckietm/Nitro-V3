@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType } from '../../../../api';
-import { Text } from '../../../../common';
-import { useWired } from '../../../../hooks';
 import iconRotateClockwise from '../../../../assets/images/wired/icon_wired_rotate_clockwise.png';
 import iconRotateCounterClockwise from '../../../../assets/images/wired/icon_wired_rotate_counter_clockwise.png';
-import { WiredDirectionIcon, WIRED_DIRECTION_GRID } from '../WiredDirectionIcon';
-import { WiredActionBaseView } from './WiredActionBaseView';
+import { Text } from '../../../../common';
+import { useWired } from '../../../../hooks';
+import { WIRED_DIRECTION_GRID, WiredDirectionIcon } from '../WiredDirectionIcon';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 const ROTATION_CLOCKWISE = 8;
 const ROTATION_COUNTER_CLOCKWISE = 9;

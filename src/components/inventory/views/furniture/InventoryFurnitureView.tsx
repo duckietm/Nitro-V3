@@ -2,7 +2,7 @@ import { InfiniteGrid } from '@layout/InfiniteGrid';
 import { GetSessionDataManager, IRoomSession, RoomPreviewer, Vector3d } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaPowerOff, FaSyncAlt, FaTrashAlt } from 'react-icons/fa';
-import { DispatchUiEvent, FurniCategory, GroupItem, LocalizeText, UnseenItemCategory, attemptItemPlacement } from '../../../../api';
+import { attemptItemPlacement, DispatchUiEvent, FurniCategory, GroupItem, LocalizeText, UnseenItemCategory } from '../../../../api';
 import { LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomPreviewerView } from '../../../../common';
 import { CatalogPostMarketplaceOfferEvent, DeleteItemConfirmEvent } from '../../../../events';
 import { useInventoryFurni, useInventoryUnseenTracker } from '../../../../hooks';

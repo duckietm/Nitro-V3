@@ -1,6 +1,6 @@
 import { FC, Fragment, ReactNode, useMemo } from 'react';
-import { GetNickIconUrl } from '../assets/images/user_custom/nick_icons';
 import { getPrefixEffectStyle, getPrefixFontStyle, parseFontSegments, parsePrefixColors } from '../api';
+import { GetNickIconUrl } from '../assets/images/user_custom/nick_icons';
 
 const renderInlineFontMarkup = (text: string): ReactNode => {
     if (!text) return text;

@@ -5,12 +5,12 @@ import { Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView 
 import { useHelp } from '../../hooks';
 import { DescribeReportView } from './views/DescribeReportView';
 import { HelpIndexView } from './views/HelpIndexView';
+import { NameChangeView } from './views/name-change/NameChangeView';
 import { ReportSummaryView } from './views/ReportSummaryView';
 import { SanctionSatusView } from './views/SanctionStatusView';
 import { SelectReportedChatsView } from './views/SelectReportedChatsView';
 import { SelectReportedUserView } from './views/SelectReportedUserView';
 import { SelectTopicView } from './views/SelectTopicView';
-import { NameChangeView } from './views/name-change/NameChangeView';
 
 export const HelpView: FC<{}> = (props) => {
     const [isVisible, setIsVisible] = useState(false);

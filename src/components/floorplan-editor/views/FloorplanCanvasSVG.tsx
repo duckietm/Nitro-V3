@@ -1,10 +1,10 @@
-import { Dispatch, FC, PointerEvent as ReactPointerEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react';
+import { Dispatch, FC, ReactElement, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState, WheelEvent } from 'react';
 import { FaCrosshairs, FaSearchMinus, FaSearchPlus, FaSyncAlt } from 'react-icons/fa';
-import { FloorplanAction, FloorplanState } from '../state/types';
-import { FloorplanTile } from './FloorplanTile';
 import { tileToScreen, usePointerToTile } from '../hooks/usePointerToTile';
 import { useTool } from '../hooks/useTool';
-import { TILE_SIZE, MAX_NUM_TILE_PER_AXIS } from '../state/constants';
+import { MAX_NUM_TILE_PER_AXIS, TILE_SIZE } from '../state/constants';
+import { FloorplanAction, FloorplanState } from '../state/types';
+import { FloorplanTile } from './FloorplanTile';
 
 type Props = {
     state: FloorplanState;

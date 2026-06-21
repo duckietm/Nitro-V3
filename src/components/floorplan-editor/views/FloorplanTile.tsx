@@ -1,8 +1,8 @@
 import { FC, memo } from 'react';
-import { Tile } from '../state/types';
-import { tileFill } from '../state/selectors';
-import { TILE_SIZE } from '../state/constants';
 import { tileToScreen } from '../hooks/usePointerToTile';
+import { TILE_SIZE } from '../state/constants';
+import { tileFill } from '../state/selectors';
+import { Tile } from '../state/types';
 
 type Props = {
     row: number;

@@ -2,7 +2,7 @@ import { ClubOfferData, GiftReceiverNotFoundEvent, PurchaseFromCatalogAsGiftComp
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CatalogPurchaseState, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { AutoGrid, Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutLoadingSpinnerView, Text } from '../../../../../common';
-import { CatalogEvent, CatalogPurchaseFailureEvent, CatalogPurchasedEvent } from '../../../../../events';
+import { CatalogEvent, CatalogPurchasedEvent, CatalogPurchaseFailureEvent } from '../../../../../events';
 import { useCatalogData, useClubOffers, useMessageEvent, usePurse, useUiEvent, useUserDataSnapshot } from '../../../../../hooks';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 

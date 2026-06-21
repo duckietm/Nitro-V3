@@ -26,11 +26,11 @@ import {
     PlaySound,
     RoomChatFormatter
 } from '../../../api';
+import { useChatHistory } from './../../chat-history';
 import { useMessageEvent, useNitroEvent } from '../../events';
 import { useUserDataSnapshot } from '../../session/useSessionSnapshots';
 import { useTranslation } from '../../translation';
 import { useRoom } from '../useRoom';
-import { useChatHistory } from './../../chat-history';
 
 const CHAT_MESSAGES_MAX = 250;
 

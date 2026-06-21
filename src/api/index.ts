@@ -1,5 +1,3 @@
-export * from './GetRendererVersion';
-export * from './GetUIVersion';
 export * from './achievements';
 export * from './auth';
 export * from './avatar';
@@ -11,6 +9,8 @@ export * from './chat-history';
 export * from './emustats';
 export * from './events';
 export * from './friends';
+export * from './GetRendererVersion';
+export * from './GetUIVersion';
 export * from './groups';
 export * from './guide-tool';
 export * from './hc-center';

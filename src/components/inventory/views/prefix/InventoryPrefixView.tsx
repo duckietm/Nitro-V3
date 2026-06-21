@@ -1,8 +1,8 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
-import { IPrefixItem, LocalizeText, parsePrefixColors, getPrefixEffectStyle, getPrefixFontStyle } from '../../../../api';
-import { Button } from '../../../../common';
+import { getPrefixEffectStyle, getPrefixFontStyle, IPrefixItem, LocalizeText, parsePrefixColors } from '../../../../api';
 import { GetNickIconUrl } from '../../../../assets/images/user_custom/nick_icons';
+import { Button } from '../../../../common';
 import { useInventoryNickIcons, useInventoryPrefixes, useNotification } from '../../../../hooks';
 import { NitroButton } from '../../../../layout';
 

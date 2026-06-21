@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import { WidgetErrorBoundary } from '../../../../common';
-import { FurnitureBackgroundColorView } from './FurnitureBackgroundColorView';
+import { FurnitureContextMenuView } from './context-menu/FurnitureContextMenuView';
 import { FurnitureAreaHideView } from './FurnitureAreaHideView';
+import { FurnitureBackgroundColorView } from './FurnitureBackgroundColorView';
 import { FurnitureBadgeDisplayView } from './FurnitureBadgeDisplayView';
 import { FurnitureCraftingView } from './FurnitureCraftingView';
 import { FurnitureDimmerView } from './FurnitureDimmerView';
@@ -18,7 +19,6 @@ import { FurnitureStackHeightView } from './FurnitureStackHeightView';
 import { FurnitureStickieView } from './FurnitureStickieView';
 import { FurnitureTrophyView } from './FurnitureTrophyView';
 import { FurnitureYoutubeDisplayView } from './FurnitureYoutubeDisplayView';
-import { FurnitureContextMenuView } from './context-menu/FurnitureContextMenuView';
 import { FurniturePlaylistEditorWidgetView } from './playlist-editor/FurniturePlaylistEditorWidgetView';
 
 export const FurnitureWidgetsView: FC<{}> = (props) => {

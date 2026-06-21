@@ -1,5 +1,5 @@
+import { COLORMAP, HEIGHT_BRUSH_MAX, HEIGHT_BRUSH_MIN, HEIGHT_SCHEME } from './constants';
 import { Tile } from './types';
-import { HEIGHT_SCHEME, COLORMAP, HEIGHT_BRUSH_MIN, HEIGHT_BRUSH_MAX } from './constants';
 
 export const areaCount = (tiles: Tile[][]): { total: number; walkable: number } => {
     let total = 0;

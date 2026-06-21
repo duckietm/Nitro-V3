@@ -3,8 +3,8 @@
 import { RoomSessionDoorbellEvent } from '@nitrots/nitro-renderer';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { useDoorbellState } from './useDoorbellState';
 import { clearMockEventDispatcher, mockEventDispatcher } from '../../../nitro-renderer.mock';
+import { useDoorbellState } from './useDoorbellState';
 
 // Server push helper — mirrors the renderer wire by emitting the same
 // constants the SUT listens to. The real constructor takes a session

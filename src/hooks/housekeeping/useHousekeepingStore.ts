@@ -14,8 +14,8 @@ import {
     loadRecentLookups,
     persistRecentLookups,
     pushRecentLookup,
-    recordSample,
-    RecentLookupEntry
+    RecentLookupEntry,
+    recordSample
 } from '../../api';
 import { useLocalStorage } from '../useLocalStorage';
 

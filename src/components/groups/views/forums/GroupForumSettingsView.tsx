@@ -1,8 +1,7 @@
-import { UpdateForumSettingsMessageComposer } from '@nitrots/nitro-renderer';
+import { ExtendedForumData, UpdateForumSettingsMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Text } from '../../../../common';
-import { ExtendedForumData } from '@nitrots/nitro-renderer';
 
 // Permission levels: 0 = EVERYONE, 1 = MEMBERS, 2 = ADMINS, 3 = OWNER
 const PERMISSION_EVERYONE = 0;

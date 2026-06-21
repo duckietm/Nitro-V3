@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { FloorplanPreviewSVG } from './FloorplanPreviewSVG';
+import { describe, expect, it } from 'vitest';
 import { initialState } from '../state/reducer';
+import { FloorplanPreviewSVG } from './FloorplanPreviewSVG';
 
 describe('FloorplanPreviewSVG', () => {
     it('renders nothing for empty tilemap', () => {

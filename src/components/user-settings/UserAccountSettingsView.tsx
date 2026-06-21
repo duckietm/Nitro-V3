@@ -14,7 +14,7 @@ import {
     FaShieldAlt,
     FaUserCog
 } from 'react-icons/fa';
-import { GetConfigurationValue, LocalizeText, getAccessToken } from '../../api';
+import { GetConfigurationValue, getAccessToken, LocalizeText } from '../../api';
 import { Button, LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 
 const MIN_PASSWORD_LENGTH = 8;

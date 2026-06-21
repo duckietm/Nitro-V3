@@ -13,8 +13,8 @@ import { DispatchUiEvent, LocalizeText, NotificationAlertType, RoomWidgetUpdateR
 import { WidgetErrorBoundary } from '../../../common';
 import { useNitroEvent, useNotification, usePollSubscriptions, useRoom } from '../../../hooks';
 import { AvatarInfoWidgetView } from './avatar-info/AvatarInfoWidgetView';
-import { ChatInputView } from './chat-input/ChatInputView';
 import { ChatWidgetView } from './chat/ChatWidgetView';
+import { ChatInputView } from './chat-input/ChatInputView';
 import { FurniChooserWidgetView } from './choosers/FurniChooserWidgetView';
 import { UserChooserWidgetView } from './choosers/UserChooserWidgetView';
 import { DoorbellWidgetView } from './doorbell/DoorbellWidgetView';

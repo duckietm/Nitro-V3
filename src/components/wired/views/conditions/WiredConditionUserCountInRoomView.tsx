@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { WiredConditionBaseView } from './WiredConditionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredConditionBaseView } from './WiredConditionBaseView';
 
 export const WiredConditionUserCountInRoomView: FC<{}> = (props) => {
     const [min, setMin] = useState(1);

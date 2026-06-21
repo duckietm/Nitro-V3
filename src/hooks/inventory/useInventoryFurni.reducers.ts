@@ -6,16 +6,16 @@ import {
     FurnitureListRemovedEvent
 } from '@nitrots/nitro-renderer';
 import {
-    CloneObject,
-    FurnitureItem,
-    GroupItem,
-    UnseenItemCategory,
     addFurnitureItem,
     attemptItemPlacement,
+    CloneObject,
     cancelRoomObjectPlacement,
+    FurnitureItem,
+    GroupItem,
     getAllItemIds,
     getPlacingItemId,
-    mergeFurniFragments
+    mergeFurniFragments,
+    UnseenItemCategory
 } from '../../api';
 
 /**

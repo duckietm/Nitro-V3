@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { FloorplanCanvasSVG } from './FloorplanCanvasSVG';
+import { describe, expect, it, vi } from 'vitest';
 import { initialState } from '../state/reducer';
+import { FloorplanCanvasSVG } from './FloorplanCanvasSVG';
 
 describe('FloorplanCanvasSVG', () => {
     it('renders one polygon per non-blocked tile', () => {

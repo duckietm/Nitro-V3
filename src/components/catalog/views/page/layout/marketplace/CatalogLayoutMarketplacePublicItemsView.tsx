@@ -1,8 +1,8 @@
 import {
     BuyMarketplaceOfferMessageComposer,
     GetMarketplaceOffersMessageComposer,
-    MarketplaceBuyOfferResultEvent,
-    MarketPlaceOffersEvent
+    MarketPlaceOffersEvent,
+    MarketplaceBuyOfferResultEvent
 } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useMemo, useRef, useState } from 'react';
 import {

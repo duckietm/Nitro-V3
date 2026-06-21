@@ -1,6 +1,6 @@
-import { RgbaColorPicker, RgbaColor } from 'react-colorful';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FaUndo, FaTrash, FaDownload, FaUpload } from 'react-icons/fa';
+import { RgbaColor, RgbaColorPicker } from 'react-colorful';
+import { FaDownload, FaTrash, FaUndo, FaUpload } from 'react-icons/fa';
 import { LocalizeText, PRESET_COLORS, THEME_PRESETS, useUiSettings } from '../../api';
 import { Flex, Text } from '../../common';
 

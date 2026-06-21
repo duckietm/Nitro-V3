@@ -3,8 +3,8 @@ import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
-import { WiredConditionBaseView } from './WiredConditionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredConditionBaseView } from './WiredConditionBaseView';
 
 interface WiredConditionActorIsWearingEffectViewProps {
     negative?: boolean;

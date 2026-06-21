@@ -1,6 +1,6 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { addMention, setMentions, markAllRead, markRead, getMentionsSnapshot, getUnreadCount, resetMentions } from '../mentionsStore';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { IMentionEntry } from '../../../api/mentions';
+import { addMention, getMentionsSnapshot, getUnreadCount, markAllRead, markRead, resetMentions, setMentions } from '../mentionsStore';
 
 const make = (id: number, read = false): IMentionEntry => ({
     mentionId: id,

@@ -1,7 +1,7 @@
 /* @vitest-environment jsdom */
 
-import { afterEach, describe, it, expect, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FloorplanHeightPicker } from './FloorplanHeightPicker';
 
 const TRACK_HEIGHT = 260;

@@ -1,8 +1,8 @@
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { FC, useLayoutEffect, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { LocalizeText, MessengerFriend } from '../../../../api';
 import { FriendBarItemView } from './FriendBarItemView';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 // Hard cap on simultaneously-shown friend chips. The effective count is
 // reduced below this when the bar would otherwise overflow its (clipped)

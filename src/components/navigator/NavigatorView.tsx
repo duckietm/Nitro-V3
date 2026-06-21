@@ -12,11 +12,11 @@ import {
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef } from 'react';
 import { FaPlus } from 'react-icons/fa';
-import savesSearchIcon from '../../assets/images/navigator/saves-search/search_save.png';
-import createRoomImg from '../../assets/images/navigator/create_room.png';
-import randomRoomImg from '../../assets/images/navigator/random_room.png';
-import promoteRoomImg from '../../assets/images/navigator/promote_room.png';
 import { CreateLinkEvent, LocalizeText, SendMessageComposer, TryVisitRoom } from '../../api';
+import createRoomImg from '../../assets/images/navigator/create_room.png';
+import promoteRoomImg from '../../assets/images/navigator/promote_room.png';
+import randomRoomImg from '../../assets/images/navigator/random_room.png';
+import savesSearchIcon from '../../assets/images/navigator/saves-search/search_save.png';
 import { Flex, Text, WidgetErrorBoundary } from '../../common';
 import { useNavigatorData, useNavigatorSearch, useNavigatorUiState, useNavigatorUiStore, useNitroEvent } from '../../hooks';
 import { NavigatorDoorStateView } from './views/NavigatorDoorStateView';

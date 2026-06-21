@@ -4,8 +4,8 @@ import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Button, Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 type RewardType = 'badge' | 'credits' | 'pixels' | 'diamonds' | 'points' | 'furni' | 'respect';
 

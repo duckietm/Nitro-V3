@@ -1,6 +1,6 @@
 import * as Popover from '@radix-ui/react-popover';
-import { LazyEmojiPicker } from '../../../../common/LazyEmojiPicker';
 import { FC, useState } from 'react';
+import { LazyEmojiPicker } from '../../../../common/LazyEmojiPicker';
 
 interface ChatInputEmojiSelectorViewProps {
     addChatEmoji: (emoji: string) => void;

@@ -1,6 +1,6 @@
 import { FriendCategoryData } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { LocalizeText, MessengerFriend, countFriendsByCategory } from '../../../../api';
+import { countFriendsByCategory, LocalizeText, MessengerFriend } from '../../../../api';
 import { Flex } from '../../../../common';
 
 interface FriendsListGroupChipsViewProps {

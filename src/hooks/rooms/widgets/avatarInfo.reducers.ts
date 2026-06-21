@@ -1,7 +1,7 @@
 import type { RoomSessionFavoriteGroupUpdateEvent, RoomSessionUserBadgesEvent, RoomSessionUserFigureUpdateEvent } from '@nitrots/nitro-renderer';
 import { dedupeBadges } from '../../../api/avatar/dedupeBadges';
-import type { IAvatarInfo } from '../../../api/room/widgets/IAvatarInfo';
 import { AvatarInfoUser } from '../../../api/room/widgets/AvatarInfoUser';
+import type { IAvatarInfo } from '../../../api/room/widgets/IAvatarInfo';
 
 /**
  * Pure reducers consumed by useAvatarInfoWidget to update the inspected

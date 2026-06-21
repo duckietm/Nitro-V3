@@ -26,12 +26,11 @@ import {
     RoomUnitStatusEvent,
     UpdateFurniturePositionComposer,
     Vector3d,
+    WiredMonitorDataEvent,
+    WiredMonitorRequestComposer,
     WiredUserInspectMoveComposer
 } from '@nitrots/nitro-renderer';
-import { WiredMonitorDataEvent, WiredMonitorRequestComposer } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import wiredGlobalPlaceholderImage from '../../assets/images/wiredtools/wired_global_placeholder.png';
-import wiredMonitorImage from '../../assets/images/wiredtools/wired_monitor.png';
 import {
     AvatarInfoUtilities,
     GetRoomObjectBounds,
@@ -41,6 +40,8 @@ import {
     SendMessageComposer,
     WiredSelectionVisualizer
 } from '../../api';
+import wiredGlobalPlaceholderImage from '../../assets/images/wiredtools/wired_global_placeholder.png';
+import wiredMonitorImage from '../../assets/images/wiredtools/wired_monitor.png';
 import {
     Button,
     DraggableWindowPosition,
@@ -65,8 +66,8 @@ import {
     MONTH_NAMES,
     TABS,
     TEAM_COLOR_NAMES,
-    VARIABLES_ELEMENTS,
     VARIABLE_DEFINITIONS,
+    VARIABLES_ELEMENTS,
     WEEKDAY_NAMES,
     WIRED_CLOCK_REFRESH_MS,
     WIRED_FREEZE_EFFECT_IDS,
@@ -105,16 +106,16 @@ import {
     VariableHighlightOverlay,
     VariableHighlightTarget,
     VariableManageEntry,
-    VariableTextValue,
     VariablesElementButton,
     VariablesElementType,
+    VariableTextValue,
     WiredToolsTab
 } from './WiredCreatorTools.types';
-import { useWiredCreatorToolsUiStore } from './wiredCreatorToolsUiStore';
 import { WiredInspectionTabView } from './WiredInspectionTabView';
 import { WiredMonitorTabView } from './WiredMonitorTabView';
 import { WiredToolsSettingsTabView } from './WiredToolsSettingsTabView';
 import { WiredVariablesTabView } from './WiredVariablesTabView';
+import { useWiredCreatorToolsUiStore } from './wiredCreatorToolsUiStore';
 
 export const WiredCreatorToolsView: FC<{}> = () => {
     const isVisible = useWiredCreatorToolsUiStore((s) => s.isVisible);

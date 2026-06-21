@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MessengerFriend } from './MessengerFriend';
 import { countFriendsByCategory, filterFriendsByCategory } from './friendCategory.helpers';
+import { MessengerFriend } from './MessengerFriend';
 
 const makeFriend = (id: number, categoryId: number): MessengerFriend => {
     const friend = new MessengerFriend();

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { act, render, cleanup, fireEvent } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Capture handlers registered by useMessageEvent / useNitroEvent so we can fire fake events.
 const messageHandlers = new Map<unknown, (event: unknown) => void>();
@@ -29,16 +29,16 @@ vi.mock('../../api', async (importOriginal) => {
 });
 
 import {
+    AddLinkEventTracker,
     FloorHeightMapEvent,
-    RoomVisualizationSettingsEvent,
+    GetOccupiedTilesMessageComposer,
+    GetRoomEntryTileMessageComposer,
+    RemoveLinkEventTracker,
+    RoomEngineEvent,
     RoomEntryTileMessageEvent,
     RoomOccupiedTilesMessageEvent,
-    RoomEngineEvent,
-    GetRoomEntryTileMessageComposer,
-    GetOccupiedTilesMessageComposer,
-    UpdateFloorPropertiesMessageComposer,
-    AddLinkEventTracker,
-    RemoveLinkEventTracker
+    RoomVisualizationSettingsEvent,
+    UpdateFloorPropertiesMessageComposer
 } from '@nitrots/nitro-renderer';
 import { FloorplanEditorView } from './FloorplanEditorView';
 

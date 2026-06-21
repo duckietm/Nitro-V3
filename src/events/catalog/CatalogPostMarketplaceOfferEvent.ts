@@ -1,5 +1,5 @@
-import { CatalogEvent } from '.';
 import { FurnitureItem } from '../../api';
+import { CatalogEvent } from '.';
 
 export class CatalogPostMarketplaceOfferEvent extends CatalogEvent {
     public static readonly POST_MARKETPLACE = 'CE_POST_MARKETPLACE';

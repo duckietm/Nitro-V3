@@ -63,10 +63,10 @@ import {
     SoundNames
 } from '../../api';
 import {
+    CatalogPurchasedEvent,
     CatalogPurchaseFailureEvent,
     CatalogPurchaseNotAllowedEvent,
     CatalogPurchaseSoldOutEvent,
-    CatalogPurchasedEvent,
     InventoryFurniAddedEvent
 } from '../../events';
 import { useMessageEvent, useNitroEvent, useUiEvent } from '../events';
@@ -78,10 +78,10 @@ import {
     getNodesByOfferIdFromMap,
     getOfferProductKeys,
     normalizeCatalogType,
-    resolveBuilderFurniPlaceableStatus,
     RoomControllerLevel,
     RoomObjectCategory,
-    RoomObjectType
+    RoomObjectType,
+    resolveBuilderFurniPlaceableStatus
 } from './useCatalog.helpers';
 import { useCatalogPlaceMultipleItems } from './useCatalogPlaceMultipleItems';
 import { useCatalogSkipPurchaseConfirmation } from './useCatalogSkipPurchaseConfirmation';

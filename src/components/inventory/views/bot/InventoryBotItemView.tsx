@@ -1,6 +1,6 @@
 import { MouseEventType } from '@nitrots/nitro-renderer';
 import { FC, MouseEvent, PropsWithChildren, useState } from 'react';
-import { IBotItem, UnseenItemCategory, attemptBotPlacement } from '../../../../api';
+import { attemptBotPlacement, IBotItem, UnseenItemCategory } from '../../../../api';
 import { LayoutAvatarImageView } from '../../../../common';
 import { useInventoryBots, useInventoryUnseenTracker } from '../../../../hooks';
 import { InfiniteGrid } from '../../../../layout';

@@ -3,7 +3,7 @@ import { FC, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useFilterWordsWidget, useNavigatorData } from '../../../../hooks';
-import { NitroInput, classNames } from '../../../../layout';
+import { classNames, NitroInput } from '../../../../layout';
 
 export const RoomFilterWordsWidgetView: FC<{}> = (props) => {
     const [word, setWord] = useState<string>('bobba');

@@ -1,6 +1,4 @@
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, Ref } from 'react';
-import { classNames } from '../../layout';
-
 import arrowLeftIcon from '../../assets/images/avatareditor/arrow-left-icon.png';
 import arrowRightIcon from '../../assets/images/avatareditor/arrow-right-icon.png';
 import caIcon from '../../assets/images/avatareditor/ca-icon.png';
@@ -33,6 +31,7 @@ import shIcon from '../../assets/images/avatareditor/sh-icon.png';
 import shSelectedIcon from '../../assets/images/avatareditor/sh-selected-icon.png';
 import waIcon from '../../assets/images/avatareditor/wa-icon.png';
 import waSelectedIcon from '../../assets/images/avatareditor/wa-selected-icon.png';
+import { classNames } from '../../layout';
 
 const ICON_MAP: Record<string, { normal: string; selected?: string }> = {
     'arrow-left': { normal: arrowLeftIcon },

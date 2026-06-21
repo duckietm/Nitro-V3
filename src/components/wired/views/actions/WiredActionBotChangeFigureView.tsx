@@ -4,8 +4,8 @@ import { LocalizeText, WIRED_STRING_DELIMETER, WiredFurniType } from '../../../.
 import { Button, LayoutAvatarImageView, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { BOT_SOURCES, WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 const DEFAULT_FIGURE: string = 'hd-180-1.ch-210-66.lg-270-82.sh-290-81';
 const normalizeBotSource = (value: number, hasBotName = false) => (BOT_SOURCES.some((option) => option.value === value) ? value : hasBotName ? 100 : 0);

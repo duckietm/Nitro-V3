@@ -1,7 +1,7 @@
 import { DeletePetMessageComposer, IRoomSession, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
-import { IPetItem, LocalizeText, SendMessageComposer, UnseenItemCategory, attemptPetPlacement } from '../../../../api';
+import { attemptPetPlacement, IPetItem, LocalizeText, SendMessageComposer, UnseenItemCategory } from '../../../../api';
 import { LayoutRoomPreviewerView } from '../../../../common';
 import { useInventoryPets, useInventoryUnseenTracker, useNotification } from '../../../../hooks';
 import { InfiniteGrid, NitroButton } from '../../../../layout';

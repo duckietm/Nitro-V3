@@ -21,7 +21,7 @@ import {
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaCrosshairs, FaTimes } from 'react-icons/fa';
 import { GrFormNextLink, GrRotateLeft, GrRotateRight } from 'react-icons/gr';
-import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer, GetConfigurationValue } from '../../../../../api';
+import { AvatarInfoFurni, GetConfigurationValue, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
 import {
     Button,
     Column,

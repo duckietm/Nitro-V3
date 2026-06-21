@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType } from '../../../../api';
+import { WiredActionLayoutCode } from '../../../../api/wired/WiredActionLayoutCode';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { WiredActionBaseView } from './WiredActionBaseView';
-import { WiredActionLayoutCode } from '../../../../api/wired/WiredActionLayoutCode';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 export const WiredActionTeleportView: FC<{}> = (props) => {
     const { trigger = null, setIntParams = null } = useWired();

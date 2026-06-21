@@ -3,8 +3,8 @@ import { GetConfigurationValue, LocalizeText, WiredFurniType } from '../../../..
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 export const WiredActionMuteUserView: FC<{}> = (props) => {
     const [time, setTime] = useState(-1);

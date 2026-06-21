@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { fireEvent, render, cleanup } from '@testing-library/react';
-import { FloorplanToolbar } from './FloorplanToolbar';
+import { cleanup, fireEvent, render } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { initialState } from '../state/reducer';
+import { FloorplanToolbar } from './FloorplanToolbar';
 
 describe('FloorplanToolbar', () => {
     afterEach(() => cleanup());

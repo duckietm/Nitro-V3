@@ -8,7 +8,7 @@ import {
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
 import { GetRoomSession, getYoutubeRoomEnabled, LocalizeText, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../api';
-import { NitroCardContentView, NitroCardHeaderView, NitroCardView, LayoutAvatarImageView } from '../../common';
+import { LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { useFurnitureYoutubeWidget, useHasPermission, useMessageEvent } from '../../hooks';
 import ReactPlayer from '../youtube/YoutubeReactPlayer';
 

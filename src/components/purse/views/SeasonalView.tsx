@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { GetConfigurationValue, localizeWithFallback, LocalizeFormattedNumber } from '../../../api';
+import { GetConfigurationValue, LocalizeFormattedNumber, localizeWithFallback } from '../../../api';
 import { Flex, Text } from '../../../common';
 
 interface SeasonalViewProps {

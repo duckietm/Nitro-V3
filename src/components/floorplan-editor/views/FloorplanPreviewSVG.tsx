@@ -1,8 +1,8 @@
 import { FC, useMemo } from 'react';
-import { FloorplanState, Tile } from '../state/types';
-import { tileFill } from '../state/selectors';
-import { TILE_SIZE } from '../state/constants';
 import { tileToScreen } from '../hooks/usePointerToTile';
+import { TILE_SIZE } from '../state/constants';
+import { tileFill } from '../state/selectors';
+import { FloorplanState, Tile } from '../state/types';
 
 const WALL_FILL_LEFT = '#8a8a8a';
 const WALL_FILL_BACK = '#cfcfcf';

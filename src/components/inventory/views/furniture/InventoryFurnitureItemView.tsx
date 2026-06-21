@@ -1,8 +1,8 @@
 import { MouseEventType } from '@nitrots/nitro-renderer';
 import { FC, MouseEvent, useState } from 'react';
-import { GroupItem, attemptItemPlacement } from '../../../../api';
+import { attemptItemPlacement, GroupItem } from '../../../../api';
 import { useInventoryFurni } from '../../../../hooks';
-import { InfiniteGrid, classNames } from '../../../../layout';
+import { classNames, InfiniteGrid } from '../../../../layout';
 
 export const InventoryFurnitureItemView: FC<{
     groupItem: GroupItem;

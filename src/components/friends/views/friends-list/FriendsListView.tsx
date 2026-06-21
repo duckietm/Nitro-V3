@@ -1,13 +1,13 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveFriendComposer, RemoveLinkEventTracker, SendRoomInviteComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, MessengerFriend, SendMessageComposer, filterFriendsByCategory } from '../../../../api';
+import { filterFriendsByCategory, LocalizeText, MessengerFriend, SendMessageComposer } from '../../../../api';
 import { Button, Flex, NitroCardAccordionSetView, NitroCardAccordionView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFriends } from '../../../../hooks';
 import { FriendsCategoryManagerView } from './FriendsCategoryManagerView';
+import { FriendsListGroupChipsView } from './FriendsListGroupChipsView';
 import { FriendsRemoveConfirmationView } from './FriendsListRemoveConfirmationView';
 import { FriendsRoomInviteView } from './FriendsListRoomInviteView';
 import { FriendsSearchView } from './FriendsListSearchView';
-import { FriendsListGroupChipsView } from './FriendsListGroupChipsView';
 import { FriendsListGroupView } from './friends-list-group/FriendsListGroupView';
 import { FriendsListRequestView } from './friends-list-request/FriendsListRequestView';
 

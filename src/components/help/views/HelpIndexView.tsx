@@ -2,10 +2,10 @@ import { GetCfhStatusMessageComposer } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
 import { FaArrowCircleRight } from 'react-icons/fa';
 import { CreateLinkEvent, DispatchUiEvent, GetConfigurationValue, LocalizeText, ReportState, ReportType, SendMessageComposer } from '../../../api';
+import helpDuck from '../../../assets/images/help/help-duck.png';
 import { Text } from '../../../common';
 import { GuideToolEvent } from '../../../events';
 import { useHelp } from '../../../hooks';
-import helpDuck from '../../../assets/images/help/help-duck.png';
 
 export const HelpIndexView: FC<{}> = (props) => {
     const { setActiveReport = null } = useHelp();

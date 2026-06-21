@@ -1,5 +1,6 @@
 import {
     AddLinkEventTracker,
+    ExtendedForumData,
     ForumDataMessageEvent,
     GetForumStatsMessageComposer,
     GuildForumThread,
@@ -10,12 +11,11 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
-import { GroupForumThreadListView } from './GroupForumThreadListView';
-import { GroupForumThreadView } from './GroupForumThreadView';
+import { GroupForumListView } from './GroupForumListView';
 import { GroupForumNewThreadView } from './GroupForumNewThreadView';
 import { GroupForumSettingsView } from './GroupForumSettingsView';
-import { GroupForumListView } from './GroupForumListView';
-import { ExtendedForumData } from '@nitrots/nitro-renderer';
+import { GroupForumThreadListView } from './GroupForumThreadListView';
+import { GroupForumThreadView } from './GroupForumThreadView';
 
 const VIEW_FORUM_LIST = 0;
 const VIEW_THREAD_LIST = 1;

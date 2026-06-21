@@ -2,9 +2,9 @@ import { FC } from 'react';
 import { LocalizeText } from '../../api';
 import { Base } from '../Base';
 import { Column } from '../Column';
+import { DraggableWindow } from '../draggable-window';
 import { Flex } from '../Flex';
 import { Text } from '../Text';
-import { DraggableWindow } from '../draggable-window';
 
 interface LayoutTrophyViewProps {
     color: string;

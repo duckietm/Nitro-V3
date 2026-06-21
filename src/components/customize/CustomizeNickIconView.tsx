@@ -12,17 +12,16 @@ import {
     SetDisplayOrderComposer,
     UserNickIconsEvent
 } from '@nitrots/nitro-renderer';
-import { LazyEmojiPicker } from '../../common/LazyEmojiPicker';
 import { FC, useEffect, useMemo, useState } from 'react';
 import {
+    getPrefixEffectStyle,
+    getPrefixFontStyle,
     INickIconItem,
     IPrefixItem,
     PRESET_PREFIX_EFFECTS,
     PRESET_PREFIX_FONTS,
-    SendMessageComposer,
-    getPrefixEffectStyle,
-    getPrefixFontStyle,
-    parsePrefixColors
+    parsePrefixColors,
+    SendMessageComposer
 } from '../../api';
 import { GetNickIconUrl } from '../../assets/images/user_custom/nick_icons';
 import {
@@ -35,6 +34,7 @@ import {
     Text,
     UserIdentityView
 } from '../../common';
+import { LazyEmojiPicker } from '../../common/LazyEmojiPicker';
 import { LayoutCurrencyIcon } from '../../common/layout/LayoutCurrencyIcon';
 import { useMessageEvent } from '../../hooks';
 

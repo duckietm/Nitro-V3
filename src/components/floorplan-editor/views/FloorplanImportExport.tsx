@@ -1,8 +1,8 @@
 import { Dispatch, FC, useState } from 'react';
 import { LocalizeText } from '../../../api';
 import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../common';
-import { FloorplanAction, FloorplanState } from '../state/types';
 import { serializeTilemap } from '../state/encoding';
+import { FloorplanAction, FloorplanState } from '../state/types';
 
 type Props = {
     state: FloorplanState;

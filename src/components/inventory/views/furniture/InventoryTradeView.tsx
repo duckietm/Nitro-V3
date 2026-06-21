@@ -4,12 +4,12 @@ import { FaChevronLeft, FaChevronRight, FaLock, FaUnlock } from 'react-icons/fa'
 import {
     FurniCategory,
     GroupItem,
+    getGuildFurniType,
     IFurnitureItem,
     LocalizeText,
     NotificationAlertType,
     SendMessageComposer,
-    TradeState,
-    getGuildFurniType
+    TradeState
 } from '../../../../api';
 import { AutoGrid, Button, Column, Flex, Grid, LayoutGridItem, Text } from '../../../../common';
 import { useInventoryTrade, useNotification } from '../../../../hooks';

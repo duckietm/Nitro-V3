@@ -1,7 +1,5 @@
 import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType } from '../../../../api';
-import { Text } from '../../../../common';
-import { useWired } from '../../../../hooks';
 import iconWiredDirE from '../../../../assets/images/wired/icon_wired_dir_e.png';
 import iconWiredDirHorizontalRandom from '../../../../assets/images/wired/icon_wired_dir_horizontal_random.png';
 import iconWiredDirN from '../../../../assets/images/wired/icon_wired_dir_n.png';
@@ -13,9 +11,11 @@ import iconWiredDirSe from '../../../../assets/images/wired/icon_wired_dir_se.pn
 import iconWiredDirSw from '../../../../assets/images/wired/icon_wired_dir_sw.png';
 import iconWiredDirVerticalRandom from '../../../../assets/images/wired/icon_wired_dir_vertical_random.png';
 import iconWiredDirW from '../../../../assets/images/wired/icon_wired_dir_w.png';
-import { WiredDirectionIcon, WIRED_DIRECTION_GRID } from '../WiredDirectionIcon';
-import { WiredActionBaseView } from './WiredActionBaseView';
+import { Text } from '../../../../common';
+import { useWired } from '../../../../hooks';
+import { WIRED_DIRECTION_GRID, WiredDirectionIcon } from '../WiredDirectionIcon';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 const NORMAL_DIRECTION_VALUE_MAP: Record<number, { value: number; icon: string }> = {
     0: { value: 6, icon: iconWiredDirN },

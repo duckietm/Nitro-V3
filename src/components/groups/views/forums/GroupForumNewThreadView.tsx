@@ -1,9 +1,8 @@
-import { PostMessageMessageComposer, PostThreadMessageEvent } from '@nitrots/nitro-renderer';
+import { ExtendedForumData, PostMessageMessageComposer, PostThreadMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Text } from '../../../../common';
 import { useMessageEvent, useNotification } from '../../../../hooks';
-import { ExtendedForumData } from '@nitrots/nitro-renderer';
 
 interface GroupForumNewThreadViewProps {
     groupId: number;

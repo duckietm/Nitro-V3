@@ -1,8 +1,7 @@
 import { AvatarScaleType, AvatarSetType, GetAvatarRenderManager, GetConfiguration, IAvatarImage } from '@nitrots/nitro-renderer';
 import { FC, useActionState, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { ClearRememberLogin, GetConfigurationValue, GetRememberLogin, StoreRememberLoginFromPayload, persistAccessTokenFromPayload } from '../../api';
-import { configFileUrl } from '../../secure-assets';
+import { ClearRememberLogin, GetConfigurationValue, GetRememberLogin, persistAccessTokenFromPayload, StoreRememberLoginFromPayload } from '../../api';
 import flagBr from '../../assets/images/flag_icon/flag_icon_br.png';
 import flagDe from '../../assets/images/flag_icon/flag_icon_de.png';
 import flagEn from '../../assets/images/flag_icon/flag_icon_en.png';
@@ -14,6 +13,7 @@ import flagNl from '../../assets/images/flag_icon/flag_icon_nl.png';
 import flagSelected from '../../assets/images/flag_icon/flag_icon_selected.png';
 import flagTr from '../../assets/images/flag_icon/flag_icon_tr.png';
 import { applyTextTranslationLocale } from '../../hooks/translation/useTranslation';
+import { configFileUrl } from '../../secure-assets';
 import { NewsWindow } from './components/NewsWindow';
 import { TurnstileWidget } from './TurnstileWidget';
 import { t } from './utils/i18n';

@@ -11,17 +11,17 @@ import { WiredTriggerClickTileView } from './WiredTriggerClickTileView';
 import { WiredTriggerClickUserView } from './WiredTriggerClickUserView';
 import { WiredTriggerClockCounterView } from './WiredTriggerClockCounterView';
 import { WiredTriggerCollisionView } from './WiredTriggerCollisionView';
-import { WiredTriggerUserPerformsActionView } from './WiredTriggerUserPerformsActionView';
-import { WiredTriggerVariableChangedView } from './WiredTriggerVariableChangedView';
 import { WiredTriggeExecuteOnceView } from './WiredTriggerExecuteOnceView';
 import { WiredTriggeExecutePeriodicallyLongView } from './WiredTriggerExecutePeriodicallyLongView';
-import { WiredTriggeExecutePeriodicallyView } from './WiredTriggerExecutePeriodicallyView';
 import { WiredTriggeExecutePeriodicallyShortView } from './WiredTriggerExecutePeriodicallyShortView';
+import { WiredTriggeExecutePeriodicallyView } from './WiredTriggerExecutePeriodicallyView';
 import { WiredTriggerGameEndsView } from './WiredTriggerGameEndsView';
 import { WiredTriggerGameStartsView } from './WiredTriggerGameStartsView';
-import { WiredTriggeScoreAchievedView } from './WiredTriggerScoreAchievedView';
 import { WiredTriggerReceiveSignalView } from './WiredTriggerReceiveSignalView';
+import { WiredTriggeScoreAchievedView } from './WiredTriggerScoreAchievedView';
 import { WiredTriggerToggleFurniView } from './WiredTriggerToggleFurniView';
+import { WiredTriggerUserPerformsActionView } from './WiredTriggerUserPerformsActionView';
+import { WiredTriggerVariableChangedView } from './WiredTriggerVariableChangedView';
 
 export const WiredTriggerLayoutView = (code: number) => {
     switch (code) {

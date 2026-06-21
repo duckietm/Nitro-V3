@@ -1,4 +1,3 @@
-import { act, cleanup, renderHook } from '@testing-library/react';
 import {
     DoorbellMessageEvent,
     FlatAccessDeniedMessageEvent,
@@ -7,6 +6,7 @@ import {
     RoomDataParser,
     RoomDoorbellAcceptedEvent
 } from '@nitrots/nitro-renderer';
+import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { DoorStateType } from '../../../api';
 import { clearMockEventDispatcher, mockEventDispatcher } from '../../../nitro-renderer.mock';

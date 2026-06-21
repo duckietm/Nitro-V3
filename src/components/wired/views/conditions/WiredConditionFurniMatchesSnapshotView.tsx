@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { WiredConditionBaseView } from './WiredConditionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredConditionBaseView } from './WiredConditionBaseView';
 
 interface WiredConditionFurniMatchesSnapshotViewProps {
     negative?: boolean;

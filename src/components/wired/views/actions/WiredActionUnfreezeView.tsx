@@ -1,8 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import { WiredFurniType } from '../../../../api';
 import { useWired } from '../../../../hooks';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 export const WiredActionUnfreezeView: FC<{}> = () => {
     const [userSource, setUserSource] = useState(0);

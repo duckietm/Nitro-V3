@@ -3,8 +3,8 @@ import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredHandItemField } from '../WiredHandItemField';
-import { WiredConditionBaseView } from './WiredConditionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredConditionBaseView } from './WiredConditionBaseView';
 
 interface WiredConditionActorHasHandItemViewProps {
     negative?: boolean;

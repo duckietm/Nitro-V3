@@ -7,7 +7,7 @@ import {
     PostThreadMessageEvent
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, SendMessageComposer, GetUserProfile } from '../../../../api';
+import { GetUserProfile, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, LayoutBadgeImageView, Text } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
 

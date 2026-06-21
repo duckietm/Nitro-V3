@@ -129,7 +129,7 @@ export const GroupCreatorView: FC<GroupCreatorViewProps> = (props) => {
                             <Flex
                                 key={index}
                                 center
-                                className={`relative -ml-[6px] bg-[url('@/assets/images/groups/creator_tabs.png')] bg-no-repeat transition-[transform,filter,opacity] duration-150 ${(tab === 1) ? 'w-[84px] h-[24px] bg-position-[0px_0px]' : tab === 4 ? 'w-[133px] h-[28px] bg-position-[0px_-104px]' : 'w-[83px] h-[24px] bg-position-[0px_-52px]'} ${currentTab === tab ? 'active z-[1] scale-[1.05] brightness-110 saturate-150 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]' : 'opacity-60 saturate-50'}`}
+                                className={`relative -ml-[6px] bg-[url('@/assets/images/groups/creator_tabs.png')] bg-no-repeat transition-[transform,filter,opacity] duration-150 ${tab === 1 ? 'w-[84px] h-[24px] bg-position-[0px_0px]' : tab === 4 ? 'w-[133px] h-[28px] bg-position-[0px_-104px]' : 'w-[83px] h-[24px] bg-position-[0px_-52px]'} ${currentTab === tab ? 'active z-[1] scale-[1.05] brightness-110 saturate-150 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]' : 'opacity-60 saturate-50'}`}
                             >
                                 <Text variant="white">{LocalizeText(`group.create.steplabel.${tab}`)}</Text>
                             </Flex>

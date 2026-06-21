@@ -19,16 +19,16 @@ import { LocalizeText, SendMessageComposer } from '../../api';
 import { Button, ButtonGroup, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
 import { useFloorplanLiveSync } from '../../hooks/rooms/widgets/useFloorplanLiveSync';
-import { MAX_WALL_HEIGHT, MIN_WALL_HEIGHT } from './state/constants';
-import { EntryDir, ThicknessLevel } from './state/types';
-import { areaCount } from './state/selectors';
-import { serializeTilemap } from './state/encoding';
 import { useFloorplanReducer } from './hooks/useFloorplanReducer';
+import { MAX_WALL_HEIGHT, MIN_WALL_HEIGHT } from './state/constants';
+import { serializeTilemap } from './state/encoding';
+import { areaCount } from './state/selectors';
+import { EntryDir, ThicknessLevel } from './state/types';
 import { FloorplanCanvasSVG } from './views/FloorplanCanvasSVG';
 import { FloorplanHeightPicker } from './views/FloorplanHeightPicker';
-import { FloorplanToolbar } from './views/FloorplanToolbar';
-import { FloorplanOptionsPanel } from './views/FloorplanOptionsPanel';
 import { FloorplanImportExport } from './views/FloorplanImportExport';
+import { FloorplanOptionsPanel } from './views/FloorplanOptionsPanel';
+import { FloorplanToolbar } from './views/FloorplanToolbar';
 
 const clampThickness = (v: number): ThicknessLevel => {
     if (v <= 0) return 0;

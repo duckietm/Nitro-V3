@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parseTilemap, serializeTilemap, tileToChar, charToTile } from './encoding';
+import { describe, expect, it } from 'vitest';
+import { charToTile, parseTilemap, serializeTilemap, tileToChar } from './encoding';
 
 describe('charToTile', () => {
     it('returns blocked for x', () => {

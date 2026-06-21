@@ -1,6 +1,6 @@
 import { IRoomSession, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { IBotItem, LocalizeText, UnseenItemCategory, attemptBotPlacement } from '../../../../api';
+import { attemptBotPlacement, IBotItem, LocalizeText, UnseenItemCategory } from '../../../../api';
 import { LayoutRoomPreviewerView } from '../../../../common';
 import { useInventoryBots, useInventoryUnseenTracker } from '../../../../hooks';
 import { InfiniteGrid, NitroButton } from '../../../../layout';

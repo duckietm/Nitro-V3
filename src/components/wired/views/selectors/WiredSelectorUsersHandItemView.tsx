@@ -2,8 +2,8 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { LocalizeText } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { WiredSelectorBaseView } from './WiredSelectorBaseView';
 import { WiredHandItemField } from '../WiredHandItemField';
+import { WiredSelectorBaseView } from './WiredSelectorBaseView';
 
 export const WiredSelectorUsersHandItemView: FC<{}> = () => {
     const [handItemId, setHandItemId] = useState(0);

@@ -26,11 +26,11 @@ import {
     GetRoomSession,
     GroupItem,
     LocalizeText,
+    parseTradeItems,
     SendMessageComposer,
     TradeState,
     TradeUserData,
-    TradingNotificationType,
-    parseTradeItems
+    TradingNotificationType
 } from '../../api';
 import { useMessageEvent } from '../events';
 import { useNotification } from '../notification';

@@ -230,7 +230,7 @@ export const GroupMembersView: FC<{}> = (props) => {
                                         <div className="flex items-center justify-center">
                                             <div
                                                 className={classNames(
-                                                    `nitro-icon icon-group-small-${(member.rank === GroupRank.OWNER) ? 'owner' : member.rank === GroupRank.ADMIN ? 'admin' : membersData.admin && member.rank === GroupRank.MEMBER ? 'not-admin' : ''}`,
+                                                    `nitro-icon icon-group-small-${member.rank === GroupRank.OWNER ? 'owner' : member.rank === GroupRank.ADMIN ? 'admin' : membersData.admin && member.rank === GroupRank.MEMBER ? 'not-admin' : ''}`,
                                                     membersData.admin && 'cursor-pointer'
                                                 )}
                                                 title={LocalizeText(getRankDescription(member))}

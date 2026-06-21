@@ -5,12 +5,12 @@ import { useRoomUserListSnapshot } from '../../session/useSessionSnapshots';
 import {
     buildChatMentionSuggestions,
     computeMentionContext,
-    MentionAlias,
-    MentionAliasScope,
-    MentionSuggestion,
     MENTION_ALIAS_CONFIG_KEY,
     MENTION_ALIAS_DEFAULTS,
     MENTION_ALIAS_DESCRIPTION_KEY,
+    MentionAlias,
+    MentionAliasScope,
+    MentionSuggestion,
     sanitizeAliasList
 } from './useChatMentions.helpers';
 

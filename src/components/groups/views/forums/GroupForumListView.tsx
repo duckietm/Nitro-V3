@@ -1,9 +1,8 @@
-import { ForumsListMessageEvent, GetForumsListMessageComposer } from '@nitrots/nitro-renderer';
+import { ForumData, ForumsListMessageEvent, GetForumsListMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, SendMessageComposer, GetUserProfile } from '../../../../api';
-import { Column, Flex, Text, LayoutBadgeImageView } from '../../../../common';
+import { GetUserProfile, LocalizeText, SendMessageComposer } from '../../../../api';
+import { Column, Flex, LayoutBadgeImageView, Text } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
-import { ForumData } from '@nitrots/nitro-renderer';
 
 const FORUMS_PER_PAGE = 20;
 

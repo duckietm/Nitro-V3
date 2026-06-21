@@ -3,6 +3,8 @@ import {
     FurniEditorDeleteComposer,
     FurniEditorDetailComposer,
     FurniEditorDetailResultEvent,
+    FurniEditorImportTextComposer,
+    FurniEditorImportTextResultEvent,
     FurniEditorInteractionsComposer,
     FurniEditorInteractionsResultEvent,
     FurniEditorResultEvent,
@@ -10,9 +12,7 @@ import {
     FurniEditorSearchComposer,
     FurniEditorSearchResultEvent,
     FurniEditorUpdateComposer,
-    FurniEditorUpdateFurnidataComposer,
-    FurniEditorImportTextComposer,
-    FurniEditorImportTextResultEvent
+    FurniEditorUpdateFurnidataComposer
 } from '@nitrots/nitro-renderer';
 import { useCallback, useRef, useState } from 'react';
 import { NotificationAlertType, SendMessageComposer } from '../../api';

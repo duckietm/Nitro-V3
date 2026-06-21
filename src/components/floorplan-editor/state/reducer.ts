@@ -1,6 +1,6 @@
-import { FloorplanAction, FloorplanState, Tile } from './types';
-import { MAX_NUM_TILE_PER_AXIS, EMPTY_DOOR, MIN_WALL_HEIGHT, MAX_WALL_HEIGHT } from './constants';
+import { EMPTY_DOOR, MAX_NUM_TILE_PER_AXIS, MAX_WALL_HEIGHT, MIN_WALL_HEIGHT } from './constants';
 import { parseTilemap } from './encoding';
+import { FloorplanAction, FloorplanState, Tile } from './types';
 
 export const initialState: FloorplanState = {
     tiles: [],

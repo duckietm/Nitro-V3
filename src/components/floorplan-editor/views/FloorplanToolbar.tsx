@@ -2,7 +2,7 @@ import { Dispatch, FC } from 'react';
 import { FaHandPaper, FaRedo, FaUndo } from 'react-icons/fa';
 import { LocalizeText } from '../../../api';
 import { Base, Flex, Text } from '../../../common';
-import { FloorplanAction, FloorActionMode, FloorplanState } from '../state/types';
+import { FloorActionMode, FloorplanAction, FloorplanState } from '../state/types';
 
 type Props = {
     state: FloorplanState;

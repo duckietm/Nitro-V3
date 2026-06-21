@@ -1,14 +1,14 @@
 import { FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { FaChevronRight } from 'react-icons/fa';
+import { LocalizeText } from '../../../api';
+import searchClearIcon from '../../../assets/images/wired/var/ar_picker_cancel_search.png';
 import allIcon from '../../../assets/images/wired/var/var_picker_all.png';
 import internalIcon from '../../../assets/images/wired/var/var_picker_internal.png';
 import recentIcon from '../../../assets/images/wired/var/var_picker_recent.png';
-import searchClearIcon from '../../../assets/images/wired/var/ar_picker_cancel_search.png';
 import searchIcon from '../../../assets/images/wired/var/var_picker_search.png';
 import smartIcon from '../../../assets/images/wired/var/var_picker_smart.png';
 import userMadeIcon from '../../../assets/images/wired/var/var_picker_usermade.png';
-import { LocalizeText } from '../../../api';
 import { Text } from '../../../common';
 import { flattenWiredVariablePickerEntries, IWiredVariablePickerEntry } from './WiredVariablePickerData';
 

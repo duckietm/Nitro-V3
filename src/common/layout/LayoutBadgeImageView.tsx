@@ -4,8 +4,8 @@ import { createPortal } from 'react-dom';
 import {
     BadgeLeaderboardStat,
     ensureBadgeLeaderboardLoaded,
-    getCachedBadgeRarityStat,
     GetConfigurationValue,
+    getCachedBadgeRarityStat,
     LocalizeBadgeDescription,
     LocalizeBadgeName,
     LocalizeText

@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { usePointerToTile, screenToTile, tileToScreen } from './usePointerToTile';
+import { describe, expect, it } from 'vitest';
+import { screenToTile, tileToScreen, usePointerToTile } from './usePointerToTile';
 
 describe('tileToScreen / screenToTile round-trip', () => {
     it('origin tile (0,0) projects to (1024, 0) and back', () => {

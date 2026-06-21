@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useTool } from './useTool';
-import { FloorplanState, FloorplanAction } from '../state/types';
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { initialState } from '../state/reducer';
+import { FloorplanAction, FloorplanState } from '../state/types';
+import { useTool } from './useTool';
 
 const withBrush = (action: FloorplanState['brush']['action'], h = 0): FloorplanState => ({ ...initialState, brush: { h, action } });
 

@@ -1,5 +1,5 @@
 import { GetCommunication, IMessageComposer, IMessageEvent, MessageEvent } from '@nitrots/nitro-renderer';
-import { QueryKey, useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
+import { QueryKey, UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
 import { SendMessageComposer } from '../nitro/SendMessageComposer';
 
 export interface NitroQueryConfig<TParser extends IMessageEvent, TData> {

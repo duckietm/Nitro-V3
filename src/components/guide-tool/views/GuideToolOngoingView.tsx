@@ -10,7 +10,7 @@ import { FC, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'rea
 import { GuideToolMessageGroup, LocalizeText, SendMessageComposer, TryVisitRoom } from '../../../api';
 import { Button, Column, Flex, LayoutAvatarImageView, Text } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
-import { NitroInput, classNames } from '../../../layout';
+import { classNames, NitroInput } from '../../../layout';
 
 interface GuideToolOngoingViewProps {
     isGuide: boolean;

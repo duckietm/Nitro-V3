@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { reducer, initialState } from './reducer';
-import { FloorplanState } from './types';
-import { defaultEmptyTilemap } from './selectors';
+import { describe, expect, it } from 'vitest';
 import { MAX_NUM_TILE_PER_AXIS } from './constants';
+import { initialState, reducer } from './reducer';
+import { defaultEmptyTilemap } from './selectors';
+import { FloorplanState } from './types';
 
 const stateWith = (tiles: FloorplanState['tiles']): FloorplanState => ({
     ...initialState,

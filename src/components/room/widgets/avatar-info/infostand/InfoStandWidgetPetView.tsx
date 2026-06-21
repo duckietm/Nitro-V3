@@ -1,5 +1,5 @@
 import { CreateLinkEvent, PetRespectComposer, PetType } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useState, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { ConvertSeconds, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Flex, LayoutCounterTimeView, LayoutPetImageView, LayoutRarityLevelView, Text, UserProfileIconView } from '../../../../../common';

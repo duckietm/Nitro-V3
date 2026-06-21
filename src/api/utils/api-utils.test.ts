@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { GetWiredTimeLocale } from '../wired/GetWiredTimeLocale';
+import { WiredDateToString } from '../wired/WiredDateToString';
 import { CloneObject } from './CloneObject';
 import { ConvertSeconds } from './ConvertSeconds';
 import { LocalizeShortNumber } from './LocalizeShortNumber';
-import { GetWiredTimeLocale } from '../wired/GetWiredTimeLocale';
-import { WiredDateToString } from '../wired/WiredDateToString';
-import { getPrefixFontStyle, parsePrefixColors, PRESET_PREFIX_FONTS } from './PrefixUtils';
+import { getPrefixFontStyle, PRESET_PREFIX_FONTS, parsePrefixColors } from './PrefixUtils';
 
 describe('ConvertSeconds', () => {
     it('formats zero seconds as the dd:hh:mm:ss zero string', () => {

@@ -1,5 +1,5 @@
-import { FC, MouseEvent, useEffect, useState } from 'react';
 import { FriendCategoryData } from '@nitrots/nitro-renderer';
+import { FC, MouseEvent, useEffect, useState } from 'react';
 import { LocalizeText } from '../../../../api';
 import { Button, Column, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFriendsActions } from '../../../../hooks';

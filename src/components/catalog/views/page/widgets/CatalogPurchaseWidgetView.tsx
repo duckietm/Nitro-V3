@@ -6,8 +6,8 @@ import {
     CatalogType,
     DispatchUiEvent,
     GetClubMemberLevel,
-    LocalStorageKeys,
     LocalizeText,
+    LocalStorageKeys,
     NotificationBubbleType,
     Offer,
     ProductTypeEnum,
@@ -17,10 +17,10 @@ import { Button, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import {
     CatalogEvent,
     CatalogInitGiftEvent,
+    CatalogPurchasedEvent,
     CatalogPurchaseFailureEvent,
     CatalogPurchaseNotAllowedEvent,
-    CatalogPurchaseSoldOutEvent,
-    CatalogPurchasedEvent
+    CatalogPurchaseSoldOutEvent
 } from '../../../../../events';
 import { useCatalogActions, useCatalogData, useCatalogUiState, useLocalStorage, useNotification, usePurse, useUiEvent } from '../../../../../hooks';
 

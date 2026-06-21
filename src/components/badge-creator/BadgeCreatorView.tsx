@@ -2,8 +2,8 @@ import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '
 import { FC, MouseEvent as ReactMouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LocalizeText } from '../../api';
 import {
-    createCustomBadge,
     CustomBadgeRecord,
+    createCustomBadge,
     deleteCustomBadge,
     ensureCustomBadgeTexts,
     fetchCustomBadges,

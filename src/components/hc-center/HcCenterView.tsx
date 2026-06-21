@@ -11,10 +11,10 @@ import {
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { ClubStatus, FriendlyTime, GetClubBadge, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../api';
+import benefitsBg from '../../assets/images/hc-center/benefits.png';
+import clockIcon from '../../assets/images/hc-center/clock.png';
 import hcLogo from '../../assets/images/hc-center/hc_logo.gif';
 import paydayBg from '../../assets/images/hc-center/payday.png';
-import clockIcon from '../../assets/images/hc-center/clock.png';
-import benefitsBg from '../../assets/images/hc-center/benefits.png';
 import {
     Button,
     Column,
