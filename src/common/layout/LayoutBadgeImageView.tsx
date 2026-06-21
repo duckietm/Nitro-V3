@@ -64,42 +64,49 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
         return newClassNames;
     }, [ classNames, isGroup, isGrayscale ]);
 
-    const getStyle = useMemo(() =>
-    {
+    const getStyle = useMemo(() => {
         let newStyle: CSSProperties = {};
 
-        if(imageElement)
-        {
-            newStyle.backgroundImage = `url(${ (isGroup) ? imageElement.src : GetConfigurationValue<string>('badge.asset.url').replace('%badgename%', badgeCode.toString()) })`;
-            newStyle.width = imageElement.width;
-            newStyle.height = imageElement.height;
+        // When we highlight rarity we draw a UNIFORM frame: the element keeps its
+        // fixed box size (w-[40px]/h-[40px] from the class list) and the badge is
+        // centered inside it, so every frame is identical regardless of the badge
+        // PNG's native dimensions. Without this the ring hugs the natural image
+        // size, and smaller badges end up with a visibly smaller frame.
+        const uniformFrame = highlightRarity;
 
-            if(scale !== 1)
-            {
-                newStyle.transform = `scale(${ scale })`;
+        if (imageElement) {
+            newStyle.backgroundImage = `url(${isGroup ? imageElement.src : GetConfigurationValue<string>('badge.asset.url').replace('%badgename%', badgeCode.toString())})`;
 
-                if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
+            if (!uniformFrame) {
+                newStyle.width = imageElement.width;
+                newStyle.height = imageElement.height;
 
-                newStyle.width = (imageElement.width * scale);
-                newStyle.height = (imageElement.height * scale);
+                if (scale !== 1) {
+                    newStyle.transform = `scale(${scale})`;
+
+                    if (!(scale % 1)) newStyle.imageRendering = 'pixelated';
+
+                    newStyle.width = imageElement.width * scale;
+                    newStyle.height = imageElement.height * scale;
+                }
             }
         }
 
-        if(highlightRarity && badgeRarityStat)
-        {
+        if (uniformFrame && badgeRarityStat) {
             const colors = BADGE_RARITY_COLORS[badgeRarityStat.rarity];
 
-            if(colors)
-            {
+            if (colors) {
                 newStyle.borderRadius = 8;
-                newStyle.boxShadow = `0 0 0 1px ${ colors.glow }, 0 0 14px ${ colors.glow }`;
+                // Contained glow: inset rings stay inside the fixed frame, so the
+                // colored ring + glow never bleed onto neighbouring badges.
+                newStyle.boxShadow = `inset 0 0 0 1px ${colors.glow}, inset 0 0 8px ${colors.glow}`;
             }
         }
 
-        if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
+        if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ badgeCode, badgeRarityStat, highlightRarity, isGroup, imageElement, scale, style ]);
+    }, [badgeCode, badgeRarityStat, highlightRarity, isGroup, imageElement, scale, style]);
 
     useEffect(() =>
     {
