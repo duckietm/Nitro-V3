@@ -193,7 +193,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                   aria-label="Edit profile background"
                 />
               )}
-              <Column grow alignItems="center" gap={0}>
+              <Column grow alignItems="center" gap={1}>
                 { (() => {
                   const maxSlots = GetConfigurationValue<number>('user.badges.max.slots', 5);
                   const isOwnUser = avatarInfo.type === AvatarInfoUser.OWN_USER;
