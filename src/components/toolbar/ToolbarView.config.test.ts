@@ -11,10 +11,11 @@ describe('Toolbar feature config', () =>
         const config = JSON.parse(readFileSync(join(root, 'public/configuration/ui-config.example'), 'utf8'));
         const source = readFileSync(join(root, 'src/components/toolbar/ToolbarView.tsx'), 'utf8');
 
+        expect(config['buildersclub.enabled']).toBe(true);
         expect(config['toolbar.buildersclub.enabled']).toBe(true);
         expect(config['toolbar.rarevalues.enabled']).toBe(true);
         expect(config['toolbar.fortunewheel.enabled']).toBe(true);
-        expect(source).toContain("GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true)");
+        expect(source).toContain("GetConfigurationValue<boolean>('buildersclub.enabled', GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true))");
         expect(source).toContain("GetConfigurationValue<boolean>('toolbar.rarevalues.enabled', true)");
         expect(source).toContain("GetConfigurationValue<boolean>('toolbar.fortunewheel.enabled', true)");
         expect(source.match(/buildersClubEnabled\s*&&/g)).toHaveLength(2);

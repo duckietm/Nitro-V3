@@ -20,6 +20,11 @@
     }
 }
 
+.tb-avatar-head {
+    background-size: auto;
+    background-position: -25px -38px;
+}
+
 .tb-collapse {
     display: flex;
     width: 15px;

@@ -20,6 +20,8 @@ describe('UI CSS ownership', () =>
 
         expect(radioView).not.toContain('RADIO_STYLES');
         expect(toolbarView).not.toContain('TOOLBAR_STYLES');
+        expect(toolbarView).not.toContain("backgroundPosition: '-25px -38px'");
+        expect(toolbarView).toContain('tb-avatar-head');
         expect(friendsBarView).not.toContain('FRIENDBAR_STYLES');
         expect(wheelWinReveal).not.toContain('<style>');
         expect(userIdentityView).not.toContain('<style>');

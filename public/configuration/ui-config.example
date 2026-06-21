@@ -35,6 +35,7 @@
     "mentions_ui.aliases.room":     [ "room" ],
     "guides.enabled": true,
 	"housekeeping.enabled": true,
+    "buildersclub.enabled": true,
     "toolbar.hide.quests": true,
     "toolbar.buildersclub.enabled": true,
     "toolbar.rarevalues.enabled": true,

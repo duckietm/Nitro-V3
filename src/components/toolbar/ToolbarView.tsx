@@ -43,7 +43,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { iconState = MessengerIconState.HIDDEN } = useMessenger();
     const { unreadCount: mentionsUnread = 0 } = useMentionsSnapshot();
     const mentionsEnabled = useMemo(() => GetConfigurationValue<boolean>('mentions_ui.enabled', true), []);
-    const buildersClubEnabled = useMemo(() => GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true), []);
+    const buildersClubEnabled = useMemo(() => GetConfigurationValue<boolean>('buildersclub.enabled', GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true)), []);
     const rareValuesEnabled = useMemo(() => GetConfigurationValue<boolean>('toolbar.rarevalues.enabled', true), []);
     const fortuneWheelEnabled = useMemo(() => GetConfigurationValue<boolean>('toolbar.fortunewheel.enabled', true), []);
     const { openMonitor, showToolbarButton } = useWiredTools();
@@ -250,7 +250,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 setMeExpanded(value => !value);
                                 event.stopPropagation();
                             } }>
-                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon" style={ { backgroundSize: 'auto', backgroundPosition: '-25px -38px' } } />
+                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon tb-avatar-head" />
                         </motion.div>
                         { (getTotalUnseen > 0) &&
                             <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
@@ -396,7 +396,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 setMeExpanded(value => !value);
                                 event.stopPropagation();
                             } }>
-                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon" style={ { backgroundSize: 'auto', backgroundPosition: '-25px -38px' } } />
+                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon tb-avatar-head" />
                         </motion.div>
                         { (getTotalUnseen > 0) &&
                             <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }

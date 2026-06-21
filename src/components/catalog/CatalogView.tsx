@@ -35,6 +35,7 @@ const CatalogViewInner: FC<{}> = () =>
     const { purse = null } = usePurse();
     const displayedCurrencies = GetConfigurationValue<number[]>('system.currency.types', []);
     const activeCatalogNode = activeNodes?.[activeNodes.length - 1] ?? null;
+    const buildersClubEnabled = GetConfigurationValue<boolean>('buildersclub.enabled', GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true));
     // Strip SWF-style suffixes like "(BC)" or "(Hot)" but keep the
     // pageId hint the gameserver appends when the viewer has
     // ACC_CATALOG_IDS - that's a pure-numeric "(6)" trailer.
@@ -50,7 +51,7 @@ const CatalogViewInner: FC<{}> = () =>
                 case 'builder':
                 case 'buildersclub':
                 case 'builders_club':
-                    return CatalogType.BUILDER;
+                    return buildersClubEnabled ? CatalogType.BUILDER : CatalogType.NORMAL;
                 default:
                     return CatalogType.NORMAL;
             }
@@ -119,7 +120,7 @@ const CatalogViewInner: FC<{}> = () =>
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [ setIsVisible, openPageByOfferId, openPageByName, openCatalogByType, toggleCatalogByType ]);
+    }, [ setIsVisible, openPageByOfferId, openPageByName, openCatalogByType, toggleCatalogByType, buildersClubEnabled ]);
 
     return (
         <>
