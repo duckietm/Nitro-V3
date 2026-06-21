@@ -1,29 +1,55 @@
 import {
-    HabboSearchComposer, HabboSearchResultEvent, HousekeepingActionLogEvent, HousekeepingActionResultEvent,
-    HousekeepingBanUserComposer, HousekeepingDashboardEvent, HousekeepingDeleteRoomComposer,
-    HousekeepingFindRoomByIdComposer, HousekeepingFindUserByIdComposer, HousekeepingFindUserByNameComposer,
-    HousekeepingForceDisconnectUserComposer, HousekeepingGetDashboardComposer,
-    HousekeepingGiveCreditsComposer, HousekeepingGiveCurrencyComposer, HousekeepingGrantItemComposer,
-    HousekeepingKickAllFromRoomComposer, HousekeepingKickUserComposer, HousekeepingListActionLogComposer,
-    HousekeepingMuteRoomComposer, HousekeepingMuteUserComposer, HousekeepingResetUserPasswordComposer,
-    HousekeepingRoomData, HousekeepingRoomDetailEvent, HousekeepingRoomListEvent,
-    HousekeepingRoomStateComposer, HousekeepingSearchRoomsComposer, HousekeepingSendHotelAlertComposer,
-    HousekeepingSetHcSubscriptionComposer, HousekeepingSetUserRankComposer,
-    HousekeepingTradeLockUserComposer, HousekeepingTransferRoomOwnershipComposer,
-    HousekeepingUnbanUserComposer, HousekeepingUserDetailData, HousekeepingUserDetailEvent,
+    HabboSearchComposer,
+    HabboSearchResultEvent,
+    HousekeepingActionLogEvent,
+    HousekeepingActionResultEvent,
+    HousekeepingBanUserComposer,
+    HousekeepingDashboardEvent,
+    HousekeepingDeleteRoomComposer,
+    HousekeepingFindRoomByIdComposer,
+    HousekeepingFindUserByIdComposer,
+    HousekeepingFindUserByNameComposer,
+    HousekeepingForceDisconnectUserComposer,
+    HousekeepingGetDashboardComposer,
+    HousekeepingGiveCreditsComposer,
+    HousekeepingGiveCurrencyComposer,
+    HousekeepingGrantItemComposer,
+    HousekeepingKickAllFromRoomComposer,
+    HousekeepingKickUserComposer,
+    HousekeepingListActionLogComposer,
+    HousekeepingMuteRoomComposer,
+    HousekeepingMuteUserComposer,
+    HousekeepingResetUserPasswordComposer,
+    HousekeepingRoomData,
+    HousekeepingRoomDetailEvent,
+    HousekeepingRoomListEvent,
+    HousekeepingRoomStateComposer,
+    HousekeepingSearchRoomsComposer,
+    HousekeepingSendHotelAlertComposer,
+    HousekeepingSetHcSubscriptionComposer,
+    HousekeepingSetUserRankComposer,
+    HousekeepingTradeLockUserComposer,
+    HousekeepingTransferRoomOwnershipComposer,
+    HousekeepingUnbanUserComposer,
+    HousekeepingUserDetailData,
+    HousekeepingUserDetailEvent,
     IMessageComposer
 } from '@nitrots/nitro-renderer';
 import { awaitMessageEvent } from '../nitro/awaitMessageEvent';
 import { SendMessageComposer } from '../nitro/SendMessageComposer';
 import {
-    IHousekeepingActionLogEntry, IHousekeepingActionResult, IHousekeepingDashboard,
-    IHousekeepingRoom, IHousekeepingRoomSummary, IHousekeepingUser, IHousekeepingUserSummary
+    IHousekeepingActionLogEntry,
+    IHousekeepingActionResult,
+    IHousekeepingDashboard,
+    IHousekeepingRoom,
+    IHousekeepingRoomSummary,
+    IHousekeepingUser,
+    IHousekeepingUserSummary
 } from './IHousekeepingTypes';
 
 const USER_SEARCH_LIMIT = 8;
 
-const searchUsersViaPacket = async (prefix: string, signal?: AbortSignal): Promise<IHousekeepingUserSummary[]> =>
-{
+const searchUsersViaPacket = async (prefix: string, signal?: AbortSignal): Promise<IHousekeepingUserSummary[]> => {
     SendMessageComposer(new HabboSearchComposer(prefix));
 
     // Snapshot the parser inside the subscribe callback — the renderer
@@ -32,20 +58,18 @@ const searchUsersViaPacket = async (prefix: string, signal?: AbortSignal): Promi
     return await awaitMessageEvent<HabboSearchResultEvent, IHousekeepingUserSummary[]>(HabboSearchResultEvent, {
         signal,
         timeoutMs: 8_000,
-        select: event =>
-        {
+        select: (event) => {
             const parser = event.getParser();
 
-            if(!parser) return [];
+            if (!parser) return [];
 
-            const combined = [ ...parser.friends, ...parser.others ];
+            const combined = [...parser.friends, ...parser.others];
             const summaries: IHousekeepingUserSummary[] = [];
 
-            for(const entry of combined)
-            {
+            for (const entry of combined) {
                 const username = entry.avatarName || '';
 
-                if(!username.toLowerCase().startsWith(prefix.toLowerCase())) continue;
+                if (!username.toLowerCase().startsWith(prefix.toLowerCase())) continue;
 
                 summaries.push({
                     id: entry.avatarId,
@@ -55,7 +79,7 @@ const searchUsersViaPacket = async (prefix: string, signal?: AbortSignal): Promi
                     rank: 0
                 });
 
-                if(summaries.length >= USER_SEARCH_LIMIT) break;
+                if (summaries.length >= USER_SEARCH_LIMIT) break;
             }
 
             return summaries;
@@ -85,30 +109,27 @@ const mapUserDetail = (user: HousekeepingUserDetailData): IHousekeepingUser => (
 const awaitUserDetail = (): Promise<IHousekeepingUser | null> =>
     awaitMessageEvent<HousekeepingUserDetailEvent, IHousekeepingUser | null>(HousekeepingUserDetailEvent, {
         timeoutMs: 8_000,
-        select: event =>
-        {
+        select: (event) => {
             const parser = event.getParser();
 
-            if(!parser || !parser.found || !parser.user) return null;
+            if (!parser || !parser.found || !parser.user) return null;
 
             return mapUserDetail(parser.user);
         }
     });
 
-const findUserByNameViaPacket = async (username: string): Promise<IHousekeepingUser | null> =>
-{
+const findUserByNameViaPacket = async (username: string): Promise<IHousekeepingUser | null> => {
     const trimmed = (username || '').trim();
 
-    if(!trimmed) return null;
+    if (!trimmed) return null;
 
     SendMessageComposer(new HousekeepingFindUserByNameComposer(trimmed));
 
     return awaitUserDetail();
 };
 
-const findUserByIdViaPacket = async (userId: number): Promise<IHousekeepingUser | null> =>
-{
-    if(!Number.isFinite(userId) || userId <= 0) return null;
+const findUserByIdViaPacket = async (userId: number): Promise<IHousekeepingUser | null> => {
+    if (!Number.isFinite(userId) || userId <= 0) return null;
 
     SendMessageComposer(new HousekeepingFindUserByIdComposer(userId));
 
@@ -122,20 +143,17 @@ const findUserByIdViaPacket = async (userId: number): Promise<IHousekeepingUser 
  * filter via the `accept` predicate — protects against another concurrent
  * action's ack slipping into a waiter that was expecting a different one.
  */
-const runHkAction = async (composer: IMessageComposer<unknown[]>, expectedActionKey: string, timeoutMs = 15_000): Promise<IHousekeepingActionResult> =>
-{
+const runHkAction = async (composer: IMessageComposer<unknown[]>, expectedActionKey: string, timeoutMs = 15_000): Promise<IHousekeepingActionResult> => {
     SendMessageComposer(composer);
 
-    try
-    {
+    try {
         return await awaitMessageEvent<HousekeepingActionResultEvent, IHousekeepingActionResult>(HousekeepingActionResultEvent, {
             timeoutMs,
-            accept: e => e.getParser()?.actionKey === expectedActionKey,
-            select: event =>
-            {
+            accept: (e) => e.getParser()?.actionKey === expectedActionKey,
+            select: (event) => {
                 const parser = event.getParser();
 
-                if(!parser) return { ok: false, actionId: null, message: 'no_parser' };
+                if (!parser) return { ok: false, actionId: null, message: 'no_parser' };
 
                 return {
                     ok: parser.ok,
@@ -144,9 +162,7 @@ const runHkAction = async (composer: IMessageComposer<unknown[]>, expectedAction
                 };
             }
         });
-    }
-    catch(err)
-    {
+    } catch (err) {
         const reason = err instanceof Error ? err.message : 'unknown';
 
         return { ok: false, actionId: null, message: reason };
@@ -156,8 +172,7 @@ const runHkAction = async (composer: IMessageComposer<unknown[]>, expectedAction
 const banUserViaPacket = (userId: number, reason: string, hours: number): Promise<IHousekeepingActionResult> =>
     runHkAction(new HousekeepingBanUserComposer(userId, reason || '', hours), 'user.ban');
 
-const unbanUserViaPacket = (userId: number): Promise<IHousekeepingActionResult> =>
-    runHkAction(new HousekeepingUnbanUserComposer(userId), 'user.unban');
+const unbanUserViaPacket = (userId: number): Promise<IHousekeepingActionResult> => runHkAction(new HousekeepingUnbanUserComposer(userId), 'user.unban');
 
 const muteUserViaPacket = (userId: number, reason: string, minutes: number): Promise<IHousekeepingActionResult> =>
     runHkAction(new HousekeepingMuteUserComposer(userId, reason || '', minutes), 'user.mute');
@@ -191,56 +206,53 @@ const mapRoom = (room: HousekeepingRoomData): IHousekeepingRoom => ({
     createdAt: room.createdAt
 });
 
-const findRoomByIdViaPacket = (roomId: number): Promise<IHousekeepingRoom | null> =>
-{
-    if(!Number.isFinite(roomId) || roomId <= 0) return Promise.resolve(null);
+const findRoomByIdViaPacket = (roomId: number): Promise<IHousekeepingRoom | null> => {
+    if (!Number.isFinite(roomId) || roomId <= 0) return Promise.resolve(null);
 
     SendMessageComposer(new HousekeepingFindRoomByIdComposer(roomId));
 
     return awaitMessageEvent<HousekeepingRoomDetailEvent, IHousekeepingRoom | null>(HousekeepingRoomDetailEvent, {
         timeoutMs: 8_000,
-        select: event =>
-        {
+        select: (event) => {
             const parser = event.getParser();
 
-            if(!parser || !parser.found || !parser.room) return null;
+            if (!parser || !parser.found || !parser.room) return null;
 
             return mapRoom(parser.room);
         }
     });
 };
 
-const findRoomByNameViaPacket = (name: string): Promise<IHousekeepingRoom[]> =>
-{
+const findRoomByNameViaPacket = (name: string): Promise<IHousekeepingRoom[]> => {
     const trimmed = (name || '').trim();
 
-    if(!trimmed) return Promise.resolve([]);
+    if (!trimmed) return Promise.resolve([]);
 
     SendMessageComposer(new HousekeepingSearchRoomsComposer(trimmed, true, 50));
 
     return awaitMessageEvent<HousekeepingRoomListEvent, IHousekeepingRoom[]>(HousekeepingRoomListEvent, {
         timeoutMs: 8_000,
-        select: event => event.getParser()?.rooms.map(mapRoom) ?? []
+        select: (event) => event.getParser()?.rooms.map(mapRoom) ?? []
     });
 };
 
-const searchRoomsViaPacket = (prefix: string, signal?: AbortSignal): Promise<IHousekeepingRoomSummary[]> =>
-{
+const searchRoomsViaPacket = (prefix: string, signal?: AbortSignal): Promise<IHousekeepingRoomSummary[]> => {
     const trimmed = (prefix || '').trim();
 
-    if(!trimmed) return Promise.resolve([]);
+    if (!trimmed) return Promise.resolve([]);
 
     SendMessageComposer(new HousekeepingSearchRoomsComposer(trimmed, false, 8));
 
     return awaitMessageEvent<HousekeepingRoomListEvent, IHousekeepingRoomSummary[]>(HousekeepingRoomListEvent, {
         signal,
         timeoutMs: 8_000,
-        select: event => event.getParser()?.rooms.map(room => ({
-            id: room.id,
-            name: room.name,
-            userCount: room.userCount,
-            ownerName: room.ownerName
-        })) ?? []
+        select: (event) =>
+            event.getParser()?.rooms.map((room) => ({
+                id: room.id,
+                name: room.name,
+                userCount: room.userCount,
+                ownerName: room.ownerName
+            })) ?? []
     });
 };
 
@@ -256,8 +268,7 @@ const kickAllFromRoomViaPacket = (roomId: number): Promise<IHousekeepingActionRe
 const transferRoomOwnershipViaPacket = (roomId: number, newOwnerId: number): Promise<IHousekeepingActionResult> =>
     runHkAction(new HousekeepingTransferRoomOwnershipComposer(roomId, newOwnerId), 'room.transfer');
 
-const deleteRoomViaPacket = (roomId: number): Promise<IHousekeepingActionResult> =>
-    runHkAction(new HousekeepingDeleteRoomComposer(roomId), 'room.delete');
+const deleteRoomViaPacket = (roomId: number): Promise<IHousekeepingActionResult> => runHkAction(new HousekeepingDeleteRoomComposer(roomId), 'room.delete');
 
 const CURRENCY_DUCKETS = 0;
 const CURRENCY_DIAMONDS = 5;
@@ -266,10 +277,10 @@ const giveCreditsViaPacket = (userId: number, amount: number): Promise<IHousekee
     runHkAction(new HousekeepingGiveCreditsComposer(userId, amount), 'user.give_credits');
 
 const giveDucketsViaPacket = (userId: number, amount: number): Promise<IHousekeepingActionResult> =>
-    runHkAction(new HousekeepingGiveCurrencyComposer(userId, CURRENCY_DUCKETS, amount), `user.give_currency_${ CURRENCY_DUCKETS }`);
+    runHkAction(new HousekeepingGiveCurrencyComposer(userId, CURRENCY_DUCKETS, amount), `user.give_currency_${CURRENCY_DUCKETS}`);
 
 const giveDiamondsViaPacket = (userId: number, amount: number): Promise<IHousekeepingActionResult> =>
-    runHkAction(new HousekeepingGiveCurrencyComposer(userId, CURRENCY_DIAMONDS, amount), `user.give_currency_${ CURRENCY_DIAMONDS }`);
+    runHkAction(new HousekeepingGiveCurrencyComposer(userId, CURRENCY_DIAMONDS, amount), `user.give_currency_${CURRENCY_DIAMONDS}`);
 
 const grantItemViaPacket = (userId: number, itemId: number, quantity: number): Promise<IHousekeepingActionResult> =>
     runHkAction(new HousekeepingGrantItemComposer(userId, itemId, quantity), 'user.grant_item');
@@ -281,23 +292,28 @@ const sendHotelAlertViaPacket = (message: string): Promise<IHousekeepingActionRe
     runHkAction(new HousekeepingSendHotelAlertComposer(message || ''), 'hotel.alert');
 
 const EMPTY_DASHBOARD: IHousekeepingDashboard = {
-    onlineUsers: 0, totalUsers: 0, activeRooms: 0, totalRooms: 0,
-    peakOnlineToday: 0, peakOnlineAllTime: 0, pendingTickets: 0,
-    sanctionsLast24h: 0, serverUptimeSeconds: 0, serverVersion: ''
+    onlineUsers: 0,
+    totalUsers: 0,
+    activeRooms: 0,
+    totalRooms: 0,
+    peakOnlineToday: 0,
+    peakOnlineAllTime: 0,
+    pendingTickets: 0,
+    sanctionsLast24h: 0,
+    serverUptimeSeconds: 0,
+    serverVersion: ''
 };
 
-const getDashboardViaPacket = (signal?: AbortSignal): Promise<IHousekeepingDashboard> =>
-{
+const getDashboardViaPacket = (signal?: AbortSignal): Promise<IHousekeepingDashboard> => {
     SendMessageComposer(new HousekeepingGetDashboardComposer());
 
     return awaitMessageEvent<HousekeepingDashboardEvent, IHousekeepingDashboard>(HousekeepingDashboardEvent, {
         signal,
         timeoutMs: 10_000,
-        select: event =>
-        {
+        select: (event) => {
             const parser = event.getParser();
 
-            if(!parser) return EMPTY_DASHBOARD;
+            if (!parser) return EMPTY_DASHBOARD;
 
             return {
                 onlineUsers: parser.onlineUsers,
@@ -315,8 +331,7 @@ const getDashboardViaPacket = (signal?: AbortSignal): Promise<IHousekeepingDashb
     });
 };
 
-const listActionLogViaPacket = (limit: number, signal?: AbortSignal): Promise<IHousekeepingActionLogEntry[]> =>
-{
+const listActionLogViaPacket = (limit: number, signal?: AbortSignal): Promise<IHousekeepingActionLogEntry[]> => {
     const safeLimit = Math.max(1, Math.min(500, Math.floor(limit || 50)));
 
     SendMessageComposer(new HousekeepingListActionLogComposer(safeLimit));
@@ -324,18 +339,19 @@ const listActionLogViaPacket = (limit: number, signal?: AbortSignal): Promise<IH
     return awaitMessageEvent<HousekeepingActionLogEvent, IHousekeepingActionLogEntry[]>(HousekeepingActionLogEvent, {
         signal,
         timeoutMs: 10_000,
-        select: event => event.getParser()?.entries.map(entry => ({
-            id: entry.id,
-            timestamp: entry.timestamp,
-            actorId: entry.actorId,
-            actorName: entry.actorName,
-            targetType: (entry.targetType === 'room' || entry.targetType === 'hotel') ? entry.targetType : 'user',
-            targetId: entry.targetId > 0 ? entry.targetId : null,
-            targetLabel: entry.targetLabel,
-            action: entry.action,
-            detail: entry.detail,
-            success: entry.success
-        })) ?? []
+        select: (event) =>
+            event.getParser()?.entries.map((entry) => ({
+                id: entry.id,
+                timestamp: entry.timestamp,
+                actorId: entry.actorId,
+                actorName: entry.actorName,
+                targetType: entry.targetType === 'room' || entry.targetType === 'hotel' ? entry.targetType : 'user',
+                targetId: entry.targetId > 0 ? entry.targetId : null,
+                targetLabel: entry.targetLabel,
+                action: entry.action,
+                detail: entry.detail,
+                success: entry.success
+            })) ?? []
     });
 };
 

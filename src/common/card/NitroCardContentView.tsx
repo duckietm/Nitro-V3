@@ -1,19 +1,17 @@
 import { FC, useMemo } from 'react';
 import { Column, ColumnProps } from '..';
 
-export const NitroCardContentView: FC<ColumnProps> = props =>
-{
+export const NitroCardContentView: FC<ColumnProps> = (props) => {
     const { overflow = 'auto', classNames = [], ...rest } = props;
 
-    const getClassNames = useMemo(() =>
-    {
+    const getClassNames = useMemo(() => {
         // Theme Changer
-        const newClassNames: string[] = [ 'container-fluid', 'nitro-card-content-shell', 'h-full p-[10px] overflow-auto' ];
+        const newClassNames: string[] = ['container-fluid', 'nitro-card-content-shell', 'h-full p-[10px] overflow-auto'];
 
-        if(classNames.length) newClassNames.push(...classNames);
+        if (classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
-    }, [ classNames ]);
+    }, [classNames]);
 
-    return <Column classNames={ getClassNames } overflow={ overflow } { ...rest } />;
+    return <Column classNames={getClassNames} overflow={overflow} {...rest} />;
 };

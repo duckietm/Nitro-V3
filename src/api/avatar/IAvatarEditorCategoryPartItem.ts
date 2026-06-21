@@ -1,7 +1,6 @@
 import { IFigurePartSet } from '@nitrots/nitro-renderer';
 
-export interface IAvatarEditorCategoryPartItem
-{
+export interface IAvatarEditorCategoryPartItem {
     id?: number;
     partSet?: IFigurePartSet;
     usesColor?: boolean;

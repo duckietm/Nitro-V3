@@ -18,8 +18,5 @@ import { useSyncExternalStore } from 'react';
  * object is returned across reads until the corresponding *_UPDATED event
  * dispatches.
  */
-export const useExternalSnapshot = <T,>(
-    subscribe: (onChange: () => void) => () => void,
-    getSnapshot: () => T,
-    getServerSnapshot?: () => T
-): T => useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot ?? getSnapshot);
+export const useExternalSnapshot = <T>(subscribe: (onChange: () => void) => () => void, getSnapshot: () => T, getServerSnapshot?: () => T): T =>
+    useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot ?? getSnapshot);

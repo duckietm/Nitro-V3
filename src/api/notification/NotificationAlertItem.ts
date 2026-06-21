@@ -1,7 +1,6 @@
 import { NotificationAlertType } from './NotificationAlertType';
 
-export class NotificationAlertItem
-{
+export class NotificationAlertItem {
     private static ITEM_ID: number = -1;
 
     private _id: number;
@@ -12,8 +11,14 @@ export class NotificationAlertItem
     private _title: string;
     private _imageUrl: string;
 
-    constructor(messages: string[], alertType: string = NotificationAlertType.DEFAULT, clickUrl: string = null, clickUrlText: string = null, title: string = null, imageUrl: string = null)
-    {
+    constructor(
+        messages: string[],
+        alertType: string = NotificationAlertType.DEFAULT,
+        clickUrl: string = null,
+        clickUrlText: string = null,
+        title: string = null,
+        imageUrl: string = null
+    ) {
         NotificationAlertItem.ITEM_ID += 1;
 
         this._id = NotificationAlertItem.ITEM_ID;
@@ -25,43 +30,35 @@ export class NotificationAlertItem
         this._imageUrl = imageUrl;
     }
 
-    public get id(): number
-    {
+    public get id(): number {
         return this._id;
     }
 
-    public get messages(): string[]
-    {
+    public get messages(): string[] {
         return this._messages;
     }
 
-    public set alertType(alertType: string)
-    {
+    public set alertType(alertType: string) {
         this._alertType = alertType;
     }
 
-    public get alertType(): string
-    {
+    public get alertType(): string {
         return this._alertType;
     }
 
-    public get clickUrl(): string
-    {
+    public get clickUrl(): string {
         return this._clickUrl;
     }
 
-    public get clickUrlText(): string
-    {
+    public get clickUrlText(): string {
         return this._clickUrlText;
     }
 
-    public get title(): string
-    {
+    public get title(): string {
         return this._title;
     }
 
-    public get imageUrl(): string
-    {
+    public get imageUrl(): string {
         return this._imageUrl;
     }
 }

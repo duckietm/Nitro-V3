@@ -4,7 +4,7 @@ import globalInspectionIcon from '../../assets/images/wiredtools/global.png';
 import userInspectionIcon from '../../assets/images/wiredtools/user.png';
 import { InspectionElementButton, VariableDefinition, VariablesElementButton, VariablesElementType, WiredToolsTab } from './WiredCreatorTools.types';
 
-export const TABS: Array<{ key: WiredToolsTab; label: string; }> = [
+export const TABS: Array<{ key: WiredToolsTab; label: string }> = [
     { key: 'monitor', label: 'Monitor' },
     { key: 'variables', label: 'Variables' },
     { key: 'inspection', label: 'Inspection' },
@@ -12,14 +12,7 @@ export const TABS: Array<{ key: WiredToolsTab; label: string; }> = [
     { key: 'settings', label: 'Settings' }
 ];
 
-export const MONITOR_LOG_ORDER: string[] = [
-    'EXECUTION_CAP',
-    'DELAYED_EVENTS_CAP',
-    'EXECUTOR_OVERLOAD',
-    'MARKED_AS_HEAVY',
-    'KILLED',
-    'RECURSION_TIMEOUT'
-];
+export const MONITOR_LOG_ORDER: string[] = ['EXECUTION_CAP', 'DELAYED_EVENTS_CAP', 'EXECUTOR_OVERLOAD', 'MARKED_AS_HEAVY', 'KILLED', 'RECURSION_TIMEOUT'];
 
 export const WIRED_MONITOR_ACTION_FETCH = 0;
 export const WIRED_MONITOR_ACTION_CLEAR_LOGS = 1;
@@ -28,7 +21,7 @@ export const WIRED_VARIABLES_POLL_MS = 50;
 export const WIRED_INSPECTION_REFRESH_MS = 50;
 export const WIRED_CLOCK_REFRESH_MS = 50;
 
-export const MONITOR_ERROR_INFO: Record<string, { description: string[]; severity: string; title: string; }> = {
+export const MONITOR_ERROR_INFO: Record<string, { description: string[]; severity: string; title: string }> = {
     EXECUTION_CAP: {
         title: 'EXECUTION_CAP',
         severity: 'ERROR',
@@ -98,24 +91,28 @@ export const VARIABLES_ELEMENTS: VariablesElementButton[] = [
     { key: 'context', label: 'Context', icon: contextInspectionIcon }
 ];
 
-export const EDITABLE_FURNI_VARIABLES: string[] = [ '@position_x', '@position_y', '@rotation', '@altitude', '@state', '@wallitem_offset' ];
-export const EDITABLE_USER_VARIABLES: string[] = [ '@position_x', '@position_y', '@direction' ];
+export const EDITABLE_FURNI_VARIABLES: string[] = ['@position_x', '@position_y', '@rotation', '@altitude', '@state', '@wallitem_offset'];
+export const EDITABLE_USER_VARIABLES: string[] = ['@position_x', '@position_y', '@direction'];
 
-const createVariableDefinition = (key: string, target: 'Furni' | 'User' | 'Global' | 'Context', availability: string = 'Always', canWriteTo = false): VariableDefinition =>
-    ({
-        key,
-        target,
-        type: 'Internal',
-        hasValue: true,
-        availability,
-        canWriteTo,
-        canCreateDelete: false,
-        canIntercept: false,
-        hasCreationTime: false,
-        hasUpdateTime: false,
-        isTextConnected: false,
-        isAlwaysAvailable: (availability === 'Always')
-    });
+const createVariableDefinition = (
+    key: string,
+    target: 'Furni' | 'User' | 'Global' | 'Context',
+    availability: string = 'Always',
+    canWriteTo = false
+): VariableDefinition => ({
+    key,
+    target,
+    type: 'Internal',
+    hasValue: true,
+    availability,
+    canWriteTo,
+    canCreateDelete: false,
+    canIntercept: false,
+    hasCreationTime: false,
+    hasUpdateTime: false,
+    isTextConnected: false,
+    isAlwaysAvailable: availability === 'Always'
+});
 
 export const VARIABLE_DEFINITIONS: Record<VariablesElementType, VariableDefinition[]> = {
     furni: [
@@ -211,7 +208,7 @@ export const VARIABLE_DEFINITIONS: Record<VariablesElementType, VariableDefiniti
     ]
 };
 
-export const WIRED_FREEZE_EFFECT_IDS: Set<number> = new Set([ 218, 12, 11, 53, 163 ]);
+export const WIRED_FREEZE_EFFECT_IDS: Set<number> = new Set([218, 12, 11, 53, 163]);
 
 export const TEAM_COLOR_NAMES: Record<number, string> = {
     1: 'red',
@@ -220,6 +217,6 @@ export const TEAM_COLOR_NAMES: Record<number, string> = {
     4: 'yellow'
 };
 
-export const WEEKDAY_NAMES: string[] = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
-export const MONTH_NAMES: string[] = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
-export const DIRECTION_NAMES: string[] = [ 'North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West' ];
+export const WEEKDAY_NAMES: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+export const MONTH_NAMES: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+export const DIRECTION_NAMES: string[] = ['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'];

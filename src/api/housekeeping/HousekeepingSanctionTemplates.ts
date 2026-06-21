@@ -5,10 +5,9 @@ export const HousekeepingSanctionType = {
     TRADE_LOCK: 'trade_lock'
 } as const;
 
-export type HousekeepingSanctionType = typeof HousekeepingSanctionType[keyof typeof HousekeepingSanctionType];
+export type HousekeepingSanctionType = (typeof HousekeepingSanctionType)[keyof typeof HousekeepingSanctionType];
 
-export interface HousekeepingSanctionTemplate
-{
+export interface HousekeepingSanctionTemplate {
     id: string;
     /** Display name (LocalizeText key OR plain label fallback). */
     name: string;
@@ -40,11 +39,15 @@ export const HK_SANCTION_TEMPLATES: HousekeepingSanctionTemplate[] = [
     { id: 'ban_30d', name: 'Ban 30d', type: HousekeepingSanctionType.BAN, durationValue: 720, defaultReason: '30-day ban — final warning' },
     { id: 'ban_perm', name: 'Ban permanent', type: HousekeepingSanctionType.BAN, durationValue: 24 * 365 * 100, defaultReason: 'Permanent ban' },
     { id: 'tlock_7d', name: 'Trade lock 7d', type: HousekeepingSanctionType.TRADE_LOCK, durationValue: 168, defaultReason: 'Trade lock — suspected scam' },
-    { id: 'tlock_perm', name: 'Trade lock perm', type: HousekeepingSanctionType.TRADE_LOCK, durationValue: 24 * 365 * 100, defaultReason: 'Permanent trade lock' }
+    {
+        id: 'tlock_perm',
+        name: 'Trade lock perm',
+        type: HousekeepingSanctionType.TRADE_LOCK,
+        durationValue: 24 * 365 * 100,
+        defaultReason: 'Permanent trade lock'
+    }
 ];
 
-export const findTemplateById = (id: string): HousekeepingSanctionTemplate | null =>
-    HK_SANCTION_TEMPLATES.find(t => t.id === id) ?? null;
+export const findTemplateById = (id: string): HousekeepingSanctionTemplate | null => HK_SANCTION_TEMPLATES.find((t) => t.id === id) ?? null;
 
-export const templatesByType = (type: HousekeepingSanctionType): HousekeepingSanctionTemplate[] =>
-    HK_SANCTION_TEMPLATES.filter(t => t.type === type);
+export const templatesByType = (type: HousekeepingSanctionType): HousekeepingSanctionTemplate[] => HK_SANCTION_TEMPLATES.filter((t) => t.type === type);

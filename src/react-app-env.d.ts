@@ -33,13 +33,11 @@ declare module '*.css';
 declare module '*.scss';
 declare module '*.sass';
 
-interface Window
-{
+interface Window {
     NitroConfig?: Record<string, unknown>;
     NitroSecureApiUrl?: string;
 }
 
-interface ImportMeta
-{
+interface ImportMeta {
     glob: (pattern: string, options?: { eager?: boolean; import?: string }) => Record<string, string>;
 }

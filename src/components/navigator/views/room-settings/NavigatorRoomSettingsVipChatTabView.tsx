@@ -5,73 +5,118 @@ import { Column, Grid, Text } from '../../../../common';
 import { NitroInput } from '../../../../layout';
 import { NavigatorRoomSettingsSectionView } from './NavigatorRoomSettingsSectionView';
 
-interface NavigatorRoomSettingsTabViewProps
-{
+interface NavigatorRoomSettingsTabViewProps {
     roomData: IRoomData;
     handleChange: (field: string, value: string | number | boolean) => void;
 }
 
-export const NavigatorRoomSettingsVipChatTabView: FC<NavigatorRoomSettingsTabViewProps> = props =>
-{
+export const NavigatorRoomSettingsVipChatTabView: FC<NavigatorRoomSettingsTabViewProps> = (props) => {
     const { roomData = null, handleChange = null } = props;
-    const [ chatDistance, setChatDistance ] = useState<number>(0);
+    const [chatDistance, setChatDistance] = useState<number>(0);
     const isHC = GetClubMemberLevel() > 0;
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setChatDistance(roomData.chatSettings.distance);
-    }, [ roomData.chatSettings ]);
+    }, [roomData.chatSettings]);
 
     return (
         <>
             <div className="flex flex-col gap-1">
-                <Text small bold>{ LocalizeText('navigator.roomsettings.vip.caption') }</Text>
-                <Text small>{ LocalizeText('navigator.roomsettings.vip.info') }</Text>
+                <Text small bold>
+                    {LocalizeText('navigator.roomsettings.vip.caption')}
+                </Text>
+                <Text small>{LocalizeText('navigator.roomsettings.vip.info')}</Text>
             </div>
-            <Grid className={ !isHC ? 'opacity-50 pointer-events-none' : '' } overflow="auto">
-                <Column gap={ 1 } size={ 6 }>
-                    <NavigatorRoomSettingsSectionView title={ LocalizeText('navigator.roomsettings.chat_settings') } gap={ 1 } className="h-full">
-                        <Text small>{ LocalizeText('navigator.roomsettings.chat_settings.info') }</Text>
-                        <select className="form-select form-select-sm" disabled={ !isHC } value={ roomData.chatSettings.mode } onChange={ event => handleChange('bubble_mode', event.target.value) }>
-                            <option value={ RoomChatSettings.CHAT_MODE_FREE_FLOW }>{ LocalizeText('navigator.roomsettings.chat.mode.free.flow') }</option>
-                            <option value={ RoomChatSettings.CHAT_MODE_LINE_BY_LINE }>{ LocalizeText('navigator.roomsettings.chat.mode.line.by.line') }</option>
+            <Grid className={!isHC ? 'opacity-50 pointer-events-none' : ''} overflow="auto">
+                <Column gap={1} size={6}>
+                    <NavigatorRoomSettingsSectionView title={LocalizeText('navigator.roomsettings.chat_settings')} gap={1} className="h-full">
+                        <Text small>{LocalizeText('navigator.roomsettings.chat_settings.info')}</Text>
+                        <select
+                            className="form-select form-select-sm"
+                            disabled={!isHC}
+                            value={roomData.chatSettings.mode}
+                            onChange={(event) => handleChange('bubble_mode', event.target.value)}
+                        >
+                            <option value={RoomChatSettings.CHAT_MODE_FREE_FLOW}>{LocalizeText('navigator.roomsettings.chat.mode.free.flow')}</option>
+                            <option value={RoomChatSettings.CHAT_MODE_LINE_BY_LINE}>{LocalizeText('navigator.roomsettings.chat.mode.line.by.line')}</option>
                         </select>
-                        <select className="form-select form-select-sm" disabled={ !isHC } value={ roomData.chatSettings.weight } onChange={ event => handleChange('chat_weight', event.target.value) }>
-                            <option value={ RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL }>{ LocalizeText('navigator.roomsettings.chat.bubbles.width.normal') }</option>
-                            <option value={ RoomChatSettings.CHAT_BUBBLE_WIDTH_THIN }>{ LocalizeText('navigator.roomsettings.chat.bubbles.width.thin') }</option>
-                            <option value={ RoomChatSettings.CHAT_BUBBLE_WIDTH_WIDE }>{ LocalizeText('navigator.roomsettings.chat.bubbles.width.wide') }</option>
+                        <select
+                            className="form-select form-select-sm"
+                            disabled={!isHC}
+                            value={roomData.chatSettings.weight}
+                            onChange={(event) => handleChange('chat_weight', event.target.value)}
+                        >
+                            <option value={RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL}>
+                                {LocalizeText('navigator.roomsettings.chat.bubbles.width.normal')}
+                            </option>
+                            <option value={RoomChatSettings.CHAT_BUBBLE_WIDTH_THIN}>{LocalizeText('navigator.roomsettings.chat.bubbles.width.thin')}</option>
+                            <option value={RoomChatSettings.CHAT_BUBBLE_WIDTH_WIDE}>{LocalizeText('navigator.roomsettings.chat.bubbles.width.wide')}</option>
                         </select>
-                        <select className="form-select form-select-sm" disabled={ !isHC } value={ roomData.chatSettings.speed } onChange={ event => handleChange('bubble_speed', event.target.value) }>
-                            <option value={ RoomChatSettings.CHAT_SCROLL_SPEED_FAST }>{ LocalizeText('navigator.roomsettings.chat.speed.fast') }</option>
-                            <option value={ RoomChatSettings.CHAT_SCROLL_SPEED_NORMAL }>{ LocalizeText('navigator.roomsettings.chat.speed.normal') }</option>
-                            <option value={ RoomChatSettings.CHAT_SCROLL_SPEED_SLOW }>{ LocalizeText('navigator.roomsettings.chat.speed.slow') }</option>
+                        <select
+                            className="form-select form-select-sm"
+                            disabled={!isHC}
+                            value={roomData.chatSettings.speed}
+                            onChange={(event) => handleChange('bubble_speed', event.target.value)}
+                        >
+                            <option value={RoomChatSettings.CHAT_SCROLL_SPEED_FAST}>{LocalizeText('navigator.roomsettings.chat.speed.fast')}</option>
+                            <option value={RoomChatSettings.CHAT_SCROLL_SPEED_NORMAL}>{LocalizeText('navigator.roomsettings.chat.speed.normal')}</option>
+                            <option value={RoomChatSettings.CHAT_SCROLL_SPEED_SLOW}>{LocalizeText('navigator.roomsettings.chat.speed.slow')}</option>
                         </select>
-                        <select className="form-select form-select-sm" disabled={ !isHC } value={ roomData.chatSettings.protection } onChange={ event => handleChange('flood_protection', event.target.value) }>
-                            <option value={ RoomChatSettings.FLOOD_FILTER_LOOSE }>{ LocalizeText('navigator.roomsettings.chat.flood.loose') }</option>
-                            <option value={ RoomChatSettings.FLOOD_FILTER_NORMAL }>{ LocalizeText('navigator.roomsettings.chat.flood.normal') }</option>
-                            <option value={ RoomChatSettings.FLOOD_FILTER_STRICT }>{ LocalizeText('navigator.roomsettings.chat.flood.strict') }</option>
+                        <select
+                            className="form-select form-select-sm"
+                            disabled={!isHC}
+                            value={roomData.chatSettings.protection}
+                            onChange={(event) => handleChange('flood_protection', event.target.value)}
+                        >
+                            <option value={RoomChatSettings.FLOOD_FILTER_LOOSE}>{LocalizeText('navigator.roomsettings.chat.flood.loose')}</option>
+                            <option value={RoomChatSettings.FLOOD_FILTER_NORMAL}>{LocalizeText('navigator.roomsettings.chat.flood.normal')}</option>
+                            <option value={RoomChatSettings.FLOOD_FILTER_STRICT}>{LocalizeText('navigator.roomsettings.chat.flood.strict')}</option>
                         </select>
-                        <Text small>{ LocalizeText('navigator.roomsettings.chat_settings.hearing.distance') }</Text>
-                        <NitroInput className="form-control-sm" disabled={ !isHC } min="0" type="number" value={ chatDistance } onBlur={ event => handleChange('chat_distance', chatDistance) } onChange={ event => setChatDistance(event.target.valueAsNumber) } />
+                        <Text small>{LocalizeText('navigator.roomsettings.chat_settings.hearing.distance')}</Text>
+                        <NitroInput
+                            className="form-control-sm"
+                            disabled={!isHC}
+                            min="0"
+                            type="number"
+                            value={chatDistance}
+                            onBlur={(event) => handleChange('chat_distance', chatDistance)}
+                            onChange={(event) => setChatDistance(event.target.valueAsNumber)}
+                        />
                     </NavigatorRoomSettingsSectionView>
                 </Column>
-                <Column gap={ 1 } size={ 6 }>
-                    <NavigatorRoomSettingsSectionView title={ LocalizeText('navigator.roomsettings.vip_settings') } gap={ 1 } className="h-full">
+                <Column gap={1} size={6}>
+                    <NavigatorRoomSettingsSectionView title={LocalizeText('navigator.roomsettings.vip_settings')} gap={1} className="h-full">
                         <div className="flex items-center gap-1">
-                            <input checked={ roomData.hideWalls } className="form-check-input" disabled={ !isHC } type="checkbox" onChange={ event => handleChange('hide_walls', event.target.checked) } />
-                            <Text small>{ LocalizeText('navigator.roomsettings.hide_walls') }</Text>
+                            <input
+                                checked={roomData.hideWalls}
+                                className="form-check-input"
+                                disabled={!isHC}
+                                type="checkbox"
+                                onChange={(event) => handleChange('hide_walls', event.target.checked)}
+                            />
+                            <Text small>{LocalizeText('navigator.roomsettings.hide_walls')}</Text>
                         </div>
-                        <select className="form-select form-select-sm" disabled={ !isHC } value={ roomData.wallThickness } onChange={ event => handleChange('wall_thickness', event.target.value) }>
-                            <option value="0">{ LocalizeText('navigator.roomsettings.wall_thickness.normal') }</option>
-                            <option value="1">{ LocalizeText('navigator.roomsettings.wall_thickness.thick') }</option>
-                            <option value="-1">{ LocalizeText('navigator.roomsettings.wall_thickness.thin') }</option>
-                            <option value="-2">{ LocalizeText('navigator.roomsettings.wall_thickness.thinnest') }</option>
+                        <select
+                            className="form-select form-select-sm"
+                            disabled={!isHC}
+                            value={roomData.wallThickness}
+                            onChange={(event) => handleChange('wall_thickness', event.target.value)}
+                        >
+                            <option value="0">{LocalizeText('navigator.roomsettings.wall_thickness.normal')}</option>
+                            <option value="1">{LocalizeText('navigator.roomsettings.wall_thickness.thick')}</option>
+                            <option value="-1">{LocalizeText('navigator.roomsettings.wall_thickness.thin')}</option>
+                            <option value="-2">{LocalizeText('navigator.roomsettings.wall_thickness.thinnest')}</option>
                         </select>
-                        <select className="form-select form-select-sm" disabled={ !isHC } value={ roomData.floorThickness } onChange={ event => handleChange('floor_thickness', event.target.value) }>
-                            <option value="0">{ LocalizeText('navigator.roomsettings.floor_thickness.normal') }</option>
-                            <option value="1">{ LocalizeText('navigator.roomsettings.floor_thickness.thick') }</option>
-                            <option value="-1">{ LocalizeText('navigator.roomsettings.floor_thickness.thin') }</option>
-                            <option value="-2">{ LocalizeText('navigator.roomsettings.floor_thickness.thinnest') }</option>
+                        <select
+                            className="form-select form-select-sm"
+                            disabled={!isHC}
+                            value={roomData.floorThickness}
+                            onChange={(event) => handleChange('floor_thickness', event.target.value)}
+                        >
+                            <option value="0">{LocalizeText('navigator.roomsettings.floor_thickness.normal')}</option>
+                            <option value="1">{LocalizeText('navigator.roomsettings.floor_thickness.thick')}</option>
+                            <option value="-1">{LocalizeText('navigator.roomsettings.floor_thickness.thin')}</option>
+                            <option value="-2">{LocalizeText('navigator.roomsettings.floor_thickness.thinnest')}</option>
                         </select>
                     </NavigatorRoomSettingsSectionView>
                 </Column>

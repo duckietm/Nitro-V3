@@ -9,22 +9,15 @@ import { useMessageEvent } from './useMessageEvent';
  *
  *   const data = useMessageEventState(SomeParser, e => e.getParser().data, null);
  */
-export const useMessageEventState = <T extends IMessageEvent, S>(
-    eventType: typeof MessageEvent,
-    selector: (event: T) => S,
-    initial: S | (() => S)
-): S =>
-{
-    const [ value, setValue ] = useState<S>(initial);
+export const useMessageEventState = <T extends IMessageEvent, S>(eventType: typeof MessageEvent, selector: (event: T) => S, initial: S | (() => S)): S => {
+    const [value, setValue] = useState<S>(initial);
     const selectorRef = useRef(selector);
 
-    useLayoutEffect(() =>
-    {
+    useLayoutEffect(() => {
         selectorRef.current = selector;
     });
 
-    const handler = useCallback((event: T) =>
-    {
+    const handler = useCallback((event: T) => {
         setValue(selectorRef.current(event));
     }, []);
 

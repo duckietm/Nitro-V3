@@ -1,4 +1,17 @@
-import { ExtendedProfileChangedMessageEvent, GetSessionDataManager, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
+import {
+    ExtendedProfileChangedMessageEvent,
+    GetSessionDataManager,
+    RelationshipStatusInfoEvent,
+    RelationshipStatusInfoMessageParser,
+    RoomEngineObjectEvent,
+    RoomObjectCategory,
+    RoomObjectType,
+    UserCurrentBadgesComposer,
+    UserCurrentBadgesEvent,
+    UserProfileEvent,
+    UserProfileParser,
+    UserRelationshipsComposer
+} from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
 import { CreateLinkEvent, GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
 import { useMessageEvent, useNitroEvent } from '../../hooks';
@@ -6,66 +19,57 @@ import { NitroCard } from '../../layout';
 import { GroupsContainerView } from './GroupsContainerView';
 import { UserContainerView } from './UserContainerView';
 
-export const UserProfileView: FC<{}> = () =>
-{
-    const [ userProfile, setUserProfile ] = useState<UserProfileParser>(null);
-    const [ userBadges, setUserBadges ] = useState<string[]>([]);
-    const [ userRelationships, setUserRelationships ] = useState<RelationshipStatusInfoMessageParser>(null);
+export const UserProfileView: FC<{}> = () => {
+    const [userProfile, setUserProfile] = useState<UserProfileParser>(null);
+    const [userBadges, setUserBadges] = useState<string[]>([]);
+    const [userRelationships, setUserRelationships] = useState<RelationshipStatusInfoMessageParser>(null);
 
-    const onClose = () =>
-    {
+    const onClose = () => {
         setUserProfile(null);
         setUserBadges([]);
         setUserRelationships(null);
     };
 
-    const onLeaveGroup = () =>
-    {
-        if(!userProfile || (userProfile.id !== GetSessionDataManager().userId)) return;
+    const onLeaveGroup = () => {
+        if (!userProfile || userProfile.id !== GetSessionDataManager().userId) return;
 
         GetUserProfile(userProfile.id);
     };
 
-    const onOpenRooms = () =>
-    {
-        if(!userProfile) return;
+    const onOpenRooms = () => {
+        if (!userProfile) return;
 
-        CreateLinkEvent(`navigator/search/hotel_view/owner:${ userProfile.username }`);
+        CreateLinkEvent(`navigator/search/hotel_view/owner:${userProfile.username}`);
     };
 
-    useMessageEvent<UserCurrentBadgesEvent>(UserCurrentBadgesEvent, event =>
-    {
+    useMessageEvent<UserCurrentBadgesEvent>(UserCurrentBadgesEvent, (event) => {
         const parser = event.getParser();
 
-        if(!userProfile || (parser.userId !== userProfile.id)) return;
+        if (!userProfile || parser.userId !== userProfile.id) return;
 
         setUserBadges(parser.badges);
     });
 
-    useMessageEvent<RelationshipStatusInfoEvent>(RelationshipStatusInfoEvent, event =>
-    {
+    useMessageEvent<RelationshipStatusInfoEvent>(RelationshipStatusInfoEvent, (event) => {
         const parser = event.getParser();
 
-        if(!userProfile || (parser.userId !== userProfile.id)) return;
+        if (!userProfile || parser.userId !== userProfile.id) return;
 
         setUserRelationships(parser);
     });
 
-    useMessageEvent<UserProfileEvent>(UserProfileEvent, event =>
-    {
+    useMessageEvent<UserProfileEvent>(UserProfileEvent, (event) => {
         const parser = event.getParser();
 
         let isSameProfile = false;
 
-        setUserProfile(prevValue =>
-        {
-            if(prevValue && prevValue.id) isSameProfile = (prevValue.id === parser.id);
+        setUserProfile((prevValue) => {
+            if (prevValue && prevValue.id) isSameProfile = prevValue.id === parser.id;
 
             return parser;
         });
 
-        if(!isSameProfile)
-        {
+        if (!isSameProfile) {
             setUserBadges([]);
             setUserRelationships(null);
         }
@@ -74,49 +78,46 @@ export const UserProfileView: FC<{}> = () =>
         SendMessageComposer(new UserRelationshipsComposer(parser.id));
     });
 
-    useMessageEvent<ExtendedProfileChangedMessageEvent>(ExtendedProfileChangedMessageEvent, event =>
-    {
+    useMessageEvent<ExtendedProfileChangedMessageEvent>(ExtendedProfileChangedMessageEvent, (event) => {
         const parser = event.getParser();
 
-        if(parser.userId != userProfile?.id) return;
+        if (parser.userId != userProfile?.id) return;
 
         GetUserProfile(parser.userId);
     });
 
-    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.SELECTED, event =>
-    {
-        if(!userProfile) return;
+    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.SELECTED, (event) => {
+        if (!userProfile) return;
 
-        if(event.category !== RoomObjectCategory.UNIT) return;
+        if (event.category !== RoomObjectCategory.UNIT) return;
 
         const userData = GetRoomSession().userDataManager.getUserDataByIndex(event.objectId);
 
-        if(userData.type !== RoomObjectType.USER) return;
+        if (userData.type !== RoomObjectType.USER) return;
 
         GetUserProfile(userData.webID);
     });
 
-    if(!userProfile) return null;
+    if (!userProfile) return null;
 
     const cardBackgroundId = userProfile.cardBackgroundId ?? 0;
-    const cardBackgroundClass = cardBackgroundId ? `profile-card-background card-background-${ cardBackgroundId }` : '';
+    const cardBackgroundClass = cardBackgroundId ? `profile-card-background card-background-${cardBackgroundId}` : '';
 
     return (
         <NitroCard className="nitro-extended-profile-window w-[640px] h-[720px] max-w-[96vw] max-h-[92vh]" uniqueKey="nitro-user-profile">
-            <NitroCard.Header
-                headerText={ LocalizeText('extendedprofile.caption') }
-                onCloseClick={ onClose } />
-            <NitroCard.Content className={ `nitro-extended-profile-window__content overflow-hidden !p-0 flex flex-col ${ cardBackgroundClass }` }>
+            <NitroCard.Header headerText={LocalizeText('extendedprofile.caption')} onCloseClick={onClose} />
+            <NitroCard.Content className={`nitro-extended-profile-window__content overflow-hidden !p-0 flex flex-col ${cardBackgroundClass}`}>
                 <div className="px-[10px] pt-[8px]">
-                    <UserContainerView
-                        userBadges={ userBadges }
-                        userProfile={ userProfile }
-                        userRelationships={ userRelationships }
-                        onOpenRooms={ onOpenRooms } />
+                    <UserContainerView userBadges={userBadges} userProfile={userProfile} userRelationships={userRelationships} onOpenRooms={onOpenRooms} />
                 </div>
                 <div className="nitro-extended-profile-window__body nitro-extended-profile-window__body--groups flex-1 overflow-hidden px-[10px] pb-[10px] pt-[6px]">
                     <div className="nitro-extended-profile-window__panel h-full p-2">
-                        <GroupsContainerView fullWidth groups={ userProfile.groups } itsMe={ userProfile.id === GetSessionDataManager().userId } onLeaveGroup={ onLeaveGroup } />
+                        <GroupsContainerView
+                            fullWidth
+                            groups={userProfile.groups}
+                            itsMe={userProfile.id === GetSessionDataManager().userId}
+                            onLeaveGroup={onLeaveGroup}
+                        />
                     </div>
                 </div>
             </NitroCard.Content>

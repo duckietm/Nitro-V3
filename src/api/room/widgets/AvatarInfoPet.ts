@@ -1,7 +1,6 @@
 import { IAvatarInfo } from './IAvatarInfo';
 
-export class AvatarInfoPet implements IAvatarInfo
-{
+export class AvatarInfoPet implements IAvatarInfo {
     public static PET_INFO: string = 'IPI_PET_INFO';
 
     public level: number = 0;
@@ -41,6 +40,5 @@ export class AvatarInfoPet implements IAvatarInfo
     public remainingGrowTime: number = 0;
     public publiclyBreedable: boolean = false;
 
-    constructor(public readonly type: string)
-    {}
+    constructor(public readonly type: string) {}
 }

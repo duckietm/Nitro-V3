@@ -1,5 +1,4 @@
-export interface IPhotoData
-{
+export interface IPhotoData {
     /**
      * creator username
      */

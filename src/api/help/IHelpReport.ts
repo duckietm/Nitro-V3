@@ -1,7 +1,6 @@
 import { IChatEntry } from '../chat-history';
 
-export interface IHelpReport
-{
+export interface IHelpReport {
     reportType: number;
     reportedUserId: number;
     reportedChats: IChatEntry[];

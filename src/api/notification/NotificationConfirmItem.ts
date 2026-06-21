@@ -1,5 +1,4 @@
-export class NotificationConfirmItem
-{
+export class NotificationConfirmItem {
     private static ITEM_ID: number = -1;
 
     private _id: number;
@@ -11,8 +10,7 @@ export class NotificationConfirmItem
     private _cancelText: string;
     private _title: string;
 
-    constructor(confirmType: string, message: string, onConfirm: Function, onCancel: Function, confirmText: string, cancelText: string, title: string)
-    {
+    constructor(confirmType: string, message: string, onConfirm: Function, onCancel: Function, confirmText: string, cancelText: string, title: string) {
         NotificationConfirmItem.ITEM_ID += 1;
 
         this._id = NotificationConfirmItem.ITEM_ID;
@@ -25,43 +23,35 @@ export class NotificationConfirmItem
         this._title = title;
     }
 
-    public get id(): number
-    {
+    public get id(): number {
         return this._id;
     }
 
-    public get confirmType(): string
-    {
+    public get confirmType(): string {
         return this._confirmType;
     }
 
-    public get message(): string
-    {
+    public get message(): string {
         return this._message;
     }
 
-    public get onConfirm(): Function
-    {
+    public get onConfirm(): Function {
         return this._onConfirm;
     }
 
-    public get onCancel(): Function
-    {
+    public get onCancel(): Function {
         return this._onCancel;
     }
 
-    public get confirmText(): string
-    {
+    public get confirmText(): string {
         return this._confirmText;
     }
 
-    public get cancelText(): string
-    {
+    public get cancelText(): string {
         return this._cancelText;
     }
 
-    public get title(): string
-    {
+    public get title(): string {
         return this._title;
     }
 }

@@ -1,11 +1,10 @@
 import { AvatarAction, RoomObjectVariable } from '@nitrots/nitro-renderer';
 import { GetOwnRoomObject } from '../room';
 
-export function GetCanStandUp(): string
-{
+export function GetCanStandUp(): string {
     const roomObject = GetOwnRoomObject();
 
-    if(!roomObject) return AvatarAction.POSTURE_STAND;
+    if (!roomObject) return AvatarAction.POSTURE_STAND;
 
     const model = roomObject.model;
 

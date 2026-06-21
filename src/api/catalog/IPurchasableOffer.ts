@@ -1,8 +1,7 @@
 import { ICatalogPage } from './ICatalogPage';
 import { IProduct } from './IProduct';
 
-export interface IPurchasableOffer
-{
+export interface IPurchasableOffer {
     activate(): void;
     clubLevel: number;
     page: ICatalogPage;

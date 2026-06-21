@@ -1,4 +1,16 @@
-import { GetRoomEngine, GetSessionDataManager, IFurnitureData, IGetImageListener, PetFigureData, RoomEngineTriggerWidgetEvent, RoomObjectCategory, RoomObjectVariable, RoomSessionPresentEvent, TextureUtils, Vector3d } from '@nitrots/nitro-renderer';
+import {
+    GetRoomEngine,
+    GetSessionDataManager,
+    IFurnitureData,
+    IGetImageListener,
+    PetFigureData,
+    RoomEngineTriggerWidgetEvent,
+    RoomObjectCategory,
+    RoomObjectVariable,
+    RoomSessionPresentEvent,
+    TextureUtils,
+    Vector3d
+} from '@nitrots/nitro-renderer';
 import { useMemo, useState } from 'react';
 import { IsOwnerOfFurniture, LocalizeText, ProductTypeEnum } from '../../../../api';
 import { useNitroEvent } from '../../../events';
@@ -10,23 +22,21 @@ const WALLPAPER: string = 'wallpaper';
 const LANDSCAPE: string = 'landscape';
 const POSTER: string = 'poster';
 
-const useFurniturePresentWidgetState = () =>
-{
-    const [ objectId, setObjectId ] = useState(-1);
-    const [ classId, setClassId ] = useState(-1);
-    const [ itemType, setItemType ] = useState<string>(null);
-    const [ text, setText ] = useState<string>(null);
-    const [ isOwnerOfFurniture, setIsOwnerOfFurniture ] = useState(false);
-    const [ senderName, setSenderName ] = useState<string>(null);
-    const [ senderFigure, setSenderFigure ] = useState<string>(null);
-    const [ placedItemId, setPlacedItemId ] = useState(-1);
-    const [ placedItemType, setPlacedItemType ] = useState<string>(null);
-    const [ placedInRoom, setPlacedInRoom ] = useState(false);
-    const [ imageUrl, setImageUrl ] = useState<string>(null);
+const useFurniturePresentWidgetState = () => {
+    const [objectId, setObjectId] = useState(-1);
+    const [classId, setClassId] = useState(-1);
+    const [itemType, setItemType] = useState<string>(null);
+    const [text, setText] = useState<string>(null);
+    const [isOwnerOfFurniture, setIsOwnerOfFurniture] = useState(false);
+    const [senderName, setSenderName] = useState<string>(null);
+    const [senderFigure, setSenderFigure] = useState<string>(null);
+    const [placedItemId, setPlacedItemId] = useState(-1);
+    const [placedItemType, setPlacedItemType] = useState<string>(null);
+    const [placedInRoom, setPlacedInRoom] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>(null);
     const { roomSession = null } = useRoom();
 
-    const onClose = () =>
-    {
+    const onClose = () => {
         setObjectId(-1);
         setClassId(-1);
         setItemType(null);
@@ -40,91 +50,76 @@ const useFurniturePresentWidgetState = () =>
         setImageUrl(null);
     };
 
-    const openPresent = () =>
-    {
-        if(objectId === -1) return;
+    const openPresent = () => {
+        if (objectId === -1) return;
 
         roomSession.openGift(objectId);
 
-        GetRoomEngine().changeObjectModelData(GetRoomEngine().activeRoomId, objectId, RoomObjectCategory.FLOOR, RoomObjectVariable.FURNITURE_DISABLE_PICKING_ANIMATION, 1);
+        GetRoomEngine().changeObjectModelData(
+            GetRoomEngine().activeRoomId,
+            objectId,
+            RoomObjectCategory.FLOOR,
+            RoomObjectVariable.FURNITURE_DISABLE_PICKING_ANIMATION,
+            1
+        );
     };
 
-    const imageListener: IGetImageListener = useMemo(() =>
-    {
+    const imageListener: IGetImageListener = useMemo(() => {
         // async fix image
         return {
-            imageReady: (result) =>
-            {
-                (async () =>
-                {
+            imageReady: (result) => {
+                (async () => {
                     let image = result.image;
 
-                    if(!image && result.data)
-                    {
+                    if (!image && result.data) {
                         image = await TextureUtils.generateImage(result.data);
                     }
 
-                    if(image) setImageUrl(image.src);
+                    if (image) setImageUrl(image.src);
                 })();
             },
-            imageFailed: () =>
-            {
+            imageFailed: () => {
                 // no-op
             }
         };
     }, []);
 
-    useNitroEvent<RoomSessionPresentEvent>(RoomSessionPresentEvent.RSPE_PRESENT_OPENED, event =>
-    {
+    useNitroEvent<RoomSessionPresentEvent>(RoomSessionPresentEvent.RSPE_PRESENT_OPENED, (event) => {
         let furniData: IFurnitureData = null;
 
-        if(event.itemType === ProductTypeEnum.FLOOR)
-        {
+        if (event.itemType === ProductTypeEnum.FLOOR) {
             furniData = GetSessionDataManager().getFloorItemData(event.classId);
-        }
-        else if(event.itemType === ProductTypeEnum.WALL)
-        {
+        } else if (event.itemType === ProductTypeEnum.WALL) {
             furniData = GetSessionDataManager().getWallItemData(event.classId);
         }
 
         let isOwnerOfFurni = false;
 
-        if(event.placedInRoom)
-        {
+        if (event.placedInRoom) {
             const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.placedItemId, RoomObjectCategory.FLOOR);
 
-            if(roomObject) isOwnerOfFurni = IsOwnerOfFurniture(roomObject);
+            if (roomObject) isOwnerOfFurni = IsOwnerOfFurniture(roomObject);
         }
 
         let giftImage: string = null;
 
-        switch(event.itemType)
-        {
+        switch (event.itemType) {
             case ProductTypeEnum.WALL: {
-                if(furniData)
-                {
-                    switch(furniData.className)
-                    {
+                if (furniData) {
+                    switch (furniData.className) {
                         case FLOOR:
                         case LANDSCAPE:
                         case WALLPAPER:
                             let imageType = null;
                             let message = null;
 
-                            if(furniData.className === FLOOR)
-                            {
+                            if (furniData.className === FLOOR) {
                                 imageType = 'packagecard_icon_floor';
                                 message = LocalizeText('inventory.furni.item.floor.name');
-                            }
-
-                            else if(furniData.className === LANDSCAPE)
-                            {
+                            } else if (furniData.className === LANDSCAPE) {
                                 imageType = 'packagecard_icon_landscape';
                                 message = LocalizeText('inventory.furni.item.landscape.name');
-                            }
-
-                            else
-                            {
+                            } else {
                                 imageType = 'packagecard_icon_wallpaper';
                                 message = LocalizeText('inventory.furni.item.wallpaper.name');
                             }
@@ -137,14 +132,14 @@ const useFurniturePresentWidgetState = () =>
 
                             let extras: string = null;
 
-                            if(productCode.indexOf('poster') === 0) extras = productCode.replace('poster', '');
+                            if (productCode.indexOf('poster') === 0) extras = productCode.replace('poster', '');
 
                             const productData = GetSessionDataManager().getProductData(productCode);
 
                             let name: string = null;
 
-                            if(productData) name = productData.name;
-                            else if(furniData) name = furniData.name;
+                            if (productData) name = productData.name;
+                            else if (furniData) name = furniData.name;
 
                             setText(name);
                             setImageUrl(GetRoomEngine().getFurnitureWallIconUrl(event.classId, extras));
@@ -166,29 +161,33 @@ const useFurniturePresentWidgetState = () =>
                 //setImageUrl(getGiftImageUrl('packagecard_icon_hc'));
                 break;
             default: {
-                if(event.placedItemType === ProductTypeEnum.PET)
-                {
+                if (event.placedItemType === ProductTypeEnum.PET) {
                     const petfigureString = event.petFigureString;
 
-                    if(petfigureString && petfigureString.length)
-                    {
+                    if (petfigureString && petfigureString.length) {
                         const petFigureData = new PetFigureData(petfigureString);
 
-                        (async () =>
-                        {
-                            const petImage = GetRoomEngine().getRoomObjectPetImage(petFigureData.typeId, petFigureData.paletteId, petFigureData.color, new Vector3d(90), 64, imageListener, true, 0, petFigureData.customParts);
+                        (async () => {
+                            const petImage = GetRoomEngine().getRoomObjectPetImage(
+                                petFigureData.typeId,
+                                petFigureData.paletteId,
+                                petFigureData.color,
+                                new Vector3d(90),
+                                64,
+                                imageListener,
+                                true,
+                                0,
+                                petFigureData.customParts
+                            );
 
-                            if(petImage) setImageUrl((await petImage.getImage()).src);
+                            if (petImage) setImageUrl((await petImage.getImage()).src);
                         })();
                     }
-                }
-                else
-                {
-                    (async () =>
-                    {
+                } else {
+                    (async () => {
                         const furniImage = GetRoomEngine().getFurnitureFloorImage(event.classId, new Vector3d(90), 64, imageListener);
 
-                        if(furniImage) setImageUrl((await furniImage.getImage()).src);
+                        if (furniImage) setImageUrl((await furniImage.getImage()).src);
                     })();
                 }
 
@@ -208,33 +207,44 @@ const useFurniturePresentWidgetState = () =>
         setPlacedInRoom(event.placedInRoom);
     });
 
-    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_PRESENT, event =>
-    {
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_PRESENT, (event) => {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
 
-        if(!roomObject) return null;
+        if (!roomObject) return null;
 
         onClose();
 
         setObjectId(event.objectId);
         setClassId(-1);
-        setText((roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_DATA) || ''));
+        setText(roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_DATA) || '');
         setIsOwnerOfFurniture(IsOwnerOfFurniture(roomObject));
-        setSenderName((roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_PURCHASER_NAME) || null));
-        setSenderFigure((roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_PURCHASER_FIGURE) || null));
+        setSenderName(roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_PURCHASER_NAME) || null);
+        setSenderFigure(roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_PURCHASER_FIGURE) || null);
     });
 
-    useFurniRemovedEvent((objectId !== -1), event =>
-    {
-        if(event.id === objectId) onClose();
+    useFurniRemovedEvent(objectId !== -1, (event) => {
+        if (event.id === objectId) onClose();
 
-        if(event.id === placedItemId)
-        {
-            if(placedInRoom) setPlacedInRoom(false);
+        if (event.id === placedItemId) {
+            if (placedInRoom) setPlacedInRoom(false);
         }
     });
 
-    return { objectId, classId, itemType, text, isOwnerOfFurniture, senderName, senderFigure, placedItemId, placedItemType, placedInRoom, imageUrl, openPresent, onClose };
+    return {
+        objectId,
+        classId,
+        itemType,
+        text,
+        isOwnerOfFurniture,
+        senderName,
+        senderFigure,
+        placedItemId,
+        placedItemType,
+        placedInRoom,
+        imageUrl,
+        openPresent,
+        onClose
+    };
 };
 
 export const useFurniturePresentWidget = useFurniturePresentWidgetState;

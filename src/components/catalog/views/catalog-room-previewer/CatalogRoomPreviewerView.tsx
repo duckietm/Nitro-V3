@@ -7,29 +7,26 @@ import { useUiEvent } from '../../../../hooks';
 export const CatalogRoomPreviewerView: FC<{
     roomPreviewer: RoomPreviewer;
     height?: number;
-}> = props =>
-{
+}> = (props) => {
     const { roomPreviewer = null } = props;
     const elementRef = useRef<HTMLDivElement>(null);
 
-    useUiEvent(CatalogPurchasedEvent.PURCHASE_SUCCESS, event =>
-    {
-        if(!elementRef) return;
+    useUiEvent(CatalogPurchasedEvent.PURCHASE_SUCCESS, (event) => {
+        if (!elementRef) return;
 
         const renderTexture = roomPreviewer.getRoomObjectCurrentImage();
 
-        if(!renderTexture) return;
+        if (!renderTexture) return;
 
-        (async () =>
-        {
+        (async () => {
             const image = await TextureUtils.generateImage(renderTexture);
 
-            if(!image) return;
+            if (!image) return;
 
             const bounds = elementRef.current.getBoundingClientRect();
 
-            const x = (bounds.x + (bounds.width / 2));
-            const y = (bounds.y + (bounds.height / 2));
+            const x = bounds.x + bounds.width / 2;
+            const y = bounds.y + bounds.height / 2;
 
             const animateEvent = new NitroToolbarAnimateIconEvent(image, x, y);
 
@@ -40,8 +37,8 @@ export const CatalogRoomPreviewerView: FC<{
     });
 
     return (
-        <div ref={ elementRef }>
-            <LayoutRoomPreviewerView { ...props } />
+        <div ref={elementRef}>
+            <LayoutRoomPreviewerView {...props} />
         </div>
     );
 };

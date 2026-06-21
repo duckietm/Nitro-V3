@@ -9,30 +9,30 @@ import { useMessageEvent } from '../../events';
 // hotels in different locales see the right language.
 const CLIENT_COMMANDS: { key: string; descriptionKey: string }[] = [
     // Room effects
-    { key: 'shake',       descriptionKey: 'chatcmd.client.shake' },
-    { key: 'rotate',      descriptionKey: 'chatcmd.client.rotate' },
-    { key: 'zoom',        descriptionKey: 'chatcmd.client.zoom' },
-    { key: 'flip',        descriptionKey: 'chatcmd.client.flip' },
-    { key: 'iddqd',       descriptionKey: 'chatcmd.client.iddqd' },
-    { key: 'screenshot',  descriptionKey: 'chatcmd.client.screenshot' },
-    { key: 'togglefps',   descriptionKey: 'chatcmd.client.togglefps' },
+    { key: 'shake', descriptionKey: 'chatcmd.client.shake' },
+    { key: 'rotate', descriptionKey: 'chatcmd.client.rotate' },
+    { key: 'zoom', descriptionKey: 'chatcmd.client.zoom' },
+    { key: 'flip', descriptionKey: 'chatcmd.client.flip' },
+    { key: 'iddqd', descriptionKey: 'chatcmd.client.iddqd' },
+    { key: 'screenshot', descriptionKey: 'chatcmd.client.screenshot' },
+    { key: 'togglefps', descriptionKey: 'chatcmd.client.togglefps' },
     // Expressions
-    { key: 'd',           descriptionKey: 'chatcmd.client.laugh' },
-    { key: 'kiss',        descriptionKey: 'chatcmd.client.kiss' },
-    { key: 'jump',        descriptionKey: 'chatcmd.client.jump' },
-    { key: 'idle',        descriptionKey: 'chatcmd.client.idle' },
-    { key: 'sign',        descriptionKey: 'chatcmd.client.sign' },
+    { key: 'd', descriptionKey: 'chatcmd.client.laugh' },
+    { key: 'kiss', descriptionKey: 'chatcmd.client.kiss' },
+    { key: 'jump', descriptionKey: 'chatcmd.client.jump' },
+    { key: 'idle', descriptionKey: 'chatcmd.client.idle' },
+    { key: 'sign', descriptionKey: 'chatcmd.client.sign' },
     // Room management
-    { key: 'furni',       descriptionKey: 'chatcmd.client.furni' },
-    { key: 'chooser',     descriptionKey: 'chatcmd.client.chooser' },
-    { key: 'floor',       descriptionKey: 'chatcmd.client.floor' },
-    { key: 'bcfloor',     descriptionKey: 'chatcmd.client.floor' },
-    { key: 'pickall',     descriptionKey: 'chatcmd.client.pickall' },
-    { key: 'ejectall',    descriptionKey: 'chatcmd.client.ejectall' },
-    { key: 'settings',    descriptionKey: 'chatcmd.client.settings' },
+    { key: 'furni', descriptionKey: 'chatcmd.client.furni' },
+    { key: 'chooser', descriptionKey: 'chatcmd.client.chooser' },
+    { key: 'floor', descriptionKey: 'chatcmd.client.floor' },
+    { key: 'bcfloor', descriptionKey: 'chatcmd.client.floor' },
+    { key: 'pickall', descriptionKey: 'chatcmd.client.pickall' },
+    { key: 'ejectall', descriptionKey: 'chatcmd.client.ejectall' },
+    { key: 'settings', descriptionKey: 'chatcmd.client.settings' },
     // Info
-    { key: 'client',      descriptionKey: 'chatcmd.client.info' },
-    { key: 'nitro',       descriptionKey: 'chatcmd.client.info' },
+    { key: 'client', descriptionKey: 'chatcmd.client.info' },
+    { key: 'nitro', descriptionKey: 'chatcmd.client.info' }
 ];
 
 /**
@@ -47,8 +47,7 @@ const CLIENT_COMMANDS: { key: string; descriptionKey: string }[] = [
  * during login, BEFORE any React widget mounts) and one from the
  * in-hook `useMessageEvent` (which covers later rank-change refreshes).
  */
-interface ChatCommandStore
-{
+interface ChatCommandStore {
     serverCommands: CommandDefinition[];
     isListenerRegistered: boolean;
     setServerCommands: (commands: CommandDefinition[]) => void;
@@ -62,23 +61,18 @@ const useChatCommandStore = createNitroStore<ChatCommandStore>()((set) => ({
     markListenerRegistered: () => set({ isListenerRegistered: true })
 }));
 
-const ensureGlobalListener = (): void =>
-{
-    if(useChatCommandStore.getState().isListenerRegistered) return;
+const ensureGlobalListener = (): void => {
+    if (useChatCommandStore.getState().isListenerRegistered) return;
 
-    try
-    {
-        const event = new AvailableCommandsEvent((event: AvailableCommandsEvent) =>
-        {
+    try {
+        const event = new AvailableCommandsEvent((event: AvailableCommandsEvent) => {
             const parser = event.getParser();
-            useChatCommandStore.getState().setServerCommands(parser.commands.map(cmd => ({ key: cmd.key, description: cmd.description })));
+            useChatCommandStore.getState().setServerCommands(parser.commands.map((cmd) => ({ key: cmd.key, description: cmd.description })));
         });
 
         GetCommunication().registerMessageEvent(event);
         useChatCommandStore.getState().markListenerRegistered();
-    }
-    catch
-    {
+    } catch {
         // Communication not ready yet — the in-hook useMessageEvent
         // below covers later mounts.
     }
@@ -88,15 +82,13 @@ const ensureGlobalListener = (): void =>
 // React mount still hits the cache.
 ensureGlobalListener();
 
-export const useChatCommandSelector = (chatValue: string) =>
-{
-    const serverCommands = useChatCommandStore(s => s.serverCommands);
-    const setServerCommands = useChatCommandStore(s => s.setServerCommands);
-    const [ selectedIndex, setSelectedIndex ] = useState(0);
-    const [ dismissed, setDismissed ] = useState(false);
+export const useChatCommandSelector = (chatValue: string) => {
+    const serverCommands = useChatCommandStore((s) => s.serverCommands);
+    const setServerCommands = useChatCommandStore((s) => s.setServerCommands);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [dismissed, setDismissed] = useState(false);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         // Cover the case where the module-level registration failed
         // because GetCommunication() wasn't ready at import time.
         ensureGlobalListener();
@@ -104,80 +96,67 @@ export const useChatCommandSelector = (chatValue: string) =>
 
     // Late updates (rank change, etc.) — go through the store so all
     // consumers see the same data.
-    useMessageEvent<AvailableCommandsEvent>(AvailableCommandsEvent, event =>
-    {
+    useMessageEvent<AvailableCommandsEvent>(AvailableCommandsEvent, (event) => {
         const parser = event.getParser();
-        setServerCommands(parser.commands.map(cmd => ({ key: cmd.key, description: cmd.description })));
+        setServerCommands(parser.commands.map((cmd) => ({ key: cmd.key, description: cmd.description })));
     });
 
-    const allCommands = useMemo(() =>
-    {
-        const merged: CommandDefinition[] = [ ...serverCommands ];
+    const allCommands = useMemo(() => {
+        const merged: CommandDefinition[] = [...serverCommands];
 
-        for(const clientCmd of CLIENT_COMMANDS)
-        {
-            if(merged.some(cmd => cmd.key === clientCmd.key)) continue;
+        for (const clientCmd of CLIENT_COMMANDS) {
+            if (merged.some((cmd) => cmd.key === clientCmd.key)) continue;
             merged.push({ key: clientCmd.key, description: LocalizeText(clientCmd.descriptionKey) });
         }
 
         return merged.sort((a, b) => a.key.localeCompare(b.key));
-    }, [ serverCommands ]);
+    }, [serverCommands]);
 
-    const filterText = useMemo(() =>
-    {
-        if(!chatValue.startsWith(':') || chatValue.includes(' ')) return '';
+    const filterText = useMemo(() => {
+        if (!chatValue.startsWith(':') || chatValue.includes(' ')) return '';
 
         return chatValue.slice(1).toLowerCase();
-    }, [ chatValue ]);
+    }, [chatValue]);
 
-    const filteredCommands = useMemo(() =>
-    {
-        if(!filterText && !chatValue.startsWith(':')) return [];
+    const filteredCommands = useMemo(() => {
+        if (!filterText && !chatValue.startsWith(':')) return [];
 
-        return allCommands.filter(cmd => cmd.key.toLowerCase().startsWith(filterText));
-    }, [ allCommands, filterText, chatValue ]);
+        return allCommands.filter((cmd) => cmd.key.toLowerCase().startsWith(filterText));
+    }, [allCommands, filterText, chatValue]);
 
-    const isVisible = useMemo(() =>
-    {
+    const isVisible = useMemo(() => {
         return chatValue.startsWith(':') && !chatValue.includes(' ') && filteredCommands.length > 0 && !dismissed;
-    }, [ chatValue, filteredCommands, dismissed ]);
+    }, [chatValue, filteredCommands, dismissed]);
 
-    const moveUp = useCallback(() =>
-    {
-        setSelectedIndex(prev => (prev <= 0 ? filteredCommands.length - 1 : prev - 1));
-    }, [ filteredCommands.length ]);
+    const moveUp = useCallback(() => {
+        setSelectedIndex((prev) => (prev <= 0 ? filteredCommands.length - 1 : prev - 1));
+    }, [filteredCommands.length]);
 
-    const moveDown = useCallback(() =>
-    {
-        setSelectedIndex(prev => (prev >= filteredCommands.length - 1 ? 0 : prev + 1));
-    }, [ filteredCommands.length ]);
+    const moveDown = useCallback(() => {
+        setSelectedIndex((prev) => (prev >= filteredCommands.length - 1 ? 0 : prev + 1));
+    }, [filteredCommands.length]);
 
-    const selectCurrent = useCallback((): CommandDefinition | null =>
-    {
-        if(selectedIndex >= 0 && selectedIndex < filteredCommands.length)
-        {
+    const selectCurrent = useCallback((): CommandDefinition | null => {
+        if (selectedIndex >= 0 && selectedIndex < filteredCommands.length) {
             return filteredCommands[selectedIndex];
         }
 
         return null;
-    }, [ selectedIndex, filteredCommands ]);
+    }, [selectedIndex, filteredCommands]);
 
-    const close = useCallback(() =>
-    {
+    const close = useCallback(() => {
         setDismissed(true);
     }, []);
 
     // Reset dismissed when chatValue changes to a new command start
-    useEffect(() =>
-    {
-        if(chatValue === ':' || chatValue === '') setDismissed(false);
-    }, [ chatValue ]);
+    useEffect(() => {
+        if (chatValue === ':' || chatValue === '') setDismissed(false);
+    }, [chatValue]);
 
     // Reset selectedIndex when filtered list changes
-    useEffect(() =>
-    {
+    useEffect(() => {
         setSelectedIndex(0);
-    }, [ filterText ]);
+    }, [filterText]);
 
     return { isVisible, filteredCommands, selectedIndex, setSelectedIndex, moveUp, moveDown, selectCurrent, close };
 };

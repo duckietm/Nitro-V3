@@ -8,8 +8,7 @@ import { useChatInputState } from './useChatInputState';
  *    setIsIdle, sendChat }` shape so the single consumer (`ChatInputView`)
  * keeps working unchanged.
  */
-export const useChatInputWidget = () =>
-{
+export const useChatInputWidget = () => {
     const { selectedUsername, floodBlocked, floodBlockedSeconds, setIsTyping, setIsIdle } = useChatInputState();
     const { sendChat } = useChatInputActions();
 

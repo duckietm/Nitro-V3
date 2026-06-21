@@ -37,30 +37,26 @@ export const PRESET_PREFIX_EFFECTS: { id: string; label: string; icon: string; t
     { id: 'sparkle', label: 'Sparkle', icon: '+', tier: 'premium' }
 ];
 
-export const parsePrefixColors = (text: string, colorStr: string): string[] =>
-{
-    if(!colorStr || !text) return [];
+export const parsePrefixColors = (text: string, colorStr: string): string[] => {
+    if (!colorStr || !text) return [];
 
     const colors = colorStr.split(',');
-    return [ ...text ].map((_, i) => colors[Math.min(i, colors.length - 1)]);
+    return [...text].map((_, i) => colors[Math.min(i, colors.length - 1)]);
 };
-export const getPrefixFontStyle = (font: string): Record<string, string> =>
-{
-    const option = PRESET_PREFIX_FONTS.find(entry => entry.id === font);
+export const getPrefixFontStyle = (font: string): Record<string, string> => {
+    const option = PRESET_PREFIX_FONTS.find((entry) => entry.id === font);
 
-    if(!option || !option.id.length) return {};
+    if (!option || !option.id.length) return {};
 
     return { fontFamily: option.family };
 };
 
-export const getPrefixEffectStyle = (effect: string, color?: string): Record<string, string | number> =>
-{
+export const getPrefixEffectStyle = (effect: string, color?: string): Record<string, string | number> => {
     const baseColor = color || '#FFFFFF';
 
-    switch(effect)
-    {
+    switch (effect) {
         case 'glow':
-            return { textShadow: `0 0 6px ${ baseColor }, 0 0 12px ${ baseColor }80` };
+            return { textShadow: `0 0 6px ${baseColor}, 0 0 12px ${baseColor}80` };
         case 'shadow':
             return { textShadow: '2px 2px 4px rgba(0,0,0,0.7), 1px 1px 2px rgba(0,0,0,0.5)' };
         case 'italic':
@@ -96,7 +92,7 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
             };
         case 'discord-neon':
             return {
-                textShadow: `0 0 5px ${ baseColor }, 0 0 10px ${ baseColor }, 0 0 18px ${ baseColor }90`,
+                textShadow: `0 0 5px ${baseColor}, 0 0 10px ${baseColor}, 0 0 18px ${baseColor}90`,
                 fontWeight: 900,
                 letterSpacing: '0.2px'
             };
@@ -121,7 +117,7 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
             };
         case 'bold-glow':
             return {
-                textShadow: `0 0 4px ${ baseColor }, 0 0 8px ${ baseColor }, 0 0 16px ${ baseColor }60`,
+                textShadow: `0 0 4px ${baseColor}, 0 0 8px ${baseColor}, 0 0 16px ${baseColor}60`,
                 fontWeight: 900
             };
         case 'rainbow':
@@ -157,7 +153,7 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
         case 'sparkle':
             return {
                 animation: 'prefix-sparkle 1.4s ease-in-out infinite',
-                textShadow: `0 0 4px ${ baseColor }, 0 0 10px ${ baseColor }80, 0 0 16px rgba(255,255,255,0.45)`
+                textShadow: `0 0 4px ${baseColor}, 0 0 10px ${baseColor}80, 0 0 16px rgba(255,255,255,0.45)`
             };
         default:
             return {};

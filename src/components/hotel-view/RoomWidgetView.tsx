@@ -5,8 +5,7 @@ import { Base } from '../../common';
 
 export interface RoomWidgetViewProps {}
 
-export const RoomWidgetView: FC<RoomWidgetViewProps> = props =>
-{
+export const RoomWidgetView: FC<RoomWidgetViewProps> = (props) => {
     const poolId = GetConfigurationValue<string>('hotelview')['room.pool'];
     const picnicId = GetConfigurationValue<string>('hotelview')['room.picnic'];
     const rooftopId = GetConfigurationValue<string>('hotelview')['room.rooftop'];
@@ -17,25 +16,25 @@ export const RoomWidgetView: FC<RoomWidgetViewProps> = props =>
 
     return (
         <>
-            <Base className="nitro-hotel-view-rooftop position-absolute" onClick={event => CreateLinkEvent('navigator/goto/' + rooftopId)}>
+            <Base className="nitro-hotel-view-rooftop position-absolute" onClick={(event) => CreateLinkEvent('navigator/goto/' + rooftopId)}>
                 <i className="arrow" />
             </Base>
-            <Base className="nitro-hotel-view-rooftop-pool position-absolute" onClick={event => CreateLinkEvent('navigator/goto/' + rooftopPoolId)}>
+            <Base className="nitro-hotel-view-rooftop-pool position-absolute" onClick={(event) => CreateLinkEvent('navigator/goto/' + rooftopPoolId)}>
                 <i className="arrow" />
             </Base>
-            <Base className="nitro-hotel-view-picnic position-absolute" onClick={event => CreateLinkEvent('navigator/goto/' + picnicId)}>
+            <Base className="nitro-hotel-view-picnic position-absolute" onClick={(event) => CreateLinkEvent('navigator/goto/' + picnicId)}>
                 <i className="arrow" />
             </Base>
-            <Base className="nitro-hotel-view-infobus position-absolute" onClick={event => CreateLinkEvent('navigator/goto/' + infobusId)}>
+            <Base className="nitro-hotel-view-infobus position-absolute" onClick={(event) => CreateLinkEvent('navigator/goto/' + infobusId)}>
                 <i className="arrow-infobus" />
             </Base>
-            <Base className="nitro-hotel-view-pool position-absolute" onClick={event => CreateLinkEvent('navigator/goto/' + poolId)}>
+            <Base className="nitro-hotel-view-pool position-absolute" onClick={(event) => CreateLinkEvent('navigator/goto/' + poolId)}>
                 <i className="arrow-pool" />
             </Base>
-            <Base className="nitro-hotel-view-lobby position-absolute" onClick={event => CreateLinkEvent('navigator/goto/' + lobbyId)}>
+            <Base className="nitro-hotel-view-lobby position-absolute" onClick={(event) => CreateLinkEvent('navigator/goto/' + lobbyId)}>
                 <i className="arrow" />
             </Base>
-            <Base className="nitro-hotel-view-peaceful position-absolute" onClick={event => CreateLinkEvent('navigator/goto/' + peacefulId)}>
+            <Base className="nitro-hotel-view-peaceful position-absolute" onClick={(event) => CreateLinkEvent('navigator/goto/' + peacefulId)}>
                 <i className="arrow-peaceful" />
             </Base>
         </>

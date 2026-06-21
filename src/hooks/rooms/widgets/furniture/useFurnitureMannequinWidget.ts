@@ -1,20 +1,27 @@
-import { FurnitureMannequinSaveLookComposer, FurnitureMannequinSaveNameComposer, FurnitureMultiStateComposer, GetAvatarRenderManager, GetRoomEngine, HabboClubLevelEnum, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import {
+    FurnitureMannequinSaveLookComposer,
+    FurnitureMannequinSaveNameComposer,
+    FurnitureMultiStateComposer,
+    GetAvatarRenderManager,
+    GetRoomEngine,
+    HabboClubLevelEnum,
+    RoomEngineTriggerWidgetEvent,
+    RoomObjectVariable
+} from '@nitrots/nitro-renderer';
 import { useState } from 'react';
 import { MannequinUtilities, SendMessageComposer } from '../../../../api';
 import { useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
 
-const useFurnitureMannequinWidgetState = () =>
-{
-    const [ objectId, setObjectId ] = useState(-1);
-    const [ category, setCategory ] = useState(-1);
-    const [ figure, setFigure ] = useState(null);
-    const [ gender, setGender ] = useState(null);
-    const [ clubLevel, setClubLevel ] = useState(HabboClubLevelEnum.NO_CLUB);
-    const [ name, setName ] = useState(null);
+const useFurnitureMannequinWidgetState = () => {
+    const [objectId, setObjectId] = useState(-1);
+    const [category, setCategory] = useState(-1);
+    const [figure, setFigure] = useState(null);
+    const [gender, setGender] = useState(null);
+    const [clubLevel, setClubLevel] = useState(HabboClubLevelEnum.NO_CLUB);
+    const [name, setName] = useState(null);
 
-    const onClose = () =>
-    {
+    const onClose = () => {
         setObjectId(-1);
         setCategory(-1);
         setFigure(null);
@@ -22,40 +29,36 @@ const useFurnitureMannequinWidgetState = () =>
         setName(null);
     };
 
-    const saveFigure = () =>
-    {
-        if(objectId === -1) return;
+    const saveFigure = () => {
+        if (objectId === -1) return;
 
         SendMessageComposer(new FurnitureMannequinSaveLookComposer(objectId));
 
         onClose();
     };
 
-    const wearFigure = () =>
-    {
-        if(objectId === -1) return;
+    const wearFigure = () => {
+        if (objectId === -1) return;
 
         SendMessageComposer(new FurnitureMultiStateComposer(objectId));
 
         onClose();
     };
 
-    const saveName = () =>
-    {
-        if(objectId === -1) return;
+    const saveName = () => {
+        if (objectId === -1) return;
 
         SendMessageComposer(new FurnitureMannequinSaveNameComposer(objectId, name));
     };
 
-    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_MANNEQUIN, event =>
-    {
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_MANNEQUIN, (event) => {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
 
-        if(!roomObject) return;
+        if (!roomObject) return;
 
         const model = roomObject.model;
-        const figure = (model.getValue<string>(RoomObjectVariable.FURNITURE_MANNEQUIN_FIGURE) || null);
-        const gender = (model.getValue<string>(RoomObjectVariable.FURNITURE_MANNEQUIN_GENDER) || null);
+        const figure = model.getValue<string>(RoomObjectVariable.FURNITURE_MANNEQUIN_FIGURE) || null;
+        const gender = model.getValue<string>(RoomObjectVariable.FURNITURE_MANNEQUIN_GENDER) || null;
         const figureContainer = GetAvatarRenderManager().createFigureContainer(figure);
         const figureClubLevel = GetAvatarRenderManager().getFigureClubLevel(figureContainer, gender, MannequinUtilities.MANNEQUIN_CLOTHING_PART_TYPES);
 
@@ -67,9 +70,8 @@ const useFurnitureMannequinWidgetState = () =>
         setName(model.getValue<string>(RoomObjectVariable.FURNITURE_MANNEQUIN_NAME) || null);
     });
 
-    useFurniRemovedEvent(((objectId !== -1) && (category !== -1)), event =>
-    {
-        if((event.id !== objectId) || (event.category !== category)) return;
+    useFurniRemovedEvent(objectId !== -1 && category !== -1, (event) => {
+        if (event.id !== objectId || event.category !== category) return;
 
         onClose();
     });

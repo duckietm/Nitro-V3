@@ -5,26 +5,18 @@ export const LOCK_DURATION_MS = 2 * 60_000;
 
 export type AttemptState = { attempts: number; firstAt: number; lockedUntil: number };
 
-export const readLock = (): AttemptState =>
-{
-    try
-    {
+export const readLock = (): AttemptState => {
+    try {
         const raw = sessionStorage.getItem(LOCK_KEY);
-        if(!raw) return { attempts: 0, firstAt: 0, lockedUntil: 0 };
+        if (!raw) return { attempts: 0, firstAt: 0, lockedUntil: 0 };
         return JSON.parse(raw);
-    }
-    catch
-    {
+    } catch {
         return { attempts: 0, firstAt: 0, lockedUntil: 0 };
     }
 };
 
-export const writeLock = (state: AttemptState) =>
-{
-    try
-    {
+export const writeLock = (state: AttemptState) => {
+    try {
         sessionStorage.setItem(LOCK_KEY, JSON.stringify(state));
-    }
-    catch
-    { }
+    } catch {}
 };

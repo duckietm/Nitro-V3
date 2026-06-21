@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { emptySample, HK_METRICS_SAMPLE_CAP, recordSample, sampleToMetric } from './HousekeepingMetrics';
 
-describe('emptySample', () =>
-{
-    it('starts with zero samples and counts', () =>
-    {
+describe('emptySample', () => {
+    it('starts with zero samples and counts', () => {
         const e = emptySample();
 
         expect(e.samples).toEqual([]);
@@ -13,19 +11,16 @@ describe('emptySample', () =>
     });
 });
 
-describe('recordSample', () =>
-{
-    it('appends one sample and increments count', () =>
-    {
+describe('recordSample', () => {
+    it('appends one sample and increments count', () => {
         const next = recordSample(emptySample(), 50, false);
 
-        expect(next.samples).toEqual([ 50 ]);
+        expect(next.samples).toEqual([50]);
         expect(next.count).toBe(1);
         expect(next.errors).toBe(0);
     });
 
-    it('tracks errors independently from total count', () =>
-    {
+    it('tracks errors independently from total count', () => {
         let s = emptySample();
         s = recordSample(s, 10, false);
         s = recordSample(s, 20, true);
@@ -35,8 +30,7 @@ describe('recordSample', () =>
         expect(s.errors).toBe(1);
     });
 
-    it('never mutates the input (returns a new sample object)', () =>
-    {
+    it('never mutates the input (returns a new sample object)', () => {
         const before = emptySample();
         const after = recordSample(before, 100, false);
 
@@ -44,12 +38,11 @@ describe('recordSample', () =>
         expect(after).not.toBe(before);
     });
 
-    it('trims the sliding window to SAMPLE_CAP, keeping the most recent values', () =>
-    {
+    it('trims the sliding window to SAMPLE_CAP, keeping the most recent values', () => {
         let s = emptySample();
 
         // Push CAP+5 samples so the first 5 should fall off.
-        for(let i = 0; i < HK_METRICS_SAMPLE_CAP + 5; i++) s = recordSample(s, i, false);
+        for (let i = 0; i < HK_METRICS_SAMPLE_CAP + 5; i++) s = recordSample(s, i, false);
 
         expect(s.samples.length).toBe(HK_METRICS_SAMPLE_CAP);
         // Most-recent sample (i = CAP+4) survives
@@ -61,10 +54,8 @@ describe('recordSample', () =>
     });
 });
 
-describe('sampleToMetric', () =>
-{
-    it('returns zeros for an empty sample (no samples observed yet)', () =>
-    {
+describe('sampleToMetric', () => {
+    it('returns zeros for an empty sample (no samples observed yet)', () => {
         const m = sampleToMetric('ban', emptySample());
 
         expect(m).toEqual({
@@ -79,8 +70,7 @@ describe('sampleToMetric', () =>
         });
     });
 
-    it('handles a single sample (P50 == P95 == min == max == lastMs)', () =>
-    {
+    it('handles a single sample (P50 == P95 == min == max == lastMs)', () => {
         let s = emptySample();
         s = recordSample(s, 42, false);
         const m = sampleToMetric('kick', s);
@@ -92,13 +82,12 @@ describe('sampleToMetric', () =>
         expect(m.p95Ms).toBe(42);
     });
 
-    it('computes P50 and P95 on a sorted copy (input order does not affect output)', () =>
-    {
+    it('computes P50 and P95 on a sorted copy (input order does not affect output)', () => {
         // Build a known 11-sample distribution: 0..100 in steps of 10.
         let s = emptySample();
-        const values = [ 100, 10, 50, 30, 80, 0, 70, 20, 90, 40, 60 ];
+        const values = [100, 10, 50, 30, 80, 0, 70, 20, 90, 40, 60];
 
-        for(const v of values) s = recordSample(s, v, false);
+        for (const v of values) s = recordSample(s, v, false);
 
         const m = sampleToMetric('mute', s);
 
@@ -112,8 +101,7 @@ describe('sampleToMetric', () =>
         expect(m.count).toBe(11);
     });
 
-    it('preserves the error count in the snapshot', () =>
-    {
+    it('preserves the error count in the snapshot', () => {
         let s = emptySample();
         s = recordSample(s, 10, true);
         s = recordSample(s, 20, true);

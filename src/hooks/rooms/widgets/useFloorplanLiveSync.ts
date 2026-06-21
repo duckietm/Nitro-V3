@@ -45,32 +45,29 @@ export const buildLivePreviewPayload = (state: FloorplanState): LivePreviewPaylo
 });
 
 export const livePreviewPayloadsEqual = (a: LivePreviewPayload, b: LivePreviewPayload): boolean =>
-    a.tilemap === b.tilemap
-    && a.doorX === b.doorX
-    && a.doorY === b.doorY
-    && a.doorDir === b.doorDir
-    && a.thicknessWall === b.thicknessWall
-    && a.thicknessFloor === b.thicknessFloor
-    && a.wallHeight === b.wallHeight;
+    a.tilemap === b.tilemap &&
+    a.doorX === b.doorX &&
+    a.doorY === b.doorY &&
+    a.doorDir === b.doorDir &&
+    a.thicknessWall === b.thicknessWall &&
+    a.thicknessFloor === b.thicknessFloor &&
+    a.wallHeight === b.wallHeight;
 
-const applyToRenderer = (payload: LivePreviewPayload, roomId: number): boolean =>
-{
+const applyToRenderer = (payload: LivePreviewPayload, roomId: number): boolean => {
     const handler = GetRoomMessageHandler();
 
-    if(!handler || typeof handler.applyFloorModelLocally !== 'function') return false;
+    if (!handler || typeof handler.applyFloorModelLocally !== 'function') return false;
 
     const ok = handler.applyFloorModelLocally(payload.tilemap, Math.max(0, (payload.wallHeight | 0) - 1), true);
 
-    if(!ok) return false;
+    if (!ok) return false;
 
-    if(roomId >= 0)
-    {
+    if (roomId >= 0) {
         const engine = GetRoomEngine();
         const wall = THICKNESS_RENDERER_VALUE[payload.thicknessWall];
         const floor = THICKNESS_RENDERER_VALUE[payload.thicknessFloor];
 
-        if(engine && typeof engine.updateRoomInstancePlaneThickness === 'function' && wall !== undefined && floor !== undefined)
-        {
+        if (engine && typeof engine.updateRoomInstancePlaneThickness === 'function' && wall !== undefined && floor !== undefined) {
             engine.updateRoomInstancePlaneThickness(roomId, wall, floor);
         }
     }
@@ -78,8 +75,7 @@ const applyToRenderer = (payload: LivePreviewPayload, roomId: number): boolean =
     return true;
 };
 
-export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloorplanLiveSyncApi =>
-{
+export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloorplanLiveSyncApi => {
     const { enabled, state } = opts;
     const session = useActiveRoomSessionSnapshot();
     const roomId = session?.roomId ?? -1;
@@ -88,18 +84,20 @@ export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloo
     const lastAppliedRef = useRef<LivePreviewPayload | null>(null);
 
     const { tiles, door, thickness, wallHeight } = state;
-    const currentPayload = useMemo<LivePreviewPayload>(() => ({
-        tilemap: serializeTilemap(tiles),
-        doorX: door.x,
-        doorY: door.y,
-        doorDir: door.dir,
-        thicknessWall: thickness.wall,
-        thicknessFloor: thickness.floor,
-        wallHeight
-    }), [ tiles, door, thickness, wallHeight ]);
+    const currentPayload = useMemo<LivePreviewPayload>(
+        () => ({
+            tilemap: serializeTilemap(tiles),
+            doorX: door.x,
+            doorY: door.y,
+            doorDir: door.dir,
+            thicknessWall: thickness.wall,
+            thicknessFloor: thickness.floor,
+            wallHeight
+        }),
+        [tiles, door, thickness, wallHeight]
+    );
 
-    const setBaseline = useCallback((payload: LivePreviewPayload) =>
-    {
+    const setBaseline = useCallback((payload: LivePreviewPayload) => {
         const normalized: LivePreviewPayload = {
             ...payload,
             tilemap: normalizeTilemap(payload.tilemap)
@@ -109,11 +107,10 @@ export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloo
         lastAppliedRef.current = normalized;
     }, []);
 
-    const mergeBaseline = useCallback((partial: Partial<LivePreviewPayload>) =>
-    {
+    const mergeBaseline = useCallback((partial: Partial<LivePreviewPayload>) => {
         const previous = baselineRef.current;
 
-        if(!previous) return;
+        if (!previous) return;
 
         const next: LivePreviewPayload = {
             ...previous,
@@ -125,26 +122,24 @@ export const useFloorplanLiveSync = (opts: UseFloorplanLiveSyncOptions): UseFloo
         lastAppliedRef.current = next;
     }, []);
 
-    const revert = useCallback(() =>
-    {
+    const revert = useCallback(() => {
         const baseline = baselineRef.current;
 
-        if(!baseline) return;
+        if (!baseline) return;
 
-        if(applyToRenderer(baseline, roomId)) lastAppliedRef.current = baseline;
-    }, [ roomId ]);
+        if (applyToRenderer(baseline, roomId)) lastAppliedRef.current = baseline;
+    }, [roomId]);
 
-    useEffect(() =>
-    {
-        if(!enabled) return;
-        if(!baselineRef.current) return;
+    useEffect(() => {
+        if (!enabled) return;
+        if (!baselineRef.current) return;
 
         const previous = lastAppliedRef.current;
 
-        if(previous && livePreviewPayloadsEqual(currentPayload, previous)) return;
+        if (previous && livePreviewPayloadsEqual(currentPayload, previous)) return;
 
-        if(applyToRenderer(currentPayload, roomId)) lastAppliedRef.current = currentPayload;
-    }, [ enabled, currentPayload, roomId ]);
+        if (applyToRenderer(currentPayload, roomId)) lastAppliedRef.current = currentPayload;
+    }, [enabled, currentPayload, roomId]);
 
     return { setBaseline, mergeBaseline, revert };
 };

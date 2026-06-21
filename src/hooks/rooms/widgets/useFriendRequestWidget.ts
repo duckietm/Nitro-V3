@@ -6,8 +6,7 @@ import { useFriendRequestState } from './useFriendRequestState';
  * directly. This shim preserves the
  * `{ displayedRequests, hideFriendRequest }` shape for existing consumers.
  */
-export const useFriendRequestWidget = () =>
-{
+export const useFriendRequestWidget = () => {
     const { displayedRequests } = useFriendRequestState();
     const { hideFriendRequest } = useFriendRequestActions();
 

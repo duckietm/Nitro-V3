@@ -1,15 +1,24 @@
 import { createNitroStore } from '../../state/createNitroStore';
 import { createEmptyMonitorSnapshot } from './WiredCreatorTools.helpers';
-import { InspectionElementType, InspectionFurniLiveState, InspectionFurniSelection, InspectionUserLiveState, InspectionUserSelection, MonitorSnapshot, VariableHighlightOverlay, VariableManageEntry, VariablesElementType, WiredToolsTab } from './WiredCreatorTools.types';
+import {
+    InspectionElementType,
+    InspectionFurniLiveState,
+    InspectionFurniSelection,
+    InspectionUserLiveState,
+    InspectionUserSelection,
+    MonitorSnapshot,
+    VariableHighlightOverlay,
+    VariableManageEntry,
+    VariablesElementType,
+    WiredToolsTab
+} from './WiredCreatorTools.types';
 
 type MonitorSeverityFilter = 'ALL' | 'ERROR' | 'WARNING';
 type Updater<T> = T | ((prev: T) => T);
 
-const apply = <T>(prev: T, next: Updater<T>): T =>
-    ((typeof next === 'function') ? (next as (p: T) => T)(prev) : next);
+const apply = <T>(prev: T, next: Updater<T>): T => (typeof next === 'function' ? (next as (p: T) => T)(prev) : next);
 
-interface WiredCreatorToolsUiState
-{
+interface WiredCreatorToolsUiState {
     isVisible: boolean;
     activeTab: WiredToolsTab;
     inspectionType: InspectionElementType;
@@ -206,34 +215,34 @@ export const useWiredCreatorToolsUiStore = createNitroStore<WiredCreatorToolsUiS
     managedGiveVariableItemId: 0,
     managedGiveValue: '0',
 
-    setIsVisible: (next) => set(state => ({ isVisible: apply(state.isVisible, next) })),
+    setIsVisible: (next) => set((state) => ({ isVisible: apply(state.isVisible, next) })),
     setActiveTab: (next) => set({ activeTab: next }),
     setInspectionType: (next) => set({ inspectionType: next }),
     setVariablesType: (next) => set({ variablesType: next }),
 
     setIsMonitorHistoryOpen: (next) => set({ isMonitorHistoryOpen: next }),
     setIsMonitorInfoOpen: (next) => set({ isMonitorInfoOpen: next }),
-    setIsInspectionGiveOpen: (next) => set(state => ({ isInspectionGiveOpen: apply(state.isInspectionGiveOpen, next) })),
+    setIsInspectionGiveOpen: (next) => set((state) => ({ isInspectionGiveOpen: apply(state.isInspectionGiveOpen, next) })),
     setIsVariableManageOpen: (next) => set({ isVariableManageOpen: next }),
-    setIsManagedGiveOpen: (next) => set(state => ({ isManagedGiveOpen: apply(state.isManagedGiveOpen, next) })),
+    setIsManagedGiveOpen: (next) => set((state) => ({ isManagedGiveOpen: apply(state.isManagedGiveOpen, next) })),
 
     setMonitorHistorySeverityFilter: (next) => set({ monitorHistorySeverityFilter: next }),
     setMonitorHistoryTypeFilter: (next) => set({ monitorHistoryTypeFilter: next }),
 
     setVariableManageTypeFilter: (next) => set({ variableManageTypeFilter: next }),
     setVariableManageSort: (next) => set({ variableManageSort: next }),
-    setVariableManagePage: (next) => set(state => ({ variableManagePage: apply(state.variableManagePage, next) })),
+    setVariableManagePage: (next) => set((state) => ({ variableManagePage: apply(state.variableManagePage, next) })),
 
     setMonitorSnapshot: (next) => set({ monitorSnapshot: next }),
     resetMonitorSnapshot: () => set({ monitorSnapshot: createEmptyMonitorSnapshot() }),
 
     setSelectedFurni: (next) => set({ selectedFurni: next }),
-    setSelectedFurniLiveState: (next) => set(state => ({ selectedFurniLiveState: apply(state.selectedFurniLiveState, next) })),
+    setSelectedFurniLiveState: (next) => set((state) => ({ selectedFurniLiveState: apply(state.selectedFurniLiveState, next) })),
     setSelectedUser: (next) => set({ selectedUser: next }),
-    setSelectedUserLiveState: (next) => set(state => ({ selectedUserLiveState: apply(state.selectedUserLiveState, next) })),
-    setSelectedUserActionVersion: (next) => set(state => ({ selectedUserActionVersion: apply(state.selectedUserActionVersion, next) })),
+    setSelectedUserLiveState: (next) => set((state) => ({ selectedUserLiveState: apply(state.selectedUserLiveState, next) })),
+    setSelectedUserActionVersion: (next) => set((state) => ({ selectedUserActionVersion: apply(state.selectedUserActionVersion, next) })),
 
-    setIsVariableHighlightActive: (next) => set(state => ({ isVariableHighlightActive: apply(state.isVariableHighlightActive, next) })),
+    setIsVariableHighlightActive: (next) => set((state) => ({ isVariableHighlightActive: apply(state.isVariableHighlightActive, next) })),
     setVariableHighlightOverlays: (next) => set({ variableHighlightOverlays: next }),
 
     setEditingVariable: (next) => set({ editingVariable: next }),
@@ -241,8 +250,8 @@ export const useWiredCreatorToolsUiStore = createNitroStore<WiredCreatorToolsUiS
     setEditingManagedHolderVariableId: (next) => set({ editingManagedHolderVariableId: next }),
     setEditingManagedHolderValue: (next) => set({ editingManagedHolderValue: next }),
 
-    setSelectedInspectionVariableKeys: (next) => set(state => ({ selectedInspectionVariableKeys: apply(state.selectedInspectionVariableKeys, next) })),
-    setSelectedVariableKeys: (next) => set(state => ({ selectedVariableKeys: apply(state.selectedVariableKeys, next) })),
+    setSelectedInspectionVariableKeys: (next) => set((state) => ({ selectedInspectionVariableKeys: apply(state.selectedInspectionVariableKeys, next) })),
+    setSelectedVariableKeys: (next) => set((state) => ({ selectedVariableKeys: apply(state.selectedVariableKeys, next) })),
 
     setInspectionGiveVariableItemId: (next) => set({ inspectionGiveVariableItemId: next }),
     setInspectionGiveValue: (next) => set({ inspectionGiveValue: next }),

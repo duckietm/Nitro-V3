@@ -7,8 +7,7 @@ import { useFurniChooserState } from './useFurniChooserState';
  * This shim preserves the `{ items, onClose, selectItem, populateChooser }`
  * shape for existing consumers.
  */
-export const useFurniChooserWidget = () =>
-{
+export const useFurniChooserWidget = () => {
     const { items, onClose, populateChooser } = useFurniChooserState();
     const { selectItem } = useFurniChooserActions();
 

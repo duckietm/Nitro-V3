@@ -5,11 +5,10 @@ const DEFAULT_AVATAR_FIGURES: Record<string, string> = {
     F: 'hd-600-1.ch-630-66.lg-695-82.sh-725-80'
 };
 
-export const resolveAvatarFigure = (figure: string | null | undefined, gender?: string | number | null) =>
-{
+export const resolveAvatarFigure = (figure: string | null | undefined, gender?: string | number | null) => {
     const normalizedFigure = (figure || '').trim();
 
-    if(normalizedFigure.length && normalizedFigure.includes('hd-')) return normalizedFigure;
+    if (normalizedFigure.length && normalizedFigure.includes('hd-')) return normalizedFigure;
 
     return DEFAULT_AVATAR_FIGURES[resolveAvatarGender(gender)] || DEFAULT_AVATAR_FIGURES.M;
 };

@@ -29,14 +29,12 @@ import { WiredConditionUserPerformsActionView } from './WiredConditionUserPerfor
 import { WiredConditionUserCountInRoomView } from './WiredConditionUserCountInRoomView';
 import { WiredConditionSelectionQuantityView } from './WiredConditionSelectionQuantityView';
 
-export const WiredConditionLayoutView = (code: number) =>
-{
-    switch(code)
-    {
+export const WiredConditionLayoutView = (code: number) => {
+    switch (code) {
         case WiredConditionlayout.ACTOR_HAS_HANDITEM:
             return <WiredConditionActorHasHandItemView />;
         case WiredConditionlayout.NOT_ACTOR_HAS_HANDITEM:
-            return <WiredConditionActorHasHandItemView negative={ true } />;
+            return <WiredConditionActorHasHandItemView negative={true} />;
         case WiredConditionlayout.ACTOR_DIR:
             return <WiredConditionActorDirView />;
         case WiredConditionlayout.SLC_QUANTITY:
@@ -44,7 +42,7 @@ export const WiredConditionLayoutView = (code: number) =>
         case WiredConditionlayout.HAS_VAR:
             return <WiredConditionHasVariableView />;
         case WiredConditionlayout.NEG_HAS_VAR:
-            return <WiredConditionHasVariableView negative={ true } />;
+            return <WiredConditionHasVariableView negative={true} />;
         case WiredConditionlayout.VAR_VAL_MATCH:
             return <WiredConditionVariableValueMatchView />;
         case WiredConditionlayout.VAR_AGE_MATCH:
@@ -52,27 +50,27 @@ export const WiredConditionLayoutView = (code: number) =>
         case WiredConditionlayout.TRIGGERER_MATCH:
             return <WiredConditionTriggererMatchView />;
         case WiredConditionlayout.NOT_TRIGGERER_MATCH:
-            return <WiredConditionTriggererMatchView negative={ true } />;
+            return <WiredConditionTriggererMatchView negative={true} />;
         case WiredConditionlayout.ACTOR_IS_GROUP_MEMBER:
             return <WiredConditionActorIsGroupMemberView />;
         case WiredConditionlayout.NOT_ACTOR_IN_GROUP:
-            return <WiredConditionActorIsGroupMemberView negative={ true } />;
+            return <WiredConditionActorIsGroupMemberView negative={true} />;
         case WiredConditionlayout.ACTOR_IS_ON_FURNI:
             return <WiredConditionActorIsOnFurniView />;
         case WiredConditionlayout.NOT_ACTOR_ON_FURNI:
-            return <WiredConditionActorIsOnFurniView negative={ true } />;
+            return <WiredConditionActorIsOnFurniView negative={true} />;
         case WiredConditionlayout.ACTOR_IS_IN_TEAM:
             return <WiredConditionActorIsTeamMemberView />;
         case WiredConditionlayout.NOT_ACTOR_IN_TEAM:
-            return <WiredConditionActorIsTeamMemberView negative={ true } />;
+            return <WiredConditionActorIsTeamMemberView negative={true} />;
         case WiredConditionlayout.ACTOR_IS_WEARING_BADGE:
             return <WiredConditionActorIsWearingBadgeView />;
         case WiredConditionlayout.NOT_ACTOR_WEARS_BADGE:
-            return <WiredConditionActorIsWearingBadgeView negative={ true } />;
+            return <WiredConditionActorIsWearingBadgeView negative={true} />;
         case WiredConditionlayout.ACTOR_IS_WEARING_EFFECT:
             return <WiredConditionActorIsWearingEffectView />;
         case WiredConditionlayout.NOT_ACTOR_WEARING_EFFECT:
-            return <WiredConditionActorIsWearingEffectView negative={ true } />;
+            return <WiredConditionActorIsWearingEffectView negative={true} />;
         case WiredConditionlayout.DATE_RANGE_ACTIVE:
             return <WiredConditionDateRangeView />;
         case WiredConditionlayout.MOVEMENT_VALIDATION:
@@ -84,7 +82,7 @@ export const WiredConditionLayoutView = (code: number) =>
         case WiredConditionlayout.FURNIS_HAVE_AVATARS:
             return <WiredConditionFurniHasAvatarOnView />;
         case WiredConditionlayout.FURNI_NOT_HAVE_HABBO:
-            return <WiredConditionFurniHasAvatarOnView negative={ true } />;
+            return <WiredConditionFurniHasAvatarOnView negative={true} />;
         case WiredConditionlayout.HAS_STACKED_FURNIS:
             return <WiredConditionFurniHasFurniOnView />;
         case WiredConditionlayout.NOT_HAS_STACKED_FURNIS:
@@ -92,11 +90,11 @@ export const WiredConditionLayoutView = (code: number) =>
         case WiredConditionlayout.STUFF_TYPE_MATCHES:
             return <WiredConditionFurniIsOfTypeView />;
         case WiredConditionlayout.NOT_FURNI_IS_OF_TYPE:
-            return <WiredConditionFurniIsOfTypeView negative={ true } />;
+            return <WiredConditionFurniIsOfTypeView negative={true} />;
         case WiredConditionlayout.STATES_MATCH:
             return <WiredConditionFurniMatchesSnapshotView />;
         case WiredConditionlayout.NOT_STATES_MATCH:
-            return <WiredConditionFurniMatchesSnapshotView negative={ true } />;
+            return <WiredConditionFurniMatchesSnapshotView negative={true} />;
         case WiredConditionlayout.TIME_ELAPSED_LESS:
             return <WiredConditionTimeElapsedLessView />;
         case WiredConditionlayout.TIME_ELAPSED_MORE:
@@ -109,7 +107,7 @@ export const WiredConditionLayoutView = (code: number) =>
         case WiredConditionlayout.USER_PERFORMS_ACTION:
             return <WiredConditionUserPerformsActionView />;
         case WiredConditionlayout.NOT_USER_PERFORMS_ACTION:
-            return <WiredConditionUserPerformsActionView negative={ true } />;
+            return <WiredConditionUserPerformsActionView negative={true} />;
         case WiredConditionlayout.HAS_ALTITUDE:
             return <WiredConditionHasAltitudeView />;
         case WiredConditionlayout.TEAM_HAS_SCORE:

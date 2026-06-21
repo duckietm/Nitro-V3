@@ -8,21 +8,17 @@ import { resolveLocalized } from './localizeWithFallback';
  * "missing" signal into a caller-supplied fallback so raw keys like
  * `purse.seasonal.currency.11` never reach the UI.
  */
-describe('resolveLocalized', () =>
-{
-    it('returns the localized text when it differs from the key', () =>
-    {
+describe('resolveLocalized', () => {
+    it('returns the localized text when it differs from the key', () => {
         expect(resolveLocalized('Pixels', 'purse.seasonal.currency.5', 'fallback')).toBe('Pixels');
     });
 
-    it('returns the fallback when the text equals the key (missing translation)', () =>
-    {
+    it('returns the fallback when the text equals the key (missing translation)', () => {
         expect(resolveLocalized('purse.seasonal.currency.11', 'purse.seasonal.currency.11', '')).toBe('');
         expect(resolveLocalized('purse.seasonal.currency.11', 'purse.seasonal.currency.11', 'Currency')).toBe('Currency');
     });
 
-    it('returns the fallback for empty / null text', () =>
-    {
+    it('returns the fallback for empty / null text', () => {
         expect(resolveLocalized('', 'some.key', 'FB')).toBe('FB');
         expect(resolveLocalized(null as unknown as string, 'some.key', 'FB')).toBe('FB');
     });

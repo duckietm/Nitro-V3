@@ -4,79 +4,68 @@ import { BuildPurchasableClothingFigure, FurniCategory, Offer, ProductTypeEnum }
 import { AutoGrid, Column, LayoutGridItem, LayoutRoomPreviewerView } from '../../../../../common';
 import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
 
-export const CatalogViewProductWidgetView: FC<{ height?: number }> = props =>
-{
+export const CatalogViewProductWidgetView: FC<{ height?: number }> = (props) => {
     const { height = 240 } = props;
     const { currentOffer = null, roomPreviewer = null } = useCatalogData();
     const { purchaseOptions = null } = useCatalogUiState();
     const { previewStuffData = null } = purchaseOptions;
 
-    useEffect(() =>
-    {
-        if(!currentOffer || (currentOffer.pricingModel === Offer.PRICING_MODEL_BUNDLE) || !roomPreviewer) return;
+    useEffect(() => {
+        if (!currentOffer || currentOffer.pricingModel === Offer.PRICING_MODEL_BUNDLE || !roomPreviewer) return;
 
         const product = currentOffer.product;
 
-        if(!product) return;
+        if (!product) return;
 
         roomPreviewer.reset(false);
         roomPreviewer.updateObjectRoom('111', '217', '1.1');
         roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
-        const populate = () =>
-        {
-            switch(product.productType)
-            {
+        const populate = () => {
+            switch (product.productType) {
                 case ProductTypeEnum.FLOOR: {
-                    if(!product.furnitureData) return;
+                    if (!product.furnitureData) return;
 
                     const furniData = GetSessionDataManager().getFloorItemData(product.furnitureData.id);
-                    const isPurchasableClothing = (product.furnitureData.specialType === FurniCategory.FIGURE_PURCHASABLE_SET);
-                    const hasResolvableFigureSets = (() =>
-                    {
-                        if(!furniData || !furniData.customParams || !furniData.customParams.length) return false;
+                    const isPurchasableClothing = product.furnitureData.specialType === FurniCategory.FIGURE_PURCHASABLE_SET;
+                    const hasResolvableFigureSets = (() => {
+                        if (!furniData || !furniData.customParams || !furniData.customParams.length) return false;
 
-                        const parts = furniData.customParams.split(',').map(value => parseInt(value));
+                        const parts = furniData.customParams.split(',').map((value) => parseInt(value));
 
-                        for(const part of parts)
-                        {
-                            if(isNaN(part)) continue;
+                        for (const part of parts) {
+                            if (isNaN(part)) continue;
 
-                            if(GetAvatarRenderManager().structureData?.getFigurePartSet(part)) return true;
+                            if (GetAvatarRenderManager().structureData?.getFigurePartSet(part)) return true;
                         }
 
                         return false;
                     })();
 
-                    if(isPurchasableClothing || hasResolvableFigureSets)
-                    {
-                        const customParts = furniData.customParams.split(',').map(value => parseInt(value));
+                    if (isPurchasableClothing || hasResolvableFigureSets) {
+                        const customParts = furniData.customParams.split(',').map((value) => parseInt(value));
                         const figureSets: number[] = [];
 
-                        for(const part of customParts)
-                        {
-                            if(isNaN(part)) continue;
+                        for (const part of customParts) {
+                            if (isNaN(part)) continue;
 
-                            if(GetAvatarRenderManager().isValidFigureSetForGender(part, GetSessionDataManager().gender)) figureSets.push(part);
+                            if (GetAvatarRenderManager().isValidFigureSetForGender(part, GetSessionDataManager().gender)) figureSets.push(part);
                         }
 
                         const figureString = BuildPurchasableClothingFigure(GetSessionDataManager().figure, figureSets);
 
                         roomPreviewer.addAvatarIntoRoom(figureString, product.productClassId);
-                    }
-                    else
-                    {
+                    } else {
                         roomPreviewer.addFurnitureIntoRoom(product.productClassId, new Vector3d(90), previewStuffData, product.extraParam);
                     }
                     return;
                 }
                 case ProductTypeEnum.WALL: {
-                    if(!product.furnitureData) return;
+                    if (!product.furnitureData) return;
 
                     roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
-                    switch(product.furnitureData.specialType)
-                    {
+                    switch (product.furnitureData.specialType) {
                         case FurniCategory.FLOOR:
                             roomPreviewer.updateObjectRoom(product.extraParam);
                             return;
@@ -88,7 +77,7 @@ export const CatalogViewProductWidgetView: FC<{ height?: number }> = props =>
 
                             const furniData = GetSessionDataManager().getWallItemDataByName('window_double_default');
 
-                            if(furniData) roomPreviewer.addWallItemIntoRoom(furniData.id, new Vector3d(90), furniData.customParams);
+                            if (furniData) roomPreviewer.addWallItemIntoRoom(furniData.id, new Vector3d(90), furniData.customParams);
                             return;
                         }
                         default:
@@ -108,23 +97,22 @@ export const CatalogViewProductWidgetView: FC<{ height?: number }> = props =>
 
         populate();
         roomPreviewer.setAutomaticStateChange(false);
-    }, [ currentOffer, previewStuffData, roomPreviewer ]);
+    }, [currentOffer, previewStuffData, roomPreviewer]);
 
-    if(!currentOffer) return null;
+    if (!currentOffer) return null;
 
-    if(currentOffer.pricingModel === Offer.PRICING_MODEL_BUNDLE)
-    {
+    if (currentOffer.pricingModel === Offer.PRICING_MODEL_BUNDLE) {
         return (
             <Column fit className="bg-muted p-2 rounded" overflow="hidden">
-                <AutoGrid fullWidth className="nitro-catalog-layout-bundle-grid" columnCount={ 4 }>
-                    { (currentOffer.products.length > 0) && currentOffer.products.map((product, index) =>
-                    {
-                        return <LayoutGridItem key={ index } itemCount={ product.productCount } itemImage={ product.getIconUrl(currentOffer) } />;
-                    }) }
+                <AutoGrid fullWidth className="nitro-catalog-layout-bundle-grid" columnCount={4}>
+                    {currentOffer.products.length > 0 &&
+                        currentOffer.products.map((product, index) => {
+                            return <LayoutGridItem key={index} itemCount={product.productCount} itemImage={product.getIconUrl(currentOffer)} />;
+                        })}
                 </AutoGrid>
             </Column>
         );
     }
 
-    return <LayoutRoomPreviewerView key={ currentOffer?.offerId } height={ height } roomPreviewer={ roomPreviewer } />;
+    return <LayoutRoomPreviewerView key={currentOffer?.offerId} height={height} roomPreviewer={roomPreviewer} />;
 };

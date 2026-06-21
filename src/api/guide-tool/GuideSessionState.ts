@@ -1,5 +1,4 @@
-export class GuideSessionState
-{
+export class GuideSessionState {
     public static readonly NONE: string = 'NONE';
     public static readonly ERROR: string = 'ERROR';
     public static readonly REJECTED: string = 'REJECTED';

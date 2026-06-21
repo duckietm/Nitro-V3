@@ -2,8 +2,7 @@ import { GetRoomEngine, IPetCustomPart, PetFigureData, TextureUtils, Vector3d } 
 import { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Base, BaseProps } from '../Base';
 
-interface LayoutPetImageViewProps extends BaseProps<HTMLDivElement>
-{
+interface LayoutPetImageViewProps extends BaseProps<HTMLDivElement> {
     figure?: string;
     typeId?: number;
     paletteId?: number;
@@ -15,37 +14,45 @@ interface LayoutPetImageViewProps extends BaseProps<HTMLDivElement>
     scale?: number;
 }
 
-export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
-{
-    const { figure = '', typeId = -1, paletteId = -1, petColor = 0xFFFFFF, customParts = [], posture = 'std', headOnly = false, direction = 0, scale = 1, style = {}, ...rest } = props;
-    const [ petUrl, setPetUrl ] = useState<string>(null);
-    const [ width, setWidth ] = useState(0);
-    const [ height, setHeight ] = useState(0);
+export const LayoutPetImageView: FC<LayoutPetImageViewProps> = (props) => {
+    const {
+        figure = '',
+        typeId = -1,
+        paletteId = -1,
+        petColor = 0xffffff,
+        customParts = [],
+        posture = 'std',
+        headOnly = false,
+        direction = 0,
+        scale = 1,
+        style = {},
+        ...rest
+    } = props;
+    const [petUrl, setPetUrl] = useState<string>(null);
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
     const isDisposed = useRef(false);
 
-    const getStyle = useMemo(() =>
-    {
+    const getStyle = useMemo(() => {
         let newStyle: CSSProperties = {};
 
-        if(petUrl && petUrl.length) newStyle.backgroundImage = `url(${ petUrl })`;
+        if (petUrl && petUrl.length) newStyle.backgroundImage = `url(${petUrl})`;
 
-        if(scale !== 1)
-        {
-            newStyle.transform = `scale(${ scale })`;
+        if (scale !== 1) {
+            newStyle.transform = `scale(${scale})`;
 
-            if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
+            if (!(scale % 1)) newStyle.imageRendering = 'pixelated';
         }
 
         newStyle.width = width;
         newStyle.height = height;
 
-        if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
+        if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ petUrl, scale, style, width, height ]);
+    }, [petUrl, scale, style, width, height]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         let url = null;
 
         let petTypeId = typeId;
@@ -54,8 +61,7 @@ export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
         let petCustomParts: IPetCustomPart[] = customParts;
         let petHeadOnly = headOnly;
 
-        if(figure && figure.length)
-        {
+        if (figure && figure.length) {
             const petFigureData = new PetFigureData(figure);
 
             petTypeId = petFigureData.typeId;
@@ -64,62 +70,62 @@ export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
             petCustomParts = petFigureData.customParts;
         }
 
-        if(petTypeId === 16) petHeadOnly = false;
+        if (petTypeId === 16) petHeadOnly = false;
 
-        const imageResult = GetRoomEngine().getRoomObjectPetImage(petTypeId, petPaletteId, petColor1, new Vector3d((direction * 45)), 64, {
-            imageReady: async (result) =>
+        const imageResult = GetRoomEngine().getRoomObjectPetImage(
+            petTypeId,
+            petPaletteId,
+            petColor1,
+            new Vector3d(direction * 45),
+            64,
             {
-                if(isDisposed.current) return;
+                imageReady: async (result) => {
+                    if (isDisposed.current) return;
 
-                const { image, data: texture } = result;
+                    const { image, data: texture } = result;
 
-                if(image)
-                {
-                    setPetUrl(image.src);
-                    setWidth(image.width);
-                    setHeight(image.height);
-                }
-
-                else if(texture)
-                {
-                    setPetUrl(await TextureUtils.generateImageUrl(texture));
-                    setWidth(texture.width);
-                    setHeight(texture.height);
+                    if (image) {
+                        setPetUrl(image.src);
+                        setWidth(image.width);
+                        setHeight(image.height);
+                    } else if (texture) {
+                        setPetUrl(await TextureUtils.generateImageUrl(texture));
+                        setWidth(texture.width);
+                        setHeight(texture.height);
+                    }
+                },
+                imageFailed: () => {
+                    // no-op
                 }
             },
-            imageFailed: () =>
-            {
-                // no-op
-            }
-        }, petHeadOnly, 0, petCustomParts, posture);
+            petHeadOnly,
+            0,
+            petCustomParts,
+            posture
+        );
 
-        if(imageResult)
-        {
-            (async () =>
-            {
+        if (imageResult) {
+            (async () => {
                 const image = await imageResult.getImage();
 
-                if(image)
-                {
+                if (image) {
                     setPetUrl(image.src);
                     setWidth(image.width);
                     setHeight(image.height);
                 }
             })();
         }
-    }, [ figure, typeId, paletteId, petColor, customParts, posture, headOnly, direction ]);
+    }, [figure, typeId, paletteId, petColor, customParts, posture, headOnly, direction]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         isDisposed.current = false;
 
-        return () =>
-        {
+        return () => {
             isDisposed.current = true;
         };
     }, []);
 
-    const url = `url('${ petUrl }')`;
+    const url = `url('${petUrl}')`;
 
-    return <Base classNames={ [ 'pet-image' ] } style={ getStyle } { ...rest } />;
+    return <Base classNames={['pet-image']} style={getStyle} {...rest} />;
 };

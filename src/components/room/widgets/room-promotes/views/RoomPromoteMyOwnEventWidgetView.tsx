@@ -4,32 +4,34 @@ import { LocalizeText } from '../../../../../api';
 import { Button, Flex, Grid, Text } from '../../../../../common';
 import { useRoomPromote } from '../../../../../hooks';
 
-interface RoomPromoteMyOwnEventWidgetViewProps
-{
+interface RoomPromoteMyOwnEventWidgetViewProps {
     eventDescription: string;
     setIsEditingPromote: (value: boolean) => void;
 }
 
-export const RoomPromoteMyOwnEventWidgetView: FC<RoomPromoteMyOwnEventWidgetViewProps> = props =>
-{
+export const RoomPromoteMyOwnEventWidgetView: FC<RoomPromoteMyOwnEventWidgetViewProps> = (props) => {
     const { eventDescription = '', setIsEditingPromote = null } = props;
     const { setIsExtended } = useRoomPromote();
 
-    const extendPromote = () =>
-    {
+    const extendPromote = () => {
         setIsExtended(true);
         CreateLinkEvent('catalog/open/room_event');
     };
 
     return (
         <>
-            <Flex alignItems="center" gap={ 2 } style={ { overflowWrap: 'anywhere' } }>
-                <Text variant="white">{ eventDescription }</Text>
+            <Flex alignItems="center" gap={2} style={{ overflowWrap: 'anywhere' }}>
+                <Text variant="white">{eventDescription}</Text>
             </Flex>
-            <br /><br />
+            <br />
+            <br />
             <Grid className="flex items-center justify-end gap-2">
-                <Button className="btn btn-primary w-full btn-sm" onClick={ event => setIsEditingPromote(true) }>{ LocalizeText('navigator.roominfo.editevent') }</Button>
-                <Button className="btn btn-success w-full btn-sm" onClick={ event => extendPromote() }>{ LocalizeText('roomad.extend.event') }</Button>
+                <Button className="btn btn-primary w-full btn-sm" onClick={(event) => setIsEditingPromote(true)}>
+                    {LocalizeText('navigator.roominfo.editevent')}
+                </Button>
+                <Button className="btn btn-success w-full btn-sm" onClick={(event) => extendPromote()}>
+                    {LocalizeText('roomad.extend.event')}
+                </Button>
             </Grid>
         </>
     );

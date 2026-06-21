@@ -1,10 +1,24 @@
-import { CatalogAdminCreateOfferComposer, CatalogAdminCreatePageComposer, CatalogAdminDeleteOfferComposer, CatalogAdminDeletePageComposer, CatalogAdminLoadOfferComposer, CatalogAdminLoadPageComposer, CatalogAdminMoveOfferComposer, CatalogAdminMovePageComposer, CatalogAdminOfferDetailsEvent, CatalogAdminPageDetailsEvent, CatalogAdminPublishComposer, CatalogAdminResultEvent, CatalogAdminSaveOfferComposer, CatalogAdminSavePageComposer } from '@nitrots/nitro-renderer';
+import {
+    CatalogAdminCreateOfferComposer,
+    CatalogAdminCreatePageComposer,
+    CatalogAdminDeleteOfferComposer,
+    CatalogAdminDeletePageComposer,
+    CatalogAdminLoadOfferComposer,
+    CatalogAdminLoadPageComposer,
+    CatalogAdminMoveOfferComposer,
+    CatalogAdminMovePageComposer,
+    CatalogAdminOfferDetailsEvent,
+    CatalogAdminPageDetailsEvent,
+    CatalogAdminPublishComposer,
+    CatalogAdminResultEvent,
+    CatalogAdminSaveOfferComposer,
+    CatalogAdminSavePageComposer
+} from '@nitrots/nitro-renderer';
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ICatalogNode, IPurchasableOffer, NotificationAlertType, SendMessageComposer } from '../../api';
 import { useCatalogUiState, useMessageEvent, useNotification } from '../../hooks';
 
-export interface IPageEditData
-{
+export interface IPageEditData {
     pageId?: number;
     caption: string;
     captionSave: string;
@@ -26,8 +40,7 @@ export interface IPageEditData
     pageTextTeaser?: string;
 }
 
-export interface IOfferEditData
-{
+export interface IOfferEditData {
     offerId?: number;
     pageId: number;
     itemIds: string;
@@ -44,16 +57,14 @@ export interface IOfferEditData
     orderNumber: number;
 }
 
-export interface IEditingOfferDetails
-{
+export interface IEditingOfferDetails {
     offerId: number;
     offerIdGroup: number;
     limitedStack: number;
     orderNumber: number;
 }
 
-export interface IEditingPageDetails
-{
+export interface IEditingPageDetails {
     pageId: number;
     caption: string;
     captionSave: string;
@@ -63,8 +74,7 @@ export interface IEditingPageDetails
     enabled: boolean;
 }
 
-interface ICatalogAdminContext
-{
+interface ICatalogAdminContext {
     adminMode: boolean;
     setAdminMode: (value: boolean) => void;
     editingOffer: IPurchasableOffer | null;
@@ -98,35 +108,34 @@ const CatalogAdminContext = createContext<ICatalogAdminContext>(null);
 
 export const useCatalogAdmin = () => useContext(CatalogAdminContext);
 
-export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) =>
-{
+export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const { currentType } = useCatalogUiState();
-    const [ adminMode, setAdminMode ] = useState(false);
-    const [ editingOffer, setEditingOfferState ] = useState<IPurchasableOffer | null>(null);
-    const [ editingOfferDetails, setEditingOfferDetails ] = useState<IEditingOfferDetails | null>(null);
-    const [ editingPageDetails, setEditingPageDetails ] = useState<IEditingPageDetails | null>(null);
-    const [ editingPageData, setEditingPageData ] = useState(false);
-    const [ editingRootPage, setEditingRootPage ] = useState(false);
-    const [ editingPageNode, setEditingPageNode ] = useState<ICatalogNode | null>(null);
-    const [ loading, setLoading ] = useState(false);
-    const [ lastError, setLastError ] = useState<string | null>(null);
-    const [ hasPendingChanges, setHasPendingChanges ] = useState(false);
+    const [adminMode, setAdminMode] = useState(false);
+    const [editingOffer, setEditingOfferState] = useState<IPurchasableOffer | null>(null);
+    const [editingOfferDetails, setEditingOfferDetails] = useState<IEditingOfferDetails | null>(null);
+    const [editingPageDetails, setEditingPageDetails] = useState<IEditingPageDetails | null>(null);
+    const [editingPageData, setEditingPageData] = useState(false);
+    const [editingRootPage, setEditingRootPage] = useState(false);
+    const [editingPageNode, setEditingPageNode] = useState<ICatalogNode | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [lastError, setLastError] = useState<string | null>(null);
+    const [hasPendingChanges, setHasPendingChanges] = useState(false);
     const pendingActionRef = useRef<string | null>(null);
     const { simpleAlert = null } = useNotification();
 
-    const setEditingOffer = useCallback((offer: IPurchasableOffer | null) =>
-    {
-        setEditingOfferState(offer);
-        setEditingOfferDetails(null);
+    const setEditingOffer = useCallback(
+        (offer: IPurchasableOffer | null) => {
+            setEditingOfferState(offer);
+            setEditingOfferDetails(null);
 
-        if(offer && offer.offerId !== -1)
-        {
-            SendMessageComposer(new CatalogAdminLoadOfferComposer(offer.offerId, currentType));
-        }
-    }, [ currentType ]);
+            if (offer && offer.offerId !== -1) {
+                SendMessageComposer(new CatalogAdminLoadOfferComposer(offer.offerId, currentType));
+            }
+        },
+        [currentType]
+    );
 
-    useMessageEvent(CatalogAdminOfferDetailsEvent, (event: CatalogAdminOfferDetailsEvent) =>
-    {
+    useMessageEvent(CatalogAdminOfferDetailsEvent, (event: CatalogAdminOfferDetailsEvent) => {
         const parser = event.getParser();
 
         setEditingOfferDetails({
@@ -137,8 +146,7 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
         });
     });
 
-    useMessageEvent(CatalogAdminPageDetailsEvent, (event: CatalogAdminPageDetailsEvent) =>
-    {
+    useMessageEvent(CatalogAdminPageDetailsEvent, (event: CatalogAdminPageDetailsEvent) => {
         const parser = event.getParser();
 
         setEditingPageDetails({
@@ -152,27 +160,26 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
         });
     });
 
-    const requestPageDetails = useCallback((pageId: number) =>
-    {
-        setEditingPageDetails(null);
-        if(pageId == null || pageId < 0) return;
-        SendMessageComposer(new CatalogAdminLoadPageComposer(pageId, currentType));
-    }, [ currentType ]);
+    const requestPageDetails = useCallback(
+        (pageId: number) => {
+            setEditingPageDetails(null);
+            if (pageId == null || pageId < 0) return;
+            SendMessageComposer(new CatalogAdminLoadPageComposer(pageId, currentType));
+        },
+        [currentType]
+    );
 
-    useEffect(() =>
-    {
-        if(!adminMode) return;
+    useEffect(() => {
+        if (!adminMode) return;
 
-        const handleKeyDown = (e: KeyboardEvent) =>
-        {
-            if(e.key === 'Escape')
-            {
-                if(editingOffer)
-                {
-                    setEditingOffer(null); e.preventDefault(); return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                if (editingOffer) {
+                    setEditingOffer(null);
+                    e.preventDefault();
+                    return;
                 }
-                if(editingPageData || editingRootPage || editingPageNode)
-                {
+                if (editingPageData || editingRootPage || editingPageNode) {
                     setEditingPageData(false);
                     setEditingRootPage(false);
                     setEditingPageNode(null);
@@ -184,56 +191,47 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
         window.addEventListener('keydown', handleKeyDown);
 
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [ adminMode, editingOffer, editingPageData, editingRootPage, editingPageNode ]);
+    }, [adminMode, editingOffer, editingPageData, editingRootPage, editingPageNode]);
 
-    useMessageEvent(CatalogAdminResultEvent, (event: CatalogAdminResultEvent) =>
-    {
+    useMessageEvent(CatalogAdminResultEvent, (event: CatalogAdminResultEvent) => {
         const parser = event.getParser();
         const action = pendingActionRef.current;
 
         pendingActionRef.current = null;
         setLoading(false);
 
-        if(!parser.success)
-        {
+        if (!parser.success) {
             setLastError(parser.message || 'Operation failed');
 
-            if(simpleAlert)
-            {
+            if (simpleAlert) {
                 simpleAlert(parser.message || 'Operation failed', NotificationAlertType.ALERT, null, null, 'Admin Error');
             }
-        }
-        else
-        {
+        } else {
             setLastError(null);
             setEditingOffer(null);
             setEditingPageData(false);
             setEditingRootPage(false);
             setEditingPageNode(null);
 
-            if(action === 'publish')
-            {
+            if (action === 'publish') {
                 setHasPendingChanges(false);
-            }
-            else
-            {
+            } else {
                 setHasPendingChanges(true);
             }
 
-            if(simpleAlert && action)
-            {
+            if (simpleAlert && action) {
                 const messages: Record<string, string> = {
-                    'savePage': 'Page saved (publish to apply)',
-                    'createPage': 'Page created (publish to apply)',
-                    'deletePage': 'Page deleted (publish to apply)',
-                    'saveOffer': 'Offer saved (publish to apply)',
-                    'createOffer': 'Offer created (publish to apply)',
-                    'deleteOffer': 'Offer deleted (publish to apply)',
-                    'reorder': 'Order updated (publish to apply)',
-                    'toggleEnabled': 'Page toggled (publish to apply)',
-                    'toggleVisible': 'Visibility toggled (publish to apply)',
-                    'movePage': 'Page moved (publish to apply)',
-                    'publish': 'Catalog published! All users updated.',
+                    savePage: 'Page saved (publish to apply)',
+                    createPage: 'Page created (publish to apply)',
+                    deletePage: 'Page deleted (publish to apply)',
+                    saveOffer: 'Offer saved (publish to apply)',
+                    createOffer: 'Offer created (publish to apply)',
+                    deleteOffer: 'Offer deleted (publish to apply)',
+                    reorder: 'Order updated (publish to apply)',
+                    toggleEnabled: 'Page toggled (publish to apply)',
+                    toggleVisible: 'Visibility toggled (publish to apply)',
+                    movePage: 'Page moved (publish to apply)',
+                    publish: 'Catalog published! All users updated.'
                 };
 
                 simpleAlert(messages[action] || 'Operation completed', NotificationAlertType.DEFAULT, null, null, 'Catalog Admin');
@@ -241,113 +239,179 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
         }
     });
 
-    const savePage = useCallback((data: IPageEditData) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'savePage';
+    const savePage = useCallback(
+        (data: IPageEditData) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'savePage';
 
-        SendMessageComposer(new CatalogAdminSavePageComposer(
-            data.pageId || 0, data.caption, data.captionSave, data.pageLayout, data.iconImage,
-            data.minRank, data.visible === '1', data.enabled === '1',
-            data.orderNum, data.parentId,
-            data.pageHeadline || '', data.pageTeaser || '', data.pageTextDetails || '', currentType, data.catalogMode,
-            data.pageText1 || ''
-        ));
-    }, [ currentType ]);
+            SendMessageComposer(
+                new CatalogAdminSavePageComposer(
+                    data.pageId || 0,
+                    data.caption,
+                    data.captionSave,
+                    data.pageLayout,
+                    data.iconImage,
+                    data.minRank,
+                    data.visible === '1',
+                    data.enabled === '1',
+                    data.orderNum,
+                    data.parentId,
+                    data.pageHeadline || '',
+                    data.pageTeaser || '',
+                    data.pageTextDetails || '',
+                    currentType,
+                    data.catalogMode,
+                    data.pageText1 || ''
+                )
+            );
+        },
+        [currentType]
+    );
 
-    const createPage = useCallback((data: IPageEditData) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'createPage';
-        SendMessageComposer(new CatalogAdminCreatePageComposer(
-            data.caption, data.captionSave, data.pageLayout, data.iconImage,
-            data.minRank, data.visible === '1', data.enabled === '1',
-            data.orderNum, data.parentId, currentType, data.catalogMode
-        ));
-    }, [ currentType ]);
+    const createPage = useCallback(
+        (data: IPageEditData) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'createPage';
+            SendMessageComposer(
+                new CatalogAdminCreatePageComposer(
+                    data.caption,
+                    data.captionSave,
+                    data.pageLayout,
+                    data.iconImage,
+                    data.minRank,
+                    data.visible === '1',
+                    data.enabled === '1',
+                    data.orderNum,
+                    data.parentId,
+                    currentType,
+                    data.catalogMode
+                )
+            );
+        },
+        [currentType]
+    );
 
-    const deletePage = useCallback((pageId: number) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'deletePage';
-        SendMessageComposer(new CatalogAdminDeletePageComposer(pageId, currentType));
-    }, [ currentType ]);
+    const deletePage = useCallback(
+        (pageId: number) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'deletePage';
+            SendMessageComposer(new CatalogAdminDeletePageComposer(pageId, currentType));
+        },
+        [currentType]
+    );
 
-    const saveOffer = useCallback((data: IOfferEditData) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'saveOffer';
-        SendMessageComposer(new CatalogAdminSaveOfferComposer(
-            data.offerId || 0, data.pageId, data.itemIds || '',
-            data.catalogName, data.costCredits, data.costPoints, data.pointsType,
-            data.amount, data.clubOnly === '1' ? 1 : 0, data.extradata,
-            data.haveOffer === '1', data.offerId_group, data.limitedStack, data.orderNumber, currentType
-        ));
-    }, [ currentType ]);
+    const saveOffer = useCallback(
+        (data: IOfferEditData) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'saveOffer';
+            SendMessageComposer(
+                new CatalogAdminSaveOfferComposer(
+                    data.offerId || 0,
+                    data.pageId,
+                    data.itemIds || '',
+                    data.catalogName,
+                    data.costCredits,
+                    data.costPoints,
+                    data.pointsType,
+                    data.amount,
+                    data.clubOnly === '1' ? 1 : 0,
+                    data.extradata,
+                    data.haveOffer === '1',
+                    data.offerId_group,
+                    data.limitedStack,
+                    data.orderNumber,
+                    currentType
+                )
+            );
+        },
+        [currentType]
+    );
 
-    const createOffer = useCallback((data: IOfferEditData) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'createOffer';
-        SendMessageComposer(new CatalogAdminCreateOfferComposer(
-            data.pageId, data.itemIds || '',
-            data.catalogName, data.costCredits, data.costPoints, data.pointsType,
-            data.amount, data.clubOnly === '1' ? 1 : 0, data.extradata,
-            data.haveOffer === '1', data.offerId_group, data.limitedStack, data.orderNumber, currentType
-        ));
-    }, [ currentType ]);
+    const createOffer = useCallback(
+        (data: IOfferEditData) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'createOffer';
+            SendMessageComposer(
+                new CatalogAdminCreateOfferComposer(
+                    data.pageId,
+                    data.itemIds || '',
+                    data.catalogName,
+                    data.costCredits,
+                    data.costPoints,
+                    data.pointsType,
+                    data.amount,
+                    data.clubOnly === '1' ? 1 : 0,
+                    data.extradata,
+                    data.haveOffer === '1',
+                    data.offerId_group,
+                    data.limitedStack,
+                    data.orderNumber,
+                    currentType
+                )
+            );
+        },
+        [currentType]
+    );
 
-    const deleteOffer = useCallback((offerId: number) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'deleteOffer';
-        SendMessageComposer(new CatalogAdminDeleteOfferComposer(offerId, currentType));
-    }, [ currentType ]);
+    const deleteOffer = useCallback(
+        (offerId: number) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'deleteOffer';
+            SendMessageComposer(new CatalogAdminDeleteOfferComposer(offerId, currentType));
+        },
+        [currentType]
+    );
 
-    const reorderOffers = useCallback((orders: { id: number; orderNumber: number }[]) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'reorder';
+    const reorderOffers = useCallback(
+        (orders: { id: number; orderNumber: number }[]) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'reorder';
 
-        for(const order of orders)
-        {
-            SendMessageComposer(new CatalogAdminMoveOfferComposer(order.id, order.orderNumber, currentType));
-        }
-    }, [ currentType ]);
+            for (const order of orders) {
+                SendMessageComposer(new CatalogAdminMoveOfferComposer(order.id, order.orderNumber, currentType));
+            }
+        },
+        [currentType]
+    );
 
-    const reorderPage = useCallback((pageId: number, newParentId: number, newIndex: number) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'movePage';
-        SendMessageComposer(new CatalogAdminMovePageComposer(pageId, newParentId, newIndex, currentType));
-    }, [ currentType ]);
+    const reorderPage = useCallback(
+        (pageId: number, newParentId: number, newIndex: number) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'movePage';
+            SendMessageComposer(new CatalogAdminMovePageComposer(pageId, newParentId, newIndex, currentType));
+        },
+        [currentType]
+    );
 
-    const togglePageEnabled = useCallback((pageId: number) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'toggleEnabled';
-        SendMessageComposer(new CatalogAdminMovePageComposer(pageId, -1, -1, currentType));
-    }, [ currentType ]);
+    const togglePageEnabled = useCallback(
+        (pageId: number) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'toggleEnabled';
+            SendMessageComposer(new CatalogAdminMovePageComposer(pageId, -1, -1, currentType));
+        },
+        [currentType]
+    );
 
-    const togglePageVisible = useCallback((pageId: number) =>
-    {
-        setLoading(true);
-        setLastError(null);
-        pendingActionRef.current = 'toggleVisible';
-        SendMessageComposer(new CatalogAdminMovePageComposer(pageId, -2, -1, currentType));
-    }, [ currentType ]);
+    const togglePageVisible = useCallback(
+        (pageId: number) => {
+            setLoading(true);
+            setLastError(null);
+            pendingActionRef.current = 'toggleVisible';
+            SendMessageComposer(new CatalogAdminMovePageComposer(pageId, -2, -1, currentType));
+        },
+        [currentType]
+    );
 
-    const publishCatalog = useCallback(() =>
-    {
+    const publishCatalog = useCallback(() => {
         setLoading(true);
         setLastError(null);
         pendingActionRef.current = 'publish';
@@ -355,20 +419,38 @@ export const CatalogAdminProvider: FC<{ children: ReactNode }> = ({ children }) 
     }, []);
 
     return (
-        <CatalogAdminContext value={ {
-            adminMode, setAdminMode,
-            editingOffer, setEditingOffer, editingOfferDetails,
-            editingPageDetails, requestPageDetails,
-            editingPageData, setEditingPageData,
-            editingRootPage, setEditingRootPage,
-            editingPageNode, setEditingPageNode,
-            loading, lastError, hasPendingChanges,
-            savePage, createPage, deletePage,
-            saveOffer, createOffer, deleteOffer,
-            reorderOffers, reorderPage, togglePageEnabled, togglePageVisible,
-            publishCatalog
-        } }>
-            { children }
+        <CatalogAdminContext
+            value={{
+                adminMode,
+                setAdminMode,
+                editingOffer,
+                setEditingOffer,
+                editingOfferDetails,
+                editingPageDetails,
+                requestPageDetails,
+                editingPageData,
+                setEditingPageData,
+                editingRootPage,
+                setEditingRootPage,
+                editingPageNode,
+                setEditingPageNode,
+                loading,
+                lastError,
+                hasPendingChanges,
+                savePage,
+                createPage,
+                deletePage,
+                saveOffer,
+                createOffer,
+                deleteOffer,
+                reorderOffers,
+                reorderPage,
+                togglePageEnabled,
+                togglePageVisible,
+                publishCatalog
+            }}
+        >
+            {children}
         </CatalogAdminContext>
     );
 };

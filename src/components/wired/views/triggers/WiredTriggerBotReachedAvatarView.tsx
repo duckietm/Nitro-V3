@@ -11,44 +11,44 @@ const BOT_SOURCE_OPTIONS: WiredSourceOption[] = [
     { value: 200, label: 'wiredfurni.params.sources.users.200' }
 ];
 
-const normalizeBotSource = (value: number) => (BOT_SOURCE_OPTIONS.some(option => (option.value === value)) ? value : 100);
+const normalizeBotSource = (value: number) => (BOT_SOURCE_OPTIONS.some((option) => option.value === value) ? value : 100);
 
-export const WiredTriggerBotReachedAvatarView: FC<{}> = props =>
-{
-    const [ botName, setBotName ] = useState('');
-    const [ botSource, setBotSource ] = useState(100);
+export const WiredTriggerBotReachedAvatarView: FC<{}> = (props) => {
+    const [botName, setBotName] = useState('');
+    const [botSource, setBotSource] = useState(100);
     const { trigger = null, setStringParam = null, setIntParams = null } = useWired();
 
-    const save = () =>
-    {
-        setStringParam((botSource === 100) ? botName : '');
-        setIntParams([ botSource ]);
+    const save = () => {
+        setStringParam(botSource === 100 ? botName : '');
+        setIntParams([botSource]);
     };
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setBotName(trigger.stringData);
-        setBotSource((trigger?.intData?.length > 0) ? normalizeBotSource(trigger.intData[0]) : 100);
-    }, [ trigger ]);
+        setBotSource(trigger?.intData?.length > 0 ? normalizeBotSource(trigger.intData[0]) : 100);
+    }, [trigger]);
 
     return (
         <WiredTriggerBaseView
-            hasSpecialInput={ true }
-            requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE }
-            save={ save }
+            hasSpecialInput={true}
+            requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE}
+            save={save}
             footer={
                 <WiredSourcesSelector
-                    showUsers={ true }
-                    userSource={ botSource }
-                    userSources={ BOT_SOURCE_OPTIONS }
+                    showUsers={true}
+                    userSource={botSource}
+                    userSources={BOT_SOURCE_OPTIONS}
                     usersTitle="wiredfurni.params.sources.users.title.bots"
-                    onChangeUsers={ setBotSource } />
-            }>
-            { (botSource === 100) &&
+                    onChangeUsers={setBotSource}
+                />
+            }
+        >
+            {botSource === 100 && (
                 <div className="flex flex-col gap-1">
-                    <Text bold>{ LocalizeText('wiredfurni.params.bot.name') }</Text>
-                    <NitroInput maxLength={ 32 } type="text" value={ botName } onChange={ event => setBotName(event.target.value) } />
-                </div> }
+                    <Text bold>{LocalizeText('wiredfurni.params.bot.name')}</Text>
+                    <NitroInput maxLength={32} type="text" value={botName} onChange={(event) => setBotName(event.target.value)} />
+                </div>
+            )}
         </WiredTriggerBaseView>
     );
 };

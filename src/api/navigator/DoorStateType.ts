@@ -1,5 +1,4 @@
-export class DoorStateType
-{
+export class DoorStateType {
     public static NONE: number = 0;
     public static START_DOORBELL: number = 1;
     public static START_PASSWORD: number = 2;

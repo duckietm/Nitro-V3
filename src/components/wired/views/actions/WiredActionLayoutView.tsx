@@ -82,10 +82,8 @@ import { WiredExtraVariableEchoView } from '../extras/WiredExtraVariableEchoView
 import { WiredExtraVariableReferenceView } from '../extras/WiredExtraVariableReferenceView';
 import { WiredExtraVariableTextConnectorView } from '../extras/WiredExtraVariableTextConnectorView';
 
-export const WiredActionLayoutView = (code: number) =>
-{
-    switch(code)
-    {
+export const WiredActionLayoutView = (code: number) => {
+    switch (code) {
         case WiredActionLayoutCode.BOT_CHANGE_FIGURE:
             return <WiredActionBotChangeFigureView />;
         case WiredActionLayoutCode.ADJUST_CLOCK:

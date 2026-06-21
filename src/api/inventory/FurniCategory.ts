@@ -1,5 +1,4 @@
-export class FurniCategory
-{
+export class FurniCategory {
     public static DEFAULT: number = 1;
     public static WALL_PAPER: number = 2;
     public static FLOOR: number = 3;

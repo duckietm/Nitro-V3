@@ -15,8 +15,7 @@ import { applyFavouriteGroupUpdate, applyUserBadgesUpdate, applyUserFigureUpdate
  * pass plain objects cast to the renderer types.
  */
 
-const buildAvatarInfoUser = (overrides: Partial<AvatarInfoUser> = {}): AvatarInfoUser =>
-{
+const buildAvatarInfoUser = (overrides: Partial<AvatarInfoUser> = {}): AvatarInfoUser => {
     const instance = new AvatarInfoUser(AvatarInfoUser.OWN_USER);
 
     Object.assign(instance, overrides);
@@ -24,74 +23,64 @@ const buildAvatarInfoUser = (overrides: Partial<AvatarInfoUser> = {}): AvatarInf
     return instance;
 };
 
-describe('applyUserBadgesUpdate', () =>
-{
-    it('returns the same reference when state is not an AvatarInfoUser', () =>
-    {
+describe('applyUserBadgesUpdate', () => {
+    it('returns the same reference when state is not an AvatarInfoUser', () => {
         const state: IAvatarInfo = { type: 'NOT_USER' } as IAvatarInfo;
-        const event = { userId: 42, badges: [ 'a' ] } as any;
+        const event = { userId: 42, badges: ['a'] } as any;
 
         expect(applyUserBadgesUpdate(state, event)).toBe(state);
     });
 
-    it('returns the same reference when state is null', () =>
-    {
-        const event = { userId: 42, badges: [ 'a' ] } as any;
+    it('returns the same reference when state is null', () => {
+        const event = { userId: 42, badges: ['a'] } as any;
 
         expect(applyUserBadgesUpdate(null, event)).toBeNull();
     });
 
-    it('returns the same reference when the event is for a different user', () =>
-    {
+    it('returns the same reference when the event is for a different user', () => {
         const state = buildAvatarInfoUser({ webID: 1, badges: [] });
-        const event = { userId: 99, badges: [ 'a' ] } as any;
+        const event = { userId: 99, badges: ['a'] } as any;
 
         expect(applyUserBadgesUpdate(state, event)).toBe(state);
     });
 
-    it('returns the same reference when the dedup result equals the existing badges', () =>
-    {
-        const state = buildAvatarInfoUser({ webID: 42, badges: [ 'a', 'b' ] });
-        const event = { userId: 42, badges: [ 'a', 'b' ] } as any;
+    it('returns the same reference when the dedup result equals the existing badges', () => {
+        const state = buildAvatarInfoUser({ webID: 42, badges: ['a', 'b'] });
+        const event = { userId: 42, badges: ['a', 'b'] } as any;
 
         expect(applyUserBadgesUpdate(state, event)).toBe(state);
     });
 
-    it('returns a cloned AvatarInfoUser with deduped badges when the event applies', () =>
-    {
-        const state = buildAvatarInfoUser({ webID: 42, badges: [ 'a' ], name: 'alice' });
-        const event = { userId: 42, badges: [ 'b', 'b', 'c' ] } as any;
+    it('returns a cloned AvatarInfoUser with deduped badges when the event applies', () => {
+        const state = buildAvatarInfoUser({ webID: 42, badges: ['a'], name: 'alice' });
+        const event = { userId: 42, badges: ['b', 'b', 'c'] } as any;
 
         const next = applyUserBadgesUpdate(state, event) as AvatarInfoUser;
 
         expect(next).not.toBe(state);
         expect(next).toBeInstanceOf(AvatarInfoUser);
-        expect(next.badges).toEqual([ 'b', '', 'c' ]);
+        expect(next.badges).toEqual(['b', '', 'c']);
         // surrounding fields propagate via Object.assign
         expect(next.name).toBe('alice');
     });
 });
 
-describe('applyUserFigureUpdate', () =>
-{
-    it('returns the same reference when state is not an AvatarInfoUser', () =>
-    {
+describe('applyUserFigureUpdate', () => {
+    it('returns the same reference when state is not an AvatarInfoUser', () => {
         const state: IAvatarInfo = { type: 'NOT_USER' } as IAvatarInfo;
         const event = { roomIndex: 5, figure: 'hr-100' } as any;
 
         expect(applyUserFigureUpdate(state, event)).toBe(state);
     });
 
-    it('ignores events targeting a different roomIndex', () =>
-    {
+    it('ignores events targeting a different roomIndex', () => {
         const state = buildAvatarInfoUser({ roomIndex: 3, figure: 'old' });
         const event = { roomIndex: 7, figure: 'new' } as any;
 
         expect(applyUserFigureUpdate(state, event)).toBe(state);
     });
 
-    it('applies all 13 figure-related fields when roomIndex matches', () =>
-    {
+    it('applies all 13 figure-related fields when roomIndex matches', () => {
         const state = buildAvatarInfoUser({ roomIndex: 3 });
         const event = {
             roomIndex: 3,
@@ -128,8 +117,7 @@ describe('applyUserFigureUpdate', () =>
         expect(next.cardBackgroundId).toBe(9);
     });
 
-    it('defaults cardBackgroundId to 0 when the server omits it', () =>
-    {
+    it('defaults cardBackgroundId to 0 when the server omits it', () => {
         const state = buildAvatarInfoUser({ roomIndex: 3, cardBackgroundId: 7 });
         const event = {
             roomIndex: 3,
@@ -154,28 +142,24 @@ describe('applyUserFigureUpdate', () =>
     });
 });
 
-describe('applyFavouriteGroupUpdate', () =>
-{
-    const resolveGroupBadge = (groupId: number) => `badge-${ groupId }`;
+describe('applyFavouriteGroupUpdate', () => {
+    const resolveGroupBadge = (groupId: number) => `badge-${groupId}`;
 
-    it('returns the same reference when state is not an AvatarInfoUser', () =>
-    {
+    it('returns the same reference when state is not an AvatarInfoUser', () => {
         const state: IAvatarInfo = { type: 'NOT_USER' } as IAvatarInfo;
         const event = { roomIndex: 5, status: 1, habboGroupId: 42, habboGroupName: 'Cool Group' } as any;
 
         expect(applyFavouriteGroupUpdate(state, event, resolveGroupBadge)).toBe(state);
     });
 
-    it('ignores events targeting a different roomIndex', () =>
-    {
+    it('ignores events targeting a different roomIndex', () => {
         const state = buildAvatarInfoUser({ roomIndex: 3 });
         const event = { roomIndex: 7, status: 1, habboGroupId: 42, habboGroupName: 'g' } as any;
 
         expect(applyFavouriteGroupUpdate(state, event, resolveGroupBadge)).toBe(state);
     });
 
-    it('applies a fresh group when status is positive and groupId is positive', () =>
-    {
+    it('applies a fresh group when status is positive and groupId is positive', () => {
         const state = buildAvatarInfoUser({ roomIndex: 3, groupId: -1 });
         const event = { roomIndex: 3, status: 1, habboGroupId: 42, habboGroupName: 'Cool Group' } as any;
 
@@ -186,8 +170,7 @@ describe('applyFavouriteGroupUpdate', () =>
         expect(next.groupBadgeId).toBe('badge-42');
     });
 
-    it('clears the group when status is -1', () =>
-    {
+    it('clears the group when status is -1', () => {
         const state = buildAvatarInfoUser({ roomIndex: 3, groupId: 42, groupName: 'old', groupBadgeId: 'badge-42' });
         const event = { roomIndex: 3, status: -1, habboGroupId: 42, habboGroupName: 'ignored' } as any;
 
@@ -198,8 +181,7 @@ describe('applyFavouriteGroupUpdate', () =>
         expect(next.groupBadgeId).toBeNull();
     });
 
-    it('clears the group when habboGroupId is 0 (no favourite)', () =>
-    {
+    it('clears the group when habboGroupId is 0 (no favourite)', () => {
         const state = buildAvatarInfoUser({ roomIndex: 3, groupId: 7 });
         const event = { roomIndex: 3, status: 1, habboGroupId: 0, habboGroupName: 'ignored' } as any;
 

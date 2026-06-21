@@ -1,18 +1,5 @@
-import
-{
-    CreateLinkEvent,
-    GroupDeleteComposer,
-    GroupSaveInformationComposer,
-} from '@nitrots/nitro-renderer';
-import
-{
-    Dispatch,
-    FC,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import { CreateLinkEvent, GroupDeleteComposer, GroupSaveInformationComposer } from '@nitrots/nitro-renderer';
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { IGroupData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Text } from '../../../../common';
 import { useNotification } from '../../../../hooks';
@@ -27,32 +14,22 @@ interface GroupTabIdentityViewProps {
     availableRooms?: { id: number; name: string }[];
 }
 
-export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
-{
-    const {
-        groupData = null,
-        setGroupData = null,
-        setCloseAction = null,
-        onClose = null,
-        isCreator = false,
-        availableRooms = [],
-    } = props;
+export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) => {
+    const { groupData = null, setGroupData = null, setCloseAction = null, onClose = null, isCreator = false, availableRooms = [] } = props;
     const [groupName, setGroupName] = useState<string>('');
     const [groupDescription, setGroupDescription] = useState<string>('');
     const [groupHomeroomId, setGroupHomeroomId] = useState<number>(-1);
     const { showConfirm = null } = useNotification();
 
-    const deleteGroup = () =>
-    {
-        if(!groupData || groupData.groupId <= 0) return;
+    const deleteGroup = () => {
+        if (!groupData || groupData.groupId <= 0) return;
 
         showConfirm(
             LocalizeText('group.deleteconfirm.desc'),
-            () =>
-            {
+            () => {
                 SendMessageComposer(new GroupDeleteComposer(groupData.groupId));
 
-                if(onClose) onClose();
+                if (onClose) onClose();
             },
             null,
             null,
@@ -61,22 +38,15 @@ export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
         );
     };
 
-    const saveIdentity = useCallback(() =>
-    {
-        if(!groupData || !groupName || !groupName.length) return false;
+    const saveIdentity = useCallback(() => {
+        if (!groupData || !groupName || !groupName.length) return false;
 
-        if(
-            groupName === groupData.groupName &&
-            groupDescription === groupData.groupDescription
-        )
-            return true;
+        if (groupName === groupData.groupName && groupDescription === groupData.groupDescription) return true;
 
-        if(groupData.groupId <= 0)
-        {
-            if(groupHomeroomId <= 0) return false;
+        if (groupData.groupId <= 0) {
+            if (groupHomeroomId <= 0) return false;
 
-            setGroupData((prevValue) =>
-            {
+            setGroupData((prevValue) => {
                 const newValue = { ...prevValue };
 
                 newValue.groupName = groupName;
@@ -89,32 +59,24 @@ export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
             return true;
         }
 
-        SendMessageComposer(
-            new GroupSaveInformationComposer(
-                groupData.groupId,
-                groupName,
-                groupDescription || ''
-            )
-        );
+        SendMessageComposer(new GroupSaveInformationComposer(groupData.groupId, groupName, groupDescription || ''));
 
         return true;
     }, [groupData, groupName, groupDescription, groupHomeroomId, setGroupData]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setGroupName(groupData.groupName || '');
         setGroupDescription(groupData.groupDescription || '');
         setGroupHomeroomId(groupData.groupHomeroomId);
     }, [groupData]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setCloseAction({ action: saveIdentity });
 
         return () => setCloseAction(null);
     }, [setCloseAction, saveIdentity]);
 
-    if(!groupData) return null;
+    if (!groupData) return null;
 
     return (
         <Column justifyContent="between" overflow="auto">
@@ -123,12 +85,7 @@ export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
                     <Text center className="col-span-3">
                         {LocalizeText('group.edit.name')}
                     </Text>
-                    <NitroInput
-                        maxLength={29}
-                        type="text"
-                        value={groupName}
-                        onChange={(event) => setGroupName(event.target.value)}
-                    />
+                    <NitroInput maxLength={29} type="text" value={groupName} onChange={(event) => setGroupName(event.target.value)} />
                 </div>
                 <div className="flex items-center gap-1">
                     <Text center className="col-span-3">
@@ -138,9 +95,7 @@ export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
                         className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm"
                         maxLength={254}
                         value={groupDescription}
-                        onChange={(event) =>
-                            setGroupDescription(event.target.value)
-                        }
+                        onChange={(event) => setGroupDescription(event.target.value)}
                     />
                 </div>
                 {isCreator && (
@@ -153,16 +108,10 @@ export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
                                 <select
                                     className="form-select form-select-sm"
                                     value={groupHomeroomId}
-                                    onChange={(event) =>
-                                        setGroupHomeroomId(
-                                            parseInt(event.target.value)
-                                        )
-                                    }
+                                    onChange={(event) => setGroupHomeroomId(parseInt(event.target.value))}
                                 >
                                     <option disabled value={-1}>
-                                        {LocalizeText(
-                                            'group.edit.base.select.room'
-                                        )}
+                                        {LocalizeText('group.edit.base.select.room')}
                                     </option>
                                     {availableRooms &&
                                         availableRooms.map((room, index) => (
@@ -175,9 +124,7 @@ export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
                         </div>
                         <div className="flex gap-1">
                             <div className="col-span-3">&nbsp;</div>
-                            <Text small>
-                                {LocalizeText('group.edit.base.warning')}
-                            </Text>
+                            <Text small>{LocalizeText('group.edit.base.warning')}</Text>
                         </div>
                     </>
                 )}
@@ -188,13 +135,7 @@ export const GroupTabIdentityView: FC<GroupTabIdentityViewProps> = (props) =>
                 </Button>
             )}
             {isCreator && (
-                <Text
-                    center
-                    fullWidth
-                    pointer
-                    underline
-                    onClick={(event) => CreateLinkEvent('navigator/create')}
-                >
+                <Text center fullWidth pointer underline onClick={(event) => CreateLinkEvent('navigator/create')}>
                     {LocalizeText('group.createroom')}
                 </Text>
             )}

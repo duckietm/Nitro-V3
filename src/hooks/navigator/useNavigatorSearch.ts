@@ -18,39 +18,35 @@ import { useNavigatorUiStore } from './navigatorUiStore';
  * useMessageEvent listener used here matches the rest of the codebase
  * and reliably catches every server push.
  */
-export const useNavigatorSearch = () =>
-{
-    const tabCode = useNavigatorUiStore(s => s.currentTabCode);
-    const filter  = useNavigatorUiStore(s => s.currentFilter);
+export const useNavigatorSearch = () => {
+    const tabCode = useNavigatorUiStore((s) => s.currentTabCode);
+    const filter = useNavigatorUiStore((s) => s.currentFilter);
 
-    const [ searchResult, setSearchResult ] = useState<NavigatorSearchResultSet | null>(null);
-    const [ isFetching, setIsFetching ] = useState(false);
+    const [searchResult, setSearchResult] = useState<NavigatorSearchResultSet | null>(null);
+    const [isFetching, setIsFetching] = useState(false);
 
-    useEffect(() =>
-    {
-        if(!tabCode) return;
+    useEffect(() => {
+        if (!tabCode) return;
 
         setIsFetching(true);
         SendMessageComposer(new NavigatorSearchComposer(tabCode, filter));
-    }, [ tabCode, filter ]);
+    }, [tabCode, filter]);
 
-    useMessageEvent<NavigatorSearchEvent>(NavigatorSearchEvent, event =>
-    {
+    useMessageEvent<NavigatorSearchEvent>(NavigatorSearchEvent, (event) => {
         const result = event.getParser()?.result;
-        if(!result) return;
+        if (!result) return;
 
         // No active tab → the search query is disabled, ignore any event.
         // Otherwise only accept the event whose code matches the active tab.
-        if(!tabCode || (result.code !== tabCode)) return;
+        if (!tabCode || result.code !== tabCode) return;
 
         setSearchResult(result);
         setIsFetching(false);
     });
 
     // A newly created room refetches the current search.
-    useMessageEvent<FlatCreatedEvent>(FlatCreatedEvent, () =>
-    {
-        if(!tabCode) return;
+    useMessageEvent<FlatCreatedEvent>(FlatCreatedEvent, () => {
+        if (!tabCode) return;
 
         setIsFetching(true);
         SendMessageComposer(new NavigatorSearchComposer(tabCode, filter));
@@ -59,9 +55,8 @@ export const useNavigatorSearch = () =>
     return {
         searchResult,
         isFetching,
-        refetch: () =>
-        {
-            if(!tabCode) return;
+        refetch: () => {
+            if (!tabCode) return;
             setIsFetching(true);
             SendMessageComposer(new NavigatorSearchComposer(tabCode, filter));
         }

@@ -1,4 +1,14 @@
-import { GetEventDispatcher, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, IRoomSessionSnapshot, IRoomUserData, ISoundVolumesSnapshot, IUserDataSnapshot, NitroEventType } from '@nitrots/nitro-renderer';
+import {
+    GetEventDispatcher,
+    GetRoomSessionManager,
+    GetSessionDataManager,
+    GetSoundManager,
+    IRoomSessionSnapshot,
+    IRoomUserData,
+    ISoundVolumesSnapshot,
+    IUserDataSnapshot,
+    NitroEventType
+} from '@nitrots/nitro-renderer';
 import { useMemo } from 'react';
 import { useExternalSnapshot } from '../events/useExternalSnapshot';
 
@@ -67,66 +77,54 @@ const DEFAULT_VOLUMES: Readonly<ISoundVolumesSnapshot> = Object.freeze({
     trax: 0.5
 }) as Readonly<ISoundVolumesSnapshot>;
 
-const subscribeTo = (eventType: string) => (onChange: () => void): (() => void) =>
-{
-    const dispatcher = GetEventDispatcher();
+const subscribeTo =
+    (eventType: string) =>
+    (onChange: () => void): (() => void) => {
+        const dispatcher = GetEventDispatcher();
 
-    // Stale renderer (no v2.1.0 subscribe API) — return a no-op
-    // unsubscribe so useSyncExternalStore stays mounted cleanly.
-    if(!dispatcher || typeof dispatcher.subscribe !== 'function') return NOOP_UNSUBSCRIBE;
+        // Stale renderer (no v2.1.0 subscribe API) — return a no-op
+        // unsubscribe so useSyncExternalStore stays mounted cleanly.
+        if (!dispatcher || typeof dispatcher.subscribe !== 'function') return NOOP_UNSUBSCRIBE;
 
-    return dispatcher.subscribe(eventType, onChange);
-};
+        return dispatcher.subscribe(eventType, onChange);
+    };
 
 export const useUserDataSnapshot = (): Readonly<IUserDataSnapshot> =>
-    useExternalSnapshot(
-        subscribeTo(NitroEventType.SESSION_DATA_UPDATED),
-        () =>
-        {
-            const manager = GetSessionDataManager();
+    useExternalSnapshot(subscribeTo(NitroEventType.SESSION_DATA_UPDATED), () => {
+        const manager = GetSessionDataManager();
 
-            if(!manager || typeof manager.getUserDataSnapshot !== 'function') return DEFAULT_USER_DATA;
+        if (!manager || typeof manager.getUserDataSnapshot !== 'function') return DEFAULT_USER_DATA;
 
-            return manager.getUserDataSnapshot();
-        }
-    );
+        return manager.getUserDataSnapshot();
+    });
 
 export const useActiveRoomSessionSnapshot = (): Readonly<IRoomSessionSnapshot> | null =>
-    useExternalSnapshot(
-        subscribeTo(NitroEventType.ROOM_SESSION_UPDATED),
-        () =>
-        {
-            const manager = GetRoomSessionManager();
+    useExternalSnapshot(subscribeTo(NitroEventType.ROOM_SESSION_UPDATED), () => {
+        const manager = GetRoomSessionManager();
 
-            if(!manager || typeof manager.getActiveRoomSessionSnapshot !== 'function') return null;
+        if (!manager || typeof manager.getActiveRoomSessionSnapshot !== 'function') return null;
 
-            return manager.getActiveRoomSessionSnapshot();
-        }
-    );
+        return manager.getActiveRoomSessionSnapshot();
+    });
 
 export const useIgnoredUsersSnapshot = (): ReadonlyArray<string> =>
-    useExternalSnapshot(
-        subscribeTo(NitroEventType.IGNORED_USERS_UPDATED),
-        () =>
-        {
-            const inner = GetSessionDataManager()?.ignoredUsersManager;
+    useExternalSnapshot(subscribeTo(NitroEventType.IGNORED_USERS_UPDATED), () => {
+        const inner = GetSessionDataManager()?.ignoredUsersManager;
 
-            if(!inner || typeof inner.getIgnoredUsersSnapshot !== 'function') return EMPTY_IGNORED_LIST;
+        if (!inner || typeof inner.getIgnoredUsersSnapshot !== 'function') return EMPTY_IGNORED_LIST;
 
-            return inner.getIgnoredUsersSnapshot();
-        }
-    );
+        return inner.getIgnoredUsersSnapshot();
+    });
 
 /**
  * Reactive predicate built on top of `useIgnoredUsersSnapshot`.
  * Re-renders only when the array reference flips (i.e. someone is added
  * or removed) — not on unrelated session updates.
  */
-export const useIsUserIgnored = (name: string): boolean =>
-{
+export const useIsUserIgnored = (name: string): boolean => {
     const list = useIgnoredUsersSnapshot();
 
-    return useMemo(() => list.includes(name), [ list, name ]);
+    return useMemo(() => list.includes(name), [list, name]);
 };
 
 /**
@@ -139,8 +137,7 @@ export const useIsUserIgnored = (name: string): boolean =>
  * (`useHasPermission(key)`) below, which is dynamic against
  * `permission_definitions` and survives rank renumbering.
  */
-export interface IUserRank
-{
+export interface IUserRank {
     readonly id: number;
     readonly name: string;
     readonly level: number;
@@ -149,18 +146,20 @@ export interface IUserRank
     readonly prefixColor: string;
 }
 
-export const useUserRank = (): IUserRank =>
-{
+export const useUserRank = (): IUserRank => {
     const userData = useUserDataSnapshot();
 
-    return useMemo<IUserRank>(() => ({
-        id: userData.rankId,
-        name: userData.rankName,
-        level: userData.securityLevel,
-        badge: userData.rankBadge,
-        prefix: userData.rankPrefix,
-        prefixColor: userData.rankPrefixColor
-    }), [ userData.rankId, userData.rankName, userData.securityLevel, userData.rankBadge, userData.rankPrefix, userData.rankPrefixColor ]);
+    return useMemo<IUserRank>(
+        () => ({
+            id: userData.rankId,
+            name: userData.rankName,
+            level: userData.securityLevel,
+            badge: userData.rankBadge,
+            prefix: userData.rankPrefix,
+            prefixColor: userData.rankPrefixColor
+        }),
+        [userData.rankId, userData.rankName, userData.securityLevel, userData.rankBadge, userData.rankPrefix, userData.rankPrefixColor]
+    );
 };
 
 /**
@@ -178,17 +177,13 @@ export const useUserRank = (): IUserRank =>
  * every key, which hides mod-only UI by default (safe).
  */
 export const useUserPermissions = (): ReadonlyMap<string, number> =>
-    useExternalSnapshot(
-        subscribeTo(NitroEventType.USER_PERMISSIONS_UPDATED),
-        () =>
-        {
-            const manager = GetSessionDataManager();
+    useExternalSnapshot(subscribeTo(NitroEventType.USER_PERMISSIONS_UPDATED), () => {
+        const manager = GetSessionDataManager();
 
-            if(!manager || typeof manager.getPermissionsSnapshot !== 'function') return EMPTY_PERMISSIONS;
+        if (!manager || typeof manager.getPermissionsSnapshot !== 'function') return EMPTY_PERMISSIONS;
 
-            return manager.getPermissionsSnapshot();
-        }
-    );
+        return manager.getPermissionsSnapshot();
+    });
 
 /**
  * Reactive predicate: does the current user have the named
@@ -208,11 +203,10 @@ export const useUserPermissions = (): ReadonlyMap<string, number> =>
  * Prefer this over any rank-based gate — it survives rank
  * renumbering and adding new ranks without touching the React code.
  */
-export const useHasPermission = (key: string): boolean =>
-{
+export const useHasPermission = (key: string): boolean => {
     const permissions = useUserPermissions();
 
-    return useMemo(() => permissions.get(key) === 1, [ permissions, key ]);
+    return useMemo(() => permissions.get(key) === 1, [permissions, key]);
 };
 
 /**
@@ -226,11 +220,10 @@ export const useHasPermission = (key: string): boolean =>
  * plain ALLOWED, or for the handful of permissions whose
  * `permission_definitions.max_value > 1`.
  */
-export const usePermissionValue = (key: string): number =>
-{
+export const usePermissionValue = (key: string): number => {
     const permissions = useUserPermissions();
 
-    return useMemo(() => permissions.get(key) ?? 0, [ permissions, key ]);
+    return useMemo(() => permissions.get(key) ?? 0, [permissions, key]);
 };
 
 /**
@@ -244,41 +237,32 @@ export const usePermissionValue = (key: string): number =>
 export const useIsAmbassador = (): boolean => useHasPermission('acc_ambassador');
 
 export const useGroupBadgesSnapshot = (): ReadonlyMap<number, string> =>
-    useExternalSnapshot(
-        subscribeTo(NitroEventType.GROUP_BADGES_UPDATED),
-        () =>
-        {
-            const inner = GetSessionDataManager()?.groupInformationManager;
+    useExternalSnapshot(subscribeTo(NitroEventType.GROUP_BADGES_UPDATED), () => {
+        const inner = GetSessionDataManager()?.groupInformationManager;
 
-            if(!inner || typeof inner.getGroupBadgesSnapshot !== 'function') return EMPTY_GROUP_BADGES;
+        if (!inner || typeof inner.getGroupBadgesSnapshot !== 'function') return EMPTY_GROUP_BADGES;
 
-            return inner.getGroupBadgesSnapshot();
-        }
-    );
+        return inner.getGroupBadgesSnapshot();
+    });
 
 /**
  * Returns the badge id for a given group, reactive. Empty string when
  * the badge isn't known (matches the legacy `getGroupBadge` fallback).
  */
-export const useGroupBadge = (groupId: number): string =>
-{
+export const useGroupBadge = (groupId: number): string => {
     const badges = useGroupBadgesSnapshot();
 
-    return useMemo(() => badges.get(groupId) ?? '', [ badges, groupId ]);
+    return useMemo(() => badges.get(groupId) ?? '', [badges, groupId]);
 };
 
 export const useVolumesSnapshot = (): Readonly<ISoundVolumesSnapshot> =>
-    useExternalSnapshot(
-        subscribeTo(NitroEventType.SOUND_VOLUMES_UPDATED),
-        () =>
-        {
-            const manager = GetSoundManager();
+    useExternalSnapshot(subscribeTo(NitroEventType.SOUND_VOLUMES_UPDATED), () => {
+        const manager = GetSoundManager();
 
-            if(!manager || typeof manager.getVolumesSnapshot !== 'function') return DEFAULT_VOLUMES;
+        if (!manager || typeof manager.getVolumesSnapshot !== 'function') return DEFAULT_VOLUMES;
 
-            return manager.getVolumesSnapshot();
-        }
-    );
+        return manager.getVolumesSnapshot();
+    });
 
 /**
  * Returns the active room's user list, reactive. Returns an empty
@@ -291,26 +275,23 @@ export const useVolumesSnapshot = (): Readonly<ISoundVolumesSnapshot> =>
  */
 export const useRoomUserListSnapshot = (): ReadonlyArray<IRoomUserData> =>
     useExternalSnapshot(
-        (onChange) =>
-        {
+        (onChange) => {
             const dispatcher = GetEventDispatcher();
 
-            if(!dispatcher || typeof dispatcher.subscribe !== 'function') return NOOP_UNSUBSCRIBE;
+            if (!dispatcher || typeof dispatcher.subscribe !== 'function') return NOOP_UNSUBSCRIBE;
 
             const offList = dispatcher.subscribe(NitroEventType.ROOM_USER_LIST_UPDATED, onChange);
             const offSession = dispatcher.subscribe(NitroEventType.ROOM_SESSION_UPDATED, onChange);
 
-            return () =>
-            {
+            return () => {
                 offList();
                 offSession();
             };
         },
-        () =>
-        {
+        () => {
             const userDataManager = GetRoomSessionManager()?.getActiveRoomSessionSnapshot?.()?.session?.userDataManager;
 
-            if(!userDataManager || typeof userDataManager.getRoomUserListSnapshot !== 'function') return EMPTY_USER_LIST;
+            if (!userDataManager || typeof userDataManager.getRoomUserListSnapshot !== 'function') return EMPTY_USER_LIST;
 
             return userDataManager.getRoomUserListSnapshot();
         }

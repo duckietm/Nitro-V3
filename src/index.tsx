@@ -32,12 +32,10 @@ import './css/common/Buttons.css';
 import './css/common/ClassicScrollbar.css';
 import './css/common/PrefixEffects.css';
 
-
 import './css/forms/form_select.css';
 
 import './css/friends/FriendsView.css';
 import './css/fortune-wheel/FortuneWheelView.css';
-
 
 import './css/help/HelpView.css';
 
@@ -49,9 +47,7 @@ import './css/icons/icons.css';
 
 import './css/inventory/InventoryView.css';
 
-
 import './css/layout/LayoutTrophy.css';
-
 
 import './css/nitrocard/NitroCardView.css';
 
@@ -76,15 +72,17 @@ import './css/WiredView.css';
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <QueryClientProvider client={ queryClient }>
+        <QueryClientProvider client={queryClient}>
             <ErrorBoundary
-                fallbackRender={ ({ error }) => (
+                fallbackRender={({ error }) => (
                     <LoadingView
-                        isError={ true }
-                        message={ `Something went wrong.\n${ (error as Error)?.message ?? 'Unknown error' }` }
-                        homeUrl={ window.location.origin + '/' } />
-                ) }>
-                <Suspense fallback={ <LoadingView message="Loading…" /> }>
+                        isError={true}
+                        message={`Something went wrong.\n${(error as Error)?.message ?? 'Unknown error'}`}
+                        homeUrl={window.location.origin + '/'}
+                    />
+                )}
+            >
+                <Suspense fallback={<LoadingView message="Loading…" />}>
                     <App />
                 </Suspense>
             </ErrorBoundary>

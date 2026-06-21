@@ -1,5 +1,4 @@
-export interface IPrefixItem
-{
+export interface IPrefixItem {
     id: number;
     displayName?: string;
     text: string;

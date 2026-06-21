@@ -1,4 +1,12 @@
-import { FurnitureFloorUpdateEvent, GetRoomEngine, GetSessionDataManager, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectVariable, Triggerable } from '@nitrots/nitro-renderer';
+import {
+    FurnitureFloorUpdateEvent,
+    GetRoomEngine,
+    GetSessionDataManager,
+    RoomEngineObjectEvent,
+    RoomObjectCategory,
+    RoomObjectVariable,
+    Triggerable
+} from '@nitrots/nitro-renderer';
 import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { GetRoomSession, LocalizeText } from '../../../api';
@@ -28,8 +36,7 @@ export const BOT_SOURCES = [
     { value: 201, label: 'wiredfurni.params.sources.users.201' }
 ];
 
-export interface WiredSourceOption
-{
+export interface WiredSourceOption {
     value: number;
     label: string;
 }
@@ -53,28 +60,24 @@ const USER_SOURCE_LABEL_ORDER = [
     'wiredfurni.params.sources.users.900'
 ];
 
-const getSourceSortIndex = (label: string, category: 'furni' | 'users') =>
-{
-    const order = (category === 'furni') ? FURNI_SOURCE_LABEL_ORDER : USER_SOURCE_LABEL_ORDER;
+const getSourceSortIndex = (label: string, category: 'furni' | 'users') => {
+    const order = category === 'furni' ? FURNI_SOURCE_LABEL_ORDER : USER_SOURCE_LABEL_ORDER;
     const index = order.indexOf(label);
 
-    return (index >= 0) ? index : (order.length + 1);
+    return index >= 0 ? index : order.length + 1;
 };
 
-export const sortWiredSourceOptions = (options: WiredSourceOption[], category: 'furni' | 'users') =>
-{
-    return [ ...options ].sort((left, right) =>
-    {
+export const sortWiredSourceOptions = (options: WiredSourceOption[], category: 'furni' | 'users') => {
+    return [...options].sort((left, right) => {
         const orderDifference = getSourceSortIndex(left.label, category) - getSourceSortIndex(right.label, category);
 
-        if(orderDifference !== 0) return orderDifference;
+        if (orderDifference !== 0) return orderDifference;
 
         return left.value - right.value;
     });
 };
 
-interface WiredSourcesSelectorProps
-{
+interface WiredSourcesSelectorProps {
     showFurni?: boolean;
     showUsers?: boolean;
     furniSource?: number;
@@ -93,114 +96,113 @@ interface WiredSourcesSelectorProps
 const BOT_SOURCE_TITLE = 'wiredfurni.params.sources.users.title.bots';
 
 const CLICK_USER_TRIGGER_NAME = 'wf_trg_click_user';
-const isClickUserTriggerName = (value?: string) =>
-{
-    if(!value) return false;
+const isClickUserTriggerName = (value?: string) => {
+    if (!value) return false;
 
     return value.toLowerCase().startsWith(CLICK_USER_TRIGGER_NAME);
 };
 
-const hasClickUserTriggerInStack = (trigger: Triggerable) =>
-{
-    if(!trigger) return false;
+const hasClickUserTriggerInStack = (trigger: Triggerable) => {
+    if (!trigger) return false;
 
     const roomSession = GetRoomSession();
     const roomId = roomSession?.roomId ?? GetRoomEngine().activeRoomId;
 
-    if(roomId == null || roomId < 0) return false;
+    if (roomId == null || roomId < 0) return false;
 
     const triggerObject = GetRoomEngine().getRoomObject(roomId, trigger.id, RoomObjectCategory.FLOOR);
 
-    if(!triggerObject) return false;
+    if (!triggerObject) return false;
 
     const triggerLocation = triggerObject.getLocation();
     const roomObjects = GetRoomEngine().getRoomObjects(roomId, RoomObjectCategory.FLOOR) || [];
 
-    for(const roomObject of roomObjects)
-    {
-        if(!roomObject) continue;
+    for (const roomObject of roomObjects) {
+        if (!roomObject) continue;
 
         const location = roomObject.getLocation();
 
-        if(!location || location.x !== triggerLocation.x || location.y !== triggerLocation.y) continue;
+        if (!location || location.x !== triggerLocation.x || location.y !== triggerLocation.y) continue;
 
         const typeId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_TYPE_ID);
         const furniData = GetSessionDataManager().getFloorItemData(typeId);
 
-        if(isClickUserTriggerName(furniData?.className) || isClickUserTriggerName(furniData?.fullName) || isClickUserTriggerName(furniData?.name)) return true;
+        if (isClickUserTriggerName(furniData?.className) || isClickUserTriggerName(furniData?.fullName) || isClickUserTriggerName(furniData?.name)) return true;
     }
 
     return false;
 };
 
-export const getAvailableUserSources = (trigger: Triggerable, userSources: WiredSourceOption[], currentUserSource: number, usersTitle = 'wiredfurni.params.sources.users.title', allowClickedUserSource = true) =>
-{
-    if(!allowClickedUserSource || usersTitle === BOT_SOURCE_TITLE) return userSources;
-    if(userSources.some(option => option.value === CLICKED_USER_SOURCE_VALUE)) return userSources;
+export const getAvailableUserSources = (
+    trigger: Triggerable,
+    userSources: WiredSourceOption[],
+    currentUserSource: number,
+    usersTitle = 'wiredfurni.params.sources.users.title',
+    allowClickedUserSource = true
+) => {
+    if (!allowClickedUserSource || usersTitle === BOT_SOURCE_TITLE) return userSources;
+    if (userSources.some((option) => option.value === CLICKED_USER_SOURCE_VALUE)) return userSources;
 
-    if(!hasClickUserTriggerInStack(trigger)) return userSources;
+    if (!hasClickUserTriggerInStack(trigger)) return userSources;
 
-    const triggerIndex = userSources.findIndex(option => option.value === 0);
+    const triggerIndex = userSources.findIndex((option) => option.value === 0);
 
-    if(triggerIndex === -1) return [ ...userSources, CLICKED_USER_SOURCE ];
+    if (triggerIndex === -1) return [...userSources, CLICKED_USER_SOURCE];
 
-    return [
-        ...userSources.slice(0, triggerIndex + 1),
-        CLICKED_USER_SOURCE,
-        ...userSources.slice(triggerIndex + 1)
-    ];
+    return [...userSources.slice(0, triggerIndex + 1), CLICKED_USER_SOURCE, ...userSources.slice(triggerIndex + 1)];
 };
 
-export const useAvailableUserSources = (trigger: Triggerable, userSources: WiredSourceOption[] = USER_SOURCES, usersTitle = 'wiredfurni.params.sources.users.title', allowClickedUserSource = true) =>
-{
-    const [ hasClickUserTrigger, setHasClickUserTrigger ] = useState(false);
+export const useAvailableUserSources = (
+    trigger: Triggerable,
+    userSources: WiredSourceOption[] = USER_SOURCES,
+    usersTitle = 'wiredfurni.params.sources.users.title',
+    allowClickedUserSource = true
+) => {
+    const [hasClickUserTrigger, setHasClickUserTrigger] = useState(false);
 
-    const refreshStackSources = useCallback(() =>
-    {
+    const refreshStackSources = useCallback(() => {
         setHasClickUserTrigger(hasClickUserTriggerInStack(trigger));
-    }, [ trigger ]);
+    }, [trigger]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         refreshStackSources();
 
-        if(!trigger) return;
+        if (!trigger) return;
 
         const intervalId = window.setInterval(refreshStackSources, 1000);
 
         return () => window.clearInterval(intervalId);
-    }, [ refreshStackSources, trigger ]);
+    }, [refreshStackSources, trigger]);
 
-    useNitroEvent<RoomEngineObjectEvent>([
-        RoomEngineObjectEvent.ADDED,
-        RoomEngineObjectEvent.REMOVED,
-        RoomEngineObjectEvent.PLACED,
-        RoomEngineObjectEvent.CONTENT_UPDATED
-    ], event =>
-    {
-        if(!trigger) return;
-        if(event.category !== RoomObjectCategory.FLOOR) return;
+    useNitroEvent<RoomEngineObjectEvent>(
+        [RoomEngineObjectEvent.ADDED, RoomEngineObjectEvent.REMOVED, RoomEngineObjectEvent.PLACED, RoomEngineObjectEvent.CONTENT_UPDATED],
+        (event) => {
+            if (!trigger) return;
+            if (event.category !== RoomObjectCategory.FLOOR) return;
 
-        const roomSession = GetRoomSession();
-        const roomId = roomSession?.roomId ?? GetRoomEngine().activeRoomId;
+            const roomSession = GetRoomSession();
+            const roomId = roomSession?.roomId ?? GetRoomEngine().activeRoomId;
 
-        if(event.roomId !== roomId) return;
+            if (event.roomId !== roomId) return;
 
-        refreshStackSources();
-    }, !!trigger);
+            refreshStackSources();
+        },
+        !!trigger
+    );
 
-    useMessageEvent<FurnitureFloorUpdateEvent>(FurnitureFloorUpdateEvent, () =>
-    {
-        if(!trigger) return;
+    useMessageEvent<FurnitureFloorUpdateEvent>(FurnitureFloorUpdateEvent, () => {
+        if (!trigger) return;
 
         refreshStackSources();
     });
 
-    return useMemo(() => getAvailableUserSources(trigger, userSources, 0, usersTitle, allowClickedUserSource && hasClickUserTrigger), [ allowClickedUserSource, hasClickUserTrigger, trigger, userSources, usersTitle ]);
+    return useMemo(
+        () => getAvailableUserSources(trigger, userSources, 0, usersTitle, allowClickedUserSource && hasClickUserTrigger),
+        [allowClickedUserSource, hasClickUserTrigger, trigger, userSources, usersTitle]
+    );
 };
 
-export const WiredSourcesSelector: FC<WiredSourcesSelectorProps> = props =>
-{
+export const WiredSourcesSelector: FC<WiredSourcesSelectorProps> = (props) => {
     const {
         showFurni = false,
         showUsers = false,
@@ -218,81 +220,95 @@ export const WiredSourcesSelector: FC<WiredSourcesSelectorProps> = props =>
     } = props;
     const { trigger = null } = useWired();
     const availableUserSources = useAvailableUserSources(trigger, userSources, usersTitle, allowClickedUserSource);
-    const orderedFurniSources = useMemo(() => sortWiredSourceOptions(furniSources, 'furni'), [ furniSources ]);
-    const orderedUserSources = useMemo(() =>
-    {
-        if(usersTitle === BOT_SOURCE_TITLE) return [ ...availableUserSources ];
+    const orderedFurniSources = useMemo(() => sortWiredSourceOptions(furniSources, 'furni'), [furniSources]);
+    const orderedUserSources = useMemo(() => {
+        if (usersTitle === BOT_SOURCE_TITLE) return [...availableUserSources];
 
         return sortWiredSourceOptions(availableUserSources, 'users');
-    }, [ availableUserSources, usersTitle ]);
+    }, [availableUserSources, usersTitle]);
 
-    useEffect(() =>
-    {
-        if(!showUsers || !onChangeUsers) return;
-        if(userSource !== CLICKED_USER_SOURCE_VALUE) return;
-        if(availableUserSources.some(source => source.value === CLICKED_USER_SOURCE_VALUE)) return;
+    useEffect(() => {
+        if (!showUsers || !onChangeUsers) return;
+        if (userSource !== CLICKED_USER_SOURCE_VALUE) return;
+        if (availableUserSources.some((source) => source.value === CLICKED_USER_SOURCE_VALUE)) return;
 
         onChangeUsers(0);
-    }, [ availableUserSources, onChangeUsers, showUsers, userSource ]);
+    }, [availableUserSources, onChangeUsers, showUsers, userSource]);
 
-    const furniIndex = Math.max(0, orderedFurniSources.findIndex(s => s.value === furniSource));
-    const userIndex = Math.max(0, orderedUserSources.findIndex(s => s.value === userSource));
+    const furniIndex = Math.max(
+        0,
+        orderedFurniSources.findIndex((s) => s.value === furniSource)
+    );
+    const userIndex = Math.max(
+        0,
+        orderedUserSources.findIndex((s) => s.value === userSource)
+    );
 
-    const prevFurni = () =>
-    {
+    const prevFurni = () => {
         const next = (furniIndex - 1 + orderedFurniSources.length) % orderedFurniSources.length;
         onChangeFurni && onChangeFurni(orderedFurniSources[next].value);
     };
 
-    const nextFurni = () =>
-    {
+    const nextFurni = () => {
         const next = (furniIndex + 1) % orderedFurniSources.length;
         onChangeFurni && onChangeFurni(orderedFurniSources[next].value);
     };
 
-    const prevUsers = () =>
-    {
+    const prevUsers = () => {
         const next = (userIndex - 1 + orderedUserSources.length) % orderedUserSources.length;
         onChangeUsers && onChangeUsers(orderedUserSources[next].value);
     };
 
-    const nextUsers = () =>
-    {
+    const nextUsers = () => {
         const next = (userIndex + 1) % orderedUserSources.length;
         onChangeUsers && onChangeUsers(orderedUserSources[next].value);
     };
 
-    if(!showFurni && !showUsers) return null;
+    if (!showFurni && !showUsers) return null;
 
     return (
         <div className="flex flex-col gap-2">
-            { showFurni &&
+            {showFurni && (
                 <>
-                    <Text bold>{ LocalizeText(furniTitle) }</Text>
+                    <Text bold>{LocalizeText(furniTitle)}</Text>
                     <div className="flex items-center gap-1">
-                        <Button variant="primary" classNames={ [ 'nitro-wired__picker-button' ] } className="px-2 py-1" onClick={ prevFurni }><FaChevronLeft /></Button>
+                        <Button variant="primary" classNames={['nitro-wired__picker-button']} className="px-2 py-1" onClick={prevFurni}>
+                            <FaChevronLeft />
+                        </Button>
                         <div className="flex min-w-0 flex-1 items-center justify-center nitro-wired__picker-label">
-                            <Text small className="text-center">{ LocalizeText(orderedFurniSources[furniIndex].label) }</Text>
+                            <Text small className="text-center">
+                                {LocalizeText(orderedFurniSources[furniIndex].label)}
+                            </Text>
                         </div>
-                        <Button variant="primary" classNames={ [ 'nitro-wired__picker-button' ] } className="px-2 py-1" onClick={ nextFurni }><FaChevronRight /></Button>
+                        <Button variant="primary" classNames={['nitro-wired__picker-button']} className="px-2 py-1" onClick={nextFurni}>
+                            <FaChevronRight />
+                        </Button>
                     </div>
-                    { furniDetail && <div className="nitro-wired__source-detail">{ furniDetail }</div> }
-                </> }
+                    {furniDetail && <div className="nitro-wired__source-detail">{furniDetail}</div>}
+                </>
+            )}
 
-            { showFurni && showUsers && <hr className="m-0 bg-dark" /> }
+            {showFurni && showUsers && <hr className="m-0 bg-dark" />}
 
-            { showUsers &&
+            {showUsers && (
                 <>
-                    <Text bold>{ LocalizeText(usersTitle) }</Text>
+                    <Text bold>{LocalizeText(usersTitle)}</Text>
                     <div className="flex items-center gap-1">
-                        <Button variant="primary" classNames={ [ 'nitro-wired__picker-button' ] } className="px-2 py-1" onClick={ prevUsers }><FaChevronLeft /></Button>
+                        <Button variant="primary" classNames={['nitro-wired__picker-button']} className="px-2 py-1" onClick={prevUsers}>
+                            <FaChevronLeft />
+                        </Button>
                         <div className="flex min-w-0 flex-1 items-center justify-center nitro-wired__picker-label">
-                            <Text small className="text-center">{ LocalizeText(orderedUserSources[userIndex].label) }</Text>
+                            <Text small className="text-center">
+                                {LocalizeText(orderedUserSources[userIndex].label)}
+                            </Text>
                         </div>
-                        <Button variant="primary" classNames={ [ 'nitro-wired__picker-button' ] } className="px-2 py-1" onClick={ nextUsers }><FaChevronRight /></Button>
+                        <Button variant="primary" classNames={['nitro-wired__picker-button']} className="px-2 py-1" onClick={nextUsers}>
+                            <FaChevronRight />
+                        </Button>
                     </div>
-                    { userDetail && <div className="nitro-wired__source-detail">{ userDetail }</div> }
-                </> }
+                    {userDetail && <div className="nitro-wired__source-detail">{userDetail}</div>}
+                </>
+            )}
         </div>
     );
 };

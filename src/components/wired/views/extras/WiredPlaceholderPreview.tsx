@@ -1,31 +1,23 @@
 import { FC, useEffect, useState } from 'react';
 import { Text } from '../../../../common';
 
-interface WiredPlaceholderPreviewProps
-{
+interface WiredPlaceholderPreviewProps {
     previewHtml: string;
     previewToken: string;
 }
 
-const copyToClipboard = async (value: string) =>
-{
-    if(!value) return false;
+const copyToClipboard = async (value: string) => {
+    if (!value) return false;
 
-    try
-    {
-        if(navigator?.clipboard?.writeText)
-        {
+    try {
+        if (navigator?.clipboard?.writeText) {
             await navigator.clipboard.writeText(value);
 
             return true;
         }
-    }
-    catch
-    {
-    }
+    } catch {}
 
-    try
-    {
+    try {
         const textArea = document.createElement('textarea');
 
         textArea.value = value;
@@ -41,37 +33,32 @@ const copyToClipboard = async (value: string) =>
         document.body.removeChild(textArea);
 
         return copied;
-    }
-    catch
-    {
+    } catch {
         return false;
     }
 };
 
-export const WiredPlaceholderPreview: FC<WiredPlaceholderPreviewProps> = props =>
-{
+export const WiredPlaceholderPreview: FC<WiredPlaceholderPreviewProps> = (props) => {
     const { previewHtml, previewToken } = props;
-    const [ copied, setCopied ] = useState(false);
+    const [copied, setCopied] = useState(false);
 
-    useEffect(() =>
-    {
-        if(!copied) return;
+    useEffect(() => {
+        if (!copied) return;
 
         const timeout = window.setTimeout(() => setCopied(false), 1200);
 
         return () => window.clearTimeout(timeout);
-    }, [ copied ]);
+    }, [copied]);
 
-    const handleCopy = async () =>
-    {
+    const handleCopy = async () => {
         const didCopy = await copyToClipboard(previewToken);
 
         setCopied(didCopy);
     };
 
     return (
-        <button type="button" className={ `nitro-wired__placeholder-preview ${ copied ? 'is-copied' : '' }` } onClick={ handleCopy }>
-            <Text dangerouslySetInnerHTML={ { __html: previewHtml } } />
+        <button type="button" className={`nitro-wired__placeholder-preview ${copied ? 'is-copied' : ''}`} onClick={handleCopy}>
+            <Text dangerouslySetInnerHTML={{ __html: previewHtml }} />
         </button>
     );
 };

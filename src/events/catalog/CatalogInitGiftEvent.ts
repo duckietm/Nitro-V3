@@ -1,13 +1,11 @@
 import { CatalogEvent } from './CatalogEvent';
 
-export class CatalogInitGiftEvent extends CatalogEvent
-{
+export class CatalogInitGiftEvent extends CatalogEvent {
     private _pageId: number;
     private _offerId: number;
     private _extraData: string;
 
-    constructor(pageId: number, offerId: number, extraData: string)
-    {
+    constructor(pageId: number, offerId: number, extraData: string) {
         super(CatalogEvent.INIT_GIFT);
 
         this._pageId = pageId;
@@ -15,18 +13,15 @@ export class CatalogInitGiftEvent extends CatalogEvent
         this._extraData = extraData;
     }
 
-    public get pageId(): number
-    {
+    public get pageId(): number {
         return this._pageId;
     }
 
-    public get offerId(): number
-    {
+    public get offerId(): number {
         return this._offerId;
     }
 
-    public get extraData(): string
-    {
+    public get extraData(): string {
         return this._extraData;
     }
 }

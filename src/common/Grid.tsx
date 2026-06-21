@@ -3,8 +3,7 @@ import { Base, BaseProps } from './Base';
 import { GridContextProvider } from './GridContext';
 import { AlignItemType, AlignSelfType, JustifyContentType, SpacingType } from './types';
 
-export interface GridProps extends BaseProps<HTMLDivElement>
-{
+export interface GridProps extends BaseProps<HTMLDivElement> {
     inline?: boolean;
     gap?: SpacingType;
     maxContent?: boolean;
@@ -15,50 +14,59 @@ export interface GridProps extends BaseProps<HTMLDivElement>
     justifyContent?: JustifyContentType;
 }
 
-export const Grid: FC<GridProps> = props =>
-{
-    const { inline = false, gap = 2, maxContent = false, columnCount = 0, center = false, alignSelf = null, alignItems = null, justifyContent = null, fullHeight = true, classNames = [], style = {}, ...rest } = props;
+export const Grid: FC<GridProps> = (props) => {
+    const {
+        inline = false,
+        gap = 2,
+        maxContent = false,
+        columnCount = 0,
+        center = false,
+        alignSelf = null,
+        alignItems = null,
+        justifyContent = null,
+        fullHeight = true,
+        classNames = [],
+        style = {},
+        ...rest
+    } = props;
 
-    const getClassNames = useMemo(() =>
-    {
+    const getClassNames = useMemo(() => {
         const newClassNames: string[] = [];
 
-
-        if(inline) newClassNames.push('inline-grid');
+        if (inline) newClassNames.push('inline-grid');
         else newClassNames.push('grid grid-rows-[repeat(var(--bs-rows,1),1fr)] grid-cols-[repeat(var(--bs-columns,12),1fr)]');
 
-        if(gap) newClassNames.push('gap-' + gap);
-        else if(gap === 0) newClassNames.push('gap-0');
+        if (gap) newClassNames.push('gap-' + gap);
+        else if (gap === 0) newClassNames.push('gap-0');
 
-        if(maxContent) newClassNames.push('basis-[max-content]');
+        if (maxContent) newClassNames.push('basis-[max-content]');
 
-        if(alignSelf) newClassNames.push('self-' + alignSelf);
+        if (alignSelf) newClassNames.push('self-' + alignSelf);
 
-        if(alignItems) newClassNames.push('items-' + alignItems);
+        if (alignItems) newClassNames.push('items-' + alignItems);
 
-        if(justifyContent) newClassNames.push('justify-' + justifyContent);
+        if (justifyContent) newClassNames.push('justify-' + justifyContent);
 
-        if(!alignItems && !justifyContent && center) newClassNames.push('items-center', 'justify-center');
+        if (!alignItems && !justifyContent && center) newClassNames.push('items-center', 'justify-center');
 
-        if(classNames.length) newClassNames.push(...classNames);
+        if (classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
-    }, [ inline, gap, maxContent, alignSelf, alignItems, justifyContent, center, classNames ]);
+    }, [inline, gap, maxContent, alignSelf, alignItems, justifyContent, center, classNames]);
 
-    const getStyle = useMemo(() =>
-    {
+    const getStyle = useMemo(() => {
         let newStyle: CSSProperties = {};
 
-        if(columnCount) newStyle['--bs-columns'] = columnCount.toString();
+        if (columnCount) newStyle['--bs-columns'] = columnCount.toString();
 
-        if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
+        if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ columnCount, style ]);
+    }, [columnCount, style]);
 
     return (
-        <GridContextProvider value={ { isCssGrid: true } }>
-            <Base classNames={ getClassNames } fullHeight={ fullHeight } style={ getStyle } { ...rest } />
+        <GridContextProvider value={{ isCssGrid: true }}>
+            <Base classNames={getClassNames} fullHeight={fullHeight} style={getStyle} {...rest} />
         </GridContextProvider>
     );
 };

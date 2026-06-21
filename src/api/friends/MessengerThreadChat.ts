@@ -1,5 +1,4 @@
-export class MessengerThreadChat
-{
+export class MessengerThreadChat {
     public static CHAT: number = 0;
     public static ROOM_INVITE: number = 1;
     public static STATUS_NOTIFICATION: number = 2;
@@ -22,8 +21,7 @@ export class MessengerThreadChat
     private _detectedLanguage: string;
     private _targetLanguage: string;
 
-    constructor(senderId: number, message: string, secondsSinceSent: number = 0, extraData: string = null, type: number = 0)
-    {
+    constructor(senderId: number, message: string, secondsSinceSent: number = 0, extraData: string = null, type: number = 0) {
         this._id = ++MessengerThreadChat.CHAT_ID;
         this._type = type;
         this._senderId = senderId;
@@ -38,8 +36,7 @@ export class MessengerThreadChat
         this._targetLanguage = '';
     }
 
-    public setTranslation(originalMessage: string, translatedMessage: string, detectedLanguage: string, targetLanguage: string): void
-    {
+    public setTranslation(originalMessage: string, translatedMessage: string, detectedLanguage: string, targetLanguage: string): void {
         this._showTranslation = true;
         this._originalMessage = originalMessage || this._message || '';
         this._translatedMessage = translatedMessage || this._originalMessage;
@@ -47,78 +44,63 @@ export class MessengerThreadChat
         this._targetLanguage = targetLanguage || '';
     }
 
-    public get id(): number
-    {
+    public get id(): number {
         return this._id;
     }
 
-    public get type(): number
-    {
+    public get type(): number {
         return this._type;
     }
 
-    public get senderId(): number
-    {
+    public get senderId(): number {
         return this._senderId;
     }
 
-    public get message(): string
-    {
+    public get message(): string {
         return this._message;
     }
 
-    public get secondsSinceSent(): number
-    {
+    public get secondsSinceSent(): number {
         return this._secondsSinceSent;
     }
 
-    public get extraData(): string
-    {
+    public get extraData(): string {
         return this._extraData;
     }
 
-    public get offlineDelivered(): boolean
-    {
-        return (this._type === MessengerThreadChat.CHAT) && (this._extraData === 'offline');
+    public get offlineDelivered(): boolean {
+        return this._type === MessengerThreadChat.CHAT && this._extraData === 'offline';
     }
 
-    public get status(): number
-    {
+    public get status(): number {
         return this._status;
     }
 
-    public setStatus(status: number): void
-    {
+    public setStatus(status: number): void {
         this._status = status;
     }
 
-    public get date(): Date
-    {
+    public get date(): Date {
         return this._date;
     }
 
-    public get showTranslation(): boolean
-    {
+    public get showTranslation(): boolean {
         return this._showTranslation;
     }
 
-    public get originalMessage(): string
-    {
+    public get originalMessage(): string {
         return this._originalMessage;
     }
 
-    public get translatedMessage(): string
-    {
+    public get translatedMessage(): string {
         return this._translatedMessage;
     }
 
-    public get detectedLanguage(): string
-    {
+    public get detectedLanguage(): string {
         return this._detectedLanguage;
     }
 
-    public get targetLanguage(): string
-    {
+    public get targetLanguage(): string {
         return this._targetLanguage;
     }
 }

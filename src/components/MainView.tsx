@@ -1,4 +1,13 @@
-import { AddLinkEventTracker, GetCommunication, GetRoomSessionManager, HabboWebTools, ILinkEventTracker, MarkMentionsReadComposer, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import {
+    AddLinkEventTracker,
+    GetCommunication,
+    GetRoomSessionManager,
+    HabboWebTools,
+    ILinkEventTracker,
+    MarkMentionsReadComposer,
+    RemoveLinkEventTracker,
+    RoomSessionEvent
+} from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
 import { GetConfigurationValue, SendMessageComposer } from '../api';
@@ -50,11 +59,10 @@ import { WiredView } from './wired/WiredView';
 import { WiredCreatorToolsView } from './wired-tools/WiredCreatorToolsView';
 import { MentionsView } from './mentions';
 
-export const MainView: FC<{}> = props =>
-{
-    const [ isReady, setIsReady ] = useState(false);
-    const [ localizationVersion, setLocalizationVersion ] = useState(0);
-    const [ mentionsVisible, setMentionsVisible ] = useState(false);
+export const MainView: FC<{}> = (props) => {
+    const [isReady, setIsReady] = useState(false);
+    const [localizationVersion, setLocalizationVersion] = useState(0);
+    const [mentionsVisible, setMentionsVisible] = useState(false);
 
     useMentionMessages();
 
@@ -66,16 +74,13 @@ export const MainView: FC<{}> = props =>
     // ignored — only an ENDED matching the tracked session (or when
     // no session is active) is honored.
     const { landingViewVisible } = useNitroEventReducer<{ sessionId: number | null; landingViewVisible: boolean }, RoomSessionEvent>(
-        [ RoomSessionEvent.CREATED, RoomSessionEvent.ENDED ],
-        (state, event) =>
-        {
-            if(event.type === RoomSessionEvent.CREATED)
-            {
+        [RoomSessionEvent.CREATED, RoomSessionEvent.ENDED],
+        (state, event) => {
+            if (event.type === RoomSessionEvent.CREATED) {
                 return { sessionId: event.session.roomId, landingViewVisible: false };
             }
 
-            if((state.sessionId !== null) && (event.session.roomId !== state.sessionId))
-            {
+            if (state.sessionId !== null && event.session.roomId !== state.sessionId) {
                 return state;
             }
 
@@ -84,8 +89,7 @@ export const MainView: FC<{}> = props =>
         { sessionId: null, landingViewVisible: true }
     );
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setIsReady(true);
 
         GetRoomSessionManager().tryRestoreSession();
@@ -93,22 +97,17 @@ export const MainView: FC<{}> = props =>
         GetCommunication().connection.ready();
     }, []);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'open':
-                        if(parts.length > 2)
-                        {
-                            switch(parts[2])
-                            {
+                        if (parts.length > 2) {
+                            switch (parts[2]) {
                                 case 'credits':
                                     //HabboWebTools.openWebPageAndMinimizeClient(this._windowManager.getProperty(ExternalVariables.WEB_SHOP_RELATIVE_URL));
                                     break;
@@ -129,25 +128,21 @@ export const MainView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         // Opening the inbox clears the unread badge both locally and
         // server-side so the toolbar count resets immediately.
-        const clearMentionsBadge = () =>
-        {
+        const clearMentionsBadge = () => {
             markAllRead();
             SendMessageComposer(new MarkMentionsReadComposer(0, 0));
         };
 
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setMentionsVisible(true);
                         clearMentionsBadge();
@@ -156,9 +151,8 @@ export const MainView: FC<{}> = props =>
                         setMentionsVisible(false);
                         return;
                     case 'toggle':
-                        setMentionsVisible(prevValue =>
-                        {
-                            if(prevValue) return false;
+                        setMentionsVisible((prevValue) => {
+                            if (prevValue) return false;
 
                             // Side-effect-free in the updater: defer the
                             // badge-clear to a microtask so React's
@@ -177,9 +171,8 @@ export const MainView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    useEffect(() =>
-    {
-        const refreshLocalization = () => setLocalizationVersion(value => (value + 1));
+    useEffect(() => {
+        const refreshLocalization = () => setLocalizationVersion((value) => value + 1);
 
         window.addEventListener('nitro-localization-updated', refreshLocalization);
 
@@ -188,17 +181,15 @@ export const MainView: FC<{}> = props =>
 
     return (
         <>
-            <div className="hidden" data-localization-version={ localizationVersion } />
+            <div className="hidden" data-localization-version={localizationVersion} />
             <AnimatePresence>
-                { landingViewVisible &&
-                    <motion.div
-                        initial={ { opacity: 0 }}
-                        animate={ { opacity: 1 }}
-                        exit={ { opacity: 0 }}>
+                {landingViewVisible && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <HotelView />
-                    </motion.div> }
+                    </motion.div>
+                )}
             </AnimatePresence>
-            <ToolbarView isInRoom={ !landingViewVisible } />
+            <ToolbarView isInRoom={!landingViewVisible} />
             <TranslationBootstrap />
             <GoogleAdsView />
             <ModToolsView />
@@ -239,9 +230,8 @@ export const MainView: FC<{}> = props =>
             <RareValuesView />
             <FortuneWheelView />
             <SoundboardView />
-            { GetConfigurationValue<boolean>('radio_ui.enabled', false) && <RadioView /> }
-            { (GetConfigurationValue<boolean>('mentions_ui.enabled', true) && mentionsVisible) &&
-                <MentionsView onClose={ () => setMentionsVisible(false) } /> }
+            {GetConfigurationValue<boolean>('radio_ui.enabled', false) && <RadioView />}
+            {GetConfigurationValue<boolean>('mentions_ui.enabled', true) && mentionsVisible && <MentionsView onClose={() => setMentionsVisible(false)} />}
             <ExternalPluginLoader />
         </>
     );

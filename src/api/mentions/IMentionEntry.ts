@@ -1,5 +1,4 @@
-export interface IMentionEntry
-{
+export interface IMentionEntry {
     mentionId: number;
     senderId: number;
     senderUsername: string;

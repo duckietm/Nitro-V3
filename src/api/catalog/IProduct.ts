@@ -1,8 +1,7 @@
 import { IFurnitureData, IProductData } from '@nitrots/nitro-renderer';
 import { IPurchasableOffer } from './IPurchasableOffer';
 
-export interface IProduct
-{
+export interface IProduct {
     getIconUrl(offer?: IPurchasableOffer): string;
     productType: string;
     productClassId: number;

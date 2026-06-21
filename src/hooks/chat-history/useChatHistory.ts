@@ -25,27 +25,23 @@ let MESSENGER_HISTORY_COUNTER: number = 0;
  * meaningful for re-rendering the bubble. Translation fields are kept
  * because they're already text.
  */
-const slimChatEntriesForStorage = (entries: IChatEntry[]): IChatEntry[] =>
-    entries.map(entry => entry.imageUrl ? { ...entry, imageUrl: undefined } : entry);
+const slimChatEntriesForStorage = (entries: IChatEntry[]): IChatEntry[] => entries.map((entry) => (entry.imageUrl ? { ...entry, imageUrl: undefined } : entry));
 
-const useChatHistoryState = () =>
-{
-    const [ chatHistory, setChatHistory ] = useLocalStorage<IChatEntry[]>('chatHistory', [], { toStorage: slimChatEntriesForStorage });
-    const [ roomHistory, setRoomHistory ] = useLocalStorage<IRoomHistoryEntry[]>('roomHistory', []);
-    const [ messengerHistory, setMessengerHistory ] = useLocalStorage<IChatEntry[]>('messengerHistory', [], { toStorage: slimChatEntriesForStorage });
-    const [ needsRoomInsert, setNeedsRoomInsert ] = useLocalStorage('needsRoomInsert', false);
+const useChatHistoryState = () => {
+    const [chatHistory, setChatHistory] = useLocalStorage<IChatEntry[]>('chatHistory', [], { toStorage: slimChatEntriesForStorage });
+    const [roomHistory, setRoomHistory] = useLocalStorage<IRoomHistoryEntry[]>('roomHistory', []);
+    const [messengerHistory, setMessengerHistory] = useLocalStorage<IChatEntry[]>('messengerHistory', [], { toStorage: slimChatEntriesForStorage });
+    const [needsRoomInsert, setNeedsRoomInsert] = useLocalStorage('needsRoomInsert', false);
 
-    const addChatEntry = (entry: IChatEntry) =>
-    {
+    const addChatEntry = (entry: IChatEntry) => {
         entry.id = CHAT_HISTORY_COUNTER++;
 
-        setChatHistory(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+        setChatHistory((prevValue) => {
+            const newValue = [...prevValue];
 
             newValue.push(entry);
 
-            if(newValue.length > CHAT_HISTORY_MAX) newValue.shift();
+            if (newValue.length > CHAT_HISTORY_MAX) newValue.shift();
 
             return newValue;
         });
@@ -53,17 +49,15 @@ const useChatHistoryState = () =>
         return entry.id;
     };
 
-    const updateChatEntry = (entryId: number, partial: Partial<IChatEntry>) =>
-    {
-        if(entryId < 0) return;
+    const updateChatEntry = (entryId: number, partial: Partial<IChatEntry>) => {
+        if (entryId < 0) return;
 
-        setChatHistory(prevValue =>
-        {
-            const index = prevValue.findIndex(entry => (entry.id === entryId));
+        setChatHistory((prevValue) => {
+            const index = prevValue.findIndex((entry) => entry.id === entryId);
 
-            if(index === -1) return prevValue;
+            if (index === -1) return prevValue;
 
-            const newValue = [ ...prevValue ];
+            const newValue = [...prevValue];
 
             newValue[index] = { ...newValue[index], ...partial };
 
@@ -73,68 +67,86 @@ const useChatHistoryState = () =>
 
     const clearChatHistory = () => setChatHistory([]);
 
-    const addRoomHistoryEntry = (entry: IRoomHistoryEntry) =>
-    {
-        setRoomHistory(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+    const addRoomHistoryEntry = (entry: IRoomHistoryEntry) => {
+        setRoomHistory((prevValue) => {
+            const newValue = [...prevValue];
 
             newValue.push(entry);
 
-            if(newValue.length > ROOM_HISTORY_MAX) newValue.shift();
+            if (newValue.length > ROOM_HISTORY_MAX) newValue.shift();
 
             return newValue;
         });
     };
 
-    const addMessengerEntry = (entry: IChatEntry) =>
-    {
+    const addMessengerEntry = (entry: IChatEntry) => {
         entry.id = MESSENGER_HISTORY_COUNTER++;
 
-        setMessengerHistory(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+        setMessengerHistory((prevValue) => {
+            const newValue = [...prevValue];
 
             newValue.push(entry);
 
-            if(newValue.length > MESSENGER_HISTORY_MAX) newValue.shift();
+            if (newValue.length > MESSENGER_HISTORY_MAX) newValue.shift();
 
             return newValue;
         });
     };
 
-    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.STARTED, event => setNeedsRoomInsert(true));
+    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.STARTED, (event) => setNeedsRoomInsert(true));
 
-    useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event =>
-    {
-        if(!needsRoomInsert) return;
+    useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, (event) => {
+        if (!needsRoomInsert) return;
 
         const parser = event.getParser();
 
-        if(roomHistory.length)
-        {
-            if(roomHistory[(roomHistory.length - 1)].id === parser.data.roomId) return;
+        if (roomHistory.length) {
+            if (roomHistory[roomHistory.length - 1].id === parser.data.roomId) return;
         }
 
-        addChatEntry({ id: -1, webId: -1, entityId: -1, name: parser.data.roomName, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_ROOM_INFO, roomId: parser.data.roomId });
+        addChatEntry({
+            id: -1,
+            webId: -1,
+            entityId: -1,
+            name: parser.data.roomName,
+            timestamp: ChatHistoryCurrentDate(),
+            type: ChatEntryType.TYPE_ROOM_INFO,
+            roomId: parser.data.roomId
+        });
 
         addRoomHistoryEntry({ id: parser.data.roomId, name: parser.data.roomName });
 
         setNeedsRoomInsert(false);
     });
 
-    useMessageEvent<NewConsoleMessageEvent>(NewConsoleMessageEvent, event =>
-    {
+    useMessageEvent<NewConsoleMessageEvent>(NewConsoleMessageEvent, (event) => {
         const parser = event.getParser();
 
-        addMessengerEntry({ id: -1, webId: parser.senderId, entityId: -1, name: '', message: parser.messageText, roomId: -1, timestamp: MessengerHistoryCurrentDate(parser.secondsSinceSent), type: ChatEntryType.TYPE_IM });
+        addMessengerEntry({
+            id: -1,
+            webId: parser.senderId,
+            entityId: -1,
+            name: '',
+            message: parser.messageText,
+            roomId: -1,
+            timestamp: MessengerHistoryCurrentDate(parser.secondsSinceSent),
+            type: ChatEntryType.TYPE_IM
+        });
     });
 
-    useMessageEvent<RoomInviteEvent>(RoomInviteEvent, event =>
-    {
+    useMessageEvent<RoomInviteEvent>(RoomInviteEvent, (event) => {
         const parser = event.getParser();
 
-        addMessengerEntry({ id: -1, webId: parser.senderId, entityId: -1, name: '', message: parser.messageText, roomId: -1, timestamp: MessengerHistoryCurrentDate(), type: ChatEntryType.TYPE_IM });
+        addMessengerEntry({
+            id: -1,
+            webId: parser.senderId,
+            entityId: -1,
+            name: '',
+            message: parser.messageText,
+            roomId: -1,
+            timestamp: MessengerHistoryCurrentDate(),
+            type: ChatEntryType.TYPE_IM
+        });
     });
 
     return { addChatEntry, updateChatEntry, clearChatHistory, chatHistory, roomHistory, messengerHistory };

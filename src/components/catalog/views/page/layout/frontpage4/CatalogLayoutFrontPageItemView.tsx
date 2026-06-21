@@ -4,34 +4,39 @@ import { GetConfigurationValue } from '../../../../../../api';
 import { LayoutBackgroundImage, LayoutBackgroundImageProps } from '../../../../../../common';
 import { Text } from '../../../../../../common/Text';
 
-export interface CatalogLayoutFrontPageItemViewProps extends LayoutBackgroundImageProps
-{
+export interface CatalogLayoutFrontPageItemViewProps extends LayoutBackgroundImageProps {
     item: FrontPageItem;
 }
 
-export const CatalogLayoutFrontPageItemView: FC<CatalogLayoutFrontPageItemViewProps> = props =>
-{
+export const CatalogLayoutFrontPageItemView: FC<CatalogLayoutFrontPageItemViewProps> = (props) => {
     const { item = null, position = 'relative', pointer = true, overflow = 'hidden', fullHeight = true, classNames = [], children = null, ...rest } = props;
 
-    const getClassNames = useMemo(() =>
-    {
-        const newClassNames: string[] = [ 'rounded', 'nitro-front-page-item' ];
+    const getClassNames = useMemo(() => {
+        const newClassNames: string[] = ['rounded', 'nitro-front-page-item'];
 
-        if(classNames.length) newClassNames.push(...classNames);
+        if (classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
-    }, [ classNames ]);
+    }, [classNames]);
 
-    if(!item) return null;
+    if (!item) return null;
 
-    const imageUrl = (GetConfigurationValue<string>('image.library.url') + item.itemPromoImage);
+    const imageUrl = GetConfigurationValue<string>('image.library.url') + item.itemPromoImage;
 
     return (
-        <LayoutBackgroundImage classNames={ getClassNames } fullHeight={ fullHeight } imageUrl={ imageUrl } overflow={ overflow } pointer={ pointer } position={ position } { ...rest }>
+        <LayoutBackgroundImage
+            classNames={getClassNames}
+            fullHeight={fullHeight}
+            imageUrl={imageUrl}
+            overflow={overflow}
+            pointer={pointer}
+            position={position}
+            {...rest}
+        >
             <Text className="bg-dark rounded p-2 m-2 bottom-0" position="absolute" variant="white">
-                { item.itemName }
+                {item.itemName}
             </Text>
-            { children }
+            {children}
         </LayoutBackgroundImage>
     );
 };

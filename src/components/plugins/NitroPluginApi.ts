@@ -4,8 +4,7 @@ import { CreateLinkEvent, GetRoomSession, SendMessageComposer, VisitDesktop } fr
 /**
  * Plugin descriptor registered by external plugin scripts.
  */
-export interface INitroPlugin
-{
+export interface INitroPlugin {
     /** Unique plugin name */
     name: string;
     /** Label shown on the button in room tools */
@@ -23,8 +22,7 @@ export interface INitroPlugin
 /**
  * API exposed to external plugins via window.NitroPlugins
  */
-export interface INitroPluginApi
-{
+export interface INitroPluginApi {
     /** Register a plugin */
     register: (plugin: INitroPlugin) => void;
     /** Unregister a plugin by name */
@@ -58,69 +56,57 @@ const _plugins: INitroPlugin[] = [];
 const _listeners: Array<() => void> = [];
 const _windowCleanup = new Map<string, () => void>();
 
-function notifyListeners()
-{
-    _listeners.forEach(fn => fn());
+function notifyListeners() {
+    _listeners.forEach((fn) => fn());
 }
 
 const pluginApi: INitroPluginApi = {
-    register(plugin: INitroPlugin)
-    {
-        if (_plugins.some(p => p.name === plugin.name)) return;
+    register(plugin: INitroPlugin) {
+        if (_plugins.some((p) => p.name === plugin.name)) return;
         _plugins.push(plugin);
         plugin.onInit?.(pluginApi);
         notifyListeners();
     },
 
-    unregister(name: string)
-    {
-        const index = _plugins.findIndex(p => p.name === name);
-        if (index >= 0)
-        {
+    unregister(name: string) {
+        const index = _plugins.findIndex((p) => p.name === name);
+        if (index >= 0) {
             _plugins[index].onClose?.();
             _plugins.splice(index, 1);
             notifyListeners();
         }
     },
 
-    getPlugins()
-    {
+    getPlugins() {
         return [..._plugins];
     },
 
-    createLinkEvent(link: string)
-    {
+    createLinkEvent(link: string) {
         CreateLinkEvent(link);
     },
 
-    getRoomEngine()
-    {
+    getRoomEngine() {
         return GetRoomEngine();
     },
 
-    getRoomSession()
-    {
+    getRoomSession() {
         return GetRoomSession();
     },
 
     sendMessage: SendMessageComposer,
 
-    sendChat(text: string, styleId: number = 0)
-    {
+    sendChat(text: string, styleId: number = 0) {
         const session = GetRoomSession();
         if (!session) return;
         session.sendChatMessage(text, styleId, '');
     },
 
-    sendStackHeight(objectId: number, height: number)
-    {
+    sendStackHeight(objectId: number, height: number) {
         SendMessageComposer(new FurnitureStackHeightComposer(objectId, height));
     },
 
-    async takeScreenshot()
-    {
-        try
-        {
+    async takeScreenshot() {
+        try {
             const session = GetRoomSession();
             if (!session) return;
 
@@ -137,20 +123,16 @@ const pluginApi: INitroPluginApi = {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        }
-        catch (e)
-        {
+        } catch (e) {
             console.warn('[NitroPlugins] Screenshot failed:', e);
         }
     },
 
-    visitDesktop()
-    {
+    visitDesktop() {
         VisitDesktop();
     },
 
-    createWindow(id: string, title: string, width: number): HTMLDivElement | null
-    {
+    createWindow(id: string, title: string, width: number): HTMLDivElement | null {
         // Remove existing window with same id
         pluginApi.destroyWindow(id);
 
@@ -165,14 +147,16 @@ const pluginApi: INitroPluginApi = {
 
         // Header (draggable)
         const header = document.createElement('div');
-        header.style.cssText = 'display:flex;align-items:center;justify-content:center;position:relative;min-height:33px;background:linear-gradient(180deg,#3c6a8e 0%,#2a4f6e 100%);cursor:move;user-select:none';
+        header.style.cssText =
+            'display:flex;align-items:center;justify-content:center;position:relative;min-height:33px;background:linear-gradient(180deg,#3c6a8e 0%,#2a4f6e 100%);cursor:move;user-select:none';
 
         const titleEl = document.createElement('span');
         titleEl.textContent = title;
         titleEl.style.cssText = 'color:#fff;font-size:16px;text-shadow:0 1px 2px rgba(0,0,0,0.5)';
 
         const closeBtn = document.createElement('div');
-        closeBtn.style.cssText = 'position:absolute;right:8px;width:20px;height:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;border-radius:50%;background:rgba(255,255,255,0.1)';
+        closeBtn.style.cssText =
+            'position:absolute;right:8px;width:20px;height:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;border-radius:50%;background:rgba(255,255,255,0.1)';
         closeBtn.innerHTML = '✕';
         closeBtn.addEventListener('click', () => pluginApi.destroyWindow(id));
 
@@ -181,10 +165,10 @@ const pluginApi: INitroPluginApi = {
 
         // Make draggable
         let isDragging = false;
-        let offsetX = 0, offsetY = 0;
+        let offsetX = 0,
+            offsetY = 0;
 
-        const onMouseDown = (e: MouseEvent) =>
-        {
+        const onMouseDown = (e: MouseEvent) => {
             isDragging = true;
             const rect = overlay.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
@@ -194,15 +178,13 @@ const pluginApi: INitroPluginApi = {
             overlay.style.top = rect.top + 'px';
         };
 
-        const onMouseMove = (e: MouseEvent) =>
-        {
+        const onMouseMove = (e: MouseEvent) => {
             if (!isDragging) return;
-            overlay.style.left = (e.clientX - offsetX) + 'px';
-            overlay.style.top = (e.clientY - offsetY) + 'px';
+            overlay.style.left = e.clientX - offsetX + 'px';
+            overlay.style.top = e.clientY - offsetY + 'px';
         };
 
-        const onMouseUp = () =>
-        {
+        const onMouseUp = () => {
             isDragging = false;
         };
 
@@ -219,8 +201,7 @@ const pluginApi: INitroPluginApi = {
         overlay.appendChild(card);
         document.body.appendChild(overlay);
 
-        _windowCleanup.set(id, () =>
-        {
+        _windowCleanup.set(id, () => {
             header.removeEventListener('mousedown', onMouseDown);
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
@@ -229,8 +210,7 @@ const pluginApi: INitroPluginApi = {
         return content;
     },
 
-    destroyWindow(id: string)
-    {
+    destroyWindow(id: string) {
         const cleanup = _windowCleanup.get(id);
 
         cleanup?.();
@@ -244,18 +224,15 @@ const pluginApi: INitroPluginApi = {
 /**
  * Subscribe to plugin list changes. Returns unsubscribe function.
  */
-export function subscribePlugins(listener: () => void): () => void
-{
+export function subscribePlugins(listener: () => void): () => void {
     _listeners.push(listener);
-    return () =>
-    {
+    return () => {
         const idx = _listeners.indexOf(listener);
         if (idx >= 0) _listeners.splice(idx, 1);
     };
 }
 
-export function getRegisteredPlugins(): INitroPlugin[]
-{
+export function getRegisteredPlugins(): INitroPlugin[] {
     return [..._plugins];
 }
 

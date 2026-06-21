@@ -1,5 +1,4 @@
-export class CatalogPurchaseState
-{
+export class CatalogPurchaseState {
     public static NONE = 0;
     public static CONFIRM = 1;
     public static PURCHASE = 2;

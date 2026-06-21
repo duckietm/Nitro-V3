@@ -4,10 +4,8 @@ import { describe, expect, it } from 'vitest';
 
 const readSource = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 
-describe('UI CSS ownership', () =>
-{
-    it('keeps static widget styles in css files instead of React style tags', () =>
-    {
+describe('UI CSS ownership', () => {
+    it('keeps static widget styles in css files instead of React style tags', () => {
         const radioView = readSource('src/components/radio/RadioView.tsx');
         const toolbarView = readSource('src/components/toolbar/ToolbarView.tsx');
         const friendsBarView = readSource('src/components/friends/views/friends-bar/FriendsBarView.tsx');
@@ -33,8 +31,7 @@ describe('UI CSS ownership', () =>
         expect(chatsCss).toContain('.nitro-bubbles-hidden .newbubblehe');
     });
 
-    it('keeps window-specific classes from repainting shared card chrome', () =>
-    {
+    it('keeps window-specific classes from repainting shared card chrome', () => {
         const groupCreatorView = readSource('src/components/groups/views/GroupCreatorView.tsx');
         const catalogView = readSource('src/components/catalog/CatalogView.tsx');
         const catalogAdminOfferEditView = readSource('src/components/catalog/views/admin/CatalogAdminOfferEditView.tsx');
@@ -107,7 +104,7 @@ describe('UI CSS ownership', () =>
         expect(catalogLayoutVipBuyView).not.toContain("backgroundSize: 'contain'");
         expect(catalogLayoutMarketplaceItemView).not.toContain('style={ { width: 40, height: 40 } }');
         expect(catalogLayoutTrophiesView).not.toContain("boxShadow: '0 0 8px");
-        expect(catalogLayoutTrophiesView).not.toContain("background: trophyText.length");
+        expect(catalogLayoutTrophiesView).not.toContain('background: trophyText.length');
         expect(catalogLayoutTrophiesView).toContain('nitro-catalog-trophy-inscription');
         expect(catalogAdminPageEditView).toContain('<CatalogAdminModalView');
         expect(catalogAdminPageEditView).toContain('widthClassName="w-[520px]"');
@@ -136,8 +133,8 @@ describe('UI CSS ownership', () =>
         expect(friendsCss).toContain('width: min(270px, calc(100vw - 16px))');
         expect(roomSettingsCss).toContain('.nitro-room-settings');
         expect(roomSettingsCss).toContain(':where(input, select, textarea)');
-        expect(indexCss).not.toContain('.nitro-wired :where(select, input[type=\'text\'], input[type=\'number\'], textarea)');
-        expect(wiredCss).toContain('.nitro-wired :where(select, input[type=\'text\'], input[type=\'number\'], textarea)');
+        expect(indexCss).not.toContain(".nitro-wired :where(select, input[type='text'], input[type='number'], textarea)");
+        expect(wiredCss).toContain(".nitro-wired :where(select, input[type='text'], input[type='number'], textarea)");
         expect(wiredCss).toContain('.nitro-wired__variable-picker-portal');
         expect(indexCss).toContain('.nitro-mod-tools :where(input, select, textarea)');
         expect(indexCss).toContain('[class*="nitro-mod-tools-"] :where(.bg-white, .bg-light, .bg-muted, .bg-card-grid-item, .bg-white\\/70)');

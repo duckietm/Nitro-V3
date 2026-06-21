@@ -1,7 +1,6 @@
 import { IObjectData } from '@nitrots/nitro-renderer';
 
-export interface IFurnitureItem
-{
+export interface IFurnitureItem {
     id: number;
     ref: number;
     type: number;

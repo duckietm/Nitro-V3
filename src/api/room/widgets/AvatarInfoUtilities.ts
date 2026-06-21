@@ -1,4 +1,22 @@
-import { GetRoomEngine, GetSessionDataManager, GetTickerTime, IFurnitureData, IRoomModerationSettings, IRoomPetData, IRoomUserData, ObjectDataFactory, PetFigureData, PetType, RoomControllerLevel, RoomModerationSettings, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomTradingLevelEnum, RoomWidgetEnumItemExtradataParameter } from '@nitrots/nitro-renderer';
+import {
+    GetRoomEngine,
+    GetSessionDataManager,
+    GetTickerTime,
+    IFurnitureData,
+    IRoomModerationSettings,
+    IRoomPetData,
+    IRoomUserData,
+    ObjectDataFactory,
+    PetFigureData,
+    PetType,
+    RoomControllerLevel,
+    RoomModerationSettings,
+    RoomObjectCategory,
+    RoomObjectType,
+    RoomObjectVariable,
+    RoomTradingLevelEnum,
+    RoomWidgetEnumItemExtradataParameter
+} from '@nitrots/nitro-renderer';
 import { GetRoomSession, IsOwnerOfFurniture } from '../../nitro';
 import { LocalizeText } from '../../utils';
 import { AvatarInfoFurni } from './AvatarInfoFurni';
@@ -7,44 +25,34 @@ import { AvatarInfoPet } from './AvatarInfoPet';
 import { AvatarInfoRentableBot } from './AvatarInfoRentableBot';
 import { AvatarInfoUser } from './AvatarInfoUser';
 
-export class AvatarInfoUtilities
-{
-    public static getObjectName(objectId: number, category: number): AvatarInfoName
-    {
+export class AvatarInfoUtilities {
+    public static getObjectName(objectId: number, category: number): AvatarInfoName {
         const roomSession = GetRoomSession();
 
         let id = -1;
         let name: string = null;
         let userType = 0;
 
-        switch(category)
-        {
+        switch (category) {
             case RoomObjectCategory.FLOOR:
             case RoomObjectCategory.WALL: {
                 const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, objectId, category);
 
-                if(!roomObject) break;
+                if (!roomObject) break;
 
-                if(roomObject.type.indexOf('poster') === 0)
-                {
+                if (roomObject.type.indexOf('poster') === 0) {
                     name = LocalizeText('${poster_' + parseInt(roomObject.type.replace('poster', '')) + '_name}');
-                }
-                else
-                {
+                } else {
                     let furniData: IFurnitureData = null;
                     const className = roomObject.type;
 
-                    if(category === RoomObjectCategory.FLOOR)
-                    {
+                    if (category === RoomObjectCategory.FLOOR) {
                         furniData = GetSessionDataManager().getFloorItemDataByName(className);
-                    }
-
-                    else if(category === RoomObjectCategory.WALL)
-                    {
+                    } else if (category === RoomObjectCategory.WALL) {
                         furniData = GetSessionDataManager().getWallItemDataByName(className);
                     }
 
-                    if(!furniData) break;
+                    if (!furniData) break;
 
                     id = furniData.id;
                     name = furniData.name;
@@ -54,7 +62,7 @@ export class AvatarInfoUtilities
             case RoomObjectCategory.UNIT: {
                 const userData = roomSession.userDataManager.getUserDataByIndex(objectId);
 
-                if(!userData) break;
+                if (!userData) break;
 
                 id = userData.webID;
                 name = userData.name;
@@ -63,17 +71,16 @@ export class AvatarInfoUtilities
             }
         }
 
-        if(!name || !name.length) return null;
+        if (!name || !name.length) return null;
 
         return new AvatarInfoName(objectId, category, id, name, userType);
     }
 
-    public static getFurniInfo(objectId: number, category: number): AvatarInfoFurni
-    {
+    public static getFurniInfo(objectId: number, category: number): AvatarInfoFurni {
         const roomSession = GetRoomSession();
         const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, objectId, category);
 
-        if(!roomObject) return null;
+        if (!roomObject) return null;
 
         const furniInfo = new AvatarInfoFurni(AvatarInfoFurni.FURNI);
 
@@ -82,7 +89,8 @@ export class AvatarInfoUtilities
 
         const model = roomObject.model;
 
-        if(model.getValue<string>(RoomWidgetEnumItemExtradataParameter.INFOSTAND_EXTRA_PARAM)) furniInfo.extraParam = model.getValue<string>(RoomWidgetEnumItemExtradataParameter.INFOSTAND_EXTRA_PARAM);
+        if (model.getValue<string>(RoomWidgetEnumItemExtradataParameter.INFOSTAND_EXTRA_PARAM))
+            furniInfo.extraParam = model.getValue<string>(RoomWidgetEnumItemExtradataParameter.INFOSTAND_EXTRA_PARAM);
 
         const objectData = ObjectDataFactory.getData(model.getValue<number>(RoomObjectVariable.FURNITURE_DATA_FORMAT));
 
@@ -92,38 +100,29 @@ export class AvatarInfoUtilities
 
         const objectType = roomObject.type;
 
-        if(objectType.indexOf('poster') === 0)
-        {
+        if (objectType.indexOf('poster') === 0) {
             const posterId = parseInt(objectType.replace('poster', ''));
 
-            furniInfo.name = LocalizeText(('${poster_' + posterId) + '_name}');
-            furniInfo.description = LocalizeText(('${poster_' + posterId) + '_desc}');
-        }
-        else
-        {
+            furniInfo.name = LocalizeText('${poster_' + posterId + '_name}');
+            furniInfo.description = LocalizeText('${poster_' + posterId + '_desc}');
+        } else {
             let furnitureData: IFurnitureData = null;
 
             const typeId = model.getValue<number>(RoomObjectVariable.FURNITURE_TYPE_ID);
 
-            if(typeId > 0)
-            {
-                if(category === RoomObjectCategory.FLOOR)
-                {
+            if (typeId > 0) {
+                if (category === RoomObjectCategory.FLOOR) {
                     furnitureData = GetSessionDataManager().getFloorItemData(typeId);
-                }
-
-                else if(category === RoomObjectCategory.WALL)
-                {
+                } else if (category === RoomObjectCategory.WALL) {
                     furnitureData = GetSessionDataManager().getWallItemData(typeId);
                 }
             }
 
-            if(furnitureData)
-            {
+            if (furnitureData) {
                 furniInfo.name = furnitureData.name;
                 furniInfo.description = furnitureData.description;
                 furniInfo.spriteId = furnitureData.id;
-                furniInfo.productType = ((category === RoomObjectCategory.WALL) ? 'i' : 's');
+                furniInfo.productType = category === RoomObjectCategory.WALL ? 'i' : 's';
                 furniInfo.purchaseOfferId = furnitureData.purchaseOfferId;
                 furniInfo.purchaseCouldBeUsedForBuyout = furnitureData.purchaseCouldBeUsedForBuyout;
                 furniInfo.rentOfferId = furnitureData.rentOfferId;
@@ -134,12 +133,12 @@ export class AvatarInfoUtilities
             }
         }
 
-        if(objectType.indexOf('post_it') > -1) furniInfo.isStickie = true;
+        if (objectType.indexOf('post_it') > -1) furniInfo.isStickie = true;
 
         const expiryTime = model.getValue<number>(RoomObjectVariable.FURNITURE_EXPIRY_TIME);
         const expiryTimestamp = model.getValue<number>(RoomObjectVariable.FURNITURE_EXPIRTY_TIMESTAMP);
 
-        furniInfo.expiration = ((expiryTime < 0) ? expiryTime : Math.max(0, (expiryTime - ((GetTickerTime() - expiryTimestamp) / 1000))));
+        furniInfo.expiration = expiryTime < 0 ? expiryTime : Math.max(0, expiryTime - (GetTickerTime() - expiryTimestamp) / 1000);
 
         /* let roomObjectImage = GetRoomEngine().getRoomObjectImage(roomSession.roomId, objectId, category, new Vector3d(180), 64, null);
 
@@ -149,40 +148,39 @@ export class AvatarInfoUtilities
         }
 
         furniInfo.image = roomObjectImage.getImage(); */
-        furniInfo.isWallItem = (category === RoomObjectCategory.WALL);
+        furniInfo.isWallItem = category === RoomObjectCategory.WALL;
         furniInfo.isRoomOwner = roomSession.isRoomOwner;
         furniInfo.roomControllerLevel = roomSession.controllerLevel;
         furniInfo.isAnyRoomController = GetSessionDataManager().isModerator;
         furniInfo.ownerId = model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID);
         furniInfo.ownerName = model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME);
         furniInfo.usagePolicy = model.getValue<number>(RoomObjectVariable.FURNITURE_USAGE_POLICY);
-        furniInfo.allowStack = (model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_STACK) > 0);
-        furniInfo.allowSit = (model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_SIT) > 0);
-        furniInfo.allowLay = (model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_LAY) > 0);
-        furniInfo.allowWalk = (model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_WALK) > 0);
+        furniInfo.allowStack = model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_STACK) > 0;
+        furniInfo.allowSit = model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_SIT) > 0;
+        furniInfo.allowLay = model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_LAY) > 0;
+        furniInfo.allowWalk = model.getValue<number>(RoomObjectVariable.FURNITURE_ALLOW_WALK) > 0;
         furniInfo.teleportTargetId = Number(model.getValue<number>(RoomObjectVariable.FURNITURE_TELEPORT_TARGET_ID) ?? 0);
 
         const dimensionsX = model.getValue<number>(RoomObjectVariable.FURNITURE_DIMENSIONS_X);
         const dimensionsY = model.getValue<number>(RoomObjectVariable.FURNITURE_DIMENSIONS_Y);
 
-        if(dimensionsX > 0) furniInfo.tileSizeX = dimensionsX;
+        if (dimensionsX > 0) furniInfo.tileSizeX = dimensionsX;
 
-        if(dimensionsY > 0) furniInfo.tileSizeY = dimensionsY;
+        if (dimensionsY > 0) furniInfo.tileSizeY = dimensionsY;
 
         const guildId = model.getValue<number>(RoomObjectVariable.FURNITURE_GUILD_CUSTOMIZED_GUILD_ID);
 
-        if(guildId !== 0) furniInfo.groupId = guildId;
+        if (guildId !== 0) furniInfo.groupId = guildId;
 
-        if(IsOwnerOfFurniture(roomObject)) furniInfo.isOwner = true;
+        if (IsOwnerOfFurniture(roomObject)) furniInfo.isOwner = true;
 
         return furniInfo;
     }
 
-    public static getUserInfo(category: number, userData: IRoomUserData): AvatarInfoUser
-    {
+    public static getUserInfo(category: number, userData: IRoomUserData): AvatarInfoUser {
         const roomSession = GetRoomSession();
 
-        const userInfo = new AvatarInfoUser((userData.webID === GetSessionDataManager().userId) ? AvatarInfoUser.OWN_USER : AvatarInfoUser.PEER);
+        const userInfo = new AvatarInfoUser(userData.webID === GetSessionDataManager().userId ? AvatarInfoUser.OWN_USER : AvatarInfoUser.PEER);
 
         userInfo.isSpectatorMode = roomSession.isSpectator;
         userInfo.name = userData.name;
@@ -206,9 +204,9 @@ export class AvatarInfoUtilities
 
         const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, userData.roomIndex, category);
 
-        if(roomObject) userInfo.carryItem = (roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT) || 0);
+        if (roomObject) userInfo.carryItem = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT) || 0;
 
-        if(userInfo.type === AvatarInfoUser.OWN_USER) userInfo.allowNameChange = GetSessionDataManager().canChangeName;
+        if (userInfo.type === AvatarInfoUser.OWN_USER) userInfo.allowNameChange = GetSessionDataManager().canChangeName;
 
         userInfo.amIOwner = roomSession.isRoomOwner;
         userInfo.isGuildRoom = roomSession.isGuildRoom;
@@ -216,10 +214,8 @@ export class AvatarInfoUtilities
         userInfo.amIAnyRoomController = GetSessionDataManager().isModerator;
         userInfo.isAmbassador = GetSessionDataManager().isAmbassador;
 
-        if(userInfo.type === AvatarInfoUser.PEER)
-        {
-            if(roomObject)
-            {
+        if (userInfo.type === AvatarInfoUser.PEER) {
+            if (roomObject) {
                 userInfo.targetRoomControllerLevel = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_FLAT_CONTROL);
                 userInfo.canBeMuted = this.canBeMuted(userInfo);
                 userInfo.canBeKicked = this.canBeKicked(userInfo);
@@ -232,19 +228,18 @@ export class AvatarInfoUtilities
             const isShuttingDown = GetSessionDataManager().isSystemShutdown;
             const tradeMode = roomSession.tradeMode;
 
-            if(isShuttingDown)
-            {
+            if (isShuttingDown) {
                 userInfo.canTrade = false;
-            }
-            else
-            {
-                switch(tradeMode)
-                {
+            } else {
+                switch (tradeMode) {
                     case RoomTradingLevelEnum.ROOM_CONTROLLER_REQUIRED: {
-                        const roomController = ((userInfo.roomControllerLevel !== RoomControllerLevel.NONE) && (userInfo.roomControllerLevel !== RoomControllerLevel.GUILD_MEMBER));
-                        const targetController = ((userInfo.targetRoomControllerLevel !== RoomControllerLevel.NONE) && (userInfo.targetRoomControllerLevel !== RoomControllerLevel.GUILD_MEMBER));
+                        const roomController =
+                            userInfo.roomControllerLevel !== RoomControllerLevel.NONE && userInfo.roomControllerLevel !== RoomControllerLevel.GUILD_MEMBER;
+                        const targetController =
+                            userInfo.targetRoomControllerLevel !== RoomControllerLevel.NONE &&
+                            userInfo.targetRoomControllerLevel !== RoomControllerLevel.GUILD_MEMBER;
 
-                        userInfo.canTrade = (roomController || targetController);
+                        userInfo.canTrade = roomController || targetController;
                         break;
                     }
                     case RoomTradingLevelEnum.FREE_TRADING:
@@ -258,9 +253,9 @@ export class AvatarInfoUtilities
 
             userInfo.canTradeReason = AvatarInfoUser.TRADE_REASON_OK;
 
-            if(isShuttingDown) userInfo.canTradeReason = AvatarInfoUser.TRADE_REASON_SHUTDOWN;
+            if (isShuttingDown) userInfo.canTradeReason = AvatarInfoUser.TRADE_REASON_SHUTDOWN;
 
-            if(tradeMode !== RoomTradingLevelEnum.FREE_TRADING) userInfo.canTradeReason = AvatarInfoUser.TRADE_REASON_NO_TRADING;
+            if (tradeMode !== RoomTradingLevelEnum.FREE_TRADING) userInfo.canTradeReason = AvatarInfoUser.TRADE_REASON_NO_TRADING;
 
             // const _local_12 = GetSessionDataManager().userId;
             // _local_13 = GetSessionDataManager().getUserTags(_local_12);
@@ -280,8 +275,7 @@ export class AvatarInfoUtilities
         return userInfo;
     }
 
-    public static getBotInfo(category: number, userData: IRoomUserData): AvatarInfoUser
-    {
+    public static getBotInfo(category: number, userData: IRoomUserData): AvatarInfoUser {
         const roomSession = GetRoomSession();
         const userInfo = new AvatarInfoUser(AvatarInfoUser.BOT);
 
@@ -293,21 +287,20 @@ export class AvatarInfoUtilities
 
         const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, userData.roomIndex, category);
 
-        if(roomObject) userInfo.carryItem = (roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT) || 0);
+        if (roomObject) userInfo.carryItem = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT) || 0;
 
         userInfo.amIOwner = roomSession.isRoomOwner;
         userInfo.isGuildRoom = roomSession.isGuildRoom;
         userInfo.roomControllerLevel = roomSession.controllerLevel;
         userInfo.amIAnyRoomController = GetSessionDataManager().isModerator;
         userInfo.isAmbassador = GetSessionDataManager().isAmbassador;
-        userInfo.badges = [ AvatarInfoUser.DEFAULT_BOT_BADGE_ID ];
+        userInfo.badges = [AvatarInfoUser.DEFAULT_BOT_BADGE_ID];
         userInfo.figure = userData.figure;
 
         return userInfo;
     }
 
-    public static getRentableBotInfo(category: number, userData: IRoomUserData): AvatarInfoRentableBot
-    {
+    public static getRentableBotInfo(category: number, userData: IRoomUserData): AvatarInfoRentableBot {
         const roomSession = GetRoomSession();
         const botInfo = new AvatarInfoRentableBot(AvatarInfoRentableBot.RENTABLE_BOT);
 
@@ -321,35 +314,33 @@ export class AvatarInfoUtilities
 
         const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, userData.roomIndex, category);
 
-        if(roomObject) botInfo.carryItem = (roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT) || 0);
+        if (roomObject) botInfo.carryItem = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT) || 0;
 
         botInfo.amIOwner = roomSession.isRoomOwner;
         botInfo.roomControllerLevel = roomSession.controllerLevel;
         botInfo.amIAnyRoomController = GetSessionDataManager().isModerator;
-        botInfo.badges = [ AvatarInfoUser.DEFAULT_BOT_BADGE_ID ];
+        botInfo.badges = [AvatarInfoUser.DEFAULT_BOT_BADGE_ID];
         botInfo.figure = userData.figure;
 
         return botInfo;
     }
 
-    public static getPetInfo(petData: IRoomPetData): AvatarInfoPet
-    {
+    public static getPetInfo(petData: IRoomPetData): AvatarInfoPet {
         const roomSession = GetRoomSession();
         const userData = roomSession.userDataManager.getPetData(petData.id);
 
-        if(!userData) return;
+        if (!userData) return;
 
         const figure = new PetFigureData(userData.figure);
 
         let posture: string = null;
 
-        if(figure.typeId === PetType.MONSTERPLANT)
-        {
-            if(petData.level >= petData.adultLevel) posture = 'std';
-            else posture = ('grw' + petData.level);
+        if (figure.typeId === PetType.MONSTERPLANT) {
+            if (petData.level >= petData.adultLevel) posture = 'std';
+            else posture = 'grw' + petData.level;
         }
 
-        const isOwner = (petData.ownerId === GetSessionDataManager().userId);
+        const isOwner = petData.ownerId === GetSessionDataManager().userId;
         const petInfo = new AvatarInfoPet(AvatarInfoPet.PET_INFO);
 
         petInfo.name = userData.name;
@@ -388,77 +379,67 @@ export class AvatarInfoUtilities
         petInfo.remainingGrowTime = petData.remainingGrowTime;
         petInfo.publiclyBreedable = petData.publiclyBreedable;
 
-        if(isOwner || roomSession.isRoomOwner || GetSessionDataManager().isModerator || (roomSession.controllerLevel >= RoomControllerLevel.GUEST)) petInfo.canRemovePet = true;
+        if (isOwner || roomSession.isRoomOwner || GetSessionDataManager().isModerator || roomSession.controllerLevel >= RoomControllerLevel.GUEST)
+            petInfo.canRemovePet = true;
 
         return petInfo;
     }
 
-    private static checkGuildSetting(userInfo: AvatarInfoUser): boolean
-    {
-        if(userInfo.isGuildRoom) return (userInfo.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN);
+    private static checkGuildSetting(userInfo: AvatarInfoUser): boolean {
+        if (userInfo.isGuildRoom) return userInfo.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN;
 
-        return (userInfo.roomControllerLevel >= RoomControllerLevel.GUEST);
+        return userInfo.roomControllerLevel >= RoomControllerLevel.GUEST;
     }
 
-    private static isValidSetting(userInfo: AvatarInfoUser, checkSetting: (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) => boolean): boolean
-    {
+    private static isValidSetting(userInfo: AvatarInfoUser, checkSetting: (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) => boolean): boolean {
         const roomSession = GetRoomSession();
 
-        if(!roomSession.isPrivateRoom) return false;
+        if (!roomSession.isPrivateRoom) return false;
 
         const moderation = roomSession.moderationSettings;
 
         let flag = false;
 
-        if(moderation) flag = checkSetting(userInfo, moderation);
+        if (moderation) flag = checkSetting(userInfo, moderation);
 
-        return (flag && (userInfo.targetRoomControllerLevel < RoomControllerLevel.ROOM_OWNER));
+        return flag && userInfo.targetRoomControllerLevel < RoomControllerLevel.ROOM_OWNER;
     }
 
-    private static canBeMuted(userInfo: AvatarInfoUser): boolean
-    {
-        const checkSetting = (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) =>
-        {
-            switch(moderation.allowMute)
-            {
+    private static canBeMuted(userInfo: AvatarInfoUser): boolean {
+        const checkSetting = (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) => {
+            switch (moderation.allowMute) {
                 case RoomModerationSettings.MODERATION_LEVEL_USER_WITH_RIGHTS:
                     return this.checkGuildSetting(userInfo);
                 default:
-                    return (userInfo.roomControllerLevel >= RoomControllerLevel.ROOM_OWNER);
+                    return userInfo.roomControllerLevel >= RoomControllerLevel.ROOM_OWNER;
             }
         };
 
         return this.isValidSetting(userInfo, checkSetting);
     }
 
-    private static canBeKicked(userInfo: AvatarInfoUser): boolean
-    {
-        const checkSetting = (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) =>
-        {
-            switch(moderation.allowKick)
-            {
+    private static canBeKicked(userInfo: AvatarInfoUser): boolean {
+        const checkSetting = (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) => {
+            switch (moderation.allowKick) {
                 case RoomModerationSettings.MODERATION_LEVEL_ALL:
                     return true;
                 case RoomModerationSettings.MODERATION_LEVEL_USER_WITH_RIGHTS:
                     return this.checkGuildSetting(userInfo);
                 default:
-                    return (userInfo.roomControllerLevel >= RoomControllerLevel.ROOM_OWNER);
+                    return userInfo.roomControllerLevel >= RoomControllerLevel.ROOM_OWNER;
             }
         };
 
         return this.isValidSetting(userInfo, checkSetting);
     }
 
-    private static canBeBanned(userInfo: AvatarInfoUser): boolean
-    {
-        const checkSetting = (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) =>
-        {
-            switch(moderation.allowBan)
-            {
+    private static canBeBanned(userInfo: AvatarInfoUser): boolean {
+        const checkSetting = (userInfo: AvatarInfoUser, moderation: IRoomModerationSettings) => {
+            switch (moderation.allowBan) {
                 case RoomModerationSettings.MODERATION_LEVEL_USER_WITH_RIGHTS:
                     return this.checkGuildSetting(userInfo);
                 default:
-                    return (userInfo.roomControllerLevel >= RoomControllerLevel.ROOM_OWNER);
+                    return userInfo.roomControllerLevel >= RoomControllerLevel.ROOM_OWNER;
             }
         };
 

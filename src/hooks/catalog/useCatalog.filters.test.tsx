@@ -17,8 +17,7 @@ import { describe, expect, it, vi } from 'vitest';
 // object. `vi.hoisted` lets us reference the fake from the mock
 // factory (which is itself hoisted).
 
-const { fakeStore } = vi.hoisted(() =>
-{
+const { fakeStore } = vi.hoisted(() => {
     const fakeStore = {
         // Data slice
         isBusy: false,
@@ -78,10 +77,8 @@ vi.mock('use-between', () => ({
 // import time via the module graph, so the order matters.
 import { useCatalogActions, useCatalogData, useCatalogUiState } from './useCatalog';
 
-describe('useCatalog filter contract', () =>
-{
-    it('useCatalogData returns the read-only data slice', () =>
-    {
+describe('useCatalog filter contract', () => {
+    it('useCatalogData returns the read-only data slice', () => {
         const { result } = renderHook(() => useCatalogData());
 
         expect(Object.keys(result.current).sort()).toEqual([
@@ -108,8 +105,7 @@ describe('useCatalog filter contract', () =>
         expect(result.current.frontPageItems).toBe(fakeStore.frontPageItems);
     });
 
-    it('useCatalogUiState returns the UI fields plus their setters', () =>
-    {
+    it('useCatalogUiState returns the UI fields plus their setters', () => {
         const { result } = renderHook(() => useCatalogUiState());
 
         expect(Object.keys(result.current).sort()).toEqual([
@@ -134,8 +130,7 @@ describe('useCatalog filter contract', () =>
         expect(result.current.setCurrentPage).toBe(fakeStore.setCurrentPage);
     });
 
-    it('useCatalogActions returns only imperative operations', () =>
-    {
+    it('useCatalogActions returns only imperative operations', () => {
         const { result } = renderHook(() => useCatalogActions());
 
         expect(Object.keys(result.current).sort()).toEqual([
@@ -162,14 +157,12 @@ describe('useCatalog filter contract', () =>
         expect(result.current.openCatalogByType).toBe(fakeStore.openCatalogByType);
     });
 
-    it('all three filters observe the same singleton — refs are ===', () =>
-    {
-        const { result } = renderHook(() =>
-            ({
-                data: useCatalogData(),
-                ui: useCatalogUiState(),
-                actions: useCatalogActions()
-            }));
+    it('all three filters observe the same singleton — refs are ===', () => {
+        const { result } = renderHook(() => ({
+            data: useCatalogData(),
+            ui: useCatalogUiState(),
+            actions: useCatalogActions()
+        }));
 
         // Each slice reaches the same fakeStore via useBetween. Any
         // accidental copy would break these `===` checks.

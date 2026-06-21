@@ -1,10 +1,8 @@
 import { Variants } from 'framer-motion';
 import { TransitionAnimationTypes } from './TransitionAnimationTypes';
 
-export function getTransitionVariants(type: string): Variants
-{
-    switch(type)
-    {
+export function getTransitionVariants(type: string): Variants {
+    switch (type) {
         case TransitionAnimationTypes.BOUNCE:
             return {
                 hidden: { opacity: 0, scale: 0.3 },
@@ -51,7 +49,7 @@ export function getTransitionVariants(type: string): Variants
             return {
                 hidden: { x: 0 },
                 visible: {
-                    x: [ 0, -6, 5, -3, 2, 0 ],
+                    x: [0, -6, 5, -3, 2, 0],
                     transition: { duration: 0.5 }
                 },
                 exit: { x: 0 }

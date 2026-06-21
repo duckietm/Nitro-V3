@@ -1,28 +1,23 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 
-export const NitrobubbleHiddenView: FC<{}> = () =>
-{
-    const [ isVisible, setIsVisible ] = useState(false);
+export const NitrobubbleHiddenView: FC<{}> = () => {
+    const [isVisible, setIsVisible] = useState(false);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         document.body.classList.toggle('nitro-bubbles-hidden', isVisible);
 
         return () => document.body.classList.remove('nitro-bubbles-hidden');
-    }, [ isVisible ]);
+    }, [isVisible]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -30,7 +25,7 @@ export const NitrobubbleHiddenView: FC<{}> = () =>
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(prevValue => !prevValue);
+                        setIsVisible((prevValue) => !prevValue);
                         return;
                 }
             },

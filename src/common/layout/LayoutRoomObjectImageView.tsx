@@ -2,8 +2,7 @@ import { GetRoomEngine, TextureUtils, Vector3d } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Base, BaseProps } from '../Base';
 
-interface LayoutRoomObjectImageViewProps extends BaseProps<HTMLDivElement>
-{
+interface LayoutRoomObjectImageViewProps extends BaseProps<HTMLDivElement> {
     roomId: number;
     objectId: number;
     category: number;
@@ -11,71 +10,61 @@ interface LayoutRoomObjectImageViewProps extends BaseProps<HTMLDivElement>
     scale?: number;
 }
 
-export const LayoutRoomObjectImageView: FC<LayoutRoomObjectImageViewProps> = props =>
-{
+export const LayoutRoomObjectImageView: FC<LayoutRoomObjectImageViewProps> = (props) => {
     const { roomId = -1, objectId = 1, category = -1, direction = 2, scale = 1, style = {}, ...rest } = props;
-    const [ imageElement, setImageElement ] = useState<HTMLImageElement>(null);
+    const [imageElement, setImageElement] = useState<HTMLImageElement>(null);
     const isMounted = useRef(true);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         isMounted.current = true;
 
-        return () =>
-        {
+        return () => {
             isMounted.current = false;
         };
     }, []);
 
-    const getStyle = useMemo(() =>
-    {
+    const getStyle = useMemo(() => {
         let newStyle: CSSProperties = {};
 
-        if(imageElement?.src?.length)
-        {
-            newStyle.backgroundImage = `url('${ imageElement.src }')`;
+        if (imageElement?.src?.length) {
+            newStyle.backgroundImage = `url('${imageElement.src}')`;
             newStyle.width = imageElement.width;
             newStyle.height = imageElement.height;
         }
 
-        if(scale !== 1)
-        {
-            newStyle.transform = `scale(${ scale })`;
+        if (scale !== 1) {
+            newStyle.transform = `scale(${scale})`;
 
-            if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
+            if (!(scale % 1)) newStyle.imageRendering = 'pixelated';
         }
 
-        if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
+        if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ imageElement, scale, style ]);
+    }, [imageElement, scale, style]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const imageResult = GetRoomEngine().getRoomObjectImage(roomId, objectId, category, new Vector3d(direction * 45), 64, {
-            imageReady: async (result) =>
-            {
+            imageReady: async (result) => {
                 const img = await TextureUtils.generateImage(result.data);
 
-                if(img && isMounted.current) setImageElement(img);
+                if (img && isMounted.current) setImageElement(img);
             },
-            imageFailed: () =>
-            {
+            imageFailed: () => {
                 // no-op
             }
         });
 
-        if(!imageResult) return;
+        if (!imageResult) return;
 
-        (async () =>
-        {
+        (async () => {
             const img = await TextureUtils.generateImage(imageResult.data);
 
-            if(img && isMounted.current) setImageElement(img);
+            if (img && isMounted.current) setImageElement(img);
         })();
-    }, [ roomId, objectId, category, direction, scale ]);
+    }, [roomId, objectId, category, direction, scale]);
 
-    if(!imageElement) return null;
+    if (!imageElement) return null;
 
-    return <Base classNames={ [ 'furni-image' ] } style={ getStyle } { ...rest } />;
+    return <Base classNames={['furni-image']} style={getStyle} {...rest} />;
 };

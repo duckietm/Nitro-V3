@@ -7,14 +7,12 @@ import { WiredExtraBaseView } from './WiredExtraBaseView';
 
 const MAX_NAME_LENGTH = 40;
 
-const normalizeVariableName = (value: string) =>
-{
+const normalizeVariableName = (value: string) => {
     let normalizedValue = (value ?? '').replace(/[\t\r\n]/g, '');
 
-    if(normalizedValue.includes('=')) normalizedValue = normalizedValue.substring(0, normalizedValue.indexOf('=')).trim();
+    if (normalizedValue.includes('=')) normalizedValue = normalizedValue.substring(0, normalizedValue.indexOf('=')).trim();
 
-    while(normalizedValue.startsWith('@') || normalizedValue.startsWith('~'))
-    {
+    while (normalizedValue.startsWith('@') || normalizedValue.startsWith('~')) {
         normalizedValue = normalizedValue.substring(1);
     }
 
@@ -24,55 +22,57 @@ const normalizeVariableName = (value: string) =>
     return normalizedValue.slice(0, MAX_NAME_LENGTH);
 };
 
-const handleVariableNameKeyDown = (event: React.KeyboardEvent<HTMLInputElement>, setValue: (value: string) => void) =>
-{
-    if(event.key !== ' ') return;
+const handleVariableNameKeyDown = (event: React.KeyboardEvent<HTMLInputElement>, setValue: (value: string) => void) => {
+    if (event.key !== ' ') return;
 
     event.preventDefault();
 
     const input = event.currentTarget;
-    const start = (input.selectionStart ?? input.value.length);
-    const end = (input.selectionEnd ?? start);
-    const nextValue = `${ input.value.substring(0, start) }_${ input.value.substring(end) }`;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? start;
+    const nextValue = `${input.value.substring(0, start)}_${input.value.substring(end)}`;
 
     setValue(normalizeVariableName(nextValue));
 
     window.requestAnimationFrame(() => input.setSelectionRange(Math.min(start + 1, input.value.length + 1), Math.min(start + 1, input.value.length + 1)));
 };
 
-export const WiredExtraContextVariableView: FC<{}> = () =>
-{
+export const WiredExtraContextVariableView: FC<{}> = () => {
     const { trigger = null, setIntParams = null, setStringParam = null } = useWired();
-    const [ variableName, setVariableName ] = useState('');
-    const [ hasValue, setHasValue ] = useState(false);
+    const [variableName, setVariableName] = useState('');
+    const [hasValue, setHasValue] = useState(false);
 
-    useEffect(() =>
-    {
-        if(!trigger) return;
+    useEffect(() => {
+        if (!trigger) return;
 
         setVariableName(normalizeVariableName(trigger.stringData));
-        setHasValue((trigger.intData.length > 0) ? (trigger.intData[0] === 1) : false);
-    }, [ trigger ]);
+        setHasValue(trigger.intData.length > 0 ? trigger.intData[0] === 1 : false);
+    }, [trigger]);
 
-    const save = () =>
-    {
+    const save = () => {
         setStringParam(normalizeVariableName(variableName));
-        setIntParams([ hasValue ? 1 : 0 ]);
+        setIntParams([hasValue ? 1 : 0]);
     };
 
     return (
-        <WiredExtraBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save } cardStyle={ { width: 400 } }>
+        <WiredExtraBaseView hasSpecialInput={true} requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE} save={save} cardStyle={{ width: 400 }}>
             <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-1">
-                    <Text>{ LocalizeText('wiredfurni.params.variables.variable_name') }</Text>
-                    <NitroInput maxLength={ MAX_NAME_LENGTH } type="text" value={ variableName } onChange={ event => setVariableName(normalizeVariableName(event.target.value)) } onKeyDown={ event => handleVariableNameKeyDown(event, setVariableName) } />
+                    <Text>{LocalizeText('wiredfurni.params.variables.variable_name')}</Text>
+                    <NitroInput
+                        maxLength={MAX_NAME_LENGTH}
+                        type="text"
+                        value={variableName}
+                        onChange={(event) => setVariableName(normalizeVariableName(event.target.value))}
+                        onKeyDown={(event) => handleVariableNameKeyDown(event, setVariableName)}
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    <Text>{ LocalizeText('wiredfurni.params.variables.settings') }</Text>
+                    <Text>{LocalizeText('wiredfurni.params.variables.settings')}</Text>
                     <label className="flex items-center gap-1 cursor-pointer">
-                        <input checked={ hasValue } className="form-check-input" type="checkbox" onChange={ event => setHasValue(event.target.checked) } />
-                        <Text>{ LocalizeText('wiredfurni.params.variables.settings.has_value') }</Text>
+                        <input checked={hasValue} className="form-check-input" type="checkbox" onChange={(event) => setHasValue(event.target.checked)} />
+                        <Text>{LocalizeText('wiredfurni.params.variables.settings.has_value')}</Text>
                     </label>
                 </div>
             </div>

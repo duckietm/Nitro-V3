@@ -1,7 +1,6 @@
 import { NitroEvent } from '@nitrots/nitro-renderer';
 
-export class CatalogEvent extends NitroEvent
-{
+export class CatalogEvent extends NitroEvent {
     public static SHOW_CATALOG: string = 'CE_SHOW_CATALOG';
     public static HIDE_CATALOG: string = 'CE_HIDE_CATALOG';
     public static TOGGLE_CATALOG: string = 'CE_TOGGLE_CATALOG';

@@ -7,8 +7,7 @@ import { Text } from '../../../../common';
 import { useMessageEvent, useNavigatorData, useRoom } from '../../../../hooks';
 import { getRegisteredPlugins, INitroPlugin, subscribePlugins } from '../../../plugins/NitroPluginApi';
 
-export const RoomToolsWidgetView: FC<{}> = props =>
-{
+export const RoomToolsWidgetView: FC<{}> = (props) => {
     const [areBubblesMuted, setAreBubblesMuted] = useState(false);
     const [isZoomedIn, setIsZoomedIn] = useState<boolean>(false);
     const [roomName, setRoomName] = useState<string>(null);
@@ -16,37 +15,30 @@ export const RoomToolsWidgetView: FC<{}> = props =>
     const [roomTags, setRoomTags] = useState<string[]>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenHistory, setIsOpenHistory] = useState<boolean>(false);
-    const [roomHistory, setRoomHistory] = useState<{ roomId: number, roomName: string }[]>([]);
+    const [roomHistory, setRoomHistory] = useState<{ roomId: number; roomName: string }[]>([]);
     const [plugins, setPlugins] = useState<INitroPlugin[]>([]);
     const { navigatorData } = useNavigatorData();
     const { roomSession = null } = useRoom();
 
     // Subscribe to external plugin changes
-    useEffect(() =>
-    {
+    useEffect(() => {
         setPlugins(getRegisteredPlugins());
         return subscribePlugins(() => setPlugins(getRegisteredPlugins()));
     }, []);
 
-    const handleToolClick = (action: string, value?: string) =>
-    {
+    const handleToolClick = (action: string, value?: string) => {
         if (!roomSession) return;
 
-        switch (action)
-        {
+        switch (action) {
             case 'settings':
                 CreateLinkEvent('navigator/toggle-room-info');
                 return;
             case 'zoom':
-                setIsZoomedIn(prevValue =>
-                {
-                    if (GetConfigurationValue('room.zoom.enabled', true))
-                    {
+                setIsZoomedIn((prevValue) => {
+                    if (GetConfigurationValue('room.zoom.enabled', true)) {
                         const scale = GetRoomEngine().getRoomInstanceRenderingCanvasScale(roomSession.roomId, 1);
                         GetRoomEngine().setRoomInstanceRenderingCanvasScale(roomSession.roomId, 1, scale === 1 ? 0.5 : 1);
-                    }
-                    else
-                    {
+                    } else {
                         const geometry = GetRoomEngine().getRoomInstanceGeometry(roomSession.roomId, 1);
                         if (geometry) geometry.performZoom();
                     }
@@ -58,7 +50,7 @@ export const RoomToolsWidgetView: FC<{}> = props =>
                 return;
             case 'hiddenbubbles':
                 CreateLinkEvent('nitrobubblehidden/toggle');
-                setAreBubblesMuted(prev => !prev);
+                setAreBubblesMuted((prev) => !prev);
                 return;
             case 'like_room':
                 SendMessageComposer(new RateFlatMessageComposer(1));
@@ -71,21 +63,20 @@ export const RoomToolsWidgetView: FC<{}> = props =>
                 SendMessageComposer(new NavigatorSearchComposer('hotel_view', `tag:${value}`));
                 return;
             case 'room_history':
-                if (roomHistory.length > 0) setIsOpenHistory(prev => !prev);
+                if (roomHistory.length > 0) setIsOpenHistory((prev) => !prev);
                 return;
             case 'room_history_back':
-                const prevIndex = roomHistory.findIndex(room => room.roomId === navigatorData.currentRoomId) - 1;
+                const prevIndex = roomHistory.findIndex((room) => room.roomId === navigatorData.currentRoomId) - 1;
                 if (prevIndex >= 0) TryVisitRoom(roomHistory[prevIndex].roomId);
                 return;
             case 'room_history_next':
-                const nextIndex = roomHistory.findIndex(room => room.roomId === navigatorData.currentRoomId) + 1;
+                const nextIndex = roomHistory.findIndex((room) => room.roomId === navigatorData.currentRoomId) + 1;
                 if (nextIndex < roomHistory.length) TryVisitRoom(roomHistory[nextIndex].roomId);
                 return;
         }
     };
 
-    const onChangeRoomHistory = (roomId: number, roomName: string) =>
-    {
+    const onChangeRoomHistory = (roomId: number, roomName: string) => {
         let newStorage = JSON.parse(window.localStorage.getItem('nitro.room.history') || '[]');
         if (newStorage.some((room: { roomId: number }) => room.roomId === roomId)) return;
 
@@ -96,10 +87,9 @@ export const RoomToolsWidgetView: FC<{}> = props =>
         SetLocalStorage('nitro.room.history', newStorage);
     };
 
-    useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event =>
-    {
+    useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, (event) => {
         const parser = event.getParser();
-        if (!parser.roomEnter || (parser.data.roomId !== roomSession.roomId)) return;
+        if (!parser.roomEnter || parser.data.roomId !== roomSession.roomId) return;
 
         if (roomName !== parser.data.roomName) setRoomName(parser.data.roomName);
         if (roomOwner !== parser.data.ownerName) setRoomOwner(parser.data.ownerName);
@@ -107,32 +97,58 @@ export const RoomToolsWidgetView: FC<{}> = props =>
         onChangeRoomHistory(parser.data.roomId, parser.data.roomName);
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setIsOpen(true);
         const timeout = setTimeout(() => setIsOpen(false), 5000);
         return () => clearTimeout(timeout);
     }, [roomName, roomOwner, roomTags]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setRoomHistory(JSON.parse(window.localStorage.getItem('nitro.room.history') || '[]'));
     }, []);
 
     return (
         <div className="flex space-x-2 nitro-room-tools-container">
             <div className="flex flex-col items-center justify-center p-2 nitro-room-tools">
-                <div className="cursor-pointer nitro-icon icon-cog" title={LocalizeText('room.settings.button.text')} onClick={() => handleToolClick('settings')} />
-                <div className={classNames('cursor-pointer', 'nitro-icon', (!isZoomedIn && 'icon-zoom-less'), (isZoomedIn && 'icon-zoom-more'))} title={LocalizeText('room.zoom.button.text')} onClick={() => handleToolClick('zoom')} />
-                <div className="cursor-pointer nitro-icon icon-chat-history" title={LocalizeText('room.chathistory.button.text')} onClick={() => handleToolClick('chat_history')} />
-                <div className={classNames('cursor-pointer', 'nitro-icon', (areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble'))} title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')} onClick={() => handleToolClick('hiddenbubbles')} />
+                <div
+                    className="cursor-pointer nitro-icon icon-cog"
+                    title={LocalizeText('room.settings.button.text')}
+                    onClick={() => handleToolClick('settings')}
+                />
+                <div
+                    className={classNames('cursor-pointer', 'nitro-icon', !isZoomedIn && 'icon-zoom-less', isZoomedIn && 'icon-zoom-more')}
+                    title={LocalizeText('room.zoom.button.text')}
+                    onClick={() => handleToolClick('zoom')}
+                />
+                <div
+                    className="cursor-pointer nitro-icon icon-chat-history"
+                    title={LocalizeText('room.chathistory.button.text')}
+                    onClick={() => handleToolClick('chat_history')}
+                />
+                <div
+                    className={classNames('cursor-pointer', 'nitro-icon', areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble')}
+                    title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')}
+                    onClick={() => handleToolClick('hiddenbubbles')}
+                />
 
                 {navigatorData.canRate && (
-                    <div className="cursor-pointer nitro-icon icon-like-room" title={LocalizeText('room.like.button.text')} onClick={() => handleToolClick('like_room')} />
+                    <div
+                        className="cursor-pointer nitro-icon icon-like-room"
+                        title={LocalizeText('room.like.button.text')}
+                        onClick={() => handleToolClick('like_room')}
+                    />
                 )}
-                <div className="cursor-pointer nitro-icon icon-room-link" title={LocalizeText('navigator.embed.caption')} onClick={() => handleToolClick('toggle_room_link')} />
-                <div className="cursor-pointer nitro-icon icon-room-history-enabled" title={LocalizeText('room.history.button.tooltip')} onClick={() => handleToolClick('room_history')} />
-                {plugins.map(plugin => (
+                <div
+                    className="cursor-pointer nitro-icon icon-room-link"
+                    title={LocalizeText('navigator.embed.caption')}
+                    onClick={() => handleToolClick('toggle_room_link')}
+                />
+                <div
+                    className="cursor-pointer nitro-icon icon-room-history-enabled"
+                    title={LocalizeText('room.history.button.tooltip')}
+                    onClick={() => handleToolClick('room_history')}
+                />
+                {plugins.map((plugin) => (
                     <div
                         key={plugin.name}
                         className={`cursor-pointer nitro-icon ${plugin.icon || 'icon-cog'}`}
@@ -148,13 +164,24 @@ export const RoomToolsWidgetView: FC<{}> = props =>
                             <div className="flex flex-col items-center justify-center">
                                 <div className="flex flex-col px-3 py-2 rounded nitro-room-tools-info">
                                     <div className="flex flex-col gap-1">
-                                        <Text wrap fontSize={4} variant="white">{roomName}</Text>
-                                        <Text fontSize={5} variant="gray">{roomOwner}</Text>
+                                        <Text wrap fontSize={4} variant="white">
+                                            {roomName}
+                                        </Text>
+                                        <Text fontSize={5} variant="gray">
+                                            {roomOwner}
+                                        </Text>
                                     </div>
                                     {roomTags && roomTags.length > 0 && (
                                         <div className="flex gap-2">
                                             {roomTags.map((tag, index) => (
-                                                <Text key={index} pointer small className="p-1 rounded bg-primary" variant="white" onClick={() => handleToolClick('navigator_search_tag', tag)}>
+                                                <Text
+                                                    key={index}
+                                                    pointer
+                                                    small
+                                                    className="p-1 rounded bg-primary"
+                                                    variant="white"
+                                                    onClick={() => handleToolClick('navigator_search_tag', tag)}
+                                                >
                                                     #{tag}
                                                 </Text>
                                             ))}
@@ -165,10 +192,22 @@ export const RoomToolsWidgetView: FC<{}> = props =>
                         </motion.div>
                     )}
                     {isOpenHistory && (
-                        <motion.div initial={{ x: -100 }} animate={{ x: 0 }} exit={{ x: -100 }} transition={{ duration: 0.3 }} className="nitro-room-tools-history">
+                        <motion.div
+                            initial={{ x: -100 }}
+                            animate={{ x: 0 }}
+                            exit={{ x: -100 }}
+                            transition={{ duration: 0.3 }}
+                            className="nitro-room-tools-history"
+                        >
                             <div className="flex flex-col px-3 py-2 rounded nitro-room-history">
-                                {roomHistory.map(history => (
-                                    <Text key={history.roomId} bold={history.roomId === navigatorData.currentRoomId} variant={history.roomId === navigatorData.currentRoomId ? 'white' : 'muted'} pointer onClick={() => TryVisitRoom(history.roomId)}>
+                                {roomHistory.map((history) => (
+                                    <Text
+                                        key={history.roomId}
+                                        bold={history.roomId === navigatorData.currentRoomId}
+                                        variant={history.roomId === navigatorData.currentRoomId ? 'white' : 'muted'}
+                                        pointer
+                                        onClick={() => TryVisitRoom(history.roomId)}
+                                    >
                                         {history.roomName}
                                     </Text>
                                 ))}

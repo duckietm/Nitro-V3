@@ -15,14 +15,12 @@ import { useNitroQuery } from '../../api/nitro-query';
  * checked the same field as the cache. With useNitroQuery, the cache
  * is React Query's; the component just reads `data`.
  */
-export const useMarketplaceConfiguration = (
-    options: { enabled?: boolean } = {}
-): UseQueryResult<MarketplaceConfigurationMessageParser> =>
+export const useMarketplaceConfiguration = (options: { enabled?: boolean } = {}): UseQueryResult<MarketplaceConfigurationMessageParser> =>
     useNitroQuery<MarketplaceConfigurationEvent, MarketplaceConfigurationMessageParser>({
-        key: [ 'nitro', 'catalog', 'marketplaceConfiguration' ],
+        key: ['nitro', 'catalog', 'marketplaceConfiguration'],
         request: () => new GetMarketplaceConfigurationMessageComposer(),
         parser: MarketplaceConfigurationEvent,
-        select: event => event.getParser(),
+        select: (event) => event.getParser(),
         enabled: options.enabled,
         staleTime: Infinity
     });

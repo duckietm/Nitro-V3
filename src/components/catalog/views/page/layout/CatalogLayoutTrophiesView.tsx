@@ -12,110 +12,117 @@ import { CatalogTotalPriceWidget } from '../widgets/CatalogTotalPriceWidget';
 import { CatalogViewProductWidgetView } from '../widgets/CatalogViewProductWidgetView';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
-export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = props =>
-{
+export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = (props) => {
     const { page = null } = props;
-    const [ trophyText, setTrophyText ] = useState<string>('');
+    const [trophyText, setTrophyText] = useState<string>('');
     const { currentOffer = null } = useCatalogData();
     const { setPurchaseOptions = null } = useCatalogUiState();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
 
-    useEffect(() =>
-    {
-        if(!currentOffer) return;
+    useEffect(() => {
+        if (!currentOffer) return;
 
-        setPurchaseOptions(prevValue =>
-        {
+        setPurchaseOptions((prevValue) => {
             const newValue = { ...prevValue };
 
             newValue.extraData = trophyText;
 
             return newValue;
         });
-    }, [ currentOffer, trophyText, setPurchaseOptions ]);
+    }, [currentOffer, trophyText, setPurchaseOptions]);
 
     const canPurchase = currentOffer && trophyText.trim().length > 0;
 
     return (
         <div className="flex flex-col h-full gap-2">
-            { /* Admin: quick actions */ }
+            {/* Admin: quick actions */}
             <CatalogAdminQuickActionsView />
 
-            { /* Selected trophy card. shrink-0 + no overflow-hidden so the
+            {/* Selected trophy card. shrink-0 + no overflow-hidden so the
                  Buy button stays inside the panel even when the grid below
-                 holds many trophies. */ }
-            { currentOffer
-                ? <div className="nitro-catalog-trophy-card flex gap-0 bg-white rounded border-2 border-warning/40 shrink-0">
-                    { /* Preview */ }
+                 holds many trophies. */}
+            {currentOffer ? (
+                <div className="nitro-catalog-trophy-card flex gap-0 bg-white rounded border-2 border-warning/40 shrink-0">
+                    {/* Preview */}
                     <div className="nitro-catalog-trophy-preview w-[120px] min-w-[120px] relative flex items-center justify-center border-r-2 border-warning/30">
-                        { (currentOffer.product.productType !== ProductTypeEnum.BADGE)
-                            ? <>
+                        {currentOffer.product.productType !== ProductTypeEnum.BADGE ? (
+                            <>
                                 <CatalogViewProductWidgetView />
                                 <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 right-1 absolute" />
                             </>
-                            : <CatalogAddOnBadgeWidgetView className="scale-2" /> }
+                        ) : (
+                            <CatalogAddOnBadgeWidgetView className="scale-2" />
+                        )}
                     </div>
-                    { /* Info */ }
+                    {/* Info */}
                     <div className="flex flex-col flex-1 min-w-0 p-2 gap-1.5">
                         <div className="flex items-center gap-1.5">
                             <FaTrophy className="text-warning text-[11px]" />
-                            <Text className="text-[12px]! font-bold text-dark leading-tight">{ currentOffer.localizationName }</Text>
-                            { adminMode &&
+                            <Text className="text-[12px]! font-bold text-dark leading-tight">{currentOffer.localizationName}</Text>
+                            {adminMode && (
                                 <FaEdit
                                     className="text-primary text-[11px] cursor-pointer hover:text-dark transition-colors shrink-0"
-                                    title={ LocalizeText('catalog.admin.offer.edit') }
-                                    onClick={ () => catalogAdmin.setEditingOffer(currentOffer) }
-                                /> }
+                                    title={LocalizeText('catalog.admin.offer.edit')}
+                                    onClick={() => catalogAdmin.setEditingOffer(currentOffer)}
+                                />
+                            )}
                         </div>
-                        { adminMode &&
+                        {adminMode && (
                             <div className="flex items-center gap-1 flex-wrap">
-                                <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">ID: { currentOffer.product.productClassId }</span>
-                                <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: { currentOffer.offerId }</span>
-                            </div> }
+                                <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">
+                                    ID: {currentOffer.product.productClassId}
+                                </span>
+                                <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: {currentOffer.offerId}</span>
+                            </div>
+                        )}
                         <CatalogTotalPriceWidget />
-                        { !canPurchase &&
-                            <span className="text-[9px] text-warning italic">{ LocalizeText('catalog.trophies.write.hint') }</span> }
+                        {!canPurchase && <span className="text-[9px] text-warning italic">{LocalizeText('catalog.trophies.write.hint')}</span>}
                         <div className="flex gap-1.5">
                             <CatalogPurchaseWidgetView />
                         </div>
                     </div>
                 </div>
-                : <div className="flex items-start gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
-                    { !!page.localization.getImage(1) &&
-                        <img alt="" className="w-[50px] h-[50px] object-contain rounded shrink-0 mt-0.5" src={ page.localization.getImage(1) } /> }
+            ) : (
+                <div className="flex items-start gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
+                    {!!page.localization.getImage(1) && (
+                        <img alt="" className="w-[50px] h-[50px] object-contain rounded shrink-0 mt-0.5" src={page.localization.getImage(1)} />
+                    )}
                     <div className="min-w-0">
                         <div className="flex items-center gap-1.5 mb-1">
                             <FaTrophy className="text-warning text-[11px]" />
-                            <span className="text-[12px] font-bold">{ LocalizeText('catalog.trophies.title') }</span>
+                            <span className="text-[12px] font-bold">{LocalizeText('catalog.trophies.title')}</span>
                         </div>
-                        <Text className="text-[10px]! text-muted leading-relaxed" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
+                        <Text
+                            className="text-[10px]! text-muted leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: SanitizeHtml(page.localization.getText(0)) }}
+                        />
                     </div>
-                </div> }
+                </div>
+            )}
 
-            { /* Trophy inscription */ }
+            {/* Trophy inscription */}
             <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
                     <FaPen className="text-[8px] text-warning" />
-                    <span className="text-[9px] font-bold text-muted uppercase tracking-wider">{ LocalizeText('catalog.trophies.inscription') }</span>
-                    <span className={ `text-[9px] ml-auto ${ trophyText.length > 180 ? 'text-danger font-bold' : 'text-muted' }` }>{ trophyText.length }/200</span>
+                    <span className="text-[9px] font-bold text-muted uppercase tracking-wider">{LocalizeText('catalog.trophies.inscription')}</span>
+                    <span className={`text-[9px] ml-auto ${trophyText.length > 180 ? 'text-danger font-bold' : 'text-muted'}`}>{trophyText.length}/200</span>
                 </div>
                 <div className="relative">
                     <textarea
-                        className={ `nitro-catalog-trophy-inscription w-full h-[60px] text-[11px] rounded p-2 pr-3 resize-none focus:outline-none transition-all border-2 ${ trophyText.length > 0 ? 'has-text' : '' }` }
-                        maxLength={ 200 }
-                        placeholder={ LocalizeText('catalog.trophies.inscription.placeholder') }
-                        value={ trophyText }
-                        onChange={ event => setTrophyText(event.target.value) }
+                        className={`nitro-catalog-trophy-inscription w-full h-[60px] text-[11px] rounded p-2 pr-3 resize-none focus:outline-none transition-all border-2 ${trophyText.length > 0 ? 'has-text' : ''}`}
+                        maxLength={200}
+                        placeholder={LocalizeText('catalog.trophies.inscription.placeholder')}
+                        value={trophyText}
+                        onChange={(event) => setTrophyText(event.target.value)}
                     />
-                    { trophyText.length > 0 &&
-                        <FaTrophy className="absolute top-2 right-2 text-[10px] text-warning/30" /> }
+                    {trophyText.length > 0 && <FaTrophy className="absolute top-2 right-2 text-[10px] text-warning/30" />}
                 </div>
             </div>
 
-            { /* Trophy grid */ }
+            {/* Trophy grid */}
             <div className="flex-1 overflow-auto min-h-0">
-                <CatalogItemGridWidgetView columnCount={ 7 } columnMinHeight={ 50 } columnMinWidth={ 50 } />
+                <CatalogItemGridWidgetView columnCount={7} columnMinHeight={50} columnMinWidth={50} />
             </div>
         </div>
     );

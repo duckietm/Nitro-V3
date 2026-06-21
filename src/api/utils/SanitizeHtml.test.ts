@@ -10,22 +10,18 @@ import { SanitizeHtml } from './SanitizeHtml';
  * guarantee (the limited markup the chat/profile UI relies on is preserved),
  * using jsdom's real parser as the oracle.
  */
-const parse = (html: string): HTMLDivElement =>
-{
+const parse = (html: string): HTMLDivElement => {
     const div = document.createElement('div');
     div.innerHTML = SanitizeHtml(html);
     return div;
 };
 
-describe('SanitizeHtml — neutralises dangerous markup', () =>
-{
-    it('removes <script> elements', () =>
-    {
+describe('SanitizeHtml — neutralises dangerous markup', () => {
+    it('removes <script> elements', () => {
         expect(parse('<script>alert(1)</script>').querySelector('script')).toBeNull();
     });
 
-    it('strips inline event handlers (onerror) from allowed tags', () =>
-    {
+    it('strips inline event handlers (onerror) from allowed tags', () => {
         const div = parse('<img src=x onerror=alert(1)>');
         const img = div.querySelector('img');
         // img tag itself is allow-listed, but the handler must be gone
@@ -33,71 +29,59 @@ describe('SanitizeHtml — neutralises dangerous markup', () =>
         expect(div.innerHTML.toLowerCase()).not.toContain('onerror');
     });
 
-    it('drops javascript: URLs on anchors', () =>
-    {
+    it('drops javascript: URLs on anchors', () => {
         const div = parse('<a href="javascript:alert(1)">x</a>');
         expect(div.querySelector('a[href^="javascript:"]')).toBeNull();
     });
 
-    it('removes <svg> and its onload handler', () =>
-    {
+    it('removes <svg> and its onload handler', () => {
         const div = parse('<svg onload=alert(1)></svg>');
         expect(div.innerHTML.toLowerCase()).not.toContain('onload');
     });
 
-    it('removes <iframe> elements', () =>
-    {
+    it('removes <iframe> elements', () => {
         expect(parse('<iframe src="https://evil.example"></iframe>').querySelector('iframe')).toBeNull();
     });
 
-    it('leaves a plain username untouched', () =>
-    {
+    it('leaves a plain username untouched', () => {
         expect(SanitizeHtml('CoolUser_123')).toBe('CoolUser_123');
     });
 });
 
-describe('SanitizeHtml — preserves the markup the chat/profile UI relies on', () =>
-{
-    it('keeps <b>/<i>/<u>', () =>
-    {
+describe('SanitizeHtml — preserves the markup the chat/profile UI relies on', () => {
+    it('keeps <b>/<i>/<u>', () => {
         const div = parse('<b>a</b><i>b</i><u>c</u>');
         expect(div.querySelector('b')).not.toBeNull();
         expect(div.querySelector('i')).not.toBeNull();
         expect(div.querySelector('u')).not.toBeNull();
     });
 
-    it('keeps <strong>/<em> (RoomChatFormatter output)', () =>
-    {
+    it('keeps <strong>/<em> (RoomChatFormatter output)', () => {
         const div = parse('<strong>x</strong><em>y</em>');
         expect(div.querySelector('strong')).not.toBeNull();
         expect(div.querySelector('em')).not.toBeNull();
     });
 
-    it('keeps a coloured span (RoomChatFormatter output)', () =>
-    {
+    it('keeps a coloured span (RoomChatFormatter output)', () => {
         const div = parse('<span style="color:red">hi</span>');
         const span = div.querySelector('span');
         expect(span).not.toBeNull();
         expect((span as HTMLElement).style.color).toBe('red');
     });
 
-    it('keeps <br>', () =>
-    {
+    it('keeps <br>', () => {
         expect(parse('a<br />b').querySelectorAll('br').length).toBe(1);
     });
 });
 
-describe('SanitizeHtml — link safety', () =>
-{
-    it('forces rel="noopener noreferrer" on a target=_blank anchor', () =>
-    {
+describe('SanitizeHtml — link safety', () => {
+    it('forces rel="noopener noreferrer" on a target=_blank anchor', () => {
         const a = parse('<a href="https://example.com" target="_blank">x</a>').querySelector('a');
         expect(a).not.toBeNull();
         expect(a?.getAttribute('rel')).toBe('noopener noreferrer');
     });
 
-    it('overrides an attacker-supplied rel on a target=_blank anchor', () =>
-    {
+    it('overrides an attacker-supplied rel on a target=_blank anchor', () => {
         const a = parse('<a href="https://example.com" target="_blank" rel="opener">x</a>').querySelector('a');
         expect(a?.getAttribute('rel')).toBe('noopener noreferrer');
     });

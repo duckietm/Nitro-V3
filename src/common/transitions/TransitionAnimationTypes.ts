@@ -1,5 +1,4 @@
-export class TransitionAnimationTypes
-{
+export class TransitionAnimationTypes {
     public static BOUNCE: string = 'bounce';
     public static SLIDE_LEFT: string = 'slideLeft';
     public static SLIDE_RIGHT: string = 'slideRight';

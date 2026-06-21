@@ -15,8 +15,7 @@ import { CatalogTotalPriceWidget } from '../widgets/CatalogTotalPriceWidget';
 import { CatalogViewProductWidgetView } from '../widgets/CatalogViewProductWidgetView';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
-export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
-{
+export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = (props) => {
     const { page = null } = props;
     const { currentOffer = null, currentPage = null, roomPreviewer = null } = useCatalogData();
     const catalogAdmin = useCatalogAdmin();
@@ -25,79 +24,95 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
 
     return (
         <div className="nitro-catalog-default-layout flex flex-col h-full gap-2">
-            <CatalogAdminQuickActionsView className="nitro-catalog-default-admin" currentOffer={ currentOffer } />
+            <CatalogAdminQuickActionsView className="nitro-catalog-default-admin" currentOffer={currentOffer} />
             <div className="nitro-catalog-product-view">
-                { currentOffer &&
+                {currentOffer && (
                     <div className="nitro-catalog-offer-panel flex gap-0">
                         <div className="nitro-catalog-offer-preview relative flex items-center justify-center">
-                            <Text className="nitro-catalog-preview-title">{ offerName }</Text>
-                            { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
+                            <Text className="nitro-catalog-preview-title">{offerName}</Text>
+                            {currentOffer.product.productType !== ProductTypeEnum.BADGE && (
                                 <>
-                                    <button className="nitro-catalog-preview-btn nitro-catalog-preview-rotate" onClick={ () => roomPreviewer?.changeRoomObjectDirection() }>
+                                    <button
+                                        className="nitro-catalog-preview-btn nitro-catalog-preview-rotate"
+                                        onClick={() => roomPreviewer?.changeRoomObjectDirection()}
+                                    >
                                         <FaSyncAlt />
                                     </button>
-                                    <button className="nitro-catalog-preview-btn nitro-catalog-preview-state" onClick={ () => roomPreviewer?.changeRoomObjectState() }>
+                                    <button
+                                        className="nitro-catalog-preview-btn nitro-catalog-preview-state"
+                                        onClick={() => roomPreviewer?.changeRoomObjectState()}
+                                    >
                                         <FaExchangeAlt />
                                     </button>
                                     <CatalogViewProductWidgetView />
                                     <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 right-1 absolute" />
-                                </> }
-                            { (currentOffer.product.productType === ProductTypeEnum.BADGE) &&
-                                <CatalogAddOnBadgeWidgetView className="scale-2" /> }
+                                </>
+                            )}
+                            {currentOffer.product.productType === ProductTypeEnum.BADGE && <CatalogAddOnBadgeWidgetView className="scale-2" />}
                         </div>
                         <div className="nitro-catalog-offer-info flex flex-col flex-1 min-w-0 gap-2">
                             <div>
                                 <div className="flex items-start justify-between gap-2">
-                                    <Text className="text-[13px]! font-bold text-dark leading-tight">{ offerName }</Text>
-                                    { adminMode &&
+                                    <Text className="text-[13px]! font-bold text-dark leading-tight">{offerName}</Text>
+                                    {adminMode && (
                                         <FaEdit
                                             className="text-primary text-[11px] cursor-pointer hover:text-dark transition-colors shrink-0 mt-0.5"
-                                            title={ LocalizeText('catalog.admin.offer.edit') }
-                                            onClick={ () => catalogAdmin.setEditingOffer(currentOffer) }
-                                        /> }
+                                            title={LocalizeText('catalog.admin.offer.edit')}
+                                            onClick={() => catalogAdmin.setEditingOffer(currentOffer)}
+                                        />
+                                    )}
                                 </div>
-                                { adminMode &&
+                                {adminMode && (
                                     <div className="flex items-center gap-1 mt-1 flex-wrap">
-                                        <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">ID: { currentOffer.product.productClassId }</span>
-                                        <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: { currentOffer.offerId }</span>
-                                        <span className="text-[8px] font-mono text-white bg-secondary px-1 py-px rounded">{ currentOffer.product.productType.toUpperCase() }</span>
-                                    </div> }
+                                        <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">
+                                            ID: {currentOffer.product.productClassId}
+                                        </span>
+                                        <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: {currentOffer.offerId}</span>
+                                        <span className="text-[8px] font-mono text-white bg-secondary px-1 py-px rounded">
+                                            {currentOffer.product.productType.toUpperCase()}
+                                        </span>
+                                    </div>
+                                )}
                                 <CatalogLimitedItemWidgetView />
                             </div>
                         </div>
-                    </div> }
+                    </div>
+                )}
 
-                { !currentOffer &&
+                {!currentOffer && (
                     <div className="nitro-catalog-welcome flex items-center gap-3">
-                        { !!page.localization.getImage(1) &&
-                            <img alt="" className="w-[70px] h-[70px] object-contain rounded shrink-0" src={ page.localization.getImage(1) } /> }
-                        <Text className="text-[11px]! text-muted" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
-                    </div> }
+                        {!!page.localization.getImage(1) && (
+                            <img alt="" className="w-[70px] h-[70px] object-contain rounded shrink-0" src={page.localization.getImage(1)} />
+                        )}
+                        <Text className="text-[11px]! text-muted" dangerouslySetInnerHTML={{ __html: SanitizeHtml(page.localization.getText(0)) }} />
+                    </div>
+                )}
             </div>
 
             <div className="nitro-catalog-grid-shell flex-1 overflow-auto min-h-0">
-                { GetConfigurationValue('catalog.headers') &&
-                    <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) } /> }
-                <CatalogItemGridWidgetView className="nitro-catalog-grid" columnCount={ 6 } columnMinHeight={ 80 } columnMinWidth={ 55 } />
+                {GetConfigurationValue('catalog.headers') && <CatalogHeaderView imageUrl={currentPage.localization.getImage(0)} />}
+                <CatalogItemGridWidgetView className="nitro-catalog-grid" columnCount={6} columnMinHeight={80} columnMinWidth={55} />
             </div>
 
-            { currentOffer &&
+            {currentOffer && (
                 <div className="nitro-catalog-price-row flex items-center justify-between gap-2">
                     <div className="nitro-catalog-spinner-slot">
                         <CatalogSpinnerWidgetView />
                     </div>
                     <div className="nitro-catalog-total-price-slot">
-                        <span className="nitro-catalog-total-price-label">{ LocalizeText('catalog.bundlewidget.price') }</span>
+                        <span className="nitro-catalog-total-price-label">{LocalizeText('catalog.bundlewidget.price')}</span>
                         <CatalogTotalPriceWidget />
                     </div>
-                </div> }
+                </div>
+            )}
 
-            { currentOffer &&
+            {currentOffer && (
                 <div className="nitro-catalog-purchase-row flex items-start justify-end">
                     <div className="nitro-catalog-offer-actions flex gap-1.5">
                         <CatalogPurchaseWidgetView />
                     </div>
-                </div> }
+                </div>
+            )}
         </div>
     );
 };

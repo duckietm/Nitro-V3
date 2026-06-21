@@ -1,5 +1,4 @@
-export interface RememberLoginData
-{
+export interface RememberLoginData {
     token?: string;
     ssoTicket?: string;
     expiresAt: number;
@@ -10,28 +9,22 @@ const REMEMBER_LOGIN_KEY = 'nitro.auth.remember';
 const LEGACY_REMEMBER_LOGIN_KEY = 'nitro.remember.token';
 const DEFAULT_REMEMBER_SECONDS = 30 * 24 * 60 * 60;
 
-export const GetRememberLogin = (): RememberLoginData | null =>
-{
-    try
-    {
+export const GetRememberLogin = (): RememberLoginData | null => {
+    try {
         const data = JSON.parse(window.localStorage.getItem(REMEMBER_LOGIN_KEY) || 'null') as RememberLoginData | null;
 
-        if(!data?.token?.length && !data?.ssoTicket?.length) return null;
-        if(data.expiresAt && ((data.expiresAt * 1000) <= Date.now()))
-        {
+        if (!data?.token?.length && !data?.ssoTicket?.length) return null;
+        if (data.expiresAt && data.expiresAt * 1000 <= Date.now()) {
             ClearRememberLogin();
             return null;
         }
 
         return data;
-    }
-    catch
-    {
-        try
-        {
+    } catch {
+        try {
             const legacyToken = window.localStorage.getItem(LEGACY_REMEMBER_LOGIN_KEY) || '';
 
-            if(!legacyToken.length) return null;
+            if (!legacyToken.length) return null;
 
             const data: RememberLoginData = {
                 token: legacyToken,
@@ -41,47 +34,34 @@ export const GetRememberLogin = (): RememberLoginData | null =>
             SetRememberLogin(data);
 
             return data;
-        }
-        catch
-        {
+        } catch {
             return null;
         }
     }
 };
 
-export const SetRememberLogin = (data: RememberLoginData): void =>
-{
-    if(!data?.token?.length && !data?.ssoTicket?.length) return;
+export const SetRememberLogin = (data: RememberLoginData): void => {
+    if (!data?.token?.length && !data?.ssoTicket?.length) return;
 
-    try
-    {
+    try {
         window.localStorage.setItem(REMEMBER_LOGIN_KEY, JSON.stringify(data));
-    }
-    catch
-    {}
+    } catch {}
 };
 
-export const ClearRememberLogin = (): void =>
-{
-    try
-    {
+export const ClearRememberLogin = (): void => {
+    try {
         window.localStorage.removeItem(REMEMBER_LOGIN_KEY);
         window.localStorage.removeItem(LEGACY_REMEMBER_LOGIN_KEY);
-    }
-    catch
-    {}
+    } catch {}
 };
 
-export const StoreRememberLoginFromPayload = (payload: Record<string, unknown>, username?: string, ssoTicket?: string): void =>
-{
+export const StoreRememberLoginFromPayload = (payload: Record<string, unknown>, username?: string, ssoTicket?: string): void => {
     const token = typeof payload.rememberToken === 'string' ? payload.rememberToken : '';
-    const rawExpiresAt = (payload.rememberExpiresAt ?? payload.expiresAt);
+    const rawExpiresAt = payload.rememberExpiresAt ?? payload.expiresAt;
     const parsedExpiresAt = typeof rawExpiresAt === 'number' ? rawExpiresAt : Number(rawExpiresAt || 0);
-    const expiresAt = (Number.isFinite(parsedExpiresAt) && parsedExpiresAt > 0)
-        ? parsedExpiresAt
-        : Math.floor(Date.now() / 1000) + DEFAULT_REMEMBER_SECONDS;
+    const expiresAt = Number.isFinite(parsedExpiresAt) && parsedExpiresAt > 0 ? parsedExpiresAt : Math.floor(Date.now() / 1000) + DEFAULT_REMEMBER_SECONDS;
 
-    if(!token.length && !ssoTicket?.length) return;
+    if (!token.length && !ssoTicket?.length) return;
 
     SetRememberLogin({ token: token || undefined, ssoTicket: ssoTicket || undefined, expiresAt, username });
 };

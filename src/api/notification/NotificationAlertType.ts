@@ -1,5 +1,4 @@
-export class NotificationAlertType
-{
+export class NotificationAlertType {
     public static DEFAULT: string = 'default';
     public static MOTD: string = 'motd';
     public static MODERATION: string = 'moderation';

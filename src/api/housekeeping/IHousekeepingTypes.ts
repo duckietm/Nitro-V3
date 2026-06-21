@@ -1,5 +1,4 @@
-export interface IHousekeepingUser
-{
+export interface IHousekeepingUser {
     id: number;
     username: string;
     motto: string;
@@ -18,8 +17,7 @@ export interface IHousekeepingUser
     isTradeLocked: boolean;
 }
 
-export interface IHousekeepingRoom
-{
+export interface IHousekeepingRoom {
     id: number;
     name: string;
     description: string;
@@ -33,15 +31,13 @@ export interface IHousekeepingRoom
     createdAt: number;
 }
 
-export interface IHousekeepingActionResult
-{
+export interface IHousekeepingActionResult {
     ok: boolean;
     actionId: number | null;
     message: string;
 }
 
-export interface IHousekeepingActionLogEntry
-{
+export interface IHousekeepingActionLogEntry {
     id: number;
     timestamp: number;
     actorId: number;
@@ -54,8 +50,7 @@ export interface IHousekeepingActionLogEntry
     success: boolean;
 }
 
-export interface IHousekeepingUserSummary
-{
+export interface IHousekeepingUserSummary {
     id: number;
     username: string;
     figure: string;
@@ -63,16 +58,14 @@ export interface IHousekeepingUserSummary
     rank: number;
 }
 
-export interface IHousekeepingRoomSummary
-{
+export interface IHousekeepingRoomSummary {
     id: number;
     name: string;
     userCount: number;
     ownerName: string;
 }
 
-export interface IHousekeepingDashboard
-{
+export interface IHousekeepingDashboard {
     onlineUsers: number;
     totalUsers: number;
     activeRooms: number;

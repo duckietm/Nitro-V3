@@ -1,7 +1,6 @@
 import { IObjectData } from '@nitrots/nitro-renderer';
 
-export class MarketplaceOfferData
-{
+export class MarketplaceOfferData {
     public static readonly TYPE_FLOOR: number = 1;
     public static readonly TYPE_WALL: number = 2;
 
@@ -18,8 +17,17 @@ export class MarketplaceOfferData
     private _offerCount: number;
     private _image: string;
 
-    constructor(offerId: number, furniId: number, furniType: number, extraData: string, stuffData: IObjectData, price: number, status: number, averagePrice: number, offerCount: number = -1)
-    {
+    constructor(
+        offerId: number,
+        furniId: number,
+        furniType: number,
+        extraData: string,
+        stuffData: IObjectData,
+        price: number,
+        status: number,
+        averagePrice: number,
+        offerCount: number = -1
+    ) {
         this._offerId = offerId;
         this._furniId = furniId;
         this._furniType = furniType;
@@ -31,98 +39,79 @@ export class MarketplaceOfferData
         this._offerCount = offerCount;
     }
 
-    public get offerId(): number
-    {
+    public get offerId(): number {
         return this._offerId;
     }
 
-    public set offerId(offerId: number)
-    {
+    public set offerId(offerId: number) {
         this._offerId = offerId;
     }
 
-    public get furniId(): number
-    {
+    public get furniId(): number {
         return this._furniId;
     }
 
-    public get furniType(): number
-    {
+    public get furniType(): number {
         return this._furniType;
     }
 
-    public get extraData(): string
-    {
+    public get extraData(): string {
         return this._extraData;
     }
 
-    public get stuffData(): IObjectData
-    {
+    public get stuffData(): IObjectData {
         return this._stuffData;
     }
 
-    public get price(): number
-    {
+    public get price(): number {
         return this._price;
     }
 
-    public set price(price: number)
-    {
+    public set price(price: number) {
         this._price = price;
     }
 
-    public get averagePrice(): number
-    {
+    public get averagePrice(): number {
         return this._averagePrice;
     }
 
-    public get image(): string
-    {
+    public get image(): string {
         return this._image;
     }
 
-    public set image(image: string)
-    {
+    public set image(image: string) {
         this._image = image;
     }
 
-    public get imageCallback(): number
-    {
+    public get imageCallback(): number {
         return this._imageCallback;
     }
 
-    public set imageCallback(callback: number)
-    {
+    public set imageCallback(callback: number) {
         this._imageCallback = callback;
     }
 
-    public get status(): number
-    {
+    public get status(): number {
         return this._status;
     }
 
-    public get timeLeftMinutes(): number
-    {
+    public get timeLeftMinutes(): number {
         return this._timeLeftMinutes;
     }
 
-    public set timeLeftMinutes(minutes: number)
-    {
+    public set timeLeftMinutes(minutes: number) {
         this._timeLeftMinutes = minutes;
     }
 
-    public get offerCount(): number
-    {
+    public get offerCount(): number {
         return this._offerCount;
     }
 
-    public set offerCount(count: number)
-    {
+    public set offerCount(count: number) {
         this._offerCount = count;
     }
 
-    public get isUniqueLimitedItem(): boolean
-    {
-        return (this.stuffData && (this.stuffData.uniqueSeries > 0));
+    public get isUniqueLimitedItem(): boolean {
+        return this.stuffData && this.stuffData.uniqueSeries > 0;
     }
 }

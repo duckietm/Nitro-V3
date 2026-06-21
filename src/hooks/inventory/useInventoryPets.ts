@@ -8,27 +8,24 @@ import { useInventoryUnseenTracker } from './useInventoryUnseenTracker';
 
 let petMsgFragments: Map<number, PetData>[] = null;
 
-const useInventoryPetsState = () =>
-{
-    const [ needsUpdate, setNeedsUpdate ] = useState(true);
-    const [ petItems, setPetItems ] = useState<IPetItem[]>([]);
-    const [ selectedPet, setSelectedPet ] = useState<IPetItem>(null);
+const useInventoryPetsState = () => {
+    const [needsUpdate, setNeedsUpdate] = useState(true);
+    const [petItems, setPetItems] = useState<IPetItem[]>([]);
+    const [selectedPet, setSelectedPet] = useState<IPetItem>(null);
     const { isVisible = false, activate = null, deactivate = null } = useSharedVisibility();
     const { isUnseen = null, resetCategory = null } = useInventoryUnseenTracker();
 
-    useMessageEvent<PetInventoryEvent>(PetInventoryEvent, event =>
-    {
+    useMessageEvent<PetInventoryEvent>(PetInventoryEvent, (event) => {
         const parser = event.getParser();
 
-        if(!petMsgFragments) petMsgFragments = new Array(parser.totalFragments);
+        if (!petMsgFragments) petMsgFragments = new Array(parser.totalFragments);
 
         const fragment = mergePetFragments(parser.fragment, parser.totalFragments, parser.fragmentNumber, petMsgFragments);
 
-        if(!fragment) return;
+        if (!fragment) return;
 
-        setPetItems(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+        setPetItems((prevValue) => {
+            const newValue = [...prevValue];
 
             processPetFragment(newValue, fragment, isUnseen);
 
@@ -38,13 +35,11 @@ const useInventoryPetsState = () =>
         petMsgFragments = null;
     });
 
-    useMessageEvent<PetAddedToInventoryEvent>(PetAddedToInventoryEvent, event =>
-    {
+    useMessageEvent<PetAddedToInventoryEvent>(PetAddedToInventoryEvent, (event) => {
         const parser = event.getParser();
 
-        setPetItems(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+        setPetItems((prevValue) => {
+            const newValue = [...prevValue];
 
             addSinglePetItem(parser.pet, newValue, isUnseen(UnseenItemCategory.PET, parser.pet.id));
 
@@ -52,13 +47,11 @@ const useInventoryPetsState = () =>
         });
     });
 
-    useMessageEvent<PetRemovedFromInventory>(PetRemovedFromInventory, event =>
-    {
+    useMessageEvent<PetRemovedFromInventory>(PetRemovedFromInventory, (event) => {
         const parser = event.getParser();
 
-        setPetItems(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+        setPetItems((prevValue) => {
+            const newValue = [...prevValue];
 
             removePetItemById(parser.petId, newValue);
 
@@ -66,40 +59,35 @@ const useInventoryPetsState = () =>
         });
     });
 
-    useEffect(() =>
-    {
-        if(!petItems || !petItems.length) return;
+    useEffect(() => {
+        if (!petItems || !petItems.length) return;
 
-        setSelectedPet(prevValue =>
-        {
+        setSelectedPet((prevValue) => {
             let newValue = prevValue;
 
-            if(newValue && (petItems.indexOf(newValue) === -1)) newValue = null;
+            if (newValue && petItems.indexOf(newValue) === -1) newValue = null;
 
-            if(!newValue) newValue = petItems[0];
+            if (!newValue) newValue = petItems[0];
 
             return newValue;
         });
-    }, [ petItems ]);
+    }, [petItems]);
 
-    useEffect(() =>
-    {
-        if(!isVisible) return;
+    useEffect(() => {
+        if (!isVisible) return;
 
-        return () =>
-        {
+        return () => {
             resetCategory(UnseenItemCategory.PET);
         };
-    }, [ isVisible, resetCategory ]);
+    }, [isVisible, resetCategory]);
 
-    useEffect(() =>
-    {
-        if(!isVisible || !needsUpdate) return;
+    useEffect(() => {
+        if (!isVisible || !needsUpdate) return;
 
         SendMessageComposer(new RequestPetsComposer());
 
         setNeedsUpdate(false);
-    }, [ isVisible, needsUpdate ]);
+    }, [isVisible, needsUpdate]);
 
     return { petItems, selectedPet, setSelectedPet, activate, deactivate };
 };

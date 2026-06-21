@@ -26,50 +26,46 @@ import { useHasPermission, usePermissionValue, useUserPermissions, useUserRank }
 // function). These tests pin the constraint so a future migration
 // doesn't reintroduce the broken pattern.
 
-class CaptureBoundary extends Component<{ children: ReactNode }, { error: Error | null }>
-{
+class CaptureBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
     state = { error: null as Error | null };
 
-    static getDerivedStateFromError(error: Error)
-    {
+    static getDerivedStateFromError(error: Error) {
         return { error };
     }
 
-    componentDidCatch()
-    {
-    }
+    componentDidCatch() {}
 
-    render()
-    {
+    render() {
         return this.state.error ? null : this.props.children;
     }
 }
 
-describe('use-between + useSyncExternalStore incompatibility', () =>
-{
-    afterEach(() =>
-    {
+describe('use-between + useSyncExternalStore incompatibility', () => {
+    afterEach(() => {
         cleanup();
     });
 
-    it('crashes when useSyncExternalStore is called inside a useBetween scope', () =>
-    {
+    it('crashes when useSyncExternalStore is called inside a useBetween scope', () => {
         // React 19 logs every render-time error to console.error before
         // forwarding to the error boundary. Suppress the noise to keep
         // the test output readable, then assert the error fingerprint.
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
-        const Broken = () =>
-        {
-            // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional: this test asserts the runtime crash
-            useBetween(() => useSyncExternalStore(() => () => undefined, () => 'v', () => 'v'));
+        const Broken = () => {
+            useBetween(() => {
+                // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional: this test asserts the runtime crash
+                return useSyncExternalStore(
+                    () => () => undefined,
+                    () => 'v',
+                    () => 'v'
+                );
+            });
             return null;
         };
 
         let captured: Error | null = null;
-        const boundaryRef = (instance: CaptureBoundary | null) =>
-        {
-            if(instance) captured = instance.state.error;
+        const boundaryRef = (instance: CaptureBoundary | null) => {
+            if (instance) captured = instance.state.error;
         };
 
         render(
@@ -84,20 +80,22 @@ describe('use-between + useSyncExternalStore incompatibility', () =>
         consoleError.mockRestore();
     });
 
-    it('works when useSyncExternalStore is called OUTSIDE the useBetween scope', () =>
-    {
+    it('works when useSyncExternalStore is called OUTSIDE the useBetween scope', () => {
         const sharedState = () => ({ count: 0 });
 
         // Lowercase intentionally — this is a custom hook named like a
         // regular function so the test reproduces the exact call shape
         // a refactor might land on. The eslint disable below silences
         // the "hooks must start with use" lint that flags the body.
-        const safeHook = () =>
-        {
+        const safeHook = () => {
             // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional: function named like a hook to mirror real call sites
             const shared = useBetween(sharedState);
             // eslint-disable-next-line react-hooks/rules-of-hooks -- intentional: same reason as above
-            const external = useSyncExternalStore(() => () => undefined, () => 'value', () => 'value');
+            const external = useSyncExternalStore(
+                () => () => undefined,
+                () => 'value',
+                () => 'value'
+            );
 
             return { ...shared, external };
         };
@@ -121,31 +119,26 @@ describe('use-between + useSyncExternalStore incompatibility', () =>
 // (gating). Tests fake both sides.
 // ============================================================================
 
-const makeFakeDispatcher = () =>
-{
+const makeFakeDispatcher = () => {
     const listeners = new Map<string, Set<() => void>>();
 
     return {
-        subscribe(type: string, cb: () => void): () => void
-        {
+        subscribe(type: string, cb: () => void): () => void {
             let bucket = listeners.get(type);
-            if(!bucket)
-            {
+            if (!bucket) {
                 bucket = new Set();
                 listeners.set(type, bucket);
             }
             bucket.add(cb);
             return () => bucket!.delete(cb);
         },
-        dispatch(type: string): void
-        {
-            listeners.get(type)?.forEach(cb => cb());
+        dispatch(type: string): void {
+            listeners.get(type)?.forEach((cb) => cb());
         }
     };
 };
 
-interface FakeUserSnapshot
-{
+interface FakeUserSnapshot {
     securityLevel: number;
     rankId: number;
     rankName: string;
@@ -164,14 +157,12 @@ const makeUserSnapshot = (overrides: Partial<FakeUserSnapshot> = {}): FakeUserSn
     ...overrides
 });
 
-describe('useHasPermission + usePermissionValue + useUserPermissions', () =>
-{
+describe('useHasPermission + usePermissionValue + useUserPermissions', () => {
     let userSnapshot: FakeUserSnapshot;
     let permissionsSnapshot: ReadonlyMap<string, number>;
     let fakeDispatcher: ReturnType<typeof makeFakeDispatcher>;
 
-    beforeEach(() =>
-    {
+    beforeEach(() => {
         userSnapshot = makeUserSnapshot();
         permissionsSnapshot = new Map();
         fakeDispatcher = makeFakeDispatcher();
@@ -184,15 +175,13 @@ describe('useHasPermission + usePermissionValue + useUserPermissions', () =>
         vi.mocked(GetEventDispatcher).mockReturnValue(fakeDispatcher as any);
     });
 
-    afterEach(() =>
-    {
+    afterEach(() => {
         cleanup();
         vi.mocked(GetSessionDataManager).mockReset();
         vi.mocked(GetEventDispatcher).mockReset();
     });
 
-    it('useUserRank surfaces rank metadata for presentational use', () =>
-    {
+    it('useUserRank surfaces rank metadata for presentational use', () => {
         userSnapshot = makeUserSnapshot({
             securityLevel: 5,
             rankId: 5,
@@ -214,12 +203,11 @@ describe('useHasPermission + usePermissionValue + useUserPermissions', () =>
         });
     });
 
-    it('useHasPermission returns true only for ALLOWED (value 1), false for ROOM_OWNER/absent/zero', () =>
-    {
+    it('useHasPermission returns true only for ALLOWED (value 1), false for ROOM_OWNER/absent/zero', () => {
         permissionsSnapshot = new Map([
-            [ 'acc_supporttool', 1 ],     // ALLOWED
-            [ 'acc_anyroomowner', 2 ],    // ROOM_OWNER — requires room ownership at call time
-            [ 'acc_closedice_room', 0 ]   // DISALLOWED (shouldn't reach the client, but defensive)
+            ['acc_supporttool', 1], // ALLOWED
+            ['acc_anyroomowner', 2], // ROOM_OWNER — requires room ownership at call time
+            ['acc_closedice_room', 0] // DISALLOWED (shouldn't reach the client, but defensive)
         ]);
 
         // ALLOWED → true. Matches Habbo.hasPermission(key) which calls
@@ -237,11 +225,10 @@ describe('useHasPermission + usePermissionValue + useUserPermissions', () =>
         expect(renderHook(() => useHasPermission('acc_unknown_key')).result.current).toBe(false);
     });
 
-    it('usePermissionValue returns the raw integer (or 0 if absent)', () =>
-    {
+    it('usePermissionValue returns the raw integer (or 0 if absent)', () => {
         permissionsSnapshot = new Map([
-            [ 'acc_supporttool', 1 ],
-            [ 'acc_anyroomowner', 2 ]
+            ['acc_supporttool', 1],
+            ['acc_anyroomowner', 2]
         ]);
 
         expect(renderHook(() => usePermissionValue('acc_supporttool')).result.current).toBe(1);
@@ -249,9 +236,11 @@ describe('useHasPermission + usePermissionValue + useUserPermissions', () =>
         expect(renderHook(() => usePermissionValue('acc_missing')).result.current).toBe(0);
     });
 
-    it('useUserPermissions exposes the full map', () =>
-    {
-        permissionsSnapshot = new Map([ [ 'acc_supporttool', 1 ], [ 'acc_ambassador', 1 ] ]);
+    it('useUserPermissions exposes the full map', () => {
+        permissionsSnapshot = new Map([
+            ['acc_supporttool', 1],
+            ['acc_ambassador', 1]
+        ]);
 
         const { result } = renderHook(() => useUserPermissions());
 
@@ -260,19 +249,17 @@ describe('useHasPermission + usePermissionValue + useUserPermissions', () =>
         expect(result.current.get('acc_ambassador')).toBe(1);
     });
 
-    it('re-renders when USER_PERMISSIONS_UPDATED fires after a runtime promote', () =>
-    {
+    it('re-renders when USER_PERMISSIONS_UPDATED fires after a runtime promote', () => {
         permissionsSnapshot = new Map();
         const { result } = renderHook(() => useHasPermission('acc_supporttool'));
         expect(result.current).toBe(false);
 
-        act(() =>
-        {
+        act(() => {
             // Renderer invariant: every invalidation produces a NEW
             // map reference. The mock's NitroEventType proxy resolves
             // any property to `mock:NitroEventType:<PROP>`, so that's
             // the wire string useSessionSnapshots subscribes against.
-            permissionsSnapshot = new Map([ [ 'acc_supporttool', 1 ] ]);
+            permissionsSnapshot = new Map([['acc_supporttool', 1]]);
             fakeDispatcher.dispatch('mock:NitroEventType:USER_PERMISSIONS_UPDATED');
         });
 

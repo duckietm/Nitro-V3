@@ -1,5 +1,4 @@
-export class TradingNotificationType
-{
+export class TradingNotificationType {
     public static ALERT_SCAM: number = 0;
     public static HOTEL_TRADING_DISABLED = 1;
     public static YOU_NOT_ALLOWED: number = 2;

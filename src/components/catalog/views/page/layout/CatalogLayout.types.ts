@@ -1,7 +1,6 @@
 import { ICatalogPage } from '../../../../../api';
 
-export interface CatalogLayoutProps
-{
+export interface CatalogLayoutProps {
     page: ICatalogPage;
     hideNavigation: () => void;
 }

@@ -5,41 +5,35 @@ import { Column, Flex, Grid, LayoutBadgeImageView } from '../../../../common';
 import { useGroup } from '../../../../hooks';
 import { GroupBadgeCreatorView } from '../GroupBadgeCreatorView';
 
-interface GroupTabBadgeViewProps
-{
+interface GroupTabBadgeViewProps {
     skipDefault?: boolean;
     setCloseAction: Dispatch<SetStateAction<{ action: () => boolean }>>;
     groupData: IGroupData;
     setGroupData: Dispatch<SetStateAction<IGroupData>>;
 }
 
-export const GroupTabBadgeView: FC<GroupTabBadgeViewProps> = props =>
-{
+export const GroupTabBadgeView: FC<GroupTabBadgeViewProps> = (props) => {
     const { groupData = null, setGroupData = null, setCloseAction = null, skipDefault = null } = props;
-    const [ badgeParts, setBadgeParts ] = useState<GroupBadgePart[]>(null);
+    const [badgeParts, setBadgeParts] = useState<GroupBadgePart[]>(null);
     const { groupCustomize = null } = useGroup();
 
-    const getModifiedBadgeCode = () =>
-    {
-        if(!badgeParts || !badgeParts.length) return '';
+    const getModifiedBadgeCode = () => {
+        if (!badgeParts || !badgeParts.length) return '';
 
         let badgeCode = '';
 
-        badgeParts.forEach(part => (part.code && (badgeCode += part.code)));
+        badgeParts.forEach((part) => part.code && (badgeCode += part.code));
 
         return badgeCode;
     };
 
-    const saveBadge = useCallback(() =>
-    {
-        if(!groupData || !badgeParts || !badgeParts.length) return false;
+    const saveBadge = useCallback(() => {
+        if (!groupData || !badgeParts || !badgeParts.length) return false;
 
-        if((groupData.groupBadgeParts === badgeParts)) return true;
+        if (groupData.groupBadgeParts === badgeParts) return true;
 
-        if(groupData.groupId <= 0)
-        {
-            setGroupData(prevValue =>
-            {
+        if (groupData.groupId <= 0) {
+            setGroupData((prevValue) => {
                 const newValue = { ...prevValue };
 
                 newValue.groupBadgeParts = badgeParts;
@@ -52,9 +46,8 @@ export const GroupTabBadgeView: FC<GroupTabBadgeViewProps> = props =>
 
         const badge = [];
 
-        badgeParts.forEach(part =>
-        {
-            if(!part.code) return;
+        badgeParts.forEach((part) => {
+            if (!part.code) return;
 
             badge.push(part.key);
             badge.push(part.color);
@@ -64,13 +57,12 @@ export const GroupTabBadgeView: FC<GroupTabBadgeViewProps> = props =>
         SendMessageComposer(new GroupSaveBadgeComposer(groupData.groupId, badge));
 
         return true;
-    }, [ groupData, badgeParts, setGroupData ]);
+    }, [groupData, badgeParts, setGroupData]);
 
-    useEffect(() =>
-    {
-        if(groupData.groupBadgeParts && groupData.groupBadgeParts.length) return;
+    useEffect(() => {
+        if (groupData.groupBadgeParts && groupData.groupBadgeParts.length) return;
 
-        if(!groupCustomize?.badgeBases?.length || !groupCustomize?.badgePartColors?.length) return;
+        if (!groupCustomize?.badgeBases?.length || !groupCustomize?.badgePartColors?.length) return;
 
         const badgeParts = [
             new GroupBadgePart(GroupBadgePart.BASE, groupCustomize.badgeBases[0].id, groupCustomize.badgePartColors[0].id),
@@ -80,42 +72,38 @@ export const GroupTabBadgeView: FC<GroupTabBadgeViewProps> = props =>
             new GroupBadgePart(GroupBadgePart.SYMBOL, 0, groupCustomize.badgePartColors[0].id)
         ];
 
-        setGroupData(prevValue =>
-        {
+        setGroupData((prevValue) => {
             const groupBadgeParts = badgeParts;
 
             return { ...prevValue, groupBadgeParts };
         });
-    }, [ groupData.groupBadgeParts, groupCustomize, setGroupData ]);
+    }, [groupData.groupBadgeParts, groupCustomize, setGroupData]);
 
-    useEffect(() =>
-    {
-        if(groupData.groupId <= 0)
-        {
-            setBadgeParts(groupData.groupBadgeParts ? [ ...groupData.groupBadgeParts ] : null);
+    useEffect(() => {
+        if (groupData.groupId <= 0) {
+            setBadgeParts(groupData.groupBadgeParts ? [...groupData.groupBadgeParts] : null);
 
             return;
         }
 
         setBadgeParts(groupData.groupBadgeParts);
-    }, [ groupData ]);
+    }, [groupData]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setCloseAction({ action: saveBadge });
 
         return () => setCloseAction(null);
-    }, [ setCloseAction, saveBadge ]);
+    }, [setCloseAction, saveBadge]);
 
     return (
-        <Grid gap={ 1 } overflow="hidden">
-            <Column size={ 2 }>
+        <Grid gap={1} overflow="hidden">
+            <Column size={2}>
                 <Flex center className="bg-muted rounded p-1">
-                    <LayoutBadgeImageView badgeCode={ getModifiedBadgeCode() } isGroup={ true } />
+                    <LayoutBadgeImageView badgeCode={getModifiedBadgeCode()} isGroup={true} />
                 </Flex>
             </Column>
-            <Column overflow="auto" size={ 10 }>
-                <GroupBadgeCreatorView badgeParts={ badgeParts } setBadgeParts={ setBadgeParts } />
+            <Column overflow="auto" size={10}>
+                <GroupBadgeCreatorView badgeParts={badgeParts} setBadgeParts={setBadgeParts} />
             </Column>
         </Grid>
     );

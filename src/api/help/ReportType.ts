@@ -1,5 +1,4 @@
-export class ReportType
-{
+export class ReportType {
     public static readonly EMERGENCY = 1;
     public static readonly GUIDE = 2;
     public static readonly IM = 3;

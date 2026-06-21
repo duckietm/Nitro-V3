@@ -4,8 +4,7 @@ import { WiredFurniType } from '../../../../api';
 import { useWired } from '../../../../hooks';
 import { WiredBaseView } from '../WiredBaseView';
 
-export interface WiredExtraBaseViewProps
-{
+export interface WiredExtraBaseViewProps {
     hasSpecialInput: boolean;
     requiresFurni: number;
     save: () => void;
@@ -16,19 +15,37 @@ export interface WiredExtraBaseViewProps
     selectionPreview?: ReactNode;
 }
 
-export const WiredExtraBaseView: FC<PropsWithChildren<WiredExtraBaseViewProps>> = props =>
-{
-    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, hasSpecialInput = false, children = null, cardStyle = undefined, footer = null, footerCollapsible = true, selectionPreview = null } = props;
+export const WiredExtraBaseView: FC<PropsWithChildren<WiredExtraBaseViewProps>> = (props) => {
+    const {
+        requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE,
+        save = null,
+        validate = null,
+        hasSpecialInput = false,
+        children = null,
+        cardStyle = undefined,
+        footer = null,
+        footerCollapsible = true,
+        selectionPreview = null
+    } = props;
     const { trigger = null, setActionDelay = null } = useWired();
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setActionDelay((trigger as WiredActionDefinition)?.delayInPulses ?? 0);
-    }, [ trigger, setActionDelay ]);
+    }, [trigger, setActionDelay]);
 
     return (
-        <WiredBaseView hasSpecialInput={ hasSpecialInput } requiresFurni={ requiresFurni } save={ save } validate={ validate } wiredType="extra" cardStyle={ cardStyle } footer={ footer } footerCollapsible={ footerCollapsible } selectionPreview={ selectionPreview }>
-            { children }
+        <WiredBaseView
+            hasSpecialInput={hasSpecialInput}
+            requiresFurni={requiresFurni}
+            save={save}
+            validate={validate}
+            wiredType="extra"
+            cardStyle={cardStyle}
+            footer={footer}
+            footerCollapsible={footerCollapsible}
+            selectionPreview={selectionPreview}
+        >
+            {children}
         </WiredBaseView>
     );
 };

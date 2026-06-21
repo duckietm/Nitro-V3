@@ -6,8 +6,7 @@ import { GetRoomSession } from '../../../api';
  * don't subscribe to the events.
  */
 export const useDoorbellActions = () => ({
-    answer: (userName: string, flag: boolean): void =>
-    {
+    answer: (userName: string, flag: boolean): void => {
         GetRoomSession()?.sendDoorbellApprovalMessage(userName, flag);
     }
 });

@@ -1,15 +1,36 @@
-import { CreateLinkEvent, FlatControllerAddedEvent, FlatControllerRemovedEvent, GetSessionDataManager, RoomControllerLevel, RoomObjectCategory, RoomObjectVariable, RoomUnitGiveHandItemComposer, SetRelationshipStatusComposer, TradingOpenComposer } from '@nitrots/nitro-renderer';
+import {
+    CreateLinkEvent,
+    FlatControllerAddedEvent,
+    FlatControllerRemovedEvent,
+    GetSessionDataManager,
+    RoomControllerLevel,
+    RoomObjectCategory,
+    RoomObjectVariable,
+    RoomUnitGiveHandItemComposer,
+    SetRelationshipStatusComposer,
+    TradingOpenComposer
+} from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { AvatarInfoUser, DispatchUiEvent, GetOwnRoomObject, GetUserProfile, LocalizeText, MessengerFriend, ReportType, RoomWidgetUpdateChatInputContentEvent, SanitizeHtml, SendMessageComposer } from '../../../../../api';
+import {
+    AvatarInfoUser,
+    DispatchUiEvent,
+    GetOwnRoomObject,
+    GetUserProfile,
+    LocalizeText,
+    MessengerFriend,
+    ReportType,
+    RoomWidgetUpdateChatInputContentEvent,
+    SanitizeHtml,
+    SendMessageComposer
+} from '../../../../../api';
 import { Flex } from '../../../../../common';
 import { useFriends, useHelp, useIsUserIgnored, useMessageEvent, useRoom, useSessionInfo, useWiredTools } from '../../../../../hooks';
 import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView';
 import { ContextMenuListItemView } from '../../context-menu/ContextMenuListItemView';
 import { ContextMenuView } from '../../context-menu/ContextMenuView';
 
-interface AvatarInfoWidgetAvatarViewProps
-{
+interface AvatarInfoWidgetAvatarViewProps {
     avatarInfo: AvatarInfoUser;
     onClose: () => void;
 }
@@ -22,10 +43,9 @@ const MODE_AMBASSADOR = 4;
 const MODE_AMBASSADOR_MUTE = 5;
 const MODE_RELATIONSHIP = 6;
 
-export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = props =>
-{
+export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = (props) => {
     const { avatarInfo = null, onClose = null } = props;
-    const [ mode, setMode ] = useState(MODE_NORMAL);
+    const [mode, setMode] = useState(MODE_NORMAL);
     const { canRequestFriend = null } = useFriends();
     const { report = null } = useHelp();
     const { roomSession = null, isHandItemBlocked = false } = useRoom();
@@ -40,67 +60,57 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
     // open time, then updates from FlatControllerAdded/Removed events
     // and from optimistic clicks so the Give/Remove Rights buttons flip
     // instantly without waiting for a server roundtrip.
-    const [ controllerLevel, setControllerLevel ] = useState(avatarInfo.targetRoomControllerLevel);
+    const [controllerLevel, setControllerLevel] = useState(avatarInfo.targetRoomControllerLevel);
 
-    useMessageEvent<FlatControllerAddedEvent>(FlatControllerAddedEvent, event =>
-    {
+    useMessageEvent<FlatControllerAddedEvent>(FlatControllerAddedEvent, (event) => {
         const parser = event.getParser();
 
-        if(!parser || (parser.data.userId !== avatarInfo.webID)) return;
+        if (!parser || parser.data.userId !== avatarInfo.webID) return;
 
         setControllerLevel(RoomControllerLevel.GUEST);
     });
 
-    useMessageEvent<FlatControllerRemovedEvent>(FlatControllerRemovedEvent, event =>
-    {
+    useMessageEvent<FlatControllerRemovedEvent>(FlatControllerRemovedEvent, (event) => {
         const parser = event.getParser();
 
-        if(!parser || (parser.userId !== avatarInfo.webID)) return;
+        if (!parser || parser.userId !== avatarInfo.webID) return;
 
         setControllerLevel(RoomControllerLevel.NONE);
     });
 
-    const isShowGiveRights = useMemo(() =>
-    {
-        return (avatarInfo.amIOwner && (controllerLevel < RoomControllerLevel.GUEST) && !avatarInfo.isGuildRoom);
-    }, [ avatarInfo, controllerLevel ]);
+    const isShowGiveRights = useMemo(() => {
+        return avatarInfo.amIOwner && controllerLevel < RoomControllerLevel.GUEST && !avatarInfo.isGuildRoom;
+    }, [avatarInfo, controllerLevel]);
 
-    const isShowRemoveRights = useMemo(() =>
-    {
-        return (avatarInfo.amIOwner && (controllerLevel === RoomControllerLevel.GUEST) && !avatarInfo.isGuildRoom);
-    }, [ avatarInfo, controllerLevel ]);
+    const isShowRemoveRights = useMemo(() => {
+        return avatarInfo.amIOwner && controllerLevel === RoomControllerLevel.GUEST && !avatarInfo.isGuildRoom;
+    }, [avatarInfo, controllerLevel]);
 
-    const moderateMenuHasContent = useMemo(() =>
-    {
-        return (avatarInfo.canBeKicked || avatarInfo.canBeBanned || avatarInfo.canBeMuted || isShowGiveRights || isShowRemoveRights);
-    }, [ isShowGiveRights, isShowRemoveRights, avatarInfo ]);
+    const moderateMenuHasContent = useMemo(() => {
+        return avatarInfo.canBeKicked || avatarInfo.canBeBanned || avatarInfo.canBeMuted || isShowGiveRights || isShowRemoveRights;
+    }, [isShowGiveRights, isShowRemoveRights, avatarInfo]);
 
-    const canGiveHandItem = useMemo(() =>
-    {
-        if(isHandItemBlocked) return false;
+    const canGiveHandItem = useMemo(() => {
+        if (isHandItemBlocked) return false;
 
         let flag = false;
 
         const roomObject = GetOwnRoomObject();
 
-        if(roomObject)
-        {
+        if (roomObject) {
             const carryId = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT);
 
-            if((carryId > 0) && (carryId < 999999)) flag = true;
+            if (carryId > 0 && carryId < 999999) flag = true;
         }
 
         return flag;
-    }, [ isHandItemBlocked ]);
+    }, [isHandItemBlocked]);
 
-    const processAction = (name: string) =>
-    {
+    const processAction = (name: string) => {
         let hideMenu = true;
 
-        if(name)
-        {
-            switch(name)
-            {
+        if (name) {
+            switch (name) {
                 case 'moderate':
                     hideMenu = false;
                     setMode(MODE_MODERATE);
@@ -137,7 +147,7 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
                     DispatchUiEvent(new RoomWidgetUpdateChatInputContentEvent(RoomWidgetUpdateChatInputContentEvent.WHISPER, avatarInfo.name));
                     break;
                 case 'friend':
-                    CreateLinkEvent(`friends/request/${ avatarInfo.webID }/${ avatarInfo.name }`);
+                    CreateLinkEvent(`friends/request/${avatarInfo.webID}/${avatarInfo.name}`);
                     break;
                 case 'relationship':
                     hideMenu = false;
@@ -146,7 +156,7 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
                 case 'respect': {
                     respectUser(avatarInfo.webID);
 
-                    if((userRespectRemaining - 1) >= 1) hideMenu = false;
+                    if (userRespectRemaining - 1 >= 1) hideMenu = false;
                     break;
                 }
                 case 'ignore':
@@ -233,183 +243,198 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
             }
         }
 
-        if(hideMenu) onClose();
+        if (hideMenu) onClose();
     };
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setMode(MODE_NORMAL);
         setControllerLevel(avatarInfo.targetRoomControllerLevel);
-    }, [ avatarInfo ]);
+    }, [avatarInfo]);
 
     return (
-        <ContextMenuView category={ RoomObjectCategory.UNIT } classNames={ [ 'nitro-avatar-action-menu' ] } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
-            <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) } dangerouslySetInnerHTML={ { __html: SanitizeHtml(`${ avatarInfo.name }`) } }></ContextMenuHeaderView>
-            { (mode === MODE_NORMAL) &&
+        <ContextMenuView
+            category={RoomObjectCategory.UNIT}
+            classNames={['nitro-avatar-action-menu']}
+            collapsable={true}
+            objectId={avatarInfo.roomIndex}
+            userType={avatarInfo.userType}
+            onClose={onClose}
+        >
+            <ContextMenuHeaderView
+                className="cursor-pointer"
+                onClick={(event) => GetUserProfile(avatarInfo.webID)}
+                dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${avatarInfo.name}`) }}
+            ></ContextMenuHeaderView>
+            {mode === MODE_NORMAL && (
                 <>
-                    { canRequestFriend(avatarInfo.webID) &&
-                        <ContextMenuListItemView onClick={ event => processAction('friend') }>
-                            { LocalizeText('infostand.button.friend') }
-                        </ContextMenuListItemView> }
-                    <ContextMenuListItemView onClick={ event => processAction('trade') }>
-                        { LocalizeText('infostand.button.trade') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('whisper') }>
-                        { LocalizeText('infostand.button.whisper') }
-                    </ContextMenuListItemView>
-                    { (userRespectRemaining > 0) &&
-                        <ContextMenuListItemView onClick={ event => processAction('respect') }>
-                            { LocalizeText('infostand.button.respect', [ 'count' ], [ userRespectRemaining.toString() ]) }
-                        </ContextMenuListItemView> }
-                    { !canRequestFriend(avatarInfo.webID) &&
-                        <ContextMenuListItemView onClick={ event => processAction('relationship') }>
-                            { LocalizeText('infostand.link.relationship') }
+                    {canRequestFriend(avatarInfo.webID) && (
+                        <ContextMenuListItemView onClick={(event) => processAction('friend')}>
+                            {LocalizeText('infostand.button.friend')}
+                        </ContextMenuListItemView>
+                    )}
+                    <ContextMenuListItemView onClick={(event) => processAction('trade')}>{LocalizeText('infostand.button.trade')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('whisper')}>{LocalizeText('infostand.button.whisper')}</ContextMenuListItemView>
+                    {userRespectRemaining > 0 && (
+                        <ContextMenuListItemView onClick={(event) => processAction('respect')}>
+                            {LocalizeText('infostand.button.respect', ['count'], [userRespectRemaining.toString()])}
+                        </ContextMenuListItemView>
+                    )}
+                    {!canRequestFriend(avatarInfo.webID) && (
+                        <ContextMenuListItemView onClick={(event) => processAction('relationship')}>
+                            {LocalizeText('infostand.link.relationship')}
                             <FaChevronRight className="right fa-icon" />
-                        </ContextMenuListItemView> }
-                    { !isIgnored &&
-                        <ContextMenuListItemView onClick={ event => processAction('ignore') }>
-                            { LocalizeText('infostand.button.ignore') }
-                        </ContextMenuListItemView> }
-                    { isIgnored &&
-                        <ContextMenuListItemView onClick={ event => processAction('unignore') }>
-                            { LocalizeText('infostand.button.unignore') }
-                        </ContextMenuListItemView> }
-                    <ContextMenuListItemView onClick={ event => processAction('report') }>
-                        { LocalizeText('infostand.button.report') }
-                    </ContextMenuListItemView>
-                    { showInspectButton &&
-                        <ContextMenuListItemView onClick={ event => processAction('inspect') }>
-                            Inspect
-                        </ContextMenuListItemView> }
-                    { moderateMenuHasContent &&
-                        <ContextMenuListItemView onClick={ event => processAction('moderate') }>
+                        </ContextMenuListItemView>
+                    )}
+                    {!isIgnored && (
+                        <ContextMenuListItemView onClick={(event) => processAction('ignore')}>
+                            {LocalizeText('infostand.button.ignore')}
+                        </ContextMenuListItemView>
+                    )}
+                    {isIgnored && (
+                        <ContextMenuListItemView onClick={(event) => processAction('unignore')}>
+                            {LocalizeText('infostand.button.unignore')}
+                        </ContextMenuListItemView>
+                    )}
+                    <ContextMenuListItemView onClick={(event) => processAction('report')}>{LocalizeText('infostand.button.report')}</ContextMenuListItemView>
+                    {showInspectButton && <ContextMenuListItemView onClick={(event) => processAction('inspect')}>Inspect</ContextMenuListItemView>}
+                    {moderateMenuHasContent && (
+                        <ContextMenuListItemView onClick={(event) => processAction('moderate')}>
                             <FaChevronRight className="right fa-icon" />
-                            { LocalizeText('infostand.link.moderate') }
-                        </ContextMenuListItemView> }
-                    { avatarInfo.isAmbassador &&
-                        <ContextMenuListItemView onClick={ event => processAction('ambassador') }>
+                            {LocalizeText('infostand.link.moderate')}
+                        </ContextMenuListItemView>
+                    )}
+                    {avatarInfo.isAmbassador && (
+                        <ContextMenuListItemView onClick={(event) => processAction('ambassador')}>
                             <FaChevronRight className="right fa-icon" />
-                            { LocalizeText('infostand.link.ambassador') }
-                        </ContextMenuListItemView> }
-                    { canGiveHandItem && <ContextMenuListItemView onClick={ event => processAction('pass_hand_item') }>
-                        { LocalizeText('avatar.widget.pass_hand_item') }
-                    </ContextMenuListItemView> }
-                </> }
-            { (mode === MODE_MODERATE) &&
+                            {LocalizeText('infostand.link.ambassador')}
+                        </ContextMenuListItemView>
+                    )}
+                    {canGiveHandItem && (
+                        <ContextMenuListItemView onClick={(event) => processAction('pass_hand_item')}>
+                            {LocalizeText('avatar.widget.pass_hand_item')}
+                        </ContextMenuListItemView>
+                    )}
+                </>
+            )}
+            {mode === MODE_MODERATE && (
                 <>
-                    <ContextMenuListItemView onClick={ event => processAction('kick') }>
-                        { LocalizeText('infostand.button.kick') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('mute') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('kick')}>{LocalizeText('infostand.button.kick')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('mute')}>
                         <FaChevronRight className="right fa-icon" />
-                        { LocalizeText('infostand.button.mute') }
+                        {LocalizeText('infostand.button.mute')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('ban') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('ban')}>
                         <FaChevronRight className="right fa-icon" />
-                        { LocalizeText('infostand.button.ban') }
+                        {LocalizeText('infostand.button.ban')}
                     </ContextMenuListItemView>
-                    { isShowGiveRights &&
-                        <ContextMenuListItemView onClick={ event => processAction('give_rights') }>
-                            { LocalizeText('infostand.button.giverights') }
-                        </ContextMenuListItemView> }
-                    { isShowRemoveRights &&
-                        <ContextMenuListItemView onClick={ event => processAction('remove_rights') }>
-                            { LocalizeText('infostand.button.removerights') }
-                        </ContextMenuListItemView> }
-                    <ContextMenuListItemView onClick={ event => processAction('back') }>
+                    {isShowGiveRights && (
+                        <ContextMenuListItemView onClick={(event) => processAction('give_rights')}>
+                            {LocalizeText('infostand.button.giverights')}
+                        </ContextMenuListItemView>
+                    )}
+                    {isShowRemoveRights && (
+                        <ContextMenuListItemView onClick={(event) => processAction('remove_rights')}>
+                            {LocalizeText('infostand.button.removerights')}
+                        </ContextMenuListItemView>
+                    )}
+                    <ContextMenuListItemView onClick={(event) => processAction('back')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
-            { (mode === MODE_MODERATE_BAN) &&
+                </>
+            )}
+            {mode === MODE_MODERATE_BAN && (
                 <>
-                    <ContextMenuListItemView onClick={ event => processAction('ban_hour') }>
-                        { LocalizeText('infostand.button.ban_hour') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ban_hour')}>
+                        {LocalizeText('infostand.button.ban_hour')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('ban_day') }>
-                        { LocalizeText('infostand.button.ban_day') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ban_day')}>{LocalizeText('infostand.button.ban_day')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('perm_ban')}>
+                        {LocalizeText('infostand.button.perm_ban')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('perm_ban') }>
-                        { LocalizeText('infostand.button.perm_ban') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('back_moderate') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('back_moderate')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
-            { (mode === MODE_MODERATE_MUTE) &&
+                </>
+            )}
+            {mode === MODE_MODERATE_MUTE && (
                 <>
-                    <ContextMenuListItemView onClick={ event => processAction('mute_2min') }>
-                        { LocalizeText('infostand.button.mute_2min') }
+                    <ContextMenuListItemView onClick={(event) => processAction('mute_2min')}>
+                        {LocalizeText('infostand.button.mute_2min')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('mute_5min') }>
-                        { LocalizeText('infostand.button.mute_5min') }
+                    <ContextMenuListItemView onClick={(event) => processAction('mute_5min')}>
+                        {LocalizeText('infostand.button.mute_5min')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('mute_10min') }>
-                        { LocalizeText('infostand.button.mute_10min') }
+                    <ContextMenuListItemView onClick={(event) => processAction('mute_10min')}>
+                        {LocalizeText('infostand.button.mute_10min')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('back_moderate') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('back_moderate')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
-            { (mode === MODE_AMBASSADOR) &&
+                </>
+            )}
+            {mode === MODE_AMBASSADOR && (
                 <>
-                    <ContextMenuListItemView onClick={ event => processAction('ambassador_alert') }>
-                        { LocalizeText('infostand.button.alert') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ambassador_alert')}>
+                        {LocalizeText('infostand.button.alert')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('ambassador_kick') }>
-                        { LocalizeText('infostand.button.kick') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ambassador_kick')}>
+                        {LocalizeText('infostand.button.kick')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('ambassador_mute') }>
-                        { LocalizeText('infostand.button.mute') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ambassador_mute')}>
+                        {LocalizeText('infostand.button.mute')}
                         <FaChevronRight className="right fa-icon" />
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('back') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('back')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
-            { (mode === MODE_AMBASSADOR_MUTE) &&
+                </>
+            )}
+            {mode === MODE_AMBASSADOR_MUTE && (
                 <>
-                    <ContextMenuListItemView onClick={ event => processAction('ambassador_mute_2min') }>
-                        { LocalizeText('infostand.button.mute_2min') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ambassador_mute_2min')}>
+                        {LocalizeText('infostand.button.mute_2min')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('ambassador_mute_10min') }>
-                        { LocalizeText('infostand.button.mute_10min') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ambassador_mute_10min')}>
+                        {LocalizeText('infostand.button.mute_10min')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('ambassador_mute_60min') }>
-                        { LocalizeText('infostand.button.mute_60min') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ambassador_mute_60min')}>
+                        {LocalizeText('infostand.button.mute_60min')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('ambassador_mute_18hr') }>
-                        { LocalizeText('infostand.button.mute_18hour') }
+                    <ContextMenuListItemView onClick={(event) => processAction('ambassador_mute_18hr')}>
+                        {LocalizeText('infostand.button.mute_18hour')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('back_ambassador') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('back_ambassador')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
-            { (mode === MODE_RELATIONSHIP) &&
+                </>
+            )}
+            {mode === MODE_RELATIONSHIP && (
                 <>
                     <Flex className="menu-list-split-3">
-                        <ContextMenuListItemView onClick={ event => processAction('rship_heart') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('rship_heart')}>
                             <div className="nitro-friends-spritesheet icon-heart cursor-pointer" />
                         </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('rship_smile') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('rship_smile')}>
                             <div className="nitro-friends-spritesheet icon-smile cursor-pointer" />
                         </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('rship_bobba') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('rship_bobba')}>
                             <div className="nitro-friends-spritesheet icon-bobba cursor-pointer" />
                         </ContextMenuListItemView>
                     </Flex>
-                    <ContextMenuListItemView onClick={ event => processAction('rship_none') }>
-                        { LocalizeText('avatar.widget.clear_relationship') }
+                    <ContextMenuListItemView onClick={(event) => processAction('rship_none')}>
+                        {LocalizeText('avatar.widget.clear_relationship')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('back') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('back')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
+                </>
+            )}
         </ContextMenuView>
     );
 };

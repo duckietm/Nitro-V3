@@ -10,10 +10,8 @@ import { useNitroEvent } from '../../events';
  * This is the "subscriptions" half of the proposal #4 split for
  * usePollWidget. The "actions" half is in usePollActions.
  */
-export const usePollSubscriptions = (): void =>
-{
-    useNitroEvent<RoomSessionPollEvent>(RoomSessionPollEvent.OFFER, event =>
-    {
+export const usePollSubscriptions = (): void => {
+    useNitroEvent<RoomSessionPollEvent>(RoomSessionPollEvent.OFFER, (event) => {
         const pollEvent = new RoomWidgetPollUpdateEvent(RoomWidgetPollUpdateEvent.OFFER, event.id);
 
         pollEvent.summary = event.summary;
@@ -22,8 +20,7 @@ export const usePollSubscriptions = (): void =>
         DispatchUiEvent(pollEvent);
     });
 
-    useNitroEvent<RoomSessionPollEvent>(RoomSessionPollEvent.ERROR, event =>
-    {
+    useNitroEvent<RoomSessionPollEvent>(RoomSessionPollEvent.ERROR, (event) => {
         const pollEvent = new RoomWidgetPollUpdateEvent(RoomWidgetPollUpdateEvent.ERROR, event.id);
 
         pollEvent.summary = event.summary;
@@ -32,8 +29,7 @@ export const usePollSubscriptions = (): void =>
         DispatchUiEvent(pollEvent);
     });
 
-    useNitroEvent<RoomSessionPollEvent>(RoomSessionPollEvent.CONTENT, event =>
-    {
+    useNitroEvent<RoomSessionPollEvent>(RoomSessionPollEvent.CONTENT, (event) => {
         const pollEvent = new RoomWidgetPollUpdateEvent(RoomWidgetPollUpdateEvent.CONTENT, event.id);
 
         pollEvent.startMessage = event.startMessage;

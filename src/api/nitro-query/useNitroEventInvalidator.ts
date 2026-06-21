@@ -31,17 +31,11 @@ import { useMessageEvent } from '../../hooks/events/useMessageEvent';
  * subscribed, the invalidation is a no-op (TanStack drops stale entries
  * with no active observers per its garbage-collection policy).
  */
-export const useNitroEventInvalidator = <T extends IMessageEvent>(
-    eventType: typeof MessageEvent,
-    queryKey: QueryKey,
-    accept?: (event: T) => boolean
-) =>
-{
+export const useNitroEventInvalidator = <T extends IMessageEvent>(eventType: typeof MessageEvent, queryKey: QueryKey, accept?: (event: T) => boolean) => {
     const queryClient = useQueryClient();
 
-    useMessageEvent<T>(eventType, event =>
-    {
-        if(accept && !accept(event)) return;
+    useMessageEvent<T>(eventType, (event) => {
+        if (accept && !accept(event)) return;
 
         queryClient.invalidateQueries({ queryKey });
     });

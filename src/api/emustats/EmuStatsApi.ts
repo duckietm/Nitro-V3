@@ -1,8 +1,7 @@
 import { GetConfiguration } from '@nitrots/nitro-renderer';
 import { getAccessToken } from '../auth';
 
-export interface EmuStatsOverview
-{
+export interface EmuStatsOverview {
     uptimeSeconds: number;
     lastRefreshEpochMs: number;
     guiStatus: string;
@@ -28,16 +27,14 @@ export interface EmuStatsOverview
     wiredActivityPerSecond: number;
 }
 
-export interface EmuStatsMemoryPoint
-{
+export interface EmuStatsMemoryPoint {
     timestamp: number;
     usedMb: number;
     maxMb: number;
     usagePercent: number;
 }
 
-export interface EmuStatsUserRow
-{
+export interface EmuStatsUserRow {
     id: number;
     username: string;
     rank: string;
@@ -45,8 +42,7 @@ export interface EmuStatsUserRow
     roomId: number;
 }
 
-export interface EmuStatsRoomRow
-{
+export interface EmuStatsRoomRow {
     roomId: number;
     name: string;
     players: number;
@@ -57,8 +53,7 @@ export interface EmuStatsRoomRow
     thread: string;
 }
 
-export interface EmuStatsWiredRow
-{
+export interface EmuStatsWiredRow {
     roomId: number;
     averageTickMs: number;
     peakTickMs: number;
@@ -68,8 +63,7 @@ export interface EmuStatsWiredRow
     heavy: boolean;
 }
 
-export interface EmuStatsWiredTopRoomRow
-{
+export interface EmuStatsWiredTopRoomRow {
     roomId: number;
     name: string;
     usagePercent: number;
@@ -80,8 +74,7 @@ export interface EmuStatsWiredTopRoomRow
     heavy: boolean;
 }
 
-export interface EmuStatsDatabasePool
-{
+export interface EmuStatsDatabasePool {
     activeConnections: number;
     idleConnections: number;
     totalConnections: number;
@@ -89,8 +82,7 @@ export interface EmuStatsDatabasePool
     maxConnections: number;
 }
 
-export interface EmuStatsScheduler
-{
+export interface EmuStatsScheduler {
     queuedTasks: number;
     activeThreads: number;
     poolSize: number;
@@ -98,8 +90,7 @@ export interface EmuStatsScheduler
     running: boolean;
 }
 
-export interface EmuStatsNetwork
-{
+export interface EmuStatsNetwork {
     incomingPacketsPerSecond: number;
     outgoingPacketsPerSecond: number;
     incomingKilobytesPerSecond: number;
@@ -108,8 +99,7 @@ export interface EmuStatsNetwork
     totalOutgoingPackets: number;
 }
 
-export interface EmuStatsGarbageCollector
-{
+export interface EmuStatsGarbageCollector {
     totalCollections: number;
     totalCollectionTimeMs: number;
     collectionsSinceLastSample: number;
@@ -117,8 +107,7 @@ export interface EmuStatsGarbageCollector
     sampledAtEpochMs: number;
 }
 
-export interface EmuStatsSnapshot
-{
+export interface EmuStatsSnapshot {
     overview: EmuStatsOverview;
     memoryHistory: EmuStatsMemoryPoint[];
     users: EmuStatsUserRow[];
@@ -131,21 +120,21 @@ export interface EmuStatsSnapshot
     garbageCollector: EmuStatsGarbageCollector;
 }
 
-const interpolate = (value: string): string =>
-{
-    try { return GetConfiguration().interpolate(value); }
-    catch { return value; }
+const interpolate = (value: string): string => {
+    try {
+        return GetConfiguration().interpolate(value);
+    } catch {
+        return value;
+    }
 };
 
-const getUrl = (): string =>
-{
+const getUrl = (): string => {
     const configured = GetConfiguration().getValue<string>('emustats.endpoint', '${api.url}/api/emustats');
 
     return interpolate(configured);
 };
 
-const buildHeaders = (): Record<string, string> =>
-{
+const buildHeaders = (): Record<string, string> => {
     const headers: Record<string, string> = {
         Accept: 'application/json',
         'X-Requested-With': 'NitroEmuStats'
@@ -153,26 +142,27 @@ const buildHeaders = (): Record<string, string> =>
 
     const token = getAccessToken();
 
-    if(token) headers.Authorization = `Bearer ${ token }`;
+    if (token) headers.Authorization = `Bearer ${token}`;
 
     return headers;
 };
 
 let cacheValue: EmuStatsSnapshot = null;
 
-const parseJson = async <T>(response: Response): Promise<T> =>
-{
+const parseJson = async <T>(response: Response): Promise<T> => {
     const text = await response.text();
 
-    if(!text) return {} as T;
+    if (!text) return {} as T;
 
-    try { return JSON.parse(text) as T; }
-    catch { throw new Error('Invalid emulator stats response.'); }
+    try {
+        return JSON.parse(text) as T;
+    } catch {
+        throw new Error('Invalid emulator stats response.');
+    }
 };
 
-export const fetchEmuStats = async (force = false): Promise<EmuStatsSnapshot> =>
-{
-    if(!force && cacheValue) return cacheValue;
+export const fetchEmuStats = async (force = false): Promise<EmuStatsSnapshot> => {
+    if (!force && cacheValue) return cacheValue;
 
     const response = await fetch(getUrl(), {
         method: 'GET',
@@ -182,9 +172,8 @@ export const fetchEmuStats = async (force = false): Promise<EmuStatsSnapshot> =>
 
     const payload = await parseJson<EmuStatsSnapshot & { error?: string }>(response);
 
-    if(!response.ok)
-    {
-        throw new Error(payload?.error || `Request failed (${ response.status }).`);
+    if (!response.ok) {
+        throw new Error(payload?.error || `Request failed (${response.status}).`);
     }
 
     cacheValue = payload;
@@ -192,7 +181,6 @@ export const fetchEmuStats = async (force = false): Promise<EmuStatsSnapshot> =>
     return payload;
 };
 
-export const getCachedEmuStats = (): EmuStatsSnapshot =>
-{
+export const getCachedEmuStats = (): EmuStatsSnapshot => {
     return cacheValue;
 };

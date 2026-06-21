@@ -2,15 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { HousekeepingTabId } from './HousekeepingActionType';
 import { housekeepingTabsForMode, isHousekeepingTabAvailable, resolveHousekeepingMode } from './HousekeepingConfig';
 
-describe('resolveHousekeepingMode', () =>
-{
-    it('returns "light" only for the exact "light" string', () =>
-    {
+describe('resolveHousekeepingMode', () => {
+    it('returns "light" only for the exact "light" string', () => {
         expect(resolveHousekeepingMode('light')).toBe('light');
     });
 
-    it('falls back to "full" for any other value (unknown strings, typos, non-strings)', () =>
-    {
+    it('falls back to "full" for any other value (unknown strings, typos, non-strings)', () => {
         expect(resolveHousekeepingMode('full')).toBe('full');
         expect(resolveHousekeepingMode('FULL')).toBe('full');
         expect(resolveHousekeepingMode('Light')).toBe('full');
@@ -22,10 +19,8 @@ describe('resolveHousekeepingMode', () =>
     });
 });
 
-describe('isHousekeepingTabAvailable', () =>
-{
-    it('exposes every tab in full mode', () =>
-    {
+describe('isHousekeepingTabAvailable', () => {
+    it('exposes every tab in full mode', () => {
         expect(isHousekeepingTabAvailable(HousekeepingTabId.DASHBOARD, 'full')).toBe(true);
         expect(isHousekeepingTabAvailable(HousekeepingTabId.USERS, 'full')).toBe(true);
         expect(isHousekeepingTabAvailable(HousekeepingTabId.ROOMS, 'full')).toBe(true);
@@ -33,8 +28,7 @@ describe('isHousekeepingTabAvailable', () =>
         expect(isHousekeepingTabAvailable(HousekeepingTabId.AUDIT, 'full')).toBe(true);
     });
 
-    it('exposes only Users + Rooms in light mode', () =>
-    {
+    it('exposes only Users + Rooms in light mode', () => {
         expect(isHousekeepingTabAvailable(HousekeepingTabId.USERS, 'light')).toBe(true);
         expect(isHousekeepingTabAvailable(HousekeepingTabId.ROOMS, 'light')).toBe(true);
 
@@ -44,10 +38,8 @@ describe('isHousekeepingTabAvailable', () =>
     });
 });
 
-describe('housekeepingTabsForMode', () =>
-{
-    it('returns the full ordered tab list in full mode', () =>
-    {
+describe('housekeepingTabsForMode', () => {
+    it('returns the full ordered tab list in full mode', () => {
         expect(housekeepingTabsForMode('full')).toEqual([
             HousekeepingTabId.DASHBOARD,
             HousekeepingTabId.USERS,
@@ -57,11 +49,7 @@ describe('housekeepingTabsForMode', () =>
         ]);
     });
 
-    it('returns Users + Rooms (in that order) for light mode', () =>
-    {
-        expect(housekeepingTabsForMode('light')).toEqual([
-            HousekeepingTabId.USERS,
-            HousekeepingTabId.ROOMS
-        ]);
+    it('returns Users + Rooms (in that order) for light mode', () => {
+        expect(housekeepingTabsForMode('light')).toEqual([HousekeepingTabId.USERS, HousekeepingTabId.ROOMS]);
     });
 });

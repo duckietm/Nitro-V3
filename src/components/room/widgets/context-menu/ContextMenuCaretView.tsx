@@ -2,25 +2,24 @@ import { FC, useMemo } from 'react';
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa';
 import { Flex, FlexProps } from '../../../../common';
 
-interface CaretViewProps extends FlexProps
-{
+interface CaretViewProps extends FlexProps {
     collapsed?: boolean;
 }
-export const ContextMenuCaretView: FC<CaretViewProps> = props =>
-{
+export const ContextMenuCaretView: FC<CaretViewProps> = (props) => {
     const { justifyContent = 'center', alignItems = 'center', classNames = [], collapsed = true, ...rest } = props;
 
-    const getClassNames = useMemo(() =>
-    {
-        const newClassNames: string[] = [ 'menu-footer nitro-context-menu-footer' ];
+    const getClassNames = useMemo(() => {
+        const newClassNames: string[] = ['menu-footer nitro-context-menu-footer'];
 
-        if(classNames.length) newClassNames.push(...classNames);
+        if (classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
-    }, [ classNames ]);
+    }, [classNames]);
 
-    return <Flex alignItems={ alignItems } classNames={ getClassNames } justifyContent={ justifyContent } { ...rest }>
-        { !collapsed && <FaCaretDown className="fa-icon align-self-center" /> }
-        { collapsed && <FaCaretUp className="fa-icon align-self-center" /> }
-    </Flex>;
+    return (
+        <Flex alignItems={alignItems} classNames={getClassNames} justifyContent={justifyContent} {...rest}>
+            {!collapsed && <FaCaretDown className="fa-icon align-self-center" />}
+            {collapsed && <FaCaretUp className="fa-icon align-self-center" />}
+        </Flex>
+    );
 };

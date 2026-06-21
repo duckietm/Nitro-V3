@@ -4,21 +4,19 @@ import { BaseProps } from '../../../../common';
 import { useRoom } from '../../../../hooks';
 import { ObjectLocationView } from '../object-location/ObjectLocationView';
 
-interface UserLocationViewProps extends BaseProps<HTMLDivElement>
-{
+interface UserLocationViewProps extends BaseProps<HTMLDivElement> {
     userId: number;
 }
 
-export const UserLocationView: FC<UserLocationViewProps> = props =>
-{
+export const UserLocationView: FC<UserLocationViewProps> = (props) => {
     const { userId = -1, ...rest } = props;
     const { roomSession = null } = useRoom();
 
-    if((userId === -1) || !roomSession) return null;
+    if (userId === -1 || !roomSession) return null;
 
     const userData = roomSession.userDataManager.getUserData(userId);
 
-    if(!userData) return null;
+    if (!userData) return null;
 
-    return <ObjectLocationView category={ RoomObjectCategory.UNIT } objectId={ userData.roomIndex } { ...rest } />;
+    return <ObjectLocationView category={RoomObjectCategory.UNIT} objectId={userData.roomIndex} {...rest} />;
 };

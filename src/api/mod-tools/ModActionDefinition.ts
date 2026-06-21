@@ -1,5 +1,4 @@
-export class ModActionDefinition
-{
+export class ModActionDefinition {
     public static ALERT: number = 1;
     public static MUTE: number = 2;
     public static BAN: number = 3;
@@ -13,8 +12,7 @@ export class ModActionDefinition
     private readonly _sanctionTypeId: number;
     private readonly _actionLengthHours: number;
 
-    constructor(actionId: number, actionName: string, actionType: number, sanctionTypeId: number, actionLengthHours:number)
-    {
+    constructor(actionId: number, actionName: string, actionType: number, sanctionTypeId: number, actionLengthHours: number) {
         this._actionId = actionId;
         this._name = actionName;
         this._actionType = actionType;
@@ -22,28 +20,23 @@ export class ModActionDefinition
         this._actionLengthHours = actionLengthHours;
     }
 
-    public get actionId(): number
-    {
+    public get actionId(): number {
         return this._actionId;
     }
 
-    public get name(): string
-    {
+    public get name(): string {
         return this._name;
     }
 
-    public get actionType(): number
-    {
+    public get actionType(): number {
         return this._actionType;
     }
 
-    public get sanctionTypeId(): number
-    {
+    public get sanctionTypeId(): number {
         return this._sanctionTypeId;
     }
 
-    public get actionLengthHours(): number
-    {
+    public get actionLengthHours(): number {
         return this._actionLengthHours;
     }
 }

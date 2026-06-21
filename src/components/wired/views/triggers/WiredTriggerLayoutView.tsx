@@ -23,10 +23,8 @@ import { WiredTriggeScoreAchievedView } from './WiredTriggerScoreAchievedView';
 import { WiredTriggerReceiveSignalView } from './WiredTriggerReceiveSignalView';
 import { WiredTriggerToggleFurniView } from './WiredTriggerToggleFurniView';
 
-export const WiredTriggerLayoutView = (code: number) =>
-{
-    switch(code)
-    {
+export const WiredTriggerLayoutView = (code: number) => {
+    switch (code) {
         case WiredTriggerLayout.AVATAR_ENTERS_ROOM:
             return <WiredTriggerAvatarEnterRoomView />;
         case WiredTriggerLayout.AVATAR_LEAVES_ROOM:
