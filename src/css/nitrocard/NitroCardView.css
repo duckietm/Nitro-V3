@@ -117,7 +117,7 @@
     .nitro-card-tabs,
     .nitro-card-tabs-shell {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 4px;
         min-height: auto;
         max-height: none;
