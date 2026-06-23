@@ -1,12 +1,4 @@
-import {
-    GetConfiguration,
-    GetLocalizationManager,
-    GetSessionDataManager,
-    TranslationLanguagesEvent,
-    TranslationLanguagesRequestComposer,
-    TranslationResultEvent,
-    TranslationTextRequestComposer
-} from '@nitrots/nitro-renderer';
+import { GetConfiguration, GetLocalizationManager, GetSessionDataManager, TranslationLanguagesEvent, TranslationLanguagesRequestComposer, TranslationResultEvent, TranslationTextRequestComposer } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { LocalStorageKeys, SendMessageComposer } from '../../api';
@@ -16,137 +8,156 @@ import { useLocalStorage } from '../useLocalStorage';
 const REQUEST_TIMEOUT_MS = 8000;
 const OUTGOING_QUEUE_TTL_MS = 30000;
 
-export interface ITranslationSettings {
+export interface ITranslationSettings
+{
     enabled: boolean;
     incomingTargetLanguage: string;
     outgoingTargetLanguage: string;
     uiTextLanguage: string;
 }
 
-export interface ITranslationLanguage {
+export interface ITranslationLanguage
+{
     code: string;
     name: string;
 }
 
-export interface ITranslationTextLocale extends ITranslationLanguage {
+export interface ITranslationTextLocale extends ITranslationLanguage
+{
     file: string;
 }
 
-export interface IResolvedTranslation {
+export interface IResolvedTranslation
+{
     originalText: string;
     translatedText: string;
     detectedLanguage: string;
     targetLanguage: string;
 }
 
-interface IPendingTranslationRequest {
+interface IPendingTranslationRequest
+{
     resolve: (translation: IResolvedTranslation) => void;
     reject: (error: Error) => void;
     timeoutId: number;
 }
 
-interface IQueuedOutgoingTranslation extends IResolvedTranslation {
+interface IQueuedOutgoingTranslation extends IResolvedTranslation
+{
     expiresAt: number;
 }
 
-const normalizeLanguageCode = (value: string) => {
-    if (!value || !value.trim().length) return '';
+const normalizeLanguageCode = (value: string) =>
+{
+    if(!value || !value.trim().length) return '';
 
     const normalized = value.trim().replace('_', '-');
     const parts = normalized.split('-');
 
-    if (parts.length === 1) return parts[0].toLowerCase();
+    if(parts.length === 1) return parts[0].toLowerCase();
 
-    return `${parts[0].toLowerCase()}-${parts[1].toUpperCase()}`;
+    return `${ parts[0].toLowerCase() }-${ parts[1].toUpperCase() }`;
 };
 
+// UI-text locales backed by the per-language UITexts_<file>.json files in
+// gamedata. `file` must match the UITexts_<file>.json filename, since
+// external.texts.translation.url is `.../UITexts_%locale%.json`.
 const TEXT_TRANSLATION_LOCALES: ITranslationTextLocale[] = [
-    { code: 'pt-BR', name: 'Portuguese (Brazil)', file: 'br' },
-    { code: 'en', name: 'English', file: 'com' },
-    { code: 'de', name: 'German', file: 'de' },
-    { code: 'es', name: 'Spanish', file: 'es' },
-    { code: 'fi', name: 'Finnish', file: 'fi' },
-    { code: 'fr', name: 'French', file: 'fr' },
+    { code: 'en', name: 'English', file: 'en' },
     { code: 'it', name: 'Italian', file: 'it' },
     { code: 'nl', name: 'Dutch', file: 'nl' },
-    { code: 'tr', name: 'Turkish', file: 'tr' }
+    { code: 'fr', name: 'French', file: 'fr' },
+    { code: 'es', name: 'Spanish', file: 'es' },
+    { code: 'ar', name: 'Arabic', file: 'ar' }
 ];
 
-const resolveTextTranslationLocale = (value: string) => {
+const resolveTextTranslationLocale = (value: string) =>
+{
     const normalizedValue = normalizeLanguageCode(value);
 
-    if (!normalizedValue.length) return null;
+    if(!normalizedValue.length) return null;
 
-    const exactMatch = TEXT_TRANSLATION_LOCALES.find((locale) => normalizeLanguageCode(locale.code) === normalizedValue);
+    const exactMatch = TEXT_TRANSLATION_LOCALES.find(locale => (normalizeLanguageCode(locale.code) === normalizedValue));
 
-    if (exactMatch) return exactMatch;
+    if(exactMatch) return exactMatch;
 
     const normalizedBase = normalizedValue.split('-')[0];
 
-    if (normalizedBase === 'pt') return TEXT_TRANSLATION_LOCALES.find((locale) => locale.file === 'br') || null;
+    if(normalizedBase === 'pt') return TEXT_TRANSLATION_LOCALES.find(locale => (locale.file === 'br')) || null;
 
-    return TEXT_TRANSLATION_LOCALES.find((locale) => normalizeLanguageCode(locale.code).split('-')[0] === normalizedBase) || null;
+    return TEXT_TRANSLATION_LOCALES.find(locale => (normalizeLanguageCode(locale.code).split('-')[0] === normalizedBase)) || null;
 };
 
-const interpolateTranslationUrl = (template: string, file: string) => {
-    if (!template || !template.length) return '';
+const interpolateTranslationUrl = (template: string, file: string) =>
+{
+    if(!template || !template.length) return '';
 
-    return GetConfiguration().interpolate(template.replace(/%locale%/gi, file).replace(/%timestamp%/gi, Date.now().toString()));
+    return GetConfiguration().interpolate(
+        template
+            .replace(/%locale%/gi, file)
+            .replace(/%timestamp%/gi, Date.now().toString()));
 };
 
-const getTextTranslationUrl = (file: string) => {
+const getTextTranslationUrl = (file: string) =>
+{
     const configuredTranslationUrl = GetConfiguration().getValue<string>('external.texts.translation.url') || '';
 
-    if (configuredTranslationUrl.length) {
+    if(configuredTranslationUrl.length)
+    {
         return interpolateTranslationUrl(configuredTranslationUrl, file);
     }
 
     const externalTextUrls = GetConfiguration().getValue<string[]>('external.texts.url') || [];
     const externalTextsUrl = externalTextUrls.length ? GetConfiguration().interpolate(externalTextUrls[0]) : '';
 
-    if (!externalTextsUrl.length) return `/text_translate/ExternalTexts_${file}.json`;
+    if(!externalTextsUrl.length) return `/text_translate/ExternalTexts_${ file }.json`;
 
     const lastSlashIndex = externalTextsUrl.lastIndexOf('/');
 
-    if (lastSlashIndex === -1) return `text_translate/ExternalTexts_${file}.json`;
+    if(lastSlashIndex === -1) return `text_translate/ExternalTexts_${ file }.json`;
 
     const basePath = externalTextsUrl.substring(0, lastSlashIndex);
 
-    return `${basePath}/text_translate/ExternalTexts_${file}.json`;
+    return `${ basePath }/text_translate/ExternalTexts_${ file }.json`;
 };
 
-const getFurnitureTranslationUrl = (file: string) => {
+const getFurnitureTranslationUrl = (file: string) =>
+{
     const configuredTranslationUrl = GetConfiguration().getValue<string>('furnidata.translation.url') || '';
 
-    if (configuredTranslationUrl.length) {
+    if(configuredTranslationUrl.length)
+    {
         return interpolateTranslationUrl(configuredTranslationUrl, file);
     }
 
     const furnidataUrl = GetConfiguration().interpolate(GetConfiguration().getValue<string>('furnidata.url') || '');
 
-    if (!furnidataUrl.length) return `/furniture_translate/FurnitureData_${file}.json`;
+    if(!furnidataUrl.length) return `/furniture_translate/FurnitureData_${ file }.json`;
 
     const lastSlashIndex = furnidataUrl.lastIndexOf('/');
 
-    if (lastSlashIndex === -1) return `furniture_translate/FurnitureData_${file}.json`;
+    if(lastSlashIndex === -1) return `furniture_translate/FurnitureData_${ file }.json`;
 
     const basePath = furnidataUrl.substring(0, lastSlashIndex);
 
-    return `${basePath}/furniture_translate/FurnitureData_${file}.json`;
+    return `${ basePath }/furniture_translate/FurnitureData_${ file }.json`;
 };
 
-const dispatchLocalizationUpdated = () => {
-    if (typeof window === 'undefined') return;
+const dispatchLocalizationUpdated = () =>
+{
+    if(typeof window === 'undefined') return;
 
     window.dispatchEvent(new CustomEvent('nitro-localization-updated'));
 };
 
-export const applyTextTranslationLocale = async (languageCode: string): Promise<void> => {
+export const applyTextTranslationLocale = async (languageCode: string): Promise<void> =>
+{
     const localizationManager = GetLocalizationManager();
     const sessionDataManager = GetSessionDataManager();
     const selectedLocale = resolveTextTranslationLocale(languageCode || '');
 
-    if (!selectedLocale) {
+    if(!selectedLocale)
+    {
         localizationManager.clearOverrideValues();
         sessionDataManager.clearFurnitureDataOverrides();
         dispatchLocalizationUpdated();
@@ -157,31 +168,36 @@ export const applyTextTranslationLocale = async (languageCode: string): Promise<
     const furnitureUrl = getFurnitureTranslationUrl(selectedLocale.file);
     const response = await fetch(textUrl);
 
-    if (response.status !== 200) throw new Error(`Unable to load ${textUrl}`);
+    if(response.status !== 200) throw new Error(`Unable to load ${ textUrl }`);
 
     const data = await response.json();
     const overrideValues = new Map<string, string>();
 
-    Object.keys(data || {}).forEach((key) => overrideValues.set(key, data[key]));
+    Object.keys(data || {}).forEach(key => overrideValues.set(key, data[key]));
     localizationManager.setOverrideValues(overrideValues);
 
-    try {
+    try
+    {
         await sessionDataManager.applyFurnitureDataOverrides(furnitureUrl);
-    } catch {
+    }
+    catch
+    {
         sessionDataManager.clearFurnitureDataOverrides();
     }
 
     dispatchLocalizationUpdated();
 };
 
-const getBrowserLanguageCode = () => {
-    if (typeof navigator === 'undefined') return 'en';
+const getBrowserLanguageCode = () =>
+{
+    if(typeof navigator === 'undefined') return 'en';
 
     return normalizeLanguageCode(navigator.language || 'en').split('-')[0] || 'en';
 };
 
-const decodeHtmlEntities = (value: string) => {
-    if (!value || typeof window === 'undefined') return value;
+const decodeHtmlEntities = (value: string) =>
+{
+    if(!value || (typeof window === 'undefined')) return value;
 
     const textarea = document.createElement('textarea');
 
@@ -190,43 +206,45 @@ const decodeHtmlEntities = (value: string) => {
     return textarea.value;
 };
 
-const resolveSupportedLanguage = (value: string, languages: ITranslationLanguage[]) => {
+const resolveSupportedLanguage = (value: string, languages: ITranslationLanguage[]) =>
+{
     const normalizedValue = normalizeLanguageCode(value);
 
-    if (!languages.length) return normalizedValue || 'en';
+    if(!languages.length) return normalizedValue || 'en';
 
-    const exactMatch = languages.find((language) => normalizeLanguageCode(language.code) === normalizedValue);
+    const exactMatch = languages.find(language => (normalizeLanguageCode(language.code) === normalizedValue));
 
-    if (exactMatch) return exactMatch.code;
+    if(exactMatch) return exactMatch.code;
 
     const normalizedBase = normalizedValue.split('-')[0];
-    const baseMatch = languages.find((language) => normalizeLanguageCode(language.code).split('-')[0] === normalizedBase);
+    const baseMatch = languages.find(language => (normalizeLanguageCode(language.code).split('-')[0] === normalizedBase));
 
-    if (baseMatch) return baseMatch.code;
+    if(baseMatch) return baseMatch.code;
 
-    const englishMatch = languages.find((language) => normalizeLanguageCode(language.code).split('-')[0] === 'en');
+    const englishMatch = languages.find(language => (normalizeLanguageCode(language.code).split('-')[0] === 'en'));
 
-    if (englishMatch) return englishMatch.code;
+    if(englishMatch) return englishMatch.code;
 
     return languages[0].code;
 };
 
-const useTranslationStore = () => {
+const useTranslationStore = () =>
+{
     const defaultTargetLanguage = getBrowserLanguageCode();
-    const [settings, setSettings] = useLocalStorage<ITranslationSettings>(LocalStorageKeys.CHAT_TRANSLATION_SETTINGS, {
+    const [ settings, setSettings ] = useLocalStorage<ITranslationSettings>(LocalStorageKeys.CHAT_TRANSLATION_SETTINGS, {
         enabled: false,
         incomingTargetLanguage: defaultTargetLanguage,
         outgoingTargetLanguage: defaultTargetLanguage,
         uiTextLanguage: ''
     });
-    const [supportedLanguages, setSupportedLanguages] = useState<ITranslationLanguage[]>([]);
-    const [availableTextLocales] = useState<ITranslationTextLocale[]>(TEXT_TRANSLATION_LOCALES);
-    const [languagesLoading, setLanguagesLoading] = useState(false);
-    const [languagesLoaded, setLanguagesLoaded] = useState(false);
-    const [localizationTextsLoading, setLocalizationTextsLoading] = useState(false);
-    const [lastIncomingLanguage, setLastIncomingLanguage] = useState('');
-    const [lastOutgoingLanguage, setLastOutgoingLanguage] = useState('');
-    const [lastError, setLastError] = useState('');
+    const [ supportedLanguages, setSupportedLanguages ] = useState<ITranslationLanguage[]>([]);
+    const [ availableTextLocales ] = useState<ITranslationTextLocale[]>(TEXT_TRANSLATION_LOCALES);
+    const [ languagesLoading, setLanguagesLoading ] = useState(false);
+    const [ languagesLoaded, setLanguagesLoaded ] = useState(false);
+    const [ localizationTextsLoading, setLocalizationTextsLoading ] = useState(false);
+    const [ lastIncomingLanguage, setLastIncomingLanguage ] = useState('');
+    const [ lastOutgoingLanguage, setLastOutgoingLanguage ] = useState('');
+    const [ lastError, setLastError ] = useState('');
     const requestIdRef = useRef(0);
     const languagesTimeoutRef = useRef(0);
     const pendingRequestsRef = useRef(new Map<number, IPendingTranslationRequest>());
@@ -234,20 +252,24 @@ const useTranslationStore = () => {
     const outgoingQueueRef = useRef(new Map<string, IQueuedOutgoingTranslation[]>());
     const localizationRequestRef = useRef(0);
 
-    const clearLanguagesTimeout = useCallback(() => {
-        if (!languagesTimeoutRef.current) return;
+    const clearLanguagesTimeout = useCallback(() =>
+    {
+        if(!languagesTimeoutRef.current) return;
 
         window.clearTimeout(languagesTimeoutRef.current);
         languagesTimeoutRef.current = 0;
     }, []);
 
-    const pruneOutgoingQueue = useCallback(() => {
+    const pruneOutgoingQueue = useCallback(() =>
+    {
         const now = Date.now();
 
-        outgoingQueueRef.current.forEach((entries, key) => {
-            const activeEntries = entries.filter((entry) => entry.expiresAt > now);
+        outgoingQueueRef.current.forEach((entries, key) =>
+        {
+            const activeEntries = entries.filter(entry => (entry.expiresAt > now));
 
-            if (activeEntries.length) {
+            if(activeEntries.length)
+            {
                 outgoingQueueRef.current.set(key, activeEntries);
                 return;
             }
@@ -256,66 +278,63 @@ const useTranslationStore = () => {
         });
     }, []);
 
-    const updateSettings = useCallback(
-        (partial: Partial<ITranslationSettings>) => {
-            setSettings((prevValue) => ({ ...prevValue, ...partial }));
-        },
-        [setSettings]
-    );
+    const updateSettings = useCallback((partial: Partial<ITranslationSettings>) =>
+    {
+        setSettings(prevValue => ({ ...prevValue, ...partial }));
+    }, [ setSettings ]);
 
-    const getLanguageName = useCallback(
-        (languageCode: string) => {
-            const normalizedLanguageCode = normalizeLanguageCode(languageCode);
+    const getLanguageName = useCallback((languageCode: string) =>
+    {
+        const normalizedLanguageCode = normalizeLanguageCode(languageCode);
 
-            if (!normalizedLanguageCode.length) return 'auto';
+        if(!normalizedLanguageCode.length) return 'auto';
 
-            const exactMatch = supportedLanguages.find((language) => normalizeLanguageCode(language.code) === normalizedLanguageCode);
+        const exactMatch = supportedLanguages.find(language => (normalizeLanguageCode(language.code) === normalizedLanguageCode));
 
-            if (exactMatch) return exactMatch.name;
+        if(exactMatch) return exactMatch.name;
 
-            const normalizedBase = normalizedLanguageCode.split('-')[0];
-            const baseMatch = supportedLanguages.find((language) => normalizeLanguageCode(language.code).split('-')[0] === normalizedBase);
+        const normalizedBase = normalizedLanguageCode.split('-')[0];
+        const baseMatch = supportedLanguages.find(language => (normalizeLanguageCode(language.code).split('-')[0] === normalizedBase));
 
-            return baseMatch?.name || normalizedLanguageCode;
-        },
-        [supportedLanguages]
-    );
+        return baseMatch?.name || normalizedLanguageCode;
+    }, [ supportedLanguages ]);
 
-    const handleLanguagesEvent = useCallback(
-        (event: TranslationLanguagesEvent) => {
-            const parser = event.getParser();
+    const handleLanguagesEvent = useCallback((event: TranslationLanguagesEvent) =>
+    {
+        const parser = event.getParser();
 
-            clearLanguagesTimeout();
-            setLanguagesLoading(false);
+        clearLanguagesTimeout();
+        setLanguagesLoading(false);
 
-            if (!parser.success) {
-                setLanguagesLoaded(false);
-                setLastError(parser.errorMessage || 'Unable to load Google Translate languages.');
-                return;
-            }
+        if(!parser.success)
+        {
+            setLanguagesLoaded(false);
+            setLastError(parser.errorMessage || 'Unable to load Google Translate languages.');
+            return;
+        }
 
-            const nextLanguages = parser.languages.map((language) => ({
-                code: normalizeLanguageCode(language.code),
-                name: language.name
-            }));
+        const nextLanguages = parser.languages.map(language => ({
+            code: normalizeLanguageCode(language.code),
+            name: language.name
+        }));
 
-            setSupportedLanguages(nextLanguages);
-            setLanguagesLoaded(true);
-            setLastError('');
-        },
-        [clearLanguagesTimeout]
-    );
+        setSupportedLanguages(nextLanguages);
+        setLanguagesLoaded(true);
+        setLastError('');
+    }, [ clearLanguagesTimeout ]);
 
-    const handleTranslationResult = useCallback((event: TranslationResultEvent) => {
+    const handleTranslationResult = useCallback((event: TranslationResultEvent) =>
+    {
         const parser = event.getParser();
         const pendingRequest = pendingRequestsRef.current.get(parser.requestId);
 
-        if (!pendingRequest) return;
+        if(!pendingRequest) return;
 
         window.clearTimeout(pendingRequest.timeoutId);
         pendingRequestsRef.current.delete(parser.requestId);
 
-        if (!parser.success) {
+        if(!parser.success)
+        {
             pendingRequest.reject(new Error(parser.errorMessage || 'Unable to translate text.'));
             return;
         }
@@ -331,174 +350,179 @@ const useTranslationStore = () => {
     useMessageEvent<TranslationLanguagesEvent>(TranslationLanguagesEvent, handleLanguagesEvent);
     useMessageEvent<TranslationResultEvent>(TranslationResultEvent, handleTranslationResult);
 
-    const ensureSupportedLanguagesLoaded = useCallback(
-        (force: boolean = false) => {
-            if (languagesLoading) return;
-            if (languagesLoaded && !force) return;
+    const ensureSupportedLanguagesLoaded = useCallback((force: boolean = false) =>
+    {
+        if(languagesLoading) return;
+        if(languagesLoaded && !force) return;
 
-            setLanguagesLoading(true);
-            setLastError('');
-            clearLanguagesTimeout();
+        setLanguagesLoading(true);
+        setLastError('');
+        clearLanguagesTimeout();
 
-            languagesTimeoutRef.current = window.setTimeout(() => {
-                setLanguagesLoading(false);
-                setLastError('Google Translate did not respond while loading languages.');
+        languagesTimeoutRef.current = window.setTimeout(() =>
+        {
+            setLanguagesLoading(false);
+            setLastError('Google Translate did not respond while loading languages.');
+        }, REQUEST_TIMEOUT_MS);
+
+        SendMessageComposer(new TranslationLanguagesRequestComposer(getBrowserLanguageCode()));
+    }, [ clearLanguagesTimeout, languagesLoaded, languagesLoading ]);
+
+    const translateText = useCallback((text: string, targetLanguage: string) =>
+    {
+        const safeText = (text || '');
+        const normalizedTargetLanguage = normalizeLanguageCode(targetLanguage || defaultTargetLanguage) || defaultTargetLanguage;
+
+        if(!safeText.trim().length)
+        {
+            return Promise.resolve({
+                originalText: safeText,
+                translatedText: safeText,
+                detectedLanguage: '',
+                targetLanguage: normalizedTargetLanguage
+            });
+        }
+
+        const cacheKey = `${ normalizedTargetLanguage }\u0000${ safeText }`;
+        const cachedValue = translationCacheRef.current.get(cacheKey);
+
+        if(cachedValue) return Promise.resolve(cachedValue);
+
+        return new Promise<IResolvedTranslation>((resolve, reject) =>
+        {
+            const requestId = ++requestIdRef.current;
+            const timeoutId = window.setTimeout(() =>
+            {
+                pendingRequestsRef.current.delete(requestId);
+                reject(new Error('Google Translate did not respond in time.'));
             }, REQUEST_TIMEOUT_MS);
 
-            SendMessageComposer(new TranslationLanguagesRequestComposer(getBrowserLanguageCode()));
-        },
-        [clearLanguagesTimeout, languagesLoaded, languagesLoading]
-    );
+            pendingRequestsRef.current.set(requestId, { resolve, reject, timeoutId });
+            SendMessageComposer(new TranslationTextRequestComposer(requestId, safeText, normalizedTargetLanguage));
+        }).then(result =>
+        {
+            translationCacheRef.current.set(cacheKey, result);
 
-    const translateText = useCallback(
-        (text: string, targetLanguage: string) => {
-            const safeText = text || '';
-            const normalizedTargetLanguage = normalizeLanguageCode(targetLanguage || defaultTargetLanguage) || defaultTargetLanguage;
+            return result;
+        });
+    }, [ defaultTargetLanguage ]);
 
-            if (!safeText.trim().length) {
-                return Promise.resolve({
-                    originalText: safeText,
-                    translatedText: safeText,
-                    detectedLanguage: '',
-                    targetLanguage: normalizedTargetLanguage
-                });
-            }
+    const translateIncoming = useCallback(async (text: string) =>
+    {
+        if(!settings.enabled) return null;
 
-            const cacheKey = `${normalizedTargetLanguage}\u0000${safeText}`;
-            const cachedValue = translationCacheRef.current.get(cacheKey);
+        try
+        {
+            const result = await translateText(text, settings.incomingTargetLanguage || defaultTargetLanguage);
 
-            if (cachedValue) return Promise.resolve(cachedValue);
+            setLastIncomingLanguage(result.detectedLanguage || '');
+            setLastError('');
 
-            return new Promise<IResolvedTranslation>((resolve, reject) => {
-                const requestId = ++requestIdRef.current;
-                const timeoutId = window.setTimeout(() => {
-                    pendingRequestsRef.current.delete(requestId);
-                    reject(new Error('Google Translate did not respond in time.'));
-                }, REQUEST_TIMEOUT_MS);
+            return result;
+        }
+        catch(error)
+        {
+            setLastError((error as Error)?.message || 'Unable to translate incoming text.');
 
-                pendingRequestsRef.current.set(requestId, { resolve, reject, timeoutId });
-                SendMessageComposer(new TranslationTextRequestComposer(requestId, safeText, normalizedTargetLanguage));
-            }).then((result) => {
-                translationCacheRef.current.set(cacheKey, result);
+            return null;
+        }
+    }, [ defaultTargetLanguage, settings.enabled, settings.incomingTargetLanguage, translateText ]);
 
-                return result;
-            });
-        },
-        [defaultTargetLanguage]
-    );
+    const translateOutgoing = useCallback(async (text: string) =>
+    {
+        if(!settings.enabled) return null;
 
-    const translateIncoming = useCallback(
-        async (text: string) => {
-            if (!settings.enabled) return null;
+        try
+        {
+            const result = await translateText(text, settings.outgoingTargetLanguage || defaultTargetLanguage);
 
-            try {
-                const result = await translateText(text, settings.incomingTargetLanguage || defaultTargetLanguage);
+            setLastOutgoingLanguage(result.detectedLanguage || '');
+            setLastError('');
 
-                setLastIncomingLanguage(result.detectedLanguage || '');
-                setLastError('');
+            return result;
+        }
+        catch(error)
+        {
+            setLastError((error as Error)?.message || 'Unable to translate outgoing text.');
 
-                return result;
-            } catch (error) {
-                setLastError((error as Error)?.message || 'Unable to translate incoming text.');
+            return null;
+        }
+    }, [ defaultTargetLanguage, settings.enabled, settings.outgoingTargetLanguage, translateText ]);
 
-                return null;
-            }
-        },
-        [defaultTargetLanguage, settings.enabled, settings.incomingTargetLanguage, translateText]
-    );
+    const enqueueOutgoingTranslation = useCallback((translation: IResolvedTranslation) =>
+    {
+        if(!translation) return;
 
-    const translateOutgoing = useCallback(
-        async (text: string) => {
-            if (!settings.enabled) return null;
+        pruneOutgoingQueue();
 
-            try {
-                const result = await translateText(text, settings.outgoingTargetLanguage || defaultTargetLanguage);
+        const queueKey = translation.translatedText || translation.originalText;
+        const currentEntries = outgoingQueueRef.current.get(queueKey) || [];
 
-                setLastOutgoingLanguage(result.detectedLanguage || '');
-                setLastError('');
+        currentEntries.push({
+            ...translation,
+            expiresAt: (Date.now() + OUTGOING_QUEUE_TTL_MS)
+        });
 
-                return result;
-            } catch (error) {
-                setLastError((error as Error)?.message || 'Unable to translate outgoing text.');
+        outgoingQueueRef.current.set(queueKey, currentEntries);
+        setLastOutgoingLanguage(translation.detectedLanguage || '');
+    }, [ pruneOutgoingQueue ]);
 
-                return null;
-            }
-        },
-        [defaultTargetLanguage, settings.enabled, settings.outgoingTargetLanguage, translateText]
-    );
+    const consumeOutgoingTranslation = useCallback((translatedText: string) =>
+    {
+        pruneOutgoingQueue();
 
-    const enqueueOutgoingTranslation = useCallback(
-        (translation: IResolvedTranslation) => {
-            if (!translation) return;
+        const queueKey = translatedText || '';
+        const currentEntries = outgoingQueueRef.current.get(queueKey);
 
-            pruneOutgoingQueue();
+        if(!currentEntries?.length) return null;
 
-            const queueKey = translation.translatedText || translation.originalText;
-            const currentEntries = outgoingQueueRef.current.get(queueKey) || [];
+        const entry = currentEntries.shift();
 
-            currentEntries.push({
-                ...translation,
-                expiresAt: Date.now() + OUTGOING_QUEUE_TTL_MS
-            });
+        if(currentEntries.length) outgoingQueueRef.current.set(queueKey, currentEntries);
+        else outgoingQueueRef.current.delete(queueKey);
 
-            outgoingQueueRef.current.set(queueKey, currentEntries);
-            setLastOutgoingLanguage(translation.detectedLanguage || '');
-        },
-        [pruneOutgoingQueue]
-    );
+        if(entry?.detectedLanguage) setLastOutgoingLanguage(entry.detectedLanguage);
 
-    const consumeOutgoingTranslation = useCallback(
-        (translatedText: string) => {
-            pruneOutgoingQueue();
+        return entry || null;
+    }, [ pruneOutgoingQueue ]);
 
-            const queueKey = translatedText || '';
-            const currentEntries = outgoingQueueRef.current.get(queueKey);
-
-            if (!currentEntries?.length) return null;
-
-            const entry = currentEntries.shift();
-
-            if (currentEntries.length) outgoingQueueRef.current.set(queueKey, currentEntries);
-            else outgoingQueueRef.current.delete(queueKey);
-
-            if (entry?.detectedLanguage) setLastOutgoingLanguage(entry.detectedLanguage);
-
-            return entry || null;
-        },
-        [pruneOutgoingQueue]
-    );
-
-    useEffect(() => {
-        if (!settings.enabled) return;
+    useEffect(() =>
+    {
+        if(!settings.enabled) return;
 
         ensureSupportedLanguagesLoaded();
-    }, [ensureSupportedLanguagesLoaded, settings.enabled]);
+    }, [ ensureSupportedLanguagesLoaded, settings.enabled ]);
 
-    useEffect(() => {
-        if (!supportedLanguages.length) return;
+    useEffect(() =>
+    {
+        if(!supportedLanguages.length) return;
 
         const resolvedIncomingTargetLanguage = resolveSupportedLanguage(settings.incomingTargetLanguage || defaultTargetLanguage, supportedLanguages);
         const resolvedOutgoingTargetLanguage = resolveSupportedLanguage(settings.outgoingTargetLanguage || defaultTargetLanguage, supportedLanguages);
 
-        if (resolvedIncomingTargetLanguage === settings.incomingTargetLanguage && resolvedOutgoingTargetLanguage === settings.outgoingTargetLanguage) return;
+        if((resolvedIncomingTargetLanguage === settings.incomingTargetLanguage) && (resolvedOutgoingTargetLanguage === settings.outgoingTargetLanguage)) return;
 
-        setSettings((prevValue) => ({
+        setSettings(prevValue => ({
             ...prevValue,
             incomingTargetLanguage: resolvedIncomingTargetLanguage,
             outgoingTargetLanguage: resolvedOutgoingTargetLanguage
         }));
-    }, [defaultTargetLanguage, setSettings, settings.incomingTargetLanguage, settings.outgoingTargetLanguage, supportedLanguages]);
+    }, [ defaultTargetLanguage, setSettings, settings.incomingTargetLanguage, settings.outgoingTargetLanguage, supportedLanguages ]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         let disposed = false;
         const requestId = ++localizationRequestRef.current;
         const selectedLocale = resolveTextTranslationLocale(settings.uiTextLanguage || '');
 
-        const applyLocalizationOverride = async () => {
-            if (!selectedLocale) {
+        const applyLocalizationOverride = async () =>
+        {
+            if(!selectedLocale)
+            {
                 await applyTextTranslationLocale('');
 
-                if (localizationRequestRef.current === requestId && !disposed) {
+                if((localizationRequestRef.current === requestId) && !disposed)
+                {
                     setLocalizationTextsLoading(false);
                     setLastError('');
                 }
@@ -506,23 +530,28 @@ const useTranslationStore = () => {
                 return;
             }
 
-            if (!disposed) setLocalizationTextsLoading(true);
+            if(!disposed) setLocalizationTextsLoading(true);
 
-            try {
-                if (disposed || localizationRequestRef.current !== requestId) return;
+            try
+            {
+                if(disposed || (localizationRequestRef.current !== requestId)) return;
 
                 await applyTextTranslationLocale(settings.uiTextLanguage || '');
 
-                if (disposed || localizationRequestRef.current !== requestId) return;
+                if(disposed || (localizationRequestRef.current !== requestId)) return;
 
                 setLastError('');
-            } catch (error) {
-                if (disposed || localizationRequestRef.current !== requestId) return;
+            }
+            catch(error)
+            {
+                if(disposed || (localizationRequestRef.current !== requestId)) return;
 
                 await applyTextTranslationLocale('');
                 setLastError((error as Error)?.message || 'Unable to load translated UI texts.');
-            } finally {
-                if (disposed || localizationRequestRef.current !== requestId) return;
+            }
+            finally
+            {
+                if(disposed || (localizationRequestRef.current !== requestId)) return;
 
                 setLocalizationTextsLoading(false);
             }
@@ -530,20 +559,23 @@ const useTranslationStore = () => {
 
         applyLocalizationOverride();
 
-        return () => {
+        return () =>
+        {
             disposed = true;
         };
-    }, [settings.uiTextLanguage]);
+    }, [ settings.uiTextLanguage ]);
 
-    useEffect(() => {
-        return () => {
+    useEffect(() =>
+    {
+        return () =>
+        {
             clearLanguagesTimeout();
 
-            pendingRequestsRef.current.forEach((pendingRequest) => window.clearTimeout(pendingRequest.timeoutId));
+            pendingRequestsRef.current.forEach(pendingRequest => window.clearTimeout(pendingRequest.timeoutId));
             pendingRequestsRef.current.clear();
             outgoingQueueRef.current.clear();
         };
-    }, [clearLanguagesTimeout]);
+    }, [ clearLanguagesTimeout ]);
 
     return {
         settings,
@@ -566,7 +598,8 @@ const useTranslationStore = () => {
     };
 };
 
-export const useTranslationState = () => {
+export const useTranslationState = () =>
+{
     const {
         settings,
         supportedLanguages,
@@ -594,7 +627,8 @@ export const useTranslationState = () => {
     };
 };
 
-export const useTranslationActions = () => {
+export const useTranslationActions = () =>
+{
     const {
         settings,
         updateSettings,
