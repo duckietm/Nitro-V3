@@ -12,8 +12,7 @@ import { CatalogType } from '../../api/catalog/CatalogType';
  * NORMAL catalog when the v3 key is empty but the legacy key exists.
  */
 
-export interface IFavoriteOffer
-{
+export interface IFavoriteOffer {
     offerId: number;
     name?: string;
     iconUrl?: string;
@@ -26,14 +25,13 @@ export const STORAGE_KEY_OFFERS_BUILDER = 'catalog_fav_offers_v3_builder';
 export const STORAGE_KEY_PAGES_NORMAL = 'catalog_fav_pages_v2_normal';
 export const STORAGE_KEY_PAGES_BUILDER = 'catalog_fav_pages_v2_builder';
 
-export const normalizeCatalogType = (catalogType?: string): string =>
-    ((catalogType === CatalogType.BUILDER) ? CatalogType.BUILDER : CatalogType.NORMAL);
+export const normalizeCatalogType = (catalogType?: string): string => (catalogType === CatalogType.BUILDER ? CatalogType.BUILDER : CatalogType.NORMAL);
 
 export const getOffersStorageKey = (catalogType?: string): string =>
-    ((normalizeCatalogType(catalogType) === CatalogType.BUILDER) ? STORAGE_KEY_OFFERS_BUILDER : STORAGE_KEY_OFFERS_NORMAL);
+    normalizeCatalogType(catalogType) === CatalogType.BUILDER ? STORAGE_KEY_OFFERS_BUILDER : STORAGE_KEY_OFFERS_NORMAL;
 
 export const getPagesStorageKey = (catalogType?: string): string =>
-    ((normalizeCatalogType(catalogType) === CatalogType.BUILDER) ? STORAGE_KEY_PAGES_BUILDER : STORAGE_KEY_PAGES_NORMAL);
+    normalizeCatalogType(catalogType) === CatalogType.BUILDER ? STORAGE_KEY_PAGES_BUILDER : STORAGE_KEY_PAGES_NORMAL;
 
 /**
  * Parse a serialized offers list from localStorage. Handles three
@@ -43,24 +41,19 @@ export const getPagesStorageKey = (catalogType?: string): string =>
  *    with only offerId populated
  *  - anything else (corrupt JSON, wrong shape) → empty array
  */
-export const parseOffers = (raw: string): IFavoriteOffer[] =>
-{
-    try
-    {
+export const parseOffers = (raw: string): IFavoriteOffer[] => {
+    try {
         const parsed = JSON.parse(raw);
 
-        if(!Array.isArray(parsed)) return [];
+        if (!Array.isArray(parsed)) return [];
 
         // migrate from old format (number[]) to new format (IFavoriteOffer[])
-        if(parsed.length > 0 && typeof parsed[0] === 'number')
-        {
-            return (parsed as number[]).map(id => ({ offerId: id }));
+        if (parsed.length > 0 && typeof parsed[0] === 'number') {
+            return (parsed as number[]).map((id) => ({ offerId: id }));
         }
 
         return parsed;
-    }
-    catch
-    {
+    } catch {
         return [];
     }
 };
@@ -70,16 +63,12 @@ export const parseOffers = (raw: string): IFavoriteOffer[] =>
  * array, rejects everything else. (The pages list has always been
  * `number[]`, no legacy format to migrate.)
  */
-export const parsePages = (raw: string): number[] =>
-{
-    try
-    {
+export const parsePages = (raw: string): number[] => {
+    try {
         const parsed = JSON.parse(raw);
 
         return Array.isArray(parsed) ? parsed : [];
-    }
-    catch
-    {
+    } catch {
         return [];
     }
 };

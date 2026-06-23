@@ -1,21 +1,20 @@
 import { FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { FaChevronRight } from 'react-icons/fa';
+import { LocalizeText } from '../../../api';
+import searchClearIcon from '../../../assets/images/wired/var/ar_picker_cancel_search.png';
 import allIcon from '../../../assets/images/wired/var/var_picker_all.png';
 import internalIcon from '../../../assets/images/wired/var/var_picker_internal.png';
 import recentIcon from '../../../assets/images/wired/var/var_picker_recent.png';
-import searchClearIcon from '../../../assets/images/wired/var/ar_picker_cancel_search.png';
 import searchIcon from '../../../assets/images/wired/var/var_picker_search.png';
 import smartIcon from '../../../assets/images/wired/var/var_picker_smart.png';
 import userMadeIcon from '../../../assets/images/wired/var/var_picker_usermade.png';
-import { LocalizeText } from '../../../api';
 import { Text } from '../../../common';
 import { flattenWiredVariablePickerEntries, IWiredVariablePickerEntry } from './WiredVariablePickerData';
 
 type WiredVariablePickerMode = 'all' | 'recent' | 'usermade' | 'smart' | 'internal' | 'search';
 
-interface WiredVariablePickerProps
-{
+interface WiredVariablePickerProps {
     emptyText?: string;
     entries: IWiredVariablePickerEntry[];
     placeholder?: string;
@@ -27,7 +26,7 @@ interface WiredVariablePickerProps
 const RECENT_PICKER_LIMIT = 12;
 const RECENT_STORAGE_PREFIX = 'nitro.wired.variable-picker.recent';
 
-const PICKER_MODES: Array<{ icon: string; key: WiredVariablePickerMode; }> = [
+const PICKER_MODES: Array<{ icon: string; key: WiredVariablePickerMode }> = [
     { key: 'all', icon: allIcon },
     { key: 'recent', icon: recentIcon },
     { key: 'usermade', icon: userMadeIcon },
@@ -38,18 +37,16 @@ const PICKER_MODES: Array<{ icon: string; key: WiredVariablePickerMode; }> = [
 
 const normalizeSearch = (value: string) => value.trim().toLocaleLowerCase();
 
-const applyQuery = (entries: IWiredVariablePickerEntry[], query: string): IWiredVariablePickerEntry[] =>
-{
-    if(!query) return entries;
+const applyQuery = (entries: IWiredVariablePickerEntry[], query: string): IWiredVariablePickerEntry[] => {
+    if (!query) return entries;
 
     const nextEntries: IWiredVariablePickerEntry[] = [];
 
-    for(const entry of entries)
-    {
+    for (const entry of entries) {
         const ownMatch = entry.searchableText.toLocaleLowerCase().includes(query);
         const matchingChildren = entry.children?.length ? applyQuery(entry.children, query) : [];
 
-        if(!ownMatch && !matchingChildren.length) continue;
+        if (!ownMatch && !matchingChildren.length) continue;
 
         nextEntries.push(matchingChildren.length ? { ...entry, children: matchingChildren } : entry);
     }
@@ -57,27 +54,25 @@ const applyQuery = (entries: IWiredVariablePickerEntry[], query: string): IWired
     return nextEntries;
 };
 
-const applyMode = (entries: IWiredVariablePickerEntry[], mode: WiredVariablePickerMode, recentTokens: string[]): IWiredVariablePickerEntry[] =>
-{
+const applyMode = (entries: IWiredVariablePickerEntry[], mode: WiredVariablePickerMode, recentTokens: string[]): IWiredVariablePickerEntry[] => {
     const recentSet = new Set(recentTokens);
 
-    const filterEntries = (items: IWiredVariablePickerEntry[]): IWiredVariablePickerEntry[] =>
-    {
+    const filterEntries = (items: IWiredVariablePickerEntry[]): IWiredVariablePickerEntry[] => {
         const filtered: IWiredVariablePickerEntry[] = [];
 
-        for(const entry of items)
-        {
-            if(mode === 'smart') continue;
+        for (const entry of items) {
+            if (mode === 'smart') continue;
 
             const nextChildren = entry.children?.length ? filterEntries(entry.children) : [];
             const childVisible = !!nextChildren.length;
-            const selfVisible = (() =>
-            {
-                switch(mode)
-                {
-                    case 'recent': return recentSet.has(entry.token);
-                    case 'usermade': return entry.kind === 'custom';
-                    case 'internal': return entry.kind === 'internal';
+            const selfVisible = (() => {
+                switch (mode) {
+                    case 'recent':
+                        return recentSet.has(entry.token);
+                    case 'usermade':
+                        return entry.kind === 'custom';
+                    case 'internal':
+                        return entry.kind === 'internal';
                     case 'search':
                     case 'all':
                     default:
@@ -85,7 +80,7 @@ const applyMode = (entries: IWiredVariablePickerEntry[], mode: WiredVariablePick
                 }
             })();
 
-            if(!selfVisible && !childVisible) continue;
+            if (!selfVisible && !childVisible) continue;
 
             filtered.push(childVisible ? { ...entry, children: nextChildren } : entry);
         }
@@ -93,73 +88,71 @@ const applyMode = (entries: IWiredVariablePickerEntry[], mode: WiredVariablePick
         return filtered;
     };
 
-    if(mode === 'recent')
-    {
+    if (mode === 'recent') {
         const flatEntries = flattenWiredVariablePickerEntries(entries)
-            .filter(entry => recentSet.has(entry.token))
+            .filter((entry) => recentSet.has(entry.token))
             .sort((left, right) => recentTokens.indexOf(left.token) - recentTokens.indexOf(right.token))
-            .map(entry => ({ ...entry, label: entry.displayLabel }));
+            .map((entry) => ({ ...entry, label: entry.displayLabel }));
 
-        return flatEntries.filter(entry => !entry.children?.length);
+        return flatEntries.filter((entry) => !entry.children?.length);
     }
 
     return filterEntries(entries);
 };
 
-export const WiredVariablePicker: FC<WiredVariablePickerProps> = props =>
-{
-    const { entries = [], selectedToken = '', onSelect, recentScope, placeholder = LocalizeText('wiredfurni.variable_picker.search'), emptyText = 'Nothing to display' } = props;
+export const WiredVariablePicker: FC<WiredVariablePickerProps> = (props) => {
+    const {
+        entries = [],
+        selectedToken = '',
+        onSelect,
+        recentScope,
+        placeholder = LocalizeText('wiredfurni.variable_picker.search'),
+        emptyText = 'Nothing to display'
+    } = props;
     const containerRef = useRef<HTMLDivElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const submenuRef = useRef<HTMLDivElement>(null);
-    const storageKey = `${ RECENT_STORAGE_PREFIX }.${ recentScope }`;
-    const [ isOpen, setIsOpen ] = useState(false);
-    const [ mode, setMode ] = useState<WiredVariablePickerMode>('all');
-    const [ query, setQuery ] = useState('');
-    const [ recentTokens, setRecentTokens ] = useState<string[]>([]);
-    const [ activeParentToken, setActiveParentToken ] = useState('');
-    const [ panelPosition, setPanelPosition ] = useState<{ left: number; top: number; width: number; } | null>(null);
-    const [ submenuPosition, setSubmenuPosition ] = useState<{ left: number; top: number; } | null>(null);
+    const storageKey = `${RECENT_STORAGE_PREFIX}.${recentScope}`;
+    const [isOpen, setIsOpen] = useState(false);
+    const [mode, setMode] = useState<WiredVariablePickerMode>('all');
+    const [query, setQuery] = useState('');
+    const [recentTokens, setRecentTokens] = useState<string[]>([]);
+    const [activeParentToken, setActiveParentToken] = useState('');
+    const [panelPosition, setPanelPosition] = useState<{ left: number; top: number; width: number } | null>(null);
+    const [submenuPosition, setSubmenuPosition] = useState<{ left: number; top: number } | null>(null);
 
     const allEntries = flattenWiredVariablePickerEntries(entries);
-    const selectedEntry = allEntries.find(entry => (entry.token === selectedToken)) || null;
+    const selectedEntry = allEntries.find((entry) => entry.token === selectedToken) || null;
     const modeEntries = applyMode(entries, mode, recentTokens);
     const filteredEntries = applyQuery(modeEntries, normalizeSearch(query));
-    const activeParent = filteredEntries.find(entry => (entry.token === activeParentToken) && entry.children?.length) || null;
-    const portalTarget = (typeof document !== 'undefined') ? (document.getElementById('draggable-windows-container') ?? document.body) : null;
+    const activeParent = filteredEntries.find((entry) => entry.token === activeParentToken && entry.children?.length) || null;
+    const portalTarget = typeof document !== 'undefined' ? (document.getElementById('draggable-windows-container') ?? document.body) : null;
 
-    useEffect(() =>
-    {
-        try
-        {
+    useEffect(() => {
+        try {
             const rawValue = window.localStorage.getItem(storageKey);
 
-            if(!rawValue)
-            {
+            if (!rawValue) {
                 setRecentTokens([]);
                 return;
             }
 
             const parsedValue = JSON.parse(rawValue) as string[];
 
-            setRecentTokens(Array.isArray(parsedValue) ? parsedValue.filter(token => typeof token === 'string') : []);
-        }
-        catch
-        {
+            setRecentTokens(Array.isArray(parsedValue) ? parsedValue.filter((token) => typeof token === 'string') : []);
+        } catch {
             setRecentTokens([]);
         }
-    }, [ storageKey ]);
+    }, [storageKey]);
 
-    useEffect(() =>
-    {
-        if(!isOpen) return;
+    useEffect(() => {
+        if (!isOpen) return;
 
-        const handleClick = (event: MouseEvent) =>
-        {
-            if(containerRef.current?.contains(event.target as Node)) return;
-            if(panelRef.current?.contains(event.target as Node)) return;
-            if(submenuRef.current?.contains(event.target as Node)) return;
+        const handleClick = (event: MouseEvent) => {
+            if (containerRef.current?.contains(event.target as Node)) return;
+            if (panelRef.current?.contains(event.target as Node)) return;
+            if (submenuRef.current?.contains(event.target as Node)) return;
 
             setIsOpen(false);
             setActiveParentToken('');
@@ -167,9 +160,8 @@ export const WiredVariablePicker: FC<WiredVariablePickerProps> = props =>
             setSubmenuPosition(null);
         };
 
-        const handleEscape = (event: KeyboardEvent) =>
-        {
-            if(event.key !== 'Escape') return;
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key !== 'Escape') return;
 
             setIsOpen(false);
             setActiveParentToken('');
@@ -180,27 +172,22 @@ export const WiredVariablePicker: FC<WiredVariablePickerProps> = props =>
         document.addEventListener('mousedown', handleClick);
         document.addEventListener('keydown', handleEscape);
 
-        return () =>
-        {
+        return () => {
             document.removeEventListener('mousedown', handleClick);
             document.removeEventListener('keydown', handleEscape);
         };
-    }, [ isOpen ]);
+    }, [isOpen]);
 
-    useLayoutEffect(() =>
-    {
-        if(!isOpen)
-        {
+    useLayoutEffect(() => {
+        if (!isOpen) {
             setPanelPosition(null);
             return;
         }
 
-        const updatePanelPosition = () =>
-        {
+        const updatePanelPosition = () => {
             const triggerRect = containerRef.current?.getBoundingClientRect();
 
-            if(!triggerRect)
-            {
+            if (!triggerRect) {
                 setPanelPosition(null);
                 return;
             }
@@ -223,50 +210,41 @@ export const WiredVariablePicker: FC<WiredVariablePickerProps> = props =>
         window.addEventListener('resize', updatePanelPosition);
         window.addEventListener('scroll', updatePanelPosition, true);
 
-        return () =>
-        {
+        return () => {
             window.removeEventListener('resize', updatePanelPosition);
             window.removeEventListener('scroll', updatePanelPosition, true);
         };
-    }, [ isOpen ]);
+    }, [isOpen]);
 
-    useEffect(() =>
-    {
-        if(!isOpen) return;
-        if(mode !== 'search') return;
+    useEffect(() => {
+        if (!isOpen) return;
+        if (mode !== 'search') return;
 
         searchInputRef.current?.focus();
-    }, [ isOpen, mode ]);
+    }, [isOpen, mode]);
 
-    useEffect(() =>
-    {
-        if(!activeParentToken) return;
-        if(filteredEntries.some(entry => entry.token === activeParentToken && entry.children?.length)) return;
+    useEffect(() => {
+        if (!activeParentToken) return;
+        if (filteredEntries.some((entry) => entry.token === activeParentToken && entry.children?.length)) return;
 
         setActiveParentToken('');
         setSubmenuPosition(null);
-    }, [ activeParentToken, filteredEntries ]);
+    }, [activeParentToken, filteredEntries]);
 
-    const rememberSelection = (token: string) =>
-    {
-        if(!token) return;
+    const rememberSelection = (token: string) => {
+        if (!token) return;
 
-        const nextRecentTokens = [ token, ...recentTokens.filter(currentToken => (currentToken !== token)) ].slice(0, RECENT_PICKER_LIMIT);
+        const nextRecentTokens = [token, ...recentTokens.filter((currentToken) => currentToken !== token)].slice(0, RECENT_PICKER_LIMIT);
 
         setRecentTokens(nextRecentTokens);
 
-        try
-        {
+        try {
             window.localStorage.setItem(storageKey, JSON.stringify(nextRecentTokens));
-        }
-        catch
-        {
-        }
+        } catch {}
     };
 
-    const handleSelect = (entry: IWiredVariablePickerEntry) =>
-    {
-        if(!entry.selectable) return;
+    const handleSelect = (entry: IWiredVariablePickerEntry) => {
+        if (!entry.selectable) return;
 
         rememberSelection(entry.token);
         onSelect(entry);
@@ -275,10 +253,8 @@ export const WiredVariablePicker: FC<WiredVariablePickerProps> = props =>
         setSubmenuPosition(null);
     };
 
-    const activateParent = (entry: IWiredVariablePickerEntry, element: HTMLButtonElement) =>
-    {
-        if(!entry.children?.length)
-        {
+    const activateParent = (entry: IWiredVariablePickerEntry, element: HTMLButtonElement) => {
+        if (!entry.children?.length) {
             setActiveParentToken('');
             setSubmenuPosition(null);
             return;
@@ -287,15 +263,13 @@ export const WiredVariablePicker: FC<WiredVariablePickerProps> = props =>
         const rowRect = element.getBoundingClientRect();
         const panelRect = panelRef.current?.getBoundingClientRect();
         const submenuWidth = 140;
-        const submenuHeight = Math.min((entry.children.length * 20) + 22, 168);
+        const submenuHeight = Math.min(entry.children.length * 20 + 22, 168);
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         const leftAnchor = panelRect ? panelRect.right : rowRect.right;
         const rightSpace = viewportWidth - leftAnchor;
-        const canOpenRight = (rightSpace >= (submenuWidth + 8));
-        const left = canOpenRight
-            ? (leftAnchor + 6)
-            : Math.max(8, (panelRect ? panelRect.left : rowRect.left) - submenuWidth - 6);
+        const canOpenRight = rightSpace >= submenuWidth + 8;
+        const left = canOpenRight ? leftAnchor + 6 : Math.max(8, (panelRect ? panelRect.left : rowRect.left) - submenuWidth - 6);
         const top = Math.min(Math.max(8, rowRect.top), Math.max(8, viewportHeight - submenuHeight - 8));
 
         setSubmenuPosition({
@@ -305,109 +279,119 @@ export const WiredVariablePicker: FC<WiredVariablePickerProps> = props =>
         setActiveParentToken(entry.token);
     };
 
-    const renderEntry = (entry: IWiredVariablePickerEntry) =>
-    {
+    const renderEntry = (entry: IWiredVariablePickerEntry) => {
         const hasChildren = !!entry.children?.length;
 
         return (
             <button
-                key={ entry.id }
+                key={entry.id}
                 type="button"
-                className={ `nitro-wired__variable-picker-row ${ entry.selectable ? '' : 'is-disabled' } ${ selectedToken === entry.token ? 'is-selected' : '' }` }
-                onMouseEnter={ event => activateParent(entry, event.currentTarget) }
-                onClick={ event =>
-                {
-                    if(hasChildren)
-                    {
+                className={`nitro-wired__variable-picker-row ${entry.selectable ? '' : 'is-disabled'} ${selectedToken === entry.token ? 'is-selected' : ''}`}
+                onMouseEnter={(event) => activateParent(entry, event.currentTarget)}
+                onClick={(event) => {
+                    if (hasChildren) {
                         activateParent(entry, event.currentTarget);
                         return;
                     }
 
-                    if(entry.selectable) handleSelect(entry);
-                } }>
-                <span className="nitro-wired__variable-picker-row-label">{ entry.label }</span>
-                { hasChildren && <FaChevronRight className="nitro-wired__variable-picker-row-arrow" /> }
+                    if (entry.selectable) handleSelect(entry);
+                }}
+            >
+                <span className="nitro-wired__variable-picker-row-label">{entry.label}</span>
+                {hasChildren && <FaChevronRight className="nitro-wired__variable-picker-row-arrow" />}
             </button>
         );
     };
 
-    const renderPanel = () =>
-    {
-        if(!panelPosition) return null;
+    const renderPanel = () => {
+        if (!panelPosition) return null;
 
         return (
             <div
-                ref={ panelRef }
+                ref={panelRef}
                 className="nitro-wired__variable-picker-panel is-portal"
-                style={ { left: panelPosition.left, top: panelPosition.top, width: panelPosition.width } }>
+                style={{ left: panelPosition.left, top: panelPosition.top, width: panelPosition.width }}
+            >
                 <div className="nitro-wired__variable-picker-toolbar">
-                    { PICKER_MODES.map(button => (
+                    {PICKER_MODES.map((button) => (
                         <button
-                            key={ button.key }
+                            key={button.key}
                             type="button"
-                            className={ `nitro-wired__variable-picker-mode ${ mode === button.key ? 'is-active' : '' }` }
-                            onClick={ () =>
-                            {
+                            className={`nitro-wired__variable-picker-mode ${mode === button.key ? 'is-active' : ''}`}
+                            onClick={() => {
                                 setMode(button.key);
-                                if(button.key === 'search') setTimeout(() => searchInputRef.current?.focus(), 0);
-                            } }>
-                            <img src={ button.icon } alt={ button.key } />
+                                if (button.key === 'search') setTimeout(() => searchInputRef.current?.focus(), 0);
+                            }}
+                        >
+                            <img src={button.icon} alt={button.key} />
                         </button>
-                    )) }
+                    ))}
                 </div>
 
                 <div className="nitro-wired__variable-picker-search">
-                    <img className="nitro-wired__variable-picker-search-icon" src={ searchIcon } alt="search" />
+                    <img className="nitro-wired__variable-picker-search-icon" src={searchIcon} alt="search" />
                     <input
-                        ref={ searchInputRef }
+                        ref={searchInputRef}
                         className="nitro-wired__variable-picker-search-input"
-                        placeholder={ placeholder }
+                        placeholder={placeholder}
                         type="text"
-                        value={ query }
-                        onChange={ event => setQuery(event.target.value) } />
-                    { !!query.length &&
-                        <button type="button" className="nitro-wired__variable-picker-clear" onClick={ () => setQuery('') }>
-                            <img src={ searchClearIcon } alt="clear" />
-                        </button> }
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                    />
+                    {!!query.length && (
+                        <button type="button" className="nitro-wired__variable-picker-clear" onClick={() => setQuery('')}>
+                            <img src={searchClearIcon} alt="clear" />
+                        </button>
+                    )}
                 </div>
 
                 <div className="nitro-wired__variable-picker-list">
-                    { filteredEntries.length
-                        ? filteredEntries.map(renderEntry)
-                        : <Text small className="nitro-wired__variable-picker-empty">{ emptyText }</Text> }
+                    {filteredEntries.length ? (
+                        filteredEntries.map(renderEntry)
+                    ) : (
+                        <Text small className="nitro-wired__variable-picker-empty">
+                            {emptyText}
+                        </Text>
+                    )}
                 </div>
             </div>
         );
     };
 
     return (
-        <div className="nitro-wired__variable-picker" ref={ containerRef }>
-            <button type="button" className="form-select form-select-sm nitro-wired__variable-picker-trigger" onClick={ () => setIsOpen(value => !value) }>
-                <span className={ selectedEntry ? '' : 'nitro-wired__variable-picker-placeholder' }>{ selectedEntry?.displayLabel || placeholder }</span>
+        <div className="nitro-wired__variable-picker" ref={containerRef}>
+            <button type="button" className="form-select form-select-sm nitro-wired__variable-picker-trigger" onClick={() => setIsOpen((value) => !value)}>
+                <span className={selectedEntry ? '' : 'nitro-wired__variable-picker-placeholder'}>{selectedEntry?.displayLabel || placeholder}</span>
             </button>
 
-            { isOpen && panelPosition && portalTarget && createPortal(
-                <div className="nitro-wired nitro-wired__variable-picker-portal">
-                    { renderPanel() }
+            {isOpen &&
+                panelPosition &&
+                portalTarget &&
+                createPortal(
+                    <div className="nitro-wired nitro-wired__variable-picker-portal">
+                        {renderPanel()}
 
-                    { activeParent?.children?.length && submenuPosition &&
-                        <div
-                            ref={ submenuRef }
-                            className="nitro-wired__variable-picker-submenu"
-                            style={ { left: submenuPosition.left, top: submenuPosition.top } }>
-                            { activeParent.children.map(child => (
-                                <button
-                                    key={ child.id }
-                                    type="button"
-                                    className={ `nitro-wired__variable-picker-row nitro-wired__variable-picker-subrow ${ child.selectable ? '' : 'is-disabled' } ${ selectedToken === child.token ? 'is-selected' : '' }` }
-                                    onClick={ () => handleSelect(child) }>
-                                    <span className="nitro-wired__variable-picker-row-label">{ child.label }</span>
-                                </button>
-                            )) }
-                        </div> }
-                </div>,
-                portalTarget
-            ) }
+                        {activeParent?.children?.length && submenuPosition && (
+                            <div
+                                ref={submenuRef}
+                                className="nitro-wired__variable-picker-submenu"
+                                style={{ left: submenuPosition.left, top: submenuPosition.top }}
+                            >
+                                {activeParent.children.map((child) => (
+                                    <button
+                                        key={child.id}
+                                        type="button"
+                                        className={`nitro-wired__variable-picker-row nitro-wired__variable-picker-subrow ${child.selectable ? '' : 'is-disabled'} ${selectedToken === child.token ? 'is-selected' : ''}`}
+                                        onClick={() => handleSelect(child)}
+                                    >
+                                        <span className="nitro-wired__variable-picker-row-label">{child.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>,
+                    portalTarget
+                )}
         </div>
     );
 };

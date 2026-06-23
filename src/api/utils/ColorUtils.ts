@@ -1,24 +1,19 @@
-export class ColorUtils
-{
-    public static makeColorHex(color: string): string
-    {
-        return ('#' + color);
+export class ColorUtils {
+    public static makeColorHex(color: string): string {
+        return '#' + color;
     }
 
-    public static makeColorNumberHex(color: number): string
-    {
+    public static makeColorNumberHex(color: number): string {
         let val = color.toString(16);
-        return ( '#' + val.padStart(6, '0'));
+        return '#' + val.padStart(6, '0');
     }
 
-    public static convertFromHex(color: string): number
-    {
+    public static convertFromHex(color: string): number {
         return parseInt(color.replace('#', ''), 16);
     }
 
-    public static uintHexColor(color: number): string
-    {
-        const realColor = color >>>0;
+    public static uintHexColor(color: number): string {
+        const realColor = color >>> 0;
 
         return ColorUtils.makeColorHex(realColor.toString(16).substring(2));
     }
@@ -28,14 +23,13 @@ export class ColorUtils
      * @param {number} value value in integer format
      * @returns {Array} 8-bit values
      */
-    public static int_to_8BitVals(value: number): [number, number, number, number]
-    {
-        const val1 = ((value >> 24) & 0xFF);
-        const val2 = ((value >> 16) & 0xFF);
-        const val3 = ((value >> 8) & 0xFF);
-        const val4 = (value & 0xFF);
+    public static int_to_8BitVals(value: number): [number, number, number, number] {
+        const val1 = (value >> 24) & 0xff;
+        const val2 = (value >> 16) & 0xff;
+        const val3 = (value >> 8) & 0xff;
+        const val4 = value & 0xff;
 
-        return [ val1, val2, val3, val4 ];
+        return [val1, val2, val3, val4];
     }
 
     /**
@@ -47,19 +41,17 @@ export class ColorUtils
      * @param val4
      * @returns 32-bit integer of combined values
      */
-    public static eight_bitVals_to_int(val1: number, val2: number, val3: number, val4: number): number
-    {
-        return (((val1) << 24) + ((val2) << 16) + ((val3) << 8) + (val4| 0));
+    public static eight_bitVals_to_int(val1: number, val2: number, val3: number, val4: number): number {
+        return (val1 << 24) + (val2 << 16) + (val3 << 8) + (val4 | 0);
     }
 
-    public static int2rgb(color: number): string
-    {
+    public static int2rgb(color: number): string {
         color >>>= 0;
-        const b = color & 0xFF;
-        const g = (color & 0xFF00) >>> 8;
-        const r = (color & 0xFF0000) >>> 16;
-        const a = ((color & 0xFF000000) >>> 24) / 255;
+        const b = color & 0xff;
+        const g = (color & 0xff00) >>> 8;
+        const r = (color & 0xff0000) >>> 16;
+        const a = ((color & 0xff000000) >>> 24) / 255;
 
-        return 'rgba(' + [ r, g, b, 1 ].join(',') + ')';
+        return 'rgba(' + [r, g, b, 1].join(',') + ')';
     }
 }

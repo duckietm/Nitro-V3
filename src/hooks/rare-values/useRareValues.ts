@@ -7,23 +7,20 @@ import { useMessageEvent } from '../events';
 // spriteId -> catalog value, fetched once from the server (RareValuesComposer).
 // Shared across all consumers via useBetween so the request fires a single time.
 // Read by both the furni infostand and the toolbar "Valore Rari" panel.
-const useRareValuesState = () =>
-{
-    const [ values, setValues ] = useState<Map<number, IRareValue>>(() => new Map());
-    const [ loaded, setLoaded ] = useState(false);
+const useRareValuesState = () => {
+    const [values, setValues] = useState<Map<number, IRareValue>>(() => new Map());
+    const [loaded, setLoaded] = useState(false);
 
-    useMessageEvent<RareValuesEvent>(RareValuesEvent, event =>
-    {
+    useMessageEvent<RareValuesEvent>(RareValuesEvent, (event) => {
         setValues(event.getParser().values);
         setLoaded(true);
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         SendMessageComposer(new RequestRareValuesComposer());
     }, []);
 
-    const getValue = useCallback((spriteId: number): IRareValue => (values.get(spriteId) ?? null), [ values ]);
+    const getValue = useCallback((spriteId: number): IRareValue => values.get(spriteId) ?? null, [values]);
 
     return { values, loaded, getValue };
 };

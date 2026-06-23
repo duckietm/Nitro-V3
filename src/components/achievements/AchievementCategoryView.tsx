@@ -9,34 +9,24 @@ interface AchievementCategoryViewProps {
     category: AchievementCategory;
 }
 
-export const AchievementCategoryView: FC<AchievementCategoryViewProps> = (
-    props,
-) =>
-{
+export const AchievementCategoryView: FC<AchievementCategoryViewProps> = (props) => {
     const { category = null } = props;
-    const { selectedAchievement = null, setSelectedAchievementId = null } =
-        useAchievements();
+    const { selectedAchievement = null, setSelectedAchievementId = null } = useAchievements();
 
-    useEffect(() =>
-    {
-        if(!category) return;
+    useEffect(() => {
+        if (!category) return;
 
-        if(!selectedAchievement)
-        {
-            setSelectedAchievementId(
-                category?.achievements?.[0]?.achievementId,
-            );
+        if (!selectedAchievement) {
+            setSelectedAchievementId(category?.achievements?.[0]?.achievementId);
         }
     }, [category, selectedAchievement, setSelectedAchievementId]);
 
-    if(!category) return null;
+    if (!category) return null;
 
     return (
         <Column fullHeight justifyContent="between">
             <AchievementListView achievements={category.achievements} />
-            {!!selectedAchievement && (
-                <AchievementDetailsView achievement={selectedAchievement} />
-            )}
+            {!!selectedAchievement && <AchievementDetailsView achievement={selectedAchievement} />}
         </Column>
     );
 };

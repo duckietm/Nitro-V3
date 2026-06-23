@@ -2,28 +2,25 @@ import { FC, useEffect, useState } from 'react';
 import { LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { WiredDirectionIcon, WIRED_DIRECTION_GRID } from '../WiredDirectionIcon';
+import { WIRED_DIRECTION_GRID, WiredDirectionIcon } from '../WiredDirectionIcon';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
 import { WiredConditionBaseView } from './WiredConditionBaseView';
 
-const toggleDirection = (mask: number, direction: number, checked: boolean) =>
-{
-    if(checked) return (mask | (1 << direction));
+const toggleDirection = (mask: number, direction: number, checked: boolean) => {
+    if (checked) return mask | (1 << direction);
 
-    return (mask & ~(1 << direction));
+    return mask & ~(1 << direction);
 };
 
-export const WiredConditionActorDirView: FC<{}> = () =>
-{
+export const WiredConditionActorDirView: FC<{}> = () => {
     const { trigger = null, setIntParams = null } = useWired();
-    const [ directionMask, setDirectionMask ] = useState(0);
-    const [ userSource, setUserSource ] = useState(0);
-    const [ quantifier, setQuantifier ] = useState(0);
-    const [ showAdvanced, setShowAdvanced ] = useState(false);
+    const [directionMask, setDirectionMask] = useState(0);
+    const [userSource, setUserSource] = useState(0);
+    const [quantifier, setQuantifier] = useState(0);
+    const [showAdvanced, setShowAdvanced] = useState(false);
 
-    useEffect(() =>
-    {
-        if(!trigger) return;
+    useEffect(() => {
+        if (!trigger) return;
 
         const nextDirectionMask = trigger.intData.length > 0 ? trigger.intData[0] : 0;
         const nextUserSource = trigger.intData.length > 1 ? trigger.intData[1] : 0;
@@ -31,69 +28,76 @@ export const WiredConditionActorDirView: FC<{}> = () =>
 
         setDirectionMask(nextDirectionMask);
         setUserSource(nextUserSource);
-        setQuantifier((nextQuantifier === 1) ? 1 : 0);
+        setQuantifier(nextQuantifier === 1 ? 1 : 0);
         setShowAdvanced(nextUserSource !== 0 || nextQuantifier !== 0);
-    }, [ trigger ]);
+    }, [trigger]);
 
-    const save = () =>
-    {
-        setIntParams([
-            directionMask,
-            userSource,
-            quantifier
-        ]);
+    const save = () => {
+        setIntParams([directionMask, userSource, quantifier]);
     };
 
     return (
         <WiredConditionBaseView
-            hasSpecialInput={ true }
-            requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE }
-            save={ save }
-            footerCollapsible={ false }
+            hasSpecialInput={true}
+            requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE}
+            save={save}
+            footerCollapsible={false}
             footer={
                 <div className="flex flex-col gap-2">
-                    <button className="btn btn-link p-0 align-self-start" type="button" onClick={ () => setShowAdvanced(value => !value) }>
-                        { LocalizeText(showAdvanced ? 'wiredfurni.params.sources.collapse' : 'wiredfurni.params.sources.expand') }
+                    <button className="btn btn-link p-0 align-self-start" type="button" onClick={() => setShowAdvanced((value) => !value)}>
+                        {LocalizeText(showAdvanced ? 'wiredfurni.params.sources.collapse' : 'wiredfurni.params.sources.expand')}
                     </button>
-                    { showAdvanced &&
+                    {showAdvanced && (
                         <>
                             <div className="flex flex-col gap-1">
-                                <Text bold>{ LocalizeText('wiredfurni.params.quantifier_selection') }</Text>
-                                { [ 0, 1 ].map(value =>
-                                {
+                                <Text bold>{LocalizeText('wiredfurni.params.quantifier_selection')}</Text>
+                                {[0, 1].map((value) => {
                                     return (
-                                        <label key={ value } className="flex items-center gap-1">
-                                            <input checked={ (quantifier === value) } className="form-check-input" name="actorDirQuantifier" type="radio" onChange={ () => setQuantifier(value) } />
-                                            <Text>{ LocalizeText(`wiredfurni.params.quantifier.users.${ value }`) }</Text>
+                                        <label key={value} className="flex items-center gap-1">
+                                            <input
+                                                checked={quantifier === value}
+                                                className="form-check-input"
+                                                name="actorDirQuantifier"
+                                                type="radio"
+                                                onChange={() => setQuantifier(value)}
+                                            />
+                                            <Text>{LocalizeText(`wiredfurni.params.quantifier.users.${value}`)}</Text>
                                         </label>
                                     );
-                                }) }
+                                })}
                             </div>
-                            <WiredSourcesSelector showUsers={ true } userSource={ userSource } onChangeUsers={ setUserSource } />
-                        </> }
+                            <WiredSourcesSelector showUsers={true} userSource={userSource} onChangeUsers={setUserSource} />
+                        </>
+                    )}
                 </div>
-            }>
+            }
+        >
             <div className="flex flex-col gap-2">
-                <Text bold>{ LocalizeText('wiredfurni.params.direction_selection') }</Text>
+                <Text bold>{LocalizeText('wiredfurni.params.direction_selection')}</Text>
                 <div className="grid grid-cols-4 gap-2 max-w-[240px]">
-                    { WIRED_DIRECTION_GRID.flatMap((row, rowIndex) => row.map((direction, columnIndex) =>
-                    {
-                        if(direction === null)
-                        {
-                            return <div key={ `actor-dir-empty-${ rowIndex }-${ columnIndex }` } />;
-                        }
+                    {WIRED_DIRECTION_GRID.flatMap((row, rowIndex) =>
+                        row.map((direction, columnIndex) => {
+                            if (direction === null) {
+                                return <div key={`actor-dir-empty-${rowIndex}-${columnIndex}`} />;
+                            }
 
-                        const checked = ((directionMask & (1 << direction)) !== 0);
+                            const checked = (directionMask & (1 << direction)) !== 0;
 
-                        return (
-                            <label key={ `actor-dir-${ direction }` } className="flex items-center justify-center gap-[2px] cursor-pointer">
-                                <input checked={ checked } className="form-check-input" type="checkbox" onChange={ event => setDirectionMask(toggleDirection(directionMask, direction, event.target.checked)) } />
-                                <span className="inline-flex items-center justify-center">
-                                    <WiredDirectionIcon direction={ direction } selected={ checked } />
-                                </span>
-                            </label>
-                        );
-                    })) }
+                            return (
+                                <label key={`actor-dir-${direction}`} className="flex items-center justify-center gap-[2px] cursor-pointer">
+                                    <input
+                                        checked={checked}
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        onChange={(event) => setDirectionMask(toggleDirection(directionMask, direction, event.target.checked))}
+                                    />
+                                    <span className="inline-flex items-center justify-center">
+                                        <WiredDirectionIcon direction={direction} selected={checked} />
+                                    </span>
+                                </label>
+                            );
+                        })
+                    )}
                 </div>
             </div>
         </WiredConditionBaseView>

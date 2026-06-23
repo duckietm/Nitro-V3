@@ -1,5 +1,4 @@
-export interface IReportedUser
-{
+export interface IReportedUser {
     id: number;
     username: string;
 }

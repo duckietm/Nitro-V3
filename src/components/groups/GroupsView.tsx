@@ -7,35 +7,30 @@ import { GroupInformationStandaloneView } from './views/GroupInformationStandalo
 import { GroupManagerView } from './views/GroupManagerView';
 import { GroupMembersView } from './views/GroupMembersView';
 
-export const GroupsView: FC<{}> = props =>
-{
-    const [ isCreatorVisible, setCreatorVisible ] = useState<boolean>(false);
+export const GroupsView: FC<{}> = (props) => {
+    const [isCreatorVisible, setCreatorVisible] = useState<boolean>(false);
     const {} = useGroup();
 
-    useMessageEvent<GroupPurchasedEvent>(GroupPurchasedEvent, event =>
-    {
+    useMessageEvent<GroupPurchasedEvent>(GroupPurchasedEvent, (event) => {
         const parser = event.getParser();
 
         setCreatorVisible(false);
         TryVisitRoom(parser.roomId);
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'create':
                         setCreatorVisible(true);
                         return;
                     case 'manage':
-                        if(!parts[2]) return;
+                        if (!parts[2]) return;
 
                         setCreatorVisible(false);
                         SendMessageComposer(new GroupSettingsComposer(Number(parts[2])));
@@ -52,10 +47,8 @@ export const GroupsView: FC<{}> = props =>
 
     return (
         <>
-            { isCreatorVisible &&
-                <GroupCreatorView onClose={ () => setCreatorVisible(false) } /> }
-            { !isCreatorVisible &&
-                <GroupManagerView /> }
+            {isCreatorVisible && <GroupCreatorView onClose={() => setCreatorVisible(false)} />}
+            {!isCreatorVisible && <GroupManagerView />}
             <GroupMembersView />
             <GroupInformationStandaloneView />
         </>

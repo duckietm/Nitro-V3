@@ -17,16 +17,17 @@ import { useNotification } from '../notification';
  * the action needs a custom label (e.g. "Delete forever" instead of
  * the generic confirm).
  */
-export const useHousekeepingConfirm = () =>
-{
+export const useHousekeepingConfirm = () => {
     const { showConfirm } = useNotification();
 
-    return useCallback((message: string, onConfirm: () => void, options: { confirmText?: string; cancelText?: string; title?: string } = {}) =>
-    {
-        const confirmText = options.confirmText ?? LocalizeText('housekeeping.confirm.proceed');
-        const cancelText = options.cancelText ?? LocalizeText('housekeeping.confirm.cancel');
-        const title = options.title ?? LocalizeText('housekeeping.confirm.title');
+    return useCallback(
+        (message: string, onConfirm: () => void, options: { confirmText?: string; cancelText?: string; title?: string } = {}) => {
+            const confirmText = options.confirmText ?? LocalizeText('housekeeping.confirm.proceed');
+            const cancelText = options.cancelText ?? LocalizeText('housekeeping.confirm.cancel');
+            const title = options.title ?? LocalizeText('housekeeping.confirm.title');
 
-        showConfirm(message, onConfirm, () => {}, confirmText, cancelText, title);
-    }, [ showConfirm ]);
+            showConfirm(message, onConfirm, () => {}, confirmText, cancelText, title);
+        },
+        [showConfirm]
+    );
 };

@@ -1,5 +1,4 @@
-export interface IRoomChatSettings
-{
+export interface IRoomChatSettings {
     mode: number;
     weight: number;
     speed: number;

@@ -24,49 +24,41 @@ const COPY_CONFIRM_MS = 1600;
  *   non-secure-context legacy paths so the button still works inside an
  *   `http://` deployment.
  */
-export const HousekeepingPasswordReveal: FC = () =>
-{
+export const HousekeepingPasswordReveal: FC = () => {
     const { passwordReveal, clearPasswordReveal } = useHousekeepingStore();
-    const [ copyState, setCopyState ] = useState<'idle' | 'ok' | 'fail'>('idle');
+    const [copyState, setCopyState] = useState<'idle' | 'ok' | 'fail'>('idle');
 
     // Reset the "copied!" visual whenever a new reveal lands so the
     // operator doesn't see a stale checkmark from a previous reset.
-    useEffect(() =>
-    {
+    useEffect(() => {
         setCopyState('idle');
-    }, [ passwordReveal?.password ]);
+    }, [passwordReveal?.password]);
 
     // Auto-revert the copy-confirmation icon back to the copy icon
     // a short while after a successful copy. The plaintext itself
     // stays revealed until the operator explicitly dismisses.
-    useEffect(() =>
-    {
-        if(copyState === 'idle') return;
+    useEffect(() => {
+        if (copyState === 'idle') return;
 
         const handle = window.setTimeout(() => setCopyState('idle'), COPY_CONFIRM_MS);
 
         return () => window.clearTimeout(handle);
-    }, [ copyState ]);
+    }, [copyState]);
 
-    if(!passwordReveal) return null;
+    if (!passwordReveal) return null;
 
-    const copyPassword = async () =>
-    {
+    const copyPassword = async () => {
         const text = passwordReveal.password;
 
-        if(!text) return;
+        if (!text) return;
 
         // Modern path — requires a secure context (https / wss / localhost).
-        if(typeof navigator !== 'undefined' && navigator.clipboard && window.isSecureContext)
-        {
-            try
-            {
+        if (typeof navigator !== 'undefined' && navigator.clipboard && window.isSecureContext) {
+            try {
                 await navigator.clipboard.writeText(text);
                 setCopyState('ok');
                 return;
-            }
-            catch
-            {
+            } catch {
                 // Fall through to the legacy path below — some browsers
                 // still gate the modern API behind extra permissions even
                 // in secure contexts.
@@ -77,8 +69,7 @@ export const HousekeepingPasswordReveal: FC = () =>
         // on plain-http deployments where `navigator.clipboard` is
         // refused. The textarea is positioned off-screen so the user
         // doesn't see a flash.
-        try
-        {
+        try {
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.setAttribute('readonly', '');
@@ -91,33 +82,33 @@ export const HousekeepingPasswordReveal: FC = () =>
             const ok = document.execCommand('copy');
             document.body.removeChild(textarea);
             setCopyState(ok ? 'ok' : 'fail');
-        }
-        catch
-        {
+        } catch {
             setCopyState('fail');
         }
     };
 
-    const copyIcon = copyState === 'ok' ? <FaCheck size={ 11 } /> : <FaCopy size={ 11 } />;
-    const copyLabel = copyState === 'ok'
-        ? LocalizeText('housekeeping.password.copied')
-        : copyState === 'fail'
-            ? LocalizeText('housekeeping.password.copy_failed')
-            : LocalizeText('housekeeping.password.copy');
+    const copyIcon = copyState === 'ok' ? <FaCheck size={11} /> : <FaCopy size={11} />;
+    const copyLabel =
+        copyState === 'ok'
+            ? LocalizeText('housekeeping.password.copied')
+            : copyState === 'fail'
+              ? LocalizeText('housekeeping.password.copy_failed')
+              : LocalizeText('housekeeping.password.copy');
 
     return (
         <div className="flex flex-col gap-1.5 px-2.5 py-2 border-y border-amber-200 bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50" role="status">
             <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold text-amber-700">
-                <FaKey size={ 10 } />
+                <FaKey size={10} />
                 <span className="grow">
-                    { LocalizeText('housekeeping.password.title', [ 'username', 'id' ], [ passwordReveal.username || '—', String(passwordReveal.userId) ]) }
+                    {LocalizeText('housekeeping.password.title', ['username', 'id'], [passwordReveal.username || '—', String(passwordReveal.userId)])}
                 </span>
                 <button
                     className="inline-flex items-center justify-center w-5 h-5 rounded text-amber-700 hover:text-amber-900 hover:bg-amber-200/60"
-                    onClick={ () => clearPasswordReveal() }
-                    title={ LocalizeText('housekeeping.password.dismiss') }
-                    aria-label={ LocalizeText('housekeeping.password.dismiss') }>
-                    <FaTimes size={ 10 } />
+                    onClick={() => clearPasswordReveal()}
+                    title={LocalizeText('housekeeping.password.dismiss')}
+                    aria-label={LocalizeText('housekeeping.password.dismiss')}
+                >
+                    <FaTimes size={10} />
                 </button>
             </div>
 
@@ -129,21 +120,23 @@ export const HousekeepingPasswordReveal: FC = () =>
                 <input
                     readOnly
                     type="text"
-                    value={ passwordReveal.password }
+                    value={passwordReveal.password}
                     className="grow font-mono tabular-nums text-sm px-2 py-1 rounded border border-amber-300 bg-white text-amber-950 focus:outline-none focus:ring-1 focus:ring-amber-400 select-all"
-                    onFocus={ event => event.currentTarget.select() }
-                    aria-label={ LocalizeText('housekeeping.password.value_label') } />
+                    onFocus={(event) => event.currentTarget.select()}
+                    aria-label={LocalizeText('housekeeping.password.value_label')}
+                />
                 <button
-                    className={ `inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold border transition-colors ${ copyState === 'ok' ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : copyState === 'fail' ? 'bg-rose-100 border-rose-300 text-rose-800' : 'bg-amber-100 border-amber-300 text-amber-900 hover:bg-amber-200' }` }
-                    onClick={ copyPassword }
-                    title={ copyLabel }
-                    aria-label={ copyLabel }>
-                    { copyIcon }
-                    <span>{ copyLabel }</span>
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold border transition-colors ${copyState === 'ok' ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : copyState === 'fail' ? 'bg-rose-100 border-rose-300 text-rose-800' : 'bg-amber-100 border-amber-300 text-amber-900 hover:bg-amber-200'}`}
+                    onClick={copyPassword}
+                    title={copyLabel}
+                    aria-label={copyLabel}
+                >
+                    {copyIcon}
+                    <span>{copyLabel}</span>
                 </button>
             </div>
 
-            <p className="text-[10px] text-amber-700/80 leading-snug">{ LocalizeText('housekeeping.password.hint') }</p>
+            <p className="text-[10px] text-amber-700/80 leading-snug">{LocalizeText('housekeeping.password.hint')}</p>
         </div>
     );
 };

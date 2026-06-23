@@ -4,19 +4,17 @@ import { SendMessageComposer } from '../../../../api';
 import { useMessageEvent } from '../../../events';
 import { useInventoryFurni } from '../../../inventory';
 
-const useFurnitureSpamWallPostItWidgetState = () =>
-{
-    const [ objectId, setObjectId ] = useState(-1);
-    const [ category, setCategory ] = useState(-1);
-    const [ itemType, setItemType ] = useState('');
-    const [ location, setLocation ] = useState('');
-    const [ color, setColor ] = useState('0');
-    const [ text, setText ] = useState('');
-    const [ canModify, setCanModify ] = useState(false);
+const useFurnitureSpamWallPostItWidgetState = () => {
+    const [objectId, setObjectId] = useState(-1);
+    const [category, setCategory] = useState(-1);
+    const [itemType, setItemType] = useState('');
+    const [location, setLocation] = useState('');
+    const [color, setColor] = useState('0');
+    const [text, setText] = useState('');
+    const [canModify, setCanModify] = useState(false);
     const { getWallItemById = null } = useInventoryFurni();
 
-    const onClose = () =>
-    {
+    const onClose = () => {
         SendMessageComposer(new AddSpamWallPostItMessageComposer(objectId, location, color, text));
 
         setObjectId(-1);
@@ -28,8 +26,7 @@ const useFurnitureSpamWallPostItWidgetState = () =>
         setCanModify(false);
     };
 
-    useMessageEvent<RequestSpamWallPostItMessageEvent>(RequestSpamWallPostItMessageEvent, event =>
-    {
+    useMessageEvent<RequestSpamWallPostItMessageEvent>(RequestSpamWallPostItMessageEvent, (event) => {
         const parser = event.getParser();
 
         setObjectId(parser.itemId);
@@ -39,11 +36,10 @@ const useFurnitureSpamWallPostItWidgetState = () =>
 
         let itemType = 'post_it';
 
-        if(inventoryItem)
-        {
+        if (inventoryItem) {
             const wallItemType = GetRoomEngine().getFurnitureWallName(inventoryItem.type);
 
-            if(wallItemType.match('post_it_')) itemType = wallItemType;
+            if (wallItemType.match('post_it_')) itemType = wallItemType;
         }
 
         setItemType(itemType);

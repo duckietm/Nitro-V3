@@ -1,5 +1,4 @@
-export class UseProductItem
-{
+export class UseProductItem {
     constructor(
         public readonly id: number,
         public readonly category: number,
@@ -7,6 +6,6 @@ export class UseProductItem
         public readonly requestRoomObjectId: number,
         public readonly targetRoomObjectId: number,
         public readonly requestInventoryStripId: number,
-        public readonly replace: boolean)
-    {}
+        public readonly replace: boolean
+    ) {}
 }

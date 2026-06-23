@@ -24,13 +24,12 @@ vi.mock('../../../../hooks', () => ({
     useNotification: () => notificationState
 }));
 
-vi.mock('../../../../api', () =>
-{
+vi.mock('../../../../api', () => {
     return {
         LocalizeText: (key: string) => key,
-        formatCompactNumber: (value: number) => Number.isFinite(value) ? String(value) : '—',
+        formatCompactNumber: (value: number) => (Number.isFinite(value) ? String(value) : '—'),
         formatRelativePast: () => 'now',
-        formatUptime: (value: number) => Number.isFinite(value) ? `${ value }s` : '—',
+        formatUptime: (value: number) => (Number.isFinite(value) ? `${value}s` : '—'),
         HousekeepingApi: {
             sendHotelAlert: vi.fn(() => Promise.resolve({ ok: true, actionId: null, message: '' }))
         },
@@ -39,8 +38,7 @@ vi.mock('../../../../api', () =>
     };
 });
 
-const resetStore = () =>
-{
+const resetStore = () => {
     storeState.dashboard = null;
     storeState.isDashboardLoading = false;
     storeState.refreshDashboard = vi.fn();
@@ -51,18 +49,15 @@ const resetStore = () =>
     storeState.setActiveTab = vi.fn();
 };
 
-describe('HousekeepingDashboardTab', () =>
-{
+describe('HousekeepingDashboardTab', () => {
     beforeEach(() => resetStore());
 
-    afterEach(() =>
-    {
+    afterEach(() => {
         cleanup();
         vi.clearAllMocks();
     });
 
-    it('renders skeleton placeholders when loading with no data yet', () =>
-    {
+    it('renders skeleton placeholders when loading with no data yet', () => {
         storeState.isDashboardLoading = true;
 
         const { container } = render(<HousekeepingDashboardTab />);
@@ -70,15 +65,13 @@ describe('HousekeepingDashboardTab', () =>
         expect(container.querySelectorAll('.animate-pulse').length).toBeGreaterThanOrEqual(4);
     });
 
-    it('renders the unavailable banner when not loading and no data', () =>
-    {
+    it('renders the unavailable banner when not loading and no data', () => {
         render(<HousekeepingDashboardTab />);
 
         expect(screen.getByText('housekeeping.dashboard.unavailable')).toBeTruthy();
     });
 
-    it('renders the hero + stat grid when dashboard data is present', () =>
-    {
+    it('renders the hero + stat grid when dashboard data is present', () => {
         storeState.dashboard = {
             onlineUsers: 42,
             totalUsers: 1000,
@@ -101,16 +94,56 @@ describe('HousekeepingDashboardTab', () =>
         expect(screen.getByText('arcturus-x')).toBeTruthy();
     });
 
-    it('renders the recent-sanctions section when audit log has successful user actions', () =>
-    {
+    it('renders the recent-sanctions section when audit log has successful user actions', () => {
         storeState.dashboard = {
-            onlineUsers: 1, totalUsers: 1, activeRooms: 1, totalRooms: 1, peakOnlineToday: 1, peakOnlineAllTime: 1,
-            pendingTickets: 0, sanctionsLast24h: 0, serverUptimeSeconds: 0, serverVersion: 'x'
+            onlineUsers: 1,
+            totalUsers: 1,
+            activeRooms: 1,
+            totalRooms: 1,
+            peakOnlineToday: 1,
+            peakOnlineAllTime: 1,
+            pendingTickets: 0,
+            sanctionsLast24h: 0,
+            serverUptimeSeconds: 0,
+            serverVersion: 'x'
         };
         storeState.actionLog = [
-            { id: 1, timestamp: 1, actorId: 1, actorName: 'admin', targetType: 'user', targetId: 2, targetLabel: 'alice', action: 'ban', detail: '', success: true },
-            { id: 2, timestamp: 2, actorId: 1, actorName: 'admin', targetType: 'room', targetId: 3, targetLabel: 'room#3', action: 'close', detail: '', success: true },
-            { id: 3, timestamp: 3, actorId: 1, actorName: 'admin', targetType: 'user', targetId: 4, targetLabel: 'bob', action: 'mute', detail: '', success: false }
+            {
+                id: 1,
+                timestamp: 1,
+                actorId: 1,
+                actorName: 'admin',
+                targetType: 'user',
+                targetId: 2,
+                targetLabel: 'alice',
+                action: 'ban',
+                detail: '',
+                success: true
+            },
+            {
+                id: 2,
+                timestamp: 2,
+                actorId: 1,
+                actorName: 'admin',
+                targetType: 'room',
+                targetId: 3,
+                targetLabel: 'room#3',
+                action: 'close',
+                detail: '',
+                success: true
+            },
+            {
+                id: 3,
+                timestamp: 3,
+                actorId: 1,
+                actorName: 'admin',
+                targetType: 'user',
+                targetId: 4,
+                targetLabel: 'bob',
+                action: 'mute',
+                detail: '',
+                success: false
+            }
         ];
 
         render(<HousekeepingDashboardTab />);
@@ -122,8 +155,7 @@ describe('HousekeepingDashboardTab', () =>
         expect(screen.queryByText('room#3')).toBeNull();
     });
 
-    it('renders the recent-lookups chips when there are entries', () =>
-    {
+    it('renders the recent-lookups chips when there are entries', () => {
         storeState.recentLookups = [
             { kind: 'user', id: 1, label: 'alice', at: 1 },
             { kind: 'room', id: 2, label: 'lobby', at: 2 }

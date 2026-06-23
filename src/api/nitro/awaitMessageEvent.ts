@@ -1,7 +1,6 @@
 import { GetCommunication, IMessageEvent } from '@nitrots/nitro-renderer';
 
-export interface AwaitMessageEventInit<T extends IMessageEvent, R = T>
-{
+export interface AwaitMessageEventInit<T extends IMessageEvent, R = T> {
     timeoutMs?: number;
     signal?: AbortSignal;
     accept?: (event: T) => boolean;
@@ -30,14 +29,14 @@ const DEFAULT_TIMEOUT_MS = 15_000;
  * AwaitMessageEventInit.select javadoc — the renderer recycles parsers,
  * so post-await reads come back null.
  */
-export const awaitMessageEvent = <T extends IMessageEvent, R = T>(eventCtor: new (callback: (event: T) => void) => T, init: AwaitMessageEventInit<T, R> = {}): Promise<R> =>
-{
+export const awaitMessageEvent = <T extends IMessageEvent, R = T>(
+    eventCtor: new (callback: (event: T) => void) => T,
+    init: AwaitMessageEventInit<T, R> = {}
+): Promise<R> => {
     const { timeoutMs = DEFAULT_TIMEOUT_MS, signal, accept, select } = init;
 
-    return new Promise<R>((resolve, reject) =>
-    {
-        if(signal?.aborted)
-        {
+    return new Promise<R>((resolve, reject) => {
+        if (signal?.aborted) {
             reject(new DOMException('aborted', 'AbortError'));
 
             return;
@@ -45,8 +44,7 @@ export const awaitMessageEvent = <T extends IMessageEvent, R = T>(eventCtor: new
 
         const communication = GetCommunication();
 
-        if(!communication || !communication.connection)
-        {
+        if (!communication || !communication.connection) {
             reject(new Error('no_connection'));
 
             return;
@@ -57,22 +55,20 @@ export const awaitMessageEvent = <T extends IMessageEvent, R = T>(eventCtor: new
         let timer: ReturnType<typeof setTimeout> | null = null;
         let onAbort: (() => void) | null = null;
 
-        const cleanup = () =>
-        {
+        const cleanup = () => {
             settled = true;
-            if(unsubscribe) unsubscribe();
+            if (unsubscribe) unsubscribe();
             unsubscribe = null;
-            if(timer) clearTimeout(timer);
+            if (timer) clearTimeout(timer);
             timer = null;
-            if(onAbort && signal) signal.removeEventListener('abort', onAbort);
+            if (onAbort && signal) signal.removeEventListener('abort', onAbort);
             onAbort = null;
         };
 
-        unsubscribe = communication.subscribeMessage(eventCtor, event =>
-        {
-            if(settled) return;
+        unsubscribe = communication.subscribeMessage(eventCtor, (event) => {
+            if (settled) return;
 
-            if(accept && !accept(event)) return;
+            if (accept && !accept(event)) return;
 
             // Snapshot the data synchronously: post-await reads of the
             // event's parser come back null because the renderer recycles
@@ -81,12 +77,9 @@ export const awaitMessageEvent = <T extends IMessageEvent, R = T>(eventCtor: new
             // that don't touch the parser.
             let snapshot: R;
 
-            try
-            {
+            try {
                 snapshot = select ? select(event) : (event as unknown as R);
-            }
-            catch(err)
-            {
+            } catch (err) {
                 cleanup();
                 reject(err instanceof Error ? err : new Error(String(err)));
 
@@ -97,18 +90,15 @@ export const awaitMessageEvent = <T extends IMessageEvent, R = T>(eventCtor: new
             resolve(snapshot);
         });
 
-        timer = setTimeout(() =>
-        {
-            if(settled) return;
+        timer = setTimeout(() => {
+            if (settled) return;
             cleanup();
             reject(new Error('timeout'));
         }, timeoutMs);
 
-        if(signal)
-        {
-            onAbort = () =>
-            {
-                if(settled) return;
+        if (signal) {
+            onAbort = () => {
+                if (settled) return;
                 cleanup();
                 reject(new DOMException('aborted', 'AbortError'));
             };

@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import { WidgetErrorBoundary } from '../../../../common';
-import { FurnitureBackgroundColorView } from './FurnitureBackgroundColorView';
+import { FurnitureContextMenuView } from './context-menu/FurnitureContextMenuView';
 import { FurnitureAreaHideView } from './FurnitureAreaHideView';
+import { FurnitureBackgroundColorView } from './FurnitureBackgroundColorView';
 import { FurnitureBadgeDisplayView } from './FurnitureBadgeDisplayView';
 import { FurnitureCraftingView } from './FurnitureCraftingView';
 import { FurnitureDimmerView } from './FurnitureDimmerView';
@@ -18,33 +19,71 @@ import { FurnitureStackHeightView } from './FurnitureStackHeightView';
 import { FurnitureStickieView } from './FurnitureStickieView';
 import { FurnitureTrophyView } from './FurnitureTrophyView';
 import { FurnitureYoutubeDisplayView } from './FurnitureYoutubeDisplayView';
-import { FurnitureContextMenuView } from './context-menu/FurnitureContextMenuView';
 import { FurniturePlaylistEditorWidgetView } from './playlist-editor/FurniturePlaylistEditorWidgetView';
 
-export const FurnitureWidgetsView: FC<{}> = props =>
-{
+export const FurnitureWidgetsView: FC<{}> = (props) => {
     return (
         <>
-            <WidgetErrorBoundary name="FurnitureAreaHide"><FurnitureAreaHideView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureBackgroundColor"><FurnitureBackgroundColorView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureBadgeDisplay"><FurnitureBadgeDisplayView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureCrafting"><FurnitureCraftingView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureDimmer"><FurnitureDimmerView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureExchangeCredit"><FurnitureExchangeCreditView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureExternalImage"><FurnitureExternalImageView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureFriendFurni"><FurnitureFriendFurniView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureGiftOpening"><FurnitureGiftOpeningView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureHighScore"><FurnitureHighScoreView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureInternalLink"><FurnitureInternalLinkView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureMannequin"><FurnitureMannequinView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurniturePlaylistEditorWidget"><FurniturePlaylistEditorWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureRoomLink"><FurnitureRoomLinkView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureSpamWallPostIt"><FurnitureSpamWallPostItView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureStackHeight"><FurnitureStackHeightView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureStickie"><FurnitureStickieView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureTrophy"><FurnitureTrophyView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureContextMenu"><FurnitureContextMenuView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurnitureYoutubeDisplay"><FurnitureYoutubeDisplayView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureAreaHide">
+                <FurnitureAreaHideView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureBackgroundColor">
+                <FurnitureBackgroundColorView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureBadgeDisplay">
+                <FurnitureBadgeDisplayView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureCrafting">
+                <FurnitureCraftingView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureDimmer">
+                <FurnitureDimmerView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureExchangeCredit">
+                <FurnitureExchangeCreditView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureExternalImage">
+                <FurnitureExternalImageView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureFriendFurni">
+                <FurnitureFriendFurniView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureGiftOpening">
+                <FurnitureGiftOpeningView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureHighScore">
+                <FurnitureHighScoreView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureInternalLink">
+                <FurnitureInternalLinkView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureMannequin">
+                <FurnitureMannequinView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurniturePlaylistEditorWidget">
+                <FurniturePlaylistEditorWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureRoomLink">
+                <FurnitureRoomLinkView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureSpamWallPostIt">
+                <FurnitureSpamWallPostItView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureStackHeight">
+                <FurnitureStackHeightView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureStickie">
+                <FurnitureStickieView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureTrophy">
+                <FurnitureTrophyView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureContextMenu">
+                <FurnitureContextMenuView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurnitureYoutubeDisplay">
+                <FurnitureYoutubeDisplayView />
+            </WidgetErrorBoundary>
         </>
     );
 };

@@ -9,40 +9,52 @@ import { FurniEditorSearchView } from './views/FurniEditorSearchView';
 const TAB_SEARCH = 0;
 const TAB_EDIT = 1;
 
-export const FurniEditorView: FC<{}> = () =>
-{
-    const [ isVisible, setIsVisible ] = useState(false);
-    const [ activeTab, setActiveTab ] = useState(TAB_SEARCH);
+export const FurniEditorView: FC<{}> = () => {
+    const [isVisible, setIsVisible] = useState(false);
+    const [activeTab, setActiveTab] = useState(TAB_SEARCH);
 
     const {
-        items, total, page, loading, error, clearError,
-        selectedItem, setSelectedItem, furniDataEntry, furniDataDiagnostic,
+        items,
+        total,
+        page,
+        loading,
+        error,
+        clearError,
+        selectedItem,
+        setSelectedItem,
+        furniDataEntry,
+        furniDataDiagnostic,
         interactions,
-        searchItems, loadDetail, loadBySpriteId, updateItem, deleteItem, loadInteractions,
-        updateFurnidata, revertFurnidata, syncPublicName, importText, importResult
+        searchItems,
+        loadDetail,
+        loadBySpriteId,
+        updateItem,
+        deleteItem,
+        loadInteractions,
+        updateFurnidata,
+        revertFurnidata,
+        syncPublicName,
+        importText,
+        importResult
     } = useFurniEditor();
 
     const isMod = useHasPermission('acc_catalogfurni');
 
     // Auto-switch to edit tab when an item is selected
-    useEffect(() =>
-    {
-        if(selectedItem) setActiveTab(TAB_EDIT);
-    }, [ selectedItem ]);
+    useEffect(() => {
+        if (selectedItem) setActiveTab(TAB_EDIT);
+    }, [selectedItem]);
 
-    useEffect(() =>
-    {
-        if(!isMod) return;
+    useEffect(() => {
+        if (!isMod) return;
 
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -50,7 +62,7 @@ export const FurniEditorView: FC<{}> = () =>
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(prev => !prev);
+                        setIsVisible((prev) => !prev);
                         return;
                 }
             },
@@ -60,34 +72,29 @@ export const FurniEditorView: FC<{}> = () =>
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [ isMod ]);
+    }, [isMod]);
 
-    useEffect(() =>
-    {
-        if(isVisible) loadInteractions();
-    }, [ isVisible ]);
+    useEffect(() => {
+        if (isVisible) loadInteractions();
+    }, [isVisible]);
 
     // Escape to close
-    useEffect(() =>
-    {
-        if(!isVisible) return;
+    useEffect(() => {
+        if (!isVisible) return;
 
-        const handler = (e: KeyboardEvent) =>
-        {
-            if(e.key === 'Escape') setIsVisible(false);
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setIsVisible(false);
         };
 
         window.addEventListener('keydown', handler);
 
         return () => window.removeEventListener('keydown', handler);
-    }, [ isVisible ]);
+    }, [isVisible]);
 
-    useEffect(() =>
-    {
-        if(!isMod) return;
+    useEffect(() => {
+        if (!isMod) return;
 
-        const handler = (e: CustomEvent<{ spriteId: number }>) =>
-        {
+        const handler = (e: CustomEvent<{ spriteId: number }>) => {
             const { spriteId } = e.detail;
 
             setIsVisible(true);
@@ -97,74 +104,68 @@ export const FurniEditorView: FC<{}> = () =>
         window.addEventListener('furni-editor:open', handler);
 
         return () => window.removeEventListener('furni-editor:open', handler);
-    }, [ isMod, loadBySpriteId ]);
+    }, [isMod, loadBySpriteId]);
 
-    const handleSelect = useCallback((id: number) =>
-    {
-        loadDetail(id);
-    }, [ loadDetail ]);
+    const handleSelect = useCallback(
+        (id: number) => {
+            loadDetail(id);
+        },
+        [loadDetail]
+    );
 
-    const handleBack = useCallback(() =>
-    {
+    const handleBack = useCallback(() => {
         setSelectedItem(null);
         setActiveTab(TAB_SEARCH);
-    }, [ setSelectedItem ]);
+    }, [setSelectedItem]);
 
-    const handleClose = useCallback(() =>
-    {
+    const handleClose = useCallback(() => {
         setIsVisible(false);
     }, []);
 
-    if(!isVisible || !isMod) return null;
+    if (!isVisible || !isMod) return null;
 
     return (
         <NitroCardView uniqueKey="furni-editor" className="w-[620px] h-[520px]">
-            <NitroCardHeaderView headerText="Furni Editor" onCloseClick={ handleClose } />
+            <NitroCardHeaderView headerText="Furni Editor" onCloseClick={handleClose} />
             <NitroCardTabsView>
-                <NitroCardTabsItemView isActive={ activeTab === TAB_SEARCH } onClick={ () => setActiveTab(TAB_SEARCH) }>
+                <NitroCardTabsItemView isActive={activeTab === TAB_SEARCH} onClick={() => setActiveTab(TAB_SEARCH)}>
                     Search
                 </NitroCardTabsItemView>
-                <NitroCardTabsItemView isActive={ activeTab === TAB_EDIT } onClick={ () => selectedItem && setActiveTab(TAB_EDIT) }>
+                <NitroCardTabsItemView isActive={activeTab === TAB_EDIT} onClick={() => selectedItem && setActiveTab(TAB_EDIT)}>
                     Edit
                 </NitroCardTabsItemView>
             </NitroCardTabsView>
             <NitroCardContentView>
-                { error &&
+                {error && (
                     <div className="bg-[#f8d7da] border border-[#f5c6cb] rounded p-2 text-[#721c24] text-xs mb-1 flex justify-between items-center">
-                        <span>{ error }</span>
-                        <span className="cursor-pointer font-bold" onClick={ clearError }>x</span>
+                        <span>{error}</span>
+                        <span className="cursor-pointer font-bold" onClick={clearError}>
+                            x
+                        </span>
                     </div>
-                }
+                )}
 
-                { activeTab === TAB_SEARCH &&
-                    <FurniEditorSearchView
-                        items={ items }
-                        total={ total }
-                        page={ page }
-                        loading={ loading }
-                        onSearch={ searchItems }
-                        onSelect={ handleSelect }
-                    />
-                }
+                {activeTab === TAB_SEARCH && (
+                    <FurniEditorSearchView items={items} total={total} page={page} loading={loading} onSearch={searchItems} onSelect={handleSelect} />
+                )}
 
-                { activeTab === TAB_EDIT && selectedItem &&
+                {activeTab === TAB_EDIT && selectedItem && (
                     <FurniEditorEditView
-                        item={ selectedItem }
-                        furniDataEntry={ furniDataEntry }
-                        furniDataDiagnostic={ furniDataDiagnostic }
-                        interactions={ interactions }
-                        loading={ loading }
-                        onUpdate={ updateItem }
-                        onDelete={ deleteItem }
-                        onBack={ handleBack }
-                        onUpdateFurnidata={ updateFurnidata }
-                        onRevertFurnidata={ revertFurnidata }
-                        onSyncPublicName={ syncPublicName }
-                        onImportText={ importText }
-                        importResult={ importResult }
+                        item={selectedItem}
+                        furniDataEntry={furniDataEntry}
+                        furniDataDiagnostic={furniDataDiagnostic}
+                        interactions={interactions}
+                        loading={loading}
+                        onUpdate={updateItem}
+                        onDelete={deleteItem}
+                        onBack={handleBack}
+                        onUpdateFurnidata={updateFurnidata}
+                        onRevertFurnidata={revertFurnidata}
+                        onSyncPublicName={syncPublicName}
+                        onImportText={importText}
+                        importResult={importResult}
                     />
-                }
-
+                )}
             </NitroCardContentView>
         </NitroCardView>
     );

@@ -1,7 +1,6 @@
-export class CameraPictureThumbnail
-{
+export class CameraPictureThumbnail {
     constructor(
         public effectName: string,
-        public thumbnailUrl: string)
-    {}
+        public thumbnailUrl: string
+    ) {}
 }

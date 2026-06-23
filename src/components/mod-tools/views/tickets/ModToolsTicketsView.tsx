@@ -9,13 +9,11 @@ import { ModToolsMyIssuesTabView } from './ModToolsMyIssuesTabView';
 import { ModToolsOpenIssuesTabView } from './ModToolsOpenIssuesTabView';
 import { ModToolsPickedIssuesTabView } from './ModToolsPickedIssuesTabView';
 
-interface ModToolsTicketsViewProps
-{
+interface ModToolsTicketsViewProps {
     onCloseClick: () => void;
 }
 
-interface TabBadgeProps
-{
+interface TabBadgeProps {
     label: string;
     count: number;
     icon: React.ReactNode;
@@ -30,90 +28,91 @@ const TONE_MAP: Record<TabBadgeProps['tone'], string> = {
 
 const TabLabel: FC<TabBadgeProps> = ({ label, count, icon, tone }) => (
     <span className="inline-flex items-center gap-1.5">
-        <span className="opacity-80">{ icon }</span>
-        <span>{ label }</span>
-        { count > 0 &&
-            <span className={ `inline-flex items-center justify-center min-w-[1.25rem] h-4 px-1 rounded-full text-[10px] font-semibold ${ TONE_MAP[tone] }` }>
-                { count > 99 ? '99+' : count }
-            </span> }
+        <span className="opacity-80">{icon}</span>
+        <span>{label}</span>
+        {count > 0 && (
+            <span className={`inline-flex items-center justify-center min-w-[1.25rem] h-4 px-1 rounded-full text-[10px] font-semibold ${TONE_MAP[tone]}`}>
+                {count > 99 ? '99+' : count}
+            </span>
+        )}
     </span>
 );
 
-export const ModToolsTicketsView: FC<ModToolsTicketsViewProps> = props =>
-{
+export const ModToolsTicketsView: FC<ModToolsTicketsViewProps> = (props) => {
     const { onCloseClick = null } = props;
-    const [ currentTab, setCurrentTab ] = useState<number>(0);
-    const [ issueInfoWindows, setIssueInfoWindows ] = useState<number[]>([]);
+    const [currentTab, setCurrentTab] = useState<number>(0);
+    const [issueInfoWindows, setIssueInfoWindows] = useState<number[]>([]);
     const { tickets = [] } = useModTools();
 
-    const { openIssues, myIssues, pickedIssues } = useMemo(() =>
-    {
+    const { openIssues, myIssues, pickedIssues } = useMemo(() => {
         const ownId = GetSessionDataManager()?.userId;
         return {
-            openIssues: tickets.filter(issue => issue.state === IssueMessageData.STATE_OPEN),
-            myIssues: tickets.filter(issue => (issue.state === IssueMessageData.STATE_PICKED) && (issue.pickerUserId === ownId)),
-            pickedIssues: tickets.filter(issue => issue.state === IssueMessageData.STATE_PICKED)
+            openIssues: tickets.filter((issue) => issue.state === IssueMessageData.STATE_OPEN),
+            myIssues: tickets.filter((issue) => issue.state === IssueMessageData.STATE_PICKED && issue.pickerUserId === ownId),
+            pickedIssues: tickets.filter((issue) => issue.state === IssueMessageData.STATE_PICKED)
         };
-    }, [ tickets ]);
+    }, [tickets]);
 
-    const closeIssue = (issueId: number) =>
-    {
-        setIssueInfoWindows(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+    const closeIssue = (issueId: number) => {
+        setIssueInfoWindows((prevValue) => {
+            const newValue = [...prevValue];
             const existingIndex = newValue.indexOf(issueId);
 
-            if(existingIndex >= 0) newValue.splice(existingIndex, 1);
+            if (existingIndex >= 0) newValue.splice(existingIndex, 1);
 
             return newValue;
         });
     };
 
-    const handleIssue = (issueId: number) =>
-    {
-        setIssueInfoWindows(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+    const handleIssue = (issueId: number) => {
+        setIssueInfoWindows((prevValue) => {
+            const newValue = [...prevValue];
             const existingIndex = newValue.indexOf(issueId);
 
-            if(existingIndex === -1) newValue.push(issueId);
+            if (existingIndex === -1) newValue.push(issueId);
             else newValue.splice(existingIndex, 1);
 
             return newValue;
         });
     };
 
-    const renderTab = () =>
-    {
-        switch(currentTab)
-        {
-            case 0: return <ModToolsOpenIssuesTabView openIssues={ openIssues } />;
-            case 1: return <ModToolsMyIssuesTabView handleIssue={ handleIssue } myIssues={ myIssues } />;
-            case 2: return <ModToolsPickedIssuesTabView pickedIssues={ pickedIssues } />;
+    const renderTab = () => {
+        switch (currentTab) {
+            case 0:
+                return <ModToolsOpenIssuesTabView openIssues={openIssues} />;
+            case 1:
+                return <ModToolsMyIssuesTabView handleIssue={handleIssue} myIssues={myIssues} />;
+            case 2:
+                return <ModToolsPickedIssuesTabView pickedIssues={pickedIssues} />;
         }
         return null;
     };
 
     return (
         <>
-            <NitroCardView className="nitro-mod-tools-tickets min-w-[520px] max-w-[640px] max-h-[520px]">
-                <NitroCardHeaderView headerText={ LocalizeText('modtools.tickets.title') } onCloseClick={ onCloseClick } />
+            <NitroCardView className="nitro-mod-tools-tickets min-w-0 w-[min(640px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]">
+                <NitroCardHeaderView headerText={LocalizeText('modtools.tickets.title')} onCloseClick={onCloseClick} />
                 <NitroCardTabsView>
-                    <NitroCardTabsItemView isActive={ currentTab === 0 } onClick={ () => setCurrentTab(0) }>
-                        <TabLabel label={ LocalizeText('modtools.tickets.tab.open') } count={ openIssues.length } icon={ <FaListUl size={ 10 } /> } tone="amber" />
+                    <NitroCardTabsItemView isActive={currentTab === 0} onClick={() => setCurrentTab(0)}>
+                        <TabLabel label={LocalizeText('modtools.tickets.tab.open')} count={openIssues.length} icon={<FaListUl size={10} />} tone="amber" />
                     </NitroCardTabsItemView>
-                    <NitroCardTabsItemView isActive={ currentTab === 1 } onClick={ () => setCurrentTab(1) }>
-                        <TabLabel label={ LocalizeText('modtools.tickets.tab.mine') } count={ myIssues.length } icon={ <FaUserCheck size={ 10 } /> } tone="sky" />
+                    <NitroCardTabsItemView isActive={currentTab === 1} onClick={() => setCurrentTab(1)}>
+                        <TabLabel label={LocalizeText('modtools.tickets.tab.mine')} count={myIssues.length} icon={<FaUserCheck size={10} />} tone="sky" />
                     </NitroCardTabsItemView>
-                    <NitroCardTabsItemView isActive={ currentTab === 2 } onClick={ () => setCurrentTab(2) }>
-                        <TabLabel label={ LocalizeText('modtools.tickets.tab.picked') } count={ pickedIssues.length } icon={ <FaCheckSquare size={ 10 } /> } tone="zinc" />
+                    <NitroCardTabsItemView isActive={currentTab === 2} onClick={() => setCurrentTab(2)}>
+                        <TabLabel
+                            label={LocalizeText('modtools.tickets.tab.picked')}
+                            count={pickedIssues.length}
+                            icon={<FaCheckSquare size={10} />}
+                            tone="zinc"
+                        />
                     </NitroCardTabsItemView>
                 </NitroCardTabsView>
-                <NitroCardContentView gap={ 1 }>
-                    { renderTab() }
-                </NitroCardContentView>
+                <NitroCardContentView gap={1}>{renderTab()}</NitroCardContentView>
             </NitroCardView>
-            { issueInfoWindows && (issueInfoWindows.length > 0) && issueInfoWindows.map(issueId => <ModToolsIssueInfoView key={ issueId } issueId={ issueId } onIssueInfoClosed={ closeIssue } />) }
+            {issueInfoWindows &&
+                issueInfoWindows.length > 0 &&
+                issueInfoWindows.map((issueId) => <ModToolsIssueInfoView key={issueId} issueId={issueId} onIssueInfoClosed={closeIssue} />)}
         </>
     );
 };

@@ -1,7 +1,6 @@
 import { AddLinkEventTracker, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { BadgeLeaderboardBoard, BadgeLeaderboardEntry, BadgeRarityKey, fetchBadgeLeaderboard, getCachedBadgeLeaderboard, LocalizeText } from '../../api';
-import { Column, DraggableWindow, DraggableWindowPosition, Flex, LayoutAvatarImageView, Text } from '../../common';
 import {
     badgeEmblemAchievement,
     badgeEmblemCommon,
@@ -23,11 +22,21 @@ import {
     leaderboardDivider,
     leaderboardDropdownOpener
 } from '../../assets/images/leaderboard_badge';
+import { Column, DraggableWindow, DraggableWindowPosition, Flex, LayoutAvatarImageView, Text } from '../../common';
 
 type LeaderboardPage =
-    | { key: 'totalBadges'; board: BadgeLeaderboardBoard; frame: string; emblem: string; title: () => string; info: () => string; option: () => string; }
-    | { key: 'achievementLevel'; board: BadgeLeaderboardBoard; frame: string; emblem: string; title: () => string; info: () => string; option: () => string; }
-    | { key: `rarity-${ BadgeRarityKey }`; rarity: BadgeRarityKey; board: BadgeLeaderboardBoard; frame: string; emblem: string; title: () => string; info: () => string; option: () => string; };
+    | { key: 'totalBadges'; board: BadgeLeaderboardBoard; frame: string; emblem: string; title: () => string; info: () => string; option: () => string }
+    | { key: 'achievementLevel'; board: BadgeLeaderboardBoard; frame: string; emblem: string; title: () => string; info: () => string; option: () => string }
+    | {
+          key: `rarity-${BadgeRarityKey}`;
+          rarity: BadgeRarityKey;
+          board: BadgeLeaderboardBoard;
+          frame: string;
+          emblem: string;
+          title: () => string;
+          info: () => string;
+          option: () => string;
+      };
 
 const RARITY_ASSETS: Record<BadgeRarityKey, { frame: string; emblem: string }> = {
     common: { frame: frameLeaderboardRarityCommon, emblem: badgeEmblemCommon },
@@ -38,30 +47,26 @@ const RARITY_ASSETS: Record<BadgeRarityKey, { frame: string; emblem: string }> =
     unique: { frame: frameLeaderboardRarityUnique, emblem: badgeEmblemUnique }
 };
 
-const RARITY_ORDER: BadgeRarityKey[] = [ 'common', 'rare', 'epic', 'legendary', 'mythical', 'unique' ];
+const RARITY_ORDER: BadgeRarityKey[] = ['common', 'rare', 'epic', 'legendary', 'mythical', 'unique'];
 const PAGE_SIZE = 10;
 
-export const BadgeLeaderboardView: FC<{}> = props =>
-{
-    const [ isVisible, setIsVisible ] = useState(false);
-    const [ isLoading, setIsLoading ] = useState(false);
-    const [ loadError, setLoadError ] = useState<string>(null);
-    const [ version, setVersion ] = useState(0);
-    const [ categoryIndex, setCategoryIndex ] = useState(0);
-    const [ entryPageIndex, setEntryPageIndex ] = useState(0);
-    const [ isCategoryMenuVisible, setIsCategoryMenuVisible ] = useState(false);
+export const BadgeLeaderboardView: FC<{}> = (props) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadError, setLoadError] = useState<string>(null);
+    const [version, setVersion] = useState(0);
+    const [categoryIndex, setCategoryIndex] = useState(0);
+    const [entryPageIndex, setEntryPageIndex] = useState(0);
+    const [isCategoryMenuVisible, setIsCategoryMenuVisible] = useState(false);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -69,10 +74,10 @@ export const BadgeLeaderboardView: FC<{}> = props =>
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(value => !value);
+                        setIsVisible((value) => !value);
                         return;
                     case 'refresh':
-                        setVersion(value => value + 1);
+                        setVersion((value) => value + 1);
                         return;
                 }
             },
@@ -84,9 +89,8 @@ export const BadgeLeaderboardView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    useEffect(() =>
-    {
-        if(!isVisible) return;
+    useEffect(() => {
+        if (!isVisible) return;
 
         let cancelled = false;
 
@@ -94,28 +98,27 @@ export const BadgeLeaderboardView: FC<{}> = props =>
         setLoadError(null);
 
         fetchBadgeLeaderboard(version > 0)
-            .then(() =>
-            {
-                if(cancelled) return;
+            .then(() => {
+                if (cancelled) return;
 
                 setIsLoading(false);
             })
-            .catch(error =>
-            {
-                if(cancelled) return;
+            .catch((error) => {
+                if (cancelled) return;
 
                 setLoadError(String((error as Error)?.message || error));
                 setIsLoading(false);
             });
 
-        return () => { cancelled = true; };
-    }, [ isVisible, version ]);
+        return () => {
+            cancelled = true;
+        };
+    }, [isVisible, version]);
 
     const leaderboard = getCachedBadgeLeaderboard();
 
-    const pages = useMemo<LeaderboardPage[]>(() =>
-    {
-        if(!leaderboard) return [];
+    const pages = useMemo<LeaderboardPage[]>(() => {
+        if (!leaderboard) return [];
 
         const built: LeaderboardPage[] = [
             {
@@ -138,63 +141,59 @@ export const BadgeLeaderboardView: FC<{}> = props =>
             }
         ];
 
-        for(const rarity of RARITY_ORDER)
-        {
+        for (const rarity of RARITY_ORDER) {
             const board = leaderboard.leaderboards.rarity?.[rarity];
 
-            if(!board?.totalPlayers) continue;
+            if (!board?.totalPlayers) continue;
 
             const assets = RARITY_ASSETS[rarity];
-            const rarityText = LocalizeText(`badge.rarity.${ rarity }`);
+            const rarityText = LocalizeText(`badge.rarity.${rarity}`);
 
             built.push({
-                key: `rarity-${ rarity }`,
+                key: `rarity-${rarity}`,
                 rarity,
                 board,
                 frame: assets.frame,
                 emblem: assets.emblem,
-                title: () => LocalizeText('badge_leaderboard.title.rarity', [ 'rarity' ], [ rarityText ]),
-                info: () => LocalizeText(`badge_leaderboard.info.rarity.${ rarity }`),
-                option: () => LocalizeText('badge_leaderboard.option.rarity', [ 'rarity' ], [ rarityText ])
+                title: () => LocalizeText('badge_leaderboard.title.rarity', ['rarity'], [rarityText]),
+                info: () => LocalizeText(`badge_leaderboard.info.rarity.${rarity}`),
+                option: () => LocalizeText('badge_leaderboard.option.rarity', ['rarity'], [rarityText])
             });
         }
 
         return built;
-    }, [ leaderboard ]);
+    }, [leaderboard]);
 
-    useEffect(() =>
-    {
-        if(!pages.length) return;
-        if(categoryIndex < pages.length) return;
+    useEffect(() => {
+        if (!pages.length) return;
+        if (categoryIndex < pages.length) return;
 
         setCategoryIndex(0);
-    }, [ categoryIndex, pages.length ]);
+    }, [categoryIndex, pages.length]);
 
-    useEffect(() => setEntryPageIndex(0), [ categoryIndex ]);
+    useEffect(() => setEntryPageIndex(0), [categoryIndex]);
 
-    useEffect(() =>
-    {
-        if(!isCategoryMenuVisible) return;
+    useEffect(() => {
+        if (!isCategoryMenuVisible) return;
 
         const onWindowPointerDown = () => setIsCategoryMenuVisible(false);
 
         window.addEventListener('pointerdown', onWindowPointerDown);
 
         return () => window.removeEventListener('pointerdown', onWindowPointerDown);
-    }, [ isCategoryMenuVisible ]);
+    }, [isCategoryMenuVisible]);
 
     const currentPage = pages[categoryIndex] || null;
     const allEntries = currentPage?.board?.entries || [];
-    const viewerEntry = useMemo(() =>
-    {
+    const viewerEntry = useMemo(() => {
         const fromBoard = currentPage?.board?.viewerEntry as BadgeLeaderboardEntry;
 
-        if(fromBoard?.userId) return fromBoard;
-        if(!leaderboard?.viewerUserId) return null;
+        if (fromBoard?.userId) return fromBoard;
+        if (!leaderboard?.viewerUserId) return null;
 
         const session = GetSessionDataManager();
 
-        if(!session || session.userId !== leaderboard.viewerUserId) return null;
+        if (!session || session.userId !== leaderboard.viewerUserId) return null;
 
         return {
             userId: session.userId,
@@ -203,15 +202,14 @@ export const BadgeLeaderboardView: FC<{}> = props =>
             score: 0,
             rank: 0
         } as BadgeLeaderboardEntry;
-    }, [ currentPage?.board?.viewerEntry, leaderboard?.viewerUserId ]);
-    const rankedEntries = useMemo(() =>
-    {
-        if(!allEntries.length) return [];
-        if(!viewerEntry?.userId) return allEntries;
+    }, [currentPage?.board?.viewerEntry, leaderboard?.viewerUserId]);
+    const rankedEntries = useMemo(() => {
+        if (!allEntries.length) return [];
+        if (!viewerEntry?.userId) return allEntries;
 
-        return allEntries.filter(entry => entry.userId !== viewerEntry.userId);
-    }, [ allEntries, viewerEntry?.userId ]);
-    const viewerHasRankedScore = ((viewerEntry?.rank || 0) > 0);
+        return allEntries.filter((entry) => entry.userId !== viewerEntry.userId);
+    }, [allEntries, viewerEntry?.userId]);
+    const viewerHasRankedScore = (viewerEntry?.rank || 0) > 0;
     const rankedTotalPlayers = Math.max((currentPage?.board?.totalPlayers || 0) - (viewerHasRankedScore ? 1 : 0), rankedEntries.length);
     const totalEntryPages = Math.max(1, Math.ceil(rankedTotalPlayers / PAGE_SIZE));
     const clampedEntryPageIndex = Math.min(entryPageIndex, totalEntryPages - 1);
@@ -219,64 +217,110 @@ export const BadgeLeaderboardView: FC<{}> = props =>
     const pageEntries = rankedEntries.slice(pageStart, pageStart + PAGE_SIZE);
     const showViewerEntry = !!viewerEntry?.userId;
 
-    if(!isVisible) return null;
+    if (!isVisible) return null;
 
     return (
         <div className="nitro-badge-leaderboard fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
-            <DraggableWindow uniqueKey="badge-leaderboard" handleSelector=".nitro-badge-leaderboard__drag-handle" windowPosition={ DraggableWindowPosition.CENTER }>
-                <div className="nitro-badge-leaderboard__window pointer-events-auto" style={ { '--badge-leaderboard-frame': `url(${ currentPage?.frame || frameLeaderboardTotal })` } as CSSProperties }>
+            <DraggableWindow
+                uniqueKey="badge-leaderboard"
+                handleSelector=".nitro-badge-leaderboard__drag-handle"
+                windowPosition={DraggableWindowPosition.CENTER}
+            >
+                <div
+                    className="nitro-badge-leaderboard__window pointer-events-auto"
+                    style={{ '--badge-leaderboard-frame': `url(${currentPage?.frame || frameLeaderboardTotal})` } as CSSProperties}
+                >
                     <div className="nitro-badge-leaderboard__frame" aria-hidden="true" />
                     <div className="nitro-badge-leaderboard__drag-handle" />
-                    <button className="nitro-badge-leaderboard__close" type="button" onPointerDown={ event => event.stopPropagation() } onClick={ () => setIsVisible(false) } aria-label="Close">
-                        <span className="nitro-badge-leaderboard__close-icon" style={ { backgroundImage: `url(${ leaderboardButtonCloseSwf })` } } />
+                    <button
+                        className="nitro-badge-leaderboard__close"
+                        type="button"
+                        onPointerDown={(event) => event.stopPropagation()}
+                        onClick={() => setIsVisible(false)}
+                        aria-label="Close"
+                    >
+                        <span className="nitro-badge-leaderboard__close-icon" style={{ backgroundImage: `url(${leaderboardButtonCloseSwf})` }} />
                     </button>
                     <div className="nitro-badge-leaderboard__header">
-                        <button className="nitro-badge-leaderboard__category-button" type="button" onPointerDown={ event => event.stopPropagation() } onClick={ () => setIsCategoryMenuVisible(value => !value) }>
-                            <Text className="nitro-badge-leaderboard__header-title">{ currentPage?.title() || LocalizeText('badge_leaderboard.title.total_badges') }</Text>
-                            <img className="nitro-badge-leaderboard__header-arrow" src={ leaderboardDropdownOpener } alt="" />
+                        <button
+                            className="nitro-badge-leaderboard__category-button"
+                            type="button"
+                            onPointerDown={(event) => event.stopPropagation()}
+                            onClick={() => setIsCategoryMenuVisible((value) => !value)}
+                        >
+                            <Text className="nitro-badge-leaderboard__header-title">
+                                {currentPage?.title() || LocalizeText('badge_leaderboard.title.total_badges')}
+                            </Text>
+                            <img className="nitro-badge-leaderboard__header-arrow" src={leaderboardDropdownOpener} alt="" />
                         </button>
-                        { isCategoryMenuVisible &&
-                            <div className="nitro-badge-leaderboard__category-menu" onPointerDown={ event => event.stopPropagation() }>
-                                { pages.map((page, index) => (
-                                    <button key={ page.key } className={ `nitro-badge-leaderboard__category-option ${ index === categoryIndex ? 'is-active' : '' }` } type="button" onClick={ () => { setCategoryIndex(index); setIsCategoryMenuVisible(false); } }>
-                                        { page.option() }
+                        {isCategoryMenuVisible && (
+                            <div className="nitro-badge-leaderboard__category-menu" onPointerDown={(event) => event.stopPropagation()}>
+                                {pages.map((page, index) => (
+                                    <button
+                                        key={page.key}
+                                        className={`nitro-badge-leaderboard__category-option ${index === categoryIndex ? 'is-active' : ''}`}
+                                        type="button"
+                                        onClick={() => {
+                                            setCategoryIndex(index);
+                                            setIsCategoryMenuVisible(false);
+                                        }}
+                                    >
+                                        {page.option()}
                                     </button>
-                                )) }
-                            </div> }
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <div className="nitro-badge-leaderboard__content">
-                        { isLoading && !leaderboard &&
-                            <div className="nitro-badge-leaderboard__state">
-                                { LocalizeText('generic.loading') }
-                            </div> }
-                        { loadError && !leaderboard &&
-                            <div className="nitro-badge-leaderboard__state nitro-badge-leaderboard__state--error">
-                                { loadError }
-                            </div> }
-                        { currentPage &&
+                        {isLoading && !leaderboard && <div className="nitro-badge-leaderboard__state">{LocalizeText('generic.loading')}</div>}
+                        {loadError && !leaderboard && <div className="nitro-badge-leaderboard__state nitro-badge-leaderboard__state--error">{loadError}</div>}
+                        {currentPage && (
                             <>
                                 <div className="nitro-badge-leaderboard__info-card">
-                                    <img className="nitro-badge-leaderboard__info-icon" src={ currentPage.emblem } alt="" />
-                                    <Text className="nitro-badge-leaderboard__info-text" small wrap>{ currentPage.info() }</Text>
+                                    <img className="nitro-badge-leaderboard__info-icon" src={currentPage.emblem} alt="" />
+                                    <Text className="nitro-badge-leaderboard__info-text" small wrap>
+                                        {currentPage.info()}
+                                    </Text>
                                 </div>
                                 <div className="nitro-badge-leaderboard__list">
-                                    { pageEntries.map((entry, index) => <LeaderboardRow key={ `${ currentPage.key }-${ entry.userId }` } entry={ entry } emblem={ currentPage.emblem } rowIndex={ pageStart + index } isCurrentUser={ false } />) }
-                                    { showViewerEntry && <LeaderboardRow entry={ viewerEntry } emblem={ currentPage.emblem } rowIndex={ pageEntries.length } isCurrentUser={ true } />}
+                                    {pageEntries.map((entry, index) => (
+                                        <LeaderboardRow
+                                            key={`${currentPage.key}-${entry.userId}`}
+                                            entry={entry}
+                                            emblem={currentPage.emblem}
+                                            rowIndex={pageStart + index}
+                                            isCurrentUser={false}
+                                        />
+                                    ))}
+                                    {showViewerEntry && (
+                                        <LeaderboardRow entry={viewerEntry} emblem={currentPage.emblem} rowIndex={pageEntries.length} isCurrentUser={true} />
+                                    )}
                                 </div>
-                                <img className="nitro-badge-leaderboard__divider" src={ leaderboardDivider } alt="" />
+                                <img className="nitro-badge-leaderboard__divider" src={leaderboardDivider} alt="" />
                                 <Flex className="nitro-badge-leaderboard__footer" justifyContent="between" alignItems="center">
-                                    <button className="nitro-badge-leaderboard__nav-button is-previous" disabled={ clampedEntryPageIndex <= 0 } onClick={ () => setEntryPageIndex(value => Math.max(0, value - 1)) }>
-                                        { LocalizeText('badge_leaderboard.previous') }
+                                    <button
+                                        className="nitro-badge-leaderboard__nav-button is-previous"
+                                        disabled={clampedEntryPageIndex <= 0}
+                                        onClick={() => setEntryPageIndex((value) => Math.max(0, value - 1))}
+                                    >
+                                        {LocalizeText('badge_leaderboard.previous')}
                                     </button>
-                                    <Column gap={ 0 } alignItems="center">
-                                        <Text small bold>{ currentPage.option() }</Text>
-                                        <Text className="opacity-70" small>{ `${ clampedEntryPageIndex + 1 } / ${ totalEntryPages }` }</Text>
+                                    <Column gap={0} alignItems="center">
+                                        <Text small bold>
+                                            {currentPage.option()}
+                                        </Text>
+                                        <Text className="opacity-70" small>{`${clampedEntryPageIndex + 1} / ${totalEntryPages}`}</Text>
                                     </Column>
-                                    <button className="nitro-badge-leaderboard__nav-button is-next" disabled={ clampedEntryPageIndex >= (totalEntryPages - 1) } onClick={ () => setEntryPageIndex(value => Math.min(totalEntryPages - 1, value + 1)) }>
-                                        { LocalizeText('badge_leaderboard.next') }
+                                    <button
+                                        className="nitro-badge-leaderboard__nav-button is-next"
+                                        disabled={clampedEntryPageIndex >= totalEntryPages - 1}
+                                        onClick={() => setEntryPageIndex((value) => Math.min(totalEntryPages - 1, value + 1))}
+                                    >
+                                        {LocalizeText('badge_leaderboard.next')}
                                     </button>
                                 </Flex>
-                            </> }
+                            </>
+                        )}
                     </div>
                 </div>
             </DraggableWindow>
@@ -284,31 +328,33 @@ export const BadgeLeaderboardView: FC<{}> = props =>
     );
 };
 
-interface LeaderboardRowProps
-{
+interface LeaderboardRowProps {
     entry: BadgeLeaderboardEntry;
     emblem: string;
     rowIndex?: number;
     isCurrentUser?: boolean;
 }
 
-const LeaderboardRow: FC<LeaderboardRowProps> = props =>
-{
+const LeaderboardRow: FC<LeaderboardRowProps> = (props) => {
     const { entry = null, emblem = null, rowIndex = 0, isCurrentUser = false } = props;
 
-    if(!entry) return null;
+    if (!entry) return null;
 
-    const rankClassName = ((entry.rank === 1) ? 'is-rank-1' : ((entry.rank === 2) ? 'is-rank-2' : ((entry.rank === 3) ? 'is-rank-3' : '')));
+    const rankClassName = entry.rank === 1 ? 'is-rank-1' : entry.rank === 2 ? 'is-rank-2' : entry.rank === 3 ? 'is-rank-3' : '';
 
     return (
-        <div className={ `nitro-badge-leaderboard__row ${ isCurrentUser ? 'is-current-user' : '' } ${ ((rowIndex % 2) === 0) ? 'is-even' : 'is-odd' }` }>
-            <div className={ `nitro-badge-leaderboard__rank ${ rankClassName }` }>{ entry.rank }</div>
+        <div className={`nitro-badge-leaderboard__row ${isCurrentUser ? 'is-current-user' : ''} ${rowIndex % 2 === 0 ? 'is-even' : 'is-odd'}`}>
+            <div className={`nitro-badge-leaderboard__rank ${rankClassName}`}>{entry.rank}</div>
             <div className="nitro-badge-leaderboard__avatar">
-                <LayoutAvatarImageView figure={ entry.figure } headOnly direction={ 2 } />
+                <LayoutAvatarImageView figure={entry.figure} headOnly direction={2} />
             </div>
-            <Text className="nitro-badge-leaderboard__username" bold>{ entry.username }</Text>
-            <Text className="nitro-badge-leaderboard__score" bold>{ entry.score }</Text>
-            <img className="nitro-badge-leaderboard__row-emblem" src={ emblem } alt="" />
+            <Text className="nitro-badge-leaderboard__username" bold>
+                {entry.username}
+            </Text>
+            <Text className="nitro-badge-leaderboard__score" bold>
+                {entry.score}
+            </Text>
+            <img className="nitro-badge-leaderboard__row-emblem" src={emblem} alt="" />
         </div>
     );
 };

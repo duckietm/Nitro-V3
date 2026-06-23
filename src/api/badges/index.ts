@@ -1,2 +1,2 @@
-export * from './CustomBadgeApi';
 export * from './BadgeLeaderboardApi';
+export * from './CustomBadgeApi';

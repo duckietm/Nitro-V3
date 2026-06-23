@@ -1,18 +1,36 @@
-import { CallForHelpDisabledNotifyMessageEvent, CallForHelpPendingCallsDeletedMessageEvent, CallForHelpPendingCallsMessageEvent, CallForHelpReplyMessageEvent, CallForHelpResultMessageEvent, DeletePendingCallsForHelpMessageComposer, GetPendingCallsForHelpMessageComposer, IssueCloseNotificationMessageEvent, SanctionStatusEvent, SanctionStatusMessageParser } from '@nitrots/nitro-renderer';
+import {
+    CallForHelpDisabledNotifyMessageEvent,
+    CallForHelpPendingCallsDeletedMessageEvent,
+    CallForHelpPendingCallsMessageEvent,
+    CallForHelpReplyMessageEvent,
+    CallForHelpResultMessageEvent,
+    DeletePendingCallsForHelpMessageComposer,
+    GetPendingCallsForHelpMessageComposer,
+    IssueCloseNotificationMessageEvent,
+    SanctionStatusEvent,
+    SanctionStatusMessageParser
+} from '@nitrots/nitro-renderer';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
-import { CallForHelpResult, GetCloseReasonKey, IHelpReport, LocalizeText, NotificationAlertType, ReportState, ReportType, SendMessageComposer } from '../../api';
+import {
+    CallForHelpResult,
+    GetCloseReasonKey,
+    IHelpReport,
+    LocalizeText,
+    NotificationAlertType,
+    ReportState,
+    ReportType,
+    SendMessageComposer
+} from '../../api';
 import { useMessageEvent } from '../events';
 import { useNotification } from '../notification';
 
-const useHelpState = () =>
-{
-    const [ activeReport, setActiveReport ] = useState<IHelpReport>(null);
-    const [ sanctionInfo, setSanctionInfo ] = useState<SanctionStatusMessageParser>(null);
+const useHelpState = () => {
+    const [activeReport, setActiveReport] = useState<IHelpReport>(null);
+    const [sanctionInfo, setSanctionInfo] = useState<SanctionStatusMessageParser>(null);
     const { simpleAlert = null, showConfirm = null } = useNotification();
 
-    const report = (type: number, options: Partial<IHelpReport>) =>
-    {
+    const report = (type: number, options: Partial<IHelpReport>) => {
         const newReport: IHelpReport = {
             reportType: type,
             reportedUserId: -1,
@@ -30,8 +48,7 @@ const useHelpState = () =>
             currentStep: 0
         };
 
-        switch(type)
-        {
+        switch (type) {
             case ReportType.BULLY:
             case ReportType.EMERGENCY:
             case ReportType.IM:
@@ -68,14 +85,12 @@ const useHelpState = () =>
         setActiveReport(newReport);
     };
 
-    useMessageEvent<CallForHelpResultMessageEvent>(CallForHelpResultMessageEvent, event =>
-    {
+    useMessageEvent<CallForHelpResultMessageEvent>(CallForHelpResultMessageEvent, (event) => {
         const parser = event.getParser();
 
         let message = parser.messageText;
 
-        switch(parser.resultType)
-        {
+        switch (parser.resultType) {
             case CallForHelpResult.TOO_MANY_PENDING_CALLS_CODE:
                 SendMessageComposer(new GetPendingCallsForHelpMessageComposer());
                 simpleAlert(LocalizeText('help.cfh.error.pending'), NotificationAlertType.MODERATION, null, null, LocalizeText('help.cfh.error.title'));
@@ -84,8 +99,7 @@ const useHelpState = () =>
                 simpleAlert(LocalizeText('help.cfh.error.abusive'), NotificationAlertType.MODERATION, null, null, LocalizeText('help.cfh.error.title'));
                 break;
             default:
-                if(message.trim().length === 0)
-                {
+                if (message.trim().length === 0) {
                     message = LocalizeText('help.cfh.sent.text');
                 }
 
@@ -93,8 +107,7 @@ const useHelpState = () =>
         }
     });
 
-    useMessageEvent<IssueCloseNotificationMessageEvent>(IssueCloseNotificationMessageEvent, event =>
-    {
+    useMessageEvent<IssueCloseNotificationMessageEvent>(IssueCloseNotificationMessageEvent, (event) => {
         const parser = event.getParser();
 
         const message = parser.messageText.length === 0 ? LocalizeText('help.cfh.closed.' + GetCloseReasonKey(parser.closeReason)) : parser.messageText;
@@ -102,42 +115,48 @@ const useHelpState = () =>
         simpleAlert(message, NotificationAlertType.MODERATION, null, null, LocalizeText('mod.alert.title'));
     });
 
-    useMessageEvent<CallForHelpPendingCallsMessageEvent>(CallForHelpPendingCallsMessageEvent, event =>
-    {
+    useMessageEvent<CallForHelpPendingCallsMessageEvent>(CallForHelpPendingCallsMessageEvent, (event) => {
         const parser = event.getParser();
 
-        if(parser.count > 0)
-        {
-            showConfirm(LocalizeText('help.emergency.pending.title') + '\n' + parser.pendingCalls[0].message, () =>
-            {
-                SendMessageComposer(new DeletePendingCallsForHelpMessageComposer());
-            }, null, LocalizeText('help.emergency.pending.button.discard'), LocalizeText('help.emergency.pending.button.keep'), LocalizeText('help.emergency.pending.message.subtitle'));
+        if (parser.count > 0) {
+            showConfirm(
+                LocalizeText('help.emergency.pending.title') + '\n' + parser.pendingCalls[0].message,
+                () => {
+                    SendMessageComposer(new DeletePendingCallsForHelpMessageComposer());
+                },
+                null,
+                LocalizeText('help.emergency.pending.button.discard'),
+                LocalizeText('help.emergency.pending.button.keep'),
+                LocalizeText('help.emergency.pending.message.subtitle')
+            );
         }
     });
 
-    useMessageEvent<CallForHelpPendingCallsDeletedMessageEvent>(CallForHelpPendingCallsDeletedMessageEvent, event =>
-    {
+    useMessageEvent<CallForHelpPendingCallsDeletedMessageEvent>(CallForHelpPendingCallsDeletedMessageEvent, (event) => {
         const message = 'Your pending calls were deleted'; // todo: add localization
 
         simpleAlert(message, NotificationAlertType.MODERATION, null, null, LocalizeText('mod.alert.title'));
     });
 
-    useMessageEvent<CallForHelpReplyMessageEvent>(CallForHelpReplyMessageEvent, event =>
-    {
+    useMessageEvent<CallForHelpReplyMessageEvent>(CallForHelpReplyMessageEvent, (event) => {
         const parser = event.getParser();
 
         simpleAlert(parser.message, NotificationAlertType.MODERATION, null, null, LocalizeText('help.cfh.reply.title'));
     });
 
-    useMessageEvent<CallForHelpDisabledNotifyMessageEvent>(CallForHelpDisabledNotifyMessageEvent, event =>
-    {
+    useMessageEvent<CallForHelpDisabledNotifyMessageEvent>(CallForHelpDisabledNotifyMessageEvent, (event) => {
         const parser = event.getParser();
 
-        simpleAlert(LocalizeText('help.emergency.global_mute.message'), NotificationAlertType.MODERATION, parser.infoUrl, LocalizeText('help.emergency.global_mute.link'), LocalizeText('help.emergency.global_mute.subtitle'));
+        simpleAlert(
+            LocalizeText('help.emergency.global_mute.message'),
+            NotificationAlertType.MODERATION,
+            parser.infoUrl,
+            LocalizeText('help.emergency.global_mute.link'),
+            LocalizeText('help.emergency.global_mute.subtitle')
+        );
     });
 
-    useMessageEvent<SanctionStatusEvent>(SanctionStatusEvent, event =>
-    {
+    useMessageEvent<SanctionStatusEvent>(SanctionStatusEvent, (event) => {
         const parser = event.getParser();
 
         setSanctionInfo(parser);

@@ -10,23 +10,19 @@ type EmojiPickerProps = Record<string, unknown>;
  * of first paint. Drop-in for `<Picker data={data} … />` (the `data` prop is
  * injected here; forward every other prop unchanged).
  */
-const PickerWithData = lazy(async () =>
-{
-    const [ dataModule, pickerModule ] = await Promise.all([
-        import('@emoji-mart/data'),
-        import('@emoji-mart/react')
-    ]);
+const PickerWithData = lazy(async () => {
+    const [dataModule, pickerModule] = await Promise.all([import('@emoji-mart/data'), import('@emoji-mart/react')]);
 
     const data = (dataModule as { default: unknown }).default;
     const Picker = (pickerModule as { default: ComponentType<EmojiPickerProps> }).default;
 
-    const Wrapped: ComponentType<EmojiPickerProps> = props => <Picker data={ data } { ...props } />;
+    const Wrapped: ComponentType<EmojiPickerProps> = (props) => <Picker data={data} {...props} />;
 
     return { default: Wrapped };
 });
 
-export const LazyEmojiPicker: FC<EmojiPickerProps> = props => (
-    <Suspense fallback={ <div className="px-2 py-1 text-[11px] text-white/60">…</div> }>
-        <PickerWithData { ...props } />
+export const LazyEmojiPicker: FC<EmojiPickerProps> = (props) => (
+    <Suspense fallback={<div className="px-2 py-1 text-[11px] text-white/60">…</div>}>
+        <PickerWithData {...props} />
     </Suspense>
 );

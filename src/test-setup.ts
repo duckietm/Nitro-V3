@@ -9,24 +9,18 @@ document.body.appendChild(draggableWindowsContainer);
 // any component that resizes a canvas to its container) constructs
 // one at mount. A no-op stub is enough — the tests never assert
 // resize-driven behavior, they just need the constructor to exist.
-if(typeof globalThis.ResizeObserver === 'undefined')
-{
-    class ResizeObserverStub
-    {
-        constructor(_callback: unknown)
-        {
+if (typeof globalThis.ResizeObserver === 'undefined') {
+    class ResizeObserverStub {
+        constructor(_callback: unknown) {
             // no-op
         }
-        public observe(): void
-        {
+        public observe(): void {
             // no-op
         }
-        public unobserve(): void
-        {
+        public unobserve(): void {
             // no-op
         }
-        public disconnect(): void
-        {
+        public disconnect(): void {
             // no-op
         }
     }

@@ -16,45 +16,64 @@ const USER_SOURCES: WiredSourceOption[] = [
     { value: 201, label: 'wiredfurni.params.sources.users.201' }
 ];
 
-const normalizeCarryMode = (value: number) => ((value === CARRY_MODE_SAME_TILE) ? CARRY_MODE_SAME_TILE : CARRY_MODE_DIRECT);
-const normalizeUserSource = (value: number) => (USER_SOURCES.some(option => option.value === value) ? value : 0);
+const normalizeCarryMode = (value: number) => (value === CARRY_MODE_SAME_TILE ? CARRY_MODE_SAME_TILE : CARRY_MODE_DIRECT);
+const normalizeUserSource = (value: number) => (USER_SOURCES.some((option) => option.value === value) ? value : 0);
 
-export const WiredExtraMoveCarryUsersView: FC<{}> = () =>
-{
+export const WiredExtraMoveCarryUsersView: FC<{}> = () => {
     const { trigger = null, setIntParams = null, setStringParam = null } = useWired();
-    const [ carryMode, setCarryMode ] = useState(CARRY_MODE_DIRECT);
-    const [ userSource, setUserSource ] = useState(0);
+    const [carryMode, setCarryMode] = useState(CARRY_MODE_DIRECT);
+    const [userSource, setUserSource] = useState(0);
 
-    useEffect(() =>
-    {
-        if(!trigger) return;
+    useEffect(() => {
+        if (!trigger) return;
 
-        setCarryMode(normalizeCarryMode((trigger.intData.length > 0) ? trigger.intData[0] : CARRY_MODE_DIRECT));
-        setUserSource(normalizeUserSource((trigger.intData.length > 1) ? trigger.intData[1] : 0));
-    }, [ trigger ]);
+        setCarryMode(normalizeCarryMode(trigger.intData.length > 0 ? trigger.intData[0] : CARRY_MODE_DIRECT));
+        setUserSource(normalizeUserSource(trigger.intData.length > 1 ? trigger.intData[1] : 0));
+    }, [trigger]);
 
-    const save = () =>
-    {
-        setIntParams([ normalizeCarryMode(carryMode), normalizeUserSource(userSource) ]);
+    const save = () => {
+        setIntParams([normalizeCarryMode(carryMode), normalizeUserSource(userSource)]);
         setStringParam('');
     };
 
     return (
         <WiredExtraBaseView
-            hasSpecialInput={ true }
-            requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE }
-            save={ save }
-            cardStyle={ { width: 420 } }
-            footer={ <WiredSourcesSelector showUsers={ true } userSource={ userSource } userSources={ USER_SOURCES } usersTitle="wiredfurni.params.sources.users.title.carry" allowClickedUserSource={ false } onChangeUsers={ value => setUserSource(normalizeUserSource(value)) } /> }>
+            hasSpecialInput={true}
+            requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE}
+            save={save}
+            cardStyle={{ width: 420 }}
+            footer={
+                <WiredSourcesSelector
+                    showUsers={true}
+                    userSource={userSource}
+                    userSources={USER_SOURCES}
+                    usersTitle="wiredfurni.params.sources.users.title.carry"
+                    allowClickedUserSource={false}
+                    onChangeUsers={(value) => setUserSource(normalizeUserSource(value))}
+                />
+            }
+        >
             <div className="flex flex-col gap-2">
-                <Text bold>{ LocalizeText('wiredfurni.params.carry_mode') }</Text>
+                <Text bold>{LocalizeText('wiredfurni.params.carry_mode')}</Text>
                 <label className="flex items-center gap-1 cursor-pointer">
-                    <input checked={ (carryMode === CARRY_MODE_DIRECT) } className="form-check-input" name="wiredCarryMode" type="radio" onChange={ () => setCarryMode(CARRY_MODE_DIRECT) } />
-                    <Text>{ LocalizeText('wiredfurni.params.carry_mode.0') }</Text>
+                    <input
+                        checked={carryMode === CARRY_MODE_DIRECT}
+                        className="form-check-input"
+                        name="wiredCarryMode"
+                        type="radio"
+                        onChange={() => setCarryMode(CARRY_MODE_DIRECT)}
+                    />
+                    <Text>{LocalizeText('wiredfurni.params.carry_mode.0')}</Text>
                 </label>
                 <label className="flex items-center gap-1 cursor-pointer">
-                    <input checked={ (carryMode === CARRY_MODE_SAME_TILE) } className="form-check-input" name="wiredCarryMode" type="radio" onChange={ () => setCarryMode(CARRY_MODE_SAME_TILE) } />
-                    <Text>{ LocalizeText('wiredfurni.params.carry_mode.1') }</Text>
+                    <input
+                        checked={carryMode === CARRY_MODE_SAME_TILE}
+                        className="form-check-input"
+                        name="wiredCarryMode"
+                        type="radio"
+                        onChange={() => setCarryMode(CARRY_MODE_SAME_TILE)}
+                    />
+                    <Text>{LocalizeText('wiredfurni.params.carry_mode.1')}</Text>
                 </label>
             </div>
         </WiredExtraBaseView>

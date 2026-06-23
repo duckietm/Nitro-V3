@@ -2,22 +2,29 @@ import { RelationshipStatusEnum, RelationshipStatusInfoMessageParser } from '@ni
 import { FC } from 'react';
 import { InfoStandWidgetUserRelationshipsRelationshipItemView } from './InfoStandWidgetUserRelationshipItemView';
 
-interface InfoStandWidgetUserRelationshipsViewProps
-{
+interface InfoStandWidgetUserRelationshipsViewProps {
     relationships: RelationshipStatusInfoMessageParser;
 }
 
-export const InfoStandWidgetUserRelationshipsView: FC<InfoStandWidgetUserRelationshipsViewProps> = props =>
-{
+export const InfoStandWidgetUserRelationshipsView: FC<InfoStandWidgetUserRelationshipsViewProps> = (props) => {
     const { relationships = null } = props;
 
-    if(!relationships || !relationships.relationshipStatusMap.length) return null;
+    if (!relationships || !relationships.relationshipStatusMap.length) return null;
 
     return (
         <>
-            <InfoStandWidgetUserRelationshipsRelationshipItemView relationship={ relationships.relationshipStatusMap.getValue(RelationshipStatusEnum.HEART) } type={ RelationshipStatusEnum.HEART } />
-            <InfoStandWidgetUserRelationshipsRelationshipItemView relationship={ relationships.relationshipStatusMap.getValue(RelationshipStatusEnum.SMILE) } type={ RelationshipStatusEnum.SMILE } />
-            <InfoStandWidgetUserRelationshipsRelationshipItemView relationship={ relationships.relationshipStatusMap.getValue(RelationshipStatusEnum.BOBBA) } type={ RelationshipStatusEnum.BOBBA } />
+            <InfoStandWidgetUserRelationshipsRelationshipItemView
+                relationship={relationships.relationshipStatusMap.getValue(RelationshipStatusEnum.HEART)}
+                type={RelationshipStatusEnum.HEART}
+            />
+            <InfoStandWidgetUserRelationshipsRelationshipItemView
+                relationship={relationships.relationshipStatusMap.getValue(RelationshipStatusEnum.SMILE)}
+                type={RelationshipStatusEnum.SMILE}
+            />
+            <InfoStandWidgetUserRelationshipsRelationshipItemView
+                relationship={relationships.relationshipStatusMap.getValue(RelationshipStatusEnum.BOBBA)}
+                type={RelationshipStatusEnum.BOBBA}
+            />
         </>
     );
 };

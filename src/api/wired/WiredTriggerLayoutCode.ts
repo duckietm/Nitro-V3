@@ -1,5 +1,4 @@
-export class WiredTriggerLayout
-{
+export class WiredTriggerLayout {
     public static AVATAR_SAYS_SOMETHING: number = 0;
     public static AVATAR_WALKS_ON_FURNI: number = 1;
     public static AVATAR_WALKS_OFF_FURNI: number = 2;

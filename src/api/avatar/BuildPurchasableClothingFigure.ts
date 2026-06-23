@@ -1,22 +1,20 @@
 import { AvatarFigureContainer, GetAvatarRenderManager, IFigurePartSet } from '@nitrots/nitro-renderer';
 
-const getFirstSelectableColorForSetType = (setType: string): number =>
-{
+const getFirstSelectableColorForSetType = (setType: string): number => {
     const structure = GetAvatarRenderManager()?.structureData;
 
-    if(!structure) return -1;
+    if (!structure) return -1;
 
     const set = structure.getSetType(setType);
 
-    if(!set) return -1;
+    if (!set) return -1;
 
     const palette = structure.getPalette(set.paletteID);
 
-    if(!palette) return -1;
+    if (!palette) return -1;
 
-    for(const color of palette.colors.getValues())
-    {
-        if(!color || !color.isSelectable) continue;
+    for (const color of palette.colors.getValues()) {
+        if (!color || !color.isSelectable) continue;
 
         return color.id;
     }
@@ -33,28 +31,25 @@ const getFirstSelectableColorForSetType = (setType: string): number =>
  * first selectable palette colour is used so the part still renders instead of
  * being dropped.
  */
-export const BuildPurchasableClothingFigure = (baseFigure: string, setIds: number[]): string =>
-{
+export const BuildPurchasableClothingFigure = (baseFigure: string, setIds: number[]): string => {
     const manager = GetAvatarRenderManager();
 
-    if(!manager) return baseFigure;
+    if (!manager) return baseFigure;
 
     const container = new AvatarFigureContainer(baseFigure ?? '');
     const structure = manager.structureData;
 
-    for(const setId of setIds)
-    {
+    for (const setId of setIds) {
         const partSet: IFigurePartSet = structure?.getFigurePartSet(setId);
 
-        if(!partSet) continue;
+        if (!partSet) continue;
 
         let colorIds = container.getPartColorIds(partSet.type) ?? [];
 
-        if(!colorIds.length)
-        {
+        if (!colorIds.length) {
             const defaultColor = getFirstSelectableColorForSetType(partSet.type);
 
-            if(defaultColor >= 0) colorIds = [ defaultColor ];
+            if (defaultColor >= 0) colorIds = [defaultColor];
         }
 
         container.updatePart(partSet.type, partSet.id, colorIds);

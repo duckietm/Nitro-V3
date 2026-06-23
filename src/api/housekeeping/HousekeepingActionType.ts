@@ -23,7 +23,7 @@ export const HousekeepingActionType = {
     ECONOMY_HOTEL_ALERT: 'economy.hotel_alert'
 } as const;
 
-export type HousekeepingActionType = typeof HousekeepingActionType[keyof typeof HousekeepingActionType];
+export type HousekeepingActionType = (typeof HousekeepingActionType)[keyof typeof HousekeepingActionType];
 
 export const HousekeepingTabId = {
     DASHBOARD: 'dashboard',
@@ -33,4 +33,4 @@ export const HousekeepingTabId = {
     AUDIT: 'audit'
 } as const;
 
-export type HousekeepingTabId = typeof HousekeepingTabId[keyof typeof HousekeepingTabId];
+export type HousekeepingTabId = (typeof HousekeepingTabId)[keyof typeof HousekeepingTabId];

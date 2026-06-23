@@ -1,55 +1,57 @@
-import { Game2AccountGameStatusMessageEvent, Game2AccountGameStatusMessageParser, GameConfigurationData, GameListMessageEvent, GameStatusMessageEvent, GetGameListMessageComposer, LoadGameUrlEvent } from '@nitrots/nitro-renderer';
+import {
+    Game2AccountGameStatusMessageEvent,
+    Game2AccountGameStatusMessageParser,
+    GameConfigurationData,
+    GameListMessageEvent,
+    GameStatusMessageEvent,
+    GetGameListMessageComposer,
+    LoadGameUrlEvent
+} from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer, VisitDesktop } from '../../api';
 import { useMessageEvent } from '../events';
 
-const useGameCenterState = () =>
-{
-    const [ isVisible, setIsVisible ] = useState<boolean>(false);
-    const [ games, setGames ] = useState<GameConfigurationData[]>(null);
-    const [ selectedGame, setSelectedGame ] = useState<GameConfigurationData>(null);
-    const [ accountStatus, setAccountStatus ] = useState<Game2AccountGameStatusMessageParser>(null);
-    const [ gameOffline, setGameOffline ] = useState<boolean>(false);
-    const [ gameURL, setGameURL ] = useState<string>(null);
+const useGameCenterState = () => {
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [games, setGames] = useState<GameConfigurationData[]>(null);
+    const [selectedGame, setSelectedGame] = useState<GameConfigurationData>(null);
+    const [accountStatus, setAccountStatus] = useState<Game2AccountGameStatusMessageParser>(null);
+    const [gameOffline, setGameOffline] = useState<boolean>(false);
+    const [gameURL, setGameURL] = useState<string>(null);
 
-    useMessageEvent<GameListMessageEvent>(GameListMessageEvent, event =>
-    {
+    useMessageEvent<GameListMessageEvent>(GameListMessageEvent, (event) => {
         let parser = event.getParser();
 
-        if(!parser || parser && !parser.games.length) return;
+        if (!parser || (parser && !parser.games.length)) return;
 
         setSelectedGame(parser.games[0]);
 
         setGames(parser.games);
     });
 
-    useMessageEvent<Game2AccountGameStatusMessageEvent>(Game2AccountGameStatusMessageEvent, event =>
-    {
+    useMessageEvent<Game2AccountGameStatusMessageEvent>(Game2AccountGameStatusMessageEvent, (event) => {
         let parser = event.getParser();
 
-        if(!parser) return;
+        if (!parser) return;
 
         setAccountStatus(parser);
     });
 
-    useMessageEvent<GameStatusMessageEvent>(GameStatusMessageEvent, event =>
-    {
+    useMessageEvent<GameStatusMessageEvent>(GameStatusMessageEvent, (event) => {
         let parser = event.getParser();
 
-        if(!parser) return;
+        if (!parser) return;
 
         setGameOffline(parser.isInMaintenance);
     });
 
-    useMessageEvent<LoadGameUrlEvent>(LoadGameUrlEvent, event =>
-    {
+    useMessageEvent<LoadGameUrlEvent>(LoadGameUrlEvent, (event) => {
         let parser = event.getParser();
 
-        if(!parser) return;
+        if (!parser) return;
 
-        switch(parser.gameTypeId)
-        {
+        switch (parser.gameTypeId) {
             case 2:
                 return console.log('snowwar');
             default:
@@ -57,26 +59,25 @@ const useGameCenterState = () =>
         }
     });
 
-    useEffect(()=>
-    {
-        if(isVisible)
-        {
+    useEffect(() => {
+        if (isVisible) {
             SendMessageComposer(new GetGameListMessageComposer());
             VisitDesktop();
-        }
-        else
-        {
+        } else {
             // dispose or wtv
         }
-    },[ isVisible ]);
+    }, [isVisible]);
 
     return {
-        isVisible, setIsVisible,
+        isVisible,
+        setIsVisible,
         games,
         accountStatus,
-        selectedGame, setSelectedGame,
+        selectedGame,
+        setSelectedGame,
         gameOffline,
-        gameURL, setGameURL
+        gameURL,
+        setGameURL
     };
 };
 

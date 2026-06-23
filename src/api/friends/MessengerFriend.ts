@@ -1,7 +1,6 @@
 import { FriendParser } from '@nitrots/nitro-renderer';
 
-export class MessengerFriend
-{
+export class MessengerFriend {
     public static RELATIONSHIP_NONE: number = 0;
     public static RELATIONSHIP_HEART: number = 1;
     public static RELATIONSHIP_SMILE: number = 2;
@@ -23,8 +22,7 @@ export class MessengerFriend
     public relationshipStatus: number = -1;
     public unread: number = 0;
 
-    public populate(parser: FriendParser): void
-    {
+    public populate(parser: FriendParser): void {
         this.id = parser.id;
         this.name = parser.name;
         this.gender = parser.gender;

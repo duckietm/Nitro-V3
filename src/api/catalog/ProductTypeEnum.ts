@@ -1,5 +1,4 @@
-export class ProductTypeEnum
-{
+export class ProductTypeEnum {
     public static WALL: string = 'i';
     public static FLOOR: string = 's';
     public static EFFECT: string = 'e';

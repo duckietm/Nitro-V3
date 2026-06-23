@@ -20,8 +20,7 @@ export interface TextProps extends BaseProps<HTMLDivElement> {
     textBreak?: boolean;
 }
 
-export const Text: FC<TextProps> = props =>
-{
+export const Text: FC<TextProps> = (props) => {
     const {
         variant = 'black',
         fontWeight = null,
@@ -41,12 +40,10 @@ export const Text: FC<TextProps> = props =>
         ...rest
     } = props;
 
-    const getClassNames = useMemo(() =>
-    {
+    const getClassNames = useMemo(() => {
         const newClassNames: string[] = [truncate ? 'block' : 'inline'];
 
-        if (variant)
-        {
+        if (variant) {
             if (variant === 'primary') newClassNames.push('text-[#1e7295]');
             if (variant == 'secondary') newClassNames.push('text-[#185d79]');
             if (variant === 'black') newClassNames.push('text-[#000000]');
@@ -74,9 +71,9 @@ export const Text: FC<TextProps> = props =>
         if (textBreak) newClassNames.push('text-break');
 
         return newClassNames;
-    }, [ variant, fontWeight, fontSize, fontSizeCustom, align, bold, underline, italics, truncate, center, textEnd, small, wrap, noWrap, textBreak ]);
+    }, [variant, fontWeight, fontSize, fontSizeCustom, align, bold, underline, italics, truncate, center, textEnd, small, wrap, noWrap, textBreak]);
 
-    const style = fontSizeCustom ? { '--font-size': `${fontSizeCustom}px` } as React.CSSProperties : undefined;
+    const style = fontSizeCustom ? ({ '--font-size': `${fontSizeCustom}px` } as React.CSSProperties) : undefined;
 
     return <Base classNames={getClassNames} style={style} {...rest} />;
 };

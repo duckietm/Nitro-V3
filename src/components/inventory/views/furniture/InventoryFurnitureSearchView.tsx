@@ -6,24 +6,19 @@ import { NitroButton, NitroInput } from '../../../../layout';
 export const InventoryFurnitureSearchView: FC<{
     groupItems: GroupItem[];
     setGroupItems: Dispatch<SetStateAction<GroupItem[]>>;
-}> = props =>
-{
+}> = (props) => {
     const { groupItems = [], setGroupItems = null } = props;
-    const [ searchValue, setSearchValue ] = useState('');
+    const [searchValue, setSearchValue] = useState('');
 
-    useEffect(() =>
-    {
-        let filteredGroupItems = [ ...groupItems ];
+    useEffect(() => {
+        let filteredGroupItems = [...groupItems];
 
-        if(searchValue && searchValue.length)
-        {
+        if (searchValue && searchValue.length) {
             const comparison = searchValue.toLocaleLowerCase();
 
-            filteredGroupItems = groupItems.filter(item =>
-            {
-                if(comparison && comparison.length)
-                {
-                    if(item.name.toLocaleLowerCase().includes(comparison)) return item;
+            filteredGroupItems = groupItems.filter((item) => {
+                if (comparison && comparison.length) {
+                    if (item.name.toLocaleLowerCase().includes(comparison)) return item;
                 }
 
                 return null;
@@ -31,14 +26,11 @@ export const InventoryFurnitureSearchView: FC<{
         }
 
         setGroupItems(filteredGroupItems);
-    }, [ groupItems, setGroupItems, searchValue ]);
+    }, [groupItems, setGroupItems, searchValue]);
 
     return (
         <div className="flex gap-1">
-            <NitroInput
-                placeholder={ LocalizeText('generic.search') }
-                value={ searchValue }
-                onChange={ event => setSearchValue(event.target.value) } />
+            <NitroInput placeholder={LocalizeText('generic.search')} value={searchValue} onChange={(event) => setSearchValue(event.target.value)} />
             <NitroButton>
                 <FaSearch className="fa-icon" />
             </NitroButton>

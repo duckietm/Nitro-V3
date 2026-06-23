@@ -1,5 +1,4 @@
-export class TradeState
-{
+export class TradeState {
     public static TRADING_STATE_READY: number = 0;
     public static TRADING_STATE_RUNNING: number = 1;
     public static TRADING_STATE_COUNTDOWN: number = 2;

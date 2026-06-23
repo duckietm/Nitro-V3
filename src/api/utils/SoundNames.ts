@@ -1,5 +1,4 @@
-export class SoundNames
-{
+export class SoundNames {
     public static CAMERA_SHUTTER = 'camera_shutter';
     public static CREDITS = 'credits';
     public static DUCKETS = 'duckets';

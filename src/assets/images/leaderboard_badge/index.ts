@@ -23,8 +23,8 @@ export { default as frameLeaderboardRarityUnique } from './frame_leaderboard_rar
 export { default as frameLeaderboardTotal } from './frame_leaderboard_total.png';
 export { default as leaderboardBadgesWhite } from './leaderboard_badges_white.png';
 export { default as leaderboardButtonCloseSwf } from './leaderboard_button_close_swf.png';
-export { default as leaderboardDropdownOpener } from './leaderboard_dropdown_opener.png';
 export { default as leaderboardDivider } from './leaderboard_divider.png';
+export { default as leaderboardDropdownOpener } from './leaderboard_dropdown_opener.png';
 export { default as leaderboardEntryEven } from './leaderboard_entry_even.png';
 export { default as leaderboardEntrySelf } from './leaderboard_entry_self.png';
 export { default as leaderboardEntryUneven } from './leaderboard_entry_uneven.png';

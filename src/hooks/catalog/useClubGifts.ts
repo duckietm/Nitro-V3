@@ -2,7 +2,7 @@ import { ClubGiftInfoEvent, ClubGiftInfoParser, GetClubGiftInfo } from '@nitrots
 import { UseQueryResult } from '@tanstack/react-query';
 import { useNitroEventInvalidator, useNitroQuery } from '../../api/nitro-query';
 
-const CLUB_GIFTS_KEY = [ 'nitro', 'catalog', 'clubGifts' ] as const;
+const CLUB_GIFTS_KEY = ['nitro', 'catalog', 'clubGifts'] as const;
 
 /**
  * Habbo Club gift availability (counts of pending gifts, days until
@@ -19,15 +19,12 @@ const CLUB_GIFTS_KEY = [ 'nitro', 'catalog', 'clubGifts' ] as const;
  * Replaces the previous useCatalog listener that stuffed
  * `parser` into `catalogOptions.clubGifts`.
  */
-export const useClubGifts = (
-    options: { enabled?: boolean } = {}
-): UseQueryResult<ClubGiftInfoParser> =>
-{
+export const useClubGifts = (options: { enabled?: boolean } = {}): UseQueryResult<ClubGiftInfoParser> => {
     const query = useNitroQuery<ClubGiftInfoEvent, ClubGiftInfoParser>({
         key: CLUB_GIFTS_KEY as unknown as string[],
         request: () => new GetClubGiftInfo(),
         parser: ClubGiftInfoEvent,
-        select: event => event.getParser(),
+        select: (event) => event.getParser(),
         enabled: options.enabled,
         staleTime: Infinity
     });

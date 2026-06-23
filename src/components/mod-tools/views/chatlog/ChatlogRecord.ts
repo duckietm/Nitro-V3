@@ -1,5 +1,4 @@
-export interface ChatlogRecord
-{
+export interface ChatlogRecord {
     timestamp?: string;
     habboId?: number;
     username?: string;

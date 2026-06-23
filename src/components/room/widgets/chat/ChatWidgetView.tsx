@@ -7,101 +7,90 @@ import { WorkerBuilder } from '../../../../workers/WorkerBuilder';
 import { ChatWidgetMessageView } from './ChatWidgetMessageView';
 import { ChatWidgetWindowView } from './ChatWidgetWindowView';
 
-export const ChatWidgetView: FC<{}> = props =>
-{
+export const ChatWidgetView: FC<{}> = (props) => {
     const { chatMessages = [], setChatMessages = null, chatSettings = null, getScrollSpeed = 6000 } = useChatWidget();
-    const [ chatWindowEnabled ] = useChatWindow();
+    const [chatWindowEnabled] = useChatWindow();
     const elementRef = useRef<HTMLDivElement>(null);
 
-    const removeHiddenChats = useCallback(() =>
-    {
-        setChatMessages(prevValue =>
-        {
-            if(prevValue)
-            {
-                const newMessages = prevValue.filter(chat => ((chat.top > (-(chat.height) * 2))));
+    const removeHiddenChats = useCallback(() => {
+        setChatMessages((prevValue) => {
+            if (prevValue) {
+                const newMessages = prevValue.filter((chat) => chat.top > -chat.height * 2);
 
-                if(newMessages.length !== prevValue.length) return newMessages;
+                if (newMessages.length !== prevValue.length) return newMessages;
             }
 
             return prevValue;
         });
-    }, [ setChatMessages ]);
+    }, [setChatMessages]);
 
-    const checkOverlappingChats = useCallback((chat: ChatBubbleMessage, moved: number, tempChats: ChatBubbleMessage[]) =>
-    {
-        for(let i = (chatMessages.indexOf(chat) - 1); i >= 0; i--)
-        {
-            const collides = chatMessages[i];
+    const checkOverlappingChats = useCallback(
+        (chat: ChatBubbleMessage, moved: number, tempChats: ChatBubbleMessage[]) => {
+            for (let i = chatMessages.indexOf(chat) - 1; i >= 0; i--) {
+                const collides = chatMessages[i];
 
-            if(!collides || (chat === collides) || (tempChats.indexOf(collides) >= 0) || (((collides.top + collides.height) - moved) > (chat.top + chat.height))) continue;
+                if (!collides || chat === collides || tempChats.indexOf(collides) >= 0 || collides.top + collides.height - moved > chat.top + chat.height)
+                    continue;
 
-            if(DoChatsOverlap(chat, collides, -moved, 0))
-            {
-                const amount = Math.abs((collides.top + collides.height) - chat.top);
+                if (DoChatsOverlap(chat, collides, -moved, 0)) {
+                    const amount = Math.abs(collides.top + collides.height - chat.top);
 
-                tempChats.push(collides);
+                    tempChats.push(collides);
 
-                collides.top -= amount;
-                collides.skipMovement = true;
+                    collides.top -= amount;
+                    collides.skipMovement = true;
 
-                checkOverlappingChats(collides, amount, tempChats);
+                    checkOverlappingChats(collides, amount, tempChats);
+                }
             }
-        }
-    }, [ chatMessages ]);
+        },
+        [chatMessages]
+    );
 
-    const makeRoom = useCallback((chat: ChatBubbleMessage) =>
-    {
-        if(chatSettings.mode === RoomChatSettings.CHAT_MODE_FREE_FLOW)
-        {
-            chat.skipMovement = true;
+    const makeRoom = useCallback(
+        (chat: ChatBubbleMessage) => {
+            if (chatSettings.mode === RoomChatSettings.CHAT_MODE_FREE_FLOW) {
+                chat.skipMovement = true;
 
-            checkOverlappingChats(chat, 0, [ chat ]);
-
-            removeHiddenChats();
-        }
-        else
-        {
-            const lowestPoint = (chat.top + chat.height);
-            const requiredSpace = chat.height;
-            const spaceAvailable = (elementRef.current.offsetHeight - lowestPoint);
-            const amount = (requiredSpace - spaceAvailable);
-
-            if(spaceAvailable < requiredSpace)
-            {
-                setChatMessages(prevValue =>
-                {
-                    prevValue.forEach(prevChat =>
-                    {
-                        if(prevChat === chat) return;
-
-                        prevChat.top -= amount;
-                    });
-
-                    return prevValue;
-                });
+                checkOverlappingChats(chat, 0, [chat]);
 
                 removeHiddenChats();
-            }
-        }
-    }, [ chatSettings, checkOverlappingChats, removeHiddenChats, setChatMessages ]);
+            } else {
+                const lowestPoint = chat.top + chat.height;
+                const requiredSpace = chat.height;
+                const spaceAvailable = elementRef.current.offsetHeight - lowestPoint;
+                const amount = requiredSpace - spaceAvailable;
 
-    useEffect(() =>
-    {
-        const resize = (event: UIEvent = null) =>
-        {
-            if(!elementRef || !elementRef.current) return;
+                if (spaceAvailable < requiredSpace) {
+                    setChatMessages((prevValue) => {
+                        prevValue.forEach((prevChat) => {
+                            if (prevChat === chat) return;
+
+                            prevChat.top -= amount;
+                        });
+
+                        return prevValue;
+                    });
+
+                    removeHiddenChats();
+                }
+            }
+        },
+        [chatSettings, checkOverlappingChats, removeHiddenChats, setChatMessages]
+    );
+
+    useEffect(() => {
+        const resize = (event: UIEvent = null) => {
+            if (!elementRef || !elementRef.current) return;
 
             const currentHeight = elementRef.current.offsetHeight;
             const newHeight = Math.round(document.body.offsetHeight * GetConfigurationValue<number>('chat.viewer.height.percentage'));
 
-            elementRef.current.style.height = `${ newHeight }px`;
+            elementRef.current.style.height = `${newHeight}px`;
 
-            setChatMessages(prevValue =>
-            {
-                if(prevValue)
-                {
-                    prevValue.forEach(chat => (chat.top -= (currentHeight - newHeight)));
+            setChatMessages((prevValue) => {
+                if (prevValue) {
+                    prevValue.forEach((chat) => (chat.top -= currentHeight - newHeight));
                 }
 
                 return prevValue;
@@ -112,22 +101,16 @@ export const ChatWidgetView: FC<{}> = props =>
 
         resize();
 
-        return () =>
-        {
+        return () => {
             window.removeEventListener('resize', resize);
         };
-    }, [ setChatMessages ]);
+    }, [setChatMessages]);
 
-    useEffect(() =>
-    {
-        const moveAllChatsUp = (amount: number) =>
-        {
-            setChatMessages(prevValue =>
-            {
-                prevValue.forEach(chat =>
-                {
-                    if(chat.skipMovement)
-                    {
+    useEffect(() => {
+        const moveAllChatsUp = (amount: number) => {
+            setChatMessages((prevValue) => {
+                prevValue.forEach((chat) => {
+                    if (chat.skipMovement) {
                         chat.skipMovement = false;
 
                         return;
@@ -148,18 +131,21 @@ export const ChatWidgetView: FC<{}> = props =>
 
         worker.postMessage({ action: 'START', content: getScrollSpeed });
 
-        return () =>
-        {
+        return () => {
             worker.postMessage({ action: 'STOP' });
 
             worker.terminate();
         };
-    }, [ getScrollSpeed, removeHiddenChats, setChatMessages ]);
+    }, [getScrollSpeed, removeHiddenChats, setChatMessages]);
 
     return (
-        <div ref={ elementRef } className="absolute flex justify-center items-center w-full top-0 min-h-px z-(--chat-zindex) bg-transparent roundehidden shadow-none pointer-events-none">
-            { !chatWindowEnabled && chatMessages.map(chat => <ChatWidgetMessageView key={ chat.id } bubbleWidth={ chatSettings.weight } chat={ chat } makeRoom={ makeRoom } />) }
-            { chatWindowEnabled && <ChatWidgetWindowView /> }
+        <div
+            ref={elementRef}
+            className="absolute flex justify-center items-center w-full top-0 min-h-px z-(--chat-zindex) bg-transparent roundehidden shadow-none pointer-events-none"
+        >
+            {!chatWindowEnabled &&
+                chatMessages.map((chat) => <ChatWidgetMessageView key={chat.id} bubbleWidth={chatSettings.weight} chat={chat} makeRoom={makeRoom} />)}
+            {chatWindowEnabled && <ChatWidgetWindowView />}
         </div>
     );
 };

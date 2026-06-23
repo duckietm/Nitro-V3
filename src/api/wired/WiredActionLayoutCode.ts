@@ -1,5 +1,4 @@
-export class WiredActionLayoutCode
-{
+export class WiredActionLayoutCode {
     public static TOGGLE_FURNI_STATE: number = 0;
     public static RESET: number = 1;
     public static SET_FURNI_STATE: number = 3;

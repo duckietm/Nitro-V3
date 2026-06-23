@@ -12,13 +12,11 @@ import { useUserDataSnapshot } from './useSessionSnapshots';
 // this body crashes the React tree on first paint with
 // "(intermediate value)() is undefined". See useSessionSnapshots.test.tsx
 // for the regression guard.
-const useSessionInfoState = () =>
-{
-    const [ userInfo, setUserInfo ] = useState<UserInfoDataParser>(null);
-    const [ chatStyleId, setChatStyleId ] = useState<number>(0);
+const useSessionInfoState = () => {
+    const [userInfo, setUserInfo] = useState<UserInfoDataParser>(null);
+    const [chatStyleId, setChatStyleId] = useState<number>(0);
 
-    const updateChatStyleId = (styleId: number) =>
-    {
+    const updateChatStyleId = (styleId: number) => {
         setChatStyleId(styleId);
 
         SendMessageComposer(new RoomUnitChatStyleComposer(styleId));
@@ -27,13 +25,11 @@ const useSessionInfoState = () =>
     const respectUser = (userId: number) => GetSessionDataManager().giveRespect(userId);
     const respectPet = (petId: number) => GetSessionDataManager().givePetRespect(petId);
 
-    useMessageEvent<UserInfoEvent>(UserInfoEvent, event =>
-    {
+    useMessageEvent<UserInfoEvent>(UserInfoEvent, (event) => {
         setUserInfo(event.getParser().userInfo);
     });
 
-    useMessageEvent<UserSettingsEvent>(UserSettingsEvent, event =>
-    {
+    useMessageEvent<UserSettingsEvent>(UserSettingsEvent, (event) => {
         setChatStyleId(event.getParser().chatType);
     });
 
@@ -47,8 +43,7 @@ const useSessionInfoState = () =>
 // snapshot on UserInfoEvent / FigureUpdateEvent / giveRespect /
 // givePetRespect, so userFigure / respectsLeft / respectsPetLeft stay
 // in sync without local useState mirrors.
-export const useSessionInfo = () =>
-{
+export const useSessionInfo = () => {
     const shared = useBetween(useSessionInfoState);
     const userData = useUserDataSnapshot();
 

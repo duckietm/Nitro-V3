@@ -1,6 +1,5 @@
 import { BotData } from '@nitrots/nitro-renderer';
 
-export interface IBotItem
-{
+export interface IBotItem {
     botData: BotData;
 }

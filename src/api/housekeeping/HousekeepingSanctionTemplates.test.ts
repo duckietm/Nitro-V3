@@ -1,21 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import {
-    findTemplateById, HK_SANCTION_TEMPLATES, HousekeepingSanctionType, templatesByType
-} from './HousekeepingSanctionTemplates';
+import { findTemplateById, HK_SANCTION_TEMPLATES, HousekeepingSanctionType, templatesByType } from './HousekeepingSanctionTemplates';
 
-describe('HK_SANCTION_TEMPLATES', () =>
-{
-    it('has a unique id for every template', () =>
-    {
-        const ids = HK_SANCTION_TEMPLATES.map(t => t.id);
+describe('HK_SANCTION_TEMPLATES', () => {
+    it('has a unique id for every template', () => {
+        const ids = HK_SANCTION_TEMPLATES.map((t) => t.id);
         const unique = new Set(ids);
 
         expect(unique.size).toBe(ids.length);
     });
 
-    it('covers every sanction type at least once', () =>
-    {
-        const types = new Set(HK_SANCTION_TEMPLATES.map(t => t.type));
+    it('covers every sanction type at least once', () => {
+        const types = new Set(HK_SANCTION_TEMPLATES.map((t) => t.type));
 
         expect(types.has(HousekeepingSanctionType.BAN)).toBe(true);
         expect(types.has(HousekeepingSanctionType.MUTE)).toBe(true);
@@ -23,51 +18,41 @@ describe('HK_SANCTION_TEMPLATES', () =>
         expect(types.has(HousekeepingSanctionType.TRADE_LOCK)).toBe(true);
     });
 
-    it('uses durationValue=0 for KICK templates only (kick is instant, no duration)', () =>
-    {
-        for(const template of HK_SANCTION_TEMPLATES)
-        {
-            if(template.type === HousekeepingSanctionType.KICK) expect(template.durationValue).toBe(0);
+    it('uses durationValue=0 for KICK templates only (kick is instant, no duration)', () => {
+        for (const template of HK_SANCTION_TEMPLATES) {
+            if (template.type === HousekeepingSanctionType.KICK) expect(template.durationValue).toBe(0);
             else expect(template.durationValue).toBeGreaterThan(0);
         }
     });
 
-    it('every template has a non-empty default reason (avoids empty-reason validation failures)', () =>
-    {
-        for(const template of HK_SANCTION_TEMPLATES)
-        {
+    it('every template has a non-empty default reason (avoids empty-reason validation failures)', () => {
+        for (const template of HK_SANCTION_TEMPLATES) {
             expect(template.defaultReason.trim().length).toBeGreaterThan(0);
         }
     });
 });
 
-describe('findTemplateById', () =>
-{
-    it('returns the matching template', () =>
-    {
+describe('findTemplateById', () => {
+    it('returns the matching template', () => {
         expect(findTemplateById('ban_24h')?.type).toBe(HousekeepingSanctionType.BAN);
         expect(findTemplateById('ban_24h')?.durationValue).toBe(24);
     });
 
-    it('returns null for an unknown id', () =>
-    {
+    it('returns null for an unknown id', () => {
         expect(findTemplateById('does-not-exist')).toBeNull();
         expect(findTemplateById('')).toBeNull();
     });
 });
 
-describe('templatesByType', () =>
-{
-    it('filters the list down to a single type', () =>
-    {
+describe('templatesByType', () => {
+    it('filters the list down to a single type', () => {
         const bans = templatesByType(HousekeepingSanctionType.BAN);
 
         expect(bans.length).toBeGreaterThan(0);
-        expect(bans.every(t => t.type === HousekeepingSanctionType.BAN)).toBe(true);
+        expect(bans.every((t) => t.type === HousekeepingSanctionType.BAN)).toBe(true);
     });
 
-    it('returns an empty list for unknown types (defensive)', () =>
-    {
+    it('returns an empty list for unknown types (defensive)', () => {
         expect(templatesByType('unknown' as never)).toEqual([]);
     });
 });

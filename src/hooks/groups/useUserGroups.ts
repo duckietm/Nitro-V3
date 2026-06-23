@@ -4,27 +4,23 @@ import { useBetween } from 'use-between';
 import { SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
 
-const useUserGroupsStore = () =>
-{
-    const [ groups, setGroups ] = useState<HabboGroupEntryData[]>([]);
+const useUserGroupsStore = () => {
+    const [groups, setGroups] = useState<HabboGroupEntryData[]>([]);
 
-    const onGuildMemberships = useCallback((event: GuildMembershipsMessageEvent) =>
-    {
+    const onGuildMemberships = useCallback((event: GuildMembershipsMessageEvent) => {
         setGroups(event.getParser()?.groups || []);
     }, []);
 
     useMessageEvent<GuildMembershipsMessageEvent>(GuildMembershipsMessageEvent, onGuildMemberships);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         SendMessageComposer(new CatalogGroupsComposer());
     }, []);
 
     return { groups };
 };
 
-export const useUserGroups = (): { data: HabboGroupEntryData[] } =>
-{
+export const useUserGroups = (): { data: HabboGroupEntryData[] } => {
     const { groups } = useBetween(useUserGroupsStore);
 
     return { data: groups };

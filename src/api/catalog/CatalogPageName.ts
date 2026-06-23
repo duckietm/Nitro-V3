@@ -1,5 +1,4 @@
-﻿export class CatalogPageName
-{
+﻿export class CatalogPageName {
     public static DUCKET_INFO: string = 'ducket_info';
     public static CREDITS: string = 'credits';
     public static AVATAR_EFFECTS: string = 'avatar_effects';

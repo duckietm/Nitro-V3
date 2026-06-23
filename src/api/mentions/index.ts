@@ -1,4 +1,4 @@
-export * from './MentionType';
 export * from './IMentionEntry';
-export * from './mentionTokens';
+export * from './MentionType';
 export * from './mentionsFormat';
+export * from './mentionTokens';

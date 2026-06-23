@@ -1,5 +1,4 @@
-export interface IPurse
-{
+export interface IPurse {
     credits: number;
     activityPoints: Map<number, number>;
     clubDays: number;

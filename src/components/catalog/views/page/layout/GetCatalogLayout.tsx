@@ -3,7 +3,6 @@ import { CatalogLayoutProps } from './CatalogLayout.types';
 import { CatalogLayoutBadgeDisplayView } from './CatalogLayoutBadgeDisplayView';
 import { CatalogLayoutBuildersClubBuyView } from './CatalogLayoutBuildersClubBuyView';
 import { CatalogLayoutColorGroupingView } from './CatalogLayoutColorGroupingView';
-import { CatalogLayoutCustomPrefixView } from './CatalogLayoutCustomPrefixView';
 import { CatalogLayoutDefaultView } from './CatalogLayoutDefaultView';
 import { CatalogLayouGuildCustomFurniView } from './CatalogLayoutGuildCustomFurniView';
 import { CatalogLayouGuildForumView } from './CatalogLayoutGuildForumView';
@@ -24,65 +23,61 @@ import { CatalogLayoutMarketplacePublicItemsView } from './marketplace/CatalogLa
 import { CatalogLayoutPetView } from './pets/CatalogLayoutPetView';
 import { CatalogLayoutVipGiftsView } from './vip-gifts/CatalogLayoutVipGiftsView';
 
-export const GetCatalogLayout = (page: ICatalogPage, hideNavigation: () => void) =>
-{
-    if(!page) return null;
+export const GetCatalogLayout = (page: ICatalogPage, hideNavigation: () => void) => {
+    if (!page) return null;
 
     const layoutProps: CatalogLayoutProps = { page, hideNavigation };
 
-    switch(page.layoutCode)
-    {
+    switch (page.layoutCode) {
         case 'frontpage_featured':
             return null;
         case 'frontpage4':
-            return <CatalogLayoutFrontpage4View { ...layoutProps } />;
+            return <CatalogLayoutFrontpage4View {...layoutProps} />;
         case 'pets':
-            return <CatalogLayoutPetView { ...layoutProps } />;
+            return <CatalogLayoutPetView {...layoutProps} />;
         case 'pets2':
-            return <CatalogLayoutPets2View { ...layoutProps } />;
+            return <CatalogLayoutPets2View {...layoutProps} />;
         case 'pets3':
-            return <CatalogLayoutPets3View { ...layoutProps } />;
+            return <CatalogLayoutPets3View {...layoutProps} />;
         case 'vip_buy':
-            return <CatalogLayoutVipBuyView { ...layoutProps } />;
+            return <CatalogLayoutVipBuyView {...layoutProps} />;
         case 'builders_club_frontpage':
         case 'builders_club_addons':
         case 'builders_club_loyalty':
-            return <CatalogLayoutBuildersClubBuyView { ...layoutProps } />;
+            return <CatalogLayoutBuildersClubBuyView {...layoutProps} />;
         case 'guild_frontpage':
-            return <CatalogLayouGuildFrontpageView { ...layoutProps } />;
+            return <CatalogLayouGuildFrontpageView {...layoutProps} />;
         case 'guild_forum':
-            return <CatalogLayouGuildForumView { ...layoutProps } />;
+            return <CatalogLayouGuildForumView {...layoutProps} />;
         case 'guild_custom_furni':
-            return <CatalogLayouGuildCustomFurniView { ...layoutProps } />;
+            return <CatalogLayouGuildCustomFurniView {...layoutProps} />;
         case 'club_gifts':
-            return <CatalogLayoutVipGiftsView { ...layoutProps } />;
+            return <CatalogLayoutVipGiftsView {...layoutProps} />;
         case 'marketplace_own_items':
-            return <CatalogLayoutMarketplaceOwnItemsView { ...layoutProps } />;
+            return <CatalogLayoutMarketplaceOwnItemsView {...layoutProps} />;
         case 'marketplace':
-            return <CatalogLayoutMarketplacePublicItemsView { ...layoutProps } />;
+            return <CatalogLayoutMarketplacePublicItemsView {...layoutProps} />;
         case 'single_bundle':
-            return <CatalogLayoutSingleBundleView { ...layoutProps } />;
+            return <CatalogLayoutSingleBundleView {...layoutProps} />;
         case 'room_bundle':
-            return <CatalogLayoutRoomBundleView { ...layoutProps } />;
+            return <CatalogLayoutRoomBundleView {...layoutProps} />;
         case 'spaces_new':
-            return <CatalogLayoutSpacesView { ...layoutProps } />;
+            return <CatalogLayoutSpacesView {...layoutProps} />;
         case 'trophies':
-            return <CatalogLayoutTrophiesView { ...layoutProps } />;
+            return <CatalogLayoutTrophiesView {...layoutProps} />;
         case 'info_loyalty':
-            return <CatalogLayoutInfoLoyaltyView { ...layoutProps } />;
+            return <CatalogLayoutInfoLoyaltyView {...layoutProps} />;
         case 'badge_display':
-            return <CatalogLayoutBadgeDisplayView { ...layoutProps } />;
+            return <CatalogLayoutBadgeDisplayView {...layoutProps} />;
         case 'roomads':
-            return <CatalogLayoutRoomAdsView { ...layoutProps } />;
+            return <CatalogLayoutRoomAdsView {...layoutProps} />;
         case 'default_3x3_color_grouping':
-            return <CatalogLayoutColorGroupingView { ...layoutProps } />;
+            return <CatalogLayoutColorGroupingView {...layoutProps} />;
         case 'soundmachine':
-            return <CatalogLayoutSoundMachineView { ...layoutProps } />;
-        case 'custom_prefix':
-            return <CatalogLayoutCustomPrefixView { ...layoutProps } />;
+            return <CatalogLayoutSoundMachineView {...layoutProps} />;
         case 'bots':
         case 'default_3x3':
         default:
-            return <CatalogLayoutDefaultView { ...layoutProps } />;
+            return <CatalogLayoutDefaultView {...layoutProps} />;
     }
 };

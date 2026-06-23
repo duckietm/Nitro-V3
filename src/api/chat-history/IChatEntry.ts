@@ -1,5 +1,4 @@
-export interface IChatEntry
-{
+export interface IChatEntry {
     id: number;
     webId: number;
     entityId: number;

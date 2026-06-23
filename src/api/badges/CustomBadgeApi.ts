@@ -1,8 +1,7 @@
 import { GetConfiguration, GetLocalizationManager } from '@nitrots/nitro-renderer';
 import { getAccessToken } from '../auth';
 
-export interface CustomBadgeRecord
-{
+export interface CustomBadgeRecord {
     badgeId: string;
     badgeCode: string;
     name: string;
@@ -12,8 +11,7 @@ export interface CustomBadgeRecord
     url: string;
 }
 
-export interface CustomBadgeListResponse
-{
+export interface CustomBadgeListResponse {
     badges: CustomBadgeRecord[];
     max: number;
     badgeWidth: number;
@@ -23,81 +21,66 @@ export interface CustomBadgeListResponse
     currencyType?: number;
 }
 
-export interface CustomBadgeError
-{
+export interface CustomBadgeError {
     error: string;
     code?: string;
 }
 
-const interpolate = (value: string): string =>
-{
-    try
-    {
+const interpolate = (value: string): string => {
+    try {
         return GetConfiguration().interpolate(value);
-    }
-    catch
-    {
+    } catch {
         return value;
     }
 };
 
-const getConfigUrl = (key: string, fallback: string): string =>
-    interpolate(GetConfiguration().getValue<string>(key, fallback));
+const getConfigUrl = (key: string, fallback: string): string => interpolate(GetConfiguration().getValue<string>(key, fallback));
 
-const buildUrl = (key: string, fallback: string, badgeId?: string): string =>
-{
+const buildUrl = (key: string, fallback: string, badgeId?: string): string => {
     const template = getConfigUrl(key, fallback);
-    if(!badgeId) return template;
-    if(template.includes('%badgeId%')) return template.replace(/%badgeId%/g, encodeURIComponent(badgeId));
+    if (!badgeId) return template;
+    if (template.includes('%badgeId%')) return template.replace(/%badgeId%/g, encodeURIComponent(badgeId));
     return template + (template.endsWith('/') ? '' : '/') + encodeURIComponent(badgeId);
 };
 
-const authHeaders = (): Record<string, string> =>
-{
+const authHeaders = (): Record<string, string> => {
     const headers: Record<string, string> = {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'X-Requested-With': 'NitroCustomBadges'
     };
     const token = getAccessToken();
-    if(token) headers['Authorization'] = `Bearer ${ token }`;
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     return headers;
 };
 
-const parseJson = async <T>(response: Response): Promise<T> =>
-{
+const parseJson = async <T>(response: Response): Promise<T> => {
     const text = await response.text();
-    if(!text) return {} as T;
-    try
-    {
+    if (!text) return {} as T;
+    try {
         return JSON.parse(text) as T;
-    }
-    catch
-    {
+    } catch {
         throw new Error('Invalid response from server.');
     }
 };
 
-const throwOnError = async (response: Response): Promise<void> =>
-{
-    if(response.ok) return;
+const throwOnError = async (response: Response): Promise<void> => {
+    if (response.ok) return;
     const payload = await parseJson<CustomBadgeError>(response);
-    const message = payload?.error || `Request failed (${ response.status }).`;
+    const message = payload?.error || `Request failed (${response.status}).`;
     const err = new Error(message) as Error & { status: number; code?: string };
     err.status = response.status;
-    if(payload?.code) err.code = payload.code;
+    if (payload?.code) err.code = payload.code;
     throw err;
 };
 
-export const fetchCustomBadges = async (): Promise<CustomBadgeListResponse> =>
-{
+export const fetchCustomBadges = async (): Promise<CustomBadgeListResponse> => {
     const url = buildUrl('badges.custom.list.endpoint', '/api/badges/custom');
     const response = await fetch(url, { method: 'GET', credentials: 'include', headers: authHeaders() });
     await throwOnError(response);
     return parseJson<CustomBadgeListResponse>(response);
 };
 
-export const createCustomBadge = async (body: { name: string; description: string; image: string }): Promise<CustomBadgeRecord> =>
-{
+export const createCustomBadge = async (body: { name: string; description: string; image: string }): Promise<CustomBadgeRecord> => {
     const url = buildUrl('badges.custom.create.endpoint', '/api/badges/custom');
     const response = await fetch(url, {
         method: 'POST',
@@ -109,8 +92,7 @@ export const createCustomBadge = async (body: { name: string; description: strin
     return parseJson<CustomBadgeRecord>(response);
 };
 
-export const updateCustomBadge = async (badgeId: string, body: { name: string; description: string; image: string }): Promise<CustomBadgeRecord> =>
-{
+export const updateCustomBadge = async (badgeId: string, body: { name: string; description: string; image: string }): Promise<CustomBadgeRecord> => {
     const url = buildUrl('badges.custom.update.endpoint', '/api/badges/custom/%badgeId%', badgeId);
     const response = await fetch(url, {
         method: 'PUT',
@@ -122,70 +104,56 @@ export const updateCustomBadge = async (badgeId: string, body: { name: string; d
     return parseJson<CustomBadgeRecord>(response);
 };
 
-export const deleteCustomBadge = async (badgeId: string): Promise<void> =>
-{
+export const deleteCustomBadge = async (badgeId: string): Promise<void> => {
     const url = buildUrl('badges.custom.delete.endpoint', '/api/badges/custom/%badgeId%', badgeId);
     const response = await fetch(url, { method: 'DELETE', credentials: 'include', headers: authHeaders() });
     await throwOnError(response);
 };
 
-export const isCustomBadgeCode = (code: string | null | undefined): boolean =>
-{
-    if(!code) return false;
+export const isCustomBadgeCode = (code: string | null | undefined): boolean => {
+    if (!code) return false;
     return /^CUST[A-Z0-9]{5}-\d+$/.test(code);
 };
 
 let customBadgeTextsLoadPromise: Promise<void> | null = null;
 
-const injectTextsIntoLocalization = (texts: Record<string, string> | null | undefined): void =>
-{
-    if(!texts) return;
+const injectTextsIntoLocalization = (texts: Record<string, string> | null | undefined): void => {
+    if (!texts) return;
     let manager: ReturnType<typeof GetLocalizationManager> | null = null;
-    try
-    {
+    try {
         manager = GetLocalizationManager();
-    }
-    catch
-    {
+    } catch {
         return;
     }
-    if(!manager || typeof manager.setValue !== 'function') return;
-    for(const key of Object.keys(texts))
-    {
+    if (!manager || typeof manager.setValue !== 'function') return;
+    for (const key of Object.keys(texts)) {
         const value = texts[key];
-        if(typeof value === 'string') manager.setValue(key, value);
+        if (typeof value === 'string') manager.setValue(key, value);
     }
 };
 
-export const ensureCustomBadgeTexts = (): Promise<void> =>
-{
-    if(customBadgeTextsLoadPromise) return customBadgeTextsLoadPromise;
-    customBadgeTextsLoadPromise = (async () =>
-    {
-        try
-        {
+export const ensureCustomBadgeTexts = (): Promise<void> => {
+    if (customBadgeTextsLoadPromise) return customBadgeTextsLoadPromise;
+    customBadgeTextsLoadPromise = (async () => {
+        try {
             const url = buildUrl('badges.custom.texts.endpoint', '/api/badges/custom/texts');
-            const response = await fetch(url, { method: 'GET', credentials: 'include', headers: { 'Accept': 'application/json' } });
-            if(!response.ok) return;
+            const response = await fetch(url, { method: 'GET', credentials: 'include', headers: { Accept: 'application/json' } });
+            if (!response.ok) return;
             const payload = await parseJson<{ texts: Record<string, string> }>(response);
             injectTextsIntoLocalization(payload.texts);
-        }
-        catch
-        {}
+        } catch {}
     })();
     return customBadgeTextsLoadPromise;
 };
 
-export const refreshCustomBadgeTexts = (): Promise<void> =>
-{
+export const refreshCustomBadgeTexts = (): Promise<void> => {
     customBadgeTextsLoadPromise = null;
     return ensureCustomBadgeTexts();
 };
 
-export const setCustomBadgeText = (badgeId: string, name: string, description: string): void =>
-{
+export const setCustomBadgeText = (badgeId: string, name: string, description: string): void => {
     injectTextsIntoLocalization({
-        [`badge_name_${ badgeId }`]: name || badgeId,
-        [`badge_desc_${ badgeId }`]: description || ''
+        [`badge_name_${badgeId}`]: name || badgeId,
+        [`badge_desc_${badgeId}`]: description || ''
     });
 };

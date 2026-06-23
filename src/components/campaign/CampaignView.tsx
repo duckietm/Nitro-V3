@@ -1,64 +1,62 @@
-import { AddLinkEventTracker, CampaignCalendarData, CampaignCalendarDataMessageEvent, CampaignCalendarDoorOpenedMessageEvent, ILinkEventTracker, OpenCampaignCalendarDoorAsStaffComposer, OpenCampaignCalendarDoorComposer, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
+import {
+    AddLinkEventTracker,
+    CampaignCalendarData,
+    CampaignCalendarDataMessageEvent,
+    CampaignCalendarDoorOpenedMessageEvent,
+    ILinkEventTracker,
+    OpenCampaignCalendarDoorAsStaffComposer,
+    OpenCampaignCalendarDoorComposer,
+    RemoveLinkEventTracker
+} from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { CalendarItem, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../../hooks';
 import { CalendarView } from './CalendarView';
 
-export const CampaignView: FC<{}> = props =>
-{
-    const [ calendarData, setCalendarData ] = useState<CampaignCalendarData>(null);
-    const [ lastOpenAttempt, setLastOpenAttempt ] = useState<number>(-1);
-    const [ receivedProducts, setReceivedProducts ] = useState<Map<number, CalendarItem>>(new Map());
-    const [ isCalendarOpen, setCalendarOpen ] = useState(false);
+export const CampaignView: FC<{}> = (props) => {
+    const [calendarData, setCalendarData] = useState<CampaignCalendarData>(null);
+    const [lastOpenAttempt, setLastOpenAttempt] = useState<number>(-1);
+    const [receivedProducts, setReceivedProducts] = useState<Map<number, CalendarItem>>(new Map());
+    const [isCalendarOpen, setCalendarOpen] = useState(false);
 
-    const openPackage = (id: number, asStaff = false) =>
-    {
-        if(!calendarData) return;
+    const openPackage = (id: number, asStaff = false) => {
+        if (!calendarData) return;
 
         setLastOpenAttempt(id);
 
-        if(asStaff)
-        {
+        if (asStaff) {
             SendMessageComposer(new OpenCampaignCalendarDoorAsStaffComposer(calendarData.campaignName, id));
-        }
-
-        else
-        {
+        } else {
             SendMessageComposer(new OpenCampaignCalendarDoorComposer(calendarData.campaignName, id));
         }
     };
 
-    useMessageEvent<CampaignCalendarDataMessageEvent>(CampaignCalendarDataMessageEvent, event =>
-    {
+    useMessageEvent<CampaignCalendarDataMessageEvent>(CampaignCalendarDataMessageEvent, (event) => {
         const parser = event.getParser();
 
-        if(!parser) return;
+        if (!parser) return;
 
         setCalendarData(parser.calendarData);
     });
 
-    useMessageEvent<CampaignCalendarDoorOpenedMessageEvent>(CampaignCalendarDoorOpenedMessageEvent, event =>
-    {
+    useMessageEvent<CampaignCalendarDoorOpenedMessageEvent>(CampaignCalendarDoorOpenedMessageEvent, (event) => {
         const parser = event.getParser();
 
-        if(!parser) return;
+        if (!parser) return;
 
         const lastAttempt = lastOpenAttempt;
 
-        if(parser.doorOpened)
-        {
-            setCalendarData(prev =>
-            {
+        if (parser.doorOpened) {
+            setCalendarData((prev) => {
                 const copy = prev.clone();
                 copy.openedDays.push(lastOpenAttempt);
 
                 return copy;
             });
 
-            setReceivedProducts(prev =>
-            {
+            setReceivedProducts((prev) => {
                 const copy = new Map(prev);
-                copy.set(lastAttempt, new CalendarItem(parser.productName, parser.customImage,parser.furnitureClassName));
+                copy.set(lastAttempt, new CalendarItem(parser.productName, parser.customImage, parser.furnitureClassName));
 
                 return copy;
             });
@@ -67,17 +65,14 @@ export const CampaignView: FC<{}> = props =>
         setLastOpenAttempt(-1);
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const value = url.split('/');
 
-                if(value.length < 2) return;
+                if (value.length < 2) return;
 
-                switch(value[1])
-                {
+                switch (value[1]) {
                     case 'calendar':
                         setCalendarOpen(true);
                         break;
@@ -93,9 +88,18 @@ export const CampaignView: FC<{}> = props =>
 
     return (
         <>
-            { (calendarData && isCalendarOpen) &&
-                <CalendarView campaignName={ calendarData.campaignName } currentDay={ calendarData.currentDay } missedDays={ calendarData.missedDays } numDays={ calendarData.campaignDays } openedDays={ calendarData.openedDays } openPackage={ openPackage } receivedProducts={ receivedProducts } onClose={ () => setCalendarOpen(false) } />
-            }
+            {calendarData && isCalendarOpen && (
+                <CalendarView
+                    campaignName={calendarData.campaignName}
+                    currentDay={calendarData.currentDay}
+                    missedDays={calendarData.missedDays}
+                    numDays={calendarData.campaignDays}
+                    openedDays={calendarData.openedDays}
+                    openPackage={openPackage}
+                    receivedProducts={receivedProducts}
+                    onClose={() => setCalendarOpen(false)}
+                />
+            )}
         </>
     );
 };

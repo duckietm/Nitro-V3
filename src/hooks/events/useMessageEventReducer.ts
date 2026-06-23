@@ -24,29 +24,24 @@ export const useMessageEventReducer = <S, T extends IMessageEvent>(
     eventType: typeof MessageEvent | (typeof MessageEvent)[],
     reducer: (state: S, event: T) => S,
     initial: S | (() => S)
-): S =>
-{
-    const [ value, setValue ] = useState<S>(initial);
+): S => {
+    const [value, setValue] = useState<S>(initial);
     const reducerRef = useRef(reducer);
 
-    useLayoutEffect(() =>
-    {
+    useLayoutEffect(() => {
         reducerRef.current = reducer;
     });
 
-    const handler = useCallback((event: T) =>
-    {
-        setValue(prev => reducerRef.current(prev, event));
+    const handler = useCallback((event: T) => {
+        setValue((prev) => reducerRef.current(prev, event));
     }, []);
 
-    const types = useMemo(() => Array.isArray(eventType) ? eventType : [ eventType ], [ eventType ]);
+    const types = useMemo(() => (Array.isArray(eventType) ? eventType : [eventType]), [eventType]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const communication = GetCommunication();
 
-        const registered = types.map(t =>
-        {
+        const registered = types.map((t) => {
             //@ts-ignore
             const event = new t(handler);
 
@@ -55,11 +50,10 @@ export const useMessageEventReducer = <S, T extends IMessageEvent>(
             return event;
         });
 
-        return () =>
-        {
-            for(const event of registered) communication.removeMessageEvent(event);
+        return () => {
+            for (const event of registered) communication.removeMessageEvent(event);
         };
-    }, [ types, handler ]);
+    }, [types, handler]);
 
     return value;
 };

@@ -1,9 +1,8 @@
 import { GetCommunication, IMessageComposer, IMessageEvent, MessageEvent } from '@nitrots/nitro-renderer';
-import { QueryKey, useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
+import { QueryKey, UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
 import { SendMessageComposer } from '../nitro/SendMessageComposer';
 
-export interface NitroQueryConfig<TParser extends IMessageEvent, TData>
-{
+export interface NitroQueryConfig<TParser extends IMessageEvent, TData> {
     /**
      * Stable key for caching/deduping. Convention:
      * `['nitro', '<domain>', '<request>', ...args]`.
@@ -56,10 +55,7 @@ export interface NitroQueryConfig<TParser extends IMessageEvent, TData>
  *   the request is NOT re-sent.
  * - Identical concurrent calls (same `key`) are deduped.
  */
-export const useNitroQuery = <TParser extends IMessageEvent, TData = TParser>(
-    config: NitroQueryConfig<TParser, TData>
-): UseQueryResult<TData> =>
-{
+export const useNitroQuery = <TParser extends IMessageEvent, TData = TParser>(config: NitroQueryConfig<TParser, TData>): UseQueryResult<TData> => {
     const { key, request, parser, select, accept, timeoutMs = 15_000, enabled, staleTime, refetchOnMount } = config;
 
     const options: UseQueryOptions<TData, Error, TData> = {
@@ -81,47 +77,40 @@ export const useNitroQuery = <TParser extends IMessageEvent, TData = TParser>(
 export const awaitNitroResponse = <TParser extends IMessageEvent, TData>(
     config: Pick<NitroQueryConfig<TParser, TData>, 'request' | 'parser' | 'select' | 'accept' | 'timeoutMs'>
 ): Promise<TData> =>
-        new Promise<TData>((resolve, reject) =>
-        {
-            const { request, parser: ParserCtor, select, accept, timeoutMs = 15_000 } = config;
+    new Promise<TData>((resolve, reject) => {
+        const { request, parser: ParserCtor, select, accept, timeoutMs = 15_000 } = config;
 
-            let settled = false;
-            let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
-            let listener: IMessageEvent | undefined = undefined;
+        let settled = false;
+        let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
+        let listener: IMessageEvent | undefined = undefined;
 
-            const cleanup = () =>
-            {
-                if(timeoutHandle !== null) clearTimeout(timeoutHandle);
-                if(listener) GetCommunication().removeMessageEvent(listener);
-            };
+        const cleanup = () => {
+            if (timeoutHandle !== null) clearTimeout(timeoutHandle);
+            if (listener) GetCommunication().removeMessageEvent(listener);
+        };
 
-            listener = new (ParserCtor as any)((event: TParser) =>
-            {
-                if(settled) return;
-                if(accept && !accept(event)) return;
-                settled = true;
+        listener = new (ParserCtor as any)((event: TParser) => {
+            if (settled) return;
+            if (accept && !accept(event)) return;
+            settled = true;
 
-                cleanup();
+            cleanup();
 
-                try
-                {
-                    resolve(select ? select(event) : (event as unknown as TData));
-                }
-                catch(err)
-                {
-                    reject(err instanceof Error ? err : new Error(String(err)));
-                }
-            });
-
-            GetCommunication().registerMessageEvent(listener);
-
-            timeoutHandle = setTimeout(() =>
-            {
-                if(settled) return;
-                settled = true;
-                cleanup();
-                reject(new Error(`NitroQuery timed out after ${ timeoutMs }ms`));
-            }, timeoutMs);
-
-            if(request) SendMessageComposer(request());
+            try {
+                resolve(select ? select(event) : (event as unknown as TData));
+            } catch (err) {
+                reject(err instanceof Error ? err : new Error(String(err)));
+            }
         });
+
+        GetCommunication().registerMessageEvent(listener);
+
+        timeoutHandle = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            reject(new Error(`NitroQuery timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+
+        if (request) SendMessageComposer(request());
+    });

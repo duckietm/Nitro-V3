@@ -5,7 +5,6 @@ export type PrefixFontOption = {
     family: string;
     tier: PrefixFontTier;
 };
-
 export const PRESET_PREFIX_FONTS: PrefixFontOption[] = [
     { id: '', label: 'Default', family: 'Ubuntu, sans-serif', tier: 'basic' },
     { id: 'pixel', label: 'Pixelify Sans', family: '"Pixelify Sans", cursive', tier: 'premium' },
@@ -38,31 +37,26 @@ export const PRESET_PREFIX_EFFECTS: { id: string; label: string; icon: string; t
     { id: 'sparkle', label: 'Sparkle', icon: '+', tier: 'premium' }
 ];
 
-export const parsePrefixColors = (text: string, colorStr: string): string[] =>
-{
-    if(!colorStr || !text) return [];
+export const parsePrefixColors = (text: string, colorStr: string): string[] => {
+    if (!colorStr || !text) return [];
 
     const colors = colorStr.split(',');
-    return [ ...text ].map((_, i) => colors[Math.min(i, colors.length - 1)]);
+    return [...text].map((_, i) => colors[Math.min(i, colors.length - 1)]);
 };
+export const getPrefixFontStyle = (font: string): Record<string, string> => {
+    const option = PRESET_PREFIX_FONTS.find((entry) => entry.id === font);
 
-export const getPrefixFontStyle = (font: string): Record<string, string> =>
-{
-    const option = PRESET_PREFIX_FONTS.find(entry => entry.id === font);
-
-    if(!option || !option.id.length) return {};
+    if (!option || !option.id.length) return {};
 
     return { fontFamily: option.family };
 };
 
-export const getPrefixEffectStyle = (effect: string, color?: string): Record<string, string | number> =>
-{
+export const getPrefixEffectStyle = (effect: string, color?: string): Record<string, string | number> => {
     const baseColor = color || '#FFFFFF';
 
-    switch(effect)
-    {
+    switch (effect) {
         case 'glow':
-            return { textShadow: `0 0 6px ${ baseColor }, 0 0 12px ${ baseColor }80` };
+            return { textShadow: `0 0 6px ${baseColor}, 0 0 12px ${baseColor}80` };
         case 'shadow':
             return { textShadow: '2px 2px 4px rgba(0,0,0,0.7), 1px 1px 2px rgba(0,0,0,0.5)' };
         case 'italic':
@@ -98,7 +92,7 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
             };
         case 'discord-neon':
             return {
-                textShadow: `0 0 5px ${ baseColor }, 0 0 10px ${ baseColor }, 0 0 18px ${ baseColor }90`,
+                textShadow: `0 0 5px ${baseColor}, 0 0 10px ${baseColor}, 0 0 18px ${baseColor}90`,
                 fontWeight: 900,
                 letterSpacing: '0.2px'
             };
@@ -123,7 +117,7 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
             };
         case 'bold-glow':
             return {
-                textShadow: `0 0 4px ${ baseColor }, 0 0 8px ${ baseColor }, 0 0 16px ${ baseColor }60`,
+                textShadow: `0 0 4px ${baseColor}, 0 0 8px ${baseColor}, 0 0 16px ${baseColor}60`,
                 fontWeight: 900
             };
         case 'rainbow':
@@ -159,69 +153,9 @@ export const getPrefixEffectStyle = (effect: string, color?: string): Record<str
         case 'sparkle':
             return {
                 animation: 'prefix-sparkle 1.4s ease-in-out infinite',
-                textShadow: `0 0 4px ${ baseColor }, 0 0 10px ${ baseColor }80, 0 0 16px rgba(255,255,255,0.45)`
+                textShadow: `0 0 4px ${baseColor}, 0 0 10px ${baseColor}80, 0 0 16px rgba(255,255,255,0.45)`
             };
         default:
             return {};
     }
 };
-
-export const PREFIX_EFFECT_KEYFRAMES = `
-@keyframes prefix-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-@keyframes prefix-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
-}
-
-@keyframes prefix-wave {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-5deg); }
-    75% { transform: rotate(5deg); }
-}
-
-@keyframes prefix-shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-1px); }
-    40% { transform: translateX(1px); }
-    60% { transform: translateX(-1px); }
-    80% { transform: translateX(1px); }
-}
-
-@keyframes prefix-rainbow {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-}
-
-@keyframes prefix-gold {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.25) saturate(1.2); }
-}
-
-@keyframes prefix-glitch {
-    0%, 100% { transform: translate(0, 0); }
-    20% { transform: translate(-1px, 0); }
-    40% { transform: translate(1px, 0); }
-    60% { transform: translate(-1px, 1px); }
-    80% { transform: translate(1px, -1px); }
-}
-
-@keyframes prefix-fire {
-    0%, 100% { transform: translateY(0); filter: brightness(1); }
-    50% { transform: translateY(-1px); filter: brightness(1.15); }
-}
-
-@keyframes prefix-matrix {
-    0% { opacity: 0.85; letter-spacing: 0; }
-    50% { opacity: 1; letter-spacing: 0.4px; }
-    100% { opacity: 0.85; letter-spacing: 0; }
-}
-
-@keyframes prefix-sparkle {
-    0%, 100% { opacity: 1; filter: brightness(1); }
-    50% { opacity: 0.92; filter: brightness(1.35); }
-}
-`;

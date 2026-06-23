@@ -4,32 +4,25 @@ import { subscribePlugins } from './NitroPluginApi';
 
 import './NitroPluginApi';
 
-export const ExternalPluginLoader: FC<{}> = () =>
-{
+export const ExternalPluginLoader: FC<{}> = () => {
     const [, forceUpdate] = useState(0);
-    const [ pluginUrls, setPluginUrls ] = useState<string[]>([]);
+    const [pluginUrls, setPluginUrls] = useState<string[]>([]);
 
-    useEffect(() =>
-    {
-        return subscribePlugins(() => forceUpdate(n => n + 1));
+    useEffect(() => {
+        return subscribePlugins(() => forceUpdate((n) => n + 1));
     }, []);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         let urls: string[] = [];
 
-        try
-        {
+        try {
             urls = GetConfigurationValue<string[]>('external.plugins', []) || [];
-        }
-        catch (e)
-        {
+        } catch (e) {
             console.warn('[NitroPlugins] Could not read external.plugins config:', e);
             return;
         }
 
-        if (!urls.length)
-        {
+        if (!urls.length) {
             console.log('[NitroPlugins] No external plugins configured');
             return;
         }
@@ -42,14 +35,15 @@ export const ExternalPluginLoader: FC<{}> = () =>
 
     return (
         <>
-            { pluginUrls.map(url => (
+            {pluginUrls.map((url) => (
                 <script
-                    key={ url }
+                    key={url}
                     async
-                    src={ url }
-                    onLoad={ () => console.log(`[NitroPlugins] Loaded: ${ url }`) }
-                    onError={ () => console.warn(`[NitroPlugins] Failed to load: ${ url }`) } />
-            )) }
+                    src={url}
+                    onLoad={() => console.log(`[NitroPlugins] Loaded: ${url}`)}
+                    onError={() => console.warn(`[NitroPlugins] Failed to load: ${url}`)}
+                />
+            ))}
         </>
     );
 };

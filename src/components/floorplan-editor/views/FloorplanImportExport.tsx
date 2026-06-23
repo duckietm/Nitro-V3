@@ -1,8 +1,8 @@
 import { Dispatch, FC, useState } from 'react';
 import { LocalizeText } from '../../../api';
 import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../common';
-import { FloorplanAction, FloorplanState } from '../state/types';
 import { serializeTilemap } from '../state/encoding';
+import { FloorplanAction, FloorplanState } from '../state/types';
 
 type Props = {
     state: FloorplanState;
@@ -12,40 +12,38 @@ type Props = {
     onRevertText: () => string;
 };
 
-export const FloorplanImportExport: FC<Props> = ({ state, dispatch, onClose, onSaveFromText, onRevertText }) =>
-{
-    const [ raw, setRaw ] = useState(() => serializeTilemap(state.tiles));
+export const FloorplanImportExport: FC<Props> = ({ state, dispatch, onClose, onSaveFromText, onRevertText }) => {
+    const [raw, setRaw] = useState(() => serializeTilemap(state.tiles));
 
-    const load = () =>
-    {
+    const load = () => {
         dispatch({ type: 'IMPORT_STRING', raw, source: 'local' });
         onClose();
     };
 
-    const save = () =>
-    {
+    const save = () => {
         onSaveFromText(raw);
         onClose();
     };
 
-    const revert = () =>
-    {
+    const revert = () => {
         setRaw(onRevertText());
     };
 
     return (
         <NitroCardView uniqueKey="floorplan-import-export" theme="primary-slim" className="w-[630px] h-[475px]">
-            <NitroCardHeaderView headerText={ LocalizeText('floor.plan.editor.import.export') } onCloseClick={ onClose } />
+            <NitroCardHeaderView headerText={LocalizeText('floor.plan.editor.import.export')} onCloseClick={onClose} />
             <NitroCardContentView className="flex flex-col gap-2">
-                <textarea
-                    className="form-control w-full flex-1 font-mono"
-                    value={ raw }
-                    onChange={ e => setRaw(e.target.value) }
-                />
+                <textarea className="form-control w-full flex-1 font-mono" value={raw} onChange={(e) => setRaw(e.target.value)} />
                 <div className="flex gap-2 justify-end">
-                    <Button data-testid="import-revert" onClick={ revert }>Revert</Button>
-                    <Button data-testid="import-load" onClick={ load }>Load</Button>
-                    <Button data-testid="import-save" onClick={ save }>{ LocalizeText('floor.plan.editor.save') }</Button>
+                    <Button data-testid="import-revert" onClick={revert}>
+                        Revert
+                    </Button>
+                    <Button data-testid="import-load" onClick={load}>
+                        Load
+                    </Button>
+                    <Button data-testid="import-save" onClick={save}>
+                        {LocalizeText('floor.plan.editor.save')}
+                    </Button>
                 </div>
             </NitroCardContentView>
         </NitroCardView>

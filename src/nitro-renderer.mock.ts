@@ -58,43 +58,36 @@ const listeners = new Map<string, Set<Listener>>();
 const msgListeners = new Map<string, Set<Listener>>();
 
 export const mockEventDispatcher = {
-    addEventListener(type: string, handler: Listener)
-    {
+    addEventListener(type: string, handler: Listener) {
         let bucket = listeners.get(type);
 
-        if(!bucket)
-        {
+        if (!bucket) {
             bucket = new Set();
             listeners.set(type, bucket);
         }
 
         bucket.add(handler);
     },
-    removeEventListener(type: string, handler: Listener)
-    {
+    removeEventListener(type: string, handler: Listener) {
         listeners.get(type)?.delete(handler);
     },
-    dispatchEvent(event: { type: string })
-    {
+    dispatchEvent(event: { type: string }) {
         // Fire NitroEvent listeners first, then MessageEvent listeners.
         const bucket = listeners.get(event.type);
-        if(bucket) for(const handler of bucket) handler(event);
+        if (bucket) for (const handler of bucket) handler(event);
 
         const msgBucket = msgListeners.get(event.type);
-        if(msgBucket) for(const handler of msgBucket) handler(event);
+        if (msgBucket) for (const handler of msgBucket) handler(event);
     },
-    hasListeners(type: string)
-    {
-        return (listeners.get(type)?.size ?? 0) > 0 ||
-               (msgListeners.get(type)?.size ?? 0) > 0;
+    hasListeners(type: string) {
+        return (listeners.get(type)?.size ?? 0) > 0 || (msgListeners.get(type)?.size ?? 0) > 0;
     }
 };
 
 // Clears only the NitroEvent listener map (GetEventDispatcher / useNitroEvent
 // registrations). MessageEvent listeners (useMessageEvent / GetCommunication)
 // are intentionally preserved so useBetween-based hooks stay subscribed.
-export const clearMockEventDispatcher = () =>
-{
+export const clearMockEventDispatcher = () => {
     listeners.clear();
 };
 
@@ -108,9 +101,13 @@ export const GetEventDispatcher = vi.fn(() => mockEventDispatcher);
 // with stable wire strings. Tests only need each constant to be a
 // unique string so dispatch + listener agree.
 
-const makeEnumProxy = (label: string) => new Proxy({}, {
-    get: (_, prop) => typeof prop === 'string' ? `mock:${ label }:${ prop }` : undefined
-}) as Record<string, string>;
+const makeEnumProxy = (label: string) =>
+    new Proxy(
+        {},
+        {
+            get: (_, prop) => (typeof prop === 'string' ? `mock:${label}:${prop}` : undefined)
+        }
+    ) as Record<string, string>;
 
 export const NitroEventType = makeEnumProxy('NitroEventType');
 export const MouseEventType = makeEnumProxy('MouseEventType');
@@ -131,8 +128,7 @@ export const RoomWidgetEnumItemExtradataParameter = makeEnumProxy('RoomWidgetEnu
 // Numeric enums — values mirror the real renderer SDK so comparisons
 // (`controllerLevel >= GUILD_ADMIN`, category branching) keep working.
 
-export class RoomControllerLevel
-{
+export class RoomControllerLevel {
     static readonly NONE = 0;
     static readonly GUEST = 1;
     static readonly GUILD_MEMBER = 2;
@@ -144,8 +140,7 @@ export class RoomControllerLevel
 // Mirrors `packages/api/src/nitro/session/enum/SecurityLevel.ts`. Kept
 // around so any consumer that still imports the renderer enum
 // (non-deprecated code path) compiles cleanly under the mock.
-export class SecurityLevel
-{
+export class SecurityLevel {
     static readonly NONE = 0;
     static readonly CELEBRITY = 1;
     static readonly PARTNER = 2;
@@ -158,8 +153,7 @@ export class SecurityLevel
     static readonly SUPER_USER = 9;
 }
 
-export class RoomObjectCategory
-{
+export class RoomObjectCategory {
     static readonly MINIMUM = 0;
     static readonly ROOM = 10;
     static readonly UNIT = 20;
@@ -172,8 +166,7 @@ export class RoomObjectCategory
 // Doorbell event class
 // ---------------------------------------------------------------------------
 
-export class RoomSessionDoorbellEvent
-{
+export class RoomSessionDoorbellEvent {
     // Wire strings copied from the real class so any consumer that
     // ignores the indirection through the `.DOORBELL` static still
     // matches.
@@ -184,7 +177,11 @@ export class RoomSessionDoorbellEvent
     // Mirrors the real constructor signature `(type, session, userName)`
     // so `tsgo` is happy. Tests can pass `null` for the session: the
     // SUT only reads `.userName` and `.type`.
-    constructor(public readonly type: string, public readonly _session: unknown, public readonly userName: string) {}
+    constructor(
+        public readonly type: string,
+        public readonly _session: unknown,
+        public readonly userName: string
+    ) {}
 }
 
 // ---------------------------------------------------------------------------
@@ -193,8 +190,7 @@ export class RoomSessionDoorbellEvent
 // the barrel cascade, but whose behavior tests don't yet exercise.
 // ---------------------------------------------------------------------------
 
-class StubClass
-{
+class StubClass {
     constructor(..._args: unknown[]) {}
 }
 
@@ -210,24 +206,28 @@ export class NitroEvent extends StubClass {}
 // route dispatches through mockEventDispatcher. Each concrete subclass
 // exposes a `.type` equal to its constructor name so dispatchEvent
 // can match registered listeners.
-export class MessageEvent
-{
+export class MessageEvent {
     private _callBack: Function | null;
 
-    constructor(callBack?: Function)
-    {
+    constructor(callBack?: Function) {
         this._callBack = callBack ?? null;
     }
 
-    public get callBack(): Function | null { return this._callBack; }
+    public get callBack(): Function | null {
+        return this._callBack;
+    }
 
     // Each concrete subclass is identified by its class name.
-    public get type(): string { return this.constructor.name; }
+    public get type(): string {
+        return this.constructor.name;
+    }
 
     // Concrete subclasses override this; the no-arg construction path used
     // by makeParserlessEvent in tests leaves it returning null — tests
     // override it with (ev as any).getParser = () => parser.
-    public getParser(): any { return null; }
+    public getParser(): any {
+        return null;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -308,8 +308,7 @@ export class RespectReceivedEvent extends MessageEvent {}
 export class RoomEnterEvent extends MessageEvent {}
 export class SimpleAlertMessageEvent extends MessageEvent {}
 export class UserBannedMessageEvent extends MessageEvent {}
-export class WiredRewardResultMessageEvent extends MessageEvent
-{
+export class WiredRewardResultMessageEvent extends MessageEvent {
     static readonly PRODUCT_DONATED_CODE = 7;
     static readonly BADGE_DONATED_CODE = 8;
 }
@@ -330,8 +329,7 @@ export class Vector3d extends StubClass {}
 export class ObjectDataFactory extends StubClass {}
 
 // RoomDataParser — real static constants needed by useDoorState and its tests.
-export class RoomDataParser
-{
+export class RoomDataParser {
     static readonly DOORBELL_STATE = 1;
     static readonly PASSWORD_STATE = 2;
 }
@@ -345,15 +343,13 @@ export class NavigatorEventCategoryDataParser extends StubClass {}
 export class NavigatorSavedSearch extends StubClass {}
 export class NavigatorSearchResultSet extends StubClass {}
 export class NavigatorTopLevelContext extends StubClass {}
-export class CantConnectMessageParser extends StubClass
-{
+export class CantConnectMessageParser extends StubClass {
     static readonly REASON_FULL = 1;
     static readonly REASON_QUEUE_ERROR = 2;
     static readonly REASON_BANNED = 3;
 }
 
-export class LegacyExternalInterface
-{
+export class LegacyExternalInterface {
     static readonly available = false;
     static call(..._args: unknown[]): void {}
 }
@@ -411,15 +407,34 @@ export const HEIGHT_SCHEME = 'x0123456789abcdefghijklmnopq';
 export const MAX_NUM_TILE_PER_AXIS = 64;
 
 export const COLORMAP: object = {
-    'x': '101010',
-    '0': '0065ff', '1': '0091ff', '2': '00bcff', '3': '00e8ff',
-    '4': '00ffea', '5': '00ffbf', '6': '00ff93', '7': '00ff68',
-    '8': '00ff3d', '9': '19ff00',
-    'a': '44ff00', 'b': '70ff00', 'c': '9bff00', 'd': 'f2ff00',
-    'e': 'ffe000', 'f': 'ffb500', 'g': 'ff8900', 'h': 'ff5e00',
-    'i': 'ff3200', 'j': 'ff0700', 'k': 'ff0023', 'l': 'ff007a',
-    'm': 'ff00a5', 'n': 'ff00d1', 'o': 'ff00fc',
-    'p': 'd600ff', 'q': 'aa00ff'
+    x: '101010',
+    '0': '0065ff',
+    '1': '0091ff',
+    '2': '00bcff',
+    '3': '00e8ff',
+    '4': '00ffea',
+    '5': '00ffbf',
+    '6': '00ff93',
+    '7': '00ff68',
+    '8': '00ff3d',
+    '9': '19ff00',
+    a: '44ff00',
+    b: '70ff00',
+    c: '9bff00',
+    d: 'f2ff00',
+    e: 'ffe000',
+    f: 'ffb500',
+    g: 'ff8900',
+    h: 'ff5e00',
+    i: 'ff3200',
+    j: 'ff0700',
+    k: 'ff0023',
+    l: 'ff007a',
+    m: 'ff00a5',
+    n: 'ff00d1',
+    o: 'ff00fc',
+    p: 'd600ff',
+    q: 'aa00ff'
 };
 
 // ---------------------------------------------------------------------------
@@ -429,8 +444,7 @@ export const COLORMAP: object = {
 // Composer stubs for floor-plan-editor message events
 export class GetRoomEntryTileMessageComposer extends StubClass {}
 export class GetOccupiedTilesMessageComposer extends StubClass {}
-export class UpdateFloorPropertiesMessageComposer extends StubClass
-{
+export class UpdateFloorPropertiesMessageComposer extends StubClass {
     public tilemap: string;
     public doorX: number;
     public doorY: number;
@@ -438,8 +452,7 @@ export class UpdateFloorPropertiesMessageComposer extends StubClass
     public thicknessWall: number;
     public thicknessFloor: number;
     public wallHeight: number;
-    constructor(tilemap: string, doorX: number, doorY: number, dir: number, thicknessWall: number, thicknessFloor: number, wallHeight: number)
-    {
+    constructor(tilemap: string, doorX: number, doorY: number, dir: number, thicknessWall: number, thicknessFloor: number, wallHeight: number) {
         super();
         this.tilemap = tilemap;
         this.doorX = doorX;
@@ -464,25 +477,29 @@ export const AddLinkEventTracker = vi.fn();
 export const RemoveLinkEventTracker = vi.fn();
 
 // Thickness conversion helpers — mirror the renderer's real mapping
-export const convertNumbersForSaving = (v: number): number =>
-{
-    switch(v)
-    {
-        case 0: return -2;
-        case 1: return -1;
-        case 3: return 1;
-        default: return 0;
+export const convertNumbersForSaving = (v: number): number => {
+    switch (v) {
+        case 0:
+            return -2;
+        case 1:
+            return -1;
+        case 3:
+            return 1;
+        default:
+            return 0;
     }
 };
 
-export const convertSettingToNumber = (v: number): number =>
-{
-    switch(v)
-    {
-        case 0.25: return 0;
-        case 0.5: return 1;
-        case 2: return 3;
-        default: return 2;
+export const convertSettingToNumber = (v: number): number => {
+    switch (v) {
+        case 0.25:
+            return 0;
+        case 0.5:
+            return 1;
+        case 2:
+            return 3;
+        default:
+            return 2;
     }
 };
 
@@ -490,14 +507,12 @@ export const convertSettingToNumber = (v: number): number =>
 // Singleton getters
 // ---------------------------------------------------------------------------
 
-const stubManager = () =>
-{
+const stubManager = () => {
     const sentinel = new Proxy(() => undefined, {
-        get(target, prop)
-        {
-            if(prop === 'then') return undefined;
+        get(target, prop) {
+            if (prop === 'then') return undefined;
             const cached = (target as any)[prop];
-            if(cached !== undefined) return cached;
+            if (cached !== undefined) return cached;
             // Most fields read from a real manager are either methods
             // (return functions) or sub-objects (return proxies). We
             // return another callable proxy so chained access works.
@@ -505,8 +520,7 @@ const stubManager = () =>
             (target as any)[prop] = value;
             return value;
         },
-        apply()
-        {
+        apply() {
             return undefined;
         }
     });
@@ -528,19 +542,20 @@ export const GetAvatarRenderManager = vi.fn(stubManager);
 const _msgEventWrappers = new WeakMap<MessageEvent, (ev: any) => void>();
 
 export const GetCommunication = vi.fn(() => ({
-    registerMessageEvent(event: MessageEvent)
-    {
-        if(!event.callBack) return;
+    registerMessageEvent(event: MessageEvent) {
+        if (!event.callBack) return;
         const wrapper = (ev: any) => event.callBack!(ev);
         _msgEventWrappers.set(event, wrapper);
         let bucket = msgListeners.get(event.type);
-        if(!bucket) { bucket = new Set(); msgListeners.set(event.type, bucket); }
+        if (!bucket) {
+            bucket = new Set();
+            msgListeners.set(event.type, bucket);
+        }
         bucket.add(wrapper);
     },
-    removeMessageEvent(event: MessageEvent)
-    {
+    removeMessageEvent(event: MessageEvent) {
         const wrapper = _msgEventWrappers.get(event);
-        if(wrapper) msgListeners.get(event.type)?.delete(wrapper);
+        if (wrapper) msgListeners.get(event.type)?.delete(wrapper);
     },
     // Stub for SendMessageComposer which calls GetCommunication().connection.send(...)
     connection: { send: vi.fn() }
@@ -556,16 +571,22 @@ export const GetRoomSessionManager = vi.fn(stubManager);
 // real renderer increments to allocate unique preview-room IDs;
 // keeping it as a mutable static lets the editor mount/unmount
 // repeatedly across tests without colliding.
-export class RoomPreviewer
-{
+export class RoomPreviewer {
     static PREVIEW_COUNTER = 0;
 
-    constructor(public readonly _engine: unknown, public readonly _id: number) {}
+    constructor(
+        public readonly _engine: unknown,
+        public readonly _id: number
+    ) {}
 
     public updatePreviewModel(_model: string, _wallHeight: number, _scale?: boolean): void {}
     public modifyRoomCanvas(_w: number, _h: number): void {}
-    public getRoomCanvas(_w: number, _h: number): unknown { return null; }
-    public getRenderingCanvas(): unknown { return null; }
+    public getRoomCanvas(_w: number, _h: number): unknown {
+        return null;
+    }
+    public getRenderingCanvas(): unknown {
+        return null;
+    }
     public updatePreviewRoomView(): void {}
     public changeRoomObjectDirection(): void {}
     public changeRoomObjectState(): void {}

@@ -7,7 +7,13 @@ import { Text } from '../../../../common';
 import { useWired, useWiredTools } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
 import { WiredVariablePicker } from '../WiredVariablePicker';
-import { buildWiredVariablePickerEntries, createFallbackVariableEntry, flattenWiredVariablePickerEntries, getCustomVariableItemId, IWiredVariablePickerEntry } from '../WiredVariablePickerData';
+import {
+    buildWiredVariablePickerEntries,
+    createFallbackVariableEntry,
+    flattenWiredVariablePickerEntries,
+    getCustomVariableItemId,
+    IWiredVariablePickerEntry
+} from '../WiredVariablePickerData';
 import { WiredExtraBaseView } from './WiredExtraBaseView';
 
 const TARGET_USER = 0;
@@ -17,8 +23,7 @@ const MAX_NAME_LENGTH = 40;
 
 type EchoSourceTarget = 'user' | 'furni' | 'global';
 
-interface IEchoEditorData
-{
+interface IEchoEditorData {
     sourceTargetType?: number;
     sourceVariableItemId?: number;
     sourceVariableName?: string;
@@ -26,20 +31,18 @@ interface IEchoEditorData
     variableName?: string;
 }
 
-const TARGET_BUTTONS: Array<{ key: EchoSourceTarget; icon: string; }> = [
+const TARGET_BUTTONS: Array<{ key: EchoSourceTarget; icon: string }> = [
     { key: 'furni', icon: furniVariableIcon },
     { key: 'user', icon: userVariableIcon },
     { key: 'global', icon: globalVariableIcon }
 ];
 
-const normalizeVariableName = (value: string) =>
-{
+const normalizeVariableName = (value: string) => {
     let normalizedValue = (value ?? '').replace(/[\t\r\n]/g, '');
 
-    if(normalizedValue.includes('=')) normalizedValue = normalizedValue.substring(0, normalizedValue.indexOf('=')).trim();
+    if (normalizedValue.includes('=')) normalizedValue = normalizedValue.substring(0, normalizedValue.indexOf('=')).trim();
 
-    while(normalizedValue.startsWith('@') || normalizedValue.startsWith('~'))
-    {
+    while (normalizedValue.startsWith('@') || normalizedValue.startsWith('~')) {
         normalizedValue = normalizedValue.substring(1);
     }
 
@@ -49,85 +52,81 @@ const normalizeVariableName = (value: string) =>
     return normalizedValue.slice(0, MAX_NAME_LENGTH);
 };
 
-const handleVariableNameKeyDown = (event: React.KeyboardEvent<HTMLInputElement>, setValue: (value: string) => void) =>
-{
-    if(event.key !== ' ') return;
+const handleVariableNameKeyDown = (event: React.KeyboardEvent<HTMLInputElement>, setValue: (value: string) => void) => {
+    if (event.key !== ' ') return;
 
     event.preventDefault();
 
     const input = event.currentTarget;
-    const start = (input.selectionStart ?? input.value.length);
-    const end = (input.selectionEnd ?? start);
-    const nextValue = `${ input.value.substring(0, start) }_${ input.value.substring(end) }`;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? start;
+    const nextValue = `${input.value.substring(0, start)}_${input.value.substring(end)}`;
 
     setValue(normalizeVariableName(nextValue));
 
     window.requestAnimationFrame(() => input.setSelectionRange(Math.min(start + 1, input.value.length + 1), Math.min(start + 1, input.value.length + 1)));
 };
 
-const parseEditorData = (value: string): IEchoEditorData =>
-{
-    if(!value?.trim().startsWith('{')) return {};
+const parseEditorData = (value: string): IEchoEditorData => {
+    if (!value?.trim().startsWith('{')) return {};
 
-    try
-    {
+    try {
         return (JSON.parse(value) as IEchoEditorData) || {};
-    }
-    catch
-    {
+    } catch {
         return {};
     }
 };
 
-const normalizeTargetType = (value: number): EchoSourceTarget =>
-{
-    switch(value)
-    {
-        case TARGET_FURNI: return 'furni';
-        case TARGET_ROOM: return 'global';
-        default: return 'user';
+const normalizeTargetType = (value: number): EchoSourceTarget => {
+    switch (value) {
+        case TARGET_FURNI:
+            return 'furni';
+        case TARGET_ROOM:
+            return 'global';
+        default:
+            return 'user';
     }
 };
 
-const getTargetValue = (targetType: EchoSourceTarget) =>
-{
-    switch(targetType)
-    {
-        case 'furni': return TARGET_FURNI;
-        case 'global': return TARGET_ROOM;
-        default: return TARGET_USER;
+const getTargetValue = (targetType: EchoSourceTarget) => {
+    switch (targetType) {
+        case 'furni':
+            return TARGET_FURNI;
+        case 'global':
+            return TARGET_ROOM;
+        default:
+            return TARGET_USER;
     }
 };
 
-export const WiredExtraVariableEchoView: FC<{}> = () =>
-{
+export const WiredExtraVariableEchoView: FC<{}> = () => {
     const { trigger = null, setIntParams = null, setStringParam = null } = useWired();
     const { userVariableDefinitions = [], furniVariableDefinitions = [], roomVariableDefinitions = [] } = useWiredTools();
-    const [ variableName, setVariableName ] = useState('');
-    const [ sourceTargetType, setSourceTargetType ] = useState<EchoSourceTarget>('user');
-    const [ sourceVariableToken, setSourceVariableToken ] = useState('');
-    const [ fallbackSourceName, setFallbackSourceName ] = useState('');
+    const [variableName, setVariableName] = useState('');
+    const [sourceTargetType, setSourceTargetType] = useState<EchoSourceTarget>('user');
+    const [sourceVariableToken, setSourceVariableToken] = useState('');
+    const [fallbackSourceName, setFallbackSourceName] = useState('');
 
-    const targetDefinitions = useMemo(() =>
-    {
-        switch(sourceTargetType)
-        {
-            case 'furni': return furniVariableDefinitions;
-            case 'global': return roomVariableDefinitions;
-            default: return userVariableDefinitions;
+    const targetDefinitions = useMemo(() => {
+        switch (sourceTargetType) {
+            case 'furni':
+                return furniVariableDefinitions;
+            case 'global':
+                return roomVariableDefinitions;
+            default:
+                return userVariableDefinitions;
         }
-    }, [ furniVariableDefinitions, roomVariableDefinitions, sourceTargetType, userVariableDefinitions ]);
+    }, [furniVariableDefinitions, roomVariableDefinitions, sourceTargetType, userVariableDefinitions]);
 
-    const variableEntries = useMemo(() => buildWiredVariablePickerEntries(sourceTargetType, 'echo', targetDefinitions), [ sourceTargetType, targetDefinitions ]);
-    const resolvedVariableEntries = useMemo(() =>
-    {
-        if(!sourceVariableToken) return variableEntries;
-        if(flattenWiredVariablePickerEntries(variableEntries).some(entry => (entry.token === sourceVariableToken))) return variableEntries;
+    const variableEntries = useMemo(() => buildWiredVariablePickerEntries(sourceTargetType, 'echo', targetDefinitions), [sourceTargetType, targetDefinitions]);
+    const resolvedVariableEntries = useMemo(() => {
+        if (!sourceVariableToken) return variableEntries;
+        if (flattenWiredVariablePickerEntries(variableEntries).some((entry) => entry.token === sourceVariableToken)) return variableEntries;
 
         const fallbackEntry = createFallbackVariableEntry(sourceTargetType, sourceVariableToken);
 
-        if(fallbackEntry) return [ fallbackEntry, ...variableEntries ];
-        if(!fallbackSourceName) return variableEntries;
+        if (fallbackEntry) return [fallbackEntry, ...variableEntries];
+        if (!fallbackSourceName) return variableEntries;
 
         const namedFallback: IWiredVariablePickerEntry = {
             id: sourceVariableToken,
@@ -141,15 +140,16 @@ export const WiredExtraVariableEchoView: FC<{}> = () =>
             target: sourceTargetType
         };
 
-        return [ namedFallback, ...variableEntries ];
-    }, [ fallbackSourceName, sourceTargetType, sourceVariableToken, variableEntries ]);
+        return [namedFallback, ...variableEntries];
+    }, [fallbackSourceName, sourceTargetType, sourceVariableToken, variableEntries]);
 
-    const selectedEntry = useMemo(() => flattenWiredVariablePickerEntries(resolvedVariableEntries).find(entry => (entry.token === sourceVariableToken)) ?? null, [ resolvedVariableEntries, sourceVariableToken ]);
+    const selectedEntry = useMemo(
+        () => flattenWiredVariablePickerEntries(resolvedVariableEntries).find((entry) => entry.token === sourceVariableToken) ?? null,
+        [resolvedVariableEntries, sourceVariableToken]
+    );
 
-    useEffect(() =>
-    {
-        if(!trigger)
-        {
+    useEffect(() => {
+        if (!trigger) {
             setVariableName('');
             setSourceTargetType('user');
             setSourceVariableToken('');
@@ -163,58 +163,72 @@ export const WiredExtraVariableEchoView: FC<{}> = () =>
         setSourceTargetType(normalizeTargetType(editorData.sourceTargetType ?? TARGET_USER));
         setSourceVariableToken((editorData.sourceVariableToken || '').trim());
         setFallbackSourceName((editorData.sourceVariableName || '').trim());
-    }, [ trigger ]);
+    }, [trigger]);
 
-    const save = () =>
-    {
+    const save = () => {
         setIntParams([]);
-        setStringParam(JSON.stringify({
-            variableName: normalizeVariableName(variableName),
-            sourceTargetType: getTargetValue(sourceTargetType),
-            sourceVariableToken,
-            sourceVariableItemId: getCustomVariableItemId(sourceVariableToken),
-            sourceVariableName: selectedEntry?.displayLabel || fallbackSourceName || ''
-        }));
+        setStringParam(
+            JSON.stringify({
+                variableName: normalizeVariableName(variableName),
+                sourceTargetType: getTargetValue(sourceTargetType),
+                sourceVariableToken,
+                sourceVariableItemId: getCustomVariableItemId(sourceVariableToken),
+                sourceVariableName: selectedEntry?.displayLabel || fallbackSourceName || ''
+            })
+        );
     };
 
     const validate = () => !!sourceVariableToken;
 
-    const handleTargetTypeChange = (nextValue: EchoSourceTarget) =>
-    {
-        if(nextValue === sourceTargetType) return;
+    const handleTargetTypeChange = (nextValue: EchoSourceTarget) => {
+        if (nextValue === sourceTargetType) return;
 
         setSourceTargetType(nextValue);
         setSourceVariableToken('');
     };
 
     return (
-        <WiredExtraBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save } validate={ validate } cardStyle={ { width: 244 } }>
+        <WiredExtraBaseView
+            hasSpecialInput={true}
+            requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE}
+            save={save}
+            validate={validate}
+            cardStyle={{ width: 244 }}
+        >
             <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-1">
-                    <Text>{ LocalizeText('wiredfurni.params.variables.variable_name') }</Text>
-                    <NitroInput maxLength={ MAX_NAME_LENGTH } type="text" value={ variableName } onChange={ event => setVariableName(normalizeVariableName(event.target.value)) } onKeyDown={ event => handleVariableNameKeyDown(event, setVariableName) } />
+                    <Text>{LocalizeText('wiredfurni.params.variables.variable_name')}</Text>
+                    <NitroInput
+                        maxLength={MAX_NAME_LENGTH}
+                        type="text"
+                        value={variableName}
+                        onChange={(event) => setVariableName(normalizeVariableName(event.target.value))}
+                        onKeyDown={(event) => handleVariableNameKeyDown(event, setVariableName)}
+                    />
                 </div>
 
                 <div className="nitro-wired__give-var-heading">
-                    <Text>{ LocalizeText('wiredfurni.params.variables.variable_selection') }</Text>
+                    <Text>{LocalizeText('wiredfurni.params.variables.variable_selection')}</Text>
                     <div className="nitro-wired__give-var-targets">
-                        { TARGET_BUTTONS.map(button => (
+                        {TARGET_BUTTONS.map((button) => (
                             <button
-                                key={ button.key }
+                                key={button.key}
                                 type="button"
-                                className={ `nitro-wired__give-var-target nitro-wired__give-var-target--${ button.key } ${ sourceTargetType === button.key ? 'is-active' : '' }` }
-                                onClick={ () => handleTargetTypeChange(button.key) }>
-                                <img src={ button.icon } alt={ button.key } />
+                                className={`nitro-wired__give-var-target nitro-wired__give-var-target--${button.key} ${sourceTargetType === button.key ? 'is-active' : ''}`}
+                                onClick={() => handleTargetTypeChange(button.key)}
+                            >
+                                <img src={button.icon} alt={button.key} />
                             </button>
-                        )) }
+                        ))}
                     </div>
                 </div>
 
                 <WiredVariablePicker
-                    entries={ resolvedVariableEntries as IWiredVariablePickerEntry[] }
+                    entries={resolvedVariableEntries as IWiredVariablePickerEntry[]}
                     recentScope="variable-echo"
-                    selectedToken={ sourceVariableToken }
-                    onSelect={ entry => setSourceVariableToken(entry.token) } />
+                    selectedToken={sourceVariableToken}
+                    onSelect={(entry) => setSourceVariableToken(entry.token)}
+                />
             </div>
         </WiredExtraBaseView>
     );

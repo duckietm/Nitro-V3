@@ -5,35 +5,30 @@ import { Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView 
 import { useHelp } from '../../hooks';
 import { DescribeReportView } from './views/DescribeReportView';
 import { HelpIndexView } from './views/HelpIndexView';
+import { NameChangeView } from './views/name-change/NameChangeView';
 import { ReportSummaryView } from './views/ReportSummaryView';
 import { SanctionSatusView } from './views/SanctionStatusView';
 import { SelectReportedChatsView } from './views/SelectReportedChatsView';
 import { SelectReportedUserView } from './views/SelectReportedUserView';
 import { SelectTopicView } from './views/SelectTopicView';
-import { NameChangeView } from './views/name-change/NameChangeView';
 
-export const HelpView: FC<{}> = props =>
-{
-    const [ isVisible, setIsVisible ] = useState(false);
+export const HelpView: FC<{}> = (props) => {
+    const [isVisible, setIsVisible] = useState(false);
     const { activeReport = null, setActiveReport = null, report = null } = useHelp();
 
-    const onClose = () =>
-    {
+    const onClose = () => {
         setActiveReport(null);
         setIsVisible(false);
     };
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -41,14 +36,13 @@ export const HelpView: FC<{}> = props =>
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(prevValue => !prevValue);
+                        setIsVisible((prevValue) => !prevValue);
                         return;
                     case 'tour':
                         // todo: launch tour
                         return;
                     case 'report':
-                        if((parts.length >= 5) && (parts[2] === 'room'))
-                        {
+                        if (parts.length >= 5 && parts[2] === 'room') {
                             const roomId = parseInt(parts[3]);
                             const unknown = unescape(parts.splice(4).join('/'));
                             //this.reportRoom(roomId, unknown, "");
@@ -64,19 +58,15 @@ export const HelpView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    useEffect(() =>
-    {
-        if(!activeReport) return;
+    useEffect(() => {
+        if (!activeReport) return;
 
         setIsVisible(true);
-    }, [ activeReport ]);
+    }, [activeReport]);
 
-    const CurrentStepView = () =>
-    {
-        if(activeReport)
-        {
-            switch(activeReport.currentStep)
-            {
+    const CurrentStepView = () => {
+        if (activeReport) {
+            switch (activeReport.currentStep) {
                 case ReportState.SELECT_USER:
                     return <SelectReportedUserView />;
                 case ReportState.SELECT_CHATS:
@@ -95,22 +85,28 @@ export const HelpView: FC<{}> = props =>
 
     return (
         <>
-            { isVisible &&
-                <NitroCardView className={ `nitro-help${ activeReport ? '' : ' w-[420px]' }` } theme="primary-slim">
-                    <NitroCardHeaderView headerText={ LocalizeText('help.button.cfh') } onCloseClick={ onClose } />
+            {isVisible && (
+                <NitroCardView
+                    className={`nitro-help min-w-0 max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]${activeReport ? '' : ' w-[min(420px,calc(100vw-16px))]'}`}
+                    theme="primary-slim"
+                >
+                    <NitroCardHeaderView headerText={LocalizeText('help.button.cfh')} onCloseClick={onClose} />
                     <NitroCardContentView className="text-black">
-                        { activeReport
-                            ? <Grid>
-                                <Column center overflow="hidden" size={ 5 }>
+                        {activeReport ? (
+                            <Grid>
+                                <Column center overflow="hidden" size={5}>
                                     <div className="index-image" />
                                 </Column>
-                                <Column justifyContent="between" overflow="hidden" size={ 7 }>
+                                <Column justifyContent="between" overflow="hidden" size={7}>
                                     <CurrentStepView />
                                 </Column>
                             </Grid>
-                            : <CurrentStepView /> }
+                        ) : (
+                            <CurrentStepView />
+                        )}
                     </NitroCardContentView>
-                </NitroCardView> }
+                </NitroCardView>
+            )}
             <SanctionSatusView />
             <NameChangeView />
         </>

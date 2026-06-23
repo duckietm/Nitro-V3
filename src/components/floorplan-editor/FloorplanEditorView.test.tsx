@@ -1,19 +1,16 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { act, render, cleanup, fireEvent } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Capture handlers registered by useMessageEvent / useNitroEvent so we can fire fake events.
 const messageHandlers = new Map<unknown, (event: unknown) => void>();
 const nitroHandlers = new Map<unknown, (event: unknown) => void>();
 
-vi.mock('../../hooks', async () =>
-{
+vi.mock('../../hooks', async () => {
     return {
-        useMessageEvent: (eventClass: unknown, handler: (event: unknown) => void) =>
-        {
+        useMessageEvent: (eventClass: unknown, handler: (event: unknown) => void) => {
             messageHandlers.set(eventClass, handler);
         },
-        useNitroEvent: (eventType: unknown, handler: (event: unknown) => void) =>
-        {
+        useNitroEvent: (eventType: unknown, handler: (event: unknown) => void) => {
             nitroHandlers.set(eventType, handler);
         }
     };
@@ -22,8 +19,7 @@ vi.mock('../../hooks', async () =>
 // Spy SendMessageComposer — use importOriginal to keep all other api exports intact
 // (DraggableWindow et al. rely on GetLocalStorage and others at mount time).
 const sendMessageComposer = vi.fn();
-vi.mock('../../api', async (importOriginal) =>
-{
+vi.mock('../../api', async (importOriginal) => {
     const actual = await importOriginal<typeof import('../../api')>();
     return {
         ...actual,
@@ -33,34 +29,29 @@ vi.mock('../../api', async (importOriginal) =>
 });
 
 import {
+    AddLinkEventTracker,
     FloorHeightMapEvent,
-    RoomVisualizationSettingsEvent,
+    GetOccupiedTilesMessageComposer,
+    GetRoomEntryTileMessageComposer,
+    RemoveLinkEventTracker,
+    RoomEngineEvent,
     RoomEntryTileMessageEvent,
     RoomOccupiedTilesMessageEvent,
-    RoomEngineEvent,
-    GetRoomEntryTileMessageComposer,
-    GetOccupiedTilesMessageComposer,
-    UpdateFloorPropertiesMessageComposer,
-    AddLinkEventTracker,
-    RemoveLinkEventTracker
+    RoomVisualizationSettingsEvent,
+    UpdateFloorPropertiesMessageComposer
 } from '@nitrots/nitro-renderer';
 import { FloorplanEditorView } from './FloorplanEditorView';
 
 // The Button component in this codebase renders as a <div> (via Base), not <button>.
 // NitroCardView portals everything into #draggable-windows-container.
 // Find a clickable element by its exact trimmed text content in the portal.
-const findByExactText = (text: string): Element | undefined =>
-{
+const findByExactText = (text: string): Element | undefined => {
     const container = document.getElementById('draggable-windows-container') ?? document.body;
-    return Array.from(container.querySelectorAll('div')).find(
-        (el: Element) => el.textContent?.trim() === text
-    );
+    return Array.from(container.querySelectorAll('div')).find((el: Element) => el.textContent?.trim() === text);
 };
 
-describe('FloorplanEditorView container', () =>
-{
-    beforeEach(() =>
-    {
+describe('FloorplanEditorView container', () => {
+    beforeEach(() => {
         messageHandlers.clear();
         nitroHandlers.clear();
         sendMessageComposer.mockClear();
@@ -70,40 +61,35 @@ describe('FloorplanEditorView container', () =>
 
     afterEach(() => cleanup());
 
-    const openEditor = () =>
-    {
+    const openEditor = () => {
         render(<FloorplanEditorView />);
         // Trigger link tracker: 'floor-editor/show' to make editor visible
         const tracker = (AddLinkEventTracker as ReturnType<typeof vi.fn>).mock.calls[0][0];
         act(() => tracker.linkReceived('floor-editor/show'));
     };
 
-    it('registers a link tracker on mount with floor-editor/ prefix', () =>
-    {
+    it('registers a link tracker on mount with floor-editor/ prefix', () => {
         render(<FloorplanEditorView />);
         expect(AddLinkEventTracker).toHaveBeenCalledTimes(1);
         const tracker = (AddLinkEventTracker as ReturnType<typeof vi.fn>).mock.calls[0][0];
         expect(tracker.eventUrlPrefix).toBe('floor-editor/');
     });
 
-    it('dispatches GetRoomEntryTileMessageComposer when editor becomes visible', () =>
-    {
+    it('dispatches GetRoomEntryTileMessageComposer when editor becomes visible', () => {
         openEditor();
         const composers = sendMessageComposer.mock.calls.map((c: unknown[]) => c[0]);
         const entryComposer = composers.find((c: unknown) => c instanceof GetRoomEntryTileMessageComposer);
         expect(entryComposer).toBeTruthy();
     });
 
-    it('dispatches GetOccupiedTilesMessageComposer when editor becomes visible', () =>
-    {
+    it('dispatches GetOccupiedTilesMessageComposer when editor becomes visible', () => {
         openEditor();
         const composers = sendMessageComposer.mock.calls.map((c: unknown[]) => c[0]);
         const occupiedComposer = composers.find((c: unknown) => c instanceof GetOccupiedTilesMessageComposer);
         expect(occupiedComposer).toBeTruthy();
     });
 
-    it('seeds door from RoomEntryTileMessageEvent', () =>
-    {
+    it('seeds door from RoomEntryTileMessageEvent', () => {
         openEditor();
         const handler = messageHandlers.get(RoomEntryTileMessageEvent);
         expect(handler).toBeTruthy();
@@ -127,8 +113,7 @@ describe('FloorplanEditorView container', () =>
         expect(composer.dir).toBe(6);
     });
 
-    it('Save composer carries wallHeight - 1 from the reducer state', () =>
-    {
+    it('Save composer carries wallHeight - 1 from the reducer state', () => {
         openEditor();
         const fhmHandler = messageHandlers.get(FloorHeightMapEvent);
         // parser.wallHeight = 4 → state.wallHeight = 4 + 1 = 5 → Save sends 5 - 1 = 4
@@ -142,8 +127,7 @@ describe('FloorplanEditorView container', () =>
         expect(composer.wallHeight).toBe(4);
     });
 
-    it('Save composer thickness goes through convertNumbersForSaving', () =>
-    {
+    it('Save composer thickness goes through convertNumbersForSaving', () => {
         openEditor();
         const fhmHandler = messageHandlers.get(FloorHeightMapEvent);
         act(() => fhmHandler!({ getParser: () => ({ model: '0', wallHeight: 0 }) }));
@@ -161,8 +145,7 @@ describe('FloorplanEditorView container', () =>
         expect(composer.thicknessFloor).toBe(1);
     });
 
-    it('RoomOccupiedTilesMessageEvent marks tiles occupied without altering the saved tilemap', () =>
-    {
+    it('RoomOccupiedTilesMessageEvent marks tiles occupied without altering the saved tilemap', () => {
         openEditor();
         const fhmHandler = messageHandlers.get(FloorHeightMapEvent);
         // 2x2 grid: '00\r00' → rows 0 and 1, each with 2 walkable tiles
@@ -170,7 +153,10 @@ describe('FloorplanEditorView container', () =>
         const occHandler = messageHandlers.get(RoomOccupiedTilesMessageEvent);
         expect(occHandler).toBeTruthy();
         // Mark col 1 of row 0 as occupied; blockedTilesMap[row][col]
-        const blockedTilesMap = [[false, true], [false, false]];
+        const blockedTilesMap = [
+            [false, true],
+            [false, false]
+        ];
         act(() => occHandler!({ getParser: () => ({ blockedTilesMap }) }));
         const saveBtn = findByExactText('floor.plan.editor.save');
         expect(saveBtn).toBeTruthy();
@@ -183,8 +169,7 @@ describe('FloorplanEditorView container', () =>
         expect(composer.tilemap.split(/\r/)[0]).toBe('00');
     });
 
-    it('RoomEngineEvent.DISPOSED hides the editor', () =>
-    {
+    it('RoomEngineEvent.DISPOSED hides the editor', () => {
         render(<FloorplanEditorView />);
         const tracker = (AddLinkEventTracker as ReturnType<typeof vi.fn>).mock.calls[0][0];
         act(() => tracker.linkReceived('floor-editor/show'));
@@ -196,8 +181,7 @@ describe('FloorplanEditorView container', () =>
         expect(document.body.textContent).not.toContain('floor.plan.editor.title');
     });
 
-    it('cleans up the link tracker on unmount', () =>
-    {
+    it('cleans up the link tracker on unmount', () => {
         const { unmount } = render(<FloorplanEditorView />);
         expect(RemoveLinkEventTracker).not.toHaveBeenCalled();
         unmount();

@@ -3,9 +3,8 @@ import { FC, useEffect, useState } from 'react';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { useTranslation } from '../../hooks';
 
-export const TranslationSettingsView: FC<{}> = () =>
-{
-    const [ isVisible, setIsVisible ] = useState(false);
+export const TranslationSettingsView: FC<{}> = () => {
+    const [isVisible, setIsVisible] = useState(false);
     const {
         settings,
         supportedLanguages = [],
@@ -20,17 +19,14 @@ export const TranslationSettingsView: FC<{}> = () =>
         getLanguageName
     } = useTranslation();
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -38,7 +34,7 @@ export const TranslationSettingsView: FC<{}> = () =>
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(prevValue => !prevValue);
+                        setIsVisible((prevValue) => !prevValue);
                         return;
                 }
             },
@@ -50,21 +46,29 @@ export const TranslationSettingsView: FC<{}> = () =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    useEffect(() =>
-    {
-        if(!isVisible) return;
+    useEffect(() => {
+        if (!isVisible) return;
 
         ensureSupportedLanguagesLoaded();
-    }, [ ensureSupportedLanguagesLoaded, isVisible ]);
+    }, [ensureSupportedLanguagesLoaded, isVisible]);
 
-    if(!isVisible) return null;
+    if (!isVisible) return null;
 
     return (
-        <NitroCardView className="translation-settings-window w-[360px]" theme="primary-slim" uniqueKey="translation-settings">
-            <NitroCardHeaderView headerText="Google Translate" onCloseClick={ () => setIsVisible(false) } />
+        <NitroCardView
+            className="translation-settings-window min-w-0 w-[min(360px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
+            theme="primary-slim"
+            uniqueKey="translation-settings"
+        >
+            <NitroCardHeaderView headerText="Google Translate" onCloseClick={() => setIsVisible(false)} />
             <NitroCardContentView className="flex flex-col gap-3 text-black">
                 <div className="flex items-center gap-2">
-                    <input checked={ settings.enabled } className="form-check-input" type="checkbox" onChange={ event => updateSettings({ enabled: event.target.checked }) } />
+                    <input
+                        checked={settings.enabled}
+                        className="form-check-input"
+                        type="checkbox"
+                        onChange={(event) => updateSettings({ enabled: event.target.checked })}
+                    />
                     <Text>Enable automatic translation</Text>
                 </div>
                 <div className="rounded border border-black/10 bg-black/5 p-2 text-[11px] leading-4">
@@ -77,11 +81,16 @@ export const TranslationSettingsView: FC<{}> = () =>
                             <span>Localized text pack</span>
                             <select
                                 className="rounded border border-black/20 bg-white px-2 py-1"
-                                disabled={ localizationTextsLoading }
-                                value={ settings.uiTextLanguage || '' }
-                                onChange={ event => updateSettings({ uiTextLanguage: event.target.value }) }>
+                                disabled={localizationTextsLoading}
+                                value={settings.uiTextLanguage || ''}
+                                onChange={(event) => updateSettings({ uiTextLanguage: event.target.value })}
+                            >
                                 <option value="">Default (gamedata)</option>
-                                { availableTextLocales.map(locale => <option key={ locale.code } value={ locale.code }>{ locale.name }</option>) }
+                                {availableTextLocales.map((locale) => (
+                                    <option key={locale.code} value={locale.code}>
+                                        {locale.name}
+                                    </option>
+                                ))}
                             </select>
                         </label>
                     </div>
@@ -89,15 +98,20 @@ export const TranslationSettingsView: FC<{}> = () =>
                 <div className="flex flex-col gap-2">
                     <Text bold>Incoming messages</Text>
                     <div className="flex flex-col gap-1">
-                        <Text>Detected language (auto): { getLanguageName(lastIncomingLanguage) }</Text>
+                        <Text>Detected language (auto): {getLanguageName(lastIncomingLanguage)}</Text>
                         <label className="flex flex-col gap-1 text-[12px]">
                             <span>Translate into</span>
                             <select
                                 className="rounded border border-black/20 bg-white px-2 py-1"
-                                disabled={ languagesLoading || !supportedLanguages.length }
-                                value={ settings.incomingTargetLanguage }
-                                onChange={ event => updateSettings({ incomingTargetLanguage: event.target.value }) }>
-                                { supportedLanguages.map(language => <option key={ language.code } value={ language.code }>{ language.name }</option>) }
+                                disabled={languagesLoading || !supportedLanguages.length}
+                                value={settings.incomingTargetLanguage}
+                                onChange={(event) => updateSettings({ incomingTargetLanguage: event.target.value })}
+                            >
+                                {supportedLanguages.map((language) => (
+                                    <option key={language.code} value={language.code}>
+                                        {language.name}
+                                    </option>
+                                ))}
                             </select>
                         </label>
                     </div>
@@ -105,33 +119,42 @@ export const TranslationSettingsView: FC<{}> = () =>
                 <div className="flex flex-col gap-2">
                     <Text bold>Outgoing messages</Text>
                     <div className="flex flex-col gap-1">
-                        <Text>Detected writing language (auto): { getLanguageName(lastOutgoingLanguage) }</Text>
+                        <Text>Detected writing language (auto): {getLanguageName(lastOutgoingLanguage)}</Text>
                         <label className="flex flex-col gap-1 text-[12px]">
                             <span>Send text as</span>
                             <select
                                 className="rounded border border-black/20 bg-white px-2 py-1"
-                                disabled={ languagesLoading || !supportedLanguages.length }
-                                value={ settings.outgoingTargetLanguage }
-                                onChange={ event => updateSettings({ outgoingTargetLanguage: event.target.value }) }>
-                                { supportedLanguages.map(language => <option key={ language.code } value={ language.code }>{ language.name }</option>) }
+                                disabled={languagesLoading || !supportedLanguages.length}
+                                value={settings.outgoingTargetLanguage}
+                                onChange={(event) => updateSettings({ outgoingTargetLanguage: event.target.value })}
+                            >
+                                {supportedLanguages.map((language) => (
+                                    <option key={language.code} value={language.code}>
+                                        {language.name}
+                                    </option>
+                                ))}
                             </select>
                         </label>
                     </div>
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-black/60">
-                    <span>{ languagesLoading ? 'Loading languages...' : `${ supportedLanguages.length } languages available` }</span>
-                    <button className="rounded border border-black/15 bg-white px-2 py-1 text-[11px] text-black hover:bg-black/5" type="button" onClick={ () => ensureSupportedLanguagesLoaded(true) }>
+                    <span>{languagesLoading ? 'Loading languages...' : `${supportedLanguages.length} languages available`}</span>
+                    <button
+                        className="rounded border border-black/15 bg-white px-2 py-1 text-[11px] text-black hover:bg-black/5"
+                        type="button"
+                        onClick={() => ensureSupportedLanguagesLoaded(true)}
+                    >
                         Refresh
                     </button>
                 </div>
-                { localizationTextsLoading &&
+                {localizationTextsLoading && (
                     <div className="rounded border border-blue-300 bg-blue-50 px-2 py-1 text-[11px] leading-4 text-blue-700">
                         Loading localized interface texts...
-                    </div> }
-                { lastError.length > 0 &&
-                    <div className="rounded border border-red-300 bg-red-50 px-2 py-1 text-[11px] leading-4 text-red-700">
-                        { lastError }
-                    </div> }
+                    </div>
+                )}
+                {lastError.length > 0 && (
+                    <div className="rounded border border-red-300 bg-red-50 px-2 py-1 text-[11px] leading-4 text-red-700">{lastError}</div>
+                )}
             </NitroCardContentView>
         </NitroCardView>
     );

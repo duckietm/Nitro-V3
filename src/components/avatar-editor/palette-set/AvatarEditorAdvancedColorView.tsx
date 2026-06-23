@@ -5,8 +5,7 @@ import { useAvatarEditor } from '../../../hooks';
 
 const DEBOUNCE_MS = 150;
 
-const findNearestColor = (hex: string, colors: IPartColor[]): IPartColor | null =>
-{
+const findNearestColor = (hex: string, colors: IPartColor[]): IPartColor | null => {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
@@ -14,18 +13,17 @@ const findNearestColor = (hex: string, colors: IPartColor[]): IPartColor | null 
     let nearest: IPartColor | null = null;
     let minDist = Infinity;
 
-    for(const color of colors)
-    {
-        if(color.clubLevel > maxLevel) continue;
+    for (const color of colors) {
+        if (color.clubLevel > maxLevel) continue;
 
-        const cr = (color.rgb >> 16) & 0xFF;
-        const cg = (color.rgb >> 8) & 0xFF;
-        const cb = color.rgb & 0xFF;
+        const cr = (color.rgb >> 16) & 0xff;
+        const cg = (color.rgb >> 8) & 0xff;
+        const cb = color.rgb & 0xff;
         const dist = (r - cr) ** 2 + (g - cg) ** 2 + (b - cb) ** 2;
 
-        if(dist < minDist)
-        {
-            minDist = dist; nearest = color;
+        if (dist < minDist) {
+            minDist = dist;
+            nearest = color;
         }
     }
 
@@ -35,67 +33,60 @@ const findNearestColor = (hex: string, colors: IPartColor[]): IPartColor | null 
 export const AvatarEditorAdvancedColorView: FC<{
     category: IAvatarEditorCategory;
     paletteIndex: number;
-}> = ({ category, paletteIndex }) =>
-{
+}> = ({ category, paletteIndex }) => {
     const { selectedColorParts = null, selectEditorColor = null } = useAvatarEditor();
     const inputRef = useRef<HTMLInputElement>(null);
     const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
-    useEffect(() =>
-    {
-        return () =>
-        {
-            if(debounceRef.current) clearTimeout(debounceRef.current);
+    useEffect(() => {
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
         };
     }, []);
 
-    const selectedColor = useMemo(() =>
-    {
-        if(!selectedColorParts?.[category?.setType]?.[paletteIndex]) return null;
+    const selectedColor = useMemo(() => {
+        if (!selectedColorParts?.[category?.setType]?.[paletteIndex]) return null;
 
         return selectedColorParts[category.setType][paletteIndex];
-    }, [ category, selectedColorParts, paletteIndex ]);
+    }, [category, selectedColorParts, paletteIndex]);
 
-    const hexColor = useMemo(() =>
-        ColorUtils.makeColorNumberHex((selectedColor?.rgb ?? 0) & 0xFFFFFF),
-    [ selectedColor ]);
+    const hexColor = useMemo(() => ColorUtils.makeColorNumberHex((selectedColor?.rgb ?? 0) & 0xffffff), [selectedColor]);
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
-    {
-        const colors = category?.colorItems?.[paletteIndex];
+    const handleChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const colors = category?.colorItems?.[paletteIndex];
 
-        if(!colors) return;
+            if (!colors) return;
 
-        const value = e.target.value;
+            const value = e.target.value;
 
-        if(debounceRef.current) clearTimeout(debounceRef.current);
+            if (debounceRef.current) clearTimeout(debounceRef.current);
 
-        debounceRef.current = setTimeout(() =>
-        {
-            const nearest = findNearestColor(value, colors);
+            debounceRef.current = setTimeout(() => {
+                const nearest = findNearestColor(value, colors);
 
-            if(nearest) selectEditorColor(category.setType, paletteIndex, nearest.id);
-        }, DEBOUNCE_MS);
-    }, [ category, paletteIndex, selectEditorColor ]);
+                if (nearest) selectEditorColor(category.setType, paletteIndex, nearest.id);
+            }, DEBOUNCE_MS);
+        },
+        [category, paletteIndex, selectEditorColor]
+    );
 
     return (
         <div className="flex h-full p-1.5">
             <div
                 className="flex-1 rounded-lg cursor-pointer relative border-2 border-white/20 overflow-hidden"
                 style={{ backgroundColor: hexColor }}
-                onClick={ () => inputRef.current?.click() }
+                onClick={() => inputRef.current?.click()}
             >
                 <input
-                    ref={ inputRef }
+                    ref={inputRef}
                     type="color"
-                    value={ hexColor }
-                    onChange={ handleChange }
+                    value={hexColor}
+                    onChange={handleChange}
                     className="absolute opacity-0 inset-0 w-full h-full cursor-pointer"
                 />
                 <div className="absolute bottom-0 left-0 right-0 py-1 text-center bg-black/40">
-                    <span className="text-xs font-mono font-bold text-white">
-                        { hexColor.toUpperCase() }
-                    </span>
+                    <span className="text-xs font-mono font-bold text-white">{hexColor.toUpperCase()}</span>
                 </div>
             </div>
         </div>

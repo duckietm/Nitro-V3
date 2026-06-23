@@ -1,5 +1,4 @@
-export interface INickIconItem
-{
+export interface INickIconItem {
     id: number;
     iconKey: string;
     displayName: string;

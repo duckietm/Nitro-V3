@@ -1,18 +1,15 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
-import { LocalizeText, chooserSelectionVisualizer } from '../../../../api';
+import { chooserSelectionVisualizer, LocalizeText } from '../../../../api';
 import { useUserChooserWidget } from '../../../../hooks';
 import { ChooserWidgetView } from './ChooserWidgetView';
 
-export const UserChooserWidgetView: FC<{}> = props =>
-{
+export const UserChooserWidgetView: FC<{}> = (props) => {
     const { items = null, onClose = null, selectItem = null, populateChooser = null } = useUserChooserWidget();
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
                 populateChooser();
@@ -22,26 +19,24 @@ export const UserChooserWidgetView: FC<{}> = props =>
 
         AddLinkEventTracker(linkTracker);
 
-        return () =>
-        {
+        return () => {
             chooserSelectionVisualizer.clearAll();
             RemoveLinkEventTracker(linkTracker);
         };
-    }, [ populateChooser ]);
+    }, [populateChooser]);
 
-    if(!items) return null;
+    if (!items) return null;
 
     return (
         <ChooserWidgetView
-            title={ LocalizeText('widget.chooser.user.title') }
-            items={ items }
-            selectItem={ selectItem }
-            onClose={ () =>
-            {
+            title={LocalizeText('widget.chooser.user.title')}
+            items={items}
+            selectItem={selectItem}
+            onClose={() => {
                 chooserSelectionVisualizer.clearAll();
                 onClose();
             }}
-            pickallFurni={ false }
+            pickallFurni={false}
             type="users"
         />
     );

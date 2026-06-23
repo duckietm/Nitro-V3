@@ -1,39 +1,23 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { useChatHistory } from '../../hooks';
+import { FC, useEffect, useState } from 'react';
 
-export const NitrobubbleHiddenView: FC<{}> = props =>
-{
-    const [ isVisible, setIsVisible ] = useState(false);
-    const [ searchText, setSearchText ] = useState<string>('');
-    const { chatHistory = [] } = useChatHistory();
-    const elementRef = useRef<HTMLDivElement>(null);
+export const NitrobubbleHiddenView: FC<{}> = () => {
+    const [isVisible, setIsVisible] = useState(false);
 
-    const filteredChatHistory = useMemo(() =>
-    {
-        if (searchText.length === 0) return chatHistory;
+    useEffect(() => {
+        document.body.classList.toggle('nitro-bubbles-hidden', isVisible);
 
-        let text = searchText.toLowerCase();
+        return () => document.body.classList.remove('nitro-bubbles-hidden');
+    }, [isVisible]);
 
-        return chatHistory.filter(entry => ((entry.message && entry.message.toLowerCase().includes(text))) || (entry.name && entry.name.toLowerCase().includes(text)));
-    }, [ chatHistory, searchText ]);
-
-    useEffect(() =>
-    {
-        if(elementRef && elementRef.current && isVisible) elementRef.current.scrollTop = elementRef.current.scrollHeight;
-    }, [ isVisible ]);
-
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -41,7 +25,7 @@ export const NitrobubbleHiddenView: FC<{}> = props =>
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(prevValue => !prevValue);
+                        setIsVisible((prevValue) => !prevValue);
                         return;
                 }
             },
@@ -53,7 +37,5 @@ export const NitrobubbleHiddenView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    if(!isVisible) return null;
-    var stylecssnew = '<style>.newbubblehe { visibility: hidden !important; }</style>';
-    return ( <div dangerouslySetInnerHTML={ { __html: stylecssnew }} />);
+    return null;
 };

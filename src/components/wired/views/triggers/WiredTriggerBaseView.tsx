@@ -2,8 +2,7 @@ import { FC, PropsWithChildren, ReactNode } from 'react';
 import { WiredFurniType } from '../../../../api';
 import { WiredBaseView } from '../WiredBaseView';
 
-export interface WiredTriggerBaseViewProps
-{
+export interface WiredTriggerBaseViewProps {
     hasSpecialInput: boolean;
     requiresFurni: number;
     save: () => void;
@@ -12,15 +11,30 @@ export interface WiredTriggerBaseViewProps
     selectionPreview?: ReactNode;
 }
 
-export const WiredTriggerBaseView: FC<PropsWithChildren<WiredTriggerBaseViewProps>> = props =>
-{
-    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, hasSpecialInput = false, children = null, footer = null, footerCollapsible = true, selectionPreview = null } = props;
+export const WiredTriggerBaseView: FC<PropsWithChildren<WiredTriggerBaseViewProps>> = (props) => {
+    const {
+        requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE,
+        save = null,
+        hasSpecialInput = false,
+        children = null,
+        footer = null,
+        footerCollapsible = true,
+        selectionPreview = null
+    } = props;
 
-    const onSave = () => (save && save());
+    const onSave = () => save && save();
 
     return (
-        <WiredBaseView hasSpecialInput={ hasSpecialInput } requiresFurni={ requiresFurni } save={ onSave } wiredType="trigger" footer={ footer } footerCollapsible={ footerCollapsible } selectionPreview={ selectionPreview }>
-            { children }
+        <WiredBaseView
+            hasSpecialInput={hasSpecialInput}
+            requiresFurni={requiresFurni}
+            save={onSave}
+            wiredType="trigger"
+            footer={footer}
+            footerCollapsible={footerCollapsible}
+            selectionPreview={selectionPreview}
+        >
+            {children}
         </WiredBaseView>
     );
 };

@@ -1,5 +1,5 @@
 import { CreateLinkEvent, PetRespectComposer, PetType } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useState, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { ConvertSeconds, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Flex, LayoutCounterTimeView, LayoutPetImageView, LayoutRarityLevelView, Text, UserProfileIconView } from '../../../../../common';
@@ -7,35 +7,35 @@ import { useRoom, useSessionInfo } from '../../../../../hooks';
 
 // TypeScript interface for AvatarInfoPet
 interface AvatarInfoPet {
-  id: number;
-  name: string;
-  petType: number;
-  petBreed: number;
-  petFigure: string;
-  posture: string;
-  level: number;
-  maximumLevel: number;
-  age: number;
-  ownerId: number;
-  ownerName: string;
-  respect: number;
-  dead?: boolean;
-  energy?: number;
-  maximumEnergy?: number;
-  happyness?: number;
-  maximumHappyness?: number;
-  experience?: number;
-  levelExperienceGoal?: number;
-  remainingGrowTime?: number;
-  remainingTimeToLive?: number;
-  maximumTimeToLive?: number;
-  rarityLevel?: number;
-  isOwner?: boolean;
+    id: number;
+    name: string;
+    petType: number;
+    petBreed: number;
+    petFigure: string;
+    posture: string;
+    level: number;
+    maximumLevel: number;
+    age: number;
+    ownerId: number;
+    ownerName: string;
+    respect: number;
+    dead?: boolean;
+    energy?: number;
+    maximumEnergy?: number;
+    happyness?: number;
+    maximumHappyness?: number;
+    experience?: number;
+    levelExperienceGoal?: number;
+    remainingGrowTime?: number;
+    remainingTimeToLive?: number;
+    maximumTimeToLive?: number;
+    rarityLevel?: number;
+    isOwner?: boolean;
 }
 
 interface InfoStandWidgetPetViewProps {
-  avatarInfo: AvatarInfoPet;
-  onClose: () => void;
+    avatarInfo: AvatarInfoPet;
+    onClose: () => void;
 }
 
 const PetHeader: FC<{ name: string; petType: number; petBreed: number; onClose: () => void }> = ({ name, petType, petBreed, onClose }) => (
@@ -44,12 +44,7 @@ const PetHeader: FC<{ name: string; petType: number; petBreed: number; onClose: 
             <Text small wrap variant="white">
                 {name}
             </Text>
-            <FaTimes
-                className="cursor-pointer fa-icon"
-                onClick={onClose}
-                aria-label={LocalizeText('generic.close')}
-                title={LocalizeText('generic.close')}
-            />
+            <FaTimes className="cursor-pointer fa-icon" onClick={onClose} aria-label={LocalizeText('generic.close')} title={LocalizeText('generic.close')} />
         </Flex>
         <Text small wrap variant="white">
             {LocalizeText(`pet.breed.${petType}.${petBreed}`)}
@@ -59,9 +54,9 @@ const PetHeader: FC<{ name: string; petType: number; petBreed: number; onClose: 
 );
 
 const MonsterplantStats: FC<{
-  avatarInfo: AvatarInfoPet;
-  remainingGrowTime: number;
-  remainingTimeToLive: number;
+    avatarInfo: AvatarInfoPet;
+    remainingGrowTime: number;
+    remainingTimeToLive: number;
 }> = ({ avatarInfo, remainingGrowTime, remainingTimeToLive }) => (
     <>
         <Column center gap={1}>
@@ -91,7 +86,7 @@ const MonsterplantStats: FC<{
                     <div
                         className="bg-success rounded pet-stats"
                         style={{
-                            width: avatarInfo.dead || remainingTimeToLive <= 0 ? '0' : `${(remainingTimeToLive / avatarInfo.maximumTimeToLive) * 100}%`,
+                            width: avatarInfo.dead || remainingTimeToLive <= 0 ? '0' : `${(remainingTimeToLive / avatarInfo.maximumTimeToLive) * 100}%`
                         }}
                     />
                 </div>
@@ -149,10 +144,7 @@ const RegularPetStats: FC<{ avatarInfo: AvatarInfoPet }> = ({ avatarInfo }) => (
                                     {avatarInfo.happyness + '/' + avatarInfo.maximumHappyness}
                                 </Text>
                             </div>
-                            <div
-                                className="bg-info rounded pet-stats"
-                                style={{ width: (avatarInfo.happyness / avatarInfo.maximumHappyness) * 100 + '%' }}
-                            />
+                            <div className="bg-info rounded pet-stats" style={{ width: (avatarInfo.happyness / avatarInfo.maximumHappyness) * 100 + '%' }} />
                         </div>
                     </Column>
                     <Column alignItems="center" gap={1}>
@@ -181,10 +173,7 @@ const RegularPetStats: FC<{ avatarInfo: AvatarInfoPet }> = ({ avatarInfo }) => (
                                     {avatarInfo.energy + '/' + avatarInfo.maximumEnergy}
                                 </Text>
                             </div>
-                            <div
-                                className="bg-success rounded pet-stats"
-                                style={{ width: (avatarInfo.energy / avatarInfo.maximumEnergy) * 100 + '%' }}
-                            />
+                            <div className="bg-success rounded pet-stats" style={{ width: (avatarInfo.energy / avatarInfo.maximumEnergy) * 100 + '%' }} />
                         </div>
                     </Column>
                 </Column>
@@ -203,25 +192,21 @@ const RegularPetStats: FC<{ avatarInfo: AvatarInfoPet }> = ({ avatarInfo }) => (
     </>
 );
 
-export const InfoStandWidgetPetView: FC<InfoStandWidgetPetViewProps> = ({ avatarInfo, onClose }) =>
-{
+export const InfoStandWidgetPetView: FC<InfoStandWidgetPetViewProps> = ({ avatarInfo, onClose }) => {
     const [remainingGrowTime, setRemainingGrowTime] = useState(0);
     const [remainingTimeToLive, setRemainingTimeToLive] = useState(0);
     const { roomSession = null } = useRoom();
     const { petRespectRemaining = 0, respectPet = null } = useSessionInfo();
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setRemainingGrowTime(avatarInfo.remainingGrowTime || 0);
         setRemainingTimeToLive(avatarInfo.remainingTimeToLive || 0);
     }, [avatarInfo]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         if (avatarInfo.petType !== PetType.MONSTERPLANT || avatarInfo.dead) return;
 
-        const interval = setInterval(() =>
-        {
+        const interval = setInterval(() => {
             setRemainingGrowTime((prev) => (prev <= 0 ? 0 : prev - 1));
             setRemainingTimeToLive((prev) => (prev <= 0 ? 0 : prev - 1));
         }, 1000);
@@ -230,15 +215,12 @@ export const InfoStandWidgetPetView: FC<InfoStandWidgetPetViewProps> = ({ avatar
     }, [avatarInfo]);
 
     const processButtonAction = useCallback(
-        async (action: string) =>
-        {
-            try
-            {
+        async (action: string) => {
+            try {
                 let hideMenu = true;
                 if (!action) return;
 
-                switch (action)
-                {
+                switch (action) {
                     case 'respect':
                         await respectPet(avatarInfo.id);
                         if (petRespectRemaining - 1 >= 1) hideMenu = false;
@@ -261,9 +243,7 @@ export const InfoStandWidgetPetView: FC<InfoStandWidgetPetViewProps> = ({ avatar
                 }
 
                 if (hideMenu) onClose();
-            }
-            catch (error)
-            {
+            } catch (error) {
                 console.error(`Failed to process action ${action}:`, error);
             }
         },
@@ -274,36 +254,33 @@ export const InfoStandWidgetPetView: FC<InfoStandWidgetPetViewProps> = ({ avatar
         {
             action: 'buyfood',
             label: LocalizeText('infostand.button.buyfood'),
-            condition: avatarInfo.petType !== PetType.MONSTERPLANT,
+            condition: avatarInfo.petType !== PetType.MONSTERPLANT
         },
         {
             action: 'train',
             label: LocalizeText('infostand.button.train'),
-            condition: avatarInfo.isOwner && avatarInfo.petType !== PetType.MONSTERPLANT,
+            condition: avatarInfo.isOwner && avatarInfo.petType !== PetType.MONSTERPLANT
         },
         {
             action: 'treat',
             label: LocalizeText('infostand.button.pettreat'),
-            condition:
-        !avatarInfo.dead &&
-        avatarInfo.petType === PetType.MONSTERPLANT &&
-        avatarInfo.energy / avatarInfo.maximumEnergy < 0.98,
+            condition: !avatarInfo.dead && avatarInfo.petType === PetType.MONSTERPLANT && avatarInfo.energy / avatarInfo.maximumEnergy < 0.98
         },
         {
             action: 'compost',
             label: LocalizeText('infostand.button.compost'),
-            condition: roomSession?.isRoomOwner && avatarInfo.petType === PetType.MONSTERPLANT,
+            condition: roomSession?.isRoomOwner && avatarInfo.petType === PetType.MONSTERPLANT
         },
         {
             action: 'pick_up',
             label: LocalizeText('inventory.pets.pickup'),
-            condition: avatarInfo.isOwner,
+            condition: avatarInfo.isOwner
         },
         {
             action: 'respect',
             label: LocalizeText('infostand.button.petrespect', ['count'], [petRespectRemaining.toString()]),
-            condition: petRespectRemaining > 0 && avatarInfo.petType !== PetType.MONSTERPLANT,
-        },
+            condition: petRespectRemaining > 0 && avatarInfo.petType !== PetType.MONSTERPLANT
+        }
     ];
 
     if (!avatarInfo) return <Text variant="white">{LocalizeText('generic.loading')}</Text>;
@@ -312,18 +289,9 @@ export const InfoStandWidgetPetView: FC<InfoStandWidgetPetViewProps> = ({ avatar
         <Column alignItems="end" gap={1}>
             <Column className="nitro-infostand rounded">
                 <Column className="container-fluid content-area" gap={1} overflow="visible">
-                    <PetHeader
-                        name={avatarInfo.name}
-                        petType={avatarInfo.petType}
-                        petBreed={avatarInfo.petBreed}
-                        onClose={onClose}
-                    />
+                    <PetHeader name={avatarInfo.name} petType={avatarInfo.petType} petBreed={avatarInfo.petBreed} onClose={onClose} />
                     {avatarInfo.petType === PetType.MONSTERPLANT ? (
-                        <MonsterplantStats
-                            avatarInfo={avatarInfo}
-                            remainingGrowTime={remainingGrowTime}
-                            remainingTimeToLive={remainingTimeToLive}
-                        />
+                        <MonsterplantStats avatarInfo={avatarInfo} remainingGrowTime={remainingGrowTime} remainingTimeToLive={remainingTimeToLive} />
                     ) : (
                         <RegularPetStats avatarInfo={avatarInfo} />
                     )}

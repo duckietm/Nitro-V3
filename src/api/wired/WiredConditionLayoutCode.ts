@@ -1,5 +1,4 @@
-export class WiredConditionlayout
-{
+export class WiredConditionlayout {
     public static STATES_MATCH: number = 0;
     public static FURNIS_HAVE_AVATARS: number = 1;
     public static ACTOR_IS_ON_FURNI: number = 2;

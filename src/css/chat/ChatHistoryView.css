@@ -1,0 +1,20 @@
+.nitro-chat-history-content {
+    display: flex;
+    height: calc(100% - 40px);
+    min-height: 0;
+    flex-direction: column;
+}
+
+.nitro-chat-history-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    background: inherit;
+}
+
+.nitro-chat-history-bubble-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+}

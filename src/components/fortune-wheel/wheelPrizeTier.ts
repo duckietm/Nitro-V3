@@ -18,12 +18,10 @@ export type WheelPrizeTier = 'none' | 'common' | 'rare';
 export const CREDITS_RARE_THRESHOLD = 500;
 export const POINTS_RARE_THRESHOLD = 100;
 
-export const getPrizeTier = (prize: IWheelPrize | null): WheelPrizeTier =>
-{
-    if(!prize) return 'common';
+export const getPrizeTier = (prize: IWheelPrize | null): WheelPrizeTier => {
+    if (!prize) return 'common';
 
-    switch(prize.type)
-    {
+    switch (prize.type) {
         case 'nothing':
             return 'none';
         case 'item':

@@ -3,28 +3,32 @@ import { FC, useMemo } from 'react';
 import { AvatarInfoName, SanitizeHtml } from '../../../../../api';
 import { ContextMenuView } from '../../context-menu/ContextMenuView';
 
-interface AvatarInfoWidgetNameViewProps
-{
+interface AvatarInfoWidgetNameViewProps {
     nameInfo: AvatarInfoName;
     onClose: () => void;
 }
 
-export const AvatarInfoWidgetNameView: FC<AvatarInfoWidgetNameViewProps> = props =>
-{
+export const AvatarInfoWidgetNameView: FC<AvatarInfoWidgetNameViewProps> = (props) => {
     const { nameInfo = null, onClose = null } = props;
 
-    const getClassNames = useMemo(() =>
-    {
-        const newClassNames: string[] = [ 'name-only' ];
+    const getClassNames = useMemo(() => {
+        const newClassNames: string[] = ['name-only'];
 
-        if(nameInfo.isFriend) newClassNames.push('is-friend');
+        if (nameInfo.isFriend) newClassNames.push('is-friend');
 
         return newClassNames;
-    }, [ nameInfo ]);
+    }, [nameInfo]);
 
     return (
-        <ContextMenuView category={ nameInfo.category } classNames={ getClassNames } fades={ (nameInfo.id !== GetSessionDataManager().userId) } objectId={ nameInfo.roomIndex } userType={ nameInfo.userType } onClose={ onClose }>
-            <div className="text-shadow" dangerouslySetInnerHTML={ { __html: SanitizeHtml(`${ nameInfo.name }`) } }></div>
+        <ContextMenuView
+            category={nameInfo.category}
+            classNames={getClassNames}
+            fades={nameInfo.id !== GetSessionDataManager().userId}
+            objectId={nameInfo.roomIndex}
+            userType={nameInfo.userType}
+            onClose={onClose}
+        >
+            <div className="text-shadow" dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${nameInfo.name}`) }}></div>
         </ContextMenuView>
     );
 };

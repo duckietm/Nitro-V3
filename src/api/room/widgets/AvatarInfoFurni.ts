@@ -1,8 +1,7 @@
 import { IObjectData } from '@nitrots/nitro-renderer';
 import { IAvatarInfo } from './IAvatarInfo';
 
-export class AvatarInfoFurni implements IAvatarInfo
-{
+export class AvatarInfoFurni implements IAvatarInfo {
     public static FURNI: string = 'IFI_FURNI';
 
     public id: number = 0;
@@ -39,6 +38,5 @@ export class AvatarInfoFurni implements IAvatarInfo
     public spriteId: number = -1;
     public productType: string = 's';
 
-    constructor(public readonly type: string)
-    {}
+    constructor(public readonly type: string) {}
 }

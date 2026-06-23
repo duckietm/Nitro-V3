@@ -1,7 +1,6 @@
 import { RoomWidgetUpdateEvent } from './RoomWidgetUpdateEvent';
 
-export class RoomWidgetUpdateRoomObjectEvent extends RoomWidgetUpdateEvent
-{
+export class RoomWidgetUpdateRoomObjectEvent extends RoomWidgetUpdateEvent {
     public static OBJECT_SELECTED: string = 'RWUROE_OBJECT_SELECTED';
     public static OBJECT_DESELECTED: string = 'RWUROE_OBJECT_DESELECTED';
     public static USER_REMOVED: string = 'RWUROE_USER_REMOVED';
@@ -17,8 +16,7 @@ export class RoomWidgetUpdateRoomObjectEvent extends RoomWidgetUpdateEvent
     private _category: number;
     private _roomId: number;
 
-    constructor(type: string, id: number, category: number, roomId: number)
-    {
+    constructor(type: string, id: number, category: number, roomId: number) {
         super(type);
 
         this._id = id;
@@ -26,18 +24,15 @@ export class RoomWidgetUpdateRoomObjectEvent extends RoomWidgetUpdateEvent
         this._roomId = roomId;
     }
 
-    public get id(): number
-    {
+    public get id(): number {
         return this._id;
     }
 
-    public get category(): number
-    {
+    public get category(): number {
         return this._category;
     }
 
-    public get roomId(): number
-    {
+    public get roomId(): number {
         return this._roomId;
     }
 }

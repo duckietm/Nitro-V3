@@ -16,14 +16,12 @@ import { useNitroQuery } from '../../api/nitro-query';
  * query directly and benefit from the standard TanStack loading/error
  * states.
  */
-export const useGiftConfiguration = (
-    options: { enabled?: boolean } = {}
-): UseQueryResult<GiftWrappingConfiguration> =>
+export const useGiftConfiguration = (options: { enabled?: boolean } = {}): UseQueryResult<GiftWrappingConfiguration> =>
     useNitroQuery<GiftWrappingConfigurationEvent, GiftWrappingConfiguration>({
-        key: [ 'nitro', 'catalog', 'giftConfiguration' ],
+        key: ['nitro', 'catalog', 'giftConfiguration'],
         request: () => new GetGiftWrappingConfigurationComposer(),
         parser: GiftWrappingConfigurationEvent,
-        select: event => new GiftWrappingConfiguration(event.getParser()),
+        select: (event) => new GiftWrappingConfiguration(event.getParser()),
         enabled: options.enabled,
         staleTime: Infinity
     });

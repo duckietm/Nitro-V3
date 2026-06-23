@@ -31,19 +31,16 @@ export const useNitroEventReducer = <S, T extends NitroEvent>(
     reducer: (state: S, event: T) => S,
     initial: S | (() => S),
     enabled: boolean = true
-): S =>
-{
-    const [ value, setValue ] = useState<S>(initial);
+): S => {
+    const [value, setValue] = useState<S>(initial);
     const reducerRef = useRef(reducer);
 
-    useLayoutEffect(() =>
-    {
+    useLayoutEffect(() => {
         reducerRef.current = reducer;
     });
 
-    const handler = useCallback((event: T) =>
-    {
-        setValue(prev => reducerRef.current(prev, event));
+    const handler = useCallback((event: T) => {
+        setValue((prev) => reducerRef.current(prev, event));
     }, []);
 
     useNitroEvent<T>(types, handler, enabled);

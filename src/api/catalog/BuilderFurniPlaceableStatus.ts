@@ -1,5 +1,4 @@
-export class BuilderFurniPlaceableStatus
-{
+export class BuilderFurniPlaceableStatus {
     public static OKAY: number = 0;
     public static MISSING_OFFER: number = 1;
     public static FURNI_LIMIT_REACHED: number = 2;

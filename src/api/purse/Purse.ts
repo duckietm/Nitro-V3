@@ -1,8 +1,7 @@
 import { GetTickerTime, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
 import { IPurse } from './IPurse';
 
-export class Purse implements IPurse
-{
+export class Purse implements IPurse {
     private _credits: number = 0;
     private _activityPoints: Map<number, number> = new Map();
     private _clubDays: number = 0;
@@ -15,8 +14,7 @@ export class Purse implements IPurse
     private _minutesSinceLastModified: number = 0;
     private _lastUpdated: number = 0;
 
-    public static from(purse: Purse): Purse
-    {
+    public static from(purse: Purse): Purse {
         const newPurse = new Purse();
 
         newPurse._credits = purse._credits;
@@ -34,131 +32,108 @@ export class Purse implements IPurse
         return newPurse;
     }
 
-    public get credits(): number
-    {
+    public get credits(): number {
         return this._credits;
     }
 
-    public set credits(credits: number)
-    {
+    public set credits(credits: number) {
         this._lastUpdated = GetTickerTime();
         this._credits = credits;
     }
 
-    public get activityPoints(): Map<number, number>
-    {
+    public get activityPoints(): Map<number, number> {
         return this._activityPoints;
     }
 
-    public set activityPoints(k: Map<number, number>)
-    {
+    public set activityPoints(k: Map<number, number>) {
         this._lastUpdated = GetTickerTime();
         this._activityPoints = k;
     }
 
-    public get clubDays(): number
-    {
+    public get clubDays(): number {
         return this._clubDays;
     }
 
-    public set clubDays(k: number)
-    {
+    public set clubDays(k: number) {
         this._lastUpdated = GetTickerTime();
         this._clubDays = k;
     }
 
-    public get clubPeriods(): number
-    {
+    public get clubPeriods(): number {
         return this._clubPeriods;
     }
 
-    public set clubPeriods(k: number)
-    {
+    public set clubPeriods(k: number) {
         this._lastUpdated = GetTickerTime();
         this._clubPeriods = k;
     }
 
-    public get hasClubLeft(): boolean
-    {
-        return (this._clubDays > 0) || (this._clubPeriods > 0);
+    public get hasClubLeft(): boolean {
+        return this._clubDays > 0 || this._clubPeriods > 0;
     }
 
-    public get isVip(): boolean
-    {
+    public get isVip(): boolean {
         return this._isVIP;
     }
 
-    public set isVip(k: boolean)
-    {
+    public set isVip(k: boolean) {
         this._isVIP = k;
     }
 
-    public get pastClubDays(): number
-    {
+    public get pastClubDays(): number {
         return this._pastClubDays;
     }
 
-    public set pastClubDays(k: number)
-    {
+    public set pastClubDays(k: number) {
         this._lastUpdated = GetTickerTime();
         this._pastClubDays = k;
     }
 
-    public get pastVipDays(): number
-    {
+    public get pastVipDays(): number {
         return this._pastVipDays;
     }
 
-    public set pastVipDays(k: number)
-    {
+    public set pastVipDays(k: number) {
         this._lastUpdated = GetTickerTime();
         this._pastVipDays = k;
     }
 
-    public get isExpiring(): boolean
-    {
+    public get isExpiring(): boolean {
         return this._isExpiring;
     }
 
-    public set isExpiring(k: boolean)
-    {
+    public set isExpiring(k: boolean) {
         this._isExpiring = k;
     }
 
-    public get minutesUntilExpiration(): number
-    {
-        var k: number = ((GetTickerTime() - this._lastUpdated) / (1000 * 60));
-        var _local_2: number = (this._minutesUntilExpiration - k);
-        return (_local_2 > 0) ? _local_2 : 0;
+    public get minutesUntilExpiration(): number {
+        var k: number = (GetTickerTime() - this._lastUpdated) / (1000 * 60);
+        var _local_2: number = this._minutesUntilExpiration - k;
+        return _local_2 > 0 ? _local_2 : 0;
     }
 
-    public set minutesUntilExpiration(k: number)
-    {
+    public set minutesUntilExpiration(k: number) {
         this._lastUpdated = GetTickerTime();
         this._minutesUntilExpiration = k;
     }
 
-    public get minutesSinceLastModified(): number
-    {
+    public get minutesSinceLastModified(): number {
         return this._minutesSinceLastModified;
     }
 
-    public set minutesSinceLastModified(k: number)
-    {
+    public set minutesSinceLastModified(k: number) {
         this._lastUpdated = GetTickerTime();
         this._minutesSinceLastModified = k;
     }
 
-    public get lastUpdated(): number
-    {
+    public get lastUpdated(): number {
         return this._lastUpdated;
     }
 
-    public get clubLevel(): number
-    {
-        if(((this.clubDays === 0) && (this.clubPeriods === 0))) return HabboClubLevelEnum.NO_CLUB;
+    public get clubLevel(): number {
+        if (this.clubDays === 0 && this.clubPeriods === 0) return HabboClubLevelEnum.NO_CLUB;
 
-        if(this.isVip) return HabboClubLevelEnum.VIP;
+        if (this.isVip) return HabboClubLevelEnum.VIP;
 
         return HabboClubLevelEnum.CLUB;
     }

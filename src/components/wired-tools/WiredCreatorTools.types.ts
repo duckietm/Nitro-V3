@@ -4,30 +4,26 @@ export type WiredToolsTab = 'monitor' | 'variables' | 'inspection' | 'chests' | 
 export type InspectionElementType = 'furni' | 'user' | 'global';
 export type VariablesElementType = InspectionElementType | 'context';
 
-export interface InspectionElementButton
-{
+export interface InspectionElementButton {
     key: InspectionElementType;
     label: string;
     icon: string;
 }
 
-export interface VariablesElementButton
-{
+export interface VariablesElementButton {
     key: VariablesElementType;
     label: string;
     icon: string;
     disabled?: boolean;
 }
 
-export interface InspectionFurniSelection
-{
+export interface InspectionFurniSelection {
     objectId: number;
     category: number;
     info: AvatarInfoFurni;
 }
 
-export interface InspectionFurniLiveState
-{
+export interface InspectionFurniLiveState {
     positionX: number;
     positionY: number;
     altitude: number;
@@ -35,8 +31,7 @@ export interface InspectionFurniLiveState
     state: number;
 }
 
-export interface InspectionUserSelection
-{
+export interface InspectionUserSelection {
     kind: 'user' | 'bot' | 'rentable_bot' | 'pet';
     roomIndex: number;
     name: string;
@@ -54,22 +49,19 @@ export interface InspectionUserSelection
     posture?: string;
 }
 
-export interface InspectionUserLiveState
-{
+export interface InspectionUserLiveState {
     positionX: number;
     positionY: number;
     altitude: number;
     direction: number;
 }
 
-export interface MonitorStat
-{
+export interface MonitorStat {
     label: string;
     value: string;
 }
 
-export interface MonitorLog
-{
+export interface MonitorLog {
     type: string;
     category: string;
     amount: string;
@@ -79,8 +71,7 @@ export interface MonitorLog
     latestSourceLabel: string;
 }
 
-export interface MonitorSnapshot
-{
+export interface MonitorSnapshot {
     usageCurrentWindow: number;
     usageLimitPerWindow: number;
     isHeavy: boolean;
@@ -117,8 +108,7 @@ export interface MonitorSnapshot
     }>;
 }
 
-export interface MonitorLogDetails
-{
+export interface MonitorLogDetails {
     amount?: string;
     latest?: string;
     occurredAt?: string;
@@ -129,16 +119,14 @@ export interface MonitorLogDetails
     type: string;
 }
 
-export interface InspectionVariable
-{
+export interface InspectionVariable {
     key: string;
     value: string;
     editable?: boolean;
     valueClassName?: string;
 }
 
-export interface VariableDefinition
-{
+export interface VariableDefinition {
     key: string;
     itemId?: number;
     target: 'Furni' | 'User' | 'Global' | 'Context';
@@ -155,14 +143,12 @@ export interface VariableDefinition
     isAlwaysAvailable?: boolean;
 }
 
-export interface VariableTextValue
-{
+export interface VariableTextValue {
     value: string;
     text: string;
 }
 
-export interface VariableManageEntry
-{
+export interface VariableManageEntry {
     categoryLabel: string;
     createdAt: number;
     entityId: number;
@@ -172,23 +158,20 @@ export interface VariableManageEntry
     value: number | null;
 }
 
-export interface VariableHighlightTarget
-{
+export interface VariableHighlightTarget {
     category: number;
     hasValue: boolean;
     objectId: number;
     value: number | null;
 }
 
-export interface VariableHighlightOverlay extends VariableHighlightTarget
-{
+export interface VariableHighlightOverlay extends VariableHighlightTarget {
     key: string;
     x: number;
     y: number;
 }
 
-export interface ManagedHolderVariableEntry
-{
+export interface ManagedHolderVariableEntry {
     availability: string;
     createdAt: number;
     hasValue: boolean;
@@ -199,21 +182,18 @@ export interface ManagedHolderVariableEntry
     variableItemId: number;
 }
 
-export interface InspectionUserTeamData
-{
+export interface InspectionUserTeamData {
     colorId: number;
     typeId: number;
     score: number;
 }
 
-export interface TeamEffectData
-{
+export interface TeamEffectData {
     colorId: number;
     typeId: number;
 }
 
-export interface ParsedWallLocation
-{
+export interface ParsedWallLocation {
     width: number;
     height: number;
     localX: number;
@@ -221,8 +201,7 @@ export interface ParsedWallLocation
     direction: string;
 }
 
-export interface HotelDateTimeParts
-{
+export interface HotelDateTimeParts {
     year: number;
     month: number;
     day: number;

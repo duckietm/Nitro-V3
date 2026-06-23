@@ -1,7 +1,15 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo } from 'react';
 import { getHousekeepingMode, HousekeepingTabId, isHousekeepingEnabled, isHousekeepingTabAvailable, LocalizeText } from '../../api';
-import { DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, WidgetErrorBoundary } from '../../common';
+import {
+    DraggableWindowPosition,
+    NitroCardContentView,
+    NitroCardHeaderView,
+    NitroCardTabsItemView,
+    NitroCardTabsView,
+    NitroCardView,
+    WidgetErrorBoundary
+} from '../../common';
 import { useHasPermission, useHousekeepingStore } from '../../hooks';
 import { HousekeepingPasswordReveal } from './HousekeepingPasswordReveal';
 import { HousekeepingStatusBanner } from './HousekeepingStatusBanner';
@@ -19,11 +27,9 @@ const TAB_IDS: HousekeepingTabId[] = [
     HousekeepingTabId.AUDIT
 ];
 
-const isHkTabId = (value: string): value is HousekeepingTabId =>
-    (TAB_IDS as string[]).includes(value);
+const isHkTabId = (value: string): value is HousekeepingTabId => (TAB_IDS as string[]).includes(value);
 
-export const HousekeepingView: FC = () =>
-{
+export const HousekeepingView: FC = () => {
     const { isVisible, setIsVisible, togglePanel, activeTab, setActiveTab, closePanel, lookupUserById, seedUserFromAvatar } = useHousekeepingStore();
     // Gate behind a dedicated HK permission so the panel stays hidden
     // for plain users/mods on servers that haven't granted it. Reactive
@@ -41,17 +47,14 @@ export const HousekeepingView: FC = () =>
     const hkEnabled = useMemo(() => isHousekeepingEnabled(), []);
     const hkMode = useMemo(() => getHousekeepingMode(), []);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
-                if(parts.length < 2) return;
+                if (parts.length < 2) return;
 
-                switch(parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -62,12 +65,10 @@ export const HousekeepingView: FC = () =>
                         togglePanel();
                         return;
                     case 'tab':
-                        if(parts.length > 2)
-                        {
+                        if (parts.length > 2) {
                             const candidate = parts[2];
 
-                            if(isHkTabId(candidate) && isHousekeepingTabAvailable(candidate, getHousekeepingMode()))
-                            {
+                            if (isHkTabId(candidate) && isHousekeepingTabAvailable(candidate, getHousekeepingMode())) {
                                 setActiveTab(candidate);
                                 setIsVisible(true);
                             }
@@ -83,22 +84,27 @@ export const HousekeepingView: FC = () =>
                         // and the background lookup enriches the rest. The
                         // segments are URI-encoded so usernames with spaces or
                         // figures with special chars survive the link round-trip.
-                        if(parts.length > 2)
-                        {
+                        if (parts.length > 2) {
                             const userId = parseInt(parts[2]);
 
-                            if(Number.isFinite(userId) && userId > 0)
-                            {
+                            if (Number.isFinite(userId) && userId > 0) {
                                 setActiveTab(HousekeepingTabId.USERS);
                                 setIsVisible(true);
 
-                                if(parts.length > 4)
-                                {
+                                if (parts.length > 4) {
                                     let name = '';
                                     let figure = '';
 
-                                    try { name = decodeURIComponent(parts[3] || ''); } catch { name = parts[3] || ''; }
-                                    try { figure = decodeURIComponent(parts[4] || ''); } catch { figure = parts[4] || ''; }
+                                    try {
+                                        name = decodeURIComponent(parts[3] || '');
+                                    } catch {
+                                        name = parts[3] || '';
+                                    }
+                                    try {
+                                        figure = decodeURIComponent(parts[4] || '');
+                                    } catch {
+                                        figure = parts[4] || '';
+                                    }
 
                                     seedUserFromAvatar(userId, name, figure);
                                 }
@@ -115,45 +121,45 @@ export const HousekeepingView: FC = () =>
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [ setIsVisible, togglePanel, closePanel, setActiveTab, lookupUserById, seedUserFromAvatar ]);
+    }, [setIsVisible, togglePanel, closePanel, setActiveTab, lookupUserById, seedUserFromAvatar]);
 
     // When the panel is gated off (perm revoked mid-session, or
     // `housekeeping.enabled` is false) make sure it isn't left visible.
-    useEffect(() =>
-    {
-        if((!isHk || !hkEnabled) && isVisible) closePanel();
-    }, [ isHk, hkEnabled, isVisible, closePanel ]);
+    useEffect(() => {
+        if ((!isHk || !hkEnabled) && isVisible) closePanel();
+    }, [isHk, hkEnabled, isVisible, closePanel]);
 
     // If light mode is active and the user is parked on a tab that
     // light doesn't expose (e.g. they switched modes between
     // sessions), bounce them to Users — the canonical default for
     // the trimmed layout.
-    useEffect(() =>
-    {
-        if(!isHousekeepingTabAvailable(activeTab, hkMode)) setActiveTab(HousekeepingTabId.USERS);
-    }, [ activeTab, hkMode, setActiveTab ]);
+    useEffect(() => {
+        if (!isHousekeepingTabAvailable(activeTab, hkMode)) setActiveTab(HousekeepingTabId.USERS);
+    }, [activeTab, hkMode, setActiveTab]);
 
-    const activeView = useMemo(() =>
-    {
-        switch(activeTab)
-        {
-            case HousekeepingTabId.ROOMS: return <HousekeepingRoomsTab />;
-            case HousekeepingTabId.ECONOMY: return <HousekeepingEconomyTab />;
-            case HousekeepingTabId.AUDIT: return <HousekeepingAuditTab />;
-            case HousekeepingTabId.USERS: return <HousekeepingUsersTab />;
+    const activeView = useMemo(() => {
+        switch (activeTab) {
+            case HousekeepingTabId.ROOMS:
+                return <HousekeepingRoomsTab />;
+            case HousekeepingTabId.ECONOMY:
+                return <HousekeepingEconomyTab />;
+            case HousekeepingTabId.AUDIT:
+                return <HousekeepingAuditTab />;
+            case HousekeepingTabId.USERS:
+                return <HousekeepingUsersTab />;
             case HousekeepingTabId.DASHBOARD:
             default:
                 return <HousekeepingDashboardTab />;
         }
-    }, [ activeTab ]);
+    }, [activeTab]);
 
-    if(!hkEnabled || !isHk || !isVisible) return null;
+    if (!hkEnabled || !isHk || !isVisible) return null;
 
     const showDashboard = isHousekeepingTabAvailable(HousekeepingTabId.DASHBOARD, hkMode);
     const showEconomy = isHousekeepingTabAvailable(HousekeepingTabId.ECONOMY, hkMode);
     const showAudit = isHousekeepingTabAvailable(HousekeepingTabId.AUDIT, hkMode);
     const isLight = hkMode === 'light';
-    const headerSuffix = isLight ? ` · ${ LocalizeText('housekeeping.mode.light') }` : '';
+    const headerSuffix = isLight ? ` · ${LocalizeText('housekeeping.mode.light')}` : '';
     // Light mode is narrower because there are only 2 tabs and the
     // content density is lower — gives the operator more screen real
     // estate without a 600px-wide panel for two tabs.
@@ -161,47 +167,55 @@ export const HousekeepingView: FC = () =>
 
     return (
         <WidgetErrorBoundary name="HousekeepingView">
-            <NitroCardView className={ `nitro-housekeeping ${ sizeClass }` } theme="primary-slim" uniqueKey="housekeeping" windowPosition={ DraggableWindowPosition.TOP_CENTER }>
-                <NitroCardHeaderView headerText={ `${ LocalizeText('housekeeping.title') }${ headerSuffix }` } onCloseClick={ () => closePanel() } />
+            <NitroCardView
+                className={`nitro-housekeeping ${sizeClass}`}
+                theme="primary-slim"
+                uniqueKey="housekeeping"
+                windowPosition={DraggableWindowPosition.TOP_CENTER}
+            >
+                <NitroCardHeaderView headerText={`${LocalizeText('housekeeping.title')}${headerSuffix}`} onCloseClick={() => closePanel()} />
                 <NitroCardTabsView>
-                    { showDashboard &&
-                        <NitroCardTabsItemView isActive={ activeTab === HousekeepingTabId.DASHBOARD } onClick={ () => setActiveTab(HousekeepingTabId.DASHBOARD) }>
+                    {showDashboard && (
+                        <NitroCardTabsItemView isActive={activeTab === HousekeepingTabId.DASHBOARD} onClick={() => setActiveTab(HousekeepingTabId.DASHBOARD)}>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="nitro-icon nitro-icon-hk-tab icon-housekeeping" />
-                                <span>{ LocalizeText('housekeeping.tab.dashboard') }</span>
+                                <span>{LocalizeText('housekeeping.tab.dashboard')}</span>
                             </div>
-                        </NitroCardTabsItemView> }
-                    <NitroCardTabsItemView isActive={ activeTab === HousekeepingTabId.USERS } onClick={ () => setActiveTab(HousekeepingTabId.USERS) }>
+                        </NitroCardTabsItemView>
+                    )}
+                    <NitroCardTabsItemView isActive={activeTab === HousekeepingTabId.USERS} onClick={() => setActiveTab(HousekeepingTabId.USERS)}>
                         <div className="flex items-center gap-1.5 text-xs">
                             <span className="nitro-icon nitro-icon-hk-tab icon-modtools" />
-                            <span>{ LocalizeText('housekeeping.tab.users') }</span>
+                            <span>{LocalizeText('housekeeping.tab.users')}</span>
                         </div>
                     </NitroCardTabsItemView>
-                    <NitroCardTabsItemView isActive={ activeTab === HousekeepingTabId.ROOMS } onClick={ () => setActiveTab(HousekeepingTabId.ROOMS) }>
+                    <NitroCardTabsItemView isActive={activeTab === HousekeepingTabId.ROOMS} onClick={() => setActiveTab(HousekeepingTabId.ROOMS)}>
                         <div className="flex items-center gap-1.5 text-xs">
                             <span className="nitro-icon nitro-icon-hk-tab icon-rooms" />
-                            <span>{ LocalizeText('housekeeping.tab.rooms') }</span>
+                            <span>{LocalizeText('housekeeping.tab.rooms')}</span>
                         </div>
                     </NitroCardTabsItemView>
-                    { showEconomy &&
-                        <NitroCardTabsItemView isActive={ activeTab === HousekeepingTabId.ECONOMY } onClick={ () => setActiveTab(HousekeepingTabId.ECONOMY) }>
+                    {showEconomy && (
+                        <NitroCardTabsItemView isActive={activeTab === HousekeepingTabId.ECONOMY} onClick={() => setActiveTab(HousekeepingTabId.ECONOMY)}>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="nitro-icon nitro-icon-hk-tab icon-catalog" />
-                                <span>{ LocalizeText('housekeeping.tab.economy') }</span>
+                                <span>{LocalizeText('housekeeping.tab.economy')}</span>
                             </div>
-                        </NitroCardTabsItemView> }
-                    { showAudit &&
-                        <NitroCardTabsItemView isActive={ activeTab === HousekeepingTabId.AUDIT } onClick={ () => setActiveTab(HousekeepingTabId.AUDIT) }>
+                        </NitroCardTabsItemView>
+                    )}
+                    {showAudit && (
+                        <NitroCardTabsItemView isActive={activeTab === HousekeepingTabId.AUDIT} onClick={() => setActiveTab(HousekeepingTabId.AUDIT)}>
                             <div className="flex items-center gap-1.5 text-xs">
                                 <span className="nitro-icon nitro-icon-hk-tab icon-message" />
-                                <span>{ LocalizeText('housekeeping.tab.audit') }</span>
+                                <span>{LocalizeText('housekeeping.tab.audit')}</span>
                             </div>
-                        </NitroCardTabsItemView> }
+                        </NitroCardTabsItemView>
+                    )}
                 </NitroCardTabsView>
                 <HousekeepingStatusBanner />
                 <HousekeepingPasswordReveal />
-                <NitroCardContentView className="text-black" gap={ 2 }>
-                    { activeView }
+                <NitroCardContentView className="text-black" gap={2}>
+                    {activeView}
                 </NitroCardContentView>
             </NitroCardView>
         </WidgetErrorBoundary>

@@ -7,18 +7,16 @@ import { classNames } from '../../layout';
 import { RoomSpectatorView } from './spectator/RoomSpectatorView';
 import { RoomWidgetsView } from './widgets/RoomWidgetsView';
 
-export const RoomView: FC<{}> = (props) =>
-{
+export const RoomView: FC<{}> = (props) => {
     const { roomSession = null } = useRoom();
     const elementRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() =>
-    {
-        if(!roomSession) return;
+    useEffect(() => {
+        if (!roomSession) return;
 
         const canvas = GetRenderer().canvas;
 
-        if(!canvas) return;
+        if (!canvas) return;
 
         canvas.onclick = (event) => DispatchMouseEvent(event);
         canvas.onmousemove = (event) => DispatchMouseEvent(event);
@@ -37,44 +35,40 @@ export const RoomView: FC<{}> = (props) =>
 
         const isMobileTouch = () => window.matchMedia('(pointer: coarse), (hover: none)').matches;
 
-        const onTouchStart = (event: TouchEvent) =>
-        {
+        const onTouchStart = (event: TouchEvent) => {
             const touch = event.touches[0];
 
-            if(!touch || !isMobileTouch()) return;
+            if (!touch || !isMobileTouch()) return;
 
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
             touchMoved = false;
         };
 
-        const onTouchMove = (event: TouchEvent) =>
-        {
+        const onTouchMove = (event: TouchEvent) => {
             const touch = event.touches[0];
 
-            if(!touch || !isMobileTouch()) return;
+            if (!touch || !isMobileTouch()) return;
 
-            if(Math.abs(touch.clientX - touchStartX) > 8 || Math.abs(touch.clientY - touchStartY) > 8) touchMoved = true;
+            if (Math.abs(touch.clientX - touchStartX) > 8 || Math.abs(touch.clientY - touchStartY) > 8) touchMoved = true;
         };
 
-        const onTouchEnd = (event: TouchEvent) =>
-        {
+        const onTouchEnd = (event: TouchEvent) => {
             const touch = event.changedTouches[0];
 
-            if(!touch || touchMoved || !isMobileTouch()) return;
+            if (!touch || touchMoved || !isMobileTouch()) return;
 
             lastTileTap = { x: touch.clientX, y: touch.clientY, time: Date.now() };
         };
 
-        const showTouchFeedback = () =>
-        {
-            if(!lastTileTap || ((Date.now() - lastTileTap.time) > 250)) return;
+        const showTouchFeedback = () => {
+            if (!lastTileTap || Date.now() - lastTileTap.time > 250) return;
 
             const feedback = document.createElement('div');
 
             feedback.className = 'nitro-room-touch-feedback';
-            feedback.style.left = `${ lastTileTap.x }px`;
-            feedback.style.top = `${ lastTileTap.y }px`;
+            feedback.style.left = `${lastTileTap.x}px`;
+            feedback.style.top = `${lastTileTap.y}px`;
 
             document.body.appendChild(feedback);
             window.setTimeout(() => feedback.remove(), 420);
@@ -82,9 +76,8 @@ export const RoomView: FC<{}> = (props) =>
             lastTileTap = null;
         };
 
-        const onTileClick = (event: RoomObjectMouseEvent) =>
-        {
-            if(event instanceof RoomObjectTileMouseEvent) window.setTimeout(showTouchFeedback, 0);
+        const onTileClick = (event: RoomObjectMouseEvent) => {
+            if (event instanceof RoomObjectTileMouseEvent) window.setTimeout(showTouchFeedback, 0);
         };
 
         canvas.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -94,14 +87,13 @@ export const RoomView: FC<{}> = (props) =>
 
         const element = elementRef.current;
 
-        if(!element) return;
+        if (!element) return;
 
         canvas.classList.add('bg-black');
 
         element.appendChild(canvas);
 
-        return () =>
-        {
+        return () => {
             canvas.removeEventListener('touchstart', onTouchStart);
             canvas.removeEventListener('touchmove', onTouchMove);
             canvas.removeEventListener('touchend', onTouchEnd);
@@ -112,19 +104,17 @@ export const RoomView: FC<{}> = (props) =>
     return (
         <AnimatePresence>
             {
-                <motion.div
-                    className="w-full h-full"
-                    initial={ { opacity: 0 }}
-                    animate={ { opacity: 1 }}
-                    exit={ { opacity: 0 }}>
-                    <div ref={ elementRef } className="w-full h-full">
-                        { roomSession instanceof RoomSession &&
+                <motion.div className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    <div ref={elementRef} className="w-full h-full">
+                        {roomSession instanceof RoomSession && (
                             <>
                                 <RoomWidgetsView />
-                                { roomSession.isSpectator && <RoomSpectatorView /> }
-                            </> }
+                                {roomSession.isSpectator && <RoomSpectatorView />}
+                            </>
+                        )}
                     </div>
-                </motion.div> }
+                </motion.div>
+            }
         </AnimatePresence>
     );
 };

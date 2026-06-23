@@ -5,24 +5,20 @@ import { RoomWidgetView } from './RoomWidgetView';
 /**
  * Configure via renderer-config.json: "timezone.settings": "Europe/Amsterdam"
  */
-function getHourInTimezone(timezone: string): number
-{
-    if(!timezone) return new Date().getHours();
+function getHourInTimezone(timezone: string): number {
+    if (!timezone) return new Date().getHours();
 
-    try
-    {
+    try {
         const parts = new Intl.DateTimeFormat('en-US', {
             timeZone: timezone,
             hour: 'numeric',
             hour12: false
         }).formatToParts(new Date());
 
-        const h = parts.find(p => p.type === 'hour');
+        const h = parts.find((p) => p.type === 'hour');
 
-        return h ? (parseInt(h.value, 10) % 24) : new Date().getHours();
-    }
-    catch
-    {
+        return h ? parseInt(h.value, 10) % 24 : new Date().getHours();
+    } catch {
         return new Date().getHours();
     }
 }
@@ -35,35 +31,32 @@ function getHourInTimezone(timezone: string): number
  *  20-23 → evening
  *  00-05 → night
  */
-function getTimeOfDay(hour: number): string
-{
-    if(hour > 5 && hour <= 9) return 'morning';
-    if(hour > 9 && hour <= 16) return 'day';
-    if(hour > 16 && hour <= 19) return 'sunset';
-    if(hour > 19 && hour <= 23) return 'evening';
+function getTimeOfDay(hour: number): string {
+    if (hour > 5 && hour <= 9) return 'morning';
+    if (hour > 9 && hour <= 16) return 'day';
+    if (hour > 16 && hour <= 19) return 'sunset';
+    if (hour > 19 && hour <= 23) return 'evening';
 
     return 'night';
 }
 
 const SKY_COLORS: Record<string, string> = {
     morning: '#E67451',
-    sunset:  '#C76E00',
+    sunset: '#C76E00',
     evening: '#0a0a1e',
-    night:   '#000000',
+    night: '#000000'
 };
 
-export const HotelView: FC<{}> = props =>
-{
+export const HotelView: FC<{}> = (props) => {
     const configBgColor = GetConfigurationValue('hotelview')['images']['background.colour'];
 
     const timezone = GetConfigurationValue<string>('timezone.settings', '');
 
-    const timeOfDay = useMemo(() =>
-    {
+    const timeOfDay = useMemo(() => {
         const hour = getHourInTimezone(timezone);
 
         return getTimeOfDay(hour);
-    }, [ timezone ]);
+    }, [timezone]);
 
     /**
 	const timeOfDay = 'sunset';
@@ -77,32 +70,27 @@ export const HotelView: FC<{}> = props =>
     const lastMouseX = useRef(0);
     const lastMouseY = useRef(0);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const container = containerRef.current;
 
-        if(!container) return;
+        if (!container) return;
 
-        const centerView = () =>
-        {
+        const centerView = () => {
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight - 55;
 
             const lobbyEl = container.querySelector<HTMLElement>('.nitro-hotel-view-lobby');
 
-            if(lobbyEl)
-            {
+            if (lobbyEl) {
                 const containerRect = container.getBoundingClientRect();
                 const lobbyRect = lobbyEl.getBoundingClientRect();
 
-                const lobbyCenterX = (lobbyRect.left - containerRect.left) + container.scrollLeft + lobbyRect.width / 2;
-                const lobbyCenterY = (lobbyRect.top - containerRect.top) + container.scrollTop + lobbyRect.height / 2;
+                const lobbyCenterX = lobbyRect.left - containerRect.left + container.scrollLeft + lobbyRect.width / 2;
+                const lobbyCenterY = lobbyRect.top - containerRect.top + container.scrollTop + lobbyRect.height / 2;
 
                 container.scrollLeft = Math.max(0, lobbyCenterX - viewportWidth / 2);
                 container.scrollTop = Math.max(0, lobbyCenterY - viewportHeight / 2);
-            }
-            else
-            {
+            } else {
                 container.scrollLeft = Math.max(0, (2600 - viewportWidth) / 2);
                 container.scrollTop = Math.max(0, (1425 - viewportHeight) / 2);
             }
@@ -115,20 +103,18 @@ export const HotelView: FC<{}> = props =>
         return () => window.removeEventListener('resize', centerView);
     }, []);
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) =>
-    {
-        if(e.button !== 0) return;
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.button !== 0) return;
 
         isDragging.current = true;
         lastMouseX.current = e.pageX;
         lastMouseY.current = e.pageY;
 
-        if(containerRef.current) containerRef.current.style.cursor = 'grabbing';
+        if (containerRef.current) containerRef.current.style.cursor = 'grabbing';
     };
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) =>
-    {
-        if(!isDragging.current) return;
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDragging.current) return;
 
         e.preventDefault();
 
@@ -138,24 +124,22 @@ export const HotelView: FC<{}> = props =>
         lastMouseX.current = e.pageX;
         lastMouseY.current = e.pageY;
 
-        if(containerRef.current)
-        {
+        if (containerRef.current) {
             containerRef.current.scrollLeft -= dx;
             containerRef.current.scrollTop -= dy;
         }
     };
 
-    const handleMouseUp = () =>
-    {
+    const handleMouseUp = () => {
         isDragging.current = false;
-        if(containerRef.current) containerRef.current.style.cursor = 'grab';
+        if (containerRef.current) containerRef.current.style.cursor = 'grab';
     };
 
     return (
         <div
-            ref={ containerRef }
-            className={ `nitro-hotel-view hotel-${ timeOfDay } block fixed w-full h-[calc(100%-55px)] text-[#000]` }
-            style={ {
+            ref={containerRef}
+            className={`nitro-hotel-view hotel-${timeOfDay} block fixed w-full h-[calc(100%-55px)] text-[#000]`}
+            style={{
                 background: skyColor,
                 overflow: 'auto',
                 WebkitOverflowScrolling: 'touch',
@@ -164,17 +148,14 @@ export const HotelView: FC<{}> = props =>
                 msOverflowStyle: 'none',
                 scrollbarWidth: 'none',
                 cursor: 'grab'
-            } }
-            onMouseDown={ handleMouseDown }
-            onMouseMove={ handleMouseMove }
-            onMouseUp={ handleMouseUp }
-            onMouseLeave={ handleMouseUp }
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
         >
-            <div
-                className="hotelview position-relative"
-                style={ { minWidth: '2600px', minHeight: '1425px' } }
-            >
-                <div className="hotelview-background w-full h-full" style={ { position: 'absolute', top: 0, left: 0 } } />
+            <div className="hotelview position-relative" style={{ minWidth: '2600px', minHeight: '1425px' }}>
+                <div className="hotelview-background w-full h-full" style={{ position: 'absolute', top: 0, left: 0 }} />
                 <RoomWidgetView />
             </div>
         </div>

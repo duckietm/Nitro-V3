@@ -4,12 +4,10 @@ import { useBetween } from 'use-between';
 import { IGroupCustomize, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
 
-const useGroupState = () =>
-{
-    const [ groupCustomize, setGroupCustomize ] = useState<IGroupCustomize>(null);
+const useGroupState = () => {
+    const [groupCustomize, setGroupCustomize] = useState<IGroupCustomize>(null);
 
-    useMessageEvent<GroupBadgePartsEvent>(GroupBadgePartsEvent, event =>
-    {
+    useMessageEvent<GroupBadgePartsEvent>(GroupBadgePartsEvent, (event) => {
         const parser = event.getParser();
 
         const customize: IGroupCustomize = {
@@ -26,11 +24,10 @@ const useGroupState = () =>
         parser.colorsA.forEach((color, id) => customize.groupColorsA.push({ id, color }));
         parser.colorsB.forEach((color, id) => customize.groupColorsB.push({ id, color }));
 
-        const CompareId = (a: { id: number }, b: { id: number }) =>
-        {
-            if(a.id < b.id) return -1;
+        const CompareId = (a: { id: number }, b: { id: number }) => {
+            if (a.id < b.id) return -1;
 
-            if(a.id > b.id) return 1;
+            if (a.id > b.id) return 1;
 
             return 0;
         };
@@ -44,8 +41,7 @@ const useGroupState = () =>
         setGroupCustomize(customize);
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         SendMessageComposer(new GroupBadgePartsComposer());
     }, []);
 

@@ -1,7 +1,27 @@
-import { AvatarAction, AvatarExpressionEnum, CreateLinkEvent, RoomControllerLevel, RoomObjectCategory, RoomUnitDropHandItemComposer } from '@nitrots/nitro-renderer';
+import {
+    AvatarAction,
+    AvatarExpressionEnum,
+    CreateLinkEvent,
+    RoomControllerLevel,
+    RoomObjectCategory,
+    RoomUnitDropHandItemComposer
+} from '@nitrots/nitro-renderer';
 import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { AvatarInfoUser, DispatchUiEvent, GetCanStandUp, GetCanUseExpression, GetOwnPosture, GetUserProfile, HasHabboClub, HasHabboVip, IsRidingHorse, LocalizeText, PostureTypeEnum, SendMessageComposer } from '../../../../../api';
+import {
+    AvatarInfoUser,
+    DispatchUiEvent,
+    GetCanStandUp,
+    GetCanUseExpression,
+    GetOwnPosture,
+    GetUserProfile,
+    HasHabboClub,
+    HasHabboVip,
+    IsRidingHorse,
+    LocalizeText,
+    PostureTypeEnum,
+    SendMessageComposer
+} from '../../../../../api';
 import { LayoutCurrencyIcon } from '../../../../../common';
 import { HelpNameChangeEvent } from '../../../../../events';
 import { useRoom, useWiredTools } from '../../../../../hooks';
@@ -9,8 +29,7 @@ import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView'
 import { ContextMenuListItemView } from '../../context-menu/ContextMenuListItemView';
 import { ContextMenuView } from '../../context-menu/ContextMenuView';
 
-interface AvatarInfoWidgetOwnAvatarViewProps
-{
+interface AvatarInfoWidgetOwnAvatarViewProps {
     avatarInfo: AvatarInfoUser;
     isDancing: boolean;
     setIsDecorating: Dispatch<SetStateAction<boolean>>;
@@ -23,29 +42,22 @@ const MODE_NAME_CHANGE = 2;
 const MODE_EXPRESSIONS = 3;
 const MODE_SIGNS = 4;
 
-export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProps> = props =>
-{
+export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProps> = (props) => {
     const { avatarInfo = null, isDancing = false, setIsDecorating = null, onClose = null } = props;
-    const [ mode, setMode ] = useState((isDancing && HasHabboClub()) ? MODE_CLUB_DANCES : MODE_NORMAL);
+    const [mode, setMode] = useState(isDancing && HasHabboClub() ? MODE_CLUB_DANCES : MODE_NORMAL);
     const { roomSession = null } = useRoom();
     const { openInspectionForUser, showInspectButton } = useWiredTools();
 
-    const processAction = (name: string) =>
-    {
+    const processAction = (name: string) => {
         let hideMenu = true;
 
-        if(name)
-        {
-            if(name.startsWith('sign_'))
-            {
+        if (name) {
+            if (name.startsWith('sign_')) {
                 const sign = parseInt(name.split('_')[1]);
 
                 roomSession.sendSignMessage(sign);
-            }
-            else
-            {
-                switch(name)
-                {
+            } else {
+                switch (name) {
                     case 'decorate':
                         setIsDecorating(true);
                         break;
@@ -100,7 +112,7 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                     case 'dance_2':
                     case 'dance_3':
                     case 'dance_4':
-                        roomSession.sendDanceMessage(parseInt(name.charAt((name.length - 1))));
+                        roomSession.sendDanceMessage(parseInt(name.charAt(name.length - 1)));
                         break;
                     case 'signs':
                         hideMenu = false;
@@ -120,199 +132,174 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
             }
         }
 
-        if(hideMenu) onClose();
+        if (hideMenu) onClose();
     };
 
-    const isShowDecorate = () => (avatarInfo.amIOwner || avatarInfo.amIAnyRoomController || (avatarInfo.roomControllerLevel > RoomControllerLevel.GUEST));
+    const isShowDecorate = () => avatarInfo.amIOwner || avatarInfo.amIAnyRoomController || avatarInfo.roomControllerLevel > RoomControllerLevel.GUEST;
 
     const isRidingHorse = IsRidingHorse();
 
     return (
-        <ContextMenuView category={ RoomObjectCategory.UNIT } classNames={ [ 'nitro-avatar-action-menu' ] } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
-
-            <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) }>
-                { avatarInfo.name }
+        <ContextMenuView
+            category={RoomObjectCategory.UNIT}
+            classNames={['nitro-avatar-action-menu']}
+            collapsable={true}
+            objectId={avatarInfo.roomIndex}
+            userType={avatarInfo.userType}
+            onClose={onClose}
+        >
+            <ContextMenuHeaderView className="cursor-pointer" onClick={(event) => GetUserProfile(avatarInfo.webID)}>
+                {avatarInfo.name}
             </ContextMenuHeaderView>
-            { (mode === MODE_NORMAL) &&
+            {mode === MODE_NORMAL && (
                 <>
-                    { avatarInfo.allowNameChange &&
-                        <ContextMenuListItemView onClick={ event => processAction('change_name') }>
-                            { LocalizeText('widget.avatar.change_name') }
-                        </ContextMenuListItemView> }
-                    { isShowDecorate() &&
-                        <ContextMenuListItemView onClick={ event => processAction('decorate') }>
-                            { LocalizeText('widget.avatar.decorate') }
-                        </ContextMenuListItemView> }
-                    <ContextMenuListItemView onClick={ event => processAction('change_looks') }>
-                        { LocalizeText('widget.memenu.myclothes') }
+                    {avatarInfo.allowNameChange && (
+                        <ContextMenuListItemView onClick={(event) => processAction('change_name')}>
+                            {LocalizeText('widget.avatar.change_name')}
+                        </ContextMenuListItemView>
+                    )}
+                    {isShowDecorate() && (
+                        <ContextMenuListItemView onClick={(event) => processAction('decorate')}>
+                            {LocalizeText('widget.avatar.decorate')}
+                        </ContextMenuListItemView>
+                    )}
+                    <ContextMenuListItemView onClick={(event) => processAction('change_looks')}>
+                        {LocalizeText('widget.memenu.myclothes')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('avatar_effect') }>
-                        { LocalizeText('product.type.effect') }
+                    <ContextMenuListItemView onClick={(event) => processAction('avatar_effect')}>{LocalizeText('product.type.effect')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('customize_nick')}>Nick Custom</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('badge_leaderboard')}>
+                        {LocalizeText('badge_leaderboard.title.total_badges')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('customize_nick') }>
-                        Nick Custom
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('badge_leaderboard') }>
-                        { LocalizeText('badge_leaderboard.title.total_badges') }
-                    </ContextMenuListItemView>
-                    { (HasHabboClub() && !isRidingHorse) &&
-                        <ContextMenuListItemView onClick={ event => processAction('dance_menu') }>
+                    {HasHabboClub() && !isRidingHorse && (
+                        <ContextMenuListItemView onClick={(event) => processAction('dance_menu')}>
                             <FaChevronRight className="right fa-icon" />
-                            { LocalizeText('widget.memenu.dance') }
-                        </ContextMenuListItemView> }
-                    { (!isDancing && !HasHabboClub() && !isRidingHorse) &&
-                        <ContextMenuListItemView onClick={ event => processAction('dance') }>
-                            { LocalizeText('widget.memenu.dance') }
-                        </ContextMenuListItemView> }
-                    { (isDancing && !HasHabboClub() && !isRidingHorse) &&
-                        <ContextMenuListItemView onClick={ event => processAction('dance_stop') }>
-                            { LocalizeText('widget.memenu.dance.stop') }
-                        </ContextMenuListItemView> }
-                    <ContextMenuListItemView onClick={ event => processAction('expressions') }>
+                            {LocalizeText('widget.memenu.dance')}
+                        </ContextMenuListItemView>
+                    )}
+                    {!isDancing && !HasHabboClub() && !isRidingHorse && (
+                        <ContextMenuListItemView onClick={(event) => processAction('dance')}>{LocalizeText('widget.memenu.dance')}</ContextMenuListItemView>
+                    )}
+                    {isDancing && !HasHabboClub() && !isRidingHorse && (
+                        <ContextMenuListItemView onClick={(event) => processAction('dance_stop')}>
+                            {LocalizeText('widget.memenu.dance.stop')}
+                        </ContextMenuListItemView>
+                    )}
+                    <ContextMenuListItemView onClick={(event) => processAction('expressions')}>
                         <FaChevronRight className="right fa-icon" />
-                        { LocalizeText('infostand.link.expressions') }
+                        {LocalizeText('infostand.link.expressions')}
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('signs') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('signs')}>
                         <FaChevronRight className="right fa-icon" />
-                        { LocalizeText('infostand.show.signs') }
+                        {LocalizeText('infostand.show.signs')}
                     </ContextMenuListItemView>
-                    { (avatarInfo.carryItem > 0) &&
-                        <ContextMenuListItemView onClick={ event => processAction('drop_carry_item') }>
-                            { LocalizeText('avatar.widget.drop_hand_item') }
-                        </ContextMenuListItemView> }
-                    { showInspectButton &&
-                        <ContextMenuListItemView onClick={ event => processAction('inspect') }>
-                            Inspect
-                        </ContextMenuListItemView> }
-                </> }
-            { (mode === MODE_CLUB_DANCES) &&
+                    {avatarInfo.carryItem > 0 && (
+                        <ContextMenuListItemView onClick={(event) => processAction('drop_carry_item')}>
+                            {LocalizeText('avatar.widget.drop_hand_item')}
+                        </ContextMenuListItemView>
+                    )}
+                    {showInspectButton && <ContextMenuListItemView onClick={(event) => processAction('inspect')}>Inspect</ContextMenuListItemView>}
+                </>
+            )}
+            {mode === MODE_CLUB_DANCES && (
                 <>
-                    { isDancing &&
-                        <ContextMenuListItemView onClick={ event => processAction('dance_stop') }>
-                            { LocalizeText('widget.memenu.dance.stop') }
-                        </ContextMenuListItemView> }
-                    <ContextMenuListItemView onClick={ event => processAction('dance_1') }>
-                        { LocalizeText('widget.memenu.dance1') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('dance_2') }>
-                        { LocalizeText('widget.memenu.dance2') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('dance_3') }>
-                        { LocalizeText('widget.memenu.dance3') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('dance_4') }>
-                        { LocalizeText('widget.memenu.dance4') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('back') }>
+                    {isDancing && (
+                        <ContextMenuListItemView onClick={(event) => processAction('dance_stop')}>
+                            {LocalizeText('widget.memenu.dance.stop')}
+                        </ContextMenuListItemView>
+                    )}
+                    <ContextMenuListItemView onClick={(event) => processAction('dance_1')}>{LocalizeText('widget.memenu.dance1')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('dance_2')}>{LocalizeText('widget.memenu.dance2')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('dance_3')}>{LocalizeText('widget.memenu.dance3')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('dance_4')}>{LocalizeText('widget.memenu.dance4')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('back')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
-            { (mode === MODE_EXPRESSIONS) &&
+                </>
+            )}
+            {mode === MODE_EXPRESSIONS && (
                 <>
-                    { (GetOwnPosture() === AvatarAction.POSTURE_STAND) &&
-                        <ContextMenuListItemView onClick={ event => processAction('sit') }>
-                            { LocalizeText('widget.memenu.sit') }
-                        </ContextMenuListItemView> }
-                    { GetCanStandUp() &&
-                        <ContextMenuListItemView onClick={ event => processAction('stand') }>
-                            { LocalizeText('widget.memenu.stand') }
-                        </ContextMenuListItemView> }
-                    { GetCanUseExpression() &&
-                        <ContextMenuListItemView onClick={ event => processAction('wave') }>
-                            { LocalizeText('widget.memenu.wave') }
-                        </ContextMenuListItemView> }
-                    { GetCanUseExpression() &&
-                        <ContextMenuListItemView disabled={ !HasHabboVip() } onClick={ event => processAction('laugh') }>
-                            { !HasHabboVip() && <LayoutCurrencyIcon type="hc" /> }
-                            { LocalizeText('widget.memenu.laugh') }
-                        </ContextMenuListItemView> }
-                    { GetCanUseExpression() &&
-                        <ContextMenuListItemView disabled={ !HasHabboVip() } onClick={ event => processAction('blow') }>
-                            { !HasHabboVip() && <LayoutCurrencyIcon type="hc" /> }
-                            { LocalizeText('widget.memenu.blow') }
-                        </ContextMenuListItemView> }
-                    <ContextMenuListItemView onClick={ event => processAction('idle') }>
-                        { LocalizeText('widget.memenu.idle') }
-                    </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('back') }>
+                    {GetOwnPosture() === AvatarAction.POSTURE_STAND && (
+                        <ContextMenuListItemView onClick={(event) => processAction('sit')}>{LocalizeText('widget.memenu.sit')}</ContextMenuListItemView>
+                    )}
+                    {GetCanStandUp() && (
+                        <ContextMenuListItemView onClick={(event) => processAction('stand')}>{LocalizeText('widget.memenu.stand')}</ContextMenuListItemView>
+                    )}
+                    {GetCanUseExpression() && (
+                        <ContextMenuListItemView onClick={(event) => processAction('wave')}>{LocalizeText('widget.memenu.wave')}</ContextMenuListItemView>
+                    )}
+                    {GetCanUseExpression() && (
+                        <ContextMenuListItemView disabled={!HasHabboVip()} onClick={(event) => processAction('laugh')}>
+                            {!HasHabboVip() && <LayoutCurrencyIcon type="hc" />}
+                            {LocalizeText('widget.memenu.laugh')}
+                        </ContextMenuListItemView>
+                    )}
+                    {GetCanUseExpression() && (
+                        <ContextMenuListItemView disabled={!HasHabboVip()} onClick={(event) => processAction('blow')}>
+                            {!HasHabboVip() && <LayoutCurrencyIcon type="hc" />}
+                            {LocalizeText('widget.memenu.blow')}
+                        </ContextMenuListItemView>
+                    )}
+                    <ContextMenuListItemView onClick={(event) => processAction('idle')}>{LocalizeText('widget.memenu.idle')}</ContextMenuListItemView>
+                    <ContextMenuListItemView onClick={(event) => processAction('back')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
-            { (mode === MODE_SIGNS) &&
+                </>
+            )}
+            {mode === MODE_SIGNS && (
                 <>
                     <div className="flex menu-list-split-3">
-                        <ContextMenuListItemView onClick={ event => processAction('sign_1') }>
-                            1
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_2') }>
-                            2
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_3') }>
-                            3
-                        </ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_1')}>1</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_2')}>2</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_3')}>3</ContextMenuListItemView>
                     </div>
                     <div className="flex menu-list-split-3">
-                        <ContextMenuListItemView onClick={ event => processAction('sign_4') }>
-                            4
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_5') }>
-                            5
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_6') }>
-                            6
-                        </ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_4')}>4</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_5')}>5</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_6')}>6</ContextMenuListItemView>
                     </div>
                     <div className="flex menu-list-split-3">
-                        <ContextMenuListItemView onClick={ event => processAction('sign_7') }>
-                            7
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_8') }>
-                            8
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_9') }>
-                            9
-                        </ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_7')}>7</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_8')}>8</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_9')}>9</ContextMenuListItemView>
                     </div>
                     <div className="flex menu-list-split-3">
-                        <ContextMenuListItemView onClick={ event => processAction('sign_10') }>
-                            10
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_11') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_10')}>10</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_11')}>
                             <i className="nitro-icon icon-sign-heart" />
                         </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_12') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_12')}>
                             <i className="nitro-icon icon-sign-skull" />
                         </ContextMenuListItemView>
                     </div>
                     <div className="flex menu-list-split-3">
-                        <ContextMenuListItemView onClick={ event => processAction('sign_0') }>
-                            0
-                        </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_13') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_0')}>0</ContextMenuListItemView>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_13')}>
                             <i className="nitro-icon icon-sign-exclamation" />
                         </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_15') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_15')}>
                             <i className="nitro-icon icon-sign-smile" />
                         </ContextMenuListItemView>
                     </div>
                     <div className="flex menu-list-split-3">
-                        <ContextMenuListItemView onClick={ event => processAction('sign_14') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_14')}>
                             <i className="nitro-icon icon-sign-soccer" />
                         </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_17') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_17')}>
                             <i className="nitro-icon icon-sign-yellow" />
                         </ContextMenuListItemView>
-                        <ContextMenuListItemView onClick={ event => processAction('sign_16') }>
+                        <ContextMenuListItemView onClick={(event) => processAction('sign_16')}>
                             <i className="nitro-icon icon-sign-red" />
                         </ContextMenuListItemView>
                     </div>
-                    <ContextMenuListItemView onClick={ event => processAction('back') }>
+                    <ContextMenuListItemView onClick={(event) => processAction('back')}>
                         <FaChevronLeft className="left fa-icon" />
-                        { LocalizeText('generic.back') }
+                        {LocalizeText('generic.back')}
                     </ContextMenuListItemView>
-                </> }
+                </>
+            )}
         </ContextMenuView>
     );
 };

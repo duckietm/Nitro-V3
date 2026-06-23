@@ -6,8 +6,7 @@ import { useDoorbellState } from './useDoorbellState';
  * This shim preserves the old `{ users, answer }` shape so existing
  * imports keep working.
  */
-export const useDoorbellWidget = () =>
-{
+export const useDoorbellWidget = () => {
     const users = useDoorbellState();
     const { answer } = useDoorbellActions();
 

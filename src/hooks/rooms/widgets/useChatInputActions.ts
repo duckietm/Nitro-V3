@@ -1,4 +1,18 @@
-import { AvatarExpressionEnum, CreateLinkEvent, GetEventDispatcher, GetRoomEngine, GetSessionDataManager, GetTicker, HabboClubLevelEnum, RoomControllerLevel, RoomRotatingEffect, RoomSettingsComposer, RoomShakingEffect, RoomZoomEvent, TextureUtils } from '@nitrots/nitro-renderer';
+import {
+    AvatarExpressionEnum,
+    CreateLinkEvent,
+    GetEventDispatcher,
+    GetRoomEngine,
+    GetSessionDataManager,
+    GetTicker,
+    HabboClubLevelEnum,
+    RoomControllerLevel,
+    RoomRotatingEffect,
+    RoomSettingsComposer,
+    RoomShakingEffect,
+    RoomZoomEvent,
+    TextureUtils
+} from '@nitrots/nitro-renderer';
 import { useCallback } from 'react';
 import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../api';
 import { useNotification } from '../../notification';
@@ -20,241 +34,235 @@ import { useRoom } from '../useRoom';
  * No state lives in this hook — the typing/flood/idle state belongs
  * to useChatInputState.
  */
-export const useChatInputActions = () =>
-{
+export const useChatInputActions = () => {
     const { showNitroAlert = null, showConfirm = null } = useNotification();
     const { settings, translateOutgoing, enqueueOutgoingTranslation } = useTranslation();
     const { roomSession = null } = useRoom();
 
-    const sendChat = useCallback((text: string, chatType: number, recipientName: string = '', styleId: number = 0) =>
-    {
-        if(text === '') return null;
+    const sendChat = useCallback(
+        (text: string, chatType: number, recipientName: string = '', styleId: number = 0) => {
+            if (text === '') return null;
 
-        const parts = text.split(' ');
+            const parts = text.split(' ');
 
-        if(parts.length > 0)
-        {
-            const firstPart = parts[0];
-            let secondPart = '';
+            if (parts.length > 0) {
+                const firstPart = parts[0];
+                let secondPart = '';
 
-            if(parts.length > 1) secondPart = parts[1];
+                if (parts.length > 1) secondPart = parts[1];
 
-            if((firstPart.charAt(0) === ':') && (secondPart === 'x'))
-            {
-                const selectedAvatarId = GetRoomEngine().selectedAvatarId;
+                if (firstPart.charAt(0) === ':' && secondPart === 'x') {
+                    const selectedAvatarId = GetRoomEngine().selectedAvatarId;
 
-                if(selectedAvatarId > -1)
-                {
-                    const userData = roomSession?.userDataManager?.getUserDataByIndex(selectedAvatarId);
+                    if (selectedAvatarId > -1) {
+                        const userData = roomSession?.userDataManager?.getUserDataByIndex(selectedAvatarId);
 
-                    if(userData)
-                    {
-                        secondPart = userData.name;
-                        text = text.replace(' x', (' ' + userData.name));
+                        if (userData) {
+                            secondPart = userData.name;
+                            text = text.replace(' x', ' ' + userData.name);
+                        }
                     }
                 }
-            }
 
-            switch(firstPart.toLowerCase())
-            {
-                case ':shake':
-                    RoomShakingEffect.init(2500, 5000);
-                    RoomShakingEffect.turnVisualizationOn();
+                switch (firstPart.toLowerCase()) {
+                    case ':shake':
+                        RoomShakingEffect.init(2500, 5000);
+                        RoomShakingEffect.turnVisualizationOn();
 
-                    return null;
+                        return null;
 
-                case ':rotate':
-                    RoomRotatingEffect.init(2500, 5000);
-                    RoomRotatingEffect.turnVisualizationOn();
+                    case ':rotate':
+                        RoomRotatingEffect.init(2500, 5000);
+                        RoomRotatingEffect.turnVisualizationOn();
 
-                    return null;
-                case ':d':
-                case ';d':
-                    if(GetClubMemberLevel() === HabboClubLevelEnum.VIP)
-                    {
-                        roomSession?.sendExpressionMessage(AvatarExpressionEnum.LAUGH.ordinal);
-                    }
+                        return null;
+                    case ':d':
+                    case ';d':
+                        if (GetClubMemberLevel() === HabboClubLevelEnum.VIP) {
+                            roomSession?.sendExpressionMessage(AvatarExpressionEnum.LAUGH.ordinal);
+                        }
 
-                    break;
-                case 'o/':
-                case '_o/':
-                    roomSession?.sendExpressionMessage(AvatarExpressionEnum.WAVE.ordinal);
+                        break;
+                    case 'o/':
+                    case '_o/':
+                        roomSession?.sendExpressionMessage(AvatarExpressionEnum.WAVE.ordinal);
 
-                    return null;
-                case ':kiss':
-                    if(GetClubMemberLevel() === HabboClubLevelEnum.VIP)
-                    {
-                        roomSession?.sendExpressionMessage(AvatarExpressionEnum.BLOW.ordinal);
+                        return null;
+                    case ':kiss':
+                        if (GetClubMemberLevel() === HabboClubLevelEnum.VIP) {
+                            roomSession?.sendExpressionMessage(AvatarExpressionEnum.BLOW.ordinal);
+
+                            return null;
+                        }
+
+                        break;
+                    case ':jump':
+                        if (GetClubMemberLevel() === HabboClubLevelEnum.VIP) {
+                            roomSession?.sendExpressionMessage(AvatarExpressionEnum.JUMP.ordinal);
+
+                            return null;
+                        }
+
+                        break;
+                    case ':idle':
+                        roomSession?.sendExpressionMessage(AvatarExpressionEnum.IDLE.ordinal);
+
+                        return null;
+                    case '_b':
+                        roomSession?.sendExpressionMessage(AvatarExpressionEnum.RESPECT.ordinal);
+
+                        return null;
+                    case ':sign':
+                        roomSession?.sendSignMessage(parseInt(secondPart));
+
+                        return null;
+                    case ':iddqd':
+                    case ':flip':
+                        if (roomSession) GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, -1, true));
+
+                        return null;
+                    case ':zoom':
+                        if (roomSession) GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, parseInt(secondPart)));
+
+                        return null;
+                    case ':screenshot':
+                        if (!roomSession) return null;
+
+                        {
+                            const texture = GetRoomEngine().createTextureFromRoom(roomSession.roomId, 1);
+
+                            (async () => {
+                                try {
+                                    const imageUrl = await TextureUtils.generateImageUrl(texture);
+                                    if (!imageUrl) return;
+
+                                    const link = document.createElement('a');
+                                    link.href = imageUrl;
+                                    link.download = `room_${roomSession.roomId}_${Date.now()}.png`;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                } catch (e) {
+                                    console.warn('[Screenshot] Failed:', e);
+                                }
+                            })();
+                        }
+                        return null;
+                    case ':pickall':
+                        if (roomSession?.isRoomOwner || GetSessionDataManager().isModerator) {
+                            showConfirm(
+                                LocalizeText('room.confirm.pick_all'),
+                                () => {
+                                    GetSessionDataManager().sendSpecialCommandMessage(':pickall');
+                                },
+                                null,
+                                null,
+                                null,
+                                LocalizeText('generic.alert.title')
+                            );
+                        }
+
+                        return null;
+                    case ':ejectall':
+                        if (
+                            roomSession?.isRoomOwner ||
+                            GetSessionDataManager().isModerator ||
+                            (roomSession?.controllerLevel ?? 0) >= RoomControllerLevel.GUEST
+                        ) {
+                            showConfirm(
+                                LocalizeText('room.confirm.eject_all'),
+                                () => {
+                                    GetSessionDataManager().sendSpecialCommandMessage(':ejectall');
+                                },
+                                null,
+                                null,
+                                null,
+                                LocalizeText('generic.alert.title')
+                            );
+                        }
+                        return null;
+                    case ':furni':
+                        CreateLinkEvent('furni-chooser/');
+                        return null;
+                    case ':chooser':
+                        CreateLinkEvent('user-chooser/');
+                        return null;
+                    case ':floor':
+                    case ':bcfloor':
+                        if ((roomSession?.controllerLevel ?? 0) >= RoomControllerLevel.ROOM_OWNER) CreateLinkEvent('floor-editor/show');
+
+                        return null;
+                    case ':togglefps': {
+                        if (GetTicker().maxFPS > 0) GetTicker().maxFPS = 0;
+                        else GetTicker().maxFPS = GetConfigurationValue('system.animation.fps');
 
                         return null;
                     }
-
-                    break;
-                case ':jump':
-                    if(GetClubMemberLevel() === HabboClubLevelEnum.VIP)
-                    {
-                        roomSession?.sendExpressionMessage(AvatarExpressionEnum.JUMP.ordinal);
+                    case ':client':
+                    case ':nitro':
+                    case ':billsonnn':
+                        showNitroAlert();
+                        return null;
+                    case ':settings':
+                        if (roomSession && (roomSession.isRoomOwner || GetSessionDataManager().isModerator)) {
+                            SendMessageComposer(new RoomSettingsComposer(roomSession.roomId));
+                        }
 
                         return null;
-                    }
-
-                    break;
-                case ':idle':
-                    roomSession?.sendExpressionMessage(AvatarExpressionEnum.IDLE.ordinal);
-
-                    return null;
-                case '_b':
-                    roomSession?.sendExpressionMessage(AvatarExpressionEnum.RESPECT.ordinal);
-
-                    return null;
-                case ':sign':
-                    roomSession?.sendSignMessage(parseInt(secondPart));
-
-                    return null;
-                case ':iddqd':
-                case ':flip':
-                    if(roomSession) GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, -1, true));
-
-                    return null;
-                case ':zoom':
-                    if(roomSession) GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, parseInt(secondPart)));
-
-                    return null;
-                case ':screenshot':
-                    if(!roomSession) return null;
-
-                    {
-                        const texture = GetRoomEngine().createTextureFromRoom(roomSession.roomId, 1);
-
-                        (async () =>
-                        {
-                            try
-                            {
-                                const imageUrl = await TextureUtils.generateImageUrl(texture);
-                                if(!imageUrl) return;
-
-                                const link = document.createElement('a');
-                                link.href = imageUrl;
-                                link.download = `room_${ roomSession.roomId }_${ Date.now() }.png`;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                            }
-                            catch(e)
-                            {
-                                console.warn('[Screenshot] Failed:', e);
-                            }
-                        })();
-                    }
-                    return null;
-                case ':pickall':
-                    if(roomSession?.isRoomOwner || GetSessionDataManager().isModerator)
-                    {
-                        showConfirm(LocalizeText('room.confirm.pick_all'), () =>
-                        {
-                            GetSessionDataManager().sendSpecialCommandMessage(':pickall');
-                        },
-                        null, null, null, LocalizeText('generic.alert.title'));
-                    }
-
-                    return null;
-                case ':ejectall':
-                    if(roomSession?.isRoomOwner || GetSessionDataManager().isModerator || (roomSession?.controllerLevel ?? 0) >= RoomControllerLevel.GUEST)
-                    {
-                        showConfirm(LocalizeText('room.confirm.eject_all'), () =>
-                        {
-                            GetSessionDataManager().sendSpecialCommandMessage(':ejectall');
-                        },
-                        null, null, null, LocalizeText('generic.alert.title'));
-                    }
-                    return null;
-                case ':furni':
-                    CreateLinkEvent('furni-chooser/');
-                    return null;
-                case ':chooser':
-                    CreateLinkEvent('user-chooser/');
-                    return null;
-                case ':floor':
-                case ':bcfloor':
-                    if((roomSession?.controllerLevel ?? 0) >= RoomControllerLevel.ROOM_OWNER) CreateLinkEvent('floor-editor/show');
-
-                    return null;
-                case ':togglefps': {
-                    if(GetTicker().maxFPS > 0) GetTicker().maxFPS = 0;
-                    else GetTicker().maxFPS = GetConfigurationValue('system.animation.fps');
-
-                    return null;
+                    case ':customize':
+                        CreateLinkEvent('customize/show');
+                        return null;
                 }
-                case ':client':
-                case ':nitro':
-                case ':billsonnn':
-                    showNitroAlert();
-                    return null;
-                case ':settings':
-                    if(roomSession && (roomSession.isRoomOwner || GetSessionDataManager().isModerator))
-                    {
-                        SendMessageComposer(new RoomSettingsComposer(roomSession.roomId));
-                    }
-
-                    return null;
-                case ':customize':
-                    CreateLinkEvent('customize/show');
-                    return null;
             }
-        }
 
-        if(!roomSession) return null;
+            if (!roomSession) return null;
 
-        const preserveTrailingSpaces = (message: string) =>
-        {
-            if(message.startsWith(':')) return message;
+            const preserveTrailingSpaces = (message: string) => {
+                if (message.startsWith(':')) return message;
 
-            return message.replace(/ +$/g, match => ' '.repeat(match.length));
-        };
+                return message.replace(/ +$/g, (match) => ' '.repeat(match.length));
+            };
 
-        const dispatchChatMessage = (message: string) =>
-        {
-            const preservedMessage = preserveTrailingSpaces(message);
+            const dispatchChatMessage = (message: string) => {
+                const preservedMessage = preserveTrailingSpaces(message);
 
-            switch(chatType)
-            {
-                case ChatMessageTypeEnum.CHAT_DEFAULT:
-                    roomSession.sendChatMessage(preservedMessage, styleId);
-                    return;
-                case ChatMessageTypeEnum.CHAT_SHOUT:
-                    roomSession.sendShoutMessage(preservedMessage, styleId);
-                    return;
-                case ChatMessageTypeEnum.CHAT_WHISPER:
-                    roomSession.sendWhisperMessage(recipientName, preservedMessage, styleId);
-                    return;
+                switch (chatType) {
+                    case ChatMessageTypeEnum.CHAT_DEFAULT:
+                        roomSession.sendChatMessage(preservedMessage, styleId);
+                        return;
+                    case ChatMessageTypeEnum.CHAT_SHOUT:
+                        roomSession.sendShoutMessage(preservedMessage, styleId);
+                        return;
+                    case ChatMessageTypeEnum.CHAT_WHISPER:
+                        roomSession.sendWhisperMessage(recipientName, preservedMessage, styleId);
+                        return;
+                }
+            };
+
+            const trimmedText = text.trimStart();
+            const shouldTranslateOutgoing = settings.enabled && !!trimmedText.length && trimmedText.charAt(0) !== ':';
+
+            if (!shouldTranslateOutgoing) {
+                dispatchChatMessage(text);
+                return null;
             }
-        };
 
-        const trimmedText = text.trimStart();
-        const shouldTranslateOutgoing = settings.enabled && !!trimmedText.length && (trimmedText.charAt(0) !== ':');
+            void (async () => {
+                const translation = await translateOutgoing(text);
 
-        if(!shouldTranslateOutgoing)
-        {
-            dispatchChatMessage(text);
+                if (translation) {
+                    enqueueOutgoingTranslation(translation);
+                    dispatchChatMessage(translation.translatedText);
+                    return;
+                }
+
+                dispatchChatMessage(text);
+            })();
+
             return null;
-        }
-
-        void (async () =>
-        {
-            const translation = await translateOutgoing(text);
-
-            if(translation)
-            {
-                enqueueOutgoingTranslation(translation);
-                dispatchChatMessage(translation.translatedText);
-                return;
-            }
-
-            dispatchChatMessage(text);
-        })();
-
-        return null;
-    }, [ roomSession, settings, translateOutgoing, enqueueOutgoingTranslation, showConfirm, showNitroAlert ]);
+        },
+        [roomSession, settings, translateOutgoing, enqueueOutgoingTranslation, showConfirm, showNitroAlert]
+    );
 
     return { sendChat };
 };

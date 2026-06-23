@@ -1,5 +1,4 @@
-export class ReportState
-{
+export class ReportState {
     public static readonly SELECT_USER = 0;
     public static readonly SELECT_CHATS = 1;
     public static readonly SELECT_TOPICS = 2;

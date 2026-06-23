@@ -1,8 +1,7 @@
 import { IFurnitureData, IProductData } from '@nitrots/nitro-renderer';
 import { IPurchasableOffer } from './IPurchasableOffer';
 
-export class PlacedObjectPurchaseData
-{
+export class PlacedObjectPurchaseData {
     constructor(
         public readonly roomId: number,
         public readonly objectId: number,
@@ -11,31 +10,26 @@ export class PlacedObjectPurchaseData
         public readonly x: number,
         public readonly y: number,
         public readonly direction: number,
-        public readonly offer: IPurchasableOffer)
-    {}
+        public readonly offer: IPurchasableOffer
+    ) {}
 
-    public get offerId(): number
-    {
+    public get offerId(): number {
         return this.offer.offerId;
     }
 
-    public get productClassId(): number
-    {
+    public get productClassId(): number {
         return this.offer.product.productClassId;
     }
 
-    public get productData(): IProductData
-    {
+    public get productData(): IProductData {
         return this.offer.product.productData;
     }
 
-    public get furniData(): IFurnitureData
-    {
+    public get furniData(): IFurnitureData {
         return this.offer.product.furnitureData;
     }
 
-    public get extraParam(): string
-    {
+    public get extraParam(): string {
         return this.offer.product.extraParam;
     }
 }

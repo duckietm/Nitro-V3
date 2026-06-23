@@ -1,8 +1,7 @@
 import { IPageLocalization } from './IPageLocalization';
 import { IPurchasableOffer } from './IPurchasableOffer';
 
-export interface ICatalogPage
-{
+export interface ICatalogPage {
     readonly pageId: number;
     readonly layoutCode: string;
     readonly localization: IPageLocalization;

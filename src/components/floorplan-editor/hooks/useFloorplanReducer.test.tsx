@@ -1,24 +1,20 @@
-import { describe, it, expect } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { useFloorplanReducer } from './useFloorplanReducer';
 
-describe('useFloorplanReducer', () =>
-{
-    it('starts with initialState', () =>
-    {
+describe('useFloorplanReducer', () => {
+    it('starts with initialState', () => {
         const { result } = renderHook(() => useFloorplanReducer());
         expect(result.current.state.tiles).toEqual([]);
         expect(result.current.state.brush.action).toBe('SET');
     });
 
-    it('loadFromServer seeds tiles + door + wallHeight', () =>
-    {
+    it('loadFromServer seeds tiles + door + wallHeight', () => {
         const { result } = renderHook(() => useFloorplanReducer());
-        act(() =>
-        {
+        act(() => {
             result.current.loadFromServer({
                 tilemap: '00\rxq',
-                entryPoint: [ 1, 0 ],
+                entryPoint: [1, 0],
                 entryPointDir: 4,
                 thicknessWall: 1,
                 thicknessFloor: 0,
@@ -31,11 +27,9 @@ describe('useFloorplanReducer', () =>
         expect(result.current.state.wallHeight).toBe(5);
     });
 
-    it('dispatch updates state synchronously', () =>
-    {
+    it('dispatch updates state synchronously', () => {
         const { result } = renderHook(() => useFloorplanReducer());
-        act(() =>
-        {
+        act(() => {
             result.current.dispatch({ type: 'BRUSH_SET', action: 'DOOR' });
         });
         expect(result.current.state.brush.action).toBe('DOOR');

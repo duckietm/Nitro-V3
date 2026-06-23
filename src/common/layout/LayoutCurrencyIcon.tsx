@@ -2,43 +2,38 @@ import { CSSProperties, FC, useMemo } from 'react';
 import { GetConfigurationValue } from '../../api';
 import { Base, BaseProps } from '../Base';
 
-export interface CurrencyIconProps extends BaseProps<HTMLDivElement>
-{
+export interface CurrencyIconProps extends BaseProps<HTMLDivElement> {
     type: number | string;
 }
 
-export const LayoutCurrencyIcon: FC<CurrencyIconProps> = props =>
-{
+export const LayoutCurrencyIcon: FC<CurrencyIconProps> = (props) => {
     const { type = '', classNames = [], style = {}, ...rest } = props;
 
-    const getClassNames = useMemo(() =>
-    {
-        const newClassNames: string[] = [ 'nitro-currency-icon', 'bg-center bg-no-repeat w-[15px] h-[15px]' ];
+    const getClassNames = useMemo(() => {
+        const newClassNames: string[] = ['nitro-currency-icon', 'bg-center bg-no-repeat w-[15px] h-[15px]'];
 
-        if(classNames.length) newClassNames.push(...classNames);
+        if (classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
-    }, [ classNames ]);
+    }, [classNames]);
 
-    const urlString = useMemo(() =>
-    {
+    const urlString = useMemo(() => {
         let url = GetConfigurationValue<string>('currency.asset.icon.url', '');
 
         url = url.replace('%type%', type.toString());
 
-        return `url(${ url })`;
-    }, [ type ]);
+        return `url(${url})`;
+    }, [type]);
 
-    const getStyle = useMemo(() =>
-    {
+    const getStyle = useMemo(() => {
         let newStyle: CSSProperties = {};
 
         newStyle.backgroundImage = urlString;
 
-        if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
+        if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ style, urlString ]);
+    }, [style, urlString]);
 
-    return <Base classNames={ getClassNames } style={ getStyle } { ...rest } />;
+    return <Base classNames={getClassNames} style={getStyle} {...rest} />;
 };

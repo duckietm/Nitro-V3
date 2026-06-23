@@ -6,43 +6,48 @@ import { DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, Nit
 import { useMessageEvent } from '../../../../hooks';
 import { ChatlogView } from '../chatlog/ChatlogView';
 
-interface ModToolsUserChatlogViewProps
-{
+interface ModToolsUserChatlogViewProps {
     userId: number;
     onCloseClick: () => void;
 }
 
-export const ModToolsUserChatlogView: FC<ModToolsUserChatlogViewProps> = props =>
-{
+export const ModToolsUserChatlogView: FC<ModToolsUserChatlogViewProps> = (props) => {
     const { userId = null, onCloseClick = null } = props;
-    const [ userChatlog, setUserChatlog ] = useState<ChatRecordData[]>(null);
-    const [ username, setUsername ] = useState<string>(null);
+    const [userChatlog, setUserChatlog] = useState<ChatRecordData[]>(null);
+    const [username, setUsername] = useState<string>(null);
 
-    useMessageEvent<UserChatlogEvent>(UserChatlogEvent, event =>
-    {
+    useMessageEvent<UserChatlogEvent>(UserChatlogEvent, (event) => {
         const parser = event.getParser();
 
-        if(!parser || parser.data.userId !== userId) return;
+        if (!parser || parser.data.userId !== userId) return;
 
         setUsername(parser.data.username);
         setUserChatlog(parser.data.roomChatlogs);
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         SendMessageComposer(new GetUserChatlogMessageComposer(userId));
-    }, [ userId ]);
+    }, [userId]);
 
     return (
-        <NitroCardView className="nitro-mod-tools-chatlog min-w-[460px] max-w-[520px] max-h-[500px]" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
-            <NitroCardHeaderView headerText={ username ? LocalizeText('modtools.user.chatlog.title.with', [ 'username' ], [ username ]) : LocalizeText('modtools.user.chatlog.title') } onCloseClick={ onCloseClick } />
-            <NitroCardContentView className="text-black h-full" gap={ 1 }>
-                { userChatlog
-                    ? <ChatlogView records={ userChatlog } />
-                    : <div className="flex flex-col items-center justify-center gap-2 py-8 opacity-50 text-sm">
-                        <FaSpinner className="animate-spin" size={ 22 } />
-                        <span>{ LocalizeText('modtools.user.chatlog.loading') }</span>
-                    </div> }
+        <NitroCardView
+            className="nitro-mod-tools-chatlog min-w-0 w-[min(520px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
+            theme="primary-slim"
+            windowPosition={DraggableWindowPosition.TOP_LEFT}
+        >
+            <NitroCardHeaderView
+                headerText={username ? LocalizeText('modtools.user.chatlog.title.with', ['username'], [username]) : LocalizeText('modtools.user.chatlog.title')}
+                onCloseClick={onCloseClick}
+            />
+            <NitroCardContentView className="text-black h-full" gap={1}>
+                {userChatlog ? (
+                    <ChatlogView records={userChatlog} />
+                ) : (
+                    <div className="flex flex-col items-center justify-center gap-2 py-8 opacity-50 text-sm">
+                        <FaSpinner className="animate-spin" size={22} />
+                        <span>{LocalizeText('modtools.user.chatlog.loading')}</span>
+                    </div>
+                )}
             </NitroCardContentView>
         </NitroCardView>
     );

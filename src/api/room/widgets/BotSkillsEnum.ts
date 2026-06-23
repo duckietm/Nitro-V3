@@ -1,5 +1,4 @@
-export class BotSkillsEnum
-{
+export class BotSkillsEnum {
     public static GENERIC_SKILL: number = 0;
     public static DRESS_UP: number = 1;
     public static SETUP_CHAT: number = 2;

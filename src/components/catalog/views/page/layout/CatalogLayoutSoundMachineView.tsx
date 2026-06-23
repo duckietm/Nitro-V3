@@ -13,90 +13,82 @@ import { CatalogTotalPriceWidget } from '../widgets/CatalogTotalPriceWidget';
 import { CatalogViewProductWidgetView } from '../widgets/CatalogViewProductWidgetView';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
-export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
-{
+export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = (props) => {
     const { page = null } = props;
-    const [ songId, setSongId ] = useState(-1);
-    const [ officialSongId, setOfficialSongId ] = useState('');
+    const [songId, setSongId] = useState(-1);
+    const [officialSongId, setOfficialSongId] = useState('');
     const { currentOffer = null, currentPage = null } = useCatalogData();
 
-    const previewSong = (previewSongId: number) => GetSoundManager().musicController?.playSong(previewSongId, MusicPriorities.PRIORITY_PURCHASE_PREVIEW, 15, 0, 0, 0);
+    const previewSong = (previewSongId: number) =>
+        GetSoundManager().musicController?.playSong(previewSongId, MusicPriorities.PRIORITY_PURCHASE_PREVIEW, 15, 0, 0, 0);
 
-    useMessageEvent<OfficialSongIdMessageEvent>(OfficialSongIdMessageEvent, event =>
-    {
+    useMessageEvent<OfficialSongIdMessageEvent>(OfficialSongIdMessageEvent, (event) => {
         const parser = event.getParser();
 
-        if(parser.officialSongId !== officialSongId) return;
+        if (parser.officialSongId !== officialSongId) return;
 
         setSongId(parser.songId);
     });
 
-    useEffect(() =>
-    {
-        if(!currentOffer) return;
+    useEffect(() => {
+        if (!currentOffer) return;
 
         const product = currentOffer.product;
 
-        if(!product) return;
+        if (!product) return;
 
-        if(product.extraParam.length > 0)
-        {
+        if (product.extraParam.length > 0) {
             const id = parseInt(product.extraParam);
 
-            if(id > 0)
-            {
+            if (id > 0) {
                 setSongId(id);
-            }
-            else
-            {
+            } else {
                 setOfficialSongId(product.extraParam);
                 SendMessageComposer(new GetOfficialSongIdMessageComposer(product.extraParam));
             }
-        }
-        else
-        {
+        } else {
             setOfficialSongId('');
             setSongId(-1);
         }
 
         return () => GetSoundManager().musicController?.stop(MusicPriorities.PRIORITY_PURCHASE_PREVIEW);
-    }, [ currentOffer ]);
+    }, [currentOffer]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         return () => GetSoundManager().musicController?.stop(MusicPriorities.PRIORITY_PURCHASE_PREVIEW);
     }, []);
 
     return (
         <>
             <Grid>
-                <Column overflow="hidden" size={ 7 }>
-                    { GetConfigurationValue('catalog.headers') &&
-                        <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) } /> }
+                <Column overflow="hidden" size={7}>
+                    {GetConfigurationValue('catalog.headers') && <CatalogHeaderView imageUrl={currentPage.localization.getImage(0)} />}
                     <CatalogItemGridWidgetView />
                 </Column>
-                <Column center={ !currentOffer } overflow="hidden" size={ 5 }>
-                    { !currentOffer &&
+                <Column center={!currentOffer} overflow="hidden" size={5}>
+                    {!currentOffer && (
                         <>
-                            { !!page.localization.getImage(1) &&
-                                <LayoutImage imageUrl={ page.localization.getImage(1) } /> }
-                            <Text center dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } />
-                        </> }
-                    { currentOffer &&
+                            {!!page.localization.getImage(1) && <LayoutImage imageUrl={page.localization.getImage(1)} />}
+                            <Text center dangerouslySetInnerHTML={{ __html: SanitizeHtml(page.localization.getText(0)) }} />
+                        </>
+                    )}
+                    {currentOffer && (
                         <>
-                            <div className="flex items-center justify-center overflow-hidden" style={ { height: 140 } }>
-                                { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
+                            <div className="nitro-catalog-sound-preview flex items-center justify-center overflow-hidden">
+                                {currentOffer.product.productType !== ProductTypeEnum.BADGE && (
                                     <>
                                         <CatalogViewProductWidgetView />
                                         <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 inset-e-1" />
-                                    </> }
-                                { (currentOffer.product.productType === ProductTypeEnum.BADGE) && <CatalogAddOnBadgeWidgetView className="scale-2" /> }
+                                    </>
+                                )}
+                                {currentOffer.product.productType === ProductTypeEnum.BADGE && <CatalogAddOnBadgeWidgetView className="scale-2" />}
                             </div>
-                            <Column grow gap={ 1 }>
+                            <Column grow gap={1}>
                                 <CatalogLimitedItemWidgetView />
-                                <Text grow truncate>{ currentOffer.localizationName }</Text>
-                                { songId > -1 && <Button onClick={ () => previewSong(songId) }>{ LocalizeText('play_preview_button') }</Button>
-                                }
+                                <Text grow truncate>
+                                    {currentOffer.localizationName}
+                                </Text>
+                                {songId > -1 && <Button onClick={() => previewSong(songId)}>{LocalizeText('play_preview_button')}</Button>}
                                 <div className="flex justify-between">
                                     <div className="flex flex-col gap-1">
                                         <CatalogSpinnerWidgetView />
@@ -105,7 +97,8 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
                                 </div>
                                 <CatalogPurchaseWidgetView />
                             </Column>
-                        </> }
+                        </>
+                    )}
                 </Column>
             </Grid>
         </>

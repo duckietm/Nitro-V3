@@ -1,5 +1,4 @@
-export interface IUnseenItemTracker
-{
+export interface IUnseenItemTracker {
     dispose(): void;
     resetCategory(category: number): boolean;
     resetItems(category: number, itemIds: number[]): boolean;

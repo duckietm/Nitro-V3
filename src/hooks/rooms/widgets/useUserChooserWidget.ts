@@ -7,8 +7,7 @@ import { useUserChooserState } from './useUserChooserState';
  * preserves the `{ items, onClose, selectItem, populateChooser }` shape
  * for existing consumers.
  */
-export const useUserChooserWidget = () =>
-{
+export const useUserChooserWidget = () => {
     const { items, onClose, populateChooser } = useUserChooserState();
     const { selectItem } = useUserChooserActions();
 

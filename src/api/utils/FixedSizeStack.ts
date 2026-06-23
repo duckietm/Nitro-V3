@@ -1,45 +1,36 @@
-﻿export class FixedSizeStack
-{
+﻿export class FixedSizeStack {
     private _data: number[];
     private _maxSize: number;
     private _index: number;
 
-    constructor(k: number)
-    {
+    constructor(k: number) {
         this._data = [];
         this._maxSize = k;
         this._index = 0;
     }
 
-    public reset(): void
-    {
+    public reset(): void {
         this._data = [];
         this._index = 0;
     }
 
-    public addValue(k: number): void
-    {
-        if(this._data.length < this._maxSize)
-        {
+    public addValue(k: number): void {
+        if (this._data.length < this._maxSize) {
             this._data.push(k);
-        }
-        else
-        {
+        } else {
             this._data[this._index] = k;
         }
 
-        this._index = ((this._index + 1) % this._maxSize);
+        this._index = (this._index + 1) % this._maxSize;
     }
 
-    public getMax(): number
-    {
+    public getMax(): number {
         let k = Number.MIN_VALUE;
 
         let _local_2 = 0;
 
-        while(_local_2 < this._maxSize)
-        {
-            if(this._data[_local_2] > k) k = this._data[_local_2];
+        while (_local_2 < this._maxSize) {
+            if (this._data[_local_2] > k) k = this._data[_local_2];
 
             _local_2++;
         }
@@ -47,15 +38,13 @@
         return k;
     }
 
-    public getMin(): number
-    {
+    public getMin(): number {
         let k = Number.MAX_VALUE;
 
         let _local_2 = 0;
 
-        while(_local_2 < this._maxSize)
-        {
-            if(this._data[_local_2] < k) k = this._data[_local_2];
+        while (_local_2 < this._maxSize) {
+            if (this._data[_local_2] < k) k = this._data[_local_2];
 
             _local_2++;
         }

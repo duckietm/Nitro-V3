@@ -4,16 +4,14 @@ import { LayoutBadgeImageView } from '../../../../common';
 import { useInventoryBadges, useInventoryUnseenTracker } from '../../../../hooks';
 import { InfiniteGrid } from '../../../../layout';
 
-export const InventoryBadgeItemView: FC<PropsWithChildren<{ badgeCode: string }>> = props =>
-{
+export const InventoryBadgeItemView: FC<PropsWithChildren<{ badgeCode: string }>> = (props) => {
     const { badgeCode = null, children = null, ...rest } = props;
     const { selectedBadgeCode = null, setSelectedBadgeCode = null, toggleBadge = null, getBadgeId = null } = useInventoryBadges();
     const { isUnseen = null } = useInventoryUnseenTracker();
     const unseen = isUnseen(UnseenItemCategory.BADGE, getBadgeId(badgeCode));
-    const [ isDragging, setIsDragging ] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
 
-    const onDragStart = (event: React.DragEvent<HTMLDivElement>) =>
-    {
+    const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData('badgeCode', badgeCode);
         event.dataTransfer.setData('source', 'inventory');
         event.dataTransfer.effectAllowed = 'move';
@@ -30,16 +28,17 @@ export const InventoryBadgeItemView: FC<PropsWithChildren<{ badgeCode: string }>
     return (
         <InfiniteGrid.Item
             draggable
-            className={ `cursor-grab active:cursor-grabbing ${ isDragging ? 'opacity-40 scale-95' : '' }` }
-            itemActive={ (selectedBadgeCode === badgeCode) }
-            itemUnseen={ unseen }
-            onDoubleClick={ event => toggleBadge(selectedBadgeCode) }
-            onDragEnd={ onDragEnd }
-            onDragStart={ onDragStart }
-            onMouseDown={ event => setSelectedBadgeCode(badgeCode) }
-            { ...rest }>
-            <LayoutBadgeImageView badgeCode={ badgeCode } />
-            { children }
+            className={`cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-40 scale-95' : ''}`}
+            itemActive={selectedBadgeCode === badgeCode}
+            itemUnseen={unseen}
+            onDoubleClick={(event) => toggleBadge(selectedBadgeCode)}
+            onDragEnd={onDragEnd}
+            onDragStart={onDragStart}
+            onMouseDown={(event) => setSelectedBadgeCode(badgeCode)}
+            {...rest}
+        >
+            <LayoutBadgeImageView badgeCode={badgeCode} />
+            {children}
         </InfiniteGrid.Item>
     );
 };

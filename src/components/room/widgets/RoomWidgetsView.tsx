@@ -1,11 +1,20 @@
-import { GetRoomEngine, RoomEngineObjectEvent, RoomEngineRoomAdEvent, RoomEngineTriggerWidgetEvent, RoomEngineUseProductEvent, RoomId, RoomSessionErrorMessageEvent, RoomZoomEvent } from '@nitrots/nitro-renderer';
+import {
+    GetRoomEngine,
+    RoomEngineObjectEvent,
+    RoomEngineRoomAdEvent,
+    RoomEngineTriggerWidgetEvent,
+    RoomEngineUseProductEvent,
+    RoomId,
+    RoomSessionErrorMessageEvent,
+    RoomZoomEvent
+} from '@nitrots/nitro-renderer';
 import { FC } from 'react';
 import { DispatchUiEvent, LocalizeText, NotificationAlertType, RoomWidgetUpdateRoomObjectEvent } from '../../../api';
 import { WidgetErrorBoundary } from '../../../common';
 import { useNitroEvent, useNotification, usePollSubscriptions, useRoom } from '../../../hooks';
 import { AvatarInfoWidgetView } from './avatar-info/AvatarInfoWidgetView';
-import { ChatInputView } from './chat-input/ChatInputView';
 import { ChatWidgetView } from './chat/ChatWidgetView';
+import { ChatInputView } from './chat-input/ChatInputView';
 import { FurniChooserWidgetView } from './choosers/FurniChooserWidgetView';
 import { UserChooserWidgetView } from './choosers/UserChooserWidgetView';
 import { DoorbellWidgetView } from './doorbell/DoorbellWidgetView';
@@ -17,8 +26,7 @@ import { RoomThumbnailWidgetView } from './room-thumbnail/RoomThumbnailWidgetVie
 import { RoomToolsWidgetView } from './room-tools/RoomToolsWidgetView';
 import { WordQuizWidgetView } from './word-quiz/WordQuizWidgetView';
 
-export const RoomWidgetsView: FC<{}> = props =>
-{
+export const RoomWidgetsView: FC<{}> = (props) => {
     const { roomSession = null } = useRoom();
     const { simpleAlert = null } = useNotification();
 
@@ -27,7 +35,16 @@ export const RoomWidgetsView: FC<{}> = props =>
     // listeners are not re-registered per widget render.
     usePollSubscriptions();
 
-    useNitroEvent<RoomZoomEvent>(RoomZoomEvent.ROOM_ZOOM, event => GetRoomEngine().setRoomInstanceRenderingCanvasScale(event.roomId, 1, (((event.level)<1) ? 0.5 : (1 << (Math.floor(event.level) - 1))), null, null, event.isFlipForced));
+    useNitroEvent<RoomZoomEvent>(RoomZoomEvent.ROOM_ZOOM, (event) =>
+        GetRoomEngine().setRoomInstanceRenderingCanvasScale(
+            event.roomId,
+            1,
+            event.level < 1 ? 0.5 : 1 << (Math.floor(event.level) - 1),
+            null,
+            null,
+            event.isFlipForced
+        )
+    );
 
     useNitroEvent<RoomEngineObjectEvent>(
         [
@@ -40,18 +57,17 @@ export const RoomWidgetsView: FC<{}> = props =>
             RoomEngineRoomAdEvent.FURNI_CLICK,
             RoomEngineRoomAdEvent.FURNI_DOUBLE_CLICK,
             RoomEngineRoomAdEvent.TOOLTIP_SHOW,
-            RoomEngineRoomAdEvent.TOOLTIP_HIDE,
-        ], event =>
-        {
-            if(!roomSession) return;
+            RoomEngineRoomAdEvent.TOOLTIP_HIDE
+        ],
+        (event) => {
+            if (!roomSession) return;
 
             const objectId = event.objectId;
             const category = event.category;
 
             let updateEvent: RoomWidgetUpdateRoomObjectEvent = null;
 
-            switch(event.type)
-            {
+            switch (event.type) {
                 case RoomEngineTriggerWidgetEvent.REQUEST_TEASER:
                     //widgetHandler.processWidgetMessage(new RoomWidgetFurniToWidgetMessage(RoomWidgetFurniToWidgetMessage.REQUEST_TEASER, objectId, category, event.roomId));
                     break;
@@ -82,16 +98,17 @@ export const RoomWidgetsView: FC<{}> = props =>
                     break;
             }
 
-            if(!updateEvent) return;
+            if (!updateEvent) return;
 
             let dispatchEvent = true;
 
-            if(RoomId.isRoomPreviewerId(updateEvent.roomId)) return;
+            if (RoomId.isRoomPreviewerId(updateEvent.roomId)) return;
 
-            if(updateEvent instanceof RoomWidgetUpdateRoomObjectEvent) dispatchEvent = (!RoomId.isRoomPreviewerId(updateEvent.roomId));
+            if (updateEvent instanceof RoomWidgetUpdateRoomObjectEvent) dispatchEvent = !RoomId.isRoomPreviewerId(updateEvent.roomId);
 
-            if(dispatchEvent) DispatchUiEvent(updateEvent);
-        });
+            if (dispatchEvent) DispatchUiEvent(updateEvent);
+        }
+    );
 
     useNitroEvent<RoomSessionErrorMessageEvent>(
         [
@@ -106,14 +123,13 @@ export const RoomWidgetsView: FC<{}> = props =>
             RoomSessionErrorMessageEvent.RSEME_BOTS_FORBIDDEN_IN_FLAT,
             RoomSessionErrorMessageEvent.RSEME_BOT_LIMIT_REACHED,
             RoomSessionErrorMessageEvent.RSEME_SELECTED_TILE_NOT_FREE_FOR_BOT,
-            RoomSessionErrorMessageEvent.RSEME_BOT_NAME_NOT_ACCEPTED,
-        ], event =>
-        {
+            RoomSessionErrorMessageEvent.RSEME_BOT_NAME_NOT_ACCEPTED
+        ],
+        (event) => {
             let errorTitle = LocalizeText('error.title');
             let errorMessage: string = '';
 
-            switch(event.type)
-            {
+            switch (event.type) {
                 case RoomSessionErrorMessageEvent.RSEME_MAX_PETS:
                     errorMessage = LocalizeText('room.error.max_pets');
                     break;
@@ -156,25 +172,52 @@ export const RoomWidgetsView: FC<{}> = props =>
             }
 
             simpleAlert(errorMessage, NotificationAlertType.DEFAULT, null, null, errorTitle);
-        });
+        }
+    );
 
     return (
         <WidgetErrorBoundary name="RoomWidgets">
             <div className="absolute top-0 left-0 pointer-events-none size-full">
-                <WidgetErrorBoundary name="FurnitureWidgets"><FurnitureWidgetsView /></WidgetErrorBoundary>
+                <WidgetErrorBoundary name="FurnitureWidgets">
+                    <FurnitureWidgetsView />
+                </WidgetErrorBoundary>
             </div>
-            <WidgetErrorBoundary name="AvatarInfoWidget"><AvatarInfoWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="ChatWidget"><ChatWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="ChatInput"><ChatInputView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="DoorbellWidget"><DoorbellWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="RoomToolsWidget"><RoomToolsWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="RoomFilterWordsWidget"><RoomFilterWordsWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="RoomThumbnailWidget"><RoomThumbnailWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FurniChooserWidget"><FurniChooserWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="PetPackageWidget"><PetPackageWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="UserChooserWidget"><UserChooserWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="WordQuizWidget"><WordQuizWidgetView /></WidgetErrorBoundary>
-            <WidgetErrorBoundary name="FriendRequestWidget"><FriendRequestWidgetView /></WidgetErrorBoundary>
+            <WidgetErrorBoundary name="AvatarInfoWidget">
+                <AvatarInfoWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="ChatWidget">
+                <ChatWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="ChatInput">
+                <ChatInputView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="DoorbellWidget">
+                <DoorbellWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="RoomToolsWidget">
+                <RoomToolsWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="RoomFilterWordsWidget">
+                <RoomFilterWordsWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="RoomThumbnailWidget">
+                <RoomThumbnailWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FurniChooserWidget">
+                <FurniChooserWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="PetPackageWidget">
+                <PetPackageWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="UserChooserWidget">
+                <UserChooserWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="WordQuizWidget">
+                <WordQuizWidgetView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="FriendRequestWidget">
+                <FriendRequestWidgetView />
+            </WidgetErrorBoundary>
         </WidgetErrorBoundary>
     );
 };

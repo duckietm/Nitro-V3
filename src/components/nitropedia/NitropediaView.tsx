@@ -3,24 +3,20 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { GetConfigurationValue, OpenUrl } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 
-const NEW_LINE_REGEX = /\n\r|\n|\r/mg;
+const NEW_LINE_REGEX = /\n\r|\n|\r/gm;
 
-export const NitropediaView: FC<{}> = props =>
-{
-    const [ content, setContent ] = useState<string>(null);
-    const [ header, setHeader ] = useState<string>('');
-    const [ dimensions, setDimensions ] = useState<{ width: number, height: number }>(null);
+export const NitropediaView: FC<{}> = (props) => {
+    const [content, setContent] = useState<string>(null);
+    const [header, setHeader] = useState<string>('');
+    const [dimensions, setDimensions] = useState<{ width: number; height: number }>(null);
     const elementRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() =>
-    {
-        const openPage = async (link: string) =>
-        {
-            try
-            {
+    useEffect(() => {
+        const openPage = async (link: string) => {
+            try {
                 const response = await fetch(link);
 
-                if(!response) return;
+                if (!response) return;
 
                 const text = await response.text();
                 const splitData = text.split(NEW_LINE_REGEX);
@@ -28,10 +24,8 @@ export const NitropediaView: FC<{}> = props =>
 
                 setHeader(line[0]);
 
-                setDimensions(prevValue =>
-                {
-                    if(line[1] && (line[1].split(';').length === 2))
-                    {
+                setDimensions((prevValue) => {
+                    if (line[1] && line[1].split(';').length === 2) {
                         return {
                             width: parseInt(line[1].split(';')[0]),
                             height: parseInt(line[1].split(';')[1])
@@ -42,20 +36,16 @@ export const NitropediaView: FC<{}> = props =>
                 });
 
                 setContent(splitData.join(''));
-            }
-
-            catch (error)
-            {
-                NitroLogger.error(`Failed to fetch ${ link }`);
+            } catch (error) {
+                NitroLogger.error(`Failed to fetch ${link}`);
             }
         };
 
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const value = url.split('/');
 
-                if(value.length < 2) return;
+                if (value.length < 2) return;
 
                 value.shift();
 
@@ -69,36 +59,33 @@ export const NitropediaView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    useEffect(() =>
-    {
-        const handle = (event: MouseEvent) =>
-        {
-            if(!(event.target instanceof HTMLAnchorElement)) return;
+    useEffect(() => {
+        const handle = (event: MouseEvent) => {
+            if (!(event.target instanceof HTMLAnchorElement)) return;
 
             event.preventDefault();
 
             const link = event.target.href;
 
-            if(!link || !link.length) return;
+            if (!link || !link.length) return;
 
             OpenUrl(link);
         };
 
         document.addEventListener('click', handle);
 
-        return () =>
-        {
+        return () => {
             document.removeEventListener('click', handle);
         };
     }, []);
 
-    if(!content) return null;
+    if (!content) return null;
 
     return (
-        <NitroCardView className="nitropedia" style={ dimensions ? { width: dimensions.width, height: dimensions.height } : {} } theme="primary-slim">
-            <NitroCardHeaderView headerText={ header } onCloseClick={ () => setContent(null) }/>
+        <NitroCardView className="nitropedia" style={dimensions ? { width: dimensions.width, height: dimensions.height } : {}} theme="primary-slim">
+            <NitroCardHeaderView headerText={header} onCloseClick={() => setContent(null)} />
             <NitroCardContentView>
-                <div ref={ elementRef } className="text-black size-full" dangerouslySetInnerHTML={ { __html: content } } />
+                <div ref={elementRef} className="text-black size-full" dangerouslySetInnerHTML={{ __html: content }} />
             </NitroCardContentView>
         </NitroCardView>
     );

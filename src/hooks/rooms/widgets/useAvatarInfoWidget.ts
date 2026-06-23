@@ -1,6 +1,33 @@
-import { GetRoomEngine, GetSessionDataManager, RoomEngineObjectEvent, RoomEngineUseProductEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionFavoriteGroupUpdateEvent, RoomSessionPetInfoUpdateEvent, RoomSessionPetStatusUpdateEvent, RoomSessionUserBadgesEvent, RoomSessionUserDataUpdateEvent, RoomSessionUserFigureUpdateEvent } from '@nitrots/nitro-renderer';
+import {
+    GetRoomEngine,
+    GetSessionDataManager,
+    RoomEngineObjectEvent,
+    RoomEngineUseProductEvent,
+    RoomObjectCategory,
+    RoomObjectType,
+    RoomObjectVariable,
+    RoomSessionFavoriteGroupUpdateEvent,
+    RoomSessionPetInfoUpdateEvent,
+    RoomSessionPetStatusUpdateEvent,
+    RoomSessionUserBadgesEvent,
+    RoomSessionUserDataUpdateEvent,
+    RoomSessionUserFigureUpdateEvent
+} from '@nitrots/nitro-renderer';
 import { useEffect, useRef, useState } from 'react';
-import { AvatarInfoFurni, AvatarInfoName, AvatarInfoPet, AvatarInfoRentableBot, AvatarInfoUser, AvatarInfoUtilities, CanManipulateFurniture, FurniCategory, IAvatarInfo, IsOwnerOfFurniture, RoomWidgetUpdateRoomObjectEvent, UseProductItem } from '../../../api';
+import {
+    AvatarInfoFurni,
+    AvatarInfoName,
+    AvatarInfoPet,
+    AvatarInfoRentableBot,
+    AvatarInfoUser,
+    AvatarInfoUtilities,
+    CanManipulateFurniture,
+    FurniCategory,
+    IAvatarInfo,
+    IsOwnerOfFurniture,
+    RoomWidgetUpdateRoomObjectEvent,
+    UseProductItem
+} from '../../../api';
 import { useNitroEvent, useUiEvent } from '../../events';
 import { useFriends } from '../../friends';
 import { useWired } from '../../wired';
@@ -13,48 +40,42 @@ import { applyFavouriteGroupUpdate, applyUserBadgesUpdate, applyUserFigureUpdate
 // by the click-routing code in the room engine.
 const CLICK_USER_DEBOUNCE_MS = 120;
 
-interface NitroAvatarClickControl
-{
+interface NitroAvatarClickControl {
     suppressMenuUntil: number;
 }
 
 const getAvatarClickControl = (): NitroAvatarClickControl | null =>
     (globalThis as unknown as { __nitroAvatarClickControl?: NitroAvatarClickControl }).__nitroAvatarClickControl ?? null;
 
-const useAvatarInfoWidgetState = () =>
-{
-    const [ avatarInfo, setAvatarInfo ] = useState<IAvatarInfo>(null);
-    const [ activeNameBubble, setActiveNameBubble ] = useState<AvatarInfoName>(null);
-    const [ nameBubbles, setNameBubbles ] = useState<AvatarInfoName[]>([]);
-    const [ productBubbles, setProductBubbles ] = useState<UseProductItem[]>([]);
-    const [ confirmingProduct, setConfirmingProduct ] = useState<UseProductItem>(null);
-    const [ pendingPetId, setPendingPetId ] = useState<number>(-1);
-    const [ isDecorating, setIsDecorating ] = useState(false);
+const useAvatarInfoWidgetState = () => {
+    const [avatarInfo, setAvatarInfo] = useState<IAvatarInfo>(null);
+    const [activeNameBubble, setActiveNameBubble] = useState<AvatarInfoName>(null);
+    const [nameBubbles, setNameBubbles] = useState<AvatarInfoName[]>([]);
+    const [productBubbles, setProductBubbles] = useState<UseProductItem[]>([]);
+    const [confirmingProduct, setConfirmingProduct] = useState<UseProductItem>(null);
+    const [pendingPetId, setPendingPetId] = useState<number>(-1);
+    const [isDecorating, setIsDecorating] = useState(false);
     const pendingAvatarInfoTimeout = useRef<ReturnType<typeof setTimeout>>(null);
     const { friends = [] } = useFriends();
     const { selectObjectForWired = null } = useWired();
     const { roomSession = null } = useRoom();
 
-    const clearPendingAvatarInfo = () =>
-    {
-        if(!pendingAvatarInfoTimeout.current) return;
+    const clearPendingAvatarInfo = () => {
+        if (!pendingAvatarInfoTimeout.current) return;
 
         clearTimeout(pendingAvatarInfoTimeout.current);
         pendingAvatarInfoTimeout.current = null;
     };
 
-    const isAvatarMenuBlocked = () =>
-    {
+    const isAvatarMenuBlocked = () => {
         const control = getAvatarClickControl();
 
-        return !!control && (control.suppressMenuUntil > Date.now());
+        return !!control && control.suppressMenuUntil > Date.now();
     };
 
-    const removeNameBubble = (index: number) =>
-    {
-        setNameBubbles(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+    const removeNameBubble = (index: number) => {
+        setNameBubbles((prevValue) => {
+            const newValue = [...prevValue];
 
             newValue.splice(index, 1);
 
@@ -62,57 +83,50 @@ const useAvatarInfoWidgetState = () =>
         });
     };
 
-    const removeProductBubble = (index: number) =>
-    {
-        setProductBubbles(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+    const removeProductBubble = (index: number) => {
+        setProductBubbles((prevValue) => {
+            const newValue = [...prevValue];
             const item = newValue.splice(index, 1)[0];
 
-            if(confirmingProduct === item) setConfirmingProduct(null);
+            if (confirmingProduct === item) setConfirmingProduct(null);
 
             return newValue;
         });
     };
 
-    const updateConfirmingProduct = (product: UseProductItem) =>
-    {
+    const updateConfirmingProduct = (product: UseProductItem) => {
         setConfirmingProduct(product);
         setProductBubbles([]);
     };
 
-    const getObjectName = (objectId: number, category: number) =>
-    {
+    const getObjectName = (objectId: number, category: number) => {
         const name = AvatarInfoUtilities.getObjectName(objectId, category);
 
-        if(!name) return;
+        if (!name) return;
 
         setActiveNameBubble(name);
 
-        if(category !== RoomObjectCategory.UNIT) setProductBubbles([]);
+        if (category !== RoomObjectCategory.UNIT) setProductBubbles([]);
     };
 
-    const getObjectInfo = (objectId: number, category: number) =>
-    {
+    const getObjectInfo = (objectId: number, category: number) => {
         clearPendingAvatarInfo();
 
         let info: IAvatarInfo = null;
 
-        switch(category)
-        {
+        switch (category) {
             case RoomObjectCategory.FLOOR:
             case RoomObjectCategory.WALL:
                 info = AvatarInfoUtilities.getFurniInfo(objectId, category);
 
-                if(info) selectObjectForWired(objectId, category);
+                if (info) selectObjectForWired(objectId, category);
                 break;
             case RoomObjectCategory.UNIT: {
                 const userData = roomSession.userDataManager.getUserDataByIndex(objectId);
 
-                if(!userData) break;
+                if (!userData) break;
 
-                switch(userData.type)
-                {
+                switch (userData.type) {
                     case RoomObjectType.PET:
                         roomSession.userDataManager.requestPetInfo(userData.webID);
                         setPendingPetId(userData.webID);
@@ -128,63 +142,52 @@ const useAvatarInfoWidgetState = () =>
                         break;
                 }
             }
-
         }
 
-        if(!info) return;
+        if (!info) return;
 
-        if(category !== RoomObjectCategory.UNIT)
-        {
+        if (category !== RoomObjectCategory.UNIT) {
             setAvatarInfo(info);
             return;
         }
 
-        pendingAvatarInfoTimeout.current = setTimeout(() =>
-        {
+        pendingAvatarInfoTimeout.current = setTimeout(() => {
             pendingAvatarInfoTimeout.current = null;
 
-            if(isAvatarMenuBlocked()) return;
+            if (isAvatarMenuBlocked()) return;
 
             setAvatarInfo(info);
         }, CLICK_USER_DEBOUNCE_MS);
     };
 
-    const processUsableRoomObject = (objectId: number) =>
-    {
-    };
+    const processUsableRoomObject = (objectId: number) => {};
 
-    const refreshPetInfo = () =>
-    {
+    const refreshPetInfo = () => {
         // roomSession.userDataManager.requestPetInfo(petData.id);
     };
 
-    useNitroEvent<RoomSessionUserDataUpdateEvent>(RoomSessionUserDataUpdateEvent.USER_DATA_UPDATED, event =>
-    {
-        if(!event.addedUsers.length) return;
+    useNitroEvent<RoomSessionUserDataUpdateEvent>(RoomSessionUserDataUpdateEvent.USER_DATA_UPDATED, (event) => {
+        if (!event.addedUsers.length) return;
 
         let addedNameBubbles: AvatarInfoName[] = [];
 
-        event.addedUsers.forEach(user =>
-        {
-            if(user.webID === GetSessionDataManager().userId || user.type !== RoomObjectType.USER) return;
+        event.addedUsers.forEach((user) => {
+            if (user.webID === GetSessionDataManager().userId || user.type !== RoomObjectType.USER) return;
 
-            if(friends.find(friend => (friend.id === user.webID)))
-            {
+            if (friends.find((friend) => friend.id === user.webID)) {
                 addedNameBubbles.push(new AvatarInfoName(user.roomIndex, RoomObjectCategory.UNIT, user.webID, user.name, user.type, true));
             }
         });
 
-        if(!addedNameBubbles.length) return;
+        if (!addedNameBubbles.length) return;
 
-        setNameBubbles(prevValue =>
-        {
-            const newValue = [ ...prevValue ];
+        setNameBubbles((prevValue) => {
+            const newValue = [...prevValue];
 
-            addedNameBubbles.forEach(bubble =>
-            {
-                const oldIndex = newValue.findIndex(oldBubble => (oldBubble.id === bubble.id));
+            addedNameBubbles.forEach((bubble) => {
+                const oldIndex = newValue.findIndex((oldBubble) => oldBubble.id === bubble.id);
 
-                if(oldIndex > -1) newValue.splice(oldIndex, 1);
+                if (oldIndex > -1) newValue.splice(oldIndex, 1);
 
                 newValue.push(bubble);
             });
@@ -193,25 +196,23 @@ const useAvatarInfoWidgetState = () =>
         });
     });
 
-    useNitroEvent<RoomSessionPetInfoUpdateEvent>(RoomSessionPetInfoUpdateEvent.PET_INFO, event =>
-    {
+    useNitroEvent<RoomSessionPetInfoUpdateEvent>(RoomSessionPetInfoUpdateEvent.PET_INFO, (event) => {
         const petData = event.petInfo;
 
-        if(!petData) return;
+        if (!petData) return;
 
-        if(petData.id !== pendingPetId) return;
+        if (petData.id !== pendingPetId) return;
 
         const petInfo = AvatarInfoUtilities.getPetInfo(petData);
 
-        if(!petInfo) return;
+        if (!petInfo) return;
 
         setAvatarInfo(petInfo);
         setPendingPetId(-1);
     });
 
-    useNitroEvent<RoomSessionPetStatusUpdateEvent>(RoomSessionPetStatusUpdateEvent.PET_STATUS_UPDATE, event =>
-    {
-    /*     var _local_2:Boolean;
+    useNitroEvent<RoomSessionPetStatusUpdateEvent>(RoomSessionPetStatusUpdateEvent.PET_STATUS_UPDATE, (event) => {
+        /*     var _local_2:Boolean;
         var _local_3:Boolean;
         var _local_4:Boolean;
         var _local_5:Boolean;
@@ -233,65 +234,55 @@ const useAvatarInfoWidgetState = () =>
             this._container.events.dispatchEvent(_local_7); */
     });
 
-    useNitroEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY, event =>
-    {
+    useNitroEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY, (event) => {
         // this._Str_23199((k as RoomEngineUseProductEvent).inventoryStripId, (k as RoomEngineUseProductEvent).furnitureTypeId);
     });
 
-    useNitroEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, event =>
-    {
+    useNitroEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, (event) => {
         const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.FLOOR);
 
-        if(!roomObject || !IsOwnerOfFurniture(roomObject)) return;
+        if (!roomObject || !IsOwnerOfFurniture(roomObject)) return;
 
         const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID);
         const typeId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_TYPE_ID);
         const furniData = GetSessionDataManager().getFloorItemData(typeId);
         const parts = furniData.customParams.split(' ');
-        const part = (parts.length ? parseInt(parts[0]) : -1);
+        const part = parts.length ? parseInt(parts[0]) : -1;
 
-        if(part === -1) return;
+        if (part === -1) return;
 
         const useProductBubbles: UseProductItem[] = [];
         const roomObjects = GetRoomEngine().getRoomObjects(roomSession.roomId, RoomObjectCategory.UNIT);
 
-        for(const roomObject of roomObjects)
-        {
+        for (const roomObject of roomObjects) {
             const userData = roomSession.userDataManager.getUserDataByIndex(roomObject.id);
 
             let replace = false;
 
-            if(!userData || (userData.type !== RoomObjectType.PET))
-            {
-
-            }
-            else
-            {
-                if(userData.ownerId === ownerId)
-                {
-                    if(userData.hasSaddle && (furniData.specialType === FurniCategory.PET_SADDLE)) replace = true;
+            if (!userData || userData.type !== RoomObjectType.PET) {
+            } else {
+                if (userData.ownerId === ownerId) {
+                    if (userData.hasSaddle && furniData.specialType === FurniCategory.PET_SADDLE) replace = true;
 
                     const figureParts = userData.figure.split(' ');
-                    const figurePart = (figureParts.length ? parseInt(figureParts[0]) : -1);
+                    const figurePart = figureParts.length ? parseInt(figureParts[0]) : -1;
 
-                    if(figurePart === part)
-                    {
-                        if(furniData.specialType === FurniCategory.MONSTERPLANT_REVIVAL)
-                        {
-                            if(!userData.canRevive) continue;
+                    if (figurePart === part) {
+                        if (furniData.specialType === FurniCategory.MONSTERPLANT_REVIVAL) {
+                            if (!userData.canRevive) continue;
                         }
 
-                        if(furniData.specialType === FurniCategory.MONSTERPLANT_REBREED)
-                        {
-                            if((userData.petLevel < 7) || userData.canRevive || userData.canBreed) continue;
+                        if (furniData.specialType === FurniCategory.MONSTERPLANT_REBREED) {
+                            if (userData.petLevel < 7 || userData.canRevive || userData.canBreed) continue;
                         }
 
-                        if(furniData.specialType === FurniCategory.MONSTERPLANT_FERTILIZE)
-                        {
-                            if((userData.petLevel >= 7) || userData.canRevive) continue;
+                        if (furniData.specialType === FurniCategory.MONSTERPLANT_FERTILIZE) {
+                            if (userData.petLevel >= 7 || userData.canRevive) continue;
                         }
 
-                        useProductBubbles.push(new UseProductItem(userData.roomIndex, RoomObjectCategory.UNIT, userData.name, event.objectId, roomObject.id, -1, replace));
+                        useProductBubbles.push(
+                            new UseProductItem(userData.roomIndex, RoomObjectCategory.UNIT, userData.name, event.objectId, roomObject.id, -1, replace)
+                        );
                     }
                 }
             }
@@ -299,124 +290,97 @@ const useAvatarInfoWidgetState = () =>
 
         setConfirmingProduct(null);
 
-        if(useProductBubbles.length) setProductBubbles(useProductBubbles);
+        if (useProductBubbles.length) setProductBubbles(useProductBubbles);
     });
 
-    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.REQUEST_MANIPULATION, event =>
-    {
-        if(!CanManipulateFurniture(roomSession, event.objectId, event.category)) return;
+    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.REQUEST_MANIPULATION, (event) => {
+        if (!CanManipulateFurniture(roomSession, event.objectId, event.category)) return;
 
         setIsDecorating(true);
     });
 
-    useNitroEvent<RoomSessionUserBadgesEvent>(RoomSessionUserBadgesEvent.RSUBE_BADGES, event =>
-    {
-        setAvatarInfo(prev => applyUserBadgesUpdate(prev, event));
+    useNitroEvent<RoomSessionUserBadgesEvent>(RoomSessionUserBadgesEvent.RSUBE_BADGES, (event) => {
+        setAvatarInfo((prev) => applyUserBadgesUpdate(prev, event));
     });
 
-    useNitroEvent<RoomSessionUserFigureUpdateEvent>(RoomSessionUserFigureUpdateEvent.USER_FIGURE, event =>
-    {
-        setAvatarInfo(prev => applyUserFigureUpdate(prev, event));
+    useNitroEvent<RoomSessionUserFigureUpdateEvent>(RoomSessionUserFigureUpdateEvent.USER_FIGURE, (event) => {
+        setAvatarInfo((prev) => applyUserFigureUpdate(prev, event));
     });
 
-    useNitroEvent<RoomSessionFavoriteGroupUpdateEvent>(RoomSessionFavoriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, event =>
-    {
-        setAvatarInfo(prev => applyFavouriteGroupUpdate(prev, event, groupId => GetSessionDataManager().getGroupBadge(groupId)));
+    useNitroEvent<RoomSessionFavoriteGroupUpdateEvent>(RoomSessionFavoriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, (event) => {
+        setAvatarInfo((prev) => applyFavouriteGroupUpdate(prev, event, (groupId) => GetSessionDataManager().getGroupBadge(groupId)));
     });
 
-    useObjectSelectedEvent(event =>
-    {
+    useObjectSelectedEvent((event) => {
         getObjectInfo(event.id, event.category);
     });
 
-    useObjectDeselectedEvent(event =>
-    {
+    useObjectDeselectedEvent((event) => {
         clearPendingAvatarInfo();
         setAvatarInfo(null);
         setProductBubbles([]);
     });
 
-    useObjectRollOverEvent(event =>
-    {
-        if(avatarInfo || (event.category !== RoomObjectCategory.UNIT)) return;
+    useObjectRollOverEvent((event) => {
+        if (avatarInfo || event.category !== RoomObjectCategory.UNIT) return;
 
         getObjectName(event.id, event.category);
     });
 
-    useObjectRollOutEvent(event =>
-    {
-        if(!activeNameBubble || (event.category !== RoomObjectCategory.UNIT) || (activeNameBubble.roomIndex !== event.id)) return;
+    useObjectRollOutEvent((event) => {
+        if (!activeNameBubble || event.category !== RoomObjectCategory.UNIT || activeNameBubble.roomIndex !== event.id) return;
 
         setActiveNameBubble(null);
     });
 
-    useUiEvent<RoomWidgetUpdateRoomObjectEvent>([
-        RoomWidgetUpdateRoomObjectEvent.FURNI_REMOVED,
-        RoomWidgetUpdateRoomObjectEvent.USER_REMOVED
-    ], event =>
-    {
-        if(activeNameBubble && (activeNameBubble.category === event.category) && (activeNameBubble.roomIndex === event.id)) setActiveNameBubble(null);
+    useUiEvent<RoomWidgetUpdateRoomObjectEvent>([RoomWidgetUpdateRoomObjectEvent.FURNI_REMOVED, RoomWidgetUpdateRoomObjectEvent.USER_REMOVED], (event) => {
+        if (activeNameBubble && activeNameBubble.category === event.category && activeNameBubble.roomIndex === event.id) setActiveNameBubble(null);
 
-        if(event.category === RoomObjectCategory.UNIT)
-        {
-            let index = nameBubbles.findIndex(bubble => (bubble.roomIndex === event.id));
+        if (event.category === RoomObjectCategory.UNIT) {
+            let index = nameBubbles.findIndex((bubble) => bubble.roomIndex === event.id);
 
-            if(index > -1) setNameBubbles(prevValue => prevValue.filter(bubble => (bubble.roomIndex !== event.id)));
+            if (index > -1) setNameBubbles((prevValue) => prevValue.filter((bubble) => bubble.roomIndex !== event.id));
 
-            index = productBubbles.findIndex(bubble => (bubble.id === event.id));
+            index = productBubbles.findIndex((bubble) => bubble.id === event.id);
 
-            if(index > -1) setProductBubbles(prevValue => prevValue.filter(bubble => (bubble.id !== event.id)));
+            if (index > -1) setProductBubbles((prevValue) => prevValue.filter((bubble) => bubble.id !== event.id));
+        } else if (event.category === RoomObjectCategory.FLOOR) {
+            const index = productBubbles.findIndex((bubble) => bubble.id === event.id);
+
+            if (index > -1) setProductBubbles((prevValue) => prevValue.filter((bubble) => bubble.requestRoomObjectId !== event.id));
         }
 
-        else if(event.category === RoomObjectCategory.FLOOR)
-        {
-            const index = productBubbles.findIndex(bubble => (bubble.id === event.id));
-
-            if(index > -1) setProductBubbles(prevValue => prevValue.filter(bubble => (bubble.requestRoomObjectId !== event.id)));
-        }
-
-        if(avatarInfo)
-        {
-            if(avatarInfo instanceof AvatarInfoFurni)
-            {
-                if(avatarInfo.id === event.id) setAvatarInfo(null);
-            }
-
-            else if((avatarInfo instanceof AvatarInfoUser) || (avatarInfo instanceof AvatarInfoRentableBot) || (avatarInfo instanceof AvatarInfoPet))
-            {
-                if(avatarInfo.roomIndex === event.id) setAvatarInfo(null);
+        if (avatarInfo) {
+            if (avatarInfo instanceof AvatarInfoFurni) {
+                if (avatarInfo.id === event.id) setAvatarInfo(null);
+            } else if (avatarInfo instanceof AvatarInfoUser || avatarInfo instanceof AvatarInfoRentableBot || avatarInfo instanceof AvatarInfoPet) {
+                if (avatarInfo.roomIndex === event.id) setAvatarInfo(null);
             }
         }
     });
 
-    useEffect(() =>
-    {
-        if(!avatarInfo) return;
+    useEffect(() => {
+        if (!avatarInfo) return;
 
         setActiveNameBubble(null);
         setNameBubbles([]);
         setProductBubbles([]);
-    }, [ avatarInfo ]);
+    }, [avatarInfo]);
 
-    useEffect(() =>
-    {
-        if(!activeNameBubble) return;
+    useEffect(() => {
+        if (!activeNameBubble) return;
 
         setNameBubbles([]);
-    }, [ activeNameBubble ]);
+    }, [activeNameBubble]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         return () => clearPendingAvatarInfo();
     }, []);
 
-    useEffect(() =>
-    {
-        const refreshFurnitureInfo = () =>
-        {
-            setAvatarInfo(prevValue =>
-            {
-                if(!(prevValue instanceof AvatarInfoFurni)) return prevValue;
+    useEffect(() => {
+        const refreshFurnitureInfo = () => {
+            setAvatarInfo((prevValue) => {
+                if (!(prevValue instanceof AvatarInfoFurni)) return prevValue;
 
                 return AvatarInfoUtilities.getFurniInfo(prevValue.id, prevValue.category) || prevValue;
             });
@@ -427,14 +391,27 @@ const useAvatarInfoWidgetState = () =>
         return () => window.removeEventListener('nitro-localization-updated', refreshFurnitureInfo);
     }, []);
 
-    useEffect(() =>
-    {
-        if(!roomSession) return;
+    useEffect(() => {
+        if (!roomSession) return;
 
         roomSession.isDecorating = isDecorating;
-    }, [ roomSession, isDecorating ]);
+    }, [roomSession, isDecorating]);
 
-    return { avatarInfo, setAvatarInfo, activeNameBubble, setActiveNameBubble, nameBubbles, productBubbles, confirmingProduct, isDecorating, setIsDecorating, removeNameBubble, removeProductBubble, updateConfirmingProduct, getObjectName };
+    return {
+        avatarInfo,
+        setAvatarInfo,
+        activeNameBubble,
+        setActiveNameBubble,
+        nameBubbles,
+        productBubbles,
+        confirmingProduct,
+        isDecorating,
+        setIsDecorating,
+        removeNameBubble,
+        removeProductBubble,
+        updateConfirmingProduct,
+        getObjectName
+    };
 };
 
 export const useAvatarInfoWidget = useAvatarInfoWidgetState;

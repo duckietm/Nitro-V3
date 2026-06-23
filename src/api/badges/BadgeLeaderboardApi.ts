@@ -3,15 +3,13 @@ import { getAccessToken } from '../auth';
 
 export type BadgeRarityKey = 'common' | 'rare' | 'epic' | 'legendary' | 'mythical' | 'unique';
 
-export interface BadgeLeaderboardStat
-{
+export interface BadgeLeaderboardStat {
     badgeCode: string;
     ownerCount: number;
     rarity: BadgeRarityKey;
 }
 
-export interface BadgeLeaderboardEntry
-{
+export interface BadgeLeaderboardEntry {
     userId: number;
     username: string;
     figure: string;
@@ -19,15 +17,13 @@ export interface BadgeLeaderboardEntry
     rank: number;
 }
 
-export interface BadgeLeaderboardBoard
-{
+export interface BadgeLeaderboardBoard {
     entries: BadgeLeaderboardEntry[];
     totalPlayers: number;
     viewerEntry?: Partial<BadgeLeaderboardEntry>;
 }
 
-export interface BadgeLeaderboardResponse
-{
+export interface BadgeLeaderboardResponse {
     viewerUserId: number;
     badgeStats: BadgeLeaderboardStat[];
     thresholds: {
@@ -45,49 +41,50 @@ export interface BadgeLeaderboardResponse
     };
 }
 
-const interpolate = (value: string): string =>
-{
-    try { return GetConfiguration().interpolate(value); }
-    catch { return value; }
+const interpolate = (value: string): string => {
+    try {
+        return GetConfiguration().interpolate(value);
+    } catch {
+        return value;
+    }
 };
 
-const getUrl = (): string =>
-{
+const getUrl = (): string => {
     const configured = GetConfiguration().getValue<string>('badges.leaderboard.endpoint', '/api/badges/leaderboard');
 
     return interpolate(configured);
 };
 
-const authHeaders = (): Record<string, string> =>
-{
+const authHeaders = (): Record<string, string> => {
     const headers: Record<string, string> = {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'X-Requested-With': 'NitroBadgeLeaderboard'
     };
 
     const token = getAccessToken();
 
-    if(token) headers.Authorization = `Bearer ${ token }`;
+    if (token) headers.Authorization = `Bearer ${token}`;
 
     return headers;
 };
 
-const parseJson = async <T>(response: Response): Promise<T> =>
-{
+const parseJson = async <T>(response: Response): Promise<T> => {
     const text = await response.text();
 
-    if(!text) return {} as T;
+    if (!text) return {} as T;
 
-    try { return JSON.parse(text) as T; }
-    catch { throw new Error('Invalid response from badge leaderboard endpoint.'); }
+    try {
+        return JSON.parse(text) as T;
+    } catch {
+        throw new Error('Invalid response from badge leaderboard endpoint.');
+    }
 };
 
-const throwOnError = async (response: Response): Promise<void> =>
-{
-    if(response.ok) return;
+const throwOnError = async (response: Response): Promise<void> => {
+    if (response.ok) return;
 
     const payload = await parseJson<{ error?: string }>(response);
-    const message = payload?.error || `Request failed (${ response.status }).`;
+    const message = payload?.error || `Request failed (${response.status}).`;
     const error = new Error(message) as Error & { status?: number };
 
     error.status = response.status;
@@ -98,15 +95,13 @@ const throwOnError = async (response: Response): Promise<void> =>
 let cachePromise: Promise<BadgeLeaderboardResponse> = null;
 let cacheValue: BadgeLeaderboardResponse = null;
 
-const buildStatsMap = (response: BadgeLeaderboardResponse | null): Map<string, BadgeLeaderboardStat> =>
-{
+const buildStatsMap = (response: BadgeLeaderboardResponse | null): Map<string, BadgeLeaderboardStat> => {
     const map = new Map<string, BadgeLeaderboardStat>();
 
-    if(!response?.badgeStats?.length) return map;
+    if (!response?.badgeStats?.length) return map;
 
-    for(const stat of response.badgeStats)
-    {
-        if(!stat?.badgeCode) continue;
+    for (const stat of response.badgeStats) {
+        if (!stat?.badgeCode) continue;
 
         map.set(stat.badgeCode, stat);
     }
@@ -116,16 +111,13 @@ const buildStatsMap = (response: BadgeLeaderboardResponse | null): Map<string, B
 
 let cacheStatsMap: Map<string, BadgeLeaderboardStat> = new Map();
 
-export const fetchBadgeLeaderboard = async (force = false): Promise<BadgeLeaderboardResponse> =>
-{
-    if(!force)
-    {
-        if(cacheValue) return cacheValue;
-        if(cachePromise) return cachePromise;
+export const fetchBadgeLeaderboard = async (force = false): Promise<BadgeLeaderboardResponse> => {
+    if (!force) {
+        if (cacheValue) return cacheValue;
+        if (cachePromise) return cachePromise;
     }
 
-    cachePromise = (async () =>
-    {
+    cachePromise = (async () => {
         const response = await fetch(getUrl(), {
             method: 'GET',
             credentials: 'include',
@@ -142,29 +134,23 @@ export const fetchBadgeLeaderboard = async (force = false): Promise<BadgeLeaderb
         return payload;
     })();
 
-    try
-    {
+    try {
         return await cachePromise;
-    }
-    finally
-    {
+    } finally {
         cachePromise = null;
     }
 };
 
-export const getCachedBadgeLeaderboard = (): BadgeLeaderboardResponse =>
-{
+export const getCachedBadgeLeaderboard = (): BadgeLeaderboardResponse => {
     return cacheValue;
 };
 
-export const getCachedBadgeRarityStat = (badgeCode: string): BadgeLeaderboardStat =>
-{
-    if(!badgeCode) return null;
+export const getCachedBadgeRarityStat = (badgeCode: string): BadgeLeaderboardStat => {
+    if (!badgeCode) return null;
 
     return cacheStatsMap.get(badgeCode) || null;
 };
 
-export const ensureBadgeLeaderboardLoaded = async (): Promise<BadgeLeaderboardResponse> =>
-{
+export const ensureBadgeLeaderboardLoaded = async (): Promise<BadgeLeaderboardResponse> => {
     return fetchBadgeLeaderboard(false);
 };

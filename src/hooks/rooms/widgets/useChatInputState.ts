@@ -17,52 +17,45 @@ import { useRoom } from '../useRoom';
  *                        outgoing sendChatTypingMessage only fires on
  *                        state edges (start / stop), not every render.
  */
-export const useChatInputState = () =>
-{
-    const [ selectedUsername, setSelectedUsername ] = useState('');
-    const [ isTyping, setIsTyping ] = useState<boolean>(false);
-    const [ typingStartedSent, setTypingStartedSent ] = useState(false);
-    const [ isIdle, setIsIdle ] = useState(false);
-    const [ floodBlocked, setFloodBlocked ] = useState(false);
-    const [ floodBlockedSeconds, setFloodBlockedSeconds ] = useState(0);
+export const useChatInputState = () => {
+    const [selectedUsername, setSelectedUsername] = useState('');
+    const [isTyping, setIsTyping] = useState<boolean>(false);
+    const [typingStartedSent, setTypingStartedSent] = useState(false);
+    const [isIdle, setIsIdle] = useState(false);
+    const [floodBlocked, setFloodBlocked] = useState(false);
+    const [floodBlockedSeconds, setFloodBlockedSeconds] = useState(0);
     const { roomSession = null } = useRoom();
 
-    useNitroEvent<RoomSessionChatEvent>(RoomSessionChatEvent.FLOOD_EVENT, event =>
-    {
+    useNitroEvent<RoomSessionChatEvent>(RoomSessionChatEvent.FLOOD_EVENT, (event) => {
         setFloodBlocked(true);
         setFloodBlockedSeconds(parseFloat(event.message));
     });
 
-    useObjectSelectedEvent(event =>
-    {
-        if(event.category !== RoomObjectCategory.UNIT) return;
+    useObjectSelectedEvent((event) => {
+        if (event.category !== RoomObjectCategory.UNIT) return;
 
         const userData = roomSession?.userDataManager?.getUserDataByIndex(event.id);
 
-        if(!userData) return;
+        if (!userData) return;
 
         setSelectedUsername(userData.name);
     });
 
     useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.DESELECTED, () => setSelectedUsername(''));
 
-    useEffect(() =>
-    {
-        if(!floodBlocked) return;
+    useEffect(() => {
+        if (!floodBlocked) return;
 
         let seconds = 0;
 
-        const interval = setInterval(() =>
-        {
-            setFloodBlockedSeconds(prevValue =>
-            {
-                seconds = ((prevValue || 0) - 1);
+        const interval = setInterval(() => {
+            setFloodBlockedSeconds((prevValue) => {
+                seconds = (prevValue || 0) - 1;
 
                 return seconds;
             });
 
-            if(seconds < 0)
-            {
+            if (seconds < 0) {
                 clearInterval(interval);
 
                 setFloodBlocked(false);
@@ -70,44 +63,36 @@ export const useChatInputState = () =>
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [ floodBlocked ]);
+    }, [floodBlocked]);
 
-    useEffect(() =>
-    {
-        if(!isIdle) return;
+    useEffect(() => {
+        if (!isIdle) return;
 
-        const timeout = setTimeout(() =>
-        {
+        const timeout = setTimeout(() => {
             setIsIdle(false);
             setIsTyping(false);
         }, 10000);
 
         return () => clearTimeout(timeout);
-    }, [ isIdle ]);
+    }, [isIdle]);
 
-    useEffect(() =>
-    {
-        if(!roomSession) return;
+    useEffect(() => {
+        if (!roomSession) return;
 
-        if(isTyping)
-        {
-            if(!typingStartedSent)
-            {
+        if (isTyping) {
+            if (!typingStartedSent) {
                 setTypingStartedSent(true);
 
                 roomSession.sendChatTypingMessage(isTyping);
             }
-        }
-        else
-        {
-            if(typingStartedSent)
-            {
+        } else {
+            if (typingStartedSent) {
                 setTypingStartedSent(false);
 
                 roomSession.sendChatTypingMessage(isTyping);
             }
         }
-    }, [ roomSession, isTyping, typingStartedSent ]);
+    }, [roomSession, isTyping, typingStartedSent]);
 
     return { selectedUsername, floodBlocked, floodBlockedSeconds, setIsTyping, setIsIdle };
 };

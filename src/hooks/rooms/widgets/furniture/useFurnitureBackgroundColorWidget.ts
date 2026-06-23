@@ -5,21 +5,19 @@ import { useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
 import { useRoom } from '../../useRoom';
 
-const useFurnitureBackgroundColorWidgetState = () =>
-{
-    const [ objectId, setObjectId ] = useState(-1);
-    const [ category, setCategory ] = useState(-1);
-    const [ hue, setHue ] = useState(0);
-    const [ saturation, setSaturation ] = useState(0);
-    const [ lightness, setLightness ] = useState(0);
+const useFurnitureBackgroundColorWidgetState = () => {
+    const [objectId, setObjectId] = useState(-1);
+    const [category, setCategory] = useState(-1);
+    const [hue, setHue] = useState(0);
+    const [saturation, setSaturation] = useState(0);
+    const [lightness, setLightness] = useState(0);
     const { roomSession = null } = useRoom();
 
     const applyToner = () => SendMessageComposer(new ApplyTonerComposer(objectId, hue, saturation, lightness));
 
     const toggleToner = () => roomSession.useMultistateItem(objectId);
 
-    const onClose = () =>
-    {
+    const onClose = () => {
         DispatchUiEvent(new RoomWidgetUpdateBackgroundColorPreviewEvent(RoomWidgetUpdateBackgroundColorPreviewEvent.CLEAR_PREVIEW));
 
         setObjectId(-1);
@@ -29,9 +27,8 @@ const useFurnitureBackgroundColorWidgetState = () =>
         setLightness(0);
     };
 
-    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_BACKGROUND_COLOR, event =>
-    {
-        if(!CanManipulateFurniture(roomSession, event.objectId, event.category)) return;
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_BACKGROUND_COLOR, (event) => {
+        if (!CanManipulateFurniture(roomSession, event.objectId, event.category)) return;
 
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
         const model = roomObject.model;
@@ -43,19 +40,17 @@ const useFurnitureBackgroundColorWidgetState = () =>
         setLightness(parseInt(model.getValue<string>(RoomObjectVariable.FURNITURE_ROOM_BACKGROUND_COLOR_LIGHTNESS)) || 0);
     });
 
-    useFurniRemovedEvent(((objectId !== -1) && (category !== -1)), event =>
-    {
-        if((event.id !== objectId) || (event.category !== category)) return;
+    useFurniRemovedEvent(objectId !== -1 && category !== -1, (event) => {
+        if (event.id !== objectId || event.category !== category) return;
 
         onClose();
     });
 
-    useEffect(() =>
-    {
-        if((objectId === -1) || (category === -1)) return;
+    useEffect(() => {
+        if (objectId === -1 || category === -1) return;
 
         DispatchUiEvent(new RoomWidgetUpdateBackgroundColorPreviewEvent(RoomWidgetUpdateBackgroundColorPreviewEvent.PREVIEW, hue, saturation, lightness));
-    }, [ objectId, category, hue, saturation, lightness ]);
+    }, [objectId, category, hue, saturation, lightness]);
 
     return { objectId, hue, saturation, lightness, setHue, setSaturation, setLightness, applyToner, toggleToner, onClose };
 };

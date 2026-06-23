@@ -1,6 +1,6 @@
 import { IRoomSession, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { IBotItem, LocalizeText, UnseenItemCategory, attemptBotPlacement } from '../../../../api';
+import { attemptBotPlacement, IBotItem, LocalizeText, UnseenItemCategory } from '../../../../api';
 import { LayoutRoomPreviewerView } from '../../../../common';
 import { useInventoryBots, useInventoryUnseenTracker } from '../../../../hooks';
 import { InfiniteGrid, NitroButton } from '../../../../layout';
@@ -10,71 +10,70 @@ import { InventoryBotItemView } from './InventoryBotItemView';
 export const InventoryBotView: FC<{
     roomSession: IRoomSession;
     roomPreviewer: RoomPreviewer;
-}> = props =>
-{
+}> = (props) => {
     const { roomSession = null, roomPreviewer = null } = props;
-    const [ isVisible, setIsVisible ] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
     const { botItems = [], selectedBot = null, activate = null, deactivate = null } = useInventoryBots();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
 
-    useEffect(() =>
-    {
-        if(!selectedBot || !roomPreviewer) return;
+    useEffect(() => {
+        if (!selectedBot || !roomPreviewer) return;
 
         const botData = selectedBot.botData;
         roomPreviewer.reset(false);
         roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
         roomPreviewer.updateObjectRoom('111', '217', '1.1');
         roomPreviewer.addAvatarIntoRoom(botData.figure, 0);
-    }, [ roomPreviewer, selectedBot ]);
+    }, [roomPreviewer, selectedBot]);
 
-    useEffect(() =>
-    {
-        if(!selectedBot || !isUnseen(UnseenItemCategory.BOT, selectedBot.botData.id)) return;
+    useEffect(() => {
+        if (!selectedBot || !isUnseen(UnseenItemCategory.BOT, selectedBot.botData.id)) return;
 
         removeUnseen(UnseenItemCategory.BOT, selectedBot.botData.id);
-    }, [ selectedBot, isUnseen, removeUnseen ]);
+    }, [selectedBot, isUnseen, removeUnseen]);
 
-    useEffect(() =>
-    {
-        if(!isVisible) return;
+    useEffect(() => {
+        if (!isVisible) return;
 
         const id = activate();
 
         return () => deactivate(id);
-    }, [ isVisible, activate, deactivate ]);
+    }, [isVisible, activate, deactivate]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setIsVisible(true);
 
         return () => setIsVisible(false);
     }, []);
 
-    if(!botItems || !botItems.length) return <InventoryCategoryEmptyView desc={ LocalizeText('inventory.empty.bots.desc') } title={ LocalizeText('inventory.empty.bots.title') } />;
+    if (!botItems || !botItems.length)
+        return <InventoryCategoryEmptyView desc={LocalizeText('inventory.empty.bots.desc')} title={LocalizeText('inventory.empty.bots.title')} />;
 
     return (
         <div className="grid h-full grid-cols-12 gap-2">
             <div className="flex flex-col col-span-7 gap-1 overflow-hidden">
                 <InfiniteGrid<IBotItem>
-                    columnCount={ 4 }
-                    estimateSize={ 110 }
-                    itemRender={ item => <InventoryBotItemView botItem={ item } /> }
-                    items={ botItems }
-                    rowGap={ 4 } />
+                    columnCount={4}
+                    estimateSize={110}
+                    itemRender={(item) => <InventoryBotItemView botItem={item} />}
+                    items={botItems}
+                    rowGap={4}
+                />
             </div>
             <div className="flex flex-col col-span-5">
                 <div className="relative flex flex-col">
-                    <LayoutRoomPreviewerView height={ 140 } roomPreviewer={ roomPreviewer } />
+                    <LayoutRoomPreviewerView height={140} roomPreviewer={roomPreviewer} />
                 </div>
-                { selectedBot &&
-                        <div className="flex flex-col justify-between gap-2 grow">
-                            <span className="truncate grow">{ selectedBot.botData.name }</span>
-                            { !!roomSession &&
-                                <NitroButton className="nitro-inventory-btn-place" onClick={ event => attemptBotPlacement(selectedBot) }>
-                                    { LocalizeText('inventory.furni.placetoroom') }
-                                </NitroButton> }
-                        </div> }
+                {selectedBot && (
+                    <div className="flex flex-col justify-between gap-2 grow">
+                        <span className="truncate grow">{selectedBot.botData.name}</span>
+                        {!!roomSession && (
+                            <NitroButton className="nitro-inventory-btn-place" onClick={(event) => attemptBotPlacement(selectedBot)}>
+                                {LocalizeText('inventory.furni.placetoroom')}
+                            </NitroButton>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

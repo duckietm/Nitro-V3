@@ -10,8 +10,7 @@ import { useWiredToolsStore } from './useWiredToolsStore';
  * this hook so it's easy to grep for read-only consumers vs. the
  * imperative ones (which use useWiredToolsActions).
  */
-export const useWiredToolsState = () =>
-{
+export const useWiredToolsState = () => {
     const {
         accountPreferences,
         roomSettings,

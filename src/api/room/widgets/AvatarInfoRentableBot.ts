@@ -1,7 +1,6 @@
 import { IAvatarInfo } from './IAvatarInfo';
 
-export class AvatarInfoRentableBot implements IAvatarInfo
-{
+export class AvatarInfoRentableBot implements IAvatarInfo {
     public static RENTABLE_BOT: string = 'IRBI_RENTABLE_BOT';
 
     public name: string = '';
@@ -18,6 +17,5 @@ export class AvatarInfoRentableBot implements IAvatarInfo
     public ownerName: string = '';
     public botSkills: number[] = [];
 
-    constructor(public readonly type: string)
-    {}
+    constructor(public readonly type: string) {}
 }

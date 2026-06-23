@@ -13,8 +13,7 @@ export const HOUSEKEEPING_MODE_KEY = 'housekeeping.mode';
  * lets the operator disable HK at the build/deploy level even when
  * the permission exists on the server.
  */
-export const isHousekeepingEnabled = (): boolean =>
-    GetConfigurationValue<boolean>(HOUSEKEEPING_ENABLED_KEY, false) === true;
+export const isHousekeepingEnabled = (): boolean => GetConfigurationValue<boolean>(HOUSEKEEPING_ENABLED_KEY, false) === true;
 
 /**
  * `full` (default) exposes the five-tab layout: dashboard, users,
@@ -24,31 +23,24 @@ export const isHousekeepingEnabled = (): boolean =>
  * management. Anything else than `'light'` resolves to `'full'`
  * so a typo doesn't quietly hide tabs.
  */
-export const resolveHousekeepingMode = (raw: unknown): HousekeepingMode =>
-    (raw === 'light') ? 'light' : 'full';
+export const resolveHousekeepingMode = (raw: unknown): HousekeepingMode => (raw === 'light' ? 'light' : 'full');
 
-export const getHousekeepingMode = (): HousekeepingMode =>
-    resolveHousekeepingMode(GetConfigurationValue<string>(HOUSEKEEPING_MODE_KEY, 'full'));
+export const getHousekeepingMode = (): HousekeepingMode => resolveHousekeepingMode(GetConfigurationValue<string>(HOUSEKEEPING_MODE_KEY, 'full'));
 
-const LIGHT_TABS: ReadonlySet<HousekeepingTabId> = new Set<HousekeepingTabId>([
-    HousekeepingTabId.USERS,
-    HousekeepingTabId.ROOMS
-]);
+const LIGHT_TABS: ReadonlySet<HousekeepingTabId> = new Set<HousekeepingTabId>([HousekeepingTabId.USERS, HousekeepingTabId.ROOMS]);
 
 /**
  * Pure tab-availability check. Kept side-effect-free so tab list
  * filtering and toolbar / link-event gating can all read the same
  * source of truth without hitting the config layer multiple times.
  */
-export const isHousekeepingTabAvailable = (tab: HousekeepingTabId, mode: HousekeepingMode): boolean =>
-{
-    if(mode === 'full') return true;
+export const isHousekeepingTabAvailable = (tab: HousekeepingTabId, mode: HousekeepingMode): boolean => {
+    if (mode === 'full') return true;
 
     return LIGHT_TABS.has(tab);
 };
 
-export const housekeepingTabsForMode = (mode: HousekeepingMode): HousekeepingTabId[] =>
-{
+export const housekeepingTabsForMode = (mode: HousekeepingMode): HousekeepingTabId[] => {
     const all: HousekeepingTabId[] = [
         HousekeepingTabId.DASHBOARD,
         HousekeepingTabId.USERS,
@@ -57,5 +49,5 @@ export const housekeepingTabsForMode = (mode: HousekeepingMode): HousekeepingTab
         HousekeepingTabId.AUDIT
     ];
 
-    return all.filter(tab => isHousekeepingTabAvailable(tab, mode));
+    return all.filter((tab) => isHousekeepingTabAvailable(tab, mode));
 };

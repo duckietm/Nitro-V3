@@ -13,27 +13,24 @@ type Props<T> = {
     itemMinWidth?: number;
     rowGap?: number;
     itemRender?: (item: T, index?: number) => ReactElement;
-}
+};
 
 const GRID_GAP_PX = 4;
 
-const useColumnMeasure = (itemMinWidth: number | null, columnCountProp: number): { parentRef: RefObject<HTMLDivElement | null>; columnCount: number } =>
-{
+const useColumnMeasure = (itemMinWidth: number | null, columnCountProp: number): { parentRef: RefObject<HTMLDivElement | null>; columnCount: number } => {
     const parentRef = useRef<HTMLDivElement>(null);
-    const [ measuredColumnCount, setMeasuredColumnCount ] = useState<number>(columnCountProp);
+    const [measuredColumnCount, setMeasuredColumnCount] = useState<number>(columnCountProp);
 
-    useEffect(() =>
-    {
-        if(!itemMinWidth || itemMinWidth <= 0) return;
+    useEffect(() => {
+        if (!itemMinWidth || itemMinWidth <= 0) return;
 
         const element = parentRef.current;
-        if(!element) return;
+        if (!element) return;
 
-        const recompute = () =>
-        {
+        const recompute = () => {
             const width = element.clientWidth;
             const cols = Math.max(1, Math.floor((width + GRID_GAP_PX) / (itemMinWidth + GRID_GAP_PX)));
-            setMeasuredColumnCount(prev => prev === cols ? prev : cols);
+            setMeasuredColumnCount((prev) => (prev === cols ? prev : cols));
         };
 
         recompute();
@@ -42,48 +39,41 @@ const useColumnMeasure = (itemMinWidth: number | null, columnCountProp: number):
         observer.observe(element);
 
         return () => observer.disconnect();
-    }, [ itemMinWidth ]);
+    }, [itemMinWidth]);
 
-    const columnCount = (itemMinWidth && itemMinWidth > 0) ? measuredColumnCount : columnCountProp;
+    const columnCount = itemMinWidth && itemMinWidth > 0 ? measuredColumnCount : columnCountProp;
 
     return { parentRef, columnCount };
 };
 
-const InfiniteGridSquare = <T,>(props: Props<T>) =>
-{
+const InfiniteGridSquare = <T,>(props: Props<T>) => {
     const { items = [], columnCount: columnCountProp = 4, itemMinWidth = null, itemRender = null } = props;
     const { parentRef } = useColumnMeasure(itemMinWidth, columnCountProp);
 
-    const autoFillStyle = (itemMinWidth && itemMinWidth > 0)
-        ? { gridTemplateColumns: `repeat(auto-fill, ${ itemMinWidth }px)` }
-        : null;
-    const fixedColsClass = (itemMinWidth && itemMinWidth > 0) ? '' : `grid-cols-${ columnCountProp }`;
+    const autoFillStyle = itemMinWidth && itemMinWidth > 0 ? { gridTemplateColumns: `repeat(auto-fill, ${itemMinWidth}px)` } : null;
+    const fixedColsClass = itemMinWidth && itemMinWidth > 0 ? '' : `grid-cols-${columnCountProp}`;
 
     return (
-        <div ref={ parentRef } className="overflow-y-auto size-full">
-            <div className={ `grid ${ fixedColsClass } gap-1 w-full` } style={ autoFillStyle ?? undefined }>
-                { items.map((item, index) =>
-                {
-                    if(!item) return <Fragment key={ `${ index }-empty` } />;
+        <div ref={parentRef} className="overflow-y-auto size-full">
+            <div className={`grid ${fixedColsClass} gap-1 w-full`} style={autoFillStyle ?? undefined}>
+                {items.map((item, index) => {
+                    if (!item) return <Fragment key={`${index}-empty`} />;
 
-                    return <Fragment key={ `${ index }-item` }>{ itemRender(item, index) }</Fragment>;
-                }) }
+                    return <Fragment key={`${index}-item`}>{itemRender(item, index)}</Fragment>;
+                })}
             </div>
         </div>
     );
 };
 
-const InfiniteGridVirtualized = <T,>(props: Props<T>) =>
-{
+const InfiniteGridVirtualized = <T,>(props: Props<T>) => {
     const { items = [], columnCount: columnCountProp = 4, overscan = 5, estimateSize = 45, itemMinWidth = null, rowGap = null, itemRender = null } = props;
     const { parentRef, columnCount } = useColumnMeasure(itemMinWidth, columnCountProp);
 
-    const rowsContainerClassName = (rowGap !== null) ? 'flex flex-col w-full relative' : 'flex flex-col w-full *:pb-1 relative';
+    const rowsContainerClassName = rowGap !== null ? 'flex flex-col w-full relative' : 'flex flex-col w-full *:pb-1 relative';
 
-    const autoFillStyle = (itemMinWidth && itemMinWidth > 0)
-        ? { gridTemplateColumns: `repeat(auto-fill, ${ itemMinWidth }px)` }
-        : null;
-    const fixedColsClass = (itemMinWidth && itemMinWidth > 0) ? '' : `grid-cols-${ columnCountProp }`;
+    const autoFillStyle = itemMinWidth && itemMinWidth > 0 ? { gridTemplateColumns: `repeat(auto-fill, ${itemMinWidth}px)` } : null;
+    const fixedColsClass = itemMinWidth && itemMinWidth > 0 ? '' : `grid-cols-${columnCountProp}`;
 
     const virtualizer = useVirtualizer({
         count: Math.ceil(items.length / columnCount),
@@ -92,85 +82,72 @@ const InfiniteGridVirtualized = <T,>(props: Props<T>) =>
         estimateSize: () => estimateSize
     });
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const element = parentRef.current;
 
-        if(!element || !items) return;
+        if (!element || !items) return;
 
-        const checkAndApplyPadding = () =>
-        {
-            if(!element) return;
+        const checkAndApplyPadding = () => {
+            if (!element) return;
 
-            element.style.paddingRight = (element.scrollHeight > element.clientHeight) ? '0.25rem' : '0';
+            element.style.paddingRight = element.scrollHeight > element.clientHeight ? '0.25rem' : '0';
         };
 
         checkAndApplyPadding();
 
         window.addEventListener('resize', checkAndApplyPadding);
 
-        return () =>
-        {
+        return () => {
             window.removeEventListener('resize', checkAndApplyPadding);
         };
-    }, [ items, parentRef ]);
+    }, [items, parentRef]);
 
-    useEffect(() =>
-    {
-        if(!items || !items.length) return;
+    useEffect(() => {
+        if (!items || !items.length) return;
 
         virtualizer.scrollToIndex(0);
-    }, [ items, virtualizer ]);
+    }, [items, virtualizer]);
 
     const virtualItems = virtualizer.getVirtualItems();
 
     return (
-        <div
-            ref={ parentRef }
-            className="overflow-y-auto size-full">
+        <div ref={parentRef} className="overflow-y-auto size-full">
             <div
-                className={ rowsContainerClassName }
-                style={ {
+                className={rowsContainerClassName}
+                style={{
                     height: virtualizer.getTotalSize()
-                } }>
-                { virtualItems.map(virtualRow => (
+                }}
+            >
+                {virtualItems.map((virtualRow) => (
                     <div
-                        key={ virtualRow.key + 'a' }
-                        ref={ virtualizer.measureElement }
-                        className={ `grid ${ fixedColsClass } gap-1 absolute top-0 left-0 last:pb-0 w-full` }
-                        data-index={ virtualRow.index }
-                        style={ {
+                        key={virtualRow.key + 'a'}
+                        ref={virtualizer.measureElement}
+                        className={`grid ${fixedColsClass} gap-1 absolute top-0 left-0 last:pb-0 w-full`}
+                        data-index={virtualRow.index}
+                        style={{
                             ...(rowGap === null && { height: virtualRow.size }),
                             ...(autoFillStyle ?? {}),
-                            ...(rowGap !== null && { paddingBottom: `${ rowGap }px` }),
-                            transform: `translateY(${ virtualRow.start }px)`
-                        } }>
-                        { Array.from(Array(columnCount)).map((e, i) =>
-                        {
-                            const index = (i + (virtualRow.index * columnCount));
+                            ...(rowGap !== null && { paddingBottom: `${rowGap}px` }),
+                            transform: `translateY(${virtualRow.start}px)`
+                        }}
+                    >
+                        {Array.from(Array(columnCount)).map((e, i) => {
+                            const index = i + virtualRow.index * columnCount;
                             const item = items[index];
 
-                            if(!item) return <Fragment
-                                key={ virtualRow.index + i + 'b' } />;
+                            if (!item) return <Fragment key={virtualRow.index + i + 'b'} />;
 
-                            return (
-                                <Fragment key={ i }>
-                                    { itemRender(item, index) }
-                                </Fragment>
-                            );
-                        }) }
+                            return <Fragment key={i}>{itemRender(item, index)}</Fragment>;
+                        })}
                     </div>
-                )) }
+                ))}
             </div>
         </div>
     );
 };
 
-const InfiniteGridRoot = <T,>(props: Props<T>) =>
-{
-    return props.squareItems
-        ? <InfiniteGridSquare<T> { ...props } />
-        : <InfiniteGridVirtualized<T> { ...props } />;
+const InfiniteGridRoot = <T,>(props: Props<T>) => {
+    return props.squareItems ? <InfiniteGridSquare<T> {...props} /> : <InfiniteGridVirtualized<T> {...props} />;
 };
 
 type InfiniteGridItemProps = {
@@ -187,15 +164,28 @@ type InfiniteGridItemProps = {
     ref?: Ref<HTMLDivElement>;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-const InfiniteGridItem = ({ ref, itemImage = undefined, itemColor = undefined, itemActive = false, itemCount = 1, itemCountMinimum = 1, itemUniqueSoldout = false, itemUniqueNumber = -2, itemUnseen = false, itemHighlight = false, disabled = false, className = null, style = {}, children = null, ...rest }: InfiniteGridItemProps) =>
-{
-    const [ backgroundImageUrl, setBackgroundImageUrl ] = useState<string>(null);
+const InfiniteGridItem = ({
+    ref,
+    itemImage = undefined,
+    itemColor = undefined,
+    itemActive = false,
+    itemCount = 1,
+    itemCountMinimum = 1,
+    itemUniqueSoldout = false,
+    itemUniqueNumber = -2,
+    itemUnseen = false,
+    itemHighlight = false,
+    disabled = false,
+    className = null,
+    style = {},
+    children = null,
+    ...rest
+}: InfiniteGridItemProps) => {
+    const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>(null);
     const disposed = useRef<boolean>(false);
 
-    useEffect(() =>
-    {
-        if(!itemImage || !itemImage.length)
-        {
+    useEffect(() => {
+        if (!itemImage || !itemImage.length) {
             setBackgroundImageUrl(null);
 
             return;
@@ -203,64 +193,73 @@ const InfiniteGridItem = ({ ref, itemImage = undefined, itemColor = undefined, i
 
         const image = new Image();
 
-        image.onload = () =>
-        {
-            if(disposed.current) return;
+        image.onload = () => {
+            if (disposed.current) return;
 
             setBackgroundImageUrl(image.src);
         };
 
         image.src = itemImage;
-    }, [ itemImage ]);
+    }, [itemImage]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         disposed.current = false;
 
-        return () =>
-        {
+        return () => {
             disposed.current = true;
         };
     }, []);
 
     return (
         <div
-            ref={ ref }
-            className={ classNames(
+            ref={ref}
+            className={classNames(
                 'flex flex-col items-center justify-center cursor-pointer overflow-hidden relative bg-center bg-no-repeat w-full rounded-md border-2',
-                (itemImage && (!backgroundImageUrl || !backgroundImageUrl.length)) && 'nitro-icon icon-loading',
+                itemImage && (!backgroundImageUrl || !backgroundImageUrl.length) && 'nitro-icon icon-loading',
                 itemActive
-                    ? (itemColor ? 'border-card-grid-item-active' : 'border-card-grid-item-active bg-card-grid-item-active')
-                    : (itemColor ? 'border-card-grid-item-border' : 'border-card-grid-item-border bg-card-grid-item'),
-                (itemUniqueSoldout || (itemUniqueNumber > 0)) && 'unique-item',
+                    ? itemColor
+                        ? 'border-card-grid-item-active'
+                        : 'border-card-grid-item-active bg-card-grid-item-active'
+                    : itemColor
+                      ? 'border-card-grid-item-border'
+                      : 'border-card-grid-item-border bg-card-grid-item',
+                (itemUniqueSoldout || itemUniqueNumber > 0) && 'unique-item',
                 itemUniqueSoldout && 'sold-out',
                 itemUnseen && ' animate-pulse-glow-gold border-yellow-400/60',
                 className
-            ) }
-            style={ styleNames(
-                backgroundImageUrl && backgroundImageUrl.length && !(itemUniqueSoldout || (itemUniqueNumber > 0)) && {
-                    backgroundImage: `url(${ backgroundImageUrl })`
-                },
+            )}
+            style={styleNames(
+                backgroundImageUrl &&
+                    backgroundImageUrl.length &&
+                    !(itemUniqueSoldout || itemUniqueNumber > 0) && {
+                        backgroundImage: `url(${backgroundImageUrl})`
+                    },
                 itemColor && {
                     backgroundColor: itemColor
                 },
                 style
-            ) }
-            { ...rest }>
-            { (itemCount > itemCountMinimum) &&
-                <div className="absolute align-middle rounded bg-red-700 bg-opacity-80 text-white border-black border top-[2px] right-[2px] text-[9.5px] p-[2px] z-1 leading-[8px]">{ itemCount }</div> }
-            { (itemUniqueNumber > 0) &&
+            )}
+            {...rest}
+        >
+            {itemCount > itemCountMinimum && (
+                <div className="absolute align-middle rounded bg-red-700 bg-opacity-80 text-white border-black border top-[2px] right-[2px] text-[9.5px] p-[2px] z-1 leading-[8px]">
+                    {itemCount}
+                </div>
+            )}
+            {itemUniqueNumber > 0 && (
                 <>
                     <div
                         className="size-full unique-bg-override"
-                        style={ {
-                            backgroundImage: `url(${ backgroundImageUrl })`
-                        } } />
+                        style={{
+                            backgroundImage: `url(${backgroundImageUrl})`
+                        }}
+                    />
                     <div className="absolute bottom-0 unique-item-counter">
-                        <NitroLimitedEditionStyledNumberView value={ itemUniqueNumber } />
+                        <NitroLimitedEditionStyledNumberView value={itemUniqueNumber} />
                     </div>
-                </> }
-            { children }
+                </>
+            )}
+            {children}
         </div>
     );
 };

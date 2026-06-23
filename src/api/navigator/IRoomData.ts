@@ -1,8 +1,7 @@
 import { IRoomChatSettings } from './IRoomChatSettings';
 import { IRoomModerationSettings } from './IRoomModerationSettings';
 
-export interface IRoomData
-{
+export interface IRoomData {
     roomId: number;
     roomName: string;
     roomDescription: string;

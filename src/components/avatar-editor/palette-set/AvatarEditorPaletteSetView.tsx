@@ -9,28 +9,43 @@ export const AvatarEditorPaletteSetView: FC<{
     category: IAvatarEditorCategory;
     paletteIndex: number;
     columnCount: number;
-}> = props =>
-{
+}> = (props) => {
     const { category = null, paletteIndex = -1, columnCount = 3 } = props;
     const { selectedColorParts = null, selectEditorColor = null } = useAvatarEditor();
 
-    const isPartColorSelected = (partColor: IPartColor) =>
-    {
-        if(!category || !category.setType || !selectedColorParts || !selectedColorParts[category.setType] || !selectedColorParts[category.setType][paletteIndex]) return false;
+    const isPartColorSelected = (partColor: IPartColor) => {
+        if (
+            !category ||
+            !category.setType ||
+            !selectedColorParts ||
+            !selectedColorParts[category.setType] ||
+            !selectedColorParts[category.setType][paletteIndex]
+        )
+            return false;
 
         const selectedColorPart = selectedColorParts[category.setType][paletteIndex];
 
-        return (selectedColorPart.id === partColor.id);
+        return selectedColorPart.id === partColor.id;
     };
 
     return (
-        <InfiniteGrid<IPartColor> columnCount={ columnCount } estimateSize={ 18 } squareItems itemRender={ (item: IPartColor) =>
-        {
-            if(!item) return null;
+        <InfiniteGrid<IPartColor>
+            columnCount={columnCount}
+            estimateSize={18}
+            squareItems
+            itemRender={(item: IPartColor) => {
+                if (!item) return null;
 
-            return (
-                <AvatarEditorPaletteSetItem isSelected={ isPartColorSelected(item) } partColor={ item } onClick={ event => selectEditorColor(category.setType, paletteIndex, item.id) } />
-            );
-        } } items={ category.colorItems[paletteIndex] } overscan={ columnCount } />
+                return (
+                    <AvatarEditorPaletteSetItem
+                        isSelected={isPartColorSelected(item)}
+                        partColor={item}
+                        onClick={(event) => selectEditorColor(category.setType, paletteIndex, item.id)}
+                    />
+                );
+            }}
+            items={category.colorItems[paletteIndex]}
+            overscan={columnCount}
+        />
     );
 };

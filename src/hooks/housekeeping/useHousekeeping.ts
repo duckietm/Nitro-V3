@@ -8,8 +8,7 @@ import { useHousekeepingStore } from './useHousekeepingStore';
  * `useHousekeepingActions` directly; this hook exists for the panel
  * views that need both.
  */
-export const useHousekeeping = () =>
-{
+export const useHousekeeping = () => {
     const store = useHousekeepingStore();
     const actions = useHousekeepingActions();
 

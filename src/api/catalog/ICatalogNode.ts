@@ -1,5 +1,4 @@
-export interface ICatalogNode
-{
+export interface ICatalogNode {
     activate(): void;
     deactivate(): void;
     open(): void;

@@ -2,8 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { interpolate, t } from '../utils/i18n';
 import { resolveNewsImage, resolveNewsLink } from '../utils/news';
 
-interface NewsItem
-{
+interface NewsItem {
     id: number;
     title: string;
     body: string;
@@ -12,8 +11,7 @@ interface NewsItem
     linkUrl: string;
 }
 
-interface RawNewsItem
-{
+interface RawNewsItem {
     id?: number;
     title?: string;
     body?: string;
@@ -32,128 +30,137 @@ const normalizeNewsItem = (raw: RawNewsItem, fallbackId: number): NewsItem => ({
     linkUrl: interpolate((typeof raw.linkUrl === 'string' && raw.linkUrl) || (typeof raw.link === 'string' ? raw.link : ''))
 });
 
-interface NewsWindowProps { newsUrl: string; }
+interface NewsWindowProps {
+    newsUrl: string;
+}
 
 const NEWS_AUTO_ADVANCE_MS = 10000;
 
-export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) =>
-{
-    const [ items, setItems ] = useState<NewsItem[] | null>(null);
-    const [ failed, setFailed ] = useState(false);
-    const [ index, setIndex ] = useState(0);
-    const [ autoTick, setAutoTick ] = useState(0);
+export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) => {
+    const [items, setItems] = useState<NewsItem[] | null>(null);
+    const [failed, setFailed] = useState(false);
+    const [index, setIndex] = useState(0);
+    const [autoTick, setAutoTick] = useState(0);
 
-    useEffect(() =>
-    {
-        if(!newsUrl)
-        {
-            setFailed(true); return;
+    useEffect(() => {
+        if (!newsUrl) {
+            setFailed(true);
+            return;
         }
         let cancelled = false;
         const controller = new AbortController();
 
         fetch(newsUrl, { credentials: 'omit', signal: controller.signal })
-            .then(async r =>
-            {
-                if(!r.ok) throw new Error('status ' + r.status);
+            .then(async (r) => {
+                if (!r.ok) throw new Error('status ' + r.status);
                 return r.json();
             })
-            .then((json: unknown) =>
-            {
-                if(cancelled) return;
+            .then((json: unknown) => {
+                if (cancelled) return;
                 const rawList = Array.isArray((json as { news?: unknown })?.news)
                     ? (json as { news: RawNewsItem[] }).news
-                    : Array.isArray(json) ? (json as RawNewsItem[]) : [];
+                    : Array.isArray(json)
+                      ? (json as RawNewsItem[])
+                      : [];
                 setItems(rawList.map((raw, idx) => normalizeNewsItem(raw, idx + 1)));
             })
-            .catch(() =>
-            {
-                if(!cancelled) setFailed(true);
+            .catch(() => {
+                if (!cancelled) setFailed(true);
             });
-        return () =>
-        {
+        return () => {
             cancelled = true;
             controller.abort();
         };
-    }, [ newsUrl ]);
+    }, [newsUrl]);
 
-    useEffect(() =>
-    {
-        if(!items || items.length < 2) return;
-        const id = window.setTimeout(() =>
-        {
-            setIndex(i => (i + 1) % items.length);
+    useEffect(() => {
+        if (!items || items.length < 2) return;
+        const id = window.setTimeout(() => {
+            setIndex((i) => (i + 1) % items.length);
         }, NEWS_AUTO_ADVANCE_MS);
         return () => window.clearTimeout(id);
-    }, [ items, index, autoTick ]);
+    }, [items, index, autoTick]);
 
-    if(failed) return null;
-    if(!items || !items.length) return null;
+    if (failed) return null;
+    if (!items || !items.length) return null;
 
     const current = items[Math.min(index, items.length - 1)];
     const hasMany = items.length > 1;
-    const bumpAuto = () => setAutoTick(t => t + 1);
-    const prev = () =>
-    {
-        setIndex(i => (i - 1 + items.length) % items.length); bumpAuto();
+    const bumpAuto = () => setAutoTick((t) => t + 1);
+    const prev = () => {
+        setIndex((i) => (i - 1 + items.length) % items.length);
+        bumpAuto();
     };
-    const next = () =>
-    {
-        setIndex(i => (i + 1) % items.length); bumpAuto();
+    const next = () => {
+        setIndex((i) => (i + 1) % items.length);
+        bumpAuto();
     };
 
     const safeLinkUrl = resolveNewsLink(current.linkUrl);
     const safeImageSrc = resolveNewsImage(current.image);
-    const openLink = () =>
-    {
-        if(!safeLinkUrl) return;
+    const openLink = () => {
+        if (!safeLinkUrl) return;
         window.open(safeLinkUrl, '_blank', 'noopener,noreferrer');
     };
 
     return (
         <div className="login-news-stack">
-            <div className="news-card-wrapper" key={ current.id }>
-                <span className="news-sparkle news-sparkle-1" aria-hidden="true">★</span>
-                <span className="news-sparkle news-sparkle-2" aria-hidden="true">✦</span>
-                <span className="news-sparkle news-sparkle-3" aria-hidden="true">✧</span>
+            <div className="news-card-wrapper" key={current.id}>
+                <span className="news-sparkle news-sparkle-1" aria-hidden="true">
+                    ★
+                </span>
+                <span className="news-sparkle news-sparkle-2" aria-hidden="true">
+                    ✦
+                </span>
+                <span className="news-sparkle news-sparkle-3" aria-hidden="true">
+                    ✧
+                </span>
 
                 <div className="news-new-badge" aria-hidden="true">
-                    <span>{ t('nitro.login.news.new', 'NEW!') }</span>
+                    <span>{t('nitro.login.news.new', 'NEW!')}</span>
                 </div>
 
                 <div className="nitro-login-card nitro-news-card">
                     <div className="card-title news-ribbon">
-                        <span className="news-ribbon-text">{ t('nitro.login.news.title', 'Hotel News') }</span>
+                        <span className="news-ribbon-text">{t('nitro.login.news.title', 'Hotel News')}</span>
                     </div>
                     <div className="card-body news-body">
-                        { safeImageSrc &&
+                        {safeImageSrc && (
                             <div className="news-image">
                                 <img
-                                    src={ safeImageSrc }
-                                    alt={ current.title || 'news' }
-                                    onError={ e =>
-                                    {
-                                        (e.currentTarget).style.display = 'none';
-                                    } }
+                                    src={safeImageSrc}
+                                    alt={current.title || 'news'}
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                    }}
                                 />
                             </div>
-                        }
-                        <div className="news-headline">{ current.title }</div>
-                        { current.body &&
-                            <div className="news-text">{ current.body }</div> }
+                        )}
+                        <div className="news-headline">{current.title}</div>
+                        {current.body && <div className="news-text">{current.body}</div>}
 
                         <div className="news-footer">
-                            { current.linkText && safeLinkUrl
-                                ? <button type="button" className="ok-button news-link-button" onClick={ openLink }>{ current.linkText }</button>
-                                : <span /> }
+                            {current.linkText && safeLinkUrl ? (
+                                <button type="button" className="ok-button news-link-button" onClick={openLink}>
+                                    {current.linkText}
+                                </button>
+                            ) : (
+                                <span />
+                            )}
 
-                            { hasMany &&
+                            {hasMany && (
                                 <div className="news-pager">
-                                    <button type="button" className="arrow-btn" aria-label="Previous news" onClick={ prev }>&lsaquo;</button>
-                                    <span className="news-counter">{ index + 1 }/{ items.length }</span>
-                                    <button type="button" className="arrow-btn" aria-label="Next news" onClick={ next }>&rsaquo;</button>
+                                    <button type="button" className="arrow-btn" aria-label="Previous news" onClick={prev}>
+                                        &lsaquo;
+                                    </button>
+                                    <span className="news-counter">
+                                        {index + 1}/{items.length}
+                                    </span>
+                                    <button type="button" className="arrow-btn" aria-label="Next news" onClick={next}>
+                                        &rsaquo;
+                                    </button>
                                 </div>
-                            }
+                            )}
                         </div>
                     </div>
                 </div>

@@ -4,18 +4,14 @@
  * `javascript:`, `data:`, `vbscript:`, `file:` … scheme reach `window.open`,
  * which would run in the opener's origin.
  */
-export const isSafeExternalUrl = (url: string): boolean =>
-{
-    if(!url || (typeof url !== 'string')) return false;
+export const isSafeExternalUrl = (url: string): boolean => {
+    if (!url || typeof url !== 'string') return false;
 
-    try
-    {
+    try {
         const protocol = new URL(url.trim()).protocol;
 
-        return ((protocol === 'http:') || (protocol === 'https:'));
-    }
-    catch
-    {
+        return protocol === 'http:' || protocol === 'https:';
+    } catch {
         return false;
     }
 };

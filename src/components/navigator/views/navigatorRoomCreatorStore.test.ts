@@ -1,32 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRoomCreatorStore } from './navigatorRoomCreatorStore';
 
-describe('useRoomCreatorStore', () =>
-{
-    beforeEach(() =>
-    {
+describe('useRoomCreatorStore', () => {
+    beforeEach(() => {
         vi.useFakeTimers();
         useRoomCreatorStore.setState({ isCreating: false });
     });
 
-    afterEach(() =>
-    {
+    afterEach(() => {
         vi.useRealTimers();
     });
 
-    it('starts with isCreating === false', () =>
-    {
+    it('starts with isCreating === false', () => {
         expect(useRoomCreatorStore.getState().isCreating).toBe(false);
     });
 
-    it('beginCreate() latches isCreating to true', () =>
-    {
+    it('beginCreate() latches isCreating to true', () => {
         useRoomCreatorStore.getState().beginCreate();
         expect(useRoomCreatorStore.getState().isCreating).toBe(true);
     });
 
-    it('isCreating auto-resets to false after the 5s lockout', () =>
-    {
+    it('isCreating auto-resets to false after the 5s lockout', () => {
         useRoomCreatorStore.getState().beginCreate();
         expect(useRoomCreatorStore.getState().isCreating).toBe(true);
 
@@ -37,8 +31,7 @@ describe('useRoomCreatorStore', () =>
         expect(useRoomCreatorStore.getState().isCreating).toBe(false);
     });
 
-    it('a second beginCreate() resets the lockout timer (no double-fire)', () =>
-    {
+    it('a second beginCreate() resets the lockout timer (no double-fire)', () => {
         useRoomCreatorStore.getState().beginCreate();
         vi.advanceTimersByTime(4000);
 

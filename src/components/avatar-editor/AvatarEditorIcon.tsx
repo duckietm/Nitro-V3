@@ -1,6 +1,4 @@
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, Ref } from 'react';
-import { classNames } from '../../layout';
-
 import arrowLeftIcon from '../../assets/images/avatareditor/arrow-left-icon.png';
 import arrowRightIcon from '../../assets/images/avatareditor/arrow-right-icon.png';
 import caIcon from '../../assets/images/avatareditor/ca-icon.png';
@@ -33,49 +31,47 @@ import shIcon from '../../assets/images/avatareditor/sh-icon.png';
 import shSelectedIcon from '../../assets/images/avatareditor/sh-selected-icon.png';
 import waIcon from '../../assets/images/avatareditor/wa-icon.png';
 import waSelectedIcon from '../../assets/images/avatareditor/wa-selected-icon.png';
+import { classNames } from '../../layout';
 
 const ICON_MAP: Record<string, { normal: string; selected?: string }> = {
     'arrow-left': { normal: arrowLeftIcon },
     'arrow-right': { normal: arrowRightIcon },
-    'ca': { normal: caIcon, selected: caSelectedIcon },
-    'cc': { normal: ccIcon, selected: ccSelectedIcon },
-    'ch': { normal: chIcon, selected: chSelectedIcon },
-    'clear': { normal: clearIcon },
-    'cp': { normal: cpIcon, selected: cpSelectedIcon },
-    'ea': { normal: eaIcon, selected: eaSelectedIcon },
-    'fa': { normal: faIcon, selected: faSelectedIcon },
-    'female': { normal: femaleIcon, selected: femaleSelectedIcon },
-    'ha': { normal: haIcon, selected: haSelectedIcon },
-    'he': { normal: heIcon, selected: heSelectedIcon },
-    'hr': { normal: hrIcon, selected: hrSelectedIcon },
-    'lg': { normal: lgIcon, selected: lgSelectedIcon },
-    'male': { normal: maleIcon, selected: maleSelectedIcon },
-    'sellable': { normal: sellableIcon },
-    'sh': { normal: shIcon, selected: shSelectedIcon },
-    'wa': { normal: waIcon, selected: waSelectedIcon },
+    ca: { normal: caIcon, selected: caSelectedIcon },
+    cc: { normal: ccIcon, selected: ccSelectedIcon },
+    ch: { normal: chIcon, selected: chSelectedIcon },
+    clear: { normal: clearIcon },
+    cp: { normal: cpIcon, selected: cpSelectedIcon },
+    ea: { normal: eaIcon, selected: eaSelectedIcon },
+    fa: { normal: faIcon, selected: faSelectedIcon },
+    female: { normal: femaleIcon, selected: femaleSelectedIcon },
+    ha: { normal: haIcon, selected: haSelectedIcon },
+    he: { normal: heIcon, selected: heSelectedIcon },
+    hr: { normal: hrIcon, selected: hrSelectedIcon },
+    lg: { normal: lgIcon, selected: lgSelectedIcon },
+    male: { normal: maleIcon, selected: maleSelectedIcon },
+    sellable: { normal: sellableIcon },
+    sh: { normal: shIcon, selected: shSelectedIcon },
+    wa: { normal: waIcon, selected: waSelectedIcon }
 };
 
 type AvatarEditorIconProps = PropsWithChildren<{
     icon: string;
     selected?: boolean;
     ref?: Ref<HTMLDivElement>;
-}> & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+}> &
+    DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-export const AvatarEditorIcon = ({ ref, icon = null, selected = false, className = null, children, ...rest }: AvatarEditorIconProps) =>
-{
+export const AvatarEditorIcon = ({ ref, icon = null, selected = false, className = null, children, ...rest }: AvatarEditorIconProps) => {
     const iconEntry = icon ? ICON_MAP[icon] : null;
 
-    if(!iconEntry) return null;
+    if (!iconEntry) return null;
 
-    const src = (selected && iconEntry.selected) ? iconEntry.selected : iconEntry.normal;
+    const src = selected && iconEntry.selected ? iconEntry.selected : iconEntry.normal;
 
     return (
-        <div
-            ref={ ref }
-            className={ classNames('flex items-center justify-center cursor-pointer', className) }
-            { ...rest }>
-            <img src={ src } alt={ icon } className="h-[22px] w-auto object-contain pointer-events-none" draggable={ false } />
-            { children }
+        <div ref={ref} className={classNames('flex items-center justify-center cursor-pointer', className)} {...rest}>
+            <img src={src} alt={icon} className="h-[22px] w-auto object-contain pointer-events-none" draggable={false} />
+            {children}
         </div>
     );
 };

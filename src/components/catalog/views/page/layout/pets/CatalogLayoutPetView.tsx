@@ -1,28 +1,34 @@
-import { ApproveNameMessageComposer, ApproveNameMessageEvent, ColorConverter, PurchaseFromCatalogComposer, SellablePetPaletteData } from '@nitrots/nitro-renderer';
+import {
+    ApproveNameMessageComposer,
+    ApproveNameMessageEvent,
+    ColorConverter,
+    PurchaseFromCatalogComposer,
+    SellablePetPaletteData
+} from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { FaCheck, FaEdit, FaFillDrip, FaPaw, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaEdit, FaFillDrip, FaPaw, FaTimes } from 'react-icons/fa';
 import { DispatchUiEvent, GetPetAvailableColors, GetPetIndexFromLocalization, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../../api';
 import { LayoutGridItem, LayoutPetImageView } from '../../../../../../common';
 import { CatalogPurchaseFailureEvent } from '../../../../../../events';
 import { useCatalogData, useCatalogUiState, useMessageEvent, useSellablePetPalette } from '../../../../../../hooks';
 import { useCatalogAdmin } from '../../../../CatalogAdminContext';
+import { CatalogAdminQuickActionsView } from '../../../admin/CatalogAdminQuickActionsView';
 import { CatalogAddOnBadgeWidgetView } from '../../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogTotalPriceWidget } from '../../widgets/CatalogTotalPriceWidget';
 import { CatalogViewProductWidgetView } from '../../widgets/CatalogViewProductWidgetView';
 import { CatalogLayoutProps } from '../CatalogLayout.types';
 
-export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
-{
+export const CatalogLayoutPetView: FC<CatalogLayoutProps> = (props) => {
     const { page = null } = props;
-    const [ petIndex, setPetIndex ] = useState(-1);
-    const [ sellablePalettes, setSellablePalettes ] = useState<SellablePetPaletteData[]>([]);
-    const [ selectedPaletteIndex, setSelectedPaletteIndex ] = useState(-1);
-    const [ sellableColors, setSellableColors ] = useState<number[][]>([]);
-    const [ selectedColorIndex, setSelectedColorIndex ] = useState(-1);
-    const [ colorsShowing, setColorsShowing ] = useState(false);
-    const [ petName, setPetName ] = useState('');
-    const [ approvalPending, setApprovalPending ] = useState(true);
-    const [ approvalResult, setApprovalResult ] = useState(-1);
+    const [petIndex, setPetIndex] = useState(-1);
+    const [sellablePalettes, setSellablePalettes] = useState<SellablePetPaletteData[]>([]);
+    const [selectedPaletteIndex, setSelectedPaletteIndex] = useState(-1);
+    const [sellableColors, setSellableColors] = useState<number[][]>([]);
+    const [selectedColorIndex, setSelectedColorIndex] = useState(-1);
+    const [colorsShowing, setColorsShowing] = useState(false);
+    const [petName, setPetName] = useState('');
+    const [approvalPending, setApprovalPending] = useState(true);
+    const [approvalResult, setApprovalResult] = useState(-1);
     const { currentOffer = null, roomPreviewer = null } = useCatalogData();
     const { setCurrentOffer = null, setPurchaseOptions = null } = useCatalogUiState();
     const catalogAdmin = useCatalogAdmin();
@@ -30,48 +36,42 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
     const breed: string = (currentOffer?.product?.productData?.type as unknown as string) ?? '';
     const { data: petPalette = null } = useSellablePetPalette(breed);
 
-    const getColor = useMemo(() =>
-    {
-        if(!sellableColors.length || (selectedColorIndex === -1)) return 0xFFFFFF;
+    const getColor = useMemo(() => {
+        if (!sellableColors.length || selectedColorIndex === -1) return 0xffffff;
 
         return sellableColors[selectedColorIndex][0];
-    }, [ sellableColors, selectedColorIndex ]);
+    }, [sellableColors, selectedColorIndex]);
 
-    const petBreedName = useMemo(() =>
-    {
-        if((petIndex === -1) || !sellablePalettes.length || (selectedPaletteIndex === -1)) return '';
+    const petBreedName = useMemo(() => {
+        if (petIndex === -1 || !sellablePalettes.length || selectedPaletteIndex === -1) return '';
 
-        return LocalizeText(`pet.breed.${ petIndex }.${ sellablePalettes[selectedPaletteIndex].breedId }`);
-    }, [ petIndex, sellablePalettes, selectedPaletteIndex ]);
+        return LocalizeText(`pet.breed.${petIndex}.${sellablePalettes[selectedPaletteIndex].breedId}`);
+    }, [petIndex, sellablePalettes, selectedPaletteIndex]);
 
-    const petPurchaseString = useMemo(() =>
-    {
-        if(!sellablePalettes.length || (selectedPaletteIndex === -1)) return '';
+    const petPurchaseString = useMemo(() => {
+        if (!sellablePalettes.length || selectedPaletteIndex === -1) return '';
 
         const paletteId = sellablePalettes[selectedPaletteIndex].paletteId;
 
-        let color = 0xFFFFFF;
+        let color = 0xffffff;
 
-        if(petIndex <= 7)
-        {
-            if(selectedColorIndex === -1) return '';
+        if (petIndex <= 7) {
+            if (selectedColorIndex === -1) return '';
 
             color = sellableColors[selectedColorIndex][0];
         }
 
         let colorString = color.toString(16).toUpperCase();
 
-        while(colorString.length < 6) colorString = ('0' + colorString);
+        while (colorString.length < 6) colorString = '0' + colorString;
 
-        return `${ paletteId }\n${ colorString }`;
-    }, [ sellablePalettes, selectedPaletteIndex, petIndex, sellableColors, selectedColorIndex ]);
+        return `${paletteId}\n${colorString}`;
+    }, [sellablePalettes, selectedPaletteIndex, petIndex, sellableColors, selectedColorIndex]);
 
-    const validationErrorMessage = useMemo(() =>
-    {
+    const validationErrorMessage = useMemo(() => {
         let key: string = '';
 
-        switch(approvalResult)
-        {
+        switch (approvalResult) {
             case 1:
                 key = 'catalog.alert.petname.long';
                 break;
@@ -86,53 +86,46 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
                 break;
         }
 
-        if(!key || !key.length) return '';
+        if (!key || !key.length) return '';
 
         return LocalizeText(key);
-    }, [ approvalResult ]);
+    }, [approvalResult]);
 
-    const purchasePet = useCallback(() =>
-    {
-        if(approvalResult === -1)
-        {
+    const purchasePet = useCallback(() => {
+        if (approvalResult === -1) {
             SendMessageComposer(new ApproveNameMessageComposer(petName, 1));
 
             return;
         }
 
-        if(approvalResult === 0)
-        {
-            SendMessageComposer(new PurchaseFromCatalogComposer(page.pageId, currentOffer.offerId, `${ petName }\n${ petPurchaseString }`, 1));
+        if (approvalResult === 0) {
+            SendMessageComposer(new PurchaseFromCatalogComposer(page.pageId, currentOffer.offerId, `${petName}\n${petPurchaseString}`, 1));
 
             return;
         }
-    }, [ page, currentOffer, petName, petPurchaseString, approvalResult ]);
+    }, [page, currentOffer, petName, petPurchaseString, approvalResult]);
 
-    useMessageEvent<ApproveNameMessageEvent>(ApproveNameMessageEvent, event =>
-    {
+    useMessageEvent<ApproveNameMessageEvent>(ApproveNameMessageEvent, (event) => {
         const parser = event.getParser();
 
         setApprovalResult(parser.result);
 
-        if(parser.result === 0) purchasePet();
+        if (parser.result === 0) purchasePet();
         else DispatchUiEvent(new CatalogPurchaseFailureEvent(-1));
     });
 
-    useEffect(() =>
-    {
-        if(!page || !page.offers.length) return;
+    useEffect(() => {
+        if (!page || !page.offers.length) return;
 
         const offer = page.offers[0];
 
         setCurrentOffer(offer);
         setPetIndex(GetPetIndexFromLocalization(offer.localizationId));
         setColorsShowing(false);
-    }, [ page, setCurrentOffer ]);
+    }, [page, setCurrentOffer]);
 
-    useEffect(() =>
-    {
-        if(!currentOffer || !petPalette)
-        {
+    useEffect(() => {
+        if (!currentOffer || !petPalette) {
             setSelectedPaletteIndex(-1);
             setSellablePalettes([]);
             return;
@@ -140,178 +133,168 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = props =>
 
         const palettes: SellablePetPaletteData[] = [];
 
-        for(const palette of petPalette.palettes)
-        {
-            if(!palette.sellable) continue;
+        for (const palette of petPalette.palettes) {
+            if (!palette.sellable) continue;
 
             palettes.push(palette);
         }
 
         setSelectedPaletteIndex(palettes.length ? 0 : -1);
         setSellablePalettes(palettes);
-    }, [ currentOffer, petPalette ]);
+    }, [currentOffer, petPalette]);
 
-    useEffect(() =>
-    {
-        if(petIndex === -1) return;
+    useEffect(() => {
+        if (petIndex === -1) return;
 
         const colors = GetPetAvailableColors(petIndex, sellablePalettes);
 
-        setSelectedColorIndex((colors.length ? 0 : -1));
+        setSelectedColorIndex(colors.length ? 0 : -1);
         setSellableColors(colors);
-    }, [ petIndex, sellablePalettes ]);
+    }, [petIndex, sellablePalettes]);
 
-    useEffect(() =>
-    {
-        if(!roomPreviewer) return;
+    useEffect(() => {
+        if (!roomPreviewer) return;
 
         roomPreviewer.reset(false);
 
-        if((petIndex === -1) || !sellablePalettes.length || (selectedPaletteIndex === -1)) return;
+        if (petIndex === -1 || !sellablePalettes.length || selectedPaletteIndex === -1) return;
 
-        let petFigureString = `${ petIndex } ${ sellablePalettes[selectedPaletteIndex].paletteId }`;
+        let petFigureString = `${petIndex} ${sellablePalettes[selectedPaletteIndex].paletteId}`;
 
-        if(petIndex <= 7) petFigureString += ` ${ getColor.toString(16) }`;
+        if (petIndex <= 7) petFigureString += ` ${getColor.toString(16)}`;
 
         roomPreviewer.addPetIntoRoom(petFigureString);
-    }, [ roomPreviewer, petIndex, sellablePalettes, selectedPaletteIndex, getColor ]);
+    }, [roomPreviewer, petIndex, sellablePalettes, selectedPaletteIndex, getColor]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setApprovalResult(-1);
-    }, [ petName ]);
+    }, [petName]);
 
-    if(!currentOffer) return null;
+    if (!currentOffer) return null;
 
     return (
         <div className="flex flex-col h-full gap-2">
-            { /* Admin: quick actions */ }
-            { adminMode && !catalogAdmin.editingPageData &&
-                <div className="flex gap-2">
-                    <button
-                        className="flex items-center gap-1 text-[10px] text-primary hover:text-dark transition-colors cursor-pointer"
-                        onClick={ () =>
-                        {
-                            catalogAdmin.setEditingPageNode(null); catalogAdmin.setEditingRootPage(false); catalogAdmin.setEditingPageData(true);
-                        } }
-                    >
-                        <FaEdit className="text-[10px]" /> { LocalizeText('catalog.admin.edit.page') }
-                    </button>
-                    <button
-                        className="flex items-center gap-1 text-[10px] text-success hover:text-green-800 transition-colors cursor-pointer"
-                        onClick={ () => catalogAdmin.setEditingOffer({ offerId: -1, product: { productClassId: 0, productType: 'i', productCount: 1, extraParam: '' } } as any) }
-                    >
-                        <FaPlus className="text-[10px]" /> { LocalizeText('catalog.admin.offer.new') }
-                    </button>
-                </div> }
+            {/* Admin: quick actions */}
+            <CatalogAdminQuickActionsView />
 
-            { /* Top card: preview + name + purchase */ }
-            <div className="nitro-catalog-classic-pet-card flex gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
-                { /* Pet preview */ }
+            {/* Top card: preview + name + purchase */}
+            <div className="nitro-catalog-pet-card flex gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
+                {/* Pet preview */}
                 <div className="w-[160px] min-w-[160px] h-[140px] rounded overflow-hidden bg-card-grid-item relative flex items-center justify-center border border-card-grid-item-border">
                     <CatalogViewProductWidgetView />
                     <CatalogAddOnBadgeWidgetView className="bg-muted rounded absolute bottom-1 right-1" />
-                    { ((petIndex > -1) && (petIndex <= 7)) &&
+                    {petIndex > -1 && petIndex <= 7 && (
                         <button
-                            className={ `absolute bottom-1 left-1 w-[28px] h-[28px] rounded flex items-center justify-center cursor-pointer transition-all border ${ colorsShowing ? 'bg-primary text-white border-primary' : 'bg-white text-dark border-card-grid-item-border hover:bg-card-grid-item-active' }` }
-                            title={ LocalizeText('catalog.pets.show.colors') }
-                            onClick={ () => setColorsShowing(!colorsShowing) }
+                            className={`absolute bottom-1 left-1 w-[28px] h-[28px] rounded flex items-center justify-center cursor-pointer transition-all border ${colorsShowing ? 'bg-primary text-white border-primary' : 'bg-white text-dark border-card-grid-item-border hover:bg-card-grid-item-active'}`}
+                            title={LocalizeText('catalog.pets.show.colors')}
+                            onClick={() => setColorsShowing(!colorsShowing)}
                         >
                             <FaFillDrip className="text-[10px]" />
-                        </button> }
+                        </button>
+                    )}
                 </div>
 
-                { /* Pet info */ }
+                {/* Pet info */}
                 <div className="flex flex-col flex-1 justify-between min-w-0">
                     <div>
                         <div className="flex items-center gap-1.5">
                             <FaPaw className="text-primary text-xs" />
-                            <span className="text-sm font-bold">{ petBreedName || LocalizeText('catalog.pet.breed') }</span>
-                            { adminMode && currentOffer &&
+                            <span className="text-sm font-bold">{petBreedName || LocalizeText('catalog.pet.breed')}</span>
+                            {adminMode && currentOffer && (
                                 <FaEdit
                                     className="text-primary text-[11px] cursor-pointer hover:text-dark transition-colors shrink-0"
-                                    title={ LocalizeText('catalog.admin.offer.edit') }
-                                    onClick={ () => catalogAdmin.setEditingOffer(currentOffer) }
-                                /> }
+                                    title={LocalizeText('catalog.admin.offer.edit')}
+                                    onClick={() => catalogAdmin.setEditingOffer(currentOffer)}
+                                />
+                            )}
                         </div>
-                        { adminMode && currentOffer &&
+                        {adminMode && currentOffer && (
                             <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                                <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">ID: { currentOffer.product.productClassId }</span>
-                                <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: { currentOffer.offerId }</span>
-                            </div> }
-                        { !!page.localization.getText(0) &&
-                            <p className="text-[10px] text-dark mt-0.5" dangerouslySetInnerHTML={ { __html: SanitizeHtml(page.localization.getText(0)) } } /> }
+                                <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">
+                                    ID: {currentOffer.product.productClassId}
+                                </span>
+                                <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: {currentOffer.offerId}</span>
+                            </div>
+                        )}
+                        {!!page.localization.getText(0) && (
+                            <p className="text-[10px] text-dark mt-0.5" dangerouslySetInnerHTML={{ __html: SanitizeHtml(page.localization.getText(0)) }} />
+                        )}
                     </div>
 
-                    { /* Name input */ }
+                    {/* Name input */}
                     <div className="flex flex-col gap-1 mt-2">
-                        <label className="text-[9px] text-dark uppercase font-bold">{ LocalizeText('widgets.petpackage.name.title') }</label>
+                        <label className="text-[9px] text-dark uppercase font-bold">{LocalizeText('widgets.petpackage.name.title')}</label>
                         <div className="relative">
                             <input
-                                className={ `w-full text-[11px] border-2 rounded px-2 py-1.5 focus:outline-none transition-colors ${ approvalResult > 0 ? 'border-danger bg-danger/5' : approvalResult === 0 ? 'border-success bg-success/5' : 'border-card-grid-item-border focus:border-primary bg-white' }` }
-                                placeholder={ LocalizeText('widgets.petpackage.name.title') }
+                                className={`w-full text-[11px] border-2 rounded px-2 py-1.5 focus:outline-none transition-colors ${approvalResult > 0 ? 'border-danger bg-danger/5' : approvalResult === 0 ? 'border-success bg-success/5' : 'border-card-grid-item-border focus:border-primary bg-white'}`}
+                                placeholder={LocalizeText('widgets.petpackage.name.title')}
                                 type="text"
-                                value={ petName }
-                                onChange={ event => setPetName(event.target.value) }
+                                value={petName}
+                                onChange={(event) => setPetName(event.target.value)}
                             />
-                            { approvalResult === 0 &&
-                                <FaCheck className="absolute right-2 top-1/2 -translate-y-1/2 text-success text-[10px]" /> }
-                            { approvalResult > 0 &&
-                                <FaTimes className="absolute right-2 top-1/2 -translate-y-1/2 text-danger text-[10px]" /> }
+                            {approvalResult === 0 && <FaCheck className="absolute right-2 top-1/2 -translate-y-1/2 text-success text-[10px]" />}
+                            {approvalResult > 0 && <FaTimes className="absolute right-2 top-1/2 -translate-y-1/2 text-danger text-[10px]" />}
                         </div>
-                        { (approvalResult > 0) &&
-                            <span className="text-[10px] text-danger font-medium">{ validationErrorMessage }</span> }
+                        {approvalResult > 0 && <span className="text-[10px] text-danger font-medium">{validationErrorMessage}</span>}
                     </div>
 
-                    { /* Price + buy */ }
+                    {/* Price + buy */}
                     <div className="flex items-center justify-between mt-2">
                         <CatalogTotalPriceWidget />
                         <button
                             className="nitro-catalog-swf-button nitro-catalog-swf-buy-button"
-                            disabled={ !petName.length || (approvalResult > 0) }
-                            onClick={ purchasePet }
+                            disabled={!petName.length || approvalResult > 0}
+                            onClick={purchasePet}
                         >
-                            { approvalResult === -1 ? LocalizeText('catalog.purchase_confirmation.buy') : LocalizeText('catalog.marketplace.confirm_title') }
+                            {approvalResult === -1 ? LocalizeText('catalog.purchase_confirmation.buy') : LocalizeText('catalog.marketplace.confirm_title')}
                         </button>
                     </div>
                 </div>
             </div>
 
-            { /* Breed/Color grid */ }
+            {/* Breed/Color grid */}
             <div className="flex-1 overflow-auto min-h-0">
                 <div className="flex items-center gap-1.5 mb-1.5">
                     <span className="text-[10px] font-bold text-dark uppercase tracking-wide">
-                        { colorsShowing ? LocalizeText('catalog.pets.choose.color') : LocalizeText('catalog.pets.choose.breed') }
+                        {colorsShowing ? LocalizeText('catalog.pets.choose.color') : LocalizeText('catalog.pets.choose.breed')}
                     </span>
-                    { colorsShowing &&
-                        <button
-                            className="text-[9px] text-primary hover:text-dark cursor-pointer transition-colors"
-                            onClick={ () => setColorsShowing(false) }
-                        >
-                            { LocalizeText('catalog.pets.back.breeds') }
-                        </button> }
+                    {colorsShowing && (
+                        <button className="text-[9px] text-primary hover:text-dark cursor-pointer transition-colors" onClick={() => setColorsShowing(false)}>
+                            {LocalizeText('catalog.pets.back.breeds')}
+                        </button>
+                    )}
                 </div>
-                <div className={ colorsShowing ? 'nitro-catalog-classic-color-swatches flex flex-wrap gap-1 p-2 overflow-auto' : 'nitro-catalog-classic-pet-breeds flex flex-wrap gap-1 p-1 overflow-auto' }>
-                    { !colorsShowing && (sellablePalettes.length > 0) && sellablePalettes.map((palette, index) => (
-                        <LayoutGridItem
-                            key={ index }
-                            className="group/pet"
-                            itemActive={ (selectedPaletteIndex === index) }
-                            onClick={ () => setSelectedPaletteIndex(index) }
-                        >
-                            <LayoutPetImageView direction={ 2 } headOnly={ true } paletteId={ palette.paletteId } typeId={ petIndex } />
-                        </LayoutGridItem>
-                    )) }
-                    { colorsShowing && (sellableColors.length > 0) && sellableColors.map((colorSet, index) => (
-                        <LayoutGridItem
-                            key={ index }
-                            itemHighlight
-                            className="clear-bg"
-                            itemActive={ (selectedColorIndex === index) }
-                            itemColor={ ColorConverter.int2rgb(colorSet[0]) }
-                            onClick={ () => setSelectedColorIndex(index) }
-                        />
-                    )) }
+                <div
+                    className={
+                        colorsShowing
+                            ? 'nitro-catalog-color-swatches flex flex-wrap gap-1 p-2 overflow-auto'
+                            : 'nitro-catalog-pet-breeds flex flex-wrap gap-1 p-1 overflow-auto'
+                    }
+                >
+                    {!colorsShowing &&
+                        sellablePalettes.length > 0 &&
+                        sellablePalettes.map((palette, index) => (
+                            <LayoutGridItem
+                                key={index}
+                                className="group/pet"
+                                itemActive={selectedPaletteIndex === index}
+                                onClick={() => setSelectedPaletteIndex(index)}
+                            >
+                                <LayoutPetImageView direction={2} headOnly={true} paletteId={palette.paletteId} typeId={petIndex} />
+                            </LayoutGridItem>
+                        ))}
+                    {colorsShowing &&
+                        sellableColors.length > 0 &&
+                        sellableColors.map((colorSet, index) => (
+                            <LayoutGridItem
+                                key={index}
+                                itemHighlight
+                                className="clear-bg"
+                                itemActive={selectedColorIndex === index}
+                                itemColor={ColorConverter.int2rgb(colorSet[0])}
+                                onClick={() => setSelectedColorIndex(index)}
+                            />
+                        ))}
                 </div>
             </div>
         </div>

@@ -1,8 +1,7 @@
 export type WiredVariablePickerTarget = 'user' | 'furni' | 'global' | 'context';
 export type WiredVariablePickerUsage = 'give' | 'remove' | 'change-destination' | 'change-reference' | 'condition' | 'filter-main' | 'echo';
 
-export interface IWiredVariableDefinitionLike
-{
+export interface IWiredVariableDefinitionLike {
     availability: number;
     hasValue: boolean;
     isReadOnly?: boolean;
@@ -10,8 +9,7 @@ export interface IWiredVariableDefinitionLike
     name: string;
 }
 
-export interface IWiredVariablePickerEntry
-{
+export interface IWiredVariablePickerEntry {
     id: string;
     token: string;
     label: string;
@@ -24,8 +22,7 @@ export interface IWiredVariablePickerEntry
     children?: IWiredVariablePickerEntry[];
 }
 
-interface IInternalVariableMeta
-{
+interface IInternalVariableMeta {
     key: string;
     canUseAsDestination: boolean;
     canUseAsReference: boolean;
@@ -51,20 +48,18 @@ const CUSTOM_TOKEN_PREFIX = 'custom:';
 const INTERNAL_TOKEN_PREFIX = 'internal:';
 const GROUP_TOKEN_PREFIX = 'group:';
 
-const createInternalMeta = (key: string, canUseAsDestination = false, canUseAsReference = false): IInternalVariableMeta =>
-    ({
-        key,
-        canUseAsDestination,
-        canUseAsReference
-    });
+const createInternalMeta = (key: string, canUseAsDestination = false, canUseAsReference = false): IInternalVariableMeta => ({
+    key,
+    canUseAsDestination,
+    canUseAsReference
+});
 
-export const normalizeInternalVariableKey = (key: string) =>
-{
+export const normalizeInternalVariableKey = (key: string) => {
     const normalizedKey = key?.trim();
 
-    if(!normalizedKey) return '';
+    if (!normalizedKey) return '';
 
-    return (INTERNAL_VARIABLE_ALIASES[normalizedKey] || normalizedKey);
+    return INTERNAL_VARIABLE_ALIASES[normalizedKey] || normalizedKey;
 };
 
 const INTERNAL_VARIABLES: Record<'user' | 'furni' | 'global' | 'context', IInternalVariableMeta[]> = {
@@ -161,37 +156,37 @@ const INTERNAL_VARIABLES: Record<'user' | 'furni' | 'global' | 'context', IInter
     ]
 };
 
-const sortEntries = (left: IWiredVariablePickerEntry, right: IWiredVariablePickerEntry) =>
-{
+const sortEntries = (left: IWiredVariablePickerEntry, right: IWiredVariablePickerEntry) => {
     return left.displayLabel.localeCompare(right.displayLabel, undefined, { sensitivity: 'base' });
 };
 
-const getNormalizedInternalTarget = (target: WiredVariablePickerTarget): 'user' | 'furni' | 'global' | 'context' =>
-{
-    if(target === 'furni') return 'furni';
-    if(target === 'user') return 'user';
-    if(target === 'context') return 'context';
+const getNormalizedInternalTarget = (target: WiredVariablePickerTarget): 'user' | 'furni' | 'global' | 'context' => {
+    if (target === 'furni') return 'furni';
+    if (target === 'user') return 'user';
+    if (target === 'context') return 'context';
 
     return 'global';
 };
 
-const getInternalSelectable = (usage: WiredVariablePickerUsage, meta: IInternalVariableMeta) =>
-{
-    switch(usage)
-    {
-        case 'condition': return true;
-        case 'filter-main': return meta.canUseAsReference;
-        case 'echo': return true;
-        case 'change-destination': return meta.canUseAsDestination;
-        case 'change-reference': return meta.canUseAsReference;
-        default: return false;
+const getInternalSelectable = (usage: WiredVariablePickerUsage, meta: IInternalVariableMeta) => {
+    switch (usage) {
+        case 'condition':
+            return true;
+        case 'filter-main':
+            return meta.canUseAsReference;
+        case 'echo':
+            return true;
+        case 'change-destination':
+            return meta.canUseAsDestination;
+        case 'change-reference':
+            return meta.canUseAsReference;
+        default:
+            return false;
     }
 };
 
-const getCustomSelectable = (usage: WiredVariablePickerUsage, definition: IWiredVariableDefinitionLike) =>
-{
-    switch(usage)
-    {
+const getCustomSelectable = (usage: WiredVariablePickerUsage, definition: IWiredVariableDefinitionLike) => {
+    switch (usage) {
         case 'condition':
         case 'filter-main':
             return true;
@@ -200,71 +195,67 @@ const getCustomSelectable = (usage: WiredVariablePickerUsage, definition: IWired
         case 'change-reference':
             return !!definition.hasValue;
         case 'change-destination':
-            return (!!definition.hasValue && !definition.isReadOnly);
+            return !!definition.hasValue && !definition.isReadOnly;
         default:
             return !definition.isReadOnly;
     }
 };
 
-const getRootKey = (key: string) =>
-{
+const getRootKey = (key: string) => {
     const separatorIndex = key.indexOf('.');
 
-    if(separatorIndex < 0) return null;
+    if (separatorIndex < 0) return null;
 
     return key.slice(0, separatorIndex);
 };
 
-const createInternalEntry = (target: WiredVariablePickerTarget, usage: WiredVariablePickerUsage, meta: IInternalVariableMeta): IWiredVariablePickerEntry =>
-    ({
-        id: `${ INTERNAL_TOKEN_PREFIX }${ meta.key }`,
-        token: `${ INTERNAL_TOKEN_PREFIX }${ meta.key }`,
-        label: meta.key,
-        displayLabel: meta.key,
-        searchableText: meta.key,
-        selectable: getInternalSelectable(usage, meta),
-        hasValue: meta.canUseAsReference,
-        kind: 'internal',
-        target
-    });
+const createInternalEntry = (target: WiredVariablePickerTarget, usage: WiredVariablePickerUsage, meta: IInternalVariableMeta): IWiredVariablePickerEntry => ({
+    id: `${INTERNAL_TOKEN_PREFIX}${meta.key}`,
+    token: `${INTERNAL_TOKEN_PREFIX}${meta.key}`,
+    label: meta.key,
+    displayLabel: meta.key,
+    searchableText: meta.key,
+    selectable: getInternalSelectable(usage, meta),
+    hasValue: meta.canUseAsReference,
+    kind: 'internal',
+    target
+});
 
-const createCustomEntry = (target: WiredVariablePickerTarget, usage: WiredVariablePickerUsage, definition: IWiredVariableDefinitionLike): IWiredVariablePickerEntry =>
-    ({
-        id: `${ CUSTOM_TOKEN_PREFIX }${ definition.itemId }`,
-        token: `${ CUSTOM_TOKEN_PREFIX }${ definition.itemId }`,
-        label: definition.name,
-        displayLabel: definition.name,
-        searchableText: definition.name,
-        selectable: getCustomSelectable(usage, definition),
-        hasValue: !!definition.hasValue,
-        kind: 'custom',
-        target
-    });
+const createCustomEntry = (
+    target: WiredVariablePickerTarget,
+    usage: WiredVariablePickerUsage,
+    definition: IWiredVariableDefinitionLike
+): IWiredVariablePickerEntry => ({
+    id: `${CUSTOM_TOKEN_PREFIX}${definition.itemId}`,
+    token: `${CUSTOM_TOKEN_PREFIX}${definition.itemId}`,
+    label: definition.name,
+    displayLabel: definition.name,
+    searchableText: definition.name,
+    selectable: getCustomSelectable(usage, definition),
+    hasValue: !!definition.hasValue,
+    kind: 'custom',
+    target
+});
 
-const groupEntries = (entries: IWiredVariablePickerEntry[]) =>
-{
-    const groupedParents = new Map<string, { exact?: IWiredVariablePickerEntry; children: IWiredVariablePickerEntry[]; }>();
+const groupEntries = (entries: IWiredVariablePickerEntry[]) => {
+    const groupedParents = new Map<string, { exact?: IWiredVariablePickerEntry; children: IWiredVariablePickerEntry[] }>();
 
-    for(const entry of entries)
-    {
+    for (const entry of entries) {
         const displayLabel = entry.displayLabel?.trim();
 
-        if(!displayLabel?.length)
-        {
+        if (!displayLabel?.length) {
             continue;
         }
 
         const rootKey = getRootKey(displayLabel) || displayLabel;
         let group = groupedParents.get(rootKey);
 
-        if(!group)
-        {
+        if (!group) {
             group = { children: [] };
             groupedParents.set(rootKey, group);
         }
 
-        if(displayLabel === rootKey)
-        {
+        if (displayLabel === rootKey) {
             group.exact = {
                 ...entry,
                 label: displayLabel,
@@ -276,98 +267,93 @@ const groupEntries = (entries: IWiredVariablePickerEntry[]) =>
 
         const childLabel = displayLabel.slice(rootKey.length + 1).trim();
 
-        if(!childLabel.length) continue;
+        if (!childLabel.length) continue;
 
         group.children.push({
             ...entry,
             label: childLabel,
             displayLabel,
-            searchableText: `${ displayLabel } ${ childLabel }`
+            searchableText: `${displayLabel} ${childLabel}`
         });
     }
 
     const groupedEntries: IWiredVariablePickerEntry[] = [];
 
-    for(const [ rootKey, group ] of groupedParents)
-    {
-        const sortedChildren = [ ...group.children ]
+    for (const [rootKey, group] of groupedParents) {
+        const sortedChildren = [...group.children]
             .sort(sortEntries)
-            .filter((child, index, collection) => collection.findIndex(entry => (entry.token === child.token)) === index);
+            .filter((child, index, collection) => collection.findIndex((entry) => entry.token === child.token) === index);
         const shouldGroup = !!sortedChildren.length && (sortedChildren.length > 1 || !!group.exact);
 
-        if(!shouldGroup)
-        {
-            if(group.exact) groupedEntries.push(group.exact);
-            groupedEntries.push(...sortedChildren.map(child => ({ ...child, label: child.displayLabel })));
+        if (!shouldGroup) {
+            if (group.exact) groupedEntries.push(group.exact);
+            groupedEntries.push(...sortedChildren.map((child) => ({ ...child, label: child.displayLabel })));
             continue;
         }
 
         groupedEntries.push({
             ...(group.exact || {
-                id: `${ GROUP_TOKEN_PREFIX }${ rootKey }`,
-                token: `${ GROUP_TOKEN_PREFIX }${ rootKey }`,
+                id: `${GROUP_TOKEN_PREFIX}${rootKey}`,
+                token: `${GROUP_TOKEN_PREFIX}${rootKey}`,
                 label: rootKey,
                 displayLabel: rootKey,
                 searchableText: rootKey,
                 selectable: false,
                 hasValue: false,
-                kind: (sortedChildren[0]?.kind || 'custom'),
-                target: (sortedChildren[0]?.target || 'user')
+                kind: sortedChildren[0]?.kind || 'custom',
+                target: sortedChildren[0]?.target || 'user'
             }),
             label: rootKey,
             displayLabel: rootKey,
-            searchableText: `${ rootKey } ${ sortedChildren.map(child => child.displayLabel).join(' ') }`,
+            searchableText: `${rootKey} ${sortedChildren.map((child) => child.displayLabel).join(' ')}`,
             children: sortedChildren
         });
     }
 
     return groupedEntries
-        .filter(entry => entry.displayLabel?.trim().length)
+        .filter((entry) => entry.displayLabel?.trim().length)
         .sort(sortEntries)
-        .filter((entry, index, collection) => collection.findIndex(currentEntry => (currentEntry.token === entry.token)) === index);
+        .filter((entry, index, collection) => collection.findIndex((currentEntry) => currentEntry.token === entry.token) === index);
 };
 
-export const createCustomVariableToken = (itemId: number) => (itemId > 0 ? `${ CUSTOM_TOKEN_PREFIX }${ itemId }` : '');
-export const createInternalVariableToken = (key: string) =>
-{
+export const createCustomVariableToken = (itemId: number) => (itemId > 0 ? `${CUSTOM_TOKEN_PREFIX}${itemId}` : '');
+export const createInternalVariableToken = (key: string) => {
     const normalizedKey = normalizeInternalVariableKey(key);
 
-    return normalizedKey ? `${ INTERNAL_TOKEN_PREFIX }${ normalizedKey }` : '';
+    return normalizedKey ? `${INTERNAL_TOKEN_PREFIX}${normalizedKey}` : '';
 };
 export const isCustomVariableToken = (token: string) => !!token && token.startsWith(CUSTOM_TOKEN_PREFIX);
 export const isInternalVariableToken = (token: string) => !!token && token.startsWith(INTERNAL_TOKEN_PREFIX);
 export const getCustomVariableItemId = (token: string) => (isCustomVariableToken(token) ? parseInt(token.slice(CUSTOM_TOKEN_PREFIX.length), 10) || 0 : 0);
-export const getInternalVariableKey = (token: string) => (isInternalVariableToken(token) ? normalizeInternalVariableKey(token.slice(INTERNAL_TOKEN_PREFIX.length)) : '');
+export const getInternalVariableKey = (token: string) =>
+    isInternalVariableToken(token) ? normalizeInternalVariableKey(token.slice(INTERNAL_TOKEN_PREFIX.length)) : '';
 
-export const normalizeVariableTokenFromWire = (value: string) =>
-{
+export const normalizeVariableTokenFromWire = (value: string) => {
     const normalizedValue = value?.trim();
 
-    if(!normalizedValue) return '';
-    if(isCustomVariableToken(normalizedValue)) return normalizedValue;
-    if(isInternalVariableToken(normalizedValue)) return createInternalVariableToken(normalizedValue.slice(INTERNAL_TOKEN_PREFIX.length));
+    if (!normalizedValue) return '';
+    if (isCustomVariableToken(normalizedValue)) return normalizedValue;
+    if (isInternalVariableToken(normalizedValue)) return createInternalVariableToken(normalizedValue.slice(INTERNAL_TOKEN_PREFIX.length));
 
     const parsedValue = parseInt(normalizedValue, 10);
 
-    return (!Number.isNaN(parsedValue) && (parsedValue > 0)) ? createCustomVariableToken(parsedValue) : '';
+    return !Number.isNaN(parsedValue) && parsedValue > 0 ? createCustomVariableToken(parsedValue) : '';
 };
 
-export const createFallbackVariableEntry = (target: WiredVariablePickerTarget, token: string): IWiredVariablePickerEntry | null =>
-{
-    if(!token) return null;
+export const createFallbackVariableEntry = (target: WiredVariablePickerTarget, token: string): IWiredVariablePickerEntry | null => {
+    if (!token) return null;
 
-    if(isCustomVariableToken(token))
-    {
+    if (isCustomVariableToken(token)) {
         const itemId = getCustomVariableItemId(token);
 
-        if(itemId <= 0) return null;
+        if (itemId <= 0) return null;
 
         return {
             id: token,
             token,
-            label: `#${ itemId }`,
-            displayLabel: `#${ itemId }`,
-            searchableText: `#${ itemId }`,
+            label: `#${itemId}`,
+            displayLabel: `#${itemId}`,
+            searchableText: `#${itemId}`,
             selectable: true,
             hasValue: false,
             kind: 'custom',
@@ -375,11 +361,10 @@ export const createFallbackVariableEntry = (target: WiredVariablePickerTarget, t
         };
     }
 
-    if(isInternalVariableToken(token))
-    {
+    if (isInternalVariableToken(token)) {
         const key = getInternalVariableKey(token);
 
-        if(!key) return null;
+        if (!key) return null;
 
         return {
             id: token,
@@ -397,26 +382,25 @@ export const createFallbackVariableEntry = (target: WiredVariablePickerTarget, t
     return null;
 };
 
-export const buildWiredVariablePickerEntries = (target: WiredVariablePickerTarget, usage: WiredVariablePickerUsage, customDefinitions: IWiredVariableDefinitionLike[]) =>
-{
+export const buildWiredVariablePickerEntries = (
+    target: WiredVariablePickerTarget,
+    usage: WiredVariablePickerUsage,
+    customDefinitions: IWiredVariableDefinitionLike[]
+) => {
     const internalTarget = getNormalizedInternalTarget(target);
-    const customEntries = groupEntries([ ...(customDefinitions || []) ]
-        .map(definition => createCustomEntry(target, usage, definition))
-        .sort(sortEntries));
-    const internalEntries = groupEntries(INTERNAL_VARIABLES[internalTarget].map(meta => createInternalEntry(target, usage, meta)));
+    const customEntries = groupEntries([...(customDefinitions || [])].map((definition) => createCustomEntry(target, usage, definition)).sort(sortEntries));
+    const internalEntries = groupEntries(INTERNAL_VARIABLES[internalTarget].map((meta) => createInternalEntry(target, usage, meta)));
 
-    return [ ...customEntries, ...internalEntries ];
+    return [...customEntries, ...internalEntries];
 };
 
-export const flattenWiredVariablePickerEntries = (entries: IWiredVariablePickerEntry[]): IWiredVariablePickerEntry[] =>
-{
+export const flattenWiredVariablePickerEntries = (entries: IWiredVariablePickerEntry[]): IWiredVariablePickerEntry[] => {
     const flattened: IWiredVariablePickerEntry[] = [];
 
-    for(const entry of entries)
-    {
+    for (const entry of entries) {
         flattened.push(entry);
 
-        if(entry.children?.length) flattened.push(...entry.children);
+        if (entry.children?.length) flattened.push(...entry.children);
     }
 
     return flattened;

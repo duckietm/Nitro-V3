@@ -1,44 +1,51 @@
-import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { FloorplanCanvasSVG } from './FloorplanCanvasSVG';
+import { describe, expect, it, vi } from 'vitest';
 import { initialState } from '../state/reducer';
+import { FloorplanCanvasSVG } from './FloorplanCanvasSVG';
 
-describe('FloorplanCanvasSVG', () =>
-{
-    it('renders one polygon per non-blocked tile', () =>
-    {
+describe('FloorplanCanvasSVG', () => {
+    it('renders one polygon per non-blocked tile', () => {
         const state = {
             ...initialState,
             tiles: [
-                [{ h: 0, blocked: false }, { h: 1, blocked: true }],
-                [{ h: 2, blocked: false }, { h: 3, blocked: false }]
+                [
+                    { h: 0, blocked: false },
+                    { h: 1, blocked: true }
+                ],
+                [
+                    { h: 2, blocked: false },
+                    { h: 3, blocked: false }
+                ]
             ]
         };
-        const { container } = render(<FloorplanCanvasSVG state={ state } dispatch={ () => {} } />);
+        const { container } = render(<FloorplanCanvasSVG state={state} dispatch={() => {}} />);
         const polys = container.querySelectorAll('polygon');
         expect(polys.length).toBeGreaterThanOrEqual(3);
     });
 
-    it('renders door marker on the door tile', () =>
-    {
+    it('renders door marker on the door tile', () => {
         const state = {
             ...initialState,
-            tiles: [[{ h: 0, blocked: false }, { h: 0, blocked: false }]],
+            tiles: [
+                [
+                    { h: 0, blocked: false },
+                    { h: 0, blocked: false }
+                ]
+            ],
             door: { x: 1, y: 0, dir: 2 as const }
         };
-        const { container } = render(<FloorplanCanvasSVG state={ state } dispatch={ () => {} } />);
+        const { container } = render(<FloorplanCanvasSVG state={state} dispatch={() => {}} />);
         expect(container.querySelector('[data-testid="door-marker"]')).toBeTruthy();
     });
 
-    it('forwards pointer events to a tool dispatch (PAINT_TILE with brush)', () =>
-    {
+    it('forwards pointer events to a tool dispatch (PAINT_TILE with brush)', () => {
         const state = {
             ...initialState,
             tiles: [[{ h: 0, blocked: false }]],
             brush: { h: 0, action: 'SET' as const }
         };
         const dispatch = vi.fn();
-        const { container } = render(<FloorplanCanvasSVG state={ state } dispatch={ dispatch } />);
+        const { container } = render(<FloorplanCanvasSVG state={state} dispatch={dispatch} />);
         const svg = container.querySelector('svg') as SVGSVGElement;
         // usePointerToTile resolves the tile via document.elementFromPoint first
         // (the tile polygons carry data-row/data-col). jsdom returns null and has
@@ -54,9 +61,8 @@ describe('FloorplanCanvasSVG', () =>
         (document as { elementFromPoint?: unknown }).elementFromPoint = prevEfp;
     });
 
-    it('zoom in/out buttons adjust the viewBox', () =>
-    {
-        const { container } = render(<FloorplanCanvasSVG state={ initialState } dispatch={ () => {} } />);
+    it('zoom in/out buttons adjust the viewBox', () => {
+        const { container } = render(<FloorplanCanvasSVG state={initialState} dispatch={() => {}} />);
         const svg = container.querySelector('svg') as SVGSVGElement;
         const initialVB = svg.getAttribute('viewBox');
         fireEvent.click(container.querySelector('[data-testid="zoom-in"]') as Element);

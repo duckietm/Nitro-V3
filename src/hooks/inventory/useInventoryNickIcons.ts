@@ -5,20 +5,18 @@ import { INickIconItem, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
 import { useSharedVisibility } from '../useSharedVisibility';
 
-const useInventoryNickIconsState = () =>
-{
-    const [ needsUpdate, setNeedsUpdate ] = useState(true);
-    const [ nickIcons, setNickIcons ] = useState<INickIconItem[]>([]);
-    const [ activeNickIcon, setActiveNickIcon ] = useState<INickIconItem | null>(null);
-    const [ selectedNickIcon, setSelectedNickIcon ] = useState<INickIconItem | null>(null);
+const useInventoryNickIconsState = () => {
+    const [needsUpdate, setNeedsUpdate] = useState(true);
+    const [nickIcons, setNickIcons] = useState<INickIconItem[]>([]);
+    const [activeNickIcon, setActiveNickIcon] = useState<INickIconItem | null>(null);
+    const [selectedNickIcon, setSelectedNickIcon] = useState<INickIconItem | null>(null);
     const { isVisible = false, activate = null, deactivate = null } = useSharedVisibility();
 
-    useMessageEvent<UserNickIconsEvent>(UserNickIconsEvent, event =>
-    {
+    useMessageEvent<UserNickIconsEvent>(UserNickIconsEvent, (event) => {
         const parser = event.getParser();
         const ownedNickIcons = parser.nickIcons
-            .filter(icon => icon.owned)
-            .map(icon => ({
+            .filter((icon) => icon.owned)
+            .map((icon) => ({
                 id: icon.id,
                 iconKey: icon.iconKey,
                 displayName: icon.displayName,
@@ -29,41 +27,35 @@ const useInventoryNickIconsState = () =>
             }));
 
         setNickIcons(ownedNickIcons);
-        setActiveNickIcon(ownedNickIcons.find(icon => icon.active) || null);
+        setActiveNickIcon(ownedNickIcons.find((icon) => icon.active) || null);
     });
 
-    const activateNickIcon = (nickIconId: number) =>
-    {
+    const activateNickIcon = (nickIconId: number) => {
         SendMessageComposer(new SetActiveNickIconComposer(nickIconId));
     };
 
-    const deactivateNickIcon = () =>
-    {
+    const deactivateNickIcon = () => {
         SendMessageComposer(new SetActiveNickIconComposer(0));
     };
 
-    useEffect(() =>
-    {
-        if(!nickIcons.length)
-        {
+    useEffect(() => {
+        if (!nickIcons.length) {
             setSelectedNickIcon(null);
             return;
         }
 
-        setSelectedNickIcon(prevValue =>
-        {
-            if(prevValue && nickIcons.find(icon => icon.id === prevValue.id)) return prevValue;
+        setSelectedNickIcon((prevValue) => {
+            if (prevValue && nickIcons.find((icon) => icon.id === prevValue.id)) return prevValue;
             return nickIcons[0];
         });
-    }, [ nickIcons ]);
+    }, [nickIcons]);
 
-    useEffect(() =>
-    {
-        if(!isVisible || !needsUpdate) return;
+    useEffect(() => {
+        if (!isVisible || !needsUpdate) return;
 
         SendMessageComposer(new RequestNickIconsComposer());
         setNeedsUpdate(false);
-    }, [ isVisible, needsUpdate ]);
+    }, [isVisible, needsUpdate]);
 
     return {
         nickIcons,

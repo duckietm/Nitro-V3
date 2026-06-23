@@ -1,5 +1,4 @@
 export * from './CanManipulateFurniture';
-export * from './GetSessionDataManager';
 export * from './CreateRoomSession';
 export * from './GetCanStandUp';
 export * from './GetCanUseExpression';
@@ -10,6 +9,7 @@ export * from './GetFurnitureDataForRoomObject';
 export * from './GetOwnPosture';
 export * from './GetProductDataForLocalization';
 export * from './GetRoomSession';
+export * from './GetSessionDataManager';
 export * from './GoToDesktop';
 export * from './HasHabboClub';
 export * from './HasHabboVip';

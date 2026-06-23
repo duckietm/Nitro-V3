@@ -10,8 +10,7 @@ import { MentionRowView } from '../mentions';
 const TAB_CHAT = 'chat';
 const TAB_MENTIONS = 'mentions';
 
-export const ChatHistoryView: FC<{}> = props =>
-{
+export const ChatHistoryView: FC<{}> = (props) => {
     const [isVisible, setIsVisible] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
     const [activeTab, setActiveTab] = useState<string>(TAB_CHAT);
@@ -24,54 +23,44 @@ export const ChatHistoryView: FC<{}> = props =>
     const isFirstRender = useRef(true);
     const prevChatLength = useRef<number>(0);
 
-    const filteredChatHistory = useMemo(() =>
-    {
+    const filteredChatHistory = useMemo(() => {
         let result = chatHistory;
 
-        if (searchText.length > 0)
-        {
+        if (searchText.length > 0) {
             const text = searchText.toLowerCase();
-            result = chatHistory.filter(entry =>
-                (entry.message && entry.message.toLowerCase().includes(text)) ||
-                (entry.name && entry.name.toLowerCase().includes(text))
+            result = chatHistory.filter(
+                (entry) => (entry.message && entry.message.toLowerCase().includes(text)) || (entry.name && entry.name.toLowerCase().includes(text))
             );
         }
 
         return [...result];
     }, [chatHistory, searchText]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         if (!elementRef.current || !isVisible) return;
 
         const element = elementRef.current;
         const maxScrollTop = Math.max(0, element.scrollHeight - element.clientHeight);
         const isAtBottom = maxScrollTop === 0 || Math.abs(element.scrollTop - maxScrollTop) <= 50;
 
-        if (isFirstRender.current)
-        {
+        if (isFirstRender.current) {
             element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
             isFirstRender.current = false;
-        }
-        else if (filteredChatHistory.length > prevChatLength.current)
-        {
+        } else if (filteredChatHistory.length > prevChatLength.current) {
             element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
         }
 
         prevChatLength.current = filteredChatHistory.length;
     }, [filteredChatHistory, isVisible]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
 
                 if (parts.length < 2) return;
 
-                switch (parts[1])
-                {
+                switch (parts[1]) {
                     case 'show':
                         setIsVisible(true);
                         return;
@@ -79,7 +68,7 @@ export const ChatHistoryView: FC<{}> = props =>
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(prevValue => !prevValue);
+                        setIsVisible((prevValue) => !prevValue);
                         return;
                 }
             },
@@ -94,66 +83,96 @@ export const ChatHistoryView: FC<{}> = props =>
     if (!isVisible) return null;
 
     return (
-        <NitroCardView className="w-[400px] h-[400px] bg-[#f0f0f0]" theme="primary-slim" uniqueKey="chat-history">
-            <NitroCardHeaderView headerText={LocalizeText('room.chathistory.button.text')} onCloseClick={event => setIsVisible(false)} />
+        <NitroCardView
+            className="nitro-chat-history min-w-0 w-[min(400px,calc(100vw-16px))] h-[min(400px,calc(100vh-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)] bg-[#f0f0f0]"
+            theme="primary-slim"
+            uniqueKey="chat-history"
+        >
+            <NitroCardHeaderView headerText={LocalizeText('room.chathistory.button.text')} onCloseClick={(event) => setIsVisible(false)} />
             <NitroCardTabsView>
-                <NitroCardTabsItemView isActive={ activeTab === TAB_CHAT } onClick={ () => setActiveTab(TAB_CHAT) }>
-                    { LocalizeText('room.chathistory.button.text') }
+                <NitroCardTabsItemView isActive={activeTab === TAB_CHAT} onClick={() => setActiveTab(TAB_CHAT)}>
+                    {LocalizeText('room.chathistory.button.text')}
                 </NitroCardTabsItemView>
-                <NitroCardTabsItemView count={ unreadCount } isActive={ activeTab === TAB_MENTIONS } onClick={ () => setActiveTab(TAB_MENTIONS) }>
-                    { LocalizeText('mentions.tab.title') }
+                <NitroCardTabsItemView count={unreadCount} isActive={activeTab === TAB_MENTIONS} onClick={() => setActiveTab(TAB_MENTIONS)}>
+                    {LocalizeText('mentions.tab.title')}
                 </NitroCardTabsItemView>
             </NitroCardTabsView>
-            <NitroCardContentView className="h-full bg-[#f0f0f0] bg-[url('@/assets/images/chat/chathistory_background.png')] bg-repeat bg-auto" gap={2} overflow="hidden" style={{ height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
-                { activeTab === TAB_MENTIONS ? (
-                    <div style={{ flex: 1, overflowY: 'auto', background: 'inherit' }}>
-                        { (mentions.length === 0)
-                            ? <Text center variant="gray">{ LocalizeText('mentions.window.empty') }</Text>
-                            : mentions.map(mention => (
+            <NitroCardContentView
+                className="nitro-chat-history-content h-full bg-[#f0f0f0] bg-[url('@/assets/images/chat/chathistory_background.png')] bg-repeat bg-auto"
+                gap={2}
+                overflow="hidden"
+            >
+                {activeTab === TAB_MENTIONS ? (
+                    <div className="nitro-chat-history-scroll">
+                        {mentions.length === 0 ? (
+                            <Text center variant="gray">
+                                {LocalizeText('mentions.window.empty')}
+                            </Text>
+                        ) : (
+                            mentions.map((mention) => (
                                 <MentionRowView
-                                    key={ mention.mentionId }
-                                    mention={ mention }
-                                    onGoto={ onMentionGoto }
-                                    onOpen={ onMentionOpen }
-                                    onRemove={ onMentionRemove }
-                                    ownUsername={ ownMentionUsername } />
-                            )) }
+                                    key={mention.mentionId}
+                                    mention={mention}
+                                    onGoto={onMentionGoto}
+                                    onOpen={onMentionOpen}
+                                    onRemove={onMentionRemove}
+                                    ownUsername={ownMentionUsername}
+                                />
+                            ))
+                        )}
                     </div>
                 ) : (
-                  <>
-                <NitroInput placeholder={LocalizeText('generic.search')} type="text" value={searchText} onChange={event => setSearchText(event.target.value)} />
-                <div ref={elementRef} style={{ flex: 1, overflowY: 'auto', background: 'inherit' }}>
-                    {filteredChatHistory.map((row, index) => (
-                        <Flex key={index} alignItems="center" className="p-1" gap={2}>
-                            <Text variant="gray">{row.timestamp}</Text>
-                            {row.type === ChatEntryType.TYPE_CHAT && (
-                                <div className="bubble-container" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-                                    <div
-                                        className={`chat-bubble bubble-${row.style} type-${row.chatType}`}
-                                        style={{ maxWidth: '100%', backgroundColor: row.style === 0 ? row.color : 'transparent', position: 'relative', zIndex: 1 }}>
-                                        <div className="user-container">
-                                            {row.imageUrl && row.imageUrl.length > 0 && (
-                                                <div className="user-image" style={{ backgroundImage: `url(${row.imageUrl})` }} />
-                                            )}
+                    <>
+                        <NitroInput
+                            placeholder={LocalizeText('generic.search')}
+                            type="text"
+                            value={searchText}
+                            onChange={(event) => setSearchText(event.target.value)}
+                        />
+                        <div ref={elementRef} className="nitro-chat-history-scroll">
+                            {filteredChatHistory.map((row, index) => (
+                                <Flex key={index} alignItems="center" className="p-1" gap={2}>
+                                    <Text variant="gray">{row.timestamp}</Text>
+                                    {row.type === ChatEntryType.TYPE_CHAT && (
+                                        <div className="nitro-chat-history-bubble-wrap bubble-container">
+                                            <div
+                                                className={`chat-bubble bubble-${row.style} type-${row.chatType}`}
+                                                style={{
+                                                    maxWidth: '100%',
+                                                    backgroundColor: row.style === 0 ? row.color : 'transparent',
+                                                    position: 'relative',
+                                                    zIndex: 1
+                                                }}
+                                            >
+                                                <div className="user-container">
+                                                    {row.imageUrl && row.imageUrl.length > 0 && (
+                                                        <div className="user-image" style={{ backgroundImage: `url(${row.imageUrl})` }} />
+                                                    )}
+                                                </div>
+                                                <div className="chat-content">
+                                                    <b className="mr-1 username" dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${row.name}: `) }} />
+                                                    <span
+                                                        className="message"
+                                                        dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${row.message}`) }}
+                                                        onClick={onClickChat}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="chat-content">
-                                            <b className="mr-1 username" dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${row.name}: `) }} />
-                                            <span className="message" dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${row.message}`) }} onClick={ onClickChat } />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                            {row.type === ChatEntryType.TYPE_ROOM_INFO && (
-                                <>
-                                    <i className="nitro-icon icon-small-room" />
-                                    <Text grow textBreak wrap>{row.name}</Text>
-                                </>
-                            )}
-                        </Flex>
-                    ))}
-                </div>
-                  </>
-                ) }
+                                    )}
+                                    {row.type === ChatEntryType.TYPE_ROOM_INFO && (
+                                        <>
+                                            <i className="nitro-icon icon-small-room" />
+                                            <Text grow textBreak wrap>
+                                                {row.name}
+                                            </Text>
+                                        </>
+                                    )}
+                                </Flex>
+                            ))}
+                        </div>
+                    </>
+                )}
             </NitroCardContentView>
         </NitroCardView>
     );

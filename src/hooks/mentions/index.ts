@@ -1,3 +1,3 @@
-export * from './useMentionsSnapshot';
-export * from './useMentionMessages';
 export * from './useMentionActions';
+export * from './useMentionMessages';
+export * from './useMentionsSnapshot';

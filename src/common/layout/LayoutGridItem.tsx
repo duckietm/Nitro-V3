@@ -4,8 +4,7 @@ import { Column, ColumnProps } from '../Column';
 import { LayoutItemCountView } from './LayoutItemCountView';
 import { LayoutLimitedEditionStyledNumberView } from './limited-edition';
 
-export interface LayoutGridItemProps extends ColumnProps
-{
+export interface LayoutGridItemProps extends ColumnProps {
     itemImage?: string;
     itemColor?: string;
     itemActive?: boolean;
@@ -18,59 +17,74 @@ export interface LayoutGridItemProps extends ColumnProps
     disabled?: boolean;
 }
 
-export const LayoutGridItem: FC<LayoutGridItemProps> = props =>
-{
-    const { itemImage = undefined, itemColor = undefined, itemActive = false, itemCount = 1, itemCountMinimum = 1, itemUniqueSoldout = false, itemUniqueNumber = -2, itemUnseen = false, itemHighlight = false, disabled = false, center = true, column = true, style = {}, classNames = [], position = 'relative', overflow = 'hidden', children = null, ...rest } = props;
+export const LayoutGridItem: FC<LayoutGridItemProps> = (props) => {
+    const {
+        itemImage = undefined,
+        itemColor = undefined,
+        itemActive = false,
+        itemCount = 1,
+        itemCountMinimum = 1,
+        itemUniqueSoldout = false,
+        itemUniqueNumber = -2,
+        itemUnseen = false,
+        itemHighlight = false,
+        disabled = false,
+        center = true,
+        column = true,
+        style = {},
+        classNames = [],
+        position = 'relative',
+        overflow = 'hidden',
+        children = null,
+        ...rest
+    } = props;
 
-    const getClassNames = useMemo(() =>
-    {
-        const newClassNames: string[] = [ 'layout-grid-item' ];
+    const getClassNames = useMemo(() => {
+        const newClassNames: string[] = ['layout-grid-item'];
 
+        if (itemActive) newClassNames.push('is-grid-active', 'bg-[#e4e7df]!');
 
-        if(itemActive) newClassNames.push('is-grid-active', 'bg-[#e4e7df]!');
+        if (itemUniqueSoldout || itemUniqueNumber > 0) newClassNames.push('unique-item');
 
-        if(itemUniqueSoldout || (itemUniqueNumber > 0)) newClassNames.push('unique-item');
+        if (itemUniqueSoldout) newClassNames.push('sold-out');
 
-        if(itemUniqueSoldout) newClassNames.push('sold-out');
+        if (itemUnseen) newClassNames.push('unseen');
 
-        if(itemUnseen) newClassNames.push('unseen');
+        if (itemHighlight) newClassNames.push('has-highlight');
 
-        if(itemHighlight) newClassNames.push('has-highlight');
+        if (disabled) newClassNames.push('disabled');
 
-        if(disabled) newClassNames.push('disabled');
+        if (itemImage === null) newClassNames.push('icon', 'loading-icon');
 
-        if(itemImage === null) newClassNames.push('icon', 'loading-icon');
-
-        if(classNames.length) newClassNames.push(...classNames);
+        if (classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
-    }, [ itemActive, itemUniqueSoldout, itemUniqueNumber, itemUnseen, itemHighlight, disabled, itemImage, classNames ]);
+    }, [itemActive, itemUniqueSoldout, itemUniqueNumber, itemUnseen, itemHighlight, disabled, itemImage, classNames]);
 
-    const getStyle = useMemo(() =>
-    {
+    const getStyle = useMemo(() => {
         let newStyle = { ...style };
 
-        if(itemImage && !(itemUniqueSoldout || (itemUniqueNumber > 0))) newStyle.backgroundImage = `url(${ itemImage })`;
+        if (itemImage && !(itemUniqueSoldout || itemUniqueNumber > 0)) newStyle.backgroundImage = `url(${itemImage})`;
 
-        if(itemColor) newStyle.backgroundColor = itemColor;
+        if (itemColor) newStyle.backgroundColor = itemColor;
 
-        if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
+        if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ style, itemImage, itemColor, itemUniqueSoldout, itemUniqueNumber ]);
+    }, [style, itemImage, itemColor, itemUniqueSoldout, itemUniqueNumber]);
 
     return (
-        <Column pointer center={ center } classNames={ getClassNames } column={ column } overflow={ overflow } position={ position } style={ getStyle } { ...rest }>
-            { (itemCount > itemCountMinimum) &&
-                <LayoutItemCountView count={ itemCount } /> }
-            { (itemUniqueNumber > 0) &&
+        <Column pointer center={center} classNames={getClassNames} column={column} overflow={overflow} position={position} style={getStyle} {...rest}>
+            {itemCount > itemCountMinimum && <LayoutItemCountView count={itemCount} />}
+            {itemUniqueNumber > 0 && (
                 <>
-                    <Base fit className="unique-bg-override" style={ { backgroundImage: `url(${ itemImage })` } } />
+                    <Base fit className="unique-bg-override" style={{ backgroundImage: `url(${itemImage})` }} />
                     <div className="absolute bottom-0 unique-item-counter">
-                        <LayoutLimitedEditionStyledNumberView value={ itemUniqueNumber } />
+                        <LayoutLimitedEditionStyledNumberView value={itemUniqueNumber} />
                     </div>
-                </> }
-            { children }
+                </>
+            )}
+            {children}
         </Column>
     );
 };

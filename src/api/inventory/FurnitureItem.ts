@@ -1,8 +1,7 @@
 import { GetTickerTime, IFurnitureItemData, IObjectData } from '@nitrots/nitro-renderer';
 import { IFurnitureItem } from './IFurnitureItem';
 
-export class FurnitureItem implements IFurnitureItem
-{
+export class FurnitureItem implements IFurnitureItem {
     private _expirationTimeStamp: number;
     private _isWallItem: boolean;
     private _songId: number;
@@ -26,16 +25,15 @@ export class FurnitureItem implements IFurnitureItem
     private _isRented: boolean;
     private _flatId: number;
 
-    constructor(parser: IFurnitureItemData)
-    {
-        if(!parser) return;
+    constructor(parser: IFurnitureItemData) {
+        if (!parser) return;
 
         this._locked = false;
         this._id = parser.itemId;
         this._type = parser.spriteId;
         this._ref = parser.ref;
         this._category = parser.category;
-        this._groupable = ((parser.isGroupable) && (!(parser.rentable)));
+        this._groupable = parser.isGroupable && !parser.rentable;
         this._tradeable = parser.tradable;
         this._recyclable = parser.isRecycleable;
         this._sellable = parser.sellable;
@@ -54,147 +52,119 @@ export class FurnitureItem implements IFurnitureItem
         this._isWallItem = parser.isWallItem;
     }
 
-    public get rentable(): boolean
-    {
+    public get rentable(): boolean {
         return this._isRented;
     }
 
-    public get id(): number
-    {
+    public get id(): number {
         return this._id;
     }
 
-    public get ref(): number
-    {
+    public get ref(): number {
         return this._ref;
     }
 
-    public get category(): number
-    {
+    public get category(): number {
         return this._category;
     }
 
-    public get type(): number
-    {
+    public get type(): number {
         return this._type;
     }
 
-    public get stuffData(): IObjectData
-    {
+    public get stuffData(): IObjectData {
         return this._stuffData;
     }
 
-    public set stuffData(k: IObjectData)
-    {
+    public set stuffData(k: IObjectData) {
         this._stuffData = k;
     }
 
-    public get extra(): number
-    {
+    public get extra(): number {
         return this._extra;
     }
 
-    public get recyclable(): boolean
-    {
+    public get recyclable(): boolean {
         return this._recyclable;
     }
 
-    public get isTradable(): boolean
-    {
+    public get isTradable(): boolean {
         return this._tradeable;
     }
 
-    public get isGroupable(): boolean
-    {
+    public get isGroupable(): boolean {
         return this._groupable;
     }
 
-    public get sellable(): boolean
-    {
+    public get sellable(): boolean {
         return this._sellable;
     }
 
-    public get secondsToExpiration(): number
-    {
-        if(this._secondsToExpiration === -1) return -1;
+    public get secondsToExpiration(): number {
+        if (this._secondsToExpiration === -1) return -1;
 
         let time = -1;
 
-        if(this._hasRentPeriodStarted)
-        {
-            time = (this._secondsToExpiration - ((GetTickerTime() - this._expirationTimeStamp) / 1000));
+        if (this._hasRentPeriodStarted) {
+            time = this._secondsToExpiration - (GetTickerTime() - this._expirationTimeStamp) / 1000;
 
-            if(time < 0) time = 0;
-        }
-        else
-        {
+            if (time < 0) time = 0;
+        } else {
             time = this._secondsToExpiration;
         }
 
         return time;
     }
 
-    public get creationDay(): number
-    {
+    public get creationDay(): number {
         return this._creationDay;
     }
 
-    public get creationMonth(): number
-    {
+    public get creationMonth(): number {
         return this._creationMonth;
     }
 
-    public get creationYear(): number
-    {
+    public get creationYear(): number {
         return this._creationYear;
     }
 
-    public get slotId(): string
-    {
+    public get slotId(): string {
         return this._slotId;
     }
 
-    public get songId(): number
-    {
+    public get songId(): number {
         return this._songId;
     }
 
-    public get locked(): boolean
-    {
+    public get locked(): boolean {
         return this._locked;
     }
 
-    public set locked(k: boolean)
-    {
+    public set locked(k: boolean) {
         this._locked = k;
     }
 
-    public get flatId(): number
-    {
+    public get flatId(): number {
         return this._flatId;
     }
 
-    public get isWallItem(): boolean
-    {
+    public get isWallItem(): boolean {
         return this._isWallItem;
     }
 
-    public get hasRentPeriodStarted(): boolean
-    {
+    public get hasRentPeriodStarted(): boolean {
         return this._hasRentPeriodStarted;
     }
 
-    public get expirationTimeStamp(): number
-    {
+    public get expirationTimeStamp(): number {
         return this._expirationTimeStamp;
     }
 
-    public update(parser: IFurnitureItemData): void
-    {
+    public update(parser: IFurnitureItemData): void {
         this._type = parser.spriteId;
         this._ref = parser.ref;
         this._category = parser.category;
-        this._groupable = (parser.isGroupable && !parser.rentable);
+        this._groupable = parser.isGroupable && !parser.rentable;
         this._tradeable = parser.tradable;
         this._recyclable = parser.isRecycleable;
         this._sellable = parser.sellable;
@@ -213,8 +183,7 @@ export class FurnitureItem implements IFurnitureItem
         this._isWallItem = parser.isWallItem;
     }
 
-    public clone(): FurnitureItem
-    {
+    public clone(): FurnitureItem {
         const item = new FurnitureItem(null);
 
         item._expirationTimeStamp = this._expirationTimeStamp;

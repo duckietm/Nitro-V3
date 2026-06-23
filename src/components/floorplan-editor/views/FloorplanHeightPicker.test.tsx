@@ -1,19 +1,16 @@
 /* @vitest-environment jsdom */
 
-import { afterEach, describe, it, expect, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FloorplanHeightPicker } from './FloorplanHeightPicker';
 
 const TRACK_HEIGHT = 260;
 
-const stubTrackGeometry = (top = 0) =>
-{
+const stubTrackGeometry = (top = 0) => {
     const original = HTMLDivElement.prototype.getBoundingClientRect;
 
-    HTMLDivElement.prototype.getBoundingClientRect = function ()
-    {
-        if(this.getAttribute('data-testid') === 'height-track')
-        {
+    HTMLDivElement.prototype.getBoundingClientRect = function () {
+        if (this.getAttribute('data-testid') === 'height-track') {
             return {
                 top,
                 left: 0,
@@ -30,22 +27,18 @@ const stubTrackGeometry = (top = 0) =>
         return original.call(this);
     };
 
-    return () =>
-    {
+    return () => {
         HTMLDivElement.prototype.getBoundingClientRect = original;
     };
 };
 
-describe('FloorplanHeightPicker', () =>
-{
-    afterEach(() =>
-    {
+describe('FloorplanHeightPicker', () => {
+    afterEach(() => {
         cleanup();
     });
 
-    it('renders the track + thumb with the current value', () =>
-    {
-        render(<FloorplanHeightPicker selectedH={ 12 } onSelect={ () => undefined } />);
+    it('renders the track + thumb with the current value', () => {
+        render(<FloorplanHeightPicker selectedH={12} onSelect={() => undefined} />);
 
         const thumb = screen.getByTestId('height-thumb');
 
@@ -53,12 +46,11 @@ describe('FloorplanHeightPicker', () =>
         expect(thumb.textContent).toBe('12');
     });
 
-    it('clicking near the top of the track picks HEIGHT_BRUSH_MAX', () =>
-    {
+    it('clicking near the top of the track picks HEIGHT_BRUSH_MAX', () => {
         const restore = stubTrackGeometry();
         const onSelect = vi.fn();
 
-        render(<FloorplanHeightPicker selectedH={ 0 } onSelect={ onSelect } />);
+        render(<FloorplanHeightPicker selectedH={0} onSelect={onSelect} />);
 
         const track = screen.getByTestId('height-track');
 
@@ -69,12 +61,11 @@ describe('FloorplanHeightPicker', () =>
         restore();
     });
 
-    it('clicking near the bottom of the track picks HEIGHT_BRUSH_MIN', () =>
-    {
+    it('clicking near the bottom of the track picks HEIGHT_BRUSH_MIN', () => {
         const restore = stubTrackGeometry();
         const onSelect = vi.fn();
 
-        render(<FloorplanHeightPicker selectedH={ 26 } onSelect={ onSelect } />);
+        render(<FloorplanHeightPicker selectedH={26} onSelect={onSelect} />);
 
         const track = screen.getByTestId('height-track');
 
@@ -85,12 +76,11 @@ describe('FloorplanHeightPicker', () =>
         restore();
     });
 
-    it('clicking at the middle picks roughly the middle height', () =>
-    {
+    it('clicking at the middle picks roughly the middle height', () => {
         const restore = stubTrackGeometry();
         const onSelect = vi.fn();
 
-        render(<FloorplanHeightPicker selectedH={ 0 } onSelect={ onSelect } />);
+        render(<FloorplanHeightPicker selectedH={0} onSelect={onSelect} />);
 
         const track = screen.getByTestId('height-track');
 
@@ -101,12 +91,11 @@ describe('FloorplanHeightPicker', () =>
         restore();
     });
 
-    it('does not fire onSelect when the picked height equals the current selection', () =>
-    {
+    it('does not fire onSelect when the picked height equals the current selection', () => {
         const restore = stubTrackGeometry();
         const onSelect = vi.fn();
 
-        render(<FloorplanHeightPicker selectedH={ 26 } onSelect={ onSelect } />);
+        render(<FloorplanHeightPicker selectedH={26} onSelect={onSelect} />);
 
         const track = screen.getByTestId('height-track');
 
@@ -117,13 +106,12 @@ describe('FloorplanHeightPicker', () =>
         restore();
     });
 
-    it('thumb fill matches the tile colour at the picked height', () =>
-    {
-        const { rerender } = render(<FloorplanHeightPicker selectedH={ 0 } onSelect={ () => undefined } />);
+    it('thumb fill matches the tile colour at the picked height', () => {
+        const { rerender } = render(<FloorplanHeightPicker selectedH={0} onSelect={() => undefined} />);
 
         const colourAtZero = screen.getByTestId('height-thumb').getAttribute('data-thumb-color');
 
-        rerender(<FloorplanHeightPicker selectedH={ 13 } onSelect={ () => undefined } />);
+        rerender(<FloorplanHeightPicker selectedH={13} onSelect={() => undefined} />);
 
         const colourAtThirteen = screen.getByTestId('height-thumb').getAttribute('data-thumb-color');
 
