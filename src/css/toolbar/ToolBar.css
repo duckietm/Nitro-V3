@@ -21,8 +21,9 @@
 }
 
 .tb-avatar-head {
-    background-size: auto;
-    background-position: -25px -38px;
+    /* LayoutAvatarImageView(headOnly) writes background-size/-position inline, so the toolbar head-crop only applies with !important. */
+    background-size: auto !important;
+    background-position: -25px -38px !important;
 }
 
 .tb-collapse {
