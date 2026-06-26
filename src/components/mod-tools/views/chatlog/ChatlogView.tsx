@@ -66,40 +66,44 @@ export const ChatlogView: FC<ChatlogViewProps> = (props) => {
 
     return (
         <Column fit gap={0} overflow="hidden">
-            {/* Column headers */}
-            <div className="grid grid-cols-[60px_120px_1fr] gap-2 text-[.7rem] uppercase tracking-wide opacity-60 font-semibold border-b border-zinc-200 pb-1 px-1">
-                <div>{LocalizeText('modtools.chatlog.column.time')}</div>
-                <div>{LocalizeText('modtools.chatlog.column.user')}</div>
-                <div>{LocalizeText('modtools.chatlog.column.message')}</div>
-            </div>
-            {isEmpty ? (
-                <div className="flex flex-col items-center justify-center gap-1 py-6 opacity-50 text-sm">
-                    <FaCommentDots size={22} />
-                    <span>{LocalizeText('modtools.chatlog.empty')}</span>
-                </div>
-            ) : (
-                <InfiniteScroll
-                    rowRender={(row: ChatlogRecord) => {
-                        if (row.isRoomInfo) return <RoomInfo roomId={row.roomId} roomName={row.roomName} />;
+            <div className="min-w-0 overflow-x-auto">
+                <div className="min-w-[360px]">
+                    {/* Column headers */}
+                    <div className="grid grid-cols-[60px_120px_1fr] gap-2 text-[.7rem] uppercase tracking-wide opacity-60 font-semibold border-b border-zinc-200 pb-1 px-1">
+                        <div>{LocalizeText('modtools.chatlog.column.time')}</div>
+                        <div>{LocalizeText('modtools.chatlog.column.user')}</div>
+                        <div>{LocalizeText('modtools.chatlog.column.message')}</div>
+                    </div>
+                    {isEmpty ? (
+                        <div className="flex flex-col items-center justify-center gap-1 py-6 opacity-50 text-sm">
+                            <FaCommentDots size={22} />
+                            <span>{LocalizeText('modtools.chatlog.empty')}</span>
+                        </div>
+                    ) : (
+                        <InfiniteScroll
+                            rowRender={(row: ChatlogRecord) => {
+                                if (row.isRoomInfo) return <RoomInfo roomId={row.roomId} roomName={row.roomName} />;
 
-                        return (
-                            <div
-                                className={`grid grid-cols-[60px_120px_1fr] gap-2 items-start px-1 py-1.5 text-sm border-b border-zinc-100 even:bg-black/[0.02] hover:bg-sky-50/50 transition-colors ${row.hasHighlighting ? 'bg-amber-50/60' : ''}`}
-                            >
-                                <span className="font-mono text-[.7rem] opacity-70 tabular-nums whitespace-nowrap">{row.timestamp}</span>
-                                <button
-                                    className="text-left font-semibold text-sky-700 hover:text-sky-900 hover:underline truncate"
-                                    onClick={() => CreateLinkEvent(`mod-tools/open-user-info/${row.habboId}`)}
-                                >
-                                    {row.username}
-                                </button>
-                                <span className="break-words">{row.message}</span>
-                            </div>
-                        );
-                    }}
-                    rows={allRecords}
-                />
-            )}
+                                return (
+                                    <div
+                                        className={`grid grid-cols-[60px_120px_1fr] gap-2 items-start px-1 py-1.5 text-sm border-b border-zinc-100 even:bg-black/[0.02] hover:bg-sky-50/50 transition-colors ${row.hasHighlighting ? 'bg-amber-50/60' : ''}`}
+                                    >
+                                        <span className="font-mono text-[.7rem] opacity-70 tabular-nums whitespace-nowrap">{row.timestamp}</span>
+                                        <button
+                                            className="text-left font-semibold text-sky-700 hover:text-sky-900 hover:underline truncate"
+                                            onClick={() => CreateLinkEvent(`mod-tools/open-user-info/${row.habboId}`)}
+                                        >
+                                            {row.username}
+                                        </button>
+                                        <span className="break-words">{row.message}</span>
+                                    </div>
+                                );
+                            }}
+                            rows={allRecords}
+                        />
+                    )}
+                </div>
+            </div>
         </Column>
     );
 };
