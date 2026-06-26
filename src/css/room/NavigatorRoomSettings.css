@@ -21,10 +21,15 @@
         }
     }
 
-    .nitro-card-tabs {
+    .nitro-card-tabs-shell {
         flex-wrap: nowrap;
         overflow-x: auto;
         overflow-y: hidden;
+    }
+
+    .nitro-card-tab-item {
+        flex: 0 0 auto;
+        white-space: nowrap;
     }
 
     .nitro-card-content-shell {
@@ -67,5 +72,24 @@
         min-height: 0;
         accent-color: var(--room-settings-accent);
         box-shadow: none !important;
+    }
+}
+
+@media (max-width: 520px), (max-height: 520px) {
+    .nitro-room-settings {
+        width: calc(100vw - 16px);
+        max-height: calc(100vh - 16px);
+
+        .nitro-card-content-shell {
+            max-height: calc(100vh - 84px);
+        }
+
+        .col-span-6 {
+            grid-column: span 12 / span 12;
+        }
+
+        .h-full {
+            height: auto;
+        }
     }
 }
