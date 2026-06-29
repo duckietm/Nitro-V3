@@ -5,8 +5,8 @@ import { useWired } from '../../../../hooks';
 import { WiredSelectorBaseView } from './WiredSelectorBaseView';
 
 const MIN_ALTITUDE = 0;
-const MAX_ALTITUDE = 40;
-const ALTITUDE_STEP = 0.5;
+const MAX_ALTITUDE = 80;
+const ALTITUDE_STEP = 0.01;
 const ALTITUDE_PATTERN = /^\d*(\.\d{0,2})?$/;
 
 const clampAltitude = (value: number) => {

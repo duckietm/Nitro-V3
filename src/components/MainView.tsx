@@ -24,6 +24,7 @@ import { CampaignView } from './campaign/CampaignView';
 import { CatalogView } from './catalog/CatalogView';
 import { ChatHistoryView } from './chat-history/ChatHistoryView';
 import { CustomizeNickIconView } from './customize/CustomizeNickIconView';
+import { DiscordSettingsView } from './discord/DiscordSettingsView';
 import { EmuStatsView } from './emustats/EmuStatsView';
 import { FloorplanEditorView } from './floorplan-editor/FloorplanEditorView';
 import { FortuneWheelView } from './fortune-wheel/FortuneWheelView';
@@ -213,6 +214,7 @@ export const MainView: FC<{}> = (props) => {
             <RightSideView />
             <UserSettingsView />
             <UserAccountSettingsView />
+            <DiscordSettingsView />
             <VaultView />
             <TranslationSettingsView />
             <UserProfileView />

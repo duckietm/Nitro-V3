@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, WiredFurniType, localizeWithFallback } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredTriggerBaseView } from './WiredTriggerBaseView';
@@ -63,7 +63,7 @@ export const WiredTriggerUserPerformsActionView: FC<{}> = () => {
     return (
         <WiredTriggerBaseView hasSpecialInput={true} requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE} save={save}>
             <div className="flex flex-col gap-1">
-                <Text bold>Action</Text>
+                <Text bold>{localizeWithFallback('wiredfurni.params.action_selection', 'Action')}</Text>
                 <select className="form-select form-select-sm" value={selectedAction} onChange={(event) => setSelectedAction(parseInt(event.target.value))}>
                     {ACTION_OPTIONS.map((option) => (
                         <option key={option.value} value={option.value}>

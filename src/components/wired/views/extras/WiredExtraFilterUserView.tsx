@@ -4,8 +4,8 @@ import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredExtraBaseView } from './WiredExtraBaseView';
 
-const MIN_FILTER = 0;
-const MAX_FILTER = 10000;
+const MIN_FILTER = 1;
+const MAX_FILTER = 1000;
 
 const clampValue = (value: number) => {
     if (isNaN(value)) return MIN_FILTER;

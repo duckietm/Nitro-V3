@@ -15,7 +15,7 @@ export const WiredActionBotTalkToAvatarView: FC<{}> = (props) => {
     const [talkMode, setTalkMode] = useState(-1);
     const [botSource, setBotSource] = useState<number>(100);
     const { trigger = null, setStringParam = null, setIntParams = null } = useWired();
-    const maxMessageLength = 100;
+    const maxMessageLength = 200;
     const [userSource, setUserSource] = useState<number>(() => {
         if (trigger?.intData?.length > 1) return trigger.intData[1];
         return 0;

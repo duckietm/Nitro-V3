@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from './WiredActionBaseView';
@@ -27,8 +27,8 @@ export const WiredActionGiveScoreToPredefinedTeamView: FC<{}> = (props) => {
     return (
         <WiredActionBaseView hasSpecialInput={true} requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE} save={save}>
             <div className="flex flex-col gap-1">
-                <Text bold>{LocalizeText('wiredfurni.params.setpoints', ['points'], [points.toString()])}</Text>
-                <Slider max={100} min={1} value={points} onChange={(event) => setPoints(event)} />
+                <Text bold>{localizeWithFallback('wiredfurni.params.setpoints2', LocalizeText('wiredfurni.params.setpoints', ['points'], [points.toString()]), ['points'], [points.toString()])}</Text>
+                <Slider max={1000} min={1} value={points} onChange={(event) => setPoints(event)} />
             </div>
             <div className="flex flex-col gap-1">
                 <Text bold>{LocalizeText('wiredfurni.params.choose_type')}</Text>

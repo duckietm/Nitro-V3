@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
@@ -93,12 +93,12 @@ export const WiredActionAdjustClockView: FC<{}> = () => {
                 })}
             </div>
             <div className="flex flex-col gap-1">
-                <Text bold>{LocalizeText('wiredfurni.params.time.minute_selection')}</Text>
+                <Text bold>{localizeWithFallback('wiredfurni.params.clock_minutes', LocalizeText('wiredfurni.params.time.minute_selection'))}</Text>
                 <Slider max={MINUTES_MAX} min={MINUTES_MIN} step={1} value={minutes} onChange={(event) => setMinutes(normalizeMinutes(event as number))} />
                 <Text small>{minutes}</Text>
             </div>
             <div className="flex flex-col gap-1">
-                <Text bold>{LocalizeText('wiredfurni.params.time.second_selection')}</Text>
+                <Text bold>{localizeWithFallback('wiredfurni.params.clock_seconds', LocalizeText('wiredfurni.params.time.second_selection'))}</Text>
                 <Slider
                     max={HALF_SECONDS_MAX}
                     min={HALF_SECONDS_MIN}

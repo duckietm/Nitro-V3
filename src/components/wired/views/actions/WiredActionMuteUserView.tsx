@@ -35,7 +35,7 @@ export const WiredActionMuteUserView: FC<{}> = (props) => {
         >
             <div className="flex flex-col gap-1">
                 <Text bold>{LocalizeText('wiredfurni.params.length.minutes', ['minutes'], [time.toString()])}</Text>
-                <Slider max={10} min={1} value={time} onChange={(event) => setTime(event)} />
+                <Slider max={10} min={0} value={time} onChange={(event) => setTime(event)} />
             </div>
             <div className="flex flex-col gap-1">
                 <Text bold>{LocalizeText('wiredfurni.params.message')}</Text>

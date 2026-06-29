@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { localizeWithFallback, LocalizeText, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredTriggerBaseView } from './WiredTriggerBaseView';
@@ -17,7 +17,7 @@ export const WiredTriggeExecutePeriodicallyShortView: FC<{}> = () => {
     return (
         <WiredTriggerBaseView hasSpecialInput={true} requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE} save={save}>
             <div className="flex flex-col gap-1">
-                <Text bold>{LocalizeText('wiredfurni.params.settime', ['seconds'], [((time * 50) / 1000).toFixed(2)])}</Text>
+                <Text bold>{localizeWithFallback('wiredfurni.params.setshorttime', LocalizeText('wiredfurni.params.settime', ['seconds'], [((time * 50) / 1000).toFixed(2)]))}</Text>
                 <Text small>{`${time * 50} ms`}</Text>
                 <Slider max={10} min={1} value={time} onChange={(event) => setTime(event)} />
             </div>

@@ -1,4 +1,7 @@
 import { WiredTriggerLayout } from '../../../../api';
+import { WiredTriggerUserGetsHandItemView } from './WiredTriggerUserGetsHandItemView';
+import { WiredTriggerDiceRolledView } from './WiredTriggerDiceRolledView';
+import { WiredTriggerPressKeybindView } from './WiredTriggerPressKeybindView';
 import { WiredTriggerAvatarEnterRoomView } from './WiredTriggerAvatarEnterRoomView';
 import { WiredTriggerAvatarLeaveRoomView } from './WiredTriggerAvatarLeaveRoomView';
 import { WiredTriggerAvatarSaysSomethingView } from './WiredTriggerAvatarSaysSomethingView';
@@ -20,6 +23,8 @@ import { WiredTriggerGameStartsView } from './WiredTriggerGameStartsView';
 import { WiredTriggerReceiveSignalView } from './WiredTriggerReceiveSignalView';
 import { WiredTriggeScoreAchievedView } from './WiredTriggerScoreAchievedView';
 import { WiredTriggerToggleFurniView } from './WiredTriggerToggleFurniView';
+import { WiredTriggerTransactionCompleteView } from './WiredTriggerTransactionCompleteView';
+import { WiredTriggerTransactionFailView } from './WiredTriggerTransactionFailView';
 import { WiredTriggerUserPerformsActionView } from './WiredTriggerUserPerformsActionView';
 import { WiredTriggerVariableChangedView } from './WiredTriggerVariableChangedView';
 
@@ -71,6 +76,16 @@ export const WiredTriggerLayoutView = (code: number) => {
             return <WiredTriggerToggleFurniView />;
         case WiredTriggerLayout.RECEIVE_SIGNAL:
             return <WiredTriggerReceiveSignalView />;
+        case WiredTriggerLayout.USER_GETS_HANDITEM:
+            return <WiredTriggerUserGetsHandItemView />;
+        case WiredTriggerLayout.DICE_ROLLED:
+            return <WiredTriggerDiceRolledView />;
+        case WiredTriggerLayout.PRESS_KEYBIND:
+            return <WiredTriggerPressKeybindView />;
+        case WiredTriggerLayout.TRANSACTION_COMPLETE:
+            return <WiredTriggerTransactionCompleteView />;
+        case WiredTriggerLayout.TRANSACTION_FAIL:
+            return <WiredTriggerTransactionFailView />;
     }
 
     return null;

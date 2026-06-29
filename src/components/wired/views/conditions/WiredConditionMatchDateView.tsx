@@ -139,8 +139,8 @@ export const WiredConditionMatchDateView: FC<{}> = () => {
         setDayTo(clampValue(trigger.intData[3] ?? 31, 1, 31));
         setMonthMask(trigger.intData[4] && trigger.intData[4] > 0 ? trigger.intData[4] : ALL_MONTHS_MASK);
         setYearMode(MODE_OPTIONS.includes(trigger.intData[5]) ? trigger.intData[5] : MODE_SKIP);
-        setYearFrom(clampValue(trigger.intData[6] ?? currentYear, 1, 9999));
-        setYearTo(clampValue(trigger.intData[7] ?? currentYear, 1, 9999));
+        setYearFrom(clampValue(trigger.intData[6] ?? currentYear, 0, 9999));
+        setYearTo(clampValue(trigger.intData[7] ?? currentYear, 0, 9999));
     }, [currentYear, trigger]);
 
     const save = () => {
@@ -151,8 +151,8 @@ export const WiredConditionMatchDateView: FC<{}> = () => {
             clampValue(dayTo, 1, 31),
             monthMask || ALL_MONTHS_MASK,
             yearMode,
-            clampValue(yearFrom, 1, 9999),
-            clampValue(yearTo, 1, 9999)
+            clampValue(yearFrom, 0, 9999),
+            clampValue(yearTo, 0, 9999)
         ]);
     };
 
@@ -214,14 +214,14 @@ export const WiredConditionMatchDateView: FC<{}> = () => {
                 <MatchDateSection
                     fromValue={yearFrom}
                     max={9999}
-                    min={1}
+                    min={0}
                     mode={yearMode}
                     sectionId="matchDateYear"
                     titleKey="wiredfurni.params.time.year_selection"
                     toValue={yearTo}
-                    onFromChange={(value) => setYearFrom(clampValue(value, 1, 9999))}
+                    onFromChange={(value) => setYearFrom(clampValue(value, 0, 9999))}
                     onModeChange={setYearMode}
-                    onToChange={(value) => setYearTo(clampValue(value, 1, 9999))}
+                    onToChange={(value) => setYearTo(clampValue(value, 0, 9999))}
                 />
             </div>
         </WiredConditionBaseView>

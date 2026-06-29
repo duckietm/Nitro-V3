@@ -85,7 +85,14 @@ export const WiredActionBotGiveHandItemView: FC<{}> = (props) => {
                     <NitroInput maxLength={32} type="text" value={botName} onChange={(event) => setBotName(event.target.value)} />
                 </div>
             )}
-            <WiredHandItemField handItemId={handItemId} onChange={setHandItemId} showCopyButton={true} />
+            {/* Official BOT_GIVE_HAND_ITEM code list includes 1126/1127/1128 (§_-32b§.as DEFAULT_CODES);
+                the condition/selector variants intentionally do NOT, so pass them per-view. */}
+            <WiredHandItemField
+                handItemId={handItemId}
+                extraItemIds={[1126, 1127, 1128]}
+                onChange={setHandItemId}
+                showCopyButton={true}
+            />
         </WiredActionBaseView>
     );
 };

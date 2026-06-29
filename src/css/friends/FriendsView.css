@@ -105,11 +105,11 @@
 }
 
 .nitro-friends {
-    width: 332px;
+    width: min(332px, calc(100vw - 16px));
     height: 445px;
-    min-width: 332px;
-    min-height: 445px;
-    max-width: 332px;
+    min-width: 0;
+    min-height: 0;
+    max-width: calc(100vw - 16px);
     max-height: calc(100vh - 16px);
     resize: none !important;
     font-family: Ubuntu, sans-serif;
@@ -414,24 +414,29 @@
 }
 
 .messenger-card {
-    width: 332px;
-    min-width: 332px;
-    max-width: 332px;
-    height: 445px;
-    min-height: 445px;
-    max-height: 445px;
+    width: min(440px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    height: min(445px, calc(100vh - 16px));
+    min-height: 0;
+    max-height: calc(100vh - 16px);
     resize: none;
     pointer-events: all;
 }
 
-@media (max-width: 380px), (max-height: 470px) {
+@media (max-width: 520px), (max-height: 470px) {
+    .nitro-friends {
+        width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px) !important;
+        height: min(445px, calc(100vh - 16px)) !important;
+        max-height: calc(100vh - 16px) !important;
+    }
+
     .messenger-card {
-        width: calc(100vw - 16px);
-        min-width: 0;
-        max-width: calc(100vw - 16px);
-        height: min(445px, calc(100vh - 16px));
-        min-height: 0;
-        max-height: calc(100vh - 16px);
+        width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px) !important;
+        height: min(445px, calc(100vh - 16px)) !important;
+        max-height: calc(100vh - 16px) !important;
     }
 }
 

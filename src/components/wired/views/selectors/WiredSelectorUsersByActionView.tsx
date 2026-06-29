@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { LocalizeText } from '../../../../api';
+import { localizeWithFallback, LocalizeText } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSelectorBaseView } from './WiredSelectorBaseView';
@@ -74,7 +74,7 @@ export const WiredSelectorUsersByActionView: FC<{}> = () => {
         <WiredSelectorBaseView hasSpecialInput={true} requiresFurni={0} save={save} hideDelay={true} cardStyle={{ width: 400 }}>
             <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-1">
-                    <Text bold>Action</Text>
+                    <Text bold>{localizeWithFallback('wiredfurni.params.action_selection', 'Action')}</Text>
                     <select className="form-select form-select-sm" value={selectedAction} onChange={(event) => setSelectedAction(parseInt(event.target.value))}>
                         {ACTION_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>
