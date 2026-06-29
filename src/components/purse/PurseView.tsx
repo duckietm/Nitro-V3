@@ -164,7 +164,14 @@ export const PurseView: FC<{}> = (props) => {
                     <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('audio')}>
                         {localizeWithFallback('purse.settings.audio', 'Audio Settings')}
                     </button>
-                    <button type="button" className="nitro-purse-menu__item nitro-purse-menu__item--disabled" disabled>
+                    <button
+                        type="button"
+                        className="nitro-purse-menu__item"
+                        onClick={() => {
+                            CreateLinkEvent('discord-settings/show');
+                            setSettingsMenuOpen(false);
+                        }}
+                    >
                         {localizeWithFallback('purse.settings.discord', 'Discord Settings')}
                     </button>
                     <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('chat')}>
