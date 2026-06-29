@@ -17,7 +17,11 @@ export const PetPackageWidgetView: FC<{}> = (props) => {
     return (
         <>
             {isVisible && (
-                <NitroCardView className="nitro-pet-package no-resize" theme="primary-slim">
+                <NitroCardView
+                    isResizable={false}
+                    className="nitro-pet-package min-w-0 w-[min(340px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
+                    theme="primary-slim"
+                >
                     <NitroCardHeaderView
                         center
                         headerText={objectType === 'gnome_box' ? LocalizeText('widgets.gnomepackage.name.title') : LocalizeText('furni.petpackage.open')}
@@ -36,7 +40,7 @@ export const PetPackageWidgetView: FC<{}> = (props) => {
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center bg-white rounded py-1 px-2 input-pet-package-container">
                                     <input
-                                        className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm input-pet-package"
+                                        className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem] rounded-[.2rem] form-control-sm input-pet-package w-full min-w-0"
                                         maxLength={GetConfigurationValue('pet.package.name.max.length')}
                                         placeholder={
                                             objectType === 'gnome_box'

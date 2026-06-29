@@ -15,7 +15,7 @@ export const WiredActionBotTalkView: FC<{}> = (props) => {
     const [talkMode, setTalkMode] = useState(-1);
     const [botSource, setBotSource] = useState<number>(100);
     const { trigger = null, setStringParam = null, setIntParams = null } = useWired();
-    const maxMessageLength = 100;
+    const maxMessageLength = 200;
 
     const save = () => {
         setStringParam((botSource === 100 ? botName : '') + WIRED_STRING_DELIMETER + message);

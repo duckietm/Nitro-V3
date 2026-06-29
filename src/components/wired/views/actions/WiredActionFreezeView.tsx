@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
@@ -35,7 +35,7 @@ export const WiredActionFreezeView: FC<{}> = () => {
             footer={<WiredSourcesSelector showUsers={true} userSource={userSource} onChangeUsers={setUserSource} />}
         >
             <div className="flex flex-col gap-1">
-                <Text bold>Effect</Text>
+                <Text bold>{localizeWithFallback('wiredfurni.params.freeze.effect_selection', 'Effect')}</Text>
                 <select className="form-select form-select-sm" value={effectId} onChange={(event) => setEffectId(parseInt(event.target.value))}>
                     {EFFECT_OPTIONS.map((option) => (
                         <option key={option.value} value={option.value}>

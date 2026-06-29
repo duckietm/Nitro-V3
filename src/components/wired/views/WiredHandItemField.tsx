@@ -10,18 +10,30 @@ interface WiredHandItemFieldProps {
     onChange: (value: number) => void;
     labelKey?: string;
     showCopyButton?: boolean;
+    // Extra hand-item codes for views whose official code list differs from the
+    // shared default (e.g. BOT_GIVE_HAND_ITEM adds 1126/1127/1128, which the
+    // condition/selector variants do NOT have).
+    extraItemIds?: number[];
 }
 
 export const WiredHandItemField: FC<WiredHandItemFieldProps> = (props) => {
-    const { handItemId = 0, onChange = null, labelKey = 'wiredfurni.params.handitem', showCopyButton = false } = props;
+    const {
+        handItemId = 0,
+        onChange = null,
+        labelKey = 'wiredfurni.params.handitem',
+        showCopyButton = false,
+        extraItemIds = [],
+    } = props;
 
     const options = useMemo(() => {
         const values = [...DEFAULT_HAND_ITEM_IDS];
 
+        for (const id of extraItemIds) if (!values.includes(id)) values.push(id);
+
         if (handItemId > 0 && !values.includes(handItemId)) values.unshift(handItemId);
 
         return values;
-    }, [handItemId]);
+    }, [handItemId, extraItemIds]);
 
     const getLabel = (value: number) => {
         const key = `handitem${value}`;

@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { localizeWithFallback, LocalizeText, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
@@ -290,17 +290,20 @@ export const WiredExtraVariableLevelUpSystemView: FC<{}> = () => {
     const modeOptions = [
         { value: MODE_LINEAR, label: localizeOrFallback('wiredfurni.params.levelup.mode.1', 'Lineare') },
         { value: MODE_EXPONENTIAL, label: localizeOrFallback('wiredfurni.params.levelup.mode.2', 'Esponenziale') },
-        { value: MODE_MANUAL, label: localizeOrFallback('wiredfurni.params.levelup.mode.3', 'Manuale') }
+        {
+            value: MODE_MANUAL,
+            label: localizeWithFallback('wiredfurni.params.levelup.mode.0', localizeOrFallback('wiredfurni.params.levelup.mode.3', 'Manuale'))
+        }
     ];
 
     const subvariableOptions = [
         { key: SUB_CURRENT_LEVEL, suffix: 'current_level' },
         { key: SUB_CURRENT_XP, suffix: 'current_xp' },
-        { key: SUB_LEVEL_PROGRESS, suffix: 'level_progress' },
-        { key: SUB_LEVEL_PROGRESS_PERCENT, suffix: 'level_progress_percent' },
-        { key: SUB_TOTAL_XP_REQUIRED, suffix: 'total_xp_required' },
+        { key: SUB_LEVEL_PROGRESS, suffix: 'progress' },
+        { key: SUB_LEVEL_PROGRESS_PERCENT, suffix: 'progress_percentage' },
+        { key: SUB_TOTAL_XP_REQUIRED, suffix: 'xp_required' },
         { key: SUB_XP_REMAINING, suffix: 'xp_remaining' },
-        { key: SUB_IS_AT_MAX, suffix: 'is_at_max' },
+        { key: SUB_IS_AT_MAX, suffix: 'is_maxed' },
         { key: SUB_MAX_LEVEL, suffix: 'max_level' }
     ];
 
@@ -404,7 +407,12 @@ export const WiredExtraVariableLevelUpSystemView: FC<{}> = () => {
                                         type="radio"
                                         onChange={() => setMode(MODE_MANUAL)}
                                     />
-                                    <Text>{localizeOrFallback('wiredfurni.params.levelup.mode.3', 'Inserimento manuale')}</Text>
+                                    <Text>
+                                        {localizeWithFallback(
+                                            'wiredfurni.params.levelup.mode.0',
+                                            localizeOrFallback('wiredfurni.params.levelup.mode.3', 'Inserimento manuale')
+                                        )}
+                                    </Text>
                                 </label>
                                 <textarea
                                     className="form-control form-control-sm nitro-wired__levelup-textarea"

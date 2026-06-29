@@ -1,7 +1,7 @@
 import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { FaChartBar, FaCog, FaLanguage, FaSignOutAlt } from 'react-icons/fa';
-import { ClearRememberLogin, GetConfigurationValue, GetRememberLogin, LocalizeText, localizeWithFallback } from '../../api';
+import { ClearRememberLogin, FriendlyTime, GetConfigurationValue, GetRememberLogin, LocalizeText, localizeWithFallback } from '../../api';
 import { Column, LayoutCurrencyIcon } from '../../common';
 import { usePurse } from '../../hooks';
 import { CurrencyView } from './views/CurrencyView';
@@ -39,6 +39,17 @@ export const PurseView: FC<{}> = (props) => {
     const otherCurrencies = currencyTypes.filter((type) => type !== 0 && type !== 5);
 
     const joinLabel = useMemo(() => localizeWithFallback('purse.join', 'Join'), []);
+
+    // When the user has active HC, show the remaining time instead of "Join"
+    // (same formula as the HC Center's getClubText).
+    const clubLabel = useMemo(() => {
+        if (!purse || purse.clubDays <= 0) return joinLabel;
+        if (purse.minutesUntilExpiration > -1 && purse.minutesUntilExpiration < 60 * 24) {
+            return FriendlyTime.shortFormat(purse.minutesUntilExpiration * 60);
+        }
+        return FriendlyTime.shortFormat((purse.clubPeriods * 31 + purse.clubDays) * 86400);
+    }, [purse, joinLabel]);
+
     const earningsLabel = useMemo(() => localizeWithFallback('earnings.title', 'Earnings'), []);
     const helpLabel = useMemo(() => localizeWithFallback('help.button.name', 'Help'), []);
 
@@ -93,9 +104,9 @@ export const PurseView: FC<{}> = (props) => {
                     </div>
                     <div className="nitro-purse__col nitro-purse__col--primary">
                         {!hcDisabled && (
-                            <button type="button" className="nitro-purse__btn nitro-purse__btn--join" onClick={openClub} title={joinLabel}>
+                            <button type="button" className="nitro-purse__btn nitro-purse__btn--join" onClick={openClub} title={clubLabel}>
                                 <LayoutCurrencyIcon type="hc" />
-                                <span>{joinLabel}</span>
+                                <span>{clubLabel}</span>
                             </button>
                         )}
                         <button type="button" className="nitro-purse__btn nitro-purse__btn--earnings" onClick={openEarnings} title={earningsLabel}>

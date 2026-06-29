@@ -21,7 +21,10 @@ export const FurnitureAreaHideView: FC<{}> = (props) => {
     if (objectId === -1) return null;
 
     return (
-        <NitroCardView theme="primary-slim" className="nitro-room-widget-area-hide" style={{ maxWidth: '400px' }}>
+        <NitroCardView
+            theme="primary-slim"
+            className="nitro-room-widget-area-hide min-w-0 w-[min(400px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
+        >
             <NitroCardHeaderView headerText={LocalizeText('widget.areahide.title')} onCloseClick={onClose} />
             <NitroCardContentView overflow="hidden" justifyContent="between">
                 <Column gap={2}>

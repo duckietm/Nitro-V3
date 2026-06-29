@@ -6,6 +6,8 @@ import { WiredConditionActorIsOnFurniView } from './WiredConditionActorIsOnFurni
 import { WiredConditionActorIsTeamMemberView } from './WiredConditionActorIsTeamMemberView';
 import { WiredConditionActorIsWearingBadgeView } from './WiredConditionActorIsWearingBadgeView';
 import { WiredConditionActorIsWearingEffectView } from './WiredConditionActorIsWearingEffectView';
+import { WiredConditionChestHasItemsView } from './WiredConditionChestHasItemsView';
+import { WiredConditionChestHasItemTypeView } from './WiredConditionChestHasItemTypeView';
 import { WiredConditionCounterTimeMatchesView } from './WiredConditionCounterTimeMatchesView';
 import { WiredConditionDateRangeView } from './WiredConditionDateRangeView';
 import { WiredConditionFurniHasAvatarOnView } from './WiredConditionFurniHasAvatarOnView';
@@ -18,13 +20,16 @@ import { WiredConditionHasVariableView } from './WiredConditionHasVariableView';
 import { WiredConditionMatchDateView } from './WiredConditionMatchDateView';
 import { WiredConditionMatchTimeView } from './WiredConditionMatchTimeView';
 import { WiredConditionMovementValidationView } from './WiredConditionMovementValidationView';
+import { WiredConditionNoBattleBanzaiView } from './WiredConditionNoBattleBanzaiView';
 import { WiredConditionSelectionQuantityView } from './WiredConditionSelectionQuantityView';
 import { WiredConditionTeamHasRankView } from './WiredConditionTeamHasRankView';
 import { WiredConditionTeamHasScoreView } from './WiredConditionTeamHasScoreView';
 import { WiredConditionTimeElapsedLessView } from './WiredConditionTimeElapsedLessView';
 import { WiredConditionTimeElapsedMoreView } from './WiredConditionTimeElapsedMoreView';
+import { WiredConditionTriggerFurniAdjacentStateView } from './WiredConditionTriggerFurniAdjacentStateView';
 import { WiredConditionTriggererMatchView } from './WiredConditionTriggererMatchView';
 import { WiredConditionUserCountInRoomView } from './WiredConditionUserCountInRoomView';
+import { WiredConditionUserOnFurniWithStateView } from './WiredConditionUserOnFurniWithStateView';
 import { WiredConditionUserPerformsActionView } from './WiredConditionUserPerformsActionView';
 import { WiredConditionVariableAgeMatchView } from './WiredConditionVariableAgeMatchView';
 import { WiredConditionVariableValueMatchView } from './WiredConditionVariableValueMatchView';
@@ -114,6 +119,16 @@ export const WiredConditionLayoutView = (code: number) => {
             return <WiredConditionTeamHasScoreView />;
         case WiredConditionlayout.TEAM_HAS_RANK:
             return <WiredConditionTeamHasRankView />;
+        case WiredConditionlayout.NO_BATTLEBANZAI:
+            return <WiredConditionNoBattleBanzaiView />;
+        case WiredConditionlayout.USER_ON_FURNI_WITH_STATE:
+            return <WiredConditionUserOnFurniWithStateView />;
+        case WiredConditionlayout.TRG_FURNI_ADJACENT_STATE:
+            return <WiredConditionTriggerFurniAdjacentStateView />;
+        case WiredConditionlayout.CHEST_HAS_ITEMS:
+            return <WiredConditionChestHasItemsView />;
+        case WiredConditionlayout.CHEST_HAS_ITEM_TYPE:
+            return <WiredConditionChestHasItemTypeView />;
     }
 
     return null;

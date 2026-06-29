@@ -5,6 +5,11 @@ import { useCatalogData, useCatalogUiState, useTranslationActions, useTranslatio
 import { IPageEditData, useCatalogAdmin } from '../../CatalogAdminContext';
 import { CatalogAdminModalView } from './CatalogAdminModalView';
 
+const localizeWithFallback = (key: string, fallback: string) => {
+    const text = LocalizeText(key);
+    return text && text !== key ? text : fallback;
+};
+
 const LAYOUT_OPTIONS = [
     'default_3x3',
     'frontpage4',
@@ -159,12 +164,12 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
 
     const runTranslate = async () => {
         if (!pageText1.trim().length) {
-            setTranslateError('Nothing to translate yet.');
+            setTranslateError(localizeWithFallback('catalog.admin.translate.empty', 'Nothing to translate yet.'));
             return;
         }
 
         if (!translateTargetLanguage) {
-            setTranslateError('Pick a language first.');
+            setTranslateError(localizeWithFallback('catalog.admin.translate.pick.language', 'Pick a language first.'));
             return;
         }
 
@@ -176,7 +181,7 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
             setPageText1(result?.translatedText || pageText1);
             setShowTranslate(false);
         } catch (error) {
-            setTranslateError((error as Error)?.message || 'Translation failed.');
+            setTranslateError((error as Error)?.message || localizeWithFallback('catalog.admin.translate.failed', 'Translation failed.'));
         } finally {
             setIsTranslating(false);
         }
@@ -199,23 +204,25 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
         >
             <div className="grid grid-cols-3 gap-1.5">
                 <div className="flex flex-col gap-0.5 col-span-2">
-                    <label className="nitro-catalog-admin-label is-uppercase">Caption</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">{localizeWithFallback('catalog.admin.page.caption', 'Caption')}</label>
                     <input className={inputClass} value={caption} onChange={(e) => setCaption(e.target.value)} />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="nitro-catalog-admin-label is-uppercase">Min Rank</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">{localizeWithFallback('catalog.admin.page.min.rank', 'Min Rank')}</label>
                     <input className={inputClass} min={1} type="number" value={minRank} onChange={(e) => setMinRank(parseInt(e.target.value) || 1)} />
                 </div>
                 <div className="flex flex-col gap-0.5 col-span-2">
-                    <label className="nitro-catalog-admin-label is-uppercase">Caption Save (Localisation Key)</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">
+                        {localizeWithFallback('catalog.admin.page.caption.save', 'Caption Save (Localisation Key)')}
+                    </label>
                     <input className={inputClass} value={captionSave} onChange={(e) => setCaptionSave(e.target.value)} />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="nitro-catalog-admin-label is-uppercase">Icon Image</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">{localizeWithFallback('catalog.admin.page.icon.image', 'Icon Image')}</label>
                     <input className={inputClass} min={0} type="number" value={iconImage} onChange={(e) => setIconImage(parseInt(e.target.value) || 0)} />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="nitro-catalog-admin-label is-uppercase">Mode</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">{localizeWithFallback('catalog.admin.page.mode', 'Mode')}</label>
                     <select className={inputClass} value={catalogMode} onChange={(e) => setCatalogMode(e.target.value)}>
                         {MODE_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -225,7 +232,7 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
                     </select>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="nitro-catalog-admin-label is-uppercase">Layout</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">{localizeWithFallback('catalog.admin.page.layout', 'Layout')}</label>
                     <select className={inputClass} value={pageLayout} onChange={(e) => setPageLayout(e.target.value)}>
                         {LAYOUT_OPTIONS.map((l) => (
                             <option key={l} value={l}>
@@ -239,7 +246,7 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
                     <input className={inputClass} min={0} type="number" value={orderNum} onChange={(e) => setOrderNum(parseInt(e.target.value) || 0)} />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <label className="nitro-catalog-admin-label is-uppercase">Parent ID</label>
+                    <label className="nitro-catalog-admin-label is-uppercase">{localizeWithFallback('catalog.admin.page.parent.id', 'Parent ID')}</label>
                     <input
                         className={inputClass}
                         disabled={isRoot}
@@ -271,17 +278,20 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
                 <div className="flex flex-col gap-0.5 col-span-3">
                     <div className="flex items-center justify-between">
                         <label className="nitro-catalog-admin-label is-uppercase">
-                            Page Text 1 <span className="text-muted normal-case font-normal opacity-70">(leave blank to keep current)</span>
+                            {localizeWithFallback('catalog.admin.page.text.1', 'Page Text 1')}{' '}
+                            <span className="text-muted normal-case font-normal opacity-70">
+                                {localizeWithFallback('catalog.admin.page.text.keep.current', '(leave blank to keep current)')}
+                            </span>
                         </label>
                         <button
                             className="nitro-catalog-admin-button is-ghost is-compact"
                             disabled={isTranslating || !pageText1.trim().length}
-                            title="Translate via Google Translate"
+                            title={localizeWithFallback('catalog.admin.translate.title', 'Translate via Google Translate')}
                             type="button"
                             onClick={openTranslate}
                         >
                             {isTranslating ? <FaSpinner className="text-[8px] animate-spin" /> : <FaLanguage className="text-[10px]" />}
-                            Translate
+                            {localizeWithFallback('catalog.admin.translate.action', 'Translate')}
                         </button>
                     </div>
                     {showTranslate && (
@@ -292,7 +302,11 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
                                 value={translateTargetLanguage}
                                 onChange={(e) => setTranslateTargetLanguage(e.target.value)}
                             >
-                                {languagesLoading && !supportedLanguages.length && <option value="">Loading languages…</option>}
+                                {languagesLoading && !supportedLanguages.length && (
+                                    <option value="">
+                                        {localizeWithFallback('catalog.admin.translate.loading.languages', 'Loading languages...')}
+                                    </option>
+                                )}
                                 {supportedLanguages.map((lang) => (
                                     <option key={lang.code} value={lang.code}>
                                         {lang.name} ({lang.code})
@@ -305,7 +319,11 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
                                 type="button"
                                 onClick={runTranslate}
                             >
-                                {isTranslating ? <FaSpinner className="text-[8px] animate-spin" /> : 'Apply'}
+                                {isTranslating ? (
+                                    <FaSpinner className="text-[8px] animate-spin" />
+                                ) : (
+                                    localizeWithFallback('catalog.admin.translate.apply', 'Apply')
+                                )}
                             </button>
                             <button
                                 className="nitro-catalog-admin-button is-muted"
@@ -316,7 +334,7 @@ export const CatalogAdminPageEditView: FC<{}> = () => {
                                     setTranslateError(null);
                                 }}
                             >
-                                Cancel
+                                {localizeWithFallback('catalog.admin.cancel', 'Cancel')}
                             </button>
                         </div>
                     )}

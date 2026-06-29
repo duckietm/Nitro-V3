@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
@@ -105,7 +105,7 @@ export const WiredExtraTextOutputFurniNameView: FC<{}> = () => {
                             type="radio"
                             onChange={() => setPlaceholderType(TYPE_SINGLE)}
                         />
-                        <Text>{LocalizeText('wiredfurni.params.texts.placeholder_type.1')}</Text>
+                        <Text>{localizeWithFallback('wiredfurni.params.texts.placeholder_type.furni.1', LocalizeText('wiredfurni.params.texts.placeholder_type.1'))}</Text>
                     </label>
                     <label className="flex items-center gap-1 cursor-pointer">
                         <input
@@ -115,7 +115,7 @@ export const WiredExtraTextOutputFurniNameView: FC<{}> = () => {
                             type="radio"
                             onChange={() => setPlaceholderType(TYPE_MULTIPLE)}
                         />
-                        <Text>{LocalizeText('wiredfurni.params.texts.placeholder_type.2')}</Text>
+                        <Text>{localizeWithFallback('wiredfurni.params.texts.placeholder_type.furni.2', LocalizeText('wiredfurni.params.texts.placeholder_type.2'))}</Text>
                     </label>
                 </div>
                 {placeholderType === TYPE_MULTIPLE && (

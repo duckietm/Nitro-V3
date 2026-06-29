@@ -208,7 +208,7 @@ export const WiredActionGiveRewardView: FC<{}> = (props) => {
             footer={<WiredSourcesSelector showUsers={true} userSource={userSource} onChangeUsers={setUserSource} />}
         >
             <div className="flex items-center gap-1">
-                <input className="form-check-input" id="limitEnabled" type="checkbox" onChange={(event) => setLimitEnabled(event.target.checked)} />
+                <input checked={limitEnabled} className="form-check-input" id="limitEnabled" type="checkbox" onChange={(event) => setLimitEnabled(event.target.checked)} />
                 <Text>{LocalizeText('wiredfurni.params.prizelimit', ['amount'], [limitEnabled ? rewardsLimit.toString() : ''])}</Text>
             </div>
             {!limitEnabled && (

@@ -9,8 +9,8 @@ import { WiredActionBaseView } from './WiredActionBaseView';
 const rotationOptions: number[] = [0, 1, 2, 3, 4, 5, 6];
 
 export const WiredActionMoveAndRotateFurniView: FC<{}> = (props) => {
-    const [movement, setMovement] = useState(-1);
-    const [rotation, setRotation] = useState(-1);
+    const [movement, setMovement] = useState(0);
+    const [rotation, setRotation] = useState(0);
     const [blockOnUserCollision, setBlockOnUserCollision] = useState(false);
     const { trigger = null, setIntParams = null } = useWired();
     const [furniSource, setFurniSource] = useState<number>(() => {
@@ -25,8 +25,8 @@ export const WiredActionMoveAndRotateFurniView: FC<{}> = (props) => {
             setMovement(trigger.intData[0]);
             setRotation(trigger.intData[1]);
         } else {
-            setMovement(-1);
-            setRotation(-1);
+            setMovement(0);
+            setRotation(0);
         }
 
         if (trigger.intData.length > 2) setFurniSource(trigger.intData[2]);
