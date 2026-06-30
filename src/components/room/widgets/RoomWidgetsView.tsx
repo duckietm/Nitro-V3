@@ -13,6 +13,7 @@ import { DispatchUiEvent, LocalizeText, NotificationAlertType, RoomWidgetUpdateR
 import { WidgetErrorBoundary } from '../../../common';
 import { useNitroEvent, useNotification, usePollSubscriptions, useRoom } from '../../../hooks';
 import { AvatarInfoWidgetView } from './avatar-info/AvatarInfoWidgetView';
+import { RoomKeybindView } from './RoomKeybindView';
 import { ChatWidgetView } from './chat/ChatWidgetView';
 import { ChatInputView } from './chat-input/ChatInputView';
 import { FurniChooserWidgetView } from './choosers/FurniChooserWidgetView';
@@ -190,6 +191,9 @@ export const RoomWidgetsView: FC<{}> = (props) => {
             </WidgetErrorBoundary>
             <WidgetErrorBoundary name="ChatInput">
                 <ChatInputView />
+            </WidgetErrorBoundary>
+            <WidgetErrorBoundary name="RoomKeybind">
+                <RoomKeybindView />
             </WidgetErrorBoundary>
             <WidgetErrorBoundary name="DoorbellWidget">
                 <DoorbellWidgetView />

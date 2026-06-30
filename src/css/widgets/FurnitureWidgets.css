@@ -151,7 +151,10 @@
 }
 
 .nitro-room-widget-dimmer {
-    width: 275px;
+    width: min(275px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
 
     .dimmer-banner {
         width: 56px;
@@ -172,13 +175,29 @@
 }
 
 .nitro-widget-crafting {
-    width: 500px;
-    height: 300px;
+    width: min(500px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    height: min(300px, calc(100vh - 16px));
+    min-height: 0;
+    max-height: calc(100vh - 16px);
+
+    .crafting-widget-layout {
+        min-height: 0;
+    }
+
+    .crafting-widget-pane {
+        flex: 1 1 0;
+    }
 }
 
 .nitro-widget-exchange-credit {
-    width: 375px;
-    height: 150px;
+    width: min(375px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    height: min(150px, calc(100vh - 16px));
+    min-height: 0;
+    max-height: calc(100vh - 16px);
 
     .exchange-image {
         background-image: url('@/assets/images/room-widgets/exchange-credit/exchange-credit-image.png');
@@ -188,9 +207,15 @@
 }
 
 .nitro-external-image-widget {
+    width: min(340px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+
     .picture-preview {
-        width: 320px;
-        height: 320px;
+        width: min(320px, calc(100vw - 36px));
+        height: auto;
+        aspect-ratio: 1;
     }
     
     .picture-preview-buttons {
@@ -209,7 +234,10 @@
 }
 
 .nitro-gift-opening {
-    width: 340px;
+    width: min(340px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
     resize: none;
 }
 
@@ -509,8 +537,20 @@
 }
 
 .nitro-playlist-editor-widget {
-    width: 625px;
-    height: 440px;
+    width: min(625px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    height: min(440px, calc(100vh - 16px));
+    min-height: 0;
+    max-height: calc(100vh - 16px);
+
+    .playlist-editor-layout {
+        min-height: 0;
+    }
+
+    .playlist-editor-pane {
+        flex: 1 1 0;
+    }
 
     img.my-music {
         position: absolute;
@@ -611,9 +651,26 @@
     }
 }
 
+@media (max-width: 640px), (max-height: 520px) {
+    .nitro-playlist-editor-widget {
+        .playlist-editor-layout {
+            flex-direction: column;
+        }
+
+        .playlist-editor-pane {
+            width: 100%;
+            min-height: 0;
+        }
+    }
+}
+
 .nitro-mysterybox-dialog {
-    width: 375px;
-    height: 210px;
+    width: min(375px, calc(100vw - 16px));
+    min-width: 0;
+    max-width: calc(100vw - 16px);
+    height: min(210px, calc(100vh - 16px));
+    min-height: 0;
+    max-height: calc(100vh - 16px);
 
     .prize-container {
         height: 80px;
@@ -624,17 +681,14 @@
     }
 }
 
-.nitro-mysterytrophy-dialog
-{
-    .mysterytrophy-dialog-top
-    {
-        width: 400px;
-        height: 120px;
+.nitro-mysterytrophy-dialog {
+    .mysterytrophy-dialog-top {
+        width: 100%;
+        min-height: 120px;
         border-radius: 2px;
         background-color: #0E3F52;
 
-        .mysterytrophy-image
-        {
+        .mysterytrophy-image {
             width: 80px;
             height: 84px;
             position: relative;
@@ -642,35 +696,32 @@
             background-repeat: no-repeat;
         }
 
-        .mysterytrophy-text-big
-        {
+        .mysterytrophy-text-big {
             font-size: 16px;
         }
     }
 
-    .mysterytrophy-dialog-bottom
-    {
+    .mysterytrophy-dialog-bottom {
         display: flex;
         justify-content: center;
-        width: 400px;
-        height: 120px;
+        width: 100%;
+        min-height: 120px;
         border-radius: 2px;
         background-color: #E9E9E1;
 
-        .input-mysterytrophy-dialog
-        {
-            width: 380px;
+        .input-mysterytrophy-dialog {
+            width: min(380px, 100%);
+            min-width: 0;
             border: 1px solid black;
 
-            .input-mysterytrophy
-            {
-                width: 350px;
+            .input-mysterytrophy {
+                width: 100%;
+                min-width: 0;
                 border: 0;
                 outline: 0;
             }
 
-            .mysterytrophy-pencil-image
-            {
+            .mysterytrophy-pencil-image {
                 width: 16px;
                 height: 16px;
                 position: relative;
@@ -679,9 +730,26 @@
             }
         }
 
-        .text-decoration
-        {
+        .text-decoration {
             text-decoration: underline;
         }
+    }
+}
+
+@media (max-width: 560px), (max-height: 460px) {
+    .nitro-widget-crafting {
+        .crafting-widget-layout {
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        .crafting-widget-pane {
+            width: 100%;
+            min-height: 0;
+        }
+    }
+
+    .nitro-widget-exchange-credit {
+        height: auto;
     }
 }

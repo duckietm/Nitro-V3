@@ -135,7 +135,7 @@ export const WiredTriggerVariableChangedView: FC<{}> = () => {
 
     return (
         <WiredTriggerBaseView hasSpecialInput={true} requiresFurni={WiredFurniType.STUFF_SELECTION_OPTION_NONE} save={save}>
-            <div className="nitro-wired__give-var" style={{ width: 244 }}>
+            <div className="nitro-wired__give-var nitro-wired__give-var--trigger-variable">
                 <div className="nitro-wired__give-var-heading">
                     <Text>{LocalizeText('wiredfurni.params.variables.variable_selection')}</Text>
                     <div className="nitro-wired__give-var-targets">

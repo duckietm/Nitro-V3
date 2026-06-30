@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, WiredFurniType, localizeWithFallback } from '../../../../api';
 import contextVariableIcon from '../../../../assets/images/wired/var/icon_source_context_clean.png';
 import furniVariableIcon from '../../../../assets/images/wired/var/icon_source_furni.png';
 import globalVariableIcon from '../../../../assets/images/wired/var/icon_source_global.png';
@@ -238,7 +238,7 @@ export const WiredExtraTextOutputVariableView: FC<{}> = () => {
             return (
                 <WiredFurniSelectionSourceRow
                     title="wiredfurni.params.sources.merged.title.variables"
-                    options={[{ value: 0, label: 'Current execution' }]}
+                    options={[{ value: 0, label: localizeWithFallback('wiredfurni.params.sources.context', 'Current execution') }]}
                     value={0}
                     selectionKind="primary"
                     selectionActive={false}

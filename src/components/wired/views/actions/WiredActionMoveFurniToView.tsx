@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
@@ -64,7 +64,7 @@ export const WiredActionMoveFurniToView: FC<{}> = (props) => {
                 <Slider max={5} min={1} value={spacing} onChange={(event) => setSpacing(event)} />
             </div>
             <div className="flex flex-col gap-1">
-                <Text bold>{LocalizeText('wiredfurni.params.startdir')}</Text>
+                <Text bold>{localizeWithFallback('wiredfurni.params.movefurni', LocalizeText('wiredfurni.params.startdir'))}</Text>
                 <div className="flex gap-1">
                     {directionOptions.map((value) => {
                         return (

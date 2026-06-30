@@ -7,7 +7,7 @@ import { WiredConditionBaseView } from './WiredConditionBaseView';
 
 const COUNTER_INTERACTION_TYPES = ['game_upcounter'];
 const MIN_ALTITUDE = 0;
-const MAX_ALTITUDE = 40;
+const MAX_ALTITUDE = 80;
 const ALTITUDE_STEP = 0.01;
 const ALTITUDE_PATTERN = /^\d*(\.\d{0,2})?$/;
 
