@@ -3,6 +3,7 @@ import {
     AddLinkEventTracker,
     ConvertGlobalRoomIdMessageComposer,
     FindNewFriendsMessageComposer,
+    GetCategoriesWithUserCountMessageComposer,
     HabboWebTools,
     ILinkEventTracker,
     LegacyExternalInterface,
@@ -99,6 +100,7 @@ export const NavigatorView: FC<{}> = (props) => {
     useEffect(() => {
         if (!isVisible || !needsInit) return;
         SendMessageComposer(new NavigatorInitComposer());
+        SendMessageComposer(new GetCategoriesWithUserCountMessageComposer());
         useNavigatorUiStore.getState().markInitDone();
     }, [isVisible, needsInit]);
 

@@ -22,6 +22,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { LocalizeText, ProductImageUtility, SendMessageComposer } from '../../../../api';
 import { Column, Flex, LayoutCurrencyIcon, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { ChestButton } from './ChestButton';
+import { chestFurniDisplayName, ChestFurniGroup, groupStoredFurni } from './chestFurniGrouping';
 import { useMessageEvent } from '../../../../hooks';
 import { useInventoryFurni } from '../../../../hooks/inventory';
 import sceneZero from '../../../../assets/images/chest/light_coins_chest_balance_zero.png';
@@ -37,11 +38,6 @@ interface ChestEntry {
     amount: number;
 }
 
-interface ChestFurniEntry {
-    baseItemId: number;
-    quantity: number;
-}
-
 interface ChestLogRow {
     type: string;
     timestamp: number;
@@ -55,22 +51,22 @@ const CHEST_KIND_FURNI = 1;
 const UPGRADE_STEP = 5000;
 const FURNI_SEARCH_THRESHOLD = 31;
 
-const furniName = (baseItemId: number): string => {
-    const data = GetSessionDataManager().getFloorItemData(baseItemId);
+const furniName = (baseItemId: number, wallItem = false): string => {
+    const data = wallItem
+        ? GetSessionDataManager().getWallItemData(baseItemId)
+        : GetSessionDataManager().getFloorItemData(baseItemId);
     return data?.name || `#${baseItemId}`;
 };
 const COST_CREDITS = 10;
 const COST_DIAMONDS = 10;
 
-const groupStoredFurni = (items: IChestFurniStoredItem[]): ChestFurniEntry[] => {
-    const counts = new Map<number, number>();
-
-    for (const item of items) {
-        counts.set(item.baseItemId, (counts.get(item.baseItemId) ?? 0) + 1);
-    }
-
-    return Array.from(counts.entries()).map(([baseItemId, quantity]) => ({ baseItemId, quantity }));
-};
+const groupLabel = (group: ChestFurniGroup): string =>
+    chestFurniDisplayName(
+        group,
+        LocalizeText,
+        (id) => furniName(id, false),
+        (id) => furniName(id, true),
+    );
 
 export const FurnitureChestView: FC = () => {
     const [itemId, setItemId] = useState(-1);
@@ -89,9 +85,9 @@ export const FurnitureChestView: FC = () => {
     const [notifyMode, setNotifyMode] = useState(0);
     const [entries, setEntries] = useState<ChestEntry[]>([]);
     const [chestKind, setChestKind] = useState(0);
-    const [furniEntries, setFurniEntries] = useState<ChestFurniEntry[]>([]);
+    const [furniEntries, setFurniEntries] = useState<ChestFurniGroup[]>([]);
     const [storedFurniItems, setStoredFurniItems] = useState<IChestFurniStoredItem[]>([]);
-    const [selectedFurni, setSelectedFurni] = useState(-1);
+    const [selectedFurniKey, setSelectedFurniKey] = useState('');
     const [furniWithdrawAmount, setFurniWithdrawAmount] = useState(1);
 
     const [withdrawAmount, setWithdrawAmount] = useState(1);
@@ -143,8 +139,10 @@ export const FurnitureChestView: FC = () => {
     const visibleFurniEntries = useMemo(() => {
         const q = furniSearch.trim().toLowerCase();
         if (!q) return furniEntries;
-        return furniEntries.filter((f) => furniName(f.baseItemId).toLowerCase().includes(q));
+        return furniEntries.filter((f) => groupLabel(f).toLowerCase().includes(q));
     }, [furniEntries, furniSearch]);
+
+    const selectedGroup = furniEntries.find((f) => f.key === selectedFurniKey) ?? null;
 
     useEffect(() => {
         if (!depositFurniOpen) return;
@@ -156,8 +154,8 @@ export const FurnitureChestView: FC = () => {
         setStoredFurniItems(items);
         const grouped = groupStoredFurni(items);
         setFurniEntries(grouped);
-        setSelectedFurni((prev) =>
-            grouped.some((f) => f.baseItemId === prev) ? prev : grouped.length ? grouped[0].baseItemId : -1,
+        setSelectedFurniKey((prev) =>
+            grouped.some((f) => f.key === prev) ? prev : grouped.length ? grouped[0].key : '',
         );
     }, []);
 
@@ -183,10 +181,29 @@ export const FurnitureChestView: FC = () => {
             // v2: item rows arrive via ChestFurniChunkEvent after this shell packet
             applyStoredFurni([]);
         } else {
-            const furni = p.furniEntries.map((e) => ({ baseItemId: e.baseItemId, quantity: e.quantity }));
-            setFurniEntries(furni);
-            setSelectedFurni((prev) =>
-                furni.some((f) => f.baseItemId === prev) ? prev : furni.length ? furni[0].baseItemId : -1,
+            const legacyGroups: ChestFurniGroup[] = p.furniEntries.map((e) => ({
+                key: `0-${e.baseItemId}-`,
+                wallItem: false,
+                baseItemId: e.baseItemId,
+                legacyPosterId: '',
+                specialType: 0,
+                quantity: e.quantity,
+                sample: {
+                    inventoryId: 0,
+                    lockState: 0,
+                    transactionId: 0,
+                    wallItem: false,
+                    baseItemId: e.baseItemId,
+                    legacyPosterId: '',
+                    groupable: true,
+                    specialType: 0,
+                    stuffData: null,
+                    extra: 0,
+                },
+            }));
+            setFurniEntries(legacyGroups);
+            setSelectedFurniKey((prev) =>
+                legacyGroups.some((f) => f.key === prev) ? prev : legacyGroups.length ? legacyGroups[0].key : '',
             );
         }
     });
@@ -201,8 +218,8 @@ export const FurnitureChestView: FC = () => {
             if (p.fragmentNo === p.totalFragments - 1) {
                 const grouped = groupStoredFurni(next);
                 setFurniEntries(grouped);
-                setSelectedFurni((sel) =>
-                    grouped.some((f) => f.baseItemId === sel) ? sel : grouped.length ? grouped[0].baseItemId : -1,
+                setSelectedFurniKey((sel) =>
+                    grouped.some((f) => f.key === sel) ? sel : grouped.length ? grouped[0].key : '',
                 );
             }
             return next;
@@ -217,8 +234,8 @@ export const FurnitureChestView: FC = () => {
             const next = [...prev.filter((i) => !removed.has(i.inventoryId)), ...p.added];
             const grouped = groupStoredFurni(next);
             setFurniEntries(grouped);
-            setSelectedFurni((sel) =>
-                grouped.some((f) => f.baseItemId === sel) ? sel : grouped.length ? grouped[0].baseItemId : -1,
+            setSelectedFurniKey((sel) =>
+                grouped.some((f) => f.key === sel) ? sel : grouped.length ? grouped[0].key : '',
             );
             return next;
         });
@@ -242,7 +259,7 @@ export const FurnitureChestView: FC = () => {
     const chestTypeLabel = isFurni
         ? LocalizeText('wiredchests.furni_chest')
         : LocalizeText('wiredchests.coin_chest');
-    const selectedFurniQty = furniEntries.find((f) => f.baseItemId === selectedFurni)?.quantity ?? 0;
+    const selectedFurniQty = selectedGroup?.quantity ?? 0;
 
     const close = () => setItemId(-1);
     const deposit = () => {
@@ -265,8 +282,16 @@ export const FurnitureChestView: FC = () => {
         setConfirmWithdrawAll(false);
     };
     const withdrawFurni = () => {
-        if (selectedFurni < 0 || furniWithdrawAmount <= 0 || selectedFurniQty <= 0) return;
-        SendMessageComposer(new ChestWithdrawFurniComposer(itemId, false, selectedFurni, '', furniWithdrawAmount));
+        if (!selectedGroup || furniWithdrawAmount <= 0 || selectedFurniQty <= 0) return;
+        SendMessageComposer(
+            new ChestWithdrawFurniComposer(
+                itemId,
+                selectedGroup.wallItem,
+                selectedGroup.baseItemId,
+                selectedGroup.legacyPosterId,
+                furniWithdrawAmount,
+            ),
+        );
     };
     const depositInventoryItem = (inventoryItemId: number) => {
         if (inventoryItemId <= 0 || used >= capacityMax) return;
@@ -376,14 +401,14 @@ export const FurnitureChestView: FC = () => {
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                                         {visibleFurniEntries.map((f) => (
                                             <div
-                                                key={f.baseItemId}
-                                                onClick={() => setSelectedFurni(f.baseItemId)}
-                                                title={furniName(f.baseItemId)}
+                                                key={f.key}
+                                                onClick={() => setSelectedFurniKey(f.key)}
+                                                title={groupLabel(f)}
                                                 style={{
                                                     position: 'relative',
                                                     width: 40,
                                                     height: 40,
-                                                    border: `1px solid ${selectedFurni === f.baseItemId ? '#5b9bd5' : '#cbcbcb'}`,
+                                                    border: `1px solid ${selectedFurniKey === f.key ? '#5b9bd5' : '#cbcbcb'}`,
                                                     borderRadius: 3,
                                                     background: '#fafafa',
                                                     display: 'flex',
@@ -396,7 +421,11 @@ export const FurnitureChestView: FC = () => {
                                                 {/* small furni ICON (like inventory/catalog) — fits the 40px cell;
                                                     the full LayoutFurniImageView render overflowed/cropped here */}
                                                 <img
-                                                    src={ProductImageUtility.getProductImageUrl(FurnitureType.FLOOR, f.baseItemId, '')}
+                                                    src={ProductImageUtility.getProductImageUrl(
+                                                        f.wallItem ? FurnitureType.WALL : FurnitureType.FLOOR,
+                                                        f.baseItemId,
+                                                        f.legacyPosterId,
+                                                    )}
                                                     alt=""
                                                     draggable={false}
                                                     style={{ maxWidth: 38, maxHeight: 38, objectFit: 'contain', imageRendering: 'pixelated' }}
@@ -428,13 +457,18 @@ export const FurnitureChestView: FC = () => {
                             {/* right_panel: furni name + preview + withdraw */}
                             <div style={{ width: 175, display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ flex: 1, minHeight: 211, border: '1px solid #d8d8d8', borderRadius: 3, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 6, overflow: 'hidden' }}>
-                                    {selectedFurni >= 0 ? (
+                                    {selectedGroup ? (
                                         <>
                                             <Text bold style={{ textAlign: 'center', marginBottom: 4 }}>
-                                                {furniName(selectedFurni)}
+                                                {groupLabel(selectedGroup)}
                                             </Text>
                                             <Flex alignItems="center" justifyContent="center" style={{ flex: 1 }}>
-                                                <LayoutFurniImageView productType="s" productClassId={selectedFurni} direction={2} />
+                                                <LayoutFurniImageView
+                                                    productType={selectedGroup.wallItem ? 'i' : 's'}
+                                                    productClassId={selectedGroup.baseItemId}
+                                                    extraData={selectedGroup.legacyPosterId}
+                                                    direction={2}
+                                                />
                                             </Flex>
                                         </>
                                     ) : (
@@ -457,7 +491,7 @@ export const FurnitureChestView: FC = () => {
                                             setFurniWithdrawAmount(Math.max(0, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0))
                                         }
                                     />
-                                    <ChestButton fixed disabled={selectedFurni < 0 || selectedFurniQty <= 0} onClick={withdrawFurni}>
+                                    <ChestButton fixed disabled={!selectedGroup || selectedFurniQty <= 0} onClick={withdrawFurni}>
                                         {LocalizeText('wiredchests.withdraw')}
                                     </ChestButton>
                                 </Flex>
