@@ -4,11 +4,6 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { LocalizeText, MessengerFriend, localizeWithFallback } from '../../../../api';
 import { FriendBarItemView } from './FriendBarItemView';
 
-const localizeWithFallback = (key: string, fallback: string) => {
-    const text = LocalizeText(key);
-    return text && text !== key ? text : fallback;
-};
-
 // Hard cap on simultaneously-shown friend chips. The effective count is
 // reduced below this when the bar would otherwise overflow its (clipped)
 // slot in the toolbar — see the width measurement below.
