@@ -5,11 +5,6 @@ import { useCatalogData } from '../../../../hooks';
 import { IOfferEditData, useCatalogAdmin } from '../../CatalogAdminContext';
 import { CatalogAdminModalView } from './CatalogAdminModalView';
 
-const localizeWithFallback = (key: string, fallback: string) => {
-    const text = LocalizeText(key);
-    return text && text !== key ? text : fallback;
-};
-
 export const CatalogAdminOfferEditView: FC<{}> = () => {
     const { currentPage = null } = useCatalogData();
     const catalogAdmin = useCatalogAdmin();
