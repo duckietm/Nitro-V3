@@ -107,6 +107,21 @@ jobs:
           REPO="$IN_REPO"
           [ -z "$REPO" ] && REPO="$VAR_REPO"
           if [ -z "$REPO" ]; then
+            # Fork PRs into duckietm: pair with the head author's renderer fork
+            # (simoleo89/Nitro_Render_V3 @ Dev) instead of upstream Dev which
+            # may not yet carry the companion wire protocol.
+            PR_HEAD_OWNER="${{ github.event.pull_request.head.repo.owner.login || '' }}"
+            if [ -n "$PR_HEAD_OWNER" ] && [ "$PR_HEAD_OWNER" != "${{ github.repository_owner }}" ]; then
+              HEAD_RENDERER="${PR_HEAD_OWNER}/Nitro_Render_V3"
+              if has_ref "$HEAD_RENDERER" "$REF"; then
+                REPO="$HEAD_RENDERER"
+              elif has_ref "$HEAD_RENDERER" "integration"; then
+                REPO="$HEAD_RENDERER"
+                REF="integration"
+              fi
+            fi
+          fi
+          if [ -z "$REPO" ]; then
             OWN_REPO="${GITHUB_REPOSITORY_OWNER}/Nitro_Render_V3"
             if has_ref "$OWN_REPO" "$REF"; then
               REPO="$OWN_REPO"               # companion lives on my own fork
