@@ -1,6 +1,7 @@
 import {
     ChestDataEvent,
     ChestDepositComposer,
+    ChestDepositFurniComposer,
     ChestLogEvent,
     ChestRequestLogComposer,
     ChestSaveNotificationsComposer,
@@ -8,13 +9,16 @@ import {
     ChestUpgradeCapacityComposer,
     ChestWithdrawComposer,
     ChestWithdrawFurniComposer,
+    FurnitureListComposer,
     FurnitureType,
     GetSessionDataManager,
 } from '@nitrots/nitro-renderer';
-import { FC, useState } from 'react';
-import { ProductImageUtility, SendMessageComposer } from '../../../../api';
-import { Button, Column, Flex, LayoutCurrencyIcon, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { LocalizeText, ProductImageUtility, SendMessageComposer } from '../../../../api';
+import { Column, Flex, LayoutCurrencyIcon, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { ChestButton } from './ChestButton';
 import { useMessageEvent } from '../../../../hooks';
+import { useInventoryFurni } from '../../../../hooks/inventory';
 import sceneZero from '../../../../assets/images/chest/light_coins_chest_balance_zero.png';
 import sceneLow from '../../../../assets/images/chest/light_coins_chest_balance_low.png';
 import sceneMedium from '../../../../assets/images/chest/light_coins_chest_balance_medium.png';
@@ -52,18 +56,6 @@ const furniName = (baseItemId: number): string => {
 const COST_CREDITS = 10;
 const COST_DIAMONDS = 10;
 
-const APPEARANCE_OPTIONS = [
-    { value: 0, label: 'Apri quando qualcuno guarda dentro' },
-    { value: 1, label: 'Sempre aperto' },
-    { value: 2, label: 'Sempre chiuso' },
-];
-
-const NOTIFY_MODES = [
-    { value: 0, label: 'Sempre' },
-    { value: 1, label: 'Solo quando sono nella stanza' },
-    { value: 2, label: 'Mai' },
-];
-
 export const FurnitureChestView: FC = () => {
     const [itemId, setItemId] = useState(-1);
     const [name, setName] = useState('');
@@ -96,6 +88,52 @@ export const FurnitureChestView: FC = () => {
     const [logRows, setLogRows] = useState<ChestLogRow[]>([]);
     const [upgradeQty, setUpgradeQty] = useState(1);
     const [confirmWithdrawAll, setConfirmWithdrawAll] = useState(false);
+    const [depositFurniOpen, setDepositFurniOpen] = useState(false);
+    const [depositFurniBaseId, setDepositFurniBaseId] = useState(-1);
+    const [depositFurniAmount, setDepositFurniAmount] = useState(1);
+
+    const { groupItems = [] } = useInventoryFurni();
+
+    const appearanceOptions = useMemo(
+        () => [
+            { value: 0, label: LocalizeText('wiredchests.settings.appearance.state.0') },
+            { value: 1, label: LocalizeText('wiredchests.settings.appearance.state.1') },
+            { value: 2, label: LocalizeText('wiredchests.settings.appearance.state.2') },
+        ],
+        [],
+    );
+
+    const notifyModes = useMemo(
+        () => [
+            { value: 0, label: LocalizeText('wiredchests.notification_settings.notification_mode.when.0') },
+            { value: 1, label: LocalizeText('wiredchests.notification_settings.notification_mode.when.1') },
+            { value: 2, label: LocalizeText('wiredchests.notification_settings.notification_mode.when.2') },
+        ],
+        [],
+    );
+
+    const depositableFloorItems = useMemo(
+        () => groupItems.filter((g) => !g.isWallItem && g.getTotalCount() > 0),
+        [groupItems],
+    );
+
+    const depositFurniMax = useMemo(() => {
+        if (depositFurniBaseId < 0) return 0;
+        const owned = depositableFloorItems.find((g) => g.type === depositFurniBaseId)?.getTotalCount() ?? 0;
+        const capacityLeft = Math.max(0, capacityMax - used);
+        return Math.min(owned, capacityLeft, 100);
+    }, [depositFurniBaseId, depositableFloorItems, capacityMax, used]);
+
+    useEffect(() => {
+        if (!depositFurniOpen) return;
+        SendMessageComposer(new FurnitureListComposer());
+    }, [depositFurniOpen]);
+
+    useEffect(() => {
+        if (!depositFurniOpen || depositableFloorItems.length === 0) return;
+        if (depositableFloorItems.some((g) => g.type === depositFurniBaseId)) return;
+        setDepositFurniBaseId(depositableFloorItems[0].type);
+    }, [depositFurniOpen, depositableFloorItems, depositFurniBaseId]);
 
     useMessageEvent<ChestDataEvent>(ChestDataEvent, (event) => {
         const p = event.getParser();
@@ -138,6 +176,9 @@ export const FurnitureChestView: FC = () => {
         creditsBalance >= 100 ? sceneHigh : creditsBalance >= 20 ? sceneMedium : creditsBalance >= 1 ? sceneLow : sceneZero;
 
     const isFurni = chestKind === CHEST_KIND_FURNI;
+    const chestTypeLabel = isFurni
+        ? LocalizeText('wiredchests.furni_chest')
+        : LocalizeText('wiredchests.coin_chest');
     const selectedFurniQty = furniEntries.find((f) => f.baseItemId === selectedFurni)?.quantity ?? 0;
 
     const close = () => setItemId(-1);
@@ -160,6 +201,11 @@ export const FurnitureChestView: FC = () => {
         if (selectedFurni < 0 || furniWithdrawAmount <= 0 || selectedFurniQty <= 0) return;
         SendMessageComposer(new ChestWithdrawFurniComposer(itemId, selectedFurni, furniWithdrawAmount));
     };
+    const depositFurni = () => {
+        if (depositFurniBaseId < 0 || depositFurniAmount <= 0 || depositFurniMax <= 0) return;
+        SendMessageComposer(new ChestDepositFurniComposer(itemId, depositFurniBaseId, Math.min(depositFurniAmount, depositFurniMax)));
+        setDepositFurniAmount(1);
+    };
     const requestLog = () => SendMessageComposer(new ChestRequestLogComposer(itemId));
     const saveSettings = () => {
         SendMessageComposer(new ChestSaveSettingsComposer(itemId, name, description, accessOpen, accessDonate, appearanceState));
@@ -178,7 +224,7 @@ export const FurnitureChestView: FC = () => {
         <>
             {/* ===== MAIN WINDOW ===== */}
             <NitroCardView className="nitro-widget-chest" theme="primary-slim" style={{ width: 460 }}>
-                <NitroCardHeaderView headerText={name || (isFurni ? 'Scrigno Furni' : 'Scrigno Crediti')} onCloseClick={close} />
+                <NitroCardHeaderView headerText={name || chestTypeLabel} onCloseClick={close} />
                 <NitroCardContentView>
                     {/* ===== header box (chest_generic.xml container "header", 460x51) =====
                          grey band (layout_1 #dadada) + bottom splitter (#c0c0c0 @y50);
@@ -207,7 +253,7 @@ export const FurnitureChestView: FC = () => {
                                 opacity: 0.6,
                             }}
                         >
-                            {description || 'Per favore, deposita tutti i tuoi risparmi di una vita. Va bene. Fidati di me'}
+                            {description || LocalizeText('wiredchests.description_placeholder')}
                         </Text>
                         <div style={{ position: 'absolute', top: 7, right: 9, display: 'flex', gap: 5 }}>
                             {/* notification_settings_button 24x24, icon wired_chests_bell_icon 12x15 */}
@@ -216,7 +262,7 @@ export const FurnitureChestView: FC = () => {
                                 className="flex items-center justify-center cursor-pointer shrink-0"
                                 style={{ width: 24, height: 24, background: '#f1f0ee', border: '1px solid #cfcabc', borderRadius: 4, padding: 0 }}
                                 onClick={() => setShowNotifications(true)}
-                                title="Notifiche"
+                                title={LocalizeText('wiredchests.notifications.button')}
                             >
                                 <img src={bellIcon} width={12} height={15} alt="" draggable={false} style={{ imageRendering: 'pixelated' }} />
                             </button>
@@ -226,7 +272,7 @@ export const FurnitureChestView: FC = () => {
                                 className="flex items-center justify-center cursor-pointer shrink-0"
                                 style={{ width: 24, height: 24, background: '#f1f0ee', border: '1px solid #cfcabc', borderRadius: 4, padding: 0 }}
                                 onClick={() => setShowSettings(true)}
-                                title="Impostazioni"
+                                title={LocalizeText('wiredchests.settings.button')}
                             >
                                 <img src={gearIcon} width={14} height={14} alt="" draggable={false} style={{ imageRendering: 'pixelated' }} />
                             </button>
@@ -240,7 +286,7 @@ export const FurnitureChestView: FC = () => {
                                 {furniEntries.length === 0 ? (
                                     <Flex alignItems="center" justifyContent="center" style={{ height: '100%' }}>
                                         <Text small style={{ opacity: 0.5 }}>
-                                            Nessun oggetto nello scrigno
+                                            {LocalizeText('wiredchests.empty_furni')}
                                         </Text>
                                     </Flex>
                                 ) : (
@@ -321,15 +367,15 @@ export const FurnitureChestView: FC = () => {
                                     <input
                                         type="text"
                                         inputMode="numeric"
+                                        className="nitro-chest__input nitro-chest__input--furni"
                                         value={furniWithdrawAmount}
                                         onChange={(e) =>
                                             setFurniWithdrawAmount(Math.max(0, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0))
                                         }
-                                        style={{ width: 36, height: 22, fontSize: 11, textAlign: 'center', border: '1px solid #b9b2a0', borderRadius: 2, padding: 0, boxSizing: 'border-box' }}
                                     />
-                                    <Button variant="secondary" disabled={selectedFurni < 0 || selectedFurniQty <= 0} onClick={withdrawFurni}>
-                                        Preleva
-                                    </Button>
+                                    <ChestButton fixed disabled={selectedFurni < 0 || selectedFurniQty <= 0} onClick={withdrawFurni}>
+                                        {LocalizeText('wiredchests.withdraw')}
+                                    </ChestButton>
                                 </Flex>
                             </div>
                         </Flex>
@@ -350,7 +396,7 @@ export const FurnitureChestView: FC = () => {
                         />
                         {/* balance_cont @ (9,68): "Saldo" label = balance_txt @ (2,7), font 11, auto_size left */}
                         <div style={{ position: 'absolute', left: 11, top: 75, width: 45, color: '#5b4632', fontWeight: 'bold', fontSize: 11, lineHeight: 1, textAlign: 'left' }}>
-                            Saldo
+                            {LocalizeText('wiredchests.balance')}
                         </div>
                         {/* balance_container: AS3 centers it horizontally inside balance_cont (x9..63) at runtime
                             (balanceContainerList.x = parent.width/2 - width/2). amount (bold) + coin_icon (13x15) */}
@@ -364,18 +410,13 @@ export const FurnitureChestView: FC = () => {
                             <input
                                 type="text"
                                 inputMode="numeric"
+                                className="nitro-chest__input nitro-chest__input--coin"
                                 value={withdrawAmount}
                                 onChange={(e) => setWithdrawAmount(Math.max(0, parseInt(e.target.value.replace(/\D/g, ''), 10) || 0))}
-                                style={{ width: 27, height: 19, fontSize: 11, textAlign: 'center', border: '1px solid #d8c184', borderRadius: 2, padding: 0, background: '#fff', boxSizing: 'border-box' }}
                             />
-                            <button
-                                type="button"
-                                onClick={withdraw}
-                                disabled={creditsBalance <= 0}
-                                style={{ height: 22, fontSize: 11, fontWeight: 'bold', padding: '0 10px', background: '#e9e6df', border: '1px solid #b9b2a0', borderRadius: 3, cursor: creditsBalance <= 0 ? 'default' : 'pointer', color: '#555', opacity: creditsBalance <= 0 ? 0.5 : 1 }}
-                            >
-                                Preleva
-                            </button>
+                            <ChestButton fixed disabled={creditsBalance <= 0} onClick={withdraw}>
+                                {LocalizeText('wiredchests.withdraw')}
+                            </ChestButton>
                         </div>
                     </div>
                     {depositOpen && (
@@ -387,9 +428,9 @@ export const FurnitureChestView: FC = () => {
                                 value={depositAmount}
                                 onChange={(e) => setDepositAmount(Math.max(0, parseInt(e.target.value, 10) || 0))}
                             />
-                            <Button variant="success" onClick={deposit}>
-                                Deposita
-                            </Button>
+                            <ChestButton wide onClick={deposit}>
+                                {LocalizeText('wiredchests.deposit')}
+                            </ChestButton>
                         </Flex>
                     )}
                         </>
@@ -397,70 +438,129 @@ export const FurnitureChestView: FC = () => {
                     <div className="nitro-wired__divider" />
                     <Flex alignItems="center" justifyContent="between">
                         <Text small>
-                            Capacità utilizzata: {used}&nbsp;&nbsp;&nbsp;Massima capacità: {capacityMax}
+                            {LocalizeText('wiredchests.space_used2', ['count', 'total'], [String(used), String(capacityMax)])}
                         </Text>
-                        <Button variant="secondary" onClick={() => setShowUpgrade(true)} title="Aumenta capacità">
+                        <ChestButton
+                            icon
+                            onClick={() => setShowUpgrade(true)}
+                            title={LocalizeText('wiredchests.upgrade_capacity')}
+                        >
                             +
-                        </Button>
+                        </ChestButton>
                     </Flex>
                     {/* button_row (chest_generic.xml): left group = Preleva tutto + Deposito iniziale, right = Visualizza log */}
-                    <Flex alignItems="center" justifyContent="between" className="mt-1">
+                    <div className="nitro-chest__footer-row">
                         {!isFurni ? (
-                            <Flex gap={1}>
-                                <Button variant="secondary" disabled={creditsBalance <= 0} onClick={withdrawAll}>
-                                    Preleva tutto
-                                </Button>
-                                <Button variant="secondary" onClick={() => setDepositOpen((v) => !v)}>
-                                    Deposito iniziale
-                                </Button>
-                            </Flex>
+                            <div className="nitro-chest__footer-group">
+                                <ChestButton wide disabled={creditsBalance <= 0} onClick={withdrawAll}>
+                                    {LocalizeText('wiredchests.withdraw_all')}
+                                </ChestButton>
+                                <ChestButton wide onClick={() => setDepositOpen((v) => !v)}>
+                                    {LocalizeText('wiredchests.initial_deposit')}
+                                </ChestButton>
+                            </div>
                         ) : (
-                            <span />
+                            <div className="nitro-chest__footer-group">
+                                <ChestButton wide onClick={() => setDepositFurniOpen((v) => !v)}>
+                                    {LocalizeText('wiredchests.deposit_furni')}
+                                </ChestButton>
+                            </div>
                         )}
-                        <Button variant="secondary" onClick={requestLog}>
-                            Visualizza log
-                        </Button>
-                    </Flex>
+                        <ChestButton wide onClick={requestLog}>
+                            {LocalizeText('wiredchests.view_logs')}
+                        </ChestButton>
+                    </div>
+                    {isFurni && depositFurniOpen && (
+                        <Column gap={1} className="mt-1 p-2 border rounded">
+                            <Text bold small>
+                                {LocalizeText('wiredchests.deposit_furni.title')}
+                            </Text>
+                            {depositableFloorItems.length === 0 ? (
+                                <Text small style={{ opacity: 0.6 }}>
+                                    {LocalizeText('wiredchests.deposit_furni.empty_inventory')}
+                                </Text>
+                            ) : (
+                                <>
+                                    <select
+                                        className="form-select form-select-sm"
+                                        value={depositFurniBaseId}
+                                        onChange={(e) => setDepositFurniBaseId(parseInt(e.target.value, 10))}
+                                    >
+                                        {depositableFloorItems.map((g) => (
+                                            <option key={g.type} value={g.type}>
+                                                {g.name} (x{g.getTotalCount()})
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <Flex alignItems="center" gap={1}>
+                                        <Text small>{LocalizeText('wiredchests.quantity')}</Text>
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            max={Math.max(1, depositFurniMax)}
+                                            className="form-control form-control-sm"
+                                            style={{ width: 72 }}
+                                            value={depositFurniAmount}
+                                            onChange={(e) =>
+                                                setDepositFurniAmount(Math.max(1, parseInt(e.target.value, 10) || 1))
+                                            }
+                                        />
+                                        <ChestButton wide disabled={depositFurniMax <= 0} onClick={depositFurni}>
+                                            {LocalizeText('wiredchests.deposit')}
+                                        </ChestButton>
+                                    </Flex>
+                                    {capacityMax - used <= 0 && (
+                                        <Text small style={{ color: '#a33' }}>
+                                            {LocalizeText('wiredchests.deposit_furni.full')}
+                                        </Text>
+                                    )}
+                                </>
+                            )}
+                        </Column>
+                    )}
                 </NitroCardContentView>
             </NitroCardView>
 
             {/* ===== SETTINGS ===== */}
             {showSettings && (
                 <NitroCardView className="nitro-widget-chest-settings" theme="primary-slim" style={{ width: 360 }}>
-                    <NitroCardHeaderView headerText="Impostazioni Scrigno Crediti" onCloseClick={() => setShowSettings(false)} />
+                    <NitroCardHeaderView
+                        headerText={LocalizeText('wiredchests.settings.title', ['chest_type'], [chestTypeLabel])}
+                        onCloseClick={() => setShowSettings(false)}
+                    />
                     <NitroCardContentView>
                         <Column gap={2}>
-                            <Text bold>Impostazioni di accesso aggiuntive</Text>
+                            <Text bold>{LocalizeText('wiredchests.settings.access')}</Text>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" className="form-check-input" checked={accessOpen} onChange={(e) => setAccessOpen(e.target.checked)} />
-                                <Text small>Tutti possono aprire lo scrigno</Text>
+                                <Text small>{LocalizeText('wiredchests.settings.access.open')}</Text>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" className="form-check-input" checked={accessDonate} onChange={(e) => setAccessDonate(e.target.checked)} />
-                                <Text small>Tutti possono donare allo scrigno</Text>
+                                <Text small>{LocalizeText('wiredchests.settings.access.donate')}</Text>
                             </label>
-                            <Text bold>Informazioni scrigno (facoltativo)</Text>
-                            <Text small>Nome scrigno:</Text>
+                            <Text bold>{LocalizeText('wiredchests.settings.info')}</Text>
+                            <Text small>{LocalizeText('wiredchests.settings.info.name')}</Text>
                             <input className="form-control form-control-sm" maxLength={60} value={name} onChange={(e) => setName(e.target.value)} />
-                            <Text small>Descrizione scrigno:</Text>
+                            <Text small>{LocalizeText('wiredchests.settings.info.desc')}</Text>
                             <textarea className="form-control form-control-sm" rows={3} maxLength={255} value={description} onChange={(e) => setDescription(e.target.value)} />
-                            <Text bold>Impostazioni aspetto</Text>
-                            <Text small>Stato scrigno:</Text>
+                            <Text bold>{LocalizeText('wiredchests.settings.appearance')}</Text>
+                            <Text small>{LocalizeText('wiredchests.settings.appearance.state')}</Text>
                             <select className="form-select form-select-sm" value={appearanceState} onChange={(e) => setAppearanceState(parseInt(e.target.value, 10))}>
-                                {APPEARANCE_OPTIONS.map((o) => (
+                                {appearanceOptions.map((o) => (
                                     <option key={o.value} value={o.value}>
                                         {o.label}
                                     </option>
                                 ))}
                             </select>
-                            <Flex gap={1}>
-                                <Button variant="success" onClick={saveSettings}>
-                                    Pronto
-                                </Button>
-                                <Button variant="secondary" onClick={() => setShowSettings(false)}>
-                                    Annulla
-                                </Button>
-                            </Flex>
+                            <div className="nitro-chest__actions">
+                                <ChestButton wide onClick={saveSettings}>
+                                    {LocalizeText('wiredchests.ready')}
+                                </ChestButton>
+                                <ChestButton wide onClick={() => setShowSettings(false)}>
+                                    {LocalizeText('wiredchests.cancel')}
+                                </ChestButton>
+                            </div>
                         </Column>
                     </NitroCardContentView>
                 </NitroCardView>
@@ -469,47 +569,50 @@ export const FurnitureChestView: FC = () => {
             {/* ===== NOTIFICATIONS ===== */}
             {showNotifications && (
                 <NitroCardView className="nitro-widget-chest-notifications" theme="primary-slim" style={{ width: 360 }}>
-                    <NitroCardHeaderView headerText="Impostazione notifiche Scrigno Crediti" onCloseClick={() => setShowNotifications(false)} />
+                    <NitroCardHeaderView
+                        headerText={LocalizeText('wiredchests.notification_settings.title', ['chest_type'], [chestTypeLabel])}
+                        onCloseClick={() => setShowNotifications(false)}
+                    />
                     <NitroCardContentView>
                         <Column gap={2}>
-                            <Text bold>Notifiche generali</Text>
+                            <Text bold>{LocalizeText('wiredchests.notification_settings.enable_notifications.generic')}</Text>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" className="form-check-input" checked={notifyFull} onChange={(e) => setNotifyFull(e.target.checked)} />
-                                <Text small>Avvisami quando lo scrigno è pieno</Text>
+                                <Text small>{LocalizeText('wiredchests.notification_settings.enable_notifications.generic.0')}</Text>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" className="form-check-input" checked={notifyDonation} onChange={(e) => setNotifyDonation(e.target.checked)} />
-                                <Text small>Avvisami quando qualcuno fa una donazione</Text>
+                                <Text small>{LocalizeText('wiredchests.notification_settings.enable_notifications.generic.1')}</Text>
                             </label>
-                            <Text bold>Solo per gli scrigni Wired</Text>
+                            <Text bold>{LocalizeText('wiredchests.notification_settings.enable_notifications.wired')}</Text>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" className="form-check-input" checked={notifyWithdraw} onChange={(e) => setNotifyWithdraw(e.target.checked)} />
-                                <Text small>Avvisami quando qualcuno preleva dallo scrigno</Text>
+                                <Text small>{LocalizeText('wiredchests.notification_settings.enable_notifications.wired.0')}</Text>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" className="form-check-input" checked={notifyEmpty} onChange={(e) => setNotifyEmpty(e.target.checked)} />
-                                <Text small>Avvisami quando lo scrigno è vuoto</Text>
+                                <Text small>{LocalizeText('wiredchests.notification_settings.enable_notifications.wired.1')}</Text>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" className="form-check-input" checked={notifyWired} onChange={(e) => setNotifyWired(e.target.checked)} />
-                                <Text small>Avvisami per qualsiasi transazione Wired</Text>
+                                <Text small>{LocalizeText('wiredchests.notification_settings.enable_notifications.wired.2')}</Text>
                             </label>
-                            <Text bold>Avvisami quando:</Text>
+                            <Text bold>{LocalizeText('wiredchests.notification_settings.notification_mode.when')}</Text>
                             <select className="form-select form-select-sm" value={notifyMode} onChange={(e) => setNotifyMode(parseInt(e.target.value, 10))}>
-                                {NOTIFY_MODES.map((o) => (
+                                {notifyModes.map((o) => (
                                     <option key={o.value} value={o.value}>
                                         {o.label}
                                     </option>
                                 ))}
                             </select>
-                            <Flex gap={1}>
-                                <Button variant="success" onClick={saveNotifications}>
-                                    Pronto
-                                </Button>
-                                <Button variant="secondary" onClick={() => setShowNotifications(false)}>
-                                    Annulla
-                                </Button>
-                            </Flex>
+                            <div className="nitro-chest__actions">
+                                <ChestButton wide onClick={saveNotifications}>
+                                    {LocalizeText('wiredchests.ready')}
+                                </ChestButton>
+                                <ChestButton wide onClick={() => setShowNotifications(false)}>
+                                    {LocalizeText('wiredchests.cancel')}
+                                </ChestButton>
+                            </div>
                         </Column>
                     </NitroCardContentView>
                 </NitroCardView>
@@ -518,14 +621,20 @@ export const FurnitureChestView: FC = () => {
             {/* ===== UPGRADE ===== */}
             {showUpgrade && (
                 <NitroCardView className="nitro-widget-chest-upgrade" theme="primary-slim" style={{ width: 340 }}>
-                    <NitroCardHeaderView headerText="Aggiornamento Scrigno" onCloseClick={() => setShowUpgrade(false)} />
+                    <NitroCardHeaderView headerText={LocalizeText('wiredchests.upgrade.title')} onCloseClick={() => setShowUpgrade(false)} />
                     <NitroCardContentView>
                         <Column gap={2}>
-                            <Text bold>Capacità scrigno extra: +{UPGRADE_STEP * upgradeQty}</Text>
-                            <Text small>Capacità massima attuale: {capacityMax}</Text>
-                            <Text small>Nuova capacità massima: {capacityMax + UPGRADE_STEP * upgradeQty}</Text>
+                            <Text bold>
+                                {LocalizeText('wiredchests.upgrade.capacity.extra', ['purchase_capacity'], [String(UPGRADE_STEP * upgradeQty)])}
+                            </Text>
+                            <Text small>
+                                {LocalizeText('wiredchests.upgrade.capacity.current', ['current_capacity'], [String(capacityMax)])}
+                            </Text>
+                            <Text small>
+                                {LocalizeText('wiredchests.upgrade.capacity.new', ['new_capacity'], [String(capacityMax + UPGRADE_STEP * upgradeQty)])}
+                            </Text>
                             <Flex alignItems="center" gap={2}>
-                                <Text small>Quantità:</Text>
+                                <Text small>{LocalizeText('wiredchests.quantity')}</Text>
                                 <select className="form-select form-select-sm" value={upgradeQty} onChange={(e) => setUpgradeQty(parseInt(e.target.value, 10))}>
                                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((q) => (
                                         <option key={q} value={q}>
@@ -535,16 +644,16 @@ export const FurnitureChestView: FC = () => {
                                 </select>
                             </Flex>
                             <Text bold>
-                                Prezzo: {COST_CREDITS * upgradeQty} crediti + {COST_DIAMONDS * upgradeQty} diamanti
+                                {LocalizeText('wiredchests.upgrade.price', ['credits', 'diamonds'], [String(COST_CREDITS * upgradeQty), String(COST_DIAMONDS * upgradeQty)])}
                             </Text>
-                            <Flex gap={1}>
-                                <Button variant="success" onClick={buyUpgrade}>
-                                    Acquista
-                                </Button>
-                                <Button variant="secondary" onClick={() => setShowUpgrade(false)}>
-                                    Annulla
-                                </Button>
-                            </Flex>
+                            <div className="nitro-chest__actions">
+                                <ChestButton wide onClick={buyUpgrade}>
+                                    {LocalizeText('wiredchests.upgrade.buy')}
+                                </ChestButton>
+                                <ChestButton wide onClick={() => setShowUpgrade(false)}>
+                                    {LocalizeText('wiredchests.cancel')}
+                                </ChestButton>
+                            </div>
                         </Column>
                     </NitroCardContentView>
                 </NitroCardView>
@@ -553,32 +662,34 @@ export const FurnitureChestView: FC = () => {
             {/* ===== LOG ===== */}
             {showLog && (
                 <NitroCardView className="nitro-widget-chest-log" theme="primary-slim" style={{ width: 520 }}>
-                    <NitroCardHeaderView headerText="Log delle transazioni" onCloseClick={() => setShowLog(false)} />
+                    <NitroCardHeaderView headerText={LocalizeText('wiredchests.logs.title')} onCloseClick={() => setShowLog(false)} />
                     <NitroCardContentView>
                         <Column gap={1}>
-                            <Text small>Id scrigno {itemId}</Text>
+                            <Text small>{LocalizeText('wiredchests.logs.chest_id', ['id'], [String(itemId)])}</Text>
                             <Flex gap={2} className="border-b pb-1">
                                 <Text bold className="w-20">
-                                    Tipo
+                                    {LocalizeText('wiredchests.logs.col.type')}
                                 </Text>
                                 <Text bold className="w-24">
-                                    Timestamp
+                                    {LocalizeText('wiredchests.logs.col.timestamp')}
                                 </Text>
                                 <Text bold className="grow!">
-                                    Nome utente
+                                    {LocalizeText('wiredchests.logs.col.username')}
                                 </Text>
                                 <Text bold className="w-16">
-                                    Prelievi
+                                    {LocalizeText('wiredchests.logs.col.withdraws')}
                                 </Text>
                                 <Text bold className="w-16">
-                                    Depositi
+                                    {LocalizeText('wiredchests.logs.col.deposits')}
                                 </Text>
                             </Flex>
-                            {logRows.length === 0 && <Text small>Nessuna transazione trovata.</Text>}
+                            {logRows.length === 0 && <Text small>{LocalizeText('wiredchests.logs.empty')}</Text>}
                             {logRows.map((r, i) => (
                                 <Flex key={i} gap={2}>
                                     <Text small className="w-20">
-                                        {r.type === 'withdraw' ? 'Prelievo' : 'Deposito'}
+                                        {r.type === 'withdraw'
+                                            ? LocalizeText('wiredchests.logs.type.withdraw')
+                                            : LocalizeText('wiredchests.logs.type.deposit')}
                                     </Text>
                                     <Text small className="w-24">
                                         {new Date(r.timestamp * 1000).toLocaleString()}
@@ -602,18 +713,18 @@ export const FurnitureChestView: FC = () => {
             {/* ===== WITHDRAW-ALL CONFIRM (mirrors WiredChestWrapperView.onWithdrawAllClick) ===== */}
             {confirmWithdrawAll && (
                 <NitroCardView className="nitro-widget-chest-confirm" theme="primary-slim" style={{ width: 320 }}>
-                    <NitroCardHeaderView headerText="Preleva tutto" onCloseClick={() => setConfirmWithdrawAll(false)} />
+                    <NitroCardHeaderView headerText={LocalizeText('wiredchests.withdraw_all.confirm.title')} onCloseClick={() => setConfirmWithdrawAll(false)} />
                     <NitroCardContentView>
                         <Column gap={2}>
-                            <Text>Vuoi davvero prelevare tutti i crediti dallo scrigno?</Text>
-                            <Flex gap={1}>
-                                <Button variant="success" onClick={doWithdrawAll}>
-                                    Sì, preleva tutto
-                                </Button>
-                                <Button variant="secondary" onClick={() => setConfirmWithdrawAll(false)}>
-                                    Annulla
-                                </Button>
-                            </Flex>
+                            <Text>{LocalizeText('wiredchests.withdraw_all.confirm.desc')}</Text>
+                            <div className="nitro-chest__actions">
+                                <ChestButton wide onClick={doWithdrawAll}>
+                                    {LocalizeText('wiredchests.withdraw_all.confirm.yes')}
+                                </ChestButton>
+                                <ChestButton wide onClick={() => setConfirmWithdrawAll(false)}>
+                                    {LocalizeText('wiredchests.cancel')}
+                                </ChestButton>
+                            </div>
                         </Column>
                     </NitroCardContentView>
                 </NitroCardView>

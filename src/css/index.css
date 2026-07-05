@@ -2017,3 +2017,286 @@ body {
         width: 100%;
     }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Wired chest (Scrigno) — Sulake chest_generic / coins_chest / furni_chest UI  */
+/* -------------------------------------------------------------------------- */
+[class*='nitro-widget-chest'] {
+    color: #2e2e2e;
+
+    .nitro-chest__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-height: 22px;
+        padding: 0 10px;
+        border: 1px solid #b9b2a0;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #f3f0e8 0%, #e9e6df 48%, #ddd8cc 49%, #ebe8e0 100%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        color: #555;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+    .nitro-chest__button:hover:not(:disabled) {
+        filter: brightness(0.98);
+    }
+
+    .nitro-chest__button:active:not(:disabled) {
+        background: linear-gradient(180deg, #e4e0d6 0%, #d8d4c8 100%);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .nitro-chest__button:disabled {
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+    }
+
+    /* coins_chest_contents.xml withdraw_btn: 73×22 */
+    .nitro-chest__button--withdraw {
+        width: 73px;
+        min-width: 73px;
+        height: 22px;
+        padding: 0 6px;
+    }
+
+    /* upgrade_capacity_btn — square icon control in footer */
+    .nitro-chest__button--icon {
+        width: 24px;
+        min-width: 24px;
+        height: 22px;
+        padding: 0;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    /* Settings / notifications / upgrade sub-dialogs (wired UI builder style) */
+    .nitro-chest__button--dialog {
+        min-height: 22px;
+        padding: 0 12px;
+        border: 1px solid #8e8e8e;
+        border-radius: 6px;
+        background: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 46%, #d5d5d5 47%, #efefef 100%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+        color: #000;
+    }
+
+    .nitro-chest__button--dialog-primary {
+        min-height: 22px;
+        padding: 0 12px;
+        border: 1px solid #66793c;
+        border-radius: 6px;
+        background: linear-gradient(180deg, #a5b56e 0%, #8ea25a 49%, #7f9350 50%, #96a866 100%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        color: #fff;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    .nitro-chest__button--dialog-primary:disabled {
+        border-color: #8e8e8e;
+        background: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 46%, #d5d5d5 47%, #efefef 100%);
+        color: #888;
+        text-shadow: none;
+    }
+
+    .nitro-chest__header-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 1px solid #cfcabc;
+        border-radius: 4px;
+        background: #f1f0ee;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .nitro-chest__header-icon:hover {
+        filter: brightness(0.97);
+    }
+
+    .nitro-chest__input {
+        box-sizing: border-box;
+        border: 1px solid #b9b2a0;
+        border-radius: 2px;
+        background: #fff;
+        color: #2e2e2e;
+        font-size: 11px;
+        text-align: center;
+    }
+
+    .nitro-chest__input--scene {
+        width: 27px;
+        height: 19px;
+        padding: 0;
+        border-color: #d8c184;
+    }
+
+    .nitro-chest__input--furni-withdraw {
+        width: 36px;
+        height: 22px;
+        padding: 0;
+    }
+
+    .nitro-chest__actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .nitro-chest__actions--footer {
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .nitro-chest__actions--dialog {
+        gap: 4px;
+    }
+
+    .nitro-chest__actions--dialog .nitro-chest__button {
+        flex: 1 1 0;
+    }
+}
+
+/* Wired chest (Scrigno) — Putyhef buttons + inputs from chest_generic / coins_chest_contents XML */
+.nitro-widget-chest,
+.nitro-widget-chest-settings,
+.nitro-widget-chest-notifications,
+.nitro-widget-chest-upgrade,
+.nitro-widget-chest-log,
+.nitro-widget-chest-confirm {
+    .nitro-chest__btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 73px;
+        height: 22px;
+        padding: 0 8px;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+        color: #555;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+        border: 1px solid #b9b2a0;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #f5f3ef 0%, #e9e6df 48%, #dedad2 49%, #ebe8e1 100%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    .nitro-chest__btn:hover:not(:disabled) {
+        filter: brightness(0.98);
+    }
+
+    .nitro-chest__btn:active:not(:disabled) {
+        background: linear-gradient(180deg, #dedad2 0%, #d5d0c8 48%, #cac5bd 49%, #d8d4cc 100%);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .nitro-chest__btn:disabled {
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+    }
+
+    .nitro-chest__btn--fixed {
+        width: 73px;
+        min-width: 73px;
+        padding: 0;
+    }
+
+    .nitro-chest__btn--wide {
+        min-width: 73px;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .nitro-chest__btn--icon {
+        min-width: 24px;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1;
+        color: #2e2e2e;
+        border-color: #cfcabc;
+        border-radius: 4px;
+        background: #f1f0ee;
+        box-shadow: none;
+    }
+
+    .nitro-chest__input {
+        box-sizing: border-box;
+        height: 22px;
+        padding: 0 4px;
+        font-size: 11px;
+        text-align: center;
+        color: #000;
+        border: 1px solid #b9b2a0;
+        border-radius: 2px;
+        background: #fff;
+    }
+
+    .nitro-chest__input--coin {
+        width: 27px;
+        height: 19px;
+        border-color: #d8c184;
+    }
+
+    .nitro-chest__input--furni {
+        width: 36px;
+    }
+
+    .nitro-chest__input--qty {
+        width: 72px;
+    }
+
+    .nitro-chest__footer-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .nitro-chest__footer-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .nitro-chest__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
+    }
+
+    .form-control,
+    .form-select,
+    input[type='text'],
+    input[type='number'],
+    textarea {
+        min-height: 22px;
+        border: 1px solid #8d8d8d !important;
+        border-radius: 4px !important;
+        background: #f6f6f6 !important;
+        color: #000 !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+}
