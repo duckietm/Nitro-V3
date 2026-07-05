@@ -7,6 +7,8 @@ export type ChestButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     icon?: boolean;
     /** Fixed 73×22 like coins_chest_contents.xml withdraw_btn. */
     fixed?: boolean;
+    /** chest_generic.xml footer buttons (89–92×30). */
+    footer?: boolean;
 };
 
 /** Habbo wired-chest Putyhef-style button (chest_generic.xml / coins_chest_contents.xml). */
@@ -14,6 +16,7 @@ export const ChestButton: FC<ChestButtonProps> = ({
     wide = false,
     icon = false,
     fixed = false,
+    footer = false,
     className = '',
     type = 'button',
     children,
@@ -24,6 +27,7 @@ export const ChestButton: FC<ChestButtonProps> = ({
         wide ? 'nitro-chest__btn--wide' : '',
         icon ? 'nitro-chest__btn--icon' : '',
         fixed ? 'nitro-chest__btn--fixed' : '',
+        footer ? 'nitro-chest__btn--footer' : '',
         className,
     ]
         .filter(Boolean)

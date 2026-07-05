@@ -19,10 +19,12 @@ import {
     IChestFurniStoredItem,
 } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, ProductImageUtility, SendMessageComposer } from '../../../../api';
+import { LocalizeText, localizeWithFallback, ProductImageUtility, SendMessageComposer } from '../../../../api';
 import { Column, Flex, LayoutCurrencyIcon, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { ChestButton } from './ChestButton';
 import { chestFurniDisplayName, ChestFurniGroup, groupStoredFurni } from './chestFurniGrouping';
+import { FurniChestGridItem } from './FurniChestGridItem';
+import { FurniChestSearchBar } from './FurniChestSearchBar';
 import { useMessageEvent } from '../../../../hooks';
 import { useInventoryFurni } from '../../../../hooks/inventory';
 import sceneZero from '../../../../assets/images/chest/light_coins_chest_balance_zero.png';
@@ -85,8 +87,8 @@ export const FurnitureChestView: FC = () => {
     const [notifyMode, setNotifyMode] = useState(0);
     const [entries, setEntries] = useState<ChestEntry[]>([]);
     const [chestKind, setChestKind] = useState(0);
-    const [furniEntries, setFurniEntries] = useState<ChestFurniGroup[]>([]);
     const [storedFurniItems, setStoredFurniItems] = useState<IChestFurniStoredItem[]>([]);
+    const [legacyFurniGroups, setLegacyFurniGroups] = useState<ChestFurniGroup[]>([]);
     const [selectedFurniKey, setSelectedFurniKey] = useState('');
     const [furniWithdrawAmount, setFurniWithdrawAmount] = useState(1);
 
@@ -102,9 +104,21 @@ export const FurnitureChestView: FC = () => {
     const [upgradeQty, setUpgradeQty] = useState(1);
     const [confirmWithdrawAll, setConfirmWithdrawAll] = useState(false);
     const [depositFurniOpen, setDepositFurniOpen] = useState(false);
-    const [furniSearch, setFurniSearch] = useState('');
+    const [furniSearchDraft, setFurniSearchDraft] = useState('');
+    const [furniSearchQuery, setFurniSearchQuery] = useState('');
 
     const { groupItems = [] } = useInventoryFurni();
+
+    const furniEntries = useMemo(() => {
+        if (chestKind === CHEST_KIND_FURNI) return groupStoredFurni(storedFurniItems);
+        return legacyFurniGroups;
+    }, [chestKind, storedFurniItems, legacyFurniGroups]);
+
+    const syncSelectedFurniKey = useCallback((groups: ChestFurniGroup[]) => {
+        setSelectedFurniKey((prev) =>
+            groups.some((f) => f.key === prev) ? prev : groups.length ? groups[0].key : '',
+        );
+    }, []);
 
     const appearanceOptions = useMemo(
         () => [
@@ -137,10 +151,20 @@ export const FurnitureChestView: FC = () => {
     }, [groupItems]);
 
     const visibleFurniEntries = useMemo(() => {
-        const q = furniSearch.trim().toLowerCase();
+        const q = furniSearchQuery.trim().toLowerCase();
         if (!q) return furniEntries;
-        return furniEntries.filter((f) => groupLabel(f).toLowerCase().includes(q));
-    }, [furniEntries, furniSearch]);
+        const terms = q.split(/\s+/).filter(Boolean);
+        return furniEntries.filter((f) => {
+            const name = groupLabel(f).toLowerCase();
+            return terms.every((term) => name.includes(term));
+        });
+    }, [furniEntries, furniSearchQuery]);
+
+    const showFurniSearch = furniEntries.length >= FURNI_SEARCH_THRESHOLD;
+
+    useEffect(() => {
+        setFurniWithdrawAmount(1);
+    }, [selectedFurniKey]);
 
     const selectedGroup = furniEntries.find((f) => f.key === selectedFurniKey) ?? null;
 
@@ -150,14 +174,9 @@ export const FurnitureChestView: FC = () => {
         SendMessageComposer(new ChestStartDepositComposer(itemId));
     }, [depositFurniOpen, itemId]);
 
-    const applyStoredFurni = useCallback((items: IChestFurniStoredItem[]) => {
-        setStoredFurniItems(items);
-        const grouped = groupStoredFurni(items);
-        setFurniEntries(grouped);
-        setSelectedFurniKey((prev) =>
-            grouped.some((f) => f.key === prev) ? prev : grouped.length ? grouped[0].key : '',
-        );
-    }, []);
+    useEffect(() => {
+        syncSelectedFurniKey(furniEntries);
+    }, [furniEntries, syncSelectedFurniKey]);
 
     useMessageEvent<ChestDataEvent>(ChestDataEvent, (event) => {
         const p = event.getParser();
@@ -178,8 +197,7 @@ export const FurnitureChestView: FC = () => {
         setEntries(p.entries.map((e) => ({ currencyType: e.currencyType, amount: e.amount })));
         setChestKind(p.chestKind);
         if (p.chestKind === CHEST_KIND_FURNI) {
-            // v2: item rows arrive via ChestFurniChunkEvent after this shell packet
-            applyStoredFurni([]);
+            // v2 rows: chunk/delta own storedFurniItems — only refresh shell fields here.
         } else {
             const legacyGroups: ChestFurniGroup[] = p.furniEntries.map((e) => ({
                 key: `0-${e.baseItemId}-`,
@@ -201,10 +219,7 @@ export const FurnitureChestView: FC = () => {
                     extra: 0,
                 },
             }));
-            setFurniEntries(legacyGroups);
-            setSelectedFurniKey((prev) =>
-                legacyGroups.some((f) => f.key === prev) ? prev : legacyGroups.length ? legacyGroups[0].key : '',
-            );
+            setLegacyFurniGroups(legacyGroups);
         }
     });
 
@@ -215,13 +230,6 @@ export const FurnitureChestView: FC = () => {
         setStoredFurniItems((prev) => {
             const next = p.fragmentNo === 0 ? [] : [...prev];
             next.push(...p.items);
-            if (p.fragmentNo === p.totalFragments - 1) {
-                const grouped = groupStoredFurni(next);
-                setFurniEntries(grouped);
-                setSelectedFurniKey((sel) =>
-                    grouped.some((f) => f.key === sel) ? sel : grouped.length ? grouped[0].key : '',
-                );
-            }
             return next;
         });
     });
@@ -231,13 +239,7 @@ export const FurnitureChestView: FC = () => {
 
         setStoredFurniItems((prev) => {
             const removed = new Set(p.removedIds);
-            const next = [...prev.filter((i) => !removed.has(i.inventoryId)), ...p.added];
-            const grouped = groupStoredFurni(next);
-            setFurniEntries(grouped);
-            setSelectedFurniKey((sel) =>
-                grouped.some((f) => f.key === sel) ? sel : grouped.length ? grouped[0].key : '',
-            );
-            return next;
+            return [...prev.filter((i) => !removed.has(i.inventoryId)), ...p.added];
         });
     });
 
@@ -261,7 +263,12 @@ export const FurnitureChestView: FC = () => {
         : LocalizeText('wiredchests.coin_chest');
     const selectedFurniQty = selectedGroup?.quantity ?? 0;
 
-    const close = () => setItemId(-1);
+    const close = () => {
+        setItemId(-1);
+        setStoredFurniItems([]);
+        setLegacyFurniGroups([]);
+        setDepositFurniOpen(false);
+    };
     const deposit = () => {
         if (depositAmount <= 0) return;
         SendMessageComposer(new ChestDepositComposer(itemId, CREDITS, depositAmount));
@@ -370,118 +377,73 @@ export const FurnitureChestView: FC = () => {
                             </button>
                         </div>
                     </div>
-                    {/* ===== FURNI CHEST body (furni_chest_contents.xml): item grid (left) + detail panel (right) ===== */}
+                    {/* ===== FURNI CHEST body (furni_chest_contents.xml) ===== */}
                     {isFurni && (
-                        <Flex gap={1} style={{ margin: '4px 0' }}>
-                            <Column gap={1} style={{ width: 255 }}>
-                            {furniEntries.length >= FURNI_SEARCH_THRESHOLD && (
-                                <Flex alignItems="center" gap={1}>
-                                    <input
-                                        type="text"
-                                        className="form-control form-control-sm"
-                                        placeholder={LocalizeText('catalog.search.title')}
-                                        value={furniSearch}
-                                        onChange={(e) => setFurniSearch(e.target.value)}
+                        <div className="nitro-chest__furni-body">
+                            <div className="nitro-chest__grid-border">
+                                {showFurniSearch && (
+                                    <FurniChestSearchBar
+                                        draft={furniSearchDraft}
+                                        onDraftChange={setFurniSearchDraft}
+                                        onApply={setFurniSearchQuery}
+                                        onClear={() => {
+                                            setFurniSearchDraft('');
+                                            setFurniSearchQuery('');
+                                        }}
                                     />
-                                    {furniSearch.length > 0 && (
-                                        <ChestButton fixed onClick={() => setFurniSearch('')}>
-                                            ×
-                                        </ChestButton>
-                                    )}
-                                </Flex>
-                            )}
-                            <div style={{ width: 255, height: 242, border: '1px solid #e3e3e3', borderRadius: 3, background: '#fff', overflowY: 'auto', padding: 5 }}>
-                                {visibleFurniEntries.length === 0 ? (
-                                    <Flex alignItems="center" justifyContent="center" style={{ height: '100%' }}>
-                                        <Text small style={{ opacity: 0.5 }}>
-                                            {LocalizeText('wiredchests.empty_furni')}
-                                        </Text>
-                                    </Flex>
-                                ) : (
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                                        {visibleFurniEntries.map((f) => (
-                                            <div
-                                                key={f.key}
-                                                onClick={() => setSelectedFurniKey(f.key)}
-                                                title={groupLabel(f)}
-                                                style={{
-                                                    position: 'relative',
-                                                    width: 40,
-                                                    height: 40,
-                                                    border: `1px solid ${selectedFurniKey === f.key ? '#5b9bd5' : '#cbcbcb'}`,
-                                                    borderRadius: 3,
-                                                    background: '#fafafa',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    overflow: 'hidden',
-                                                    cursor: 'pointer',
-                                                }}
-                                            >
-                                                {/* small furni ICON (like inventory/catalog) — fits the 40px cell;
-                                                    the full LayoutFurniImageView render overflowed/cropped here */}
-                                                <img
-                                                    src={ProductImageUtility.getProductImageUrl(
-                                                        f.wallItem ? FurnitureType.WALL : FurnitureType.FLOOR,
-                                                        f.baseItemId,
-                                                        f.legacyPosterId,
-                                                    )}
-                                                    alt=""
-                                                    draggable={false}
-                                                    style={{ maxWidth: 38, maxHeight: 38, objectFit: 'contain', imageRendering: 'pixelated' }}
-                                                />
-                                                <div
-                                                    style={{
-                                                        position: 'absolute',
-                                                        right: 1,
-                                                        top: 1,
-                                                        minWidth: 13,
-                                                        height: 14,
-                                                        padding: '0 2px',
-                                                        background: '#2f6982',
-                                                        color: '#fff',
-                                                        fontSize: 10,
-                                                        lineHeight: '14px',
-                                                        textAlign: 'center',
-                                                        borderRadius: 2,
-                                                    }}
-                                                >
-                                                    {f.quantity}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
                                 )}
+                                <div
+                                    className="nitro-chest__grid-scroll"
+                                    style={showFurniSearch ? { height: 204 } : undefined}
+                                >
+                                    {visibleFurniEntries.length === 0 ? (
+                                        <div className="nitro-chest__grid-empty">
+                                            <Text small style={{ opacity: 0.5 }}>
+                                                {localizeWithFallback('wiredchests.furni_chest.no_items', 'No items stored')}
+                                            </Text>
+                                        </div>
+                                    ) : (
+                                        <div className="nitro-chest__grid">
+                                            {visibleFurniEntries.map((f) => (
+                                                <FurniChestGridItem
+                                                    key={f.key}
+                                                    group={f}
+                                                    selected={selectedFurniKey === f.key}
+                                                    title={groupLabel(f)}
+                                                    onSelect={() => setSelectedFurniKey(f.key)}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            </Column>
-                            {/* right_panel: furni name + preview + withdraw */}
-                            <div style={{ width: 175, display: 'flex', flexDirection: 'column' }}>
-                                <div style={{ flex: 1, minHeight: 211, border: '1px solid #d8d8d8', borderRadius: 3, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 6, overflow: 'hidden' }}>
+                            <div className="nitro-chest__detail-panel">
+                                <div className="nitro-chest__preview-box">
                                     {selectedGroup ? (
                                         <>
-                                            <Text bold style={{ textAlign: 'center', marginBottom: 4 }}>
+                                            <Text bold className="nitro-chest__preview-name">
                                                 {groupLabel(selectedGroup)}
                                             </Text>
-                                            <Flex alignItems="center" justifyContent="center" style={{ flex: 1 }}>
+                                            <div className="nitro-chest__preview-image">
                                                 <LayoutFurniImageView
                                                     productType={selectedGroup.wallItem ? 'i' : 's'}
                                                     productClassId={selectedGroup.baseItemId}
                                                     extraData={selectedGroup.legacyPosterId}
                                                     direction={2}
+                                                    scale={1}
                                                 />
-                                            </Flex>
+                                            </div>
                                         </>
                                     ) : (
                                         <img
                                             src={furniEmptyScene}
                                             alt=""
                                             draggable={false}
-                                            style={{ maxWidth: '100%', margin: 'auto', imageRendering: 'pixelated' }}
+                                            className="nitro-chest__preview-placeholder"
                                         />
                                     )}
                                 </div>
-                                {/* withdraw_cont: input (30) + Preleva (73) */}
-                                <Flex alignItems="center" justifyContent="end" gap={1} className="mt-1">
+                                <div className="nitro-chest__withdraw-row">
                                     <input
                                         type="text"
                                         inputMode="numeric"
@@ -494,9 +456,9 @@ export const FurnitureChestView: FC = () => {
                                     <ChestButton fixed disabled={!selectedGroup || selectedFurniQty <= 0} onClick={withdrawFurni}>
                                         {LocalizeText('wiredchests.withdraw')}
                                     </ChestButton>
-                                </Flex>
+                                </div>
                             </div>
-                        </Flex>
+                        </div>
                     )}
                     {/* ===== REAL Habbo chest scene (coin chest, extracted asset) + dynamic overlays.
                          Overlay coords are taken verbatim from the official Sulake layout
@@ -553,47 +515,52 @@ export const FurnitureChestView: FC = () => {
                     )}
                         </>
                     )}
-                    <div className="nitro-wired__divider" />
-                    <Flex alignItems="center" justifyContent="between">
-                        <Text small>
-                            {LocalizeText('wiredchests.space_used2', ['count', 'total'], [String(used), String(capacityMax)])}
-                        </Text>
-                        <ChestButton
-                            icon
-                            onClick={() => setShowUpgrade(true)}
-                            title={LocalizeText('wiredchests.upgrade_capacity')}
-                        >
-                            +
-                        </ChestButton>
-                    </Flex>
-                    {/* button_row (chest_generic.xml): left group = Preleva tutto + Deposito iniziale, right = Visualizza log */}
-                    <div className="nitro-chest__footer-row">
-                        {!isFurni ? (
-                            <div className="nitro-chest__footer-group">
-                                <ChestButton wide disabled={creditsBalance <= 0} onClick={withdrawAll}>
-                                    {LocalizeText('wiredchests.withdraw_all')}
+                    <div className="nitro-chest__footer">
+                        <Flex alignItems="center" justifyContent="between" className="nitro-chest__footer-capacity">
+                            <Text small style={{ opacity: 0.6 }}>
+                                {LocalizeText('wiredchests.space_used2', ['count', 'total'], [String(used), String(capacityMax)])}
+                            </Text>
+                            <Flex alignItems="center" gap={1}>
+                                <Text small style={{ opacity: 0.6 }}>
+                                    {LocalizeText('wiredchests.max_capacity', ['max_capacity'], [String(capacityMax)])}
+                                </Text>
+                                <ChestButton
+                                    icon
+                                    onClick={() => setShowUpgrade(true)}
+                                    title={LocalizeText('wiredchests.upgrade_capacity')}
+                                >
+                                    +
                                 </ChestButton>
-                                <ChestButton wide onClick={() => setDepositOpen((v) => !v)}>
-                                    {LocalizeText('wiredchests.initial_deposit')}
-                                </ChestButton>
-                            </div>
-                        ) : (
-                            <div className="nitro-chest__footer-group">
-                                <ChestButton wide disabled={furniEntries.length <= 0} onClick={withdrawAll}>
-                                    {LocalizeText('wiredchests.withdraw_all')}
-                                </ChestButton>
-                                <ChestButton wide onClick={startDepositFurni}>
-                                    {LocalizeText(depositFurniOpen ? 'wiredchests.cancel' : 'wiredchests.start_deposit')}
-                                </ChestButton>
-                            </div>
-                        )}
-                        <ChestButton wide onClick={requestLog}>
-                            {LocalizeText('wiredchests.view_logs')}
-                        </ChestButton>
+                            </Flex>
+                        </Flex>
+                        <div className="nitro-chest__footer-row">
+                            {!isFurni ? (
+                                <div className="nitro-chest__footer-group">
+                                    <ChestButton wide footer disabled={creditsBalance <= 0} onClick={withdrawAll}>
+                                        {LocalizeText('wiredchests.withdraw_all')}
+                                    </ChestButton>
+                                    <ChestButton wide footer onClick={() => setDepositOpen((v) => !v)}>
+                                        {LocalizeText('wiredchests.initial_deposit')}
+                                    </ChestButton>
+                                </div>
+                            ) : (
+                                <div className="nitro-chest__footer-group">
+                                    <ChestButton wide footer disabled={furniEntries.length <= 0} onClick={withdrawAll}>
+                                        {LocalizeText('wiredchests.withdraw_all')}
+                                    </ChestButton>
+                                    <ChestButton wide footer onClick={startDepositFurni}>
+                                        {LocalizeText(depositFurniOpen ? 'wiredchests.cancel' : 'wiredchests.start_deposit')}
+                                    </ChestButton>
+                                </div>
+                            )}
+                            <ChestButton wide footer onClick={requestLog}>
+                                {LocalizeText('wiredchests.view_logs')}
+                            </ChestButton>
+                        </div>
                     </div>
                     {isFurni && depositFurniOpen && (
-                        <Column gap={1} className="mt-1 p-2 border rounded">
-                            <Text bold small>
+                        <div className="nitro-chest__deposit-panel">
+                            <Text bold small className="nitro-chest__deposit-title">
                                 {LocalizeText('wiredchests.deposit_furni.title')}
                             </Text>
                             {depositableInventoryItems.length === 0 ? (
@@ -601,24 +568,15 @@ export const FurnitureChestView: FC = () => {
                                     {LocalizeText('wiredchests.deposit_furni.empty_inventory')}
                                 </Text>
                             ) : (
-                                <div style={{ maxHeight: 160, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                                <div className="nitro-chest__deposit-grid">
                                     {depositableInventoryItems.map((row) => (
-                                        <div
+                                        <button
                                             key={row.id}
+                                            type="button"
+                                            className="nitro-chest__deposit-cell"
                                             title={row.name}
+                                            disabled={used >= capacityMax}
                                             onClick={() => depositInventoryItem(row.id)}
-                                            style={{
-                                                width: 40,
-                                                height: 40,
-                                                border: '1px solid #cbcbcb',
-                                                borderRadius: 3,
-                                                background: '#fafafa',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                cursor: used >= capacityMax ? 'not-allowed' : 'pointer',
-                                                opacity: used >= capacityMax ? 0.45 : 1,
-                                            }}
                                         >
                                             <img
                                                 src={ProductImageUtility.getProductImageUrl(FurnitureType.FLOOR, row.baseItemId, '')}
@@ -626,16 +584,16 @@ export const FurnitureChestView: FC = () => {
                                                 draggable={false}
                                                 style={{ maxWidth: 38, maxHeight: 38, objectFit: 'contain', imageRendering: 'pixelated' }}
                                             />
-                                        </div>
+                                        </button>
                                     ))}
                                 </div>
                             )}
                             {capacityMax - used <= 0 && (
-                                <Text small style={{ color: '#a33' }}>
+                                <Text small className="nitro-chest__deposit-full">
                                     {LocalizeText('wiredchests.deposit_furni.full')}
                                 </Text>
                             )}
-                        </Column>
+                        </div>
                     )}
                 </NitroCardContentView>
             </NitroCardView>
