@@ -738,7 +738,7 @@ body {
     --mod-tools-panel-alt: #e5e5dc;
     --mod-tools-line: #9d9d96;
     --mod-tools-line-dark: #6f6f6a;
-    --mod-tools-accent: #2f8097;
+    --mod-tools-accent: #418db0;
     --mod-tools-text: #20201d;
     --mod-tools-muted: #60605a;
 
@@ -1088,11 +1088,13 @@ body {
         align-items: center !important;
         justify-content: center !important;
         min-height: 22px !important;
-        border: 1px solid #8e8e8e !important;
-        border-radius: 6px !important;
-        background: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 46%, #d5d5d5 47%, #efefef 100%) !important;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-        color: #000 !important;
+        border: 2px solid var(--habbo-blue-header-border, #376275) !important;
+        border-radius: 4px !important;
+        background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+        color: var(--habbo-text, #151515) !important;
+        font-weight: 700;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
         padding-top: 0 !important;
         padding-bottom: 0 !important;
     }
@@ -1100,12 +1102,14 @@ body {
     .nitro-wired__button:hover,
     .nitro-wired__picker-button:hover,
     .nitro-slider-button:hover {
-        filter: brightness(0.98);
+        filter: brightness(1.04);
     }
 
-    .nitro-wired__button--primary,
-    .nitro-wired__button--secondary {
-        font-weight: 700;
+    .nitro-wired__button--primary {
+        border-color: var(--habbo-blue-header, #0e3f52) !important;
+        background: linear-gradient(180deg, #5ba4c4 0%, #418db0 44%, #2e6f8a 100%) !important;
+        color: #fff !important;
+        text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
     }
 
     &.nitro-card-shell {

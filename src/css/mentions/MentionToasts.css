@@ -37,7 +37,7 @@
     color: #fff;
 }
 
-.mention-toast-chip.is-direct { background: #1e7295; }
+.mention-toast-chip.is-direct { background: #418db0; }
 .mention-toast-chip.is-room { background: #d08a1e; }
 
 .mention-toast-spacer {
@@ -112,7 +112,7 @@
 }
 
 .mention-toast-btn:hover {
-    background: #1e7295;
+    background: #418db0;
     border-color: #2a90bd;
     color: #fff;
 }
@@ -143,7 +143,7 @@
     width: 28px;
     height: 28px;
     font-weight: 700;
-    color: #1e7295;
+    color: #418db0;
     background: rgba(30, 114, 149, 0.12);
     border-radius: 4px;
 }

@@ -1,16 +1,16 @@
 :root {
-    --nitro-card-border: #111111;
-    --nitro-card-frame: #d8ddd4;
-    --nitro-card-surface: #f4f2e8;
-    --nitro-card-surface-raised: #ffffff;
-    --nitro-card-header: #2f7894;
-    --nitro-card-header-highlight: #58a8c5;
-    --nitro-card-header-shadow: #1a5368;
-    --nitro-card-text: #151515;
-    --nitro-card-muted: #4f5b60;
+    --nitro-card-border: var(--habbo-frame-border, #283f5d);
+    --nitro-card-frame: #376275;
+    --nitro-card-surface: var(--habbo-surface, #dfdfdf);
+    --nitro-card-surface-raised: var(--habbo-grid-active, #ececec);
+    --nitro-card-header: var(--habbo-blue, #418db0);
+    --nitro-card-header-highlight: var(--habbo-blue-highlight, #5ba4c4);
+    --nitro-card-header-shadow: var(--habbo-blue-dark, #2e6f8a);
+    --nitro-card-text: var(--habbo-text, #151515);
+    --nitro-card-muted: var(--habbo-text-muted, #666666);
     --nitro-card-focus: #ffd95a;
-    --nitro-card-radius: 8px;
-    --nitro-card-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    --nitro-card-radius: 6px;
+    --nitro-card-shadow: 0 4px 4px rgba(0, 0, 0, 0.35);
 }
 
 .nitro-card,
@@ -26,8 +26,8 @@
     .nitro-card-header,
     .nitro-card-header-shell {
         position: relative;
-        min-height: 34px;
-        max-height: 34px;
+        min-height: 33px;
+        max-height: 33px;
         width: 100%;
         margin: 0;
         padding: 4px 38px;
@@ -66,13 +66,13 @@
             height: 22px;
             padding: 0;
             line-height: 1;
-            border-radius: 5px;
+            border-radius: 4px;
             border: 2px solid var(--nitro-card-border);
             box-shadow: inset 0 1px rgba(255, 255, 255, 0.34);
-            background: #c63b32;
+            background: var(--habbo-close, #921911);
 
             &:hover {
-                background: #d64a40;
+                background: var(--habbo-close-hover, #b9322a);
                 border-color: #fff;
             }
 
@@ -118,12 +118,12 @@
     .nitro-card-tabs-shell {
         display: flex;
         flex-wrap: nowrap;
-        gap: 4px;
+        gap: 2px;
         min-height: auto;
         max-height: none;
-        padding: 5px 8px 0;
+        padding: 4px 6px 0;
         background: var(--nitro-card-frame);
-        border-bottom: 2px solid #b8c2b4;
+        border-bottom: 2px solid var(--nitro-card-border);
 
         .nav-item,
         .nitro-card-tab-item {
@@ -131,10 +131,10 @@
             padding: 0.35rem 0.75rem;
             margin-bottom: -2px;
             color: var(--nitro-card-text);
-            background: #cbd3c8;
+            background: var(--habbo-tab, #b6bec5);
             border: 2px solid var(--nitro-card-border);
             border-bottom: 0;
-            border-radius: 7px 7px 0 0;
+            border-radius: 6px 6px 0 0;
             box-shadow: inset 0 1px rgba(255, 255, 255, 0.72);
             line-height: 1.1;
 
@@ -143,7 +143,7 @@
             }
 
             &:hover {
-                background: #dde4da;
+                background: #c8d0d6;
             }
 
             &:focus-visible {
@@ -153,7 +153,7 @@
 
             &.active,
             &.nitro-card-tab-item-active {
-                background: var(--nitro-card-surface);
+                background: var(--habbo-tab-active, #dfdfdf);
                 border-color: var(--nitro-card-border) !important;
                 border-bottom: 0;
             }
@@ -186,37 +186,37 @@
 }
 
 .nitro-card-panel {
-    background: rgba(0, 0, 0, 0.045) !important;
-    border: 1px solid #c4cabf !important;
-    border-radius: 6px !important;
+    background: rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid var(--habbo-tab, #b6bec5) !important;
+    border-radius: 4px !important;
     box-shadow: none !important;
 }
 
 .nitro-card-row {
     background: rgba(0, 0, 0, 0.035) !important;
-    border: 1px solid #c4cabf !important;
-    border-radius: 6px !important;
+    border: 1px solid var(--habbo-tab, #b6bec5) !important;
+    border-radius: 4px !important;
     box-shadow: none !important;
     transition: background-color .15s ease, border-color .15s ease;
 }
 
 .nitro-card-row:hover {
     background: rgba(0, 0, 0, 0.07) !important;
-    border-color: #aeb7aa !important;
+    border-color: #9aa3ab !important;
 }
 
 .nitro-card-divider {
-    border-color: #c4cabf !important;
+    border-color: var(--habbo-tab, #b6bec5) !important;
     box-shadow: none !important;
 }
 
 .nitro-card-shell :where(.bg-muted, .bg-light, .bg-light-dark, .bg-white, .bg-white\/50, .bg-white\/80) {
-    background: rgba(0, 0, 0, 0.045) !important;
+    background: rgba(0, 0, 0, 0.04) !important;
     box-shadow: none !important;
 }
 
 .nitro-card-shell :where(.border, .border-muted, .border-card-grid-item-border, .border-card-grid-item-border-active, .border-white, .border-white\/10, .border-white\/20, .border-white\/30) {
-    border-color: #c4cabf !important;
+    border-color: var(--habbo-tab, #b6bec5) !important;
     box-shadow: none !important;
 }
 

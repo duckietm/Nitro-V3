@@ -2,24 +2,24 @@ import { ButtonHTMLAttributes, DetailedHTMLProps, PropsWithChildren, Ref } from 
 import { classNames } from './classNames';
 
 const classes = {
-    base: 'inline-flex justify-center items-center gap-2 transition-[background-color] duration-300 transform tracking-wide rounded-md',
-    disabled: '',
+    base: 'inline-flex justify-center items-center gap-2 rounded-[4px] font-bold text-[11px] leading-tight cursor-pointer select-none transition-[filter] duration-100',
+    disabled: 'opacity-55 pointer-events-none',
     size: {
-        default: 'px-2 py-0.5  font-medium',
-        lg: 'px-5 py-3 text-base font-medium',
-        xl: 'px-6 py-3.5 text-base font-medium'
+        default: 'px-3 py-0.5 min-h-[22px]',
+        lg: 'px-5 py-1 min-h-[28px] text-sm',
+        xl: 'px-6 py-1.5 min-h-[32px] text-sm'
     },
-    outline: {
-        default:
-            'text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800'
-    },
-    color: {
-        default: 'bg-button-gradient-gray border border-gray-500'
+    variant: {
+        default: 'habbo-btn-secondary',
+        primary: 'habbo-btn-primary',
+        buy: 'habbo-btn-buy',
+        success: 'habbo-btn-success',
+        danger: 'habbo-btn-danger'
     }
 };
 
 type NitroButtonProps = PropsWithChildren<{
-    color?: 'default' | 'dark' | 'ghost';
+    color?: 'default' | 'primary' | 'buy' | 'success' | 'danger' | 'dark' | 'ghost';
     size?: 'default' | 'lg' | 'xl';
     outline?: boolean;
     ref?: Ref<HTMLButtonElement>;
@@ -36,13 +36,19 @@ export const NitroButton = ({
     className = null,
     ...rest
 }: NitroButtonProps) => {
+    const variantClass = color === 'dark'
+        ? 'btn-dark'
+        : color === 'ghost'
+          ? 'habbo-btn-secondary !bg-transparent'
+          : classes.variant[color in classes.variant ? color : 'default'];
+
     return (
         <button
             ref={ref}
             className={classNames(
                 classes.base,
                 classes.size[size],
-                outline ? classes.outline[color] : classes.color[color],
+                outline ? 'habbo-btn-secondary !bg-transparent' : variantClass,
                 disabled && classes.disabled,
                 className
             )}
