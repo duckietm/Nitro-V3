@@ -1,19 +1,23 @@
 import {
     ChestDataEvent,
     ChestDepositComposer,
-    ChestDepositFurniComposer,
+    ChestDepositInventoryItemComposer,
+    ChestFurniChunkEvent,
+    ChestFurniDeltaEvent,
     ChestLogEvent,
     ChestRequestLogComposer,
     ChestSaveNotificationsComposer,
     ChestSaveSettingsComposer,
+    ChestStartDepositComposer,
     ChestUpgradeCapacityComposer,
     ChestWithdrawComposer,
     ChestWithdrawFurniComposer,
     FurnitureListComposer,
     FurnitureType,
     GetSessionDataManager,
+    IChestFurniStoredItem,
 } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { LocalizeText, ProductImageUtility, SendMessageComposer } from '../../../../api';
 import { Column, Flex, LayoutCurrencyIcon, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { ChestButton } from './ChestButton';
@@ -48,6 +52,7 @@ interface ChestLogRow {
 const CREDITS = -1;
 const CHEST_KIND_FURNI = 1;
 const UPGRADE_STEP = 5000;
+const FURNI_SEARCH_THRESHOLD = 31;
 
 const furniName = (baseItemId: number): string => {
     const data = GetSessionDataManager().getFloorItemData(baseItemId);
@@ -55,6 +60,16 @@ const furniName = (baseItemId: number): string => {
 };
 const COST_CREDITS = 10;
 const COST_DIAMONDS = 10;
+
+const groupStoredFurni = (items: IChestFurniStoredItem[]): ChestFurniEntry[] => {
+    const counts = new Map<number, number>();
+
+    for (const item of items) {
+        counts.set(item.baseItemId, (counts.get(item.baseItemId) ?? 0) + 1);
+    }
+
+    return Array.from(counts.entries()).map(([baseItemId, quantity]) => ({ baseItemId, quantity }));
+};
 
 export const FurnitureChestView: FC = () => {
     const [itemId, setItemId] = useState(-1);
@@ -74,6 +89,7 @@ export const FurnitureChestView: FC = () => {
     const [entries, setEntries] = useState<ChestEntry[]>([]);
     const [chestKind, setChestKind] = useState(0);
     const [furniEntries, setFurniEntries] = useState<ChestFurniEntry[]>([]);
+    const [storedFurniItems, setStoredFurniItems] = useState<IChestFurniStoredItem[]>([]);
     const [selectedFurni, setSelectedFurni] = useState(-1);
     const [furniWithdrawAmount, setFurniWithdrawAmount] = useState(1);
 
@@ -89,8 +105,7 @@ export const FurnitureChestView: FC = () => {
     const [upgradeQty, setUpgradeQty] = useState(1);
     const [confirmWithdrawAll, setConfirmWithdrawAll] = useState(false);
     const [depositFurniOpen, setDepositFurniOpen] = useState(false);
-    const [depositFurniBaseId, setDepositFurniBaseId] = useState(-1);
-    const [depositFurniAmount, setDepositFurniAmount] = useState(1);
+    const [furniSearch, setFurniSearch] = useState('');
 
     const { groupItems = [] } = useInventoryFurni();
 
@@ -112,28 +127,38 @@ export const FurnitureChestView: FC = () => {
         [],
     );
 
-    const depositableFloorItems = useMemo(
-        () => groupItems.filter((g) => !g.isWallItem && g.getTotalCount() > 0),
-        [groupItems],
-    );
+    const depositableInventoryItems = useMemo(() => {
+        const rows: { id: number; baseItemId: number; name: string }[] = [];
+        for (const g of groupItems) {
+            if (g.isWallItem) continue;
+            for (const item of g.items) {
+                if (item.locked) continue;
+                rows.push({ id: item.id, baseItemId: g.type, name: g.name });
+            }
+        }
+        return rows;
+    }, [groupItems]);
 
-    const depositFurniMax = useMemo(() => {
-        if (depositFurniBaseId < 0) return 0;
-        const owned = depositableFloorItems.find((g) => g.type === depositFurniBaseId)?.getTotalCount() ?? 0;
-        const capacityLeft = Math.max(0, capacityMax - used);
-        return Math.min(owned, capacityLeft, 100);
-    }, [depositFurniBaseId, depositableFloorItems, capacityMax, used]);
+    const visibleFurniEntries = useMemo(() => {
+        const q = furniSearch.trim().toLowerCase();
+        if (!q) return furniEntries;
+        return furniEntries.filter((f) => furniName(f.baseItemId).toLowerCase().includes(q));
+    }, [furniEntries, furniSearch]);
 
     useEffect(() => {
         if (!depositFurniOpen) return;
         SendMessageComposer(new FurnitureListComposer());
-    }, [depositFurniOpen]);
+        SendMessageComposer(new ChestStartDepositComposer(itemId));
+    }, [depositFurniOpen, itemId]);
 
-    useEffect(() => {
-        if (!depositFurniOpen || depositableFloorItems.length === 0) return;
-        if (depositableFloorItems.some((g) => g.type === depositFurniBaseId)) return;
-        setDepositFurniBaseId(depositableFloorItems[0].type);
-    }, [depositFurniOpen, depositableFloorItems, depositFurniBaseId]);
+    const applyStoredFurni = useCallback((items: IChestFurniStoredItem[]) => {
+        setStoredFurniItems(items);
+        const grouped = groupStoredFurni(items);
+        setFurniEntries(grouped);
+        setSelectedFurni((prev) =>
+            grouped.some((f) => f.baseItemId === prev) ? prev : grouped.length ? grouped[0].baseItemId : -1,
+        );
+    }, []);
 
     useMessageEvent<ChestDataEvent>(ChestDataEvent, (event) => {
         const p = event.getParser();
@@ -153,12 +178,49 @@ export const FurnitureChestView: FC = () => {
         setNotifyMode(p.notifyMode);
         setEntries(p.entries.map((e) => ({ currencyType: e.currencyType, amount: e.amount })));
         setChestKind(p.chestKind);
-        const furni = p.furniEntries.map((e) => ({ baseItemId: e.baseItemId, quantity: e.quantity }));
-        setFurniEntries(furni);
-        // keep selection valid; default to the first stored type
-        setSelectedFurni((prev) =>
-            furni.some((f) => f.baseItemId === prev) ? prev : furni.length ? furni[0].baseItemId : -1,
-        );
+        if (p.chestKind === CHEST_KIND_FURNI) {
+            // v2: item rows arrive via ChestFurniChunkEvent after this shell packet
+            applyStoredFurni([]);
+        } else {
+            const furni = p.furniEntries.map((e) => ({ baseItemId: e.baseItemId, quantity: e.quantity }));
+            setFurniEntries(furni);
+            setSelectedFurni((prev) =>
+                furni.some((f) => f.baseItemId === prev) ? prev : furni.length ? furni[0].baseItemId : -1,
+            );
+        }
+    });
+
+    useMessageEvent<ChestFurniChunkEvent>(ChestFurniChunkEvent, (event) => {
+        const p = event.getParser();
+        setItemId(p.chestId);
+
+        setStoredFurniItems((prev) => {
+            const next = p.fragmentNo === 0 ? [] : [...prev];
+            next.push(...p.items);
+            if (p.fragmentNo === p.totalFragments - 1) {
+                const grouped = groupStoredFurni(next);
+                setFurniEntries(grouped);
+                setSelectedFurni((sel) =>
+                    grouped.some((f) => f.baseItemId === sel) ? sel : grouped.length ? grouped[0].baseItemId : -1,
+                );
+            }
+            return next;
+        });
+    });
+
+    useMessageEvent<ChestFurniDeltaEvent>(ChestFurniDeltaEvent, (event) => {
+        const p = event.getParser();
+
+        setStoredFurniItems((prev) => {
+            const removed = new Set(p.removedIds);
+            const next = [...prev.filter((i) => !removed.has(i.inventoryId)), ...p.added];
+            const grouped = groupStoredFurni(next);
+            setFurniEntries(grouped);
+            setSelectedFurni((sel) =>
+                grouped.some((f) => f.baseItemId === sel) ? sel : grouped.length ? grouped[0].baseItemId : -1,
+            );
+            return next;
+        });
     });
 
     useMessageEvent<ChestLogEvent>(ChestLogEvent, (event) => {
@@ -199,13 +261,13 @@ export const FurnitureChestView: FC = () => {
     };
     const withdrawFurni = () => {
         if (selectedFurni < 0 || furniWithdrawAmount <= 0 || selectedFurniQty <= 0) return;
-        SendMessageComposer(new ChestWithdrawFurniComposer(itemId, selectedFurni, furniWithdrawAmount));
+        SendMessageComposer(new ChestWithdrawFurniComposer(itemId, false, selectedFurni, '', furniWithdrawAmount));
     };
-    const depositFurni = () => {
-        if (depositFurniBaseId < 0 || depositFurniAmount <= 0 || depositFurniMax <= 0) return;
-        SendMessageComposer(new ChestDepositFurniComposer(itemId, depositFurniBaseId, Math.min(depositFurniAmount, depositFurniMax)));
-        setDepositFurniAmount(1);
+    const depositInventoryItem = (inventoryItemId: number) => {
+        if (inventoryItemId <= 0 || used >= capacityMax) return;
+        SendMessageComposer(new ChestDepositInventoryItemComposer(itemId, inventoryItemId));
     };
+    const startDepositFurni = () => setDepositFurniOpen((v) => !v);
     const requestLog = () => SendMessageComposer(new ChestRequestLogComposer(itemId));
     const saveSettings = () => {
         SendMessageComposer(new ChestSaveSettingsComposer(itemId, name, description, accessOpen, accessDonate, appearanceState));
@@ -281,9 +343,25 @@ export const FurnitureChestView: FC = () => {
                     {/* ===== FURNI CHEST body (furni_chest_contents.xml): item grid (left) + detail panel (right) ===== */}
                     {isFurni && (
                         <Flex gap={1} style={{ margin: '4px 0' }}>
-                            {/* items_grid_border: scrollable 42x42 cell grid */}
+                            <Column gap={1} style={{ width: 255 }}>
+                            {furniEntries.length >= FURNI_SEARCH_THRESHOLD && (
+                                <Flex alignItems="center" gap={1}>
+                                    <input
+                                        type="text"
+                                        className="form-control form-control-sm"
+                                        placeholder={LocalizeText('catalog.search.title')}
+                                        value={furniSearch}
+                                        onChange={(e) => setFurniSearch(e.target.value)}
+                                    />
+                                    {furniSearch.length > 0 && (
+                                        <ChestButton fixed onClick={() => setFurniSearch('')}>
+                                            ×
+                                        </ChestButton>
+                                    )}
+                                </Flex>
+                            )}
                             <div style={{ width: 255, height: 242, border: '1px solid #e3e3e3', borderRadius: 3, background: '#fff', overflowY: 'auto', padding: 5 }}>
-                                {furniEntries.length === 0 ? (
+                                {visibleFurniEntries.length === 0 ? (
                                     <Flex alignItems="center" justifyContent="center" style={{ height: '100%' }}>
                                         <Text small style={{ opacity: 0.5 }}>
                                             {LocalizeText('wiredchests.empty_furni')}
@@ -291,7 +369,7 @@ export const FurnitureChestView: FC = () => {
                                     </Flex>
                                 ) : (
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                                        {furniEntries.map((f) => (
+                                        {visibleFurniEntries.map((f) => (
                                             <div
                                                 key={f.baseItemId}
                                                 onClick={() => setSelectedFurni(f.baseItemId)}
@@ -341,6 +419,7 @@ export const FurnitureChestView: FC = () => {
                                     </div>
                                 )}
                             </div>
+                            </Column>
                             {/* right_panel: furni name + preview + withdraw */}
                             <div style={{ width: 175, display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ flex: 1, minHeight: 211, border: '1px solid #d8d8d8', borderRadius: 3, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 6, overflow: 'hidden' }}>
@@ -461,8 +540,8 @@ export const FurnitureChestView: FC = () => {
                             </div>
                         ) : (
                             <div className="nitro-chest__footer-group">
-                                <ChestButton wide onClick={() => setDepositFurniOpen((v) => !v)}>
-                                    {LocalizeText('wiredchests.deposit_furni')}
+                                <ChestButton wide onClick={startDepositFurni}>
+                                    {LocalizeText(depositFurniOpen ? 'wiredchests.cancel' : 'wiredchests.start_deposit')}
                                 </ChestButton>
                             </div>
                         )}
@@ -475,46 +554,44 @@ export const FurnitureChestView: FC = () => {
                             <Text bold small>
                                 {LocalizeText('wiredchests.deposit_furni.title')}
                             </Text>
-                            {depositableFloorItems.length === 0 ? (
+                            {depositableInventoryItems.length === 0 ? (
                                 <Text small style={{ opacity: 0.6 }}>
                                     {LocalizeText('wiredchests.deposit_furni.empty_inventory')}
                                 </Text>
                             ) : (
-                                <>
-                                    <select
-                                        className="form-select form-select-sm"
-                                        value={depositFurniBaseId}
-                                        onChange={(e) => setDepositFurniBaseId(parseInt(e.target.value, 10))}
-                                    >
-                                        {depositableFloorItems.map((g) => (
-                                            <option key={g.type} value={g.type}>
-                                                {g.name} (x{g.getTotalCount()})
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <Flex alignItems="center" gap={1}>
-                                        <Text small>{LocalizeText('wiredchests.quantity')}</Text>
-                                        <input
-                                            type="number"
-                                            min={1}
-                                            max={Math.max(1, depositFurniMax)}
-                                            className="form-control form-control-sm"
-                                            style={{ width: 72 }}
-                                            value={depositFurniAmount}
-                                            onChange={(e) =>
-                                                setDepositFurniAmount(Math.max(1, parseInt(e.target.value, 10) || 1))
-                                            }
-                                        />
-                                        <ChestButton wide disabled={depositFurniMax <= 0} onClick={depositFurni}>
-                                            {LocalizeText('wiredchests.deposit')}
-                                        </ChestButton>
-                                    </Flex>
-                                    {capacityMax - used <= 0 && (
-                                        <Text small style={{ color: '#a33' }}>
-                                            {LocalizeText('wiredchests.deposit_furni.full')}
-                                        </Text>
-                                    )}
-                                </>
+                                <div style={{ maxHeight: 160, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                                    {depositableInventoryItems.map((row) => (
+                                        <div
+                                            key={row.id}
+                                            title={row.name}
+                                            onClick={() => depositInventoryItem(row.id)}
+                                            style={{
+                                                width: 40,
+                                                height: 40,
+                                                border: '1px solid #cbcbcb',
+                                                borderRadius: 3,
+                                                background: '#fafafa',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: used >= capacityMax ? 'not-allowed' : 'pointer',
+                                                opacity: used >= capacityMax ? 0.45 : 1,
+                                            }}
+                                        >
+                                            <img
+                                                src={ProductImageUtility.getProductImageUrl(FurnitureType.FLOOR, row.baseItemId, '')}
+                                                alt=""
+                                                draggable={false}
+                                                style={{ maxWidth: 38, maxHeight: 38, objectFit: 'contain', imageRendering: 'pixelated' }}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            {capacityMax - used <= 0 && (
+                                <Text small style={{ color: '#a33' }}>
+                                    {LocalizeText('wiredchests.deposit_furni.full')}
+                                </Text>
                             )}
                         </Column>
                     )}

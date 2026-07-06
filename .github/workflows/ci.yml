@@ -86,6 +86,9 @@ jobs:
           #   2. repo variables (vars.RENDERER_REPO / vars.RENDERER_REF)
           #   3. dynamic: <owner>/Nitro_Render_V3 when it carries the ref,
           #      else ${UPSTREAM_RENDERER_REPO}.
+          PR_HEAD_OWNER="${{ github.event.pull_request.head.repo.owner.login || '' }}"
+          PR_HEAD_REF="${{ github.event.pull_request.head.ref || '' }}"
+
           case "${GITHUB_EVENT_NAME}" in
             pull_request) CTX="${GITHUB_BASE_REF}" ;;
             *)            CTX="${GITHUB_REF_NAME}" ;;
@@ -108,16 +111,11 @@ jobs:
           [ -z "$REPO" ] && REPO="$VAR_REPO"
           if [ -z "$REPO" ]; then
             # Fork PRs into duckietm: pair with the head author's renderer fork
-            # (simoleo89/Nitro_Render_V3 @ Dev) instead of upstream Dev which
-            # may not yet carry the companion wire protocol.
-            PR_HEAD_OWNER="${{ github.event.pull_request.head.repo.owner.login || '' }}"
+            # instead of upstream Dev which may not yet carry the companion wire.
             if [ -n "$PR_HEAD_OWNER" ] && [ "$PR_HEAD_OWNER" != "${{ github.repository_owner }}" ]; then
               HEAD_RENDERER="${PR_HEAD_OWNER}/Nitro_Render_V3"
-              if has_ref "$HEAD_RENDERER" "$REF"; then
+              if has_ref "$HEAD_RENDERER" "$REF" || has_ref "$HEAD_RENDERER" "integration"; then
                 REPO="$HEAD_RENDERER"
-              elif has_ref "$HEAD_RENDERER" "integration"; then
-                REPO="$HEAD_RENDERER"
-                REF="integration"
               fi
             fi
           fi
@@ -128,6 +126,23 @@ jobs:
             else
               REPO="$UPSTREAM_RENDERER_REPO"  # fall back to upstream
             fi
+          fi
+
+          # Fork PR auto mode: prefer the companion renderer branch that matches
+          # the client head (e.g. feat/chest-furni-v2-ui → feat/chest-furni-v2),
+          # then integration, then the base-ref default (Dev/main).
+          if [ -z "$IN_REF" ] && [ -z "$VAR_REF" ] && [ -n "$PR_HEAD_REF" ] && [ -n "$REPO" ]; then
+            COMPANION_REFS="$PR_HEAD_REF"
+            case "$PR_HEAD_REF" in
+              *-ui) COMPANION_REFS="${PR_HEAD_REF%-ui} $COMPANION_REFS" ;;
+            esac
+            COMPANION_REFS="$COMPANION_REFS integration $AUTO_REF"
+            for CAND in $COMPANION_REFS; do
+              if has_ref "$REPO" "$CAND"; then
+                REF="$CAND"
+                break
+              fi
+            done
           fi
 
           # Safety net: never pair against a repo/ref that doesn't exist.
