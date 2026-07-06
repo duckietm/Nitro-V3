@@ -10,6 +10,7 @@ import {
     ChestSaveSettingsComposer,
     ChestStartDepositComposer,
     ChestUpgradeCapacityComposer,
+    ChestWithdrawAllFurniComposer,
     ChestWithdrawComposer,
     ChestWithdrawFurniComposer,
     FurnitureListComposer,
@@ -256,7 +257,11 @@ export const FurnitureChestView: FC = () => {
     };
     const withdrawAll = () => setConfirmWithdrawAll(true);
     const doWithdrawAll = () => {
-        SendMessageComposer(new ChestWithdrawComposer(itemId, CREDITS, -1));
+        if (isFurni) {
+            SendMessageComposer(new ChestWithdrawAllFurniComposer(itemId));
+        } else {
+            SendMessageComposer(new ChestWithdrawComposer(itemId, CREDITS, -1));
+        }
         setConfirmWithdrawAll(false);
     };
     const withdrawFurni = () => {
@@ -540,6 +545,9 @@ export const FurnitureChestView: FC = () => {
                             </div>
                         ) : (
                             <div className="nitro-chest__footer-group">
+                                <ChestButton wide disabled={furniEntries.length <= 0} onClick={withdrawAll}>
+                                    {LocalizeText('wiredchests.withdraw_all')}
+                                </ChestButton>
                                 <ChestButton wide onClick={startDepositFurni}>
                                     {LocalizeText(depositFurniOpen ? 'wiredchests.cancel' : 'wiredchests.start_deposit')}
                                 </ChestButton>
@@ -793,7 +801,11 @@ export const FurnitureChestView: FC = () => {
                     <NitroCardHeaderView headerText={LocalizeText('wiredchests.withdraw_all.confirm.title')} onCloseClick={() => setConfirmWithdrawAll(false)} />
                     <NitroCardContentView>
                         <Column gap={2}>
-                            <Text>{LocalizeText('wiredchests.withdraw_all.confirm.desc')}</Text>
+                            <Text>
+                                {LocalizeText(
+                                    isFurni ? 'wiredchests.withdraw_all.confirm.desc_furni' : 'wiredchests.withdraw_all.confirm.desc',
+                                )}
+                            </Text>
                             <div className="nitro-chest__actions">
                                 <ChestButton wide onClick={doWithdrawAll}>
                                     {LocalizeText('wiredchests.withdraw_all.confirm.yes')}

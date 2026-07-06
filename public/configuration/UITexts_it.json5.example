@@ -843,6 +843,7 @@
     'wiredchests.withdraw_all': "Preleva tutto",
     'wiredchests.withdraw_all.confirm.title': "Preleva tutto",
     'wiredchests.withdraw_all.confirm.desc': "Vuoi davvero prelevare tutti i crediti dallo scrigno?",
+    'wiredchests.withdraw_all.confirm.desc_furni': "Vuoi davvero prelevare tutti i furni dallo scrigno?",
     'wiredchests.withdraw_all.confirm.yes': "Sì, preleva tutto",
     'wiredchests.deposit': "Deposita",
     'wiredchests.initial_deposit': "Deposito iniziale",

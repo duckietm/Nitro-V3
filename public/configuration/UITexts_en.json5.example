@@ -658,6 +658,7 @@
     'wiredchests.withdraw_all': "Withdraw all",
     'wiredchests.withdraw_all.confirm.title': "Withdraw all",
     'wiredchests.withdraw_all.confirm.desc': "Are you sure you want to withdraw all credits from the chest?",
+    'wiredchests.withdraw_all.confirm.desc_furni': "Are you sure you want to withdraw all furni from the chest?",
     'wiredchests.withdraw_all.confirm.yes': "Yes, withdraw all",
     'wiredchests.deposit': "Deposit",
     'wiredchests.initial_deposit': "Initial deposit",
