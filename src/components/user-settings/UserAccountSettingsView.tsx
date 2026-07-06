@@ -30,7 +30,7 @@ const passwordStrength = (value: string): { score: number; labelKey: string; col
 
     if(score <= 1) return { score: 1, labelKey: 'usersettings.strength.weak', color: 'bg-[#a81a12]' };
     if(score === 2) return { score: 2, labelKey: 'usersettings.strength.fair', color: 'bg-[#ffc107]' };
-    if(score === 3) return { score: 3, labelKey: 'usersettings.strength.good', color: 'bg-[#1e7295]' };
+    if(score === 3) return { score: 3, labelKey: 'usersettings.strength.good', color: 'bg-[#418db0]' };
     return { score: 4, labelKey: 'usersettings.strength.strong', color: 'bg-[#00800b]' };
 };
 
@@ -396,7 +396,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
         <NitroCardView className="user-account-settings-window min-w-0 w-[min(360px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim" uniqueKey="user-account-settings">
             <NitroCardHeaderView headerText={ localizeWithFallback('usersettings.title', "User Settings") } onCloseClick={ close } />
 
-            <div className="relative flex items-center gap-3 px-3 py-2 bg-[linear-gradient(180deg,#2e8fb8_0%,#1e7295_100%)] text-white">
+            <div className="relative flex items-center gap-3 px-3 py-2 bg-[linear-gradient(180deg,#5ba4c4_0%,#418db0_100%)] text-white">
                 <div className="absolute inset-0 opacity-20 pointer-events-none [background-image:radial-gradient(rgba(255,255,255,0.5)_1px,transparent_1px)] [background-size:6px_6px]" />
                 { session.figure && (
                     <div className="relative w-[60px] h-[60px] shrink-0 rounded-full bg-white/20 border-2 border-white/40 overflow-hidden">
@@ -422,30 +422,30 @@ export const UserAccountSettingsView: FC<{}> = () =>
                         <Text small className="text-black/60 uppercase tracking-wider px-1">{ localizeWithFallback('usersettings.menu.section', "Account") }</Text>
                         <button
                             type="button"
-                            className="group flex items-center gap-3 rounded-md border border-black/10 bg-white px-3 py-2 hover:bg-[#f5fbfd] hover:border-[#1e7295] transition-colors cursor-pointer text-left"
+                            className="group flex items-center gap-3 rounded-md border border-black/10 bg-white px-3 py-2 hover:bg-[#f5fbfd] hover:border-[#418db0] transition-colors cursor-pointer text-left"
                             onClick={ () => { resetForm(); setSection('password'); } }>
-                            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#1e7295] text-white shrink-0 shadow-[inset_0_2px_#ffffff26,inset_0_-2px_#0000001a]">
+                            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#418db0] text-white shrink-0 shadow-[inset_0_2px_#ffffff26,inset_0_-2px_#0000001a]">
                                 <FaKey />
                             </div>
                             <div className="flex flex-col flex-1 leading-tight">
                                 <Text bold>{ localizeWithFallback('usersettings.menu.password.title', "Reset password") }</Text>
                                 <Text small className="text-black/60">{ localizeWithFallback('usersettings.menu.password.desc', "Change the password you use to log in.") }</Text>
                             </div>
-                            <FaChevronRight className="text-black/40 group-hover:text-[#1e7295]" />
+                            <FaChevronRight className="text-black/40 group-hover:text-[#418db0]" />
                         </button>
 
                         <button
                             type="button"
-                            className="group flex items-center gap-3 rounded-md border border-black/10 bg-white px-3 py-2 hover:bg-[#f5fbfd] hover:border-[#1e7295] transition-colors cursor-pointer text-left"
+                            className="group flex items-center gap-3 rounded-md border border-black/10 bg-white px-3 py-2 hover:bg-[#f5fbfd] hover:border-[#418db0] transition-colors cursor-pointer text-left"
                             onClick={ () => { resetForm(); setSection('email'); } }>
-                            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#185d79] text-white shrink-0 shadow-[inset_0_2px_#ffffff26,inset_0_-2px_#0000001a]">
+                            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#376275] text-white shrink-0 shadow-[inset_0_2px_#ffffff26,inset_0_-2px_#0000001a]">
                                 <FaEnvelope />
                             </div>
                             <div className="flex flex-col flex-1 leading-tight">
                                 <Text bold>{ localizeWithFallback('usersettings.menu.email.title', "Change email") }</Text>
                                 <Text small className="text-black/60">{ localizeWithFallback('usersettings.menu.email.desc', "Update your account's email address.") }</Text>
                             </div>
-                            <FaChevronRight className="text-black/40 group-hover:text-[#1e7295]" />
+                            <FaChevronRight className="text-black/40 group-hover:text-[#418db0]" />
                         </button>
 
                         <button
@@ -484,12 +484,12 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 className="flex items-center justify-center w-7 h-7 rounded-full bg-black/5 hover:bg-black/10 text-black/70 disabled:opacity-50">
                                 <FaArrowLeft size={ 11 } />
                             </button>
-                            <FaUserCog className="text-[#1e7295]" />
+                            <FaUserCog className="text-[#418db0]" />
                             <Text bold>{ localizeWithFallback('usersettings.menu.password.title', "Reset password") }</Text>
                         </div>
 
-                        <div className="flex items-start gap-2 rounded-md border border-[#1e7295]/30 bg-[#1e7295]/10 px-2 py-2 text-[11px] leading-4 text-[#0d3d52]">
-                            <FaInfoCircle className="mt-[2px] shrink-0 text-[#1e7295]" />
+                        <div className="flex items-start gap-2 rounded-md border border-[#418db0]/30 bg-[#418db0]/10 px-2 py-2 text-[11px] leading-4 text-[#0d3d52]">
+                            <FaInfoCircle className="mt-[2px] shrink-0 text-[#418db0]" />
                             <span>{ LocalizeText('usersettings.password.hint', [ 'count' ], [ MIN_PASSWORD_LENGTH.toString() ]) }</span>
                         </div>
 
@@ -499,7 +499,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
                                     type={ showCurrent ? 'text' : 'password' }
-                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#1e7295] focus:outline-none"
+                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#418db0] focus:outline-none"
                                     autoComplete="current-password"
                                     maxLength={ MAX_PASSWORD_LENGTH }
                                     value={ currentPassword }
@@ -522,7 +522,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
                                     type={ showNew ? 'text' : 'password' }
-                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#1e7295] focus:outline-none"
+                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#418db0] focus:outline-none"
                                     autoComplete="new-password"
                                     maxLength={ MAX_PASSWORD_LENGTH }
                                     value={ newPassword }
@@ -553,7 +553,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
                                     type={ showNew ? 'text' : 'password' }
-                                    className={ `w-full rounded border bg-white pl-7 pr-8 py-1 focus:outline-none ${ confirmPassword.length > 0 && confirmPassword !== newPassword ? 'border-[#a81a12] focus:border-[#a81a12]' : 'border-black/20 focus:border-[#1e7295]' }` }
+                                    className={ `w-full rounded border bg-white pl-7 pr-8 py-1 focus:outline-none ${ confirmPassword.length > 0 && confirmPassword !== newPassword ? 'border-[#a81a12] focus:border-[#a81a12]' : 'border-black/20 focus:border-[#418db0]' }` }
                                     autoComplete="new-password"
                                     maxLength={ MAX_PASSWORD_LENGTH }
                                     value={ confirmPassword }
@@ -596,12 +596,12 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 className="flex items-center justify-center w-7 h-7 rounded-full bg-black/5 hover:bg-black/10 text-black/70 disabled:opacity-50">
                                 <FaArrowLeft size={ 11 } />
                             </button>
-                            <FaEnvelope className="text-[#185d79]" />
+                            <FaEnvelope className="text-[#376275]" />
                             <Text bold>{ localizeWithFallback('usersettings.menu.email.title', "Change email") }</Text>
                         </div>
 
-                        <div className="flex items-start gap-2 rounded-md border border-[#1e7295]/30 bg-[#1e7295]/10 px-2 py-2 text-[11px] leading-4 text-[#0d3d52]">
-                            <FaInfoCircle className="mt-[2px] shrink-0 text-[#1e7295]" />
+                        <div className="flex items-start gap-2 rounded-md border border-[#418db0]/30 bg-[#418db0]/10 px-2 py-2 text-[11px] leading-4 text-[#0d3d52]">
+                            <FaInfoCircle className="mt-[2px] shrink-0 text-[#418db0]" />
                             <span>{ localizeWithFallback('usersettings.email.hint', "For your security, please confirm your current password before changing your account email.") }</span>
                         </div>
 
@@ -611,7 +611,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
                                     type={ showEmailPassword ? 'text' : 'password' }
-                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#1e7295] focus:outline-none"
+                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#418db0] focus:outline-none"
                                     autoComplete="current-password"
                                     maxLength={ MAX_PASSWORD_LENGTH }
                                     value={ emailCurrentPassword }
@@ -634,7 +634,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaEnvelope className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
                                     type="email"
-                                    className={ `w-full rounded border bg-white pl-7 pr-8 py-1 focus:outline-none ${ newEmail.length > 0 && !EMAIL_RE.test(newEmail) ? 'border-[#a81a12] focus:border-[#a81a12]' : 'border-black/20 focus:border-[#1e7295]' }` }
+                                    className={ `w-full rounded border bg-white pl-7 pr-8 py-1 focus:outline-none ${ newEmail.length > 0 && !EMAIL_RE.test(newEmail) ? 'border-[#a81a12] focus:border-[#a81a12]' : 'border-black/20 focus:border-[#418db0]' }` }
                                     autoComplete="email"
                                     inputMode="email"
                                     maxLength={ MAX_EMAIL_LENGTH }
@@ -694,7 +694,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaKey className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
                                     type={ showUsernamePassword ? 'text' : 'password' }
-                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#1e7295] focus:outline-none"
+                                    className="w-full rounded border border-black/20 bg-white pl-7 pr-8 py-1 focus:border-[#418db0] focus:outline-none"
                                     autoComplete="current-password"
                                     maxLength={ MAX_PASSWORD_LENGTH }
                                     value={ usernameCurrentPassword }
@@ -717,7 +717,7 @@ export const UserAccountSettingsView: FC<{}> = () =>
                                 <FaIdBadge className="absolute left-2 text-black/40" size={ 12 } />
                                 <input
                                     type="text"
-                                    className={ `w-full rounded border bg-white pl-7 pr-8 py-1 focus:outline-none ${ newUsername.length > 0 && (!USERNAME_RE.test(newUsername) || newUsername === session.username) ? 'border-[#a81a12] focus:border-[#a81a12]' : 'border-black/20 focus:border-[#1e7295]' }` }
+                                    className={ `w-full rounded border bg-white pl-7 pr-8 py-1 focus:outline-none ${ newUsername.length > 0 && (!USERNAME_RE.test(newUsername) || newUsername === session.username) ? 'border-[#a81a12] focus:border-[#a81a12]' : 'border-black/20 focus:border-[#418db0]' }` }
                                     autoComplete="off"
                                     spellCheck={ false }
                                     maxLength={ MAX_USERNAME_LENGTH }

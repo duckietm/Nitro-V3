@@ -1,0 +1,143 @@
+/**
+ * Official Habbo Ubuntu palette (Habbo Air deobfuscated).
+ * Frame #418DB0, catalog header #0E3F52 / #376275, content #DFDFDF / #ECECE4.
+ */
+:root {
+    --habbo-blue: #418db0;
+    --habbo-blue-light: #67a3bf;
+    --habbo-blue-highlight: #5ba4c4;
+    --habbo-blue-dark: #2e6f8a;
+    --habbo-blue-header: #0e3f52;
+    --habbo-blue-header-border: #376275;
+    --habbo-frame-border: #283f5d;
+    --habbo-surface: #dfdfdf;
+    --habbo-surface-warm: #ecece4;
+    --habbo-panel: #f7f7f2;
+    --habbo-tab: #b6bec5;
+    --habbo-tab-active: #dfdfdf;
+    --habbo-grid: #cdd3d9;
+    --habbo-grid-active: #ececec;
+    --habbo-select: #63c5e9;
+    --habbo-select-outer: #82d1ed;
+    --habbo-close: #921911;
+    --habbo-close-hover: #b9322a;
+    --habbo-toolbar: #555555;
+    --habbo-nav-border: #eceae0;
+    --habbo-text: #151515;
+    --habbo-text-muted: #666666;
+    --habbo-bc: #ff8d00;
+    --habbo-bc-outer: #ffb53c;
+    --habbo-success: #00800b;
+    --habbo-danger: #a81a12;
+    --habbo-buy-top: #ffe66b;
+    --habbo-buy-mid: #ffc828;
+    --habbo-buy-bottom: #f0a318;
+    --habbo-buy-text: #4a2b00;
+}
+
+/* Ubuntu shiny secondary (catalog secondary / preview / spinner) */
+.habbo-btn-secondary,
+.habbo-btn-slice {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 2px 12px;
+    border: 2px solid var(--habbo-blue-header-border) !important;
+    border-radius: 4px !important;
+    background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
+    color: var(--habbo-text) !important;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 0 rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: filter 0.1s ease;
+}
+
+.habbo-btn-secondary:hover,
+.habbo-btn-slice:hover {
+    filter: brightness(1.04);
+    background: linear-gradient(180deg, #ffffff 0%, #e0eff6 44%, #b8d5e4 45%, #e8f3f8 100%) !important;
+}
+
+.habbo-btn-secondary:active,
+.habbo-btn-slice:active {
+    filter: brightness(0.96);
+    background: linear-gradient(180deg, #a8c9d8 0%, #d4e6ef 55%, #f2f8fb 100%) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.habbo-btn-secondary:disabled,
+.habbo-btn-slice:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(0.15);
+}
+
+/* Ubuntu shiny primary blue */
+.habbo-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 2px 12px;
+    border: 2px solid var(--habbo-blue-header) !important;
+    border-radius: 4px !important;
+    background: linear-gradient(180deg, var(--habbo-blue-highlight) 0%, var(--habbo-blue) 44%, var(--habbo-blue-dark) 100%) !important;
+    color: #fff !important;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.45);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.habbo-btn-primary:hover {
+    background: linear-gradient(180deg, #6eb8d4 0%, #4a9bc0 44%, #3580a0 100%) !important;
+}
+
+.habbo-btn-primary:active {
+    background: linear-gradient(180deg, var(--habbo-blue-dark) 0%, var(--habbo-blue) 100%) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+/* Gold buy / confirm */
+.habbo-btn-buy {
+    border: 2px solid #8a5b00 !important;
+    border-radius: 4px !important;
+    background: linear-gradient(180deg, var(--habbo-buy-top) 0%, var(--habbo-buy-mid) 45%, var(--habbo-buy-bottom) 100%) !important;
+    color: var(--habbo-buy-text) !important;
+    font-weight: 700;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(140, 75, 0, 0.35);
+}
+
+.habbo-btn-buy:hover {
+    background: linear-gradient(180deg, #fff080 0%, #ffd54d 45%, #f5ab1c 100%) !important;
+}
+
+.habbo-btn-buy:active {
+    background: linear-gradient(180deg, #f0a318 0%, #d98c0a 100%) !important;
+    box-shadow: inset 0 2px 0 rgba(140, 75, 0, 0.45);
+}
+
+.habbo-btn-success {
+    border: 2px solid #006d09 !important;
+    border-radius: 4px !important;
+    background: linear-gradient(180deg, #b6e86b 0%, #7fc828 45%, #4f9a18 100%) !important;
+    color: #fff !important;
+    font-weight: 700;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.habbo-btn-danger {
+    border: 2px solid #86150e !important;
+    border-radius: 4px !important;
+    background: linear-gradient(180deg, #e4665c 0%, var(--habbo-danger) 100%) !important;
+    color: #fff !important;
+    font-weight: 700;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}

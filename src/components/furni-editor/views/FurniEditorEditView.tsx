@@ -75,7 +75,7 @@ const Tip: FC<{ field: string }> = ({ field }) => {
             ref={ref}
             onMouseEnter={show}
             onMouseLeave={hide}
-            className="ml-0.5 inline-flex w-3 h-3 rounded-full bg-[#1e7295] text-white text-[8px] items-center justify-center cursor-help font-bold align-middle"
+            className="ml-0.5 inline-flex w-3 h-3 rounded-full bg-[#418db0] text-white text-[8px] items-center justify-center cursor-help font-bold align-middle"
         >
             ?
             {pos &&
@@ -603,7 +603,7 @@ export const FurniEditorEditView: FC<FurniEditorEditViewProps> = (props) => {
                                             onClick={() => setField(key, !on)}
                                             aria-pressed={on}
                                             title={on ? 'Enabled — click to disable' : 'Disabled — click to enable'}
-                                            className={`inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border font-medium transition ${on ? 'bg-[#1E7295] border-[#1E7295] text-[#ffffff] shadow-sm' : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-200 hover:text-slate-600'}`}
+                                            className={`inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border font-medium transition ${on ? 'bg-[#418db0] border-[#418db0] text-[#ffffff] shadow-sm' : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-200 hover:text-slate-600'}`}
                                         >
                                             <span
                                                 className={`inline-block w-2 h-2 rounded-full ring-1 ${on ? 'bg-[#22c55e] ring-[#ffffff]/70' : 'bg-[#ef4444] ring-[#00000014]'}`}

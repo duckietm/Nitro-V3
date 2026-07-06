@@ -6,8 +6,9 @@
     --catalog-swf-border-dark: #6f6f6a;
     --catalog-swf-text: #222222;
     --catalog-swf-muted: #666666;
-    --catalog-swf-blue: #2f8097;
-    --catalog-swf-blue-dark: #1c596c;
+    --catalog-swf-blue: #418db0;
+    --catalog-swf-blue-dark: #0e3f52;
+    --catalog-swf-blue-border: #376275;
     --catalog-swf-select: #63c5e9;
     --catalog-swf-select-outer: #82d1ed;
     --catalog-swf-bc: #ff8d00;
@@ -139,33 +140,31 @@
     height: 22px !important;
     min-height: 22px !important;
     padding: 0 10px !important;
-    border: 1px solid #6f8db5 !important;
+    border: 2px solid var(--catalog-swf-blue-border) !important;
     border-image: none !important;
-    border-image-source: none !important;
     border-radius: 4px !important;
-    background: linear-gradient(180deg, #ffffff 0%, #e7eef8 100%) !important;
-    background-image: linear-gradient(180deg, #ffffff 0%, #e7eef8 100%) !important;
-    color: #1a3a6b !important;
+    background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
+    color: var(--catalog-swf-text) !important;
     font-size: 10px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     line-height: 1 !important;
-    text-shadow: none !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 0 rgba(0, 0, 0, 0.12) !important;
     cursor: pointer !important;
     white-space: nowrap !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button:hover {
-    background: linear-gradient(180deg, #ffffff 0%, #d6e2f3 100%) !important;
-    background-image: linear-gradient(180deg, #ffffff 0%, #d6e2f3 100%) !important;
-    color: #0b2347 !important;
-    border-color: #4a72b8 !important;
+    filter: brightness(1.04);
+    background: linear-gradient(180deg, #ffffff 0%, #e0eff6 44%, #b8d5e4 45%, #e8f3f8 100%) !important;
+    color: var(--catalog-swf-text) !important;
+    border-color: var(--catalog-swf-blue) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button:active {
-    background: linear-gradient(180deg, #d6e2f3 0%, #ffffff 100%) !important;
-    background-image: linear-gradient(180deg, #d6e2f3 0%, #ffffff 100%) !important;
-    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 0 0 rgba(0, 0, 0, 0) !important;
+    filter: brightness(0.96);
+    background: linear-gradient(180deg, #a8c9d8 0%, #d4e6ef 55%, #f2f8fb 100%) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button.text-success,
@@ -215,8 +214,8 @@
     --catalog-admin-border-dark: #5f5f59;
     --catalog-admin-text: #20201d;
     --catalog-admin-muted: #60605a;
-    --catalog-admin-blue: #2f8097;
-    --catalog-admin-blue-dark: #1c596c;
+    --catalog-admin-blue: #418db0;
+    --catalog-admin-blue-dark: #0e3f52;
     --catalog-admin-gold: #ffc828;
     --catalog-admin-gold-dark: #8a5b00;
     --catalog-admin-danger: #b83b32;
@@ -1325,48 +1324,45 @@
     justify-content: center !important;
     min-height: 22px;
     padding: 2px 12px !important;
-    border: 3px solid transparent !important;
-    border-radius: 0 !important;
-    border-image-source: var(--habbo-slice-button-default) !important;
-    border-image-slice: 3 3 3 3 fill !important;
-    border-image-width: 3px !important;
-    border-image-repeat: stretch !important;
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    color: #222 !important;
+    border: 2px solid var(--catalog-swf-blue-border) !important;
+    border-radius: 4px !important;
+    border-image: none !important;
+    background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
+    color: var(--catalog-swf-text) !important;
     font-size: 11px !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
-    box-shadow: none !important;
-    transition: none !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+    transition: filter 0.1s ease !important;
 }
 
 .nitro-catalog-window button.nitro-catalog-preview-btn,
 .nitro-catalog-window button.nitro-catalog-preview-btn *,
 .nitro-catalog-window button.nitro-catalog-preview-btn svg {
-    border-radius: 0 !important;
-    box-shadow: none !important;
+    border-radius: 4px !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-button:hover,
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button:hover,
 .nitro-catalog-window button.nitro-catalog-preview-btn:hover {
-    border-image-source: var(--habbo-slice-button-hover) !important;
+    filter: brightness(1.04);
+    background: linear-gradient(180deg, #ffffff 0%, #e0eff6 44%, #b8d5e4 45%, #e8f3f8 100%) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-button:active,
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button:active,
 .nitro-catalog-window button.nitro-catalog-preview-btn:active {
-    border-image-source: var(--habbo-slice-button-pressed) !important;
+    filter: brightness(0.96);
+    background: linear-gradient(180deg, #a8c9d8 0%, #d4e6ef 55%, #f2f8fb 100%) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-button.pointer-events-none,
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button:disabled,
 .nitro-catalog-window button.nitro-catalog-preview-btn:disabled {
-    border-image-source: var(--habbo-slice-button-disabled) !important;
+    opacity: 0.55 !important;
     color: #888 !important;
-    opacity: 1 !important;
+    cursor: not-allowed !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-buy-button {

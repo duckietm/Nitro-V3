@@ -223,15 +223,15 @@ export const UserSettingsView: FC<{}> = props =>
                         <button
                             type="button"
                             onClick={ () => CreateLinkEvent('user-account-settings/show') }
-                            className="group flex items-center gap-2 rounded-md border border-black/10 bg-white px-2 py-1.5 hover:bg-[#f5fbfd] hover:border-[#1e7295] transition-colors cursor-pointer text-left">
-                            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#1e7295] text-white shadow-[inset_0_2px_#ffffff26,inset_0_-2px_#0000001a]">
+                            className="group flex items-center gap-2 rounded-md border border-black/10 bg-white px-2 py-1.5 hover:bg-[#f5fbfd] hover:border-[#418db0] transition-colors cursor-pointer text-left">
+                            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#418db0] text-white shadow-[inset_0_2px_#ffffff26,inset_0_-2px_#0000001a]">
                                 <FaUserCog size={ 12 } />
                             </div>
                             <div className="flex flex-col flex-1 leading-tight">
                                 <Text bold>{ localizeWithFallback('usersettings.open.title', "User Settings") }</Text>
                                 <Text small className="text-black/60">{ localizeWithFallback('usersettings.open.subtitle', "Password and account") }</Text>
                             </div>
-                            <span className="text-black/30 group-hover:text-[#1e7295] text-[10px]">›</span>
+                            <span className="text-black/30 group-hover:text-[#418db0] text-[10px]">›</span>
                         </button>
                     </div> }
                 { (section !== null) &&

@@ -53,7 +53,7 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #1e7295;
+    background: #418db0;
 }
 
 .mention-row:hover {
@@ -115,7 +115,7 @@
     color: #fff;
 }
 
-.mention-row-type.is-direct { background: #1e7295; }
+.mention-row-type.is-direct { background: #418db0; }
 .mention-row-type.is-room { background: #d08a1e; }
 
 .mention-row-body {
@@ -203,7 +203,7 @@
     transition: background 0.1s, color 0.1s, border-color 0.1s;
 }
 
-.mention-row-action:hover { background: #1e7295; color: #fff; border-color: #185b76; }
+.mention-row-action:hover { background: #418db0; color: #fff; border-color: #376275; }
 .mention-row-action.is-remove:hover { background: #d64545; color: #fff; border-color: #b53636; }
 
 .mentions-empty {
@@ -224,7 +224,7 @@
     justify-content: center;
     border-radius: 50%;
     background: rgba(30, 114, 149, 0.10);
-    color: #1e7295;
+    color: #418db0;
     font-size: 22px;
     font-weight: 700;
 }
@@ -267,8 +267,8 @@
 }
 
 .mentions-filter.is-active {
-    background: #1e7295;
-    border-color: #185b76;
+    background: #418db0;
+    border-color: #376275;
     color: #fff;
 }
 
@@ -290,7 +290,7 @@
 
 .mentions-refresh:hover {
     background: #e9e6dc;
-    color: #1e7295;
+    color: #418db0;
 }
 
 .mentions-refresh:active {

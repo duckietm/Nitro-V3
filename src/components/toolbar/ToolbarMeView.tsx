@@ -40,7 +40,7 @@ export const ToolbarMeView: FC<
     return (
         <Flex
             alignItems="center"
-            className="bg-[rgba(20,20,20,.95)] border border-[solid] border-[#101010] [box-shadow:inset_2px_2px_rgba(255,255,255,.1),inset_-2px_-2px_rgba(255,255,255,.1)] rounded-[$border-radius] p-2"
+            className="bg-[rgba(85,85,85,0.95)] border border-[solid] border-[#3d3d3d] [box-shadow:inset_2px_2px_rgba(255,255,255,.1),inset_-2px_-2px_rgba(0,0,0,.15)] rounded-[6px] p-2"
             gap={2}
             innerRef={elementRef}
         >
