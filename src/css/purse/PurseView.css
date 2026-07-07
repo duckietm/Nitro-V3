@@ -4,39 +4,43 @@
 }
 
 .nitro-purse {
-    width: 100%;
-    max-width: 234px;
+    width: var(--habbo-purse-width, 230px);
+    max-width: var(--habbo-purse-width, 230px);
+    min-height: var(--habbo-purse-height, 77px);
     margin-left: auto;
     overflow: hidden;
-    border: 0;
-    border-left: 2px solid #41403c;
-    border-bottom: 2px solid #41403c;
-    border-radius: 0 0 0 10px;
-    background: rgba(10, 10, 12, 0.58);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+    border: 7px solid transparent;
+    border-radius: 0;
+    background: var(--habbo-purse-bg);
+    border-image-source: url('../../assets/images/purse/ubuntu_bg_9.png');
+    border-image-slice: 7 fill;
+    border-image-width: 7px;
+    border-image-repeat: stretch;
+    box-shadow: none;
+    image-rendering: pixelated;
 }
 
-/* ---- Body: 3 columns (currencies | Join+Earnings | actions) ---- */
 .nitro-purse__body {
     display: flex;
-    gap: 6px;
+    gap: 0;
     align-items: stretch;
-    padding: 6px;
+    min-height: calc(var(--habbo-purse-height, 77px) - 14px);
+    padding: 2px 4px 4px 0;
 }
 
-/* ---- Currencies (left) ---- */
 .nitro-purse__currencies {
     display: flex;
-    flex: 1 1 0;
+    flex: 0 0 57px;
     flex-direction: column;
     justify-content: center;
-    gap: 2px;
+    gap: 0;
     min-width: 0;
+    padding-left: 7px;
 }
 
 .nitro-purse .nitro-purse-button {
     align-items: center;
-    min-height: 20px;
+    min-height: 19px;
     padding: 2px 0;
     border: 0 !important;
     border-radius: 0 !important;
@@ -45,126 +49,160 @@
 }
 
 .nitro-purse .allcurrencypurse .text-white {
-    font-size: 0.76rem;
+    font-family: UbuntuCondensed, Ubuntu, sans-serif;
+    font-size: 12px;
     font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.01em;
-    color: rgba(255, 255, 255, 0.88) !important;
+    line-height: 17px;
+    letter-spacing: 0;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.27);
 }
 
 .nitro-purse .nitro-purse-button.currency--1 .text-white {
-    color: #7fdcff !important;
+    color: var(--habbo-purse-credit, #d5af22) !important;
 }
 
 .nitro-purse .nitro-purse-button.currency-0 .text-white {
-    color: #ffd76d !important;
+    color: var(--habbo-purse-ducket, #d787d7) !important;
 }
 
 .nitro-purse .nitro-purse-button.currency-5 .text-white {
-    color: #df95ff !important;
+    color: var(--habbo-purse-diamond, #38caeb) !important;
 }
 
-/* ---- Button columns (Join+Earnings and actions) ---- */
 .nitro-purse__col {
     display: flex;
     flex: 0 0 auto;
     flex-direction: column;
     align-items: stretch;
-    gap: 4px;
+}
+
+.nitro-purse__col--primary {
+    flex: 0 0 101px;
+    justify-content: center;
+    gap: 5px;
+    padding-top: 1px;
+}
+
+.nitro-purse__divider {
+    flex: 0 0 1px;
+    align-self: stretch;
+    width: 1px;
+    margin: 3px 4px 3px 3px;
+    background: var(--habbo-purse-divider, #444444);
+}
+
+.nitro-purse__col--actions {
+    flex: 0 0 50px;
+    justify-content: center;
+    gap: 2px;
+    padding-top: 1px;
 }
 
 .nitro-purse__btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-    flex: 1 1 0;
+    justify-content: flex-start;
+    gap: 4px;
     width: 100%;
-    min-height: 22px;
-    padding: 0 8px;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    color: #ffffff;
-    font-size: 0.72rem;
+    min-height: 26px;
+    height: 26px;
+    padding: 0 6px 0 5px;
+    border: 1px solid rgba(59, 57, 51, 0.8);
+    border-radius: 13px;
+    color: var(--habbo-purse-hc-text, #00c1c4);
+    font-family: UbuntuCondensed, Ubuntu, sans-serif;
+    font-size: 12px;
     font-weight: 700;
     line-height: 1;
-    letter-spacing: 0.01em;
     white-space: nowrap;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.16);
-    transition: filter 0.15s ease, transform 0.15s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(32, 34, 32, 0.88);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transition: filter 0.12s ease;
 }
 
 .nitro-purse__btn:hover {
-    filter: brightness(1.07);
-    transform: translateY(-1px);
+    filter: brightness(1.08);
 }
 
 .nitro-purse__btn:active {
-    transform: translateY(0);
-    filter: brightness(0.96);
+    filter: brightness(0.94);
 }
 
-.nitro-purse__btn--icon {
-    gap: 0;
-    padding: 0;
-}
-
-.nitro-purse__btn-icon {
-    flex: 0 0 auto;
-    color: #ff6ad0;
+.nitro-purse__btn > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .nitro-purse__btn .nitro-icon {
-    transform: scale(0.82);
+    flex: 0 0 20px;
+    width: 20px;
+    height: 18px;
+    transform: none;
 }
 
-.nitro-purse__btn--join {
-    border-color: #4f7a22;
-    background: linear-gradient(180deg, #72b03a 0%, #5a8c2a 100%);
-}
-
+.nitro-purse__btn--join,
 .nitro-purse__btn--earnings {
-    border-color: #4f7a22;
-    background: linear-gradient(180deg, #72b03a 0%, #5a8c2a 100%);
+    border-color: rgba(59, 147, 51, 0.72);
+}
+
+.nitro-purse__icon--earnings {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 18px;
+    background: url('../../assets/images/purse/icon_earnings.png') center / contain no-repeat;
+    image-rendering: pixelated;
+}
+
+.nitro-purse__btn--icon {
+    justify-content: center;
+    gap: 0;
+    min-height: 19px;
+    height: 19px;
+    padding: 0;
+    border-radius: 5px;
+    border-color: rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .nitro-purse__btn--help {
-    border-color: #14526b;
-    background: linear-gradient(180deg, #5ba4c4 0%, #418db0 44%, #2e6f8a 100%);
+    color: #ffffff;
+    background: var(--habbo-purse-help, #217bb5);
 }
 
 .nitro-purse__btn--logout {
-    border-color: #7c1414;
-    background: linear-gradient(180deg, #d23b3b 0%, #b32424 100%);
+    background: var(--habbo-purse-logout, #de5347);
 }
 
 .nitro-purse__btn--settings {
-    border-color: #565064;
-    background: #716a85;
+    background: var(--habbo-purse-settings, #726b86);
 }
 
-.nitro-purse__btn--translate {
-    border-color: #565064;
-    background: #716a85;
+.nitro-purse__icon--logout,
+.nitro-purse__icon--settings {
+    display: block;
+    width: 15px;
+    height: 18px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    image-rendering: pixelated;
 }
 
-/* Action column buttons: square corners */
-.nitro-purse__col--actions .nitro-purse__btn {
-    border-radius: 0;
+.nitro-purse__icon--logout {
+    background-image: url('../../assets/images/purse/logout_icon.png');
 }
 
-/* Gear + translate icons rendered white */
-.nitro-purse__btn--settings svg,
-.nitro-purse__btn--translate svg {
-    color: #ffffff;
+.nitro-purse__icon--settings {
+    width: 18px;
+    background-image: url('../../assets/images/purse/settings_icon.png');
 }
 
-/* ---- Other currencies: separate container(s) below the purse ---- */
 .nitro-purse__other {
     width: 100%;
-    max-width: 156px;
+    max-width: var(--habbo-purse-width, 230px);
     margin-top: 4px;
     margin-left: auto;
     display: flex;
@@ -174,13 +212,14 @@
 
 .nitro-purse__other .nitro-purse-seasonal-currency {
     padding: 4px 8px;
-    border: 0;
-    border-top: 2px solid #41403c;
-    border-left: 2px solid #41403c;
-    border-bottom: 2px solid #41403c;
-    border-radius: 10px 0 0 10px;
-    background: rgba(10, 10, 12, 0.58);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+    border: 7px solid transparent;
+    border-radius: 0;
+    border-image-source: url('../../assets/images/purse/ubuntu_bg_9.png');
+    border-image-slice: 7 fill;
+    border-image-width: 7px;
+    border-image-repeat: stretch;
+    background: var(--habbo-purse-bg);
+    box-shadow: none;
 }
 
 .nitro-purse-seasonal-currency > div {
@@ -202,18 +241,17 @@
 
 .seasonal-text {
     min-width: 0;
-    font-size: 0.76rem;
+    font-size: 12px;
     font-weight: 700;
     color: rgba(255, 255, 255, 0.82) !important;
     line-height: 1;
-    letter-spacing: 0.01em;
 }
 
 .seasonal-amount {
     margin-left: auto;
     white-space: nowrap;
     flex: 0 0 auto;
-    font-size: 0.76rem;
+    font-size: 12px;
     font-weight: 700;
     line-height: 1;
     color: rgba(255, 255, 255, 0.96) !important;
@@ -236,26 +274,28 @@
     object-fit: contain;
 }
 
-/* ---- Settings dropdown (gear menu) ---- */
 .nitro-purse-menu {
     width: 100%;
-    max-width: 234px;
+    max-width: var(--habbo-purse-width, 230px);
     margin-top: 4px;
     margin-left: auto;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 2px solid #41403c;
-    border-radius: 8px;
+    border: 7px solid transparent;
+    border-image-source: url('../../assets/images/purse/ubuntu_bg_9.png');
+    border-image-slice: 7 fill;
+    border-image-width: 7px;
+    border-image-repeat: stretch;
     background: rgba(10, 10, 12, 0.92);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+    box-shadow: none;
     pointer-events: all;
 }
 
 .nitro-purse-menu__item {
-    padding: 2px 10px;
+    padding: 4px 10px;
     text-align: left;
-    font-size: 0.78rem;
+    font-size: 12px;
     font-weight: 500;
     line-height: 1.3;
     color: rgba(255, 255, 255, 0.9);

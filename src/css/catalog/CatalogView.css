@@ -13,72 +13,29 @@
     --catalog-swf-select-outer: #82d1ed;
     --catalog-swf-bc: #ff8d00;
     --catalog-swf-bc-outer: #ffb53c;
-    --habbo-slice-button-default: url("../../assets/images/catalog/buttons/btn_secondary.png");
-    --habbo-slice-button-hover: url("../../assets/images/catalog/buttons/btn_secondary_hover.png");
-    --habbo-slice-button-pressed: url("../../assets/images/catalog/buttons/btn_secondary_pressed.png");
-    --habbo-slice-button-disabled: url("../../assets/images/catalog/buttons/btn_secondary_disabled.png");
-    --habbo-slice-button-buy: url("../../assets/images/catalog/buttons/buy.png");
-    --habbo-slice-button-large: url("../../assets/images/catalog/buttons/buy.png");
-    --habbo-slice-button-large-hover: url("../../assets/images/catalog/buttons/buy_hover.png");
-    --habbo-slice-button-large-pressed: url("../../assets/images/catalog/buttons/buy_pressed.png");
-    --habbo-slice-button-large-disabled: url("../../assets/images/catalog/buttons/buy_disabled.png");
-    --habbo-button-green: url("../../assets/images/catalog/buttons/buy.png");
-    --habbo-button-green-hover: url("../../assets/images/catalog/buttons/buy_hover.png");
-    --habbo-button-green-pressed: url("../../assets/images/catalog/buttons/buy_pressed.png");
-    --habbo-button-green-disabled: url("../../assets/images/catalog/buttons/buy_disabled.png");
-    --habbo-close: url("../../assets/images/catalog/buttons/close.png");
-    --habbo-close-hover: url("../../assets/images/catalog/buttons/close_hover.png");
-    --habbo-close-pressed: url("../../assets/images/catalog/buttons/close_pressed.png");
-    --habbo-help: url("../../assets/images/catalog/buttons/help.png");
-    --habbo-help-hover: url("../../assets/images/catalog/buttons/help_hover.png");
-    --habbo-help-pressed: url("../../assets/images/catalog/buttons/help_pressed.png");
-    --habbo-stepper-plus: url("../../assets/images/catalog/buttons/plus.png");
-    --habbo-stepper-plus-hover: url("../../assets/images/catalog/buttons/plus_hover.png");
-    --habbo-stepper-plus-pressed: url("../../assets/images/catalog/buttons/plus_pressed.png");
-    --habbo-stepper-plus-disabled: url("../../assets/images/catalog/buttons/plus_disabled.png");
-    --habbo-stepper-minus: url("../../assets/images/catalog/buttons/minus.png");
-    --habbo-stepper-minus-hover: url("../../assets/images/catalog/buttons/minus_hover.png");
-    --habbo-stepper-minus-pressed: url("../../assets/images/catalog/buttons/minus_pressed.png");
-    --habbo-stepper-minus-disabled: url("../../assets/images/catalog/buttons/minus_disabled.png");
-    --habbo-scrollbar-up: url("../../assets/images/catalog/scrollbar/scroll_v_up.png");
-    --habbo-scrollbar-up-pressed: url("../../assets/images/catalog/scrollbar/scroll_v_up_pressed.png");
-    --habbo-scrollbar-down: url("../../assets/images/catalog/scrollbar/scroll_v_down.png");
-    --habbo-scrollbar-down-pressed: url("../../assets/images/catalog/scrollbar/scroll_v_down_pressed.png");
-    --habbo-scrollbar-thumb-v: url("../../assets/images/catalog/scrollbar/scroll_v_thumb.png");
-    --habbo-scrollbar-thumb-v-pressed: url("../../assets/images/catalog/scrollbar/scroll_v_thumb_pressed.png");
-    --habbo-scrollbar-h-left: url("../../assets/images/catalog/scrollbar/scroll_h_left.png");
-    --habbo-scrollbar-h-left-pressed: url("../../assets/images/catalog/scrollbar/scroll_h_left_pressed.png");
-    --habbo-scrollbar-h-right: url("../../assets/images/catalog/scrollbar/scroll_h_right.png");
-    --habbo-scrollbar-h-right-pressed: url("../../assets/images/catalog/scrollbar/scroll_h_right_pressed.png");
-    --habbo-scrollbar-thumb-h: url("../../assets/images/catalog/scrollbar/scroll_h_thumb.png");
-    --habbo-scrollbar-thumb-h-pressed: url("../../assets/images/catalog/scrollbar/scroll_h_thumb_pressed.png");
+    /* Chrome reso in CSS puro: nessun PNG ritagliato. I glyph di stepper e
+       scrollbar sono SVG data-uri inline pi\u00f9 in basso in questo file. Non
+       ridefinire qui --habbo-close/--habbo-help: sono colori in HabboTheme. */
 
-    width: 660px !important;
-    height: 720px !important;
-    min-width: 660px !important;
-    max-width: 660px !important;
-    min-height: 640px !important;
+    width: var(--nitro-catalog-window-width, 570px) !important;
+    height: var(--nitro-catalog-window-height, 635px) !important;
+    min-width: var(--nitro-catalog-window-width, 570px) !important;
+    max-width: var(--nitro-catalog-window-width, 570px) !important;
+    min-height: 570px !important;
     max-height: calc(100vh - 24px) !important;
     position: relative;
+    display: flex;
+    flex-direction: column;
     color: var(--catalog-swf-text);
     overflow: hidden;
     box-sizing: border-box;
 }
 
 .draggable-window:has(> .nitro-catalog-window) {
-    width: 660px !important;
-    height: 720px !important;
-    min-width: 660px !important;
-    max-width: 660px !important;
-}
-
-.nitro-catalog-window::before {
-    display: none;
-}
-
-.nitro-catalog-window > * {
-    position: relative;
-    z-index: 4;
+    width: var(--nitro-catalog-window-width, 570px) !important;
+    height: var(--nitro-catalog-window-height, 635px) !important;
+    min-width: var(--nitro-catalog-window-width, 570px) !important;
+    max-width: var(--nitro-catalog-window-width, 570px) !important;
 }
 
 .nitro-catalog-window,
@@ -202,7 +159,7 @@
     min-width: 32px !important;
     max-width: 32px !important;
     padding: 6px 4px 7px !important;
-    margin-left: 4px !important;
+    margin-left: 0 !important;
 }
 
 .nitro-catalog-admin-modal {
@@ -514,27 +471,28 @@
     box-shadow: none !important;
 }
 
+/* Air: bordo esterno #376275 (2px), body #0e3f52 -> border 2px + bg body. */
 .nitro-catalog-swf-header {
     position: relative;
     flex: 0 0 90px;
     height: 90px;
     margin: 0 1px;
-    border: 1px solid #376275;
+    border: 2px solid #376275;
     background: #0e3f52;
     overflow: hidden;
 }
 
+/* Air: header image blend 0.1, greyscale, zoom 2, pivot center.
+   L'immagine reale per-pagina arriva inline da currentPage.getImage(0);
+   se assente resta il body #0e3f52 (nessun finto gradiente). */
 .nitro-catalog-swf-header-bg {
     position: absolute;
     inset: 0;
     opacity: 0.1;
+    background-color: transparent;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background:
-        linear-gradient(135deg, transparent 0 46%, rgba(255, 255, 255, 0.35) 47% 49%, transparent 50%),
-        radial-gradient(circle at 18% 28%, rgba(255, 255, 255, 0.55), transparent 18%),
-        linear-gradient(180deg, #60a6bd, #0e3f52);
     filter: grayscale(1);
 }
 
@@ -562,6 +520,7 @@
 
 .nitro-catalog-swf-header-title {
     min-height: 24px;
+    font-family: UbuntuCondensed, Ubuntu, sans-serif;
     font-size: 24px;
     font-weight: 700;
     line-height: 24px;
@@ -573,56 +532,32 @@
     line-height: 15px;
 }
 
+/* Air tab_context: y=5 h=30 -> strip 35px, offset alto 5px, tab alte 30px. */
 .nitro-catalog-tabs-shell {
-    flex: 0 0 40px;
-    height: 40px;
-    min-height: 40px;
-    max-height: 40px;
+    flex: 0 0 35px;
+    height: 35px;
+    min-height: 35px;
+    max-height: 35px;
     gap: 0;
-    padding: 4px 6px 0 !important;
+    padding: 5px 6px 0 !important;
     align-items: flex-end;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
     flex-wrap: nowrap;
-    scrollbar-width: thin;
-    scrollbar-color: #8da3b3 transparent;
 }
 
-.nitro-catalog-tabs-shell::-webkit-scrollbar {
-    width: 6px !important;
-    height: 6px !important;
-}
-
-.nitro-catalog-tabs-shell::-webkit-scrollbar-thumb {
-    background: #8da3b3 !important;
-    background-image: none !important;
-    border-radius: 3px !important;
-    box-shadow: none !important;
-    min-height: 0 !important;
-}
-
-.nitro-catalog-tabs-shell::-webkit-scrollbar-track {
-    background: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
-}
-
-.nitro-catalog-tabs-shell::-webkit-scrollbar-button:single-button {
-    display: none !important;
-}
-
+/* Air tab_button: 110x30 style 3. */
 .nitro-catalog-tabs-shell .nitro-card-tab-item {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    height: 36px;
+    height: 30px;
     min-width: 0;
-    flex: 1 1 0;
-    max-width: none;
-    padding: 6px 6px 7px;
+    flex: 0 0 auto;
+    max-width: 110px;
+    padding: 4px 8px 6px;
     margin: 0 2px 0 0;
-    flex-shrink: 1;
+    flex-shrink: 0;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -631,13 +566,17 @@
     margin-right: 0;
 }
 
+.nitro-catalog-tabs-shell .nitro-card-tab-item.nitro-catalog-admin-tab {
+    padding: 4px 4px 6px !important;
+}
+
 .nitro-catalog-tabs-shell .nitro-card-tab-item > div {
     align-items: center !important;
     justify-content: center !important;
     gap: 4px;
     min-width: 0;
     width: auto;
-    height: 20px;
+    height: 18px;
     line-height: 17px;
 }
 
@@ -653,6 +592,13 @@
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nitro-catalog-tab-count {
+    flex: 0 0 auto;
+    font-size: 10px;
+    opacity: 0.85;
 }
 
 .nitro-catalog-content-shell {
@@ -685,6 +631,7 @@
     overflow: hidden;
 }
 
+/* Air search: border x8 y131 w184 h24 style 105 (inset chiaro). */
 .nitro-catalog-search-shell {
     position: relative;
     display: flex;
@@ -695,6 +642,7 @@
     border: 1px solid #b7b7ae;
     border-radius: 3px;
     background: #f7f7f2;
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.07);
 }
 
 .nitro-catalog-search-shell input {
@@ -731,6 +679,7 @@
     right: 4px !important;
 }
 
+/* Air navigationContainer: x8 y159 w184 h433 style 6 (bordo beveled inset). */
 .nitro-catalog-navigation-shell {
     flex: 1 1 auto;
     min-height: 0;
@@ -738,6 +687,9 @@
     border: 1px solid #b4b4ae;
     border-radius: 3px;
     background: rgba(236, 236, 228, 0.5);
+    box-shadow:
+        inset 1px 1px 0 rgba(0, 0, 0, 0.08),
+        inset -1px -1px 0 rgba(255, 255, 255, 0.55);
     overflow: auto;
 }
 
@@ -1523,14 +1475,16 @@
     height: 22px !important;
     min-height: 22px !important;
     padding: 0 !important;
-    border: 0 !important;
-    border-radius: 0 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 3px !important;
     border-image: none !important;
-    background-color: transparent !important;
+    background-color: #d9d9d9 !important;
     background-repeat: no-repeat !important;
     background-position: center center !important;
-    background-size: auto !important;
-    box-shadow: none !important;
+    background-size: 9px 9px !important;
+    box-shadow:
+        inset 0 1px 0 #ffffff,
+        inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
     image-rendering: pixelated !important;
 }
 
@@ -1538,30 +1492,28 @@
     display: none !important;
 }
 
-.nitro-catalog-window button.nitro-catalog-swf-spinner-button-less {
-    background-image: var(--habbo-stepper-minus) !important;
+.nitro-catalog-window button.nitro-catalog-swf-spinner-button:active {
+    background-color: #bcbcbc !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25) !important;
 }
-.nitro-catalog-window button.nitro-catalog-swf-spinner-button-less:hover {
-    background-image: var(--habbo-stepper-minus-hover) !important;
+
+.nitro-catalog-window button.nitro-catalog-swf-spinner-button:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+.nitro-catalog-window button.nitro-catalog-swf-spinner-button-less {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='9'><rect x='1' y='4' width='7' height='2' fill='%23222'/></svg>") !important;
 }
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button-less:active {
-    background-image: var(--habbo-stepper-minus-pressed) !important;
-}
-.nitro-catalog-window button.nitro-catalog-swf-spinner-button-less:disabled {
-    background-image: var(--habbo-stepper-minus-disabled) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='9'><rect x='1' y='4' width='7' height='2' fill='%23000'/></svg>") !important;
 }
 
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button-more {
-    background-image: var(--habbo-stepper-plus) !important;
-}
-.nitro-catalog-window button.nitro-catalog-swf-spinner-button-more:hover {
-    background-image: var(--habbo-stepper-plus-hover) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='9'><rect x='1' y='4' width='7' height='2' fill='%23222'/><rect x='4' y='1' width='2' height='7' fill='%23222'/></svg>") !important;
 }
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button-more:active {
-    background-image: var(--habbo-stepper-plus-pressed) !important;
-}
-.nitro-catalog-window button.nitro-catalog-swf-spinner-button-more:disabled {
-    background-image: var(--habbo-stepper-plus-disabled) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='9'><rect x='1' y='4' width='7' height='2' fill='%23000'/><rect x='4' y='1' width='2' height='7' fill='%23000'/></svg>") !important;
 }
 
 .nitro-catalog-swf-spinner-input {

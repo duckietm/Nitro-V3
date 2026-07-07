@@ -33,6 +33,26 @@
     --habbo-buy-mid: #ffc828;
     --habbo-buy-bottom: #f0a318;
     --habbo-buy-text: #4a2b00;
+    --habbo-frame-side: 10px;
+    --habbo-frame-header-h: 33px;
+    --habbo-frame-bottom: 10px;
+    --habbo-tab-h: 32px;
+    --habbo-tab-cap: 9px;
+    --habbo-header-controls-w: 43px;
+    --habbo-purse-bg: rgba(104, 102, 97, 0.65);
+    --habbo-purse-divider: #444444;
+    --habbo-purse-hc-border: rgba(59, 57, 51, 0.8);
+    --habbo-purse-credit: #d5af22;
+    --habbo-purse-diamond: #38caeb;
+    --habbo-purse-ducket: #d787d7;
+    --habbo-purse-help: #217bb5;
+    --habbo-purse-logout: #de5347;
+    --habbo-purse-settings: #726b86;
+    --habbo-purse-hc: #3b9333;
+    --habbo-purse-hc-dark: #2d7228;
+    --habbo-purse-hc-text: #00c1c4;
+    --habbo-purse-width: 230px;
+    --habbo-purse-height: 77px;
 }
 
 /* Ubuntu shiny secondary (catalog secondary / preview / spinner) */

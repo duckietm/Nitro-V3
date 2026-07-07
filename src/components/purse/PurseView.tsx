@@ -1,6 +1,5 @@
 import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { FaChartBar, FaCog, FaLanguage, FaSignOutAlt } from 'react-icons/fa';
 import { ClearRememberLogin, FriendlyTime, GetConfigurationValue, GetRememberLogin, LocalizeText, localizeWithFallback } from '../../api';
 import { Column, LayoutCurrencyIcon } from '../../common';
 import { usePurse } from '../../hooks';
@@ -110,22 +109,12 @@ export const PurseView: FC<{}> = (props) => {
                             </button>
                         )}
                         <button type="button" className="nitro-purse__btn nitro-purse__btn--earnings" onClick={openEarnings} title={earningsLabel}>
-                            <FaChartBar className="nitro-purse__btn-icon" />
+                            <span className="nitro-purse__icon--earnings" aria-hidden="true" />
                             <span>{earningsLabel}</span>
                         </button>
                     </div>
+                    <div className="nitro-purse__divider" aria-hidden="true" />
                     <div className="nitro-purse__col nitro-purse__col--actions">
-                        <button
-                            type="button"
-                            className="nitro-purse__btn nitro-purse__btn--icon nitro-purse__btn--translate"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                CreateLinkEvent('translation-settings/toggle');
-                            }}
-                            title="Google Translate"
-                        >
-                            <FaLanguage className="nitro-purse__btn-icon" />
-                        </button>
                         <button
                             type="button"
                             className="nitro-purse__btn nitro-purse__btn--help"
@@ -143,7 +132,7 @@ export const PurseView: FC<{}> = (props) => {
                             onClick={handleLogout}
                             title="Log out"
                         >
-                            <FaSignOutAlt />
+                            <span className="nitro-purse__icon--logout" aria-hidden="true" />
                         </button>
                         <button
                             type="button"
@@ -154,13 +143,23 @@ export const PurseView: FC<{}> = (props) => {
                             }}
                             title={LocalizeText('widget.memenu.settings.title')}
                         >
-                            <FaCog />
+                            <span className="nitro-purse__icon--settings" aria-hidden="true" />
                         </button>
                     </div>
                 </div>
             </div>
             {settingsMenuOpen && (
                 <div className="nitro-purse-menu">
+                    <button
+                        type="button"
+                        className="nitro-purse-menu__item"
+                        onClick={() => {
+                            CreateLinkEvent('translation-settings/toggle');
+                            setSettingsMenuOpen(false);
+                        }}
+                    >
+                        Google Translate
+                    </button>
                     <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('audio')}>
                         {localizeWithFallback('purse.settings.audio', 'Audio Settings')}
                     </button>

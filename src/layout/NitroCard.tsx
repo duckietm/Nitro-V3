@@ -53,7 +53,7 @@ const NitroCardHeader = ({ ref, headerText = '', onCloseClick = null, className 
             <div className="flex items-center justify-center w-full ">
                 <span className="nitro-card-title text-white">{headerText}</span>
                 <div
-                    className="absolute flex items-center justify-center cursor-pointer right-2 nitro-card-close-button"
+                    className="nitro-card-close-button absolute flex items-center justify-center cursor-pointer"
                     onClick={onCloseClick}
                     onMouseDownCapture={onMouseDown}
                 />
