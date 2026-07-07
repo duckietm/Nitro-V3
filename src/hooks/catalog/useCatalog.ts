@@ -85,6 +85,12 @@ import {
 } from './useCatalog.helpers';
 import { useCatalogPlaceMultipleItems } from './useCatalogPlaceMultipleItems';
 import { useCatalogSkipPurchaseConfirmation } from './useCatalogSkipPurchaseConfirmation';
+import {
+    catalogIndexRootFromSnapshot,
+    clearCatalogIndexCache,
+    readCatalogIndexCache,
+    writeCatalogIndexCache
+} from './useCatalogIndexCache';
 
 const DUMMY_PAGE_ID_FOR_OFFER_SEARCH = -12345678;
 const DRAG_AND_DROP_ENABLED = true;
@@ -168,9 +174,13 @@ const useCatalogStore = () => {
         setCurrentType(normalizeCatalogType(type));
     }, []);
 
-    // Real-time furni importati: ri-mergia il chunk custom/imported.json5 nelle Map
-    // furnidata + RoomContentLoader all'apertura del catalogo, SENZA reload del client.
-    const refreshImportedFurnidata = useCallback(() => {
+    // Real-time furni importati: merge custom/imported.json5 once per session (or after publish).
+    // Fetching on every catalog open was adding avoidable latency; the file is usually absent.
+    const importedFurnidataMerged = useRef(false);
+
+    const refreshImportedFurnidata = useCallback((force: boolean = false) => {
+        if (!force && importedFurnidataMerged.current) return;
+
         try {
             const base = GetConfiguration().getValue<string>('furnidata.url');
 
@@ -181,6 +191,8 @@ const useCatalogStore = () => {
             GetSessionDataManager()
                 .mergeFurnitureDataFromUrl(importedUrl)
                 .then((added) => {
+                    importedFurnidataMerged.current = true;
+
                     if (added && added.length) GetRoomContentLoader().processFurnitureData(added);
                 })
                 .catch(() => {});
@@ -615,6 +627,7 @@ const useCatalogStore = () => {
 
         const { rootNode: builtRoot, offersToNodes: builtOffers } = buildCatalogNodeTree(parser.root);
 
+        writeCatalogIndexCache(parserCatalogType, parser.root);
         setRootNode(builtRoot);
         setOffersToNodes(builtOffers);
     });
@@ -816,6 +829,8 @@ const useCatalogStore = () => {
     useMessageEvent<CatalogPublishedMessageEvent>(CatalogPublishedMessageEvent, (event) => {
         const wasVisible = isVisible;
 
+        importedFurnidataMerged.current = false;
+        clearCatalogIndexCache();
         resetState();
 
         if (wasVisible)
@@ -1114,6 +1129,19 @@ const useCatalogStore = () => {
 
     useEffect(() => {
         if (!isVisible || rootNode) return;
+
+        const cachedRoot = readCatalogIndexCache(currentType);
+
+        if (cachedRoot) {
+            const { rootNode: builtRoot, offersToNodes: builtOffers } = buildCatalogNodeTree(catalogIndexRootFromSnapshot(cachedRoot));
+
+            setRootNode(builtRoot);
+            setOffersToNodes(builtOffers);
+
+            SendMessageComposer(new BuildersClubQueryFurniCountMessageComposer());
+
+            return;
+        }
 
         SendMessageComposer(new GetCatalogIndexComposer(currentType));
         SendMessageComposer(new BuildersClubQueryFurniCountMessageComposer());

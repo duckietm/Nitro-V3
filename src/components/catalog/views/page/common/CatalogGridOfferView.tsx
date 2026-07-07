@@ -1,5 +1,5 @@
 import { MouseEventType } from '@nitrots/nitro-renderer';
-import { FC, MouseEvent, useMemo, useState } from 'react';
+import { FC, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { CatalogType, GetConfigurationValue, IPurchasableOffer, Offer, ProductTypeEnum } from '../../../../../api';
 import { LayoutAvatarImageView, LayoutGridItem, LayoutGridItemProps } from '../../../../../common';
@@ -19,8 +19,36 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = (props) => {
     const { isVisible = false } = useInventoryFurni();
     const { isFavoriteOffer, toggleFavoriteOffer } = useCatalogFavorites();
     const isFav = offer ? isFavoriteOffer(offer.offerId) : false;
+    const tileRef = useRef<HTMLDivElement>(null);
+    const [iconVisible, setIconVisible] = useState(false);
 
-    const iconUrl = useMemo(() => {
+    useEffect(() => {
+        const el = tileRef.current;
+
+        if (!el) return;
+
+        if (typeof IntersectionObserver === 'undefined') {
+            setIconVisible(true);
+
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                    setIconVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { root: el.closest('.nitro-catalog-default-layout, .nitro-catalog-window') ?? null, rootMargin: '120px' }
+        );
+
+        observer.observe(el);
+
+        return () => observer.disconnect();
+    }, [offer?.offerId]);
+
+    const resolvedIconUrl = useMemo(() => {
         if (!offer) return null;
 
         if (offer.pricingModel === Offer.PRICING_MODEL_BUNDLE) {
@@ -53,6 +81,8 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = (props) => {
 
         return product.getIconUrl(offer) ?? null;
     }, [offer]);
+
+    const iconUrl = iconVisible ? resolvedIconUrl : null;
 
     const prices = useMemo(() => {
         if (!offer) return [];
@@ -97,6 +127,7 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = (props) => {
     if (!product) return null;
 
     return (
+        <div ref={tileRef}>
         <LayoutGridItem
             className={`group/tile relative ${itemActive ? 'is-active' : ''}`}
             gap={1}
@@ -140,12 +171,13 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = (props) => {
                 onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    toggleFavoriteOffer(offer.offerId, offer.localizationName, iconUrl);
+                    toggleFavoriteOffer(offer.offerId, offer.localizationName, resolvedIconUrl);
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
             >
                 <FaHeart className={`text-[10px] drop-shadow transition-colors duration-100 ${isFav ? 'text-danger' : 'text-muted hover:text-danger'}`} />
             </div>
         </LayoutGridItem>
+        </div>
     );
 };
