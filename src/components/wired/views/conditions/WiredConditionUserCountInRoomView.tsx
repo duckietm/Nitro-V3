@@ -37,7 +37,7 @@ export const WiredConditionUserCountInRoomView: FC<{}> = (props) => {
         >
             <div className="flex flex-col gap-1">
                 <Text bold>{LocalizeText('wiredfurni.params.usercountmin', ['value'], [min.toString()])}</Text>
-                <Slider max={50} min={1} value={min} onChange={(event) => setMin(event)} />
+                <Slider max={125} min={0} value={min} onChange={(event) => setMin(event)} />
             </div>
             <div className="flex flex-col gap-1">
                 <Text bold>{LocalizeText('wiredfurni.params.usercountmax', ['value'], [max.toString()])}</Text>

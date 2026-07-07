@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSourceOption, WiredSourcesSelector } from '../WiredSourcesSelector';
@@ -39,7 +39,7 @@ export const WiredTriggerReceiveSignalView: FC<{}> = () => {
             footer={<WiredSourcesSelector showFurni={true} furniSource={furniSource} furniSources={FURNI_SOURCE_OPTIONS} onChangeFurni={setFurniSource} />}
         >
             <div className="flex items-center justify-between">
-                <Text small>{LocalizeText('wiredfurni.params.signal.senders_connected')}</Text>
+                <Text small>{localizeWithFallback('wiredfurni.params.signal.senders_connected', 'Senders connected')}</Text>
                 <Text bold small>
                     {senderCount}
                 </Text>

@@ -19,7 +19,12 @@ export const FurnitureExternalImageView: FC<{}> = (props) => {
     };
 
     return (
-        <NitroCardView className="nitro-external-image-widget no-resize" uniqueKey="photo-viewer" theme="primary-slim">
+        <NitroCardView
+            isResizable={false}
+            className="nitro-external-image-widget min-w-0 max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
+            uniqueKey="photo-viewer"
+            theme="primary-slim"
+        >
             <NitroCardHeaderView
                 headerText={LocalizeText('camera.interface.title')}
                 isGalleryPhoto={true}

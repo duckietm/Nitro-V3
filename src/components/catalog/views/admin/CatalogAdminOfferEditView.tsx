@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { FaSave, FaSpinner, FaTrash } from 'react-icons/fa';
-import { LocalizeText } from '../../../../api';
+import { LocalizeText, localizeWithFallback } from '../../../../api';
 import { useCatalogData } from '../../../../hooks';
 import { IOfferEditData, useCatalogAdmin } from '../../CatalogAdminContext';
 import { CatalogAdminModalView } from './CatalogAdminModalView';
@@ -123,7 +123,7 @@ export const CatalogAdminOfferEditView: FC<{}> = () => {
                 <label className="nitro-catalog-admin-label is-primary">{LocalizeText('catalog.admin.offer.name')}</label>
                 <input
                     className={inputClass}
-                    placeholder="es. rare_dragon_lamp"
+                    placeholder={localizeWithFallback('catalog.admin.offer.name.placeholder', 'e.g. rare_dragon_lamp')}
                     type="text"
                     value={catalogName}
                     onChange={(e) => setCatalogName(e.target.value)}
@@ -135,8 +135,14 @@ export const CatalogAdminOfferEditView: FC<{}> = () => {
                 <div className="nitro-catalog-admin-section-title">{LocalizeText('catalog.admin.offer.general')}</div>
                 <div className="grid grid-cols-3 gap-1.5">
                     <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">Item IDs</label>
-                        <input className={inputClass} placeholder="1234 or 100;200" type="text" value={itemIds} onChange={(e) => setItemIds(e.target.value)} />
+                        <label className="nitro-catalog-admin-label">{localizeWithFallback('catalog.admin.offer.item.ids', 'Item IDs')}</label>
+                        <input
+                            className={inputClass}
+                            placeholder={localizeWithFallback('catalog.admin.offer.item.ids.placeholder', '1234 or 100;200')}
+                            type="text"
+                            value={itemIds}
+                            onChange={(e) => setItemIds(e.target.value)}
+                        />
                     </div>
                     <div className="flex flex-col gap-0.5">
                         <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.quantity')}</label>
@@ -176,9 +182,9 @@ export const CatalogAdminOfferEditView: FC<{}> = () => {
                     <div className="flex flex-col gap-0.5">
                         <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.points.type')}</label>
                         <select className={inputClass} value={pointsType} onChange={(e) => setPointsType(parseInt(e.target.value))}>
-                            <option value={0}>Duckets</option>
-                            <option value={5}>Diamonds</option>
-                            <option value={101}>Seasonal</option>
+                            <option value={0}>{localizeWithFallback('catalog.admin.currency.duckets', 'Duckets')}</option>
+                            <option value={5}>{localizeWithFallback('catalog.admin.currency.diamonds', 'Diamonds')}</option>
+                            <option value={101}>{localizeWithFallback('catalog.admin.currency.seasonal', 'Seasonal')}</option>
                         </select>
                     </div>
                 </div>
@@ -191,12 +197,12 @@ export const CatalogAdminOfferEditView: FC<{}> = () => {
                     <div className="flex flex-col gap-0.5">
                         <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.club.only')}</label>
                         <select className={inputClass} value={clubOnly} onChange={(e) => setClubOnly(e.target.value)}>
-                            <option value="0">No</option>
-                            <option value="1">Si</option>
+                            <option value="0">{localizeWithFallback('generic.no', 'No')}</option>
+                            <option value="1">{localizeWithFallback('generic.yes', 'Yes')}</option>
                         </select>
                     </div>
                     <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">Limited Stack</label>
+                        <label className="nitro-catalog-admin-label">{localizeWithFallback('catalog.admin.offer.limited.stack', 'Limited Stack')}</label>
                         <input
                             className={inputClass}
                             min={0}
@@ -206,7 +212,7 @@ export const CatalogAdminOfferEditView: FC<{}> = () => {
                         />
                     </div>
                     <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">Offer ID</label>
+                        <label className="nitro-catalog-admin-label">{localizeWithFallback('catalog.admin.offer.id', 'Offer ID')}</label>
                         <input className={inputClass} type="number" value={offerId} onChange={(e) => setOfferIdGroup(parseInt(e.target.value) || -1)} />
                     </div>
                 </div>

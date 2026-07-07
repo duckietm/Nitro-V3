@@ -20,7 +20,11 @@ export const FurnitureMysteryTrophyOpenDialogView: FC<FurnitureMysteryTrophyOpen
     if (objectId === -1) return null;
 
     return (
-        <NitroCardView className="nitro-mysterytrophy-dialog no-resize" theme="primary-slim">
+        <NitroCardView
+            isResizable={false}
+            className="nitro-mysterytrophy-dialog min-w-0 w-[min(400px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
+            theme="primary-slim"
+        >
             <NitroCardHeaderView center headerText={LocalizeText('mysterytrophy.header.title')} onCloseClick={onClose} />
             <NitroCardContentView>
                 <div className="flex mysterytrophy-dialog-top p-3">
@@ -35,7 +39,7 @@ export const FurnitureMysteryTrophyOpenDialogView: FC<FurnitureMysteryTrophyOpen
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center bg-white rounded py-1 px-2 input-mysterytrophy-dialog">
                             <textarea
-                                className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm input-mysterytrophy"
+                                className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem] rounded-[.2rem] form-control-sm input-mysterytrophy"
                                 value={description}
                                 onChange={(event) => setDescription(event.target.value)}
                             />

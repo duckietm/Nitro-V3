@@ -6,7 +6,8 @@ import { WiredTriggerBaseView } from './WiredTriggerBaseView';
 
 const FURNI_SOURCE_OPTIONS: WiredSourceOption[] = [
     { value: 100, label: 'wiredfurni.params.sources.furni.100' },
-    { value: 200, label: 'wiredfurni.params.sources.furni.200' }
+    { value: 200, label: 'wiredfurni.params.sources.furni.200' },
+    { value: 0, label: 'wiredfurni.params.sources.furni.0' }
 ];
 
 const normalizeFurniSource = (value: number) => (FURNI_SOURCE_OPTIONS.some((option) => option.value === value) ? value : 100);

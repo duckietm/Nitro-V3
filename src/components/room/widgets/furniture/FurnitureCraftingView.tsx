@@ -66,8 +66,8 @@ export const FurnitureCraftingView: FC<{}> = (props) => {
         <NitroCardView className="nitro-widget-crafting" theme="primary-slim">
             <NitroCardHeaderView headerText={LocalizeText('crafting.title')} onCloseClick={onClose} />
             <NitroCardContentView>
-                <div className="flex grow! gap-2 overflow-hidden">
-                    <div className="flex flex-col w-full gap-2">
+                <div className="crafting-widget-layout flex grow! gap-2 overflow-hidden">
+                    <div className="crafting-widget-pane flex flex-col w-full gap-2 min-w-0">
                         <Column fullHeight overflow="hidden">
                             <div className="bg-muted rounded py-1 text-center">{LocalizeText('crafting.title.products')}</div>
                             <AutoGrid columnCount={5}>
@@ -98,7 +98,7 @@ export const FurnitureCraftingView: FC<{}> = (props) => {
                             </AutoGrid>
                         </Column>
                     </div>
-                    <div className="flex flex-col w-full gap-2">
+                    <div className="crafting-widget-pane flex flex-col w-full gap-2 min-w-0">
                         {!selectedRecipe && (
                             <Column center fullHeight className="text-black text-center">
                                 {LocalizeText('crafting.info.start')}

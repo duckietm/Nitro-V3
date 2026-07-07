@@ -22,7 +22,7 @@ export const RoomPromoteEditWidgetView: FC<RoomPromoteEditWidgetViewProps> = (pr
     };
 
     return (
-        <NitroCardView className="nitro-guide-tool" theme="primary-slim">
+        <NitroCardView className="nitro-guide-tool nitro-room-promote-edit min-w-0 w-[min(340px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim">
             <NitroCardHeaderView headerText={LocalizeText('navigator.eventsettings.editcaption')} onCloseClick={() => setIsEditingPromote(false)} />
             <NitroCardContentView className="text-black">
                 <div className="flex flex-col">
@@ -38,7 +38,7 @@ export const RoomPromoteEditWidgetView: FC<RoomPromoteEditWidgetViewProps> = (pr
                 <div className="flex flex-col">
                     <Text bold>{LocalizeText('navigator.eventsettings.desc')}</Text>
                     <textarea
-                        className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm"
+                        className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem] rounded-[.2rem] form-control-sm"
                         maxLength={64}
                         placeholder={LocalizeText('navigator.eventsettings.desc')}
                         value={newEventDescription}

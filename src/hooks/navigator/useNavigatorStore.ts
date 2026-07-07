@@ -1,6 +1,7 @@
 import {
     CanCreateRoomEventEvent,
     CantConnectMessageParser,
+    CategoriesWithVisitorCountEvent,
     CreateLinkEvent,
     FavouriteChangedEvent,
     FavouritesEvent,
@@ -57,6 +58,8 @@ export const useNavigatorStore = () => {
     const [topLevelContext, setTopLevelContext] = useState<NavigatorTopLevelContext>(null);
     const [topLevelContexts, setTopLevelContexts] = useState<NavigatorTopLevelContext[]>(null);
     const [navigatorSearches, setNavigatorSearches] = useState<NavigatorSavedSearch[]>(null);
+    const [categoryVisitorCounts, setCategoryVisitorCounts] = useState<Map<number, number>>(null);
+    const [categoryMaxVisitorCounts, setCategoryMaxVisitorCounts] = useState<Map<number, number>>(null);
     const [navigatorData, setNavigatorData] = useState<INavigatorData>({
         settingsReceived: false,
         homeRoomId: 0,
@@ -382,12 +385,25 @@ export const useNavigatorStore = () => {
         }, [])
     );
 
+    useMessageEvent<CategoriesWithVisitorCountEvent>(
+        CategoriesWithVisitorCountEvent,
+        useCallback((event) => {
+            const data = event.getParser()?.data;
+            if (!data) return;
+
+            setCategoryVisitorCounts(new Map(data.categoryToCurrentUserCountMap));
+            setCategoryMaxVisitorCounts(new Map(data.categoryToMaxUserCountMap));
+        }, [])
+    );
+
     return {
         categories,
         eventCategories,
         topLevelContext,
         topLevelContexts,
         navigatorSearches,
+        categoryVisitorCounts,
+        categoryMaxVisitorCounts,
         navigatorData
     };
 };

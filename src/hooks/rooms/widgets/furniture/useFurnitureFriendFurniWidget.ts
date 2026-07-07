@@ -20,6 +20,7 @@ const useFurnitureFriendFurniWidgetState = () => {
     const [figures, setFigures] = useState<string[]>([]);
     const [date, setDate] = useState<string>(null);
     const [stage, setStage] = useState(0);
+    const [partnerConfirmed, setPartnerConfirmed] = useState(false);
 
     const onClose = () => {
         setObjectId(-1);
@@ -28,10 +29,22 @@ const useFurnitureFriendFurniWidgetState = () => {
         setUsernames([]);
         setFigures([]);
         setDate(null);
+        setStage(0);
+        setPartnerConfirmed(false);
+    };
+
+    const cancelLock = () => {
+        if (objectId > 0 && stage > 0) {
+            SendMessageComposer(new FriendFurniConfirmLockMessageComposer(objectId, false));
+        }
+
+        onClose();
     };
 
     const respond = (flag: boolean) => {
-        SendMessageComposer(new FriendFurniConfirmLockMessageComposer(objectId, flag));
+        if (objectId > 0) {
+            SendMessageComposer(new FriendFurniConfirmLockMessageComposer(objectId, flag));
+        }
 
         onClose();
     };
@@ -40,11 +53,16 @@ const useFurnitureFriendFurniWidgetState = () => {
         const parser = event.getParser();
 
         setObjectId(parser.furniId);
+        setPartnerConfirmed(false);
         setStage(parser.start ? 1 : 2);
     });
 
-    useMessageEvent<LoveLockFurniFinishedEvent>(LoveLockFurniFinishedEvent, (event) => onClose());
-    useMessageEvent<LoveLockFurniFriendConfirmedEvent>(LoveLockFurniFriendConfirmedEvent, (event) => onClose());
+    useMessageEvent<LoveLockFurniFinishedEvent>(LoveLockFurniFinishedEvent, () => onClose());
+
+    useMessageEvent<LoveLockFurniFriendConfirmedEvent>(LoveLockFurniFriendConfirmedEvent, () => {
+        setPartnerConfirmed(true);
+        setStage(2);
+    });
 
     useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_FRIEND_FURNITURE_ENGRAVING, (event) => {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
@@ -63,6 +81,7 @@ const useFurnitureFriendFurniWidgetState = () => {
         setFigures([data[3], data[4]]);
         setDate(data[5]);
         setStage(0);
+        setPartnerConfirmed(false);
     });
 
     useFurniRemovedEvent(objectId !== -1 && category !== -1, (event) => {
@@ -71,7 +90,7 @@ const useFurnitureFriendFurniWidgetState = () => {
         onClose();
     });
 
-    return { objectId, type, usernames, figures, date, stage, onClose, respond };
+    return { objectId, type, usernames, figures, date, stage, partnerConfirmed, onClose, cancelLock, respond };
 };
 
 export const useFurnitureFriendFurniWidget = useFurnitureFriendFurniWidgetState;

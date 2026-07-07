@@ -4,25 +4,29 @@ import { Button, DraggableWindow, LayoutAvatarImageView, NitroCardContentView, N
 import { useFurnitureFriendFurniWidget } from '../../../../hooks';
 
 export const FurnitureFriendFurniView: FC<{}> = (props) => {
-    const { objectId = -1, type = 0, stage = 0, usernames = [], figures = [], date = null, onClose = null, respond = null } = useFurnitureFriendFurniWidget();
+    const { objectId = -1, type = 0, stage = 0, partnerConfirmed = false, usernames = [], figures = [], date = null, onClose = null, cancelLock = null, respond = null } = useFurnitureFriendFurniWidget();
 
     if (objectId === -1) return null;
 
     if (stage > 0) {
+        const lockStage = partnerConfirmed ? 2 : stage;
+
         return (
             <NitroCardView className="nitro-engraving-lock" theme="primary-slim">
-                <NitroCardHeaderView headerText={LocalizeText('friend.furniture.confirm.lock.caption')} onCloseClick={onClose} />
+                <NitroCardHeaderView headerText={LocalizeText('friend.furniture.confirm.lock.caption')} onCloseClick={cancelLock ?? onClose} />
                 <NitroCardContentView>
                     <h5 className="text-black text-center font-bold	 mt-2 mb-2">{LocalizeText('friend.furniture.confirm.lock.subtitle')}</h5>
                     <div className="flex justify-center mb-2">
-                        <div className={`engraving-lock-stage-${stage}`}></div>
+                        <div className={`engraving-lock-stage-${lockStage}`}></div>
                     </div>
-                    {stage === 2 && <div className="text-small text-black text-center mb-2">{LocalizeText('friend.furniture.confirm.lock.other.locked')}</div>}
+                    {(stage === 2 || partnerConfirmed) && (
+                        <div className="text-small text-black text-center mb-2">{LocalizeText('friend.furniture.confirm.lock.other.locked')}</div>
+                    )}
                     <div className="flex gap-1">
-                        <Button fullWidth onClick={(event) => respond(false)}>
+                        <Button fullWidth onClick={() => (cancelLock ?? onClose)()}>
                             {LocalizeText('friend.furniture.confirm.lock.button.cancel')}
                         </Button>
-                        <Button fullWidth variant="success" onClick={(event) => respond(true)}>
+                        <Button fullWidth variant="success" onClick={() => respond(true)}>
                             {LocalizeText('friend.furniture.confirm.lock.button.confirm')}
                         </Button>
                     </div>

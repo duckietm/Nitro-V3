@@ -173,7 +173,7 @@
 }
 
 .nitro-purse__other .nitro-purse-seasonal-currency {
-    padding: 5px 8px;
+    padding: 4px 8px;
     border: 0;
     border-top: 2px solid #41403c;
     border-left: 2px solid #41403c;
@@ -204,7 +204,7 @@
     min-width: 0;
     font-size: 0.76rem;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.76) !important;
+    color: rgba(255, 255, 255, 0.82) !important;
     line-height: 1;
     letter-spacing: 0.01em;
 }

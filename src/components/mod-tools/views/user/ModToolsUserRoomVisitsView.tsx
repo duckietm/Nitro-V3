@@ -51,43 +51,47 @@ export const ModToolsUserRoomVisitsView: FC<ModToolsUserRoomVisitsViewProps> = (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border bg-white border-zinc-200">{countLabel}</span>
                 </div>
 
-                {/* Table head */}
-                <div className="grid grid-cols-[60px_1fr_80px] gap-2 text-[.7rem] uppercase tracking-wide opacity-60 font-semibold border-b border-zinc-200 pb-1 px-1">
-                    <div className="flex items-center gap-1">
-                        <FaClock size={10} /> {LocalizeText('modtools.user.visits.time')}
-                    </div>
-                    <div>{LocalizeText('modtools.user.visits.room')}</div>
-                    <div className="text-right">{LocalizeText('modtools.user.visits.action')}</div>
-                </div>
+                <div className="min-w-0 overflow-x-auto">
+                    <div className="min-w-[280px]">
+                        {/* Table head */}
+                        <div className="grid grid-cols-[60px_1fr_80px] gap-2 text-[.7rem] uppercase tracking-wide opacity-60 font-semibold border-b border-zinc-200 pb-1 px-1">
+                            <div className="flex items-center gap-1">
+                                <FaClock size={10} /> {LocalizeText('modtools.user.visits.time')}
+                            </div>
+                            <div>{LocalizeText('modtools.user.visits.room')}</div>
+                            <div className="text-right">{LocalizeText('modtools.user.visits.action')}</div>
+                        </div>
 
-                {/* Rows */}
-                {isEmpty ? (
-                    <div className="flex flex-col items-center justify-center gap-1 py-6 opacity-50 text-sm">
-                        <FaDoorOpen size={22} />
-                        <span>{LocalizeText('modtools.user.visits.empty')}</span>
+                        {/* Rows */}
+                        {isEmpty ? (
+                            <div className="flex flex-col items-center justify-center gap-1 py-6 opacity-50 text-sm">
+                                <FaDoorOpen size={22} />
+                                <span>{LocalizeText('modtools.user.visits.empty')}</span>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col grow min-h-0 overflow-hidden">
+                                <InfiniteScroll
+                                    rowRender={(row) => (
+                                        <div className="grid grid-cols-[60px_1fr_80px] gap-2 items-center px-1 py-1.5 text-sm border-b border-zinc-100 even:bg-black/[0.02] hover:bg-sky-50 transition-colors">
+                                            <span className="font-mono text-[.75rem] opacity-70 tabular-nums">
+                                                {row.enterHour.toString().padStart(2, '0')}:{row.enterMinute.toString().padStart(2, '0')}
+                                            </span>
+                                            <span className="truncate font-medium">{row.roomName}</span>
+                                            <button
+                                                className="inline-flex items-center justify-end gap-1 text-sky-700 hover:text-sky-900 hover:underline text-xs"
+                                                onClick={() => TryVisitRoom(row.roomId)}
+                                                title={LocalizeText('modtools.user.visits.visit.title')}
+                                            >
+                                                <FaSignInAlt size={10} /> {LocalizeText('modtools.user.visits.visit')}
+                                            </button>
+                                        </div>
+                                    )}
+                                    rows={rows}
+                                />
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="flex flex-col grow min-h-0 overflow-hidden">
-                        <InfiniteScroll
-                            rowRender={(row) => (
-                                <div className="grid grid-cols-[60px_1fr_80px] gap-2 items-center px-1 py-1.5 text-sm border-b border-zinc-100 even:bg-black/[0.02] hover:bg-sky-50 transition-colors">
-                                    <span className="font-mono text-[.75rem] opacity-70 tabular-nums">
-                                        {row.enterHour.toString().padStart(2, '0')}:{row.enterMinute.toString().padStart(2, '0')}
-                                    </span>
-                                    <span className="truncate font-medium">{row.roomName}</span>
-                                    <button
-                                        className="inline-flex items-center justify-end gap-1 text-sky-700 hover:text-sky-900 hover:underline text-xs"
-                                        onClick={() => TryVisitRoom(row.roomId)}
-                                        title={LocalizeText('modtools.user.visits.visit.title')}
-                                    >
-                                        <FaSignInAlt size={10} /> {LocalizeText('modtools.user.visits.visit')}
-                                    </button>
-                                </div>
-                            )}
-                            rows={rows}
-                        />
-                    </div>
-                )}
+                </div>
             </NitroCardContentView>
         </NitroCardView>
     );

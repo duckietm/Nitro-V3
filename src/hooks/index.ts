@@ -3,6 +3,7 @@ export * from './avatar-editor';
 export * from './camera';
 export * from './catalog';
 export * from './chat-history';
+export * from './discord/useDiscordSettings';
 export * from './events';
 export * from './fortune-wheel/useFortuneWheel';
 export * from './friends';

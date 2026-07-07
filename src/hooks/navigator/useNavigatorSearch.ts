@@ -4,6 +4,8 @@ import { SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
 import { useNavigatorUiStore } from './navigatorUiStore';
 
+const NAVIGATOR_USER_COUNT_REFRESH_MS = 15000;
+
 /**
  * Navigator search hook.
  *
@@ -21,6 +23,7 @@ import { useNavigatorUiStore } from './navigatorUiStore';
 export const useNavigatorSearch = () => {
     const tabCode = useNavigatorUiStore((s) => s.currentTabCode);
     const filter = useNavigatorUiStore((s) => s.currentFilter);
+    const isVisible = useNavigatorUiStore((s) => s.isVisible);
 
     const [searchResult, setSearchResult] = useState<NavigatorSearchResultSet | null>(null);
     const [isFetching, setIsFetching] = useState(false);
@@ -31,6 +34,17 @@ export const useNavigatorSearch = () => {
         setIsFetching(true);
         SendMessageComposer(new NavigatorSearchComposer(tabCode, filter));
     }, [tabCode, filter]);
+
+    // Keep room user counts fresh while the navigator stays open (official refreshes search periodically).
+    useEffect(() => {
+        if (!isVisible || !tabCode) return;
+
+        const timer = setInterval(() => {
+            SendMessageComposer(new NavigatorSearchComposer(tabCode, filter));
+        }, NAVIGATOR_USER_COUNT_REFRESH_MS);
+
+        return () => clearInterval(timer);
+    }, [isVisible, tabCode, filter]);
 
     useMessageEvent<NavigatorSearchEvent>(NavigatorSearchEvent, (event) => {
         const result = event.getParser()?.result;

@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, WiredFurniType, localizeWithFallback } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
@@ -36,8 +36,8 @@ export const WiredActionGiveScoreView: FC<{}> = (props) => {
             footer={<WiredSourcesSelector showUsers={true} userSource={userSource} onChangeUsers={setUserSource} />}
         >
             <div className="flex flex-col gap-1">
-                <Text bold>{LocalizeText('wiredfurni.params.setpoints', ['points'], [points.toString()])}</Text>
-                <Slider max={100} min={1} value={points} onChange={(event) => setPoints(event)} />
+                <Text bold>{localizeWithFallback('wiredfurni.params.setpoints2', LocalizeText('wiredfurni.params.setpoints', ['points'], [points.toString()]), ['points'], [points.toString()])}</Text>
+                <Slider max={1000} min={1} value={points} onChange={(event) => setPoints(event)} />
             </div>
             <div className="flex flex-col gap-1">
                 <Text bold>{LocalizeText('wiredfurni.params.choose_type')}</Text>

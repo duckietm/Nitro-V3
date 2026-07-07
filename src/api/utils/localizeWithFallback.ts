@@ -9,6 +9,12 @@ export const resolveLocalized = (localized: string, key: string, fallback: strin
 
 /**
  * Localize `key`, returning `fallback` when the key has no translation
- * (so raw keys never surface in the UI).
+ * (so raw keys never surface in the UI). Optional `parameters` / `replacements`
+ * are forwarded to `LocalizeText` for keys that contain placeholders.
  */
-export const localizeWithFallback = (key: string, fallback: string): string => resolveLocalized(LocalizeText(key), key, fallback);
+export const localizeWithFallback = (
+    key: string,
+    fallback: string,
+    parameters: string[] = null,
+    replacements: string[] = null,
+): string => resolveLocalized(LocalizeText(key, parameters, replacements), key, fallback);

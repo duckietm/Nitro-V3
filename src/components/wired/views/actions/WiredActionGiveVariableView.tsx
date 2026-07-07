@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { GetWiredTimeLocale, LocalizeText, WiredFurniType } from '../../../../api';
+import { GetWiredTimeLocale, LocalizeText, WiredFurniType, localizeWithFallback } from '../../../../api';
 import contextVariableIcon from '../../../../assets/images/wired/var/icon_source_context_clean.png';
 import furniVariableIcon from '../../../../assets/images/wired/var/icon_source_furni.png';
 import userVariableIcon from '../../../../assets/images/wired/var/icon_source_user.png';
@@ -262,7 +262,7 @@ export const WiredActionGiveVariableView: FC<{}> = () => {
                             <div className="nitro-wired__divider" />
 
                             <div className="nitro-wired__give-var-section">
-                                <div className="nitro-wired__give-var-section-title">{'Destinazione variabile:'}</div>
+                                <div className="nitro-wired__give-var-section-title">{localizeWithFallback('wiredfurni.params.sources.merged.title.variables_destination', 'Destinazione variabile:')}</div>
                                 <div className="flex items-center gap-1">
                                     <Button
                                         disabled={resolvedSourceOptions.length <= 1}

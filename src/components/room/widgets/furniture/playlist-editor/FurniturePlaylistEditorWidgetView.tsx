@@ -23,11 +23,11 @@ export const FurniturePlaylistEditorWidgetView: FC<{}> = (props) => {
         <NitroCardView className="nitro-playlist-editor-widget" theme="primary-slim">
             <NitroCardHeaderView headerText={LocalizeText('playlist.editor.title')} onCloseClick={onClose} />
             <NitroCardContentView>
-                <div className="flex flex-row gap-1 h-full">
-                    <div className="w-50 relative overflow-hidden h-full rounded flex flex-col">
+                <div className="playlist-editor-layout flex flex-row gap-1 h-full min-h-0">
+                    <div className="playlist-editor-pane relative overflow-hidden h-full rounded flex flex-col min-w-0">
                         <DiskInventoryView addToPlaylist={addToPlaylist} diskInventory={diskInventory} />
                     </div>
-                    <div className="w-50 relative overflow-hidden h-full rounded flex flex-col">
+                    <div className="playlist-editor-pane relative overflow-hidden h-full rounded flex flex-col min-w-0">
                         <SongPlaylistView
                             currentPlayingIndex={currentPlayingIndex}
                             furniId={objectId}

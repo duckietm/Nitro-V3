@@ -4,7 +4,10 @@ import { useWired } from '../../../../hooks';
 import { WiredSourceOption, WiredSourcesSelector } from '../WiredSourcesSelector';
 import { WiredTriggerBaseView } from './WiredTriggerBaseView';
 
+// Server WiredTriggerHabboClicksFurni.normalizeFurniSource keeps SELECTED(100)/SELECTOR(200) and maps
+// everything else to SOURCE_TRIGGER(0); resolveCandidateItems(0) returns the furni that fired the trigger.
 const FURNI_SOURCE_OPTIONS: WiredSourceOption[] = [
+    { value: 0, label: 'wiredfurni.params.sources.furni.0' },
     { value: 100, label: 'wiredfurni.params.sources.furni.100' },
     { value: 200, label: 'wiredfurni.params.sources.furni.200' }
 ];

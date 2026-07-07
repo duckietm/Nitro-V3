@@ -185,7 +185,7 @@ export const WiredActionSendSignalView: FC<{}> = () =>
             selectionPreview={
                 <div className="flex flex-col gap-2">
                     <WiredFurniSelectionSourceRow
-                        title="Antenne:"
+                        title={ localizeWithFallback('wiredfurni.params.sources.furni.title.signal_antenna', 'Antenne:') }
                         titleIsLiteral={ true }
                         options={ [ { value: SOURCE_SELECTED, label: 'wiredfurni.params.sources.furni.100' } ] }
                         value={ SOURCE_SELECTED }
@@ -225,7 +225,7 @@ export const WiredActionSendSignalView: FC<{}> = () =>
             }
         >
             <div className="flex flex-col gap-3">
-                <Text bold>{ LocalizeText('wiredfurni.params.signal.options') }</Text>
+                <Text bold>{ localizeWithFallback('wiredfurni.params.signal.send_options', LocalizeText('wiredfurni.params.signal.options')) }</Text>
                 <div className="form-check">
                     <input
                         type="checkbox"

@@ -1,4 +1,10 @@
 import { WiredActionLayoutCode } from '../../../../api';
+import { WiredChestCurrencyView } from '../extras/WiredChestCurrencyView';
+import { WiredChestFurniView } from '../extras/WiredChestFurniView';
+import { WiredContractPaymentView } from '../extras/WiredContractPaymentView';
+import { WiredContractRewardView } from '../extras/WiredContractRewardView';
+import { WiredContractTradeView } from '../extras/WiredContractTradeView';
+import { WiredCustomContractView } from '../extras/WiredCustomContractView';
 import { WiredExtraAnimationTimeView } from '../extras/WiredExtraAnimationTimeView';
 import { WiredExtraContextVariableView } from '../extras/WiredExtraContextVariableView';
 import { WiredExtraExecuteInOrderView } from '../extras/WiredExtraExecuteInOrderView';
@@ -9,15 +15,19 @@ import { WiredExtraFilterUsersByVariableView } from '../extras/WiredExtraFilterU
 import { WiredExtraFilterUserView } from '../extras/WiredExtraFilterUserView';
 import { WiredExtraFurniVariableView } from '../extras/WiredExtraFurniVariableView';
 import { WiredExtraMoveCarryUsersView } from '../extras/WiredExtraMoveCarryUsersView';
+import { WiredExtraMovementCurveView } from '../extras/WiredExtraMovementCurveView';
 import { WiredExtraMoveNoAnimationView } from '../extras/WiredExtraMoveNoAnimationView';
 import { WiredExtraMovePhysicsView } from '../extras/WiredExtraMovePhysicsView';
 import { WiredExtraOrEvalView } from '../extras/WiredExtraOrEvalView';
+import { WiredExtraQuestChainView } from '../extras/WiredExtraQuestChainView';
+import { WiredExtraQuestView } from '../extras/WiredExtraQuestView';
 import { WiredExtraRandomView } from '../extras/WiredExtraRandomView';
 import { WiredExtraRoomVariableView } from '../extras/WiredExtraRoomVariableView';
 import { WiredExtraTextInputVariableView } from '../extras/WiredExtraTextInputVariableView';
 import { WiredExtraTextOutputFurniNameView } from '../extras/WiredExtraTextOutputFurniNameView';
 import { WiredExtraTextOutputUsernameView } from '../extras/WiredExtraTextOutputUsernameView';
 import { WiredExtraTextOutputVariableView } from '../extras/WiredExtraTextOutputVariableView';
+import { WiredExtraTimeUtilitiesView } from '../extras/WiredExtraTimeUtilitiesView';
 import { WiredExtraUnseenView } from '../extras/WiredExtraUnseenView';
 import { WiredExtraUserVariableView } from '../extras/WiredExtraUserVariableView';
 import { WiredExtraVariableEchoView } from '../extras/WiredExtraVariableEchoView';
@@ -32,6 +42,8 @@ import { WiredSelectorFurniOnFurniView } from '../selectors/WiredSelectorFurniOn
 import { WiredSelectorFurniPicksView } from '../selectors/WiredSelectorFurniPicksView';
 import { WiredSelectorFurniSignalView } from '../selectors/WiredSelectorFurniSignalView';
 import { WiredSelectorFurniWithVariableView } from '../selectors/WiredSelectorFurniWithVariableView';
+import { WiredSelectorRemoteView } from '../selectors/WiredSelectorRemoteView';
+import { WiredSelectorScanChestFurniByType } from '../selectors/WiredSelectorScanChestFurniByType';
 import { WiredSelectorUsersAreaView } from '../selectors/WiredSelectorUsersAreaView';
 import { WiredSelectorUsersByActionView } from '../selectors/WiredSelectorUsersByActionView';
 import { WiredSelectorUsersByNameView } from '../selectors/WiredSelectorUsersByNameView';
@@ -45,6 +57,7 @@ import { WiredSelectorUsersTeamView } from '../selectors/WiredSelectorUsersTeamV
 import { WiredSelectorUsersWithVariableView } from '../selectors/WiredSelectorUsersWithVariableView';
 import { WiredActionAdjustClockView } from './WiredActionAdjustClockView';
 import { WiredActionBotChangeFigureView } from './WiredActionBotChangeFigureView';
+import { WiredActionBotDanceView } from './WiredActionBotDanceView';
 import { WiredActionBotFollowAvatarView } from './WiredActionBotFollowAvatarView';
 import { WiredActionBotGiveHandItemView } from './WiredActionBotGiveHandItemView';
 import { WiredActionBotMoveView } from './WiredActionBotMoveView';
@@ -52,6 +65,7 @@ import { WiredActionBotTalkToAvatarView } from './WiredActionBotTalkToAvatarView
 import { WiredActionBotTalkView } from './WiredActionBotTalkView';
 import { WiredActionBotTeleportView } from './WiredActionBotTeleportView';
 import { WiredActionCallAnotherStackView } from './WiredActionCallAnotherStackView';
+import { WiredActionCancelTransactionView } from './WiredActionCancelTransactionView';
 import { WiredActionChangeVariableValueView } from './WiredActionChangeVariableValueView';
 import { WiredActionChaseView } from './WiredActionChaseView';
 import { WiredActionChatView } from './WiredActionChatView';
@@ -59,25 +73,37 @@ import { WiredActionControlClockView } from './WiredActionControlClockView';
 import { WiredActionFleeView } from './WiredActionFleeView';
 import { WiredActionFreezeView } from './WiredActionFreezeView';
 import { WiredActionFurniToFurniView } from './WiredActionFurniToFurniView';
+import { WiredActionGiveCurrencyFromChestView } from './WiredActionGiveCurrencyFromChestView';
+import { WiredActionGiveFurniFromChestView } from './WiredActionGiveFurniFromChestView';
+import { WiredActionGiveOrTakeFurniView } from './WiredActionGiveOrTakeFurniView';
+import { WiredActionGivePointsTypeView } from './WiredActionGivePointsTypeView';
 import { WiredActionGiveRewardView } from './WiredActionGiveRewardView';
 import { WiredActionGiveScoreToPredefinedTeamView } from './WiredActionGiveScoreToPredefinedTeamView';
 import { WiredActionGiveScoreView } from './WiredActionGiveScoreView';
 import { WiredActionGiveVariableView } from './WiredActionGiveVariableView';
+import { WiredActionInitTransactionView } from './WiredActionInitTransactionView';
 import { WiredActionJoinTeamView } from './WiredActionJoinTeamView';
 import { WiredActionKickFromRoomView } from './WiredActionKickFromRoomView';
 import { WiredActionLeaveTeamView } from './WiredActionLeaveTeamView';
 import { WiredActionMoveAndRotateFurniView } from './WiredActionMoveAndRotateFurniView';
+import { WiredActionMoveFurniAsGroupView } from './WiredActionMoveFurniAsGroupView';
 import { WiredActionMoveFurniToView } from './WiredActionMoveFurniToView';
 import { WiredActionMoveFurniView } from './WiredActionMoveFurniView';
 import { WiredActionMoveRotateUserView } from './WiredActionMoveRotateUserView';
 import { WiredActionMuteUserView } from './WiredActionMuteUserView';
 import { WiredActionNegativeCallAnotherStackView } from './WiredActionNegativeCallAnotherStackView';
+import { WiredActionPlaceFurniView } from './WiredActionPlaceFurniView';
+import { WiredActionPlayYoutubeView } from './WiredActionPlayYoutubeView';
+import { WiredActionQuickBopperView } from './WiredActionQuickBopperView';
 import { WiredActionRelativeMoveView } from './WiredActionRelativeMoveView';
+import { WiredActionRemoveFurniView } from './WiredActionRemoveFurniView';
 import { WiredActionRemoveVariableView } from './WiredActionRemoveVariableView';
 import { WiredActionResetView } from './WiredActionResetView';
 import { WiredActionSendSignalView } from './WiredActionSendSignalView';
 import { WiredActionSetAltitudeView } from './WiredActionSetAltitudeView';
 import { WiredActionSetFurniStateToView } from './WiredActionSetFurniStateToView';
+import { WiredActionSetRollerSpeedView } from './WiredActionSetRollerSpeedView';
+import { WiredActionSetRoomAdView } from './WiredActionSetRoomAdView';
 import { WiredActionTeleportView } from './WiredActionTeleportView';
 import { WiredActionToggleFurniStateView } from './WiredActionToggleFurniStateView';
 import { WiredActionUnfreezeView } from './WiredActionUnfreezeView';
@@ -254,6 +280,58 @@ export const WiredActionLayoutView = (code: number) => {
             return <WiredActionSendSignalView />;
         case WiredActionLayoutCode.NEG_SEND_SIGNAL:
             return <WiredActionSendSignalView />;
+        case WiredActionLayoutCode.SET_ROLLER_SPEED:
+            return <WiredActionSetRollerSpeedView />;
+        case WiredActionLayoutCode.BOT_DANCE:
+            return <WiredActionBotDanceView />;
+        case WiredActionLayoutCode.GIVE_POINTS_TYPE:
+            return <WiredActionGivePointsTypeView />;
+        case WiredActionLayoutCode.GIVE_OR_TAKE_FURNI:
+            return <WiredActionGiveOrTakeFurniView />;
+        case WiredActionLayoutCode.PLAY_YOUTUBE:
+            return <WiredActionPlayYoutubeView />;
+        case WiredActionLayoutCode.QUICK_BOPPER:
+            return <WiredActionQuickBopperView />;
+        case WiredActionLayoutCode.SET_ROOM_AD:
+            return <WiredActionSetRoomAdView />;
+        case WiredActionLayoutCode.MOVE_FURNI_AS_GROUP:
+            return <WiredActionMoveFurniAsGroupView />;
+        case WiredActionLayoutCode.REMOTE_SELECTOR:
+            return <WiredSelectorRemoteView />;
+        case WiredActionLayoutCode.MOVEMENT_CURVE_EXTRA:
+            return <WiredExtraMovementCurveView />;
+        case WiredActionLayoutCode.TIME_UTILITIES_EXTRA:
+            return <WiredExtraTimeUtilitiesView />;
+        case WiredActionLayoutCode.GIVE_CURRENCY_FROM_CHEST:
+            return <WiredActionGiveCurrencyFromChestView />;
+        case WiredActionLayoutCode.CURRENCY_CHEST:
+            return <WiredChestCurrencyView />;
+        case WiredActionLayoutCode.GIVE_FURNI_FROM_CHEST:
+            return <WiredActionGiveFurniFromChestView />;
+        case WiredActionLayoutCode.FURNI_CHEST:
+            return <WiredChestFurniView />;
+        case WiredActionLayoutCode.SCAN_CHEST_FURNI_BY_TYPE:
+            return <WiredSelectorScanChestFurniByType />;
+        case WiredActionLayoutCode.INIT_TRANSACTION:
+            return <WiredActionInitTransactionView />;
+        case WiredActionLayoutCode.CANCEL_TRANSACTION:
+            return <WiredActionCancelTransactionView />;
+        case WiredActionLayoutCode.PLACE_FURNI:
+            return <WiredActionPlaceFurniView />;
+        case WiredActionLayoutCode.REMOVE_FURNI:
+            return <WiredActionRemoveFurniView />;
+        case WiredActionLayoutCode.QUEST_EXTRA:
+            return <WiredExtraQuestView />;
+        case WiredActionLayoutCode.QUEST_CHAIN_EXTRA:
+            return <WiredExtraQuestChainView />;
+        case WiredActionLayoutCode.CONTRACT_PAYMENT:
+            return <WiredContractPaymentView />;
+        case WiredActionLayoutCode.CONTRACT_REWARD:
+            return <WiredContractRewardView />;
+        case WiredActionLayoutCode.CONTRACT_TRADE:
+            return <WiredContractTradeView />;
+        case WiredActionLayoutCode.CUSTOM_CONTRACT:
+            return <WiredCustomContractView />;
     }
 
     return null;

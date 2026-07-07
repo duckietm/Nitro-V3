@@ -31,6 +31,8 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
     };
 
     const getUserCounterColor = () => {
+        if (roomData.maxUserCount <= 0) return roomData.userCount > 0 ? 'bg-success' : 'bg-primary';
+
         const num: number = 100 * (roomData.userCount / roomData.maxUserCount);
 
         if (num >= 92) return 'bg-danger';

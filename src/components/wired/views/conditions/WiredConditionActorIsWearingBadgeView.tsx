@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';
@@ -54,7 +54,7 @@ export const WiredConditionActorIsWearingBadgeView: FC<WiredConditionActorIsWear
                 ))}
             </div>
             <div className="flex flex-col gap-1">
-                <Text bold>{LocalizeText('wiredfurni.params.badgecode')}</Text>
+                <Text bold>{localizeWithFallback('wiredfurni.params.badgecode', 'Badge code')}</Text>
                 <NitroInput type="text" value={badge} onChange={(event) => setBadge(event.target.value)} />
             </div>
         </WiredConditionBaseView>

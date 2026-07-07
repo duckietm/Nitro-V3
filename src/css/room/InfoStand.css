@@ -1,5 +1,13 @@
 .nitro-use-product-confirmation {
-  width: 350px;
+  width: min(350px, calc(100vw - 16px));
+  min-width: 0;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+
+  .nitro-card-content-shell {
+    max-height: calc(100vh - 72px);
+    overflow: auto;
+  }
 
   .product-preview {
     display: flex;
@@ -19,6 +27,12 @@
       height: 80px;
       background: url('@/assets/images/room-widgets/furni-context-menu/monsterplant-preview.png') no-repeat center;
     }
+  }
+}
+
+@media (max-width: 420px) {
+  .nitro-use-product-confirmation .nitro-card-content-shell > .flex {
+    flex-direction: column;
   }
 }
 

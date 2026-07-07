@@ -138,10 +138,10 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = (props) => 
     if (!navigatorData?.enteredGuestRoom) return null;
 
     return (
-        <NitroCardView className="nitro-room-info" theme="primary-slim">
+        <NitroCardView className="nitro-room-info min-w-0 w-[min(380px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]" theme="primary-slim">
             <NitroCardHeaderView headerText={LocalizeText('navigator.roomsettings.roominfo')} onCloseClick={() => processAction('close')} />
-            <NitroCardContentView className="text-black">
-                <Flex gap={2} overflow="hidden">
+            <NitroCardContentView className="text-black max-h-[calc(100vh-72px)]" overflow="auto">
+                <Flex gap={2} overflow="hidden" className="flex-col sm:flex-row">
                     <LayoutRoomThumbnailView customUrl={navigatorData.enteredGuestRoom.officialRoomPicRef} roomId={navigatorData.enteredGuestRoom.roomId}>
                         {hasPermission('settings') && (
                             <i
