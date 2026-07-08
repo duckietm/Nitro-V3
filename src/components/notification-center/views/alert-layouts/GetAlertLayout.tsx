@@ -2,6 +2,7 @@ import { NotificationAlertItem, NotificationAlertType } from '../../../../api';
 import { NitroInfoAlertView } from './NitroInfoAlertView';
 import { NitroSystemAlertView } from './NitroSystemAlertView';
 import { NotificationDefaultAlertView } from './NotificationDefaultAlertView';
+import { isFurniDataAlert, NotificationFurniDataAlertView } from './NotificationFurniDataAlertView';
 import { NotificationSeachAlertView } from './NotificationSearchAlertView';
 
 export const GetAlertLayout = (item: NotificationAlertItem, onClose: () => void) => {
@@ -18,6 +19,8 @@ export const GetAlertLayout = (item: NotificationAlertItem, onClose: () => void)
         case NotificationAlertType.SEARCH:
             return <NotificationSeachAlertView key={key} {...props} />;
         default:
+            if (isFurniDataAlert(item)) return <NotificationFurniDataAlertView key={key} {...props} />;
+
             return <NotificationDefaultAlertView key={key} {...props} />;
     }
 };

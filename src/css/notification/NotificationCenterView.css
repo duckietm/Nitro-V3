@@ -330,6 +330,162 @@
             animation: nitroInfoShine 2.8s ease-in-out infinite;
         }
     }
+
+    &.nitro-alert-furnidata {
+        width: 400px;
+        max-height: 520px;
+
+        .notification-text {
+            min-width: auto;
+        }
+
+        .furnidata-item-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: -8px -8px 8px -8px;
+            padding: 10px;
+            background: linear-gradient(135deg, #4a72b8 0%, #2d4a82 60%, #1c2a4a 100%);
+            border-bottom: 2px solid #1c2a4a;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                inset 0 -3px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        .furnidata-item-icon {
+            font-size: 16px;
+            filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.4));
+        }
+
+        .furnidata-item-name {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.45);
+            word-break: break-word;
+        }
+
+        .furnidata-body {
+            font-family: Volter, Volter_Goldfish, "Ubuntu", sans-serif;
+            padding-right: 4px;
+        }
+
+        .furnidata-section {
+            background: linear-gradient(to bottom, #ffffff 0%, #eaf1fb 100%);
+            border: 1px solid #6f8db5;
+            border-radius: 6px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                0 2px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        .furnidata-section-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.45);
+            padding: 4px 8px;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .furnidata-section-base .furnidata-section-header {
+            background: linear-gradient(180deg, #4fb3ff 0%, #1f6dc7 100%);
+        }
+
+        .furnidata-section-room .furnidata-section-header {
+            background: linear-gradient(180deg, #6bd66b 0%, #2a8a2a 100%);
+        }
+
+        .furnidata-section-icon {
+            font-size: 13px;
+            filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.4));
+        }
+
+        .furnidata-section-title {
+            flex-grow: 1;
+        }
+
+        .furnidata-copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #1f2f4a;
+            text-shadow: none;
+            background: linear-gradient(180deg, #ffffff 0%, #d9e6f7 100%);
+            border: 1px solid rgba(0, 0, 0, 0.35);
+            border-radius: 4px;
+            padding: 1px 8px;
+            cursor: pointer;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 1px 0 rgba(0, 0, 0, 0.25);
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+
+        .furnidata-copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .furnidata-copy-btn:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+        }
+
+        .furnidata-rows {
+            list-style: none;
+            margin: 0;
+            padding: 6px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .furnidata-rows li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .furnidata-rows li:nth-child(odd) {
+            background: rgba(110, 160, 230, 0.08);
+        }
+
+        .furnidata-row-label {
+            font-size: 12px;
+            color: #4a5a76;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .furnidata-row-value {
+            font-size: 12px;
+            color: #1a3a6b;
+            font-weight: 700;
+            background: linear-gradient(180deg, #ffffff 0%, #e6efff 100%);
+            border: 1px solid #b8cce6;
+            border-radius: 4px;
+            padding: 1px 8px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            text-align: right;
+            word-break: break-word;
+        }
+    }
 }
 
 @keyframes nitroInfoPop {
