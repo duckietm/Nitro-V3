@@ -2,7 +2,7 @@ import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, Ref } from '
 import { classNames } from './classNames';
 
 const classes = {
-    base: 'block w-full placeholder-gray-400 border border-gray-300 shadow-sm appearance-none',
+    base: 'block w-full bg-white text-black placeholder-gray-400 border border-gray-300 shadow-sm appearance-none',
     disabled: '',
     size: {
         default: 'px-2 py-2  font-medium'

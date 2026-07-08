@@ -278,7 +278,7 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = (props)
                 <div className="flex items-center gap-1 text-xs">
                     <button
                         type="button"
-                        className={`px-2 py-0.5 rounded ${filter === 'all' ? 'bg-card-grid-item-active text-white' : 'bg-card-grid-item'}`}
+                        className={`px-2 py-0.5 rounded ${filter === 'all' ? 'bg-card-grid-item-active text-black font-bold' : 'bg-card-grid-item'}`}
                         onClick={() => setFilter('all')}
                     >
                         {LocalizeText('inventory.badges.tab.all') !== 'inventory.badges.tab.all' ? LocalizeText('inventory.badges.tab.all') : 'All'} (
@@ -286,7 +286,7 @@ export const InventoryBadgeView: FC<{ filteredBadgeCodes?: string[] }> = (props)
                     </button>
                     <button
                         type="button"
-                        className={`px-2 py-0.5 rounded ${filter === 'custom' ? 'bg-card-grid-item-active text-white' : 'bg-card-grid-item'}`}
+                        className={`px-2 py-0.5 rounded ${filter === 'custom' ? 'bg-card-grid-item-active text-black font-bold' : 'bg-card-grid-item'}`}
                         onClick={() => setFilter('custom')}
                     >
                         {LocalizeText('inventory.badges.tab.custom') !== 'inventory.badges.tab.custom' ? LocalizeText('inventory.badges.tab.custom') : 'Custom'}{' '}

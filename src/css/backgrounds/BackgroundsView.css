@@ -82,8 +82,10 @@
   background-repeat: repeat;
   background-position: top left;
   background-size: auto;
+
   &.card-background-0 {
-    background-image: url('@/assets/images/backgrounds/background/bg_0.png');
+    background-image: none;
+    border: 2px dashed rgba(255, 255, 255, 0.25);
   }
   &.card-background-1 {
     background-image: url('@/assets/images/backgrounds/background/bg_1.png');
