@@ -6,7 +6,7 @@ const {
 
 const colors = {
     'toolbar': '#555555',
-    'card-header': '#1E7295',
+    'card-header': '#418DB0',
     'card-close': '#921911',
     'card-tabs': '#185D79',
     'card-border': '#283F5D',
@@ -39,8 +39,8 @@ const colors = {
     'gray-700': '#495057',
     'gray-800': '#343a40',
     'gray-900': '#212529',
-    'primary': '#1E7295',
-    'secondary': '#185D79',
+    'primary': '#418DB0',
+    'secondary': '#376275',
     'success': '#00800b',
     'info': '#0dcaf0',
     'warning': '#ffc107',
@@ -79,7 +79,8 @@ module.exports = {
             colors: generateShades(colors),
             boxShadow,
             backgroundImage: {
-                'button-gradient-gray': 'linear-gradient(to bottom, #e2e2e2 50%, #c8c8c8 50%)',
+                'button-gradient-gray': 'linear-gradient(to bottom, #f2f8fb 50%, #c5d5de 50%)',
+                'button-gradient-habbo': 'linear-gradient(180deg, #5ba4c4 0%, #418db0 44%, #2e6f8a 100%)',
             },
             spacing: {
                 'card-header': '33px',

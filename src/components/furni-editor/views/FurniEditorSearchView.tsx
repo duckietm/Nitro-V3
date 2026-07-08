@@ -163,7 +163,7 @@ export const FurniEditorSearchView: FC<FurniEditorSearchViewProps> = (props) => 
                                 key={t || 'all'}
                                 type="button"
                                 onClick={() => applyType(t)}
-                                className={`px-3 py-1.5 text-[12px] font-medium rounded-lg border transition ${on ? 'bg-[#1E7295] border-[#1E7295] text-[#ffffff] shadow-sm' : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200 hover:text-slate-600'}`}
+                                className={`px-3 py-1.5 text-[12px] font-medium rounded-lg border transition ${on ? 'bg-[#418db0] border-[#418db0] text-[#ffffff] shadow-sm' : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200 hover:text-slate-600'}`}
                             >
                                 {t === '' ? 'All' : t === 's' ? 'Floor' : 'Wall'}
                             </button>
@@ -220,7 +220,7 @@ export const FurniEditorSearchView: FC<FurniEditorSearchViewProps> = (props) => 
                                 </td>
                                 <td className="px-2 py-1.5 text-center">
                                     <span
-                                        className={`inline-block px-2 py-0.5 rounded-md text-[#ffffff] text-[10px] font-semibold ${item.type === 's' ? 'bg-[#1E7295]' : 'bg-[#64748b]'}`}
+                                        className={`inline-block px-2 py-0.5 rounded-md text-[#ffffff] text-[10px] font-semibold ${item.type === 's' ? 'bg-[#418db0]' : 'bg-[#64748b]'}`}
                                     >
                                         {item.type === 's' ? 'Floor' : 'Wall'}
                                     </span>

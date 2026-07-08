@@ -6,31 +6,15 @@
     --catalog-swf-border-dark: #6f6f6a;
     --catalog-swf-text: #222222;
     --catalog-swf-muted: #666666;
-    --catalog-swf-blue: #2f8097;
-    --catalog-swf-blue-dark: #1c596c;
+    --catalog-swf-blue: #418db0;
+    --catalog-swf-blue-dark: #0e3f52;
+    --catalog-swf-blue-border: #376275;
     --catalog-swf-select: #63c5e9;
     --catalog-swf-select-outer: #82d1ed;
     --catalog-swf-bc: #ff8d00;
     --catalog-swf-bc-outer: #ffb53c;
-    --habbo-slice-button-default: url("../../assets/images/catalog/buttons/btn_secondary.png");
-    --habbo-slice-button-hover: url("../../assets/images/catalog/buttons/btn_secondary_hover.png");
-    --habbo-slice-button-pressed: url("../../assets/images/catalog/buttons/btn_secondary_pressed.png");
-    --habbo-slice-button-disabled: url("../../assets/images/catalog/buttons/btn_secondary_disabled.png");
-    --habbo-slice-button-buy: url("../../assets/images/catalog/buttons/buy.png");
-    --habbo-slice-button-large: url("../../assets/images/catalog/buttons/buy.png");
-    --habbo-slice-button-large-hover: url("../../assets/images/catalog/buttons/buy_hover.png");
-    --habbo-slice-button-large-pressed: url("../../assets/images/catalog/buttons/buy_pressed.png");
-    --habbo-slice-button-large-disabled: url("../../assets/images/catalog/buttons/buy_disabled.png");
-    --habbo-button-green: url("../../assets/images/catalog/buttons/buy.png");
-    --habbo-button-green-hover: url("../../assets/images/catalog/buttons/buy_hover.png");
-    --habbo-button-green-pressed: url("../../assets/images/catalog/buttons/buy_pressed.png");
-    --habbo-button-green-disabled: url("../../assets/images/catalog/buttons/buy_disabled.png");
-    --habbo-close: url("../../assets/images/catalog/buttons/close.png");
-    --habbo-close-hover: url("../../assets/images/catalog/buttons/close_hover.png");
-    --habbo-close-pressed: url("../../assets/images/catalog/buttons/close_pressed.png");
-    --habbo-help: url("../../assets/images/catalog/buttons/help.png");
-    --habbo-help-hover: url("../../assets/images/catalog/buttons/help_hover.png");
-    --habbo-help-pressed: url("../../assets/images/catalog/buttons/help_pressed.png");
+    /* Quantity stepper +/- sprites, kept identical to origin/main so the
+       glyphs stay put through hover/active/disabled states. */
     --habbo-stepper-plus: url("../../assets/images/catalog/buttons/plus.png");
     --habbo-stepper-plus-hover: url("../../assets/images/catalog/buttons/plus_hover.png");
     --habbo-stepper-plus-pressed: url("../../assets/images/catalog/buttons/plus_pressed.png");
@@ -39,45 +23,26 @@
     --habbo-stepper-minus-hover: url("../../assets/images/catalog/buttons/minus_hover.png");
     --habbo-stepper-minus-pressed: url("../../assets/images/catalog/buttons/minus_pressed.png");
     --habbo-stepper-minus-disabled: url("../../assets/images/catalog/buttons/minus_disabled.png");
-    --habbo-scrollbar-up: url("../../assets/images/catalog/scrollbar/scroll_v_up.png");
-    --habbo-scrollbar-up-pressed: url("../../assets/images/catalog/scrollbar/scroll_v_up_pressed.png");
-    --habbo-scrollbar-down: url("../../assets/images/catalog/scrollbar/scroll_v_down.png");
-    --habbo-scrollbar-down-pressed: url("../../assets/images/catalog/scrollbar/scroll_v_down_pressed.png");
-    --habbo-scrollbar-thumb-v: url("../../assets/images/catalog/scrollbar/scroll_v_thumb.png");
-    --habbo-scrollbar-thumb-v-pressed: url("../../assets/images/catalog/scrollbar/scroll_v_thumb_pressed.png");
-    --habbo-scrollbar-h-left: url("../../assets/images/catalog/scrollbar/scroll_h_left.png");
-    --habbo-scrollbar-h-left-pressed: url("../../assets/images/catalog/scrollbar/scroll_h_left_pressed.png");
-    --habbo-scrollbar-h-right: url("../../assets/images/catalog/scrollbar/scroll_h_right.png");
-    --habbo-scrollbar-h-right-pressed: url("../../assets/images/catalog/scrollbar/scroll_h_right_pressed.png");
-    --habbo-scrollbar-thumb-h: url("../../assets/images/catalog/scrollbar/scroll_h_thumb.png");
-    --habbo-scrollbar-thumb-h-pressed: url("../../assets/images/catalog/scrollbar/scroll_h_thumb_pressed.png");
 
-    width: 660px !important;
-    height: 720px !important;
-    min-width: 660px !important;
-    max-width: 660px !important;
-    min-height: 640px !important;
+    width: var(--nitro-catalog-window-width, 570px) !important;
+    height: var(--nitro-catalog-window-height, 635px) !important;
+    min-width: var(--nitro-catalog-window-width, 570px) !important;
+    max-width: var(--nitro-catalog-window-width, 570px) !important;
+    min-height: 570px !important;
     max-height: calc(100vh - 24px) !important;
     position: relative;
+    display: flex;
+    flex-direction: column;
     color: var(--catalog-swf-text);
     overflow: hidden;
     box-sizing: border-box;
 }
 
 .draggable-window:has(> .nitro-catalog-window) {
-    width: 660px !important;
-    height: 720px !important;
-    min-width: 660px !important;
-    max-width: 660px !important;
-}
-
-.nitro-catalog-window::before {
-    display: none;
-}
-
-.nitro-catalog-window > * {
-    position: relative;
-    z-index: 4;
+    width: var(--nitro-catalog-window-width, 570px) !important;
+    height: var(--nitro-catalog-window-height, 635px) !important;
+    min-width: var(--nitro-catalog-window-width, 570px) !important;
+    max-width: var(--nitro-catalog-window-width, 570px) !important;
 }
 
 .nitro-catalog-window,
@@ -139,33 +104,31 @@
     height: 22px !important;
     min-height: 22px !important;
     padding: 0 10px !important;
-    border: 1px solid #6f8db5 !important;
+    border: 2px solid var(--catalog-swf-blue-border) !important;
     border-image: none !important;
-    border-image-source: none !important;
     border-radius: 4px !important;
-    background: linear-gradient(180deg, #ffffff 0%, #e7eef8 100%) !important;
-    background-image: linear-gradient(180deg, #ffffff 0%, #e7eef8 100%) !important;
-    color: #1a3a6b !important;
+    background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
+    color: var(--catalog-swf-text) !important;
     font-size: 10px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     line-height: 1 !important;
-    text-shadow: none !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 0 rgba(0, 0, 0, 0.12) !important;
     cursor: pointer !important;
     white-space: nowrap !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button:hover {
-    background: linear-gradient(180deg, #ffffff 0%, #d6e2f3 100%) !important;
-    background-image: linear-gradient(180deg, #ffffff 0%, #d6e2f3 100%) !important;
-    color: #0b2347 !important;
-    border-color: #4a72b8 !important;
+    filter: brightness(1.04);
+    background: linear-gradient(180deg, #ffffff 0%, #e0eff6 44%, #b8d5e4 45%, #e8f3f8 100%) !important;
+    color: var(--catalog-swf-text) !important;
+    border-color: var(--catalog-swf-blue) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button:active {
-    background: linear-gradient(180deg, #d6e2f3 0%, #ffffff 100%) !important;
-    background-image: linear-gradient(180deg, #d6e2f3 0%, #ffffff 100%) !important;
-    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 0 0 rgba(0, 0, 0, 0) !important;
+    filter: brightness(0.96);
+    background: linear-gradient(180deg, #a8c9d8 0%, #d4e6ef 55%, #f2f8fb 100%) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button.text-success,
@@ -203,7 +166,7 @@
     min-width: 32px !important;
     max-width: 32px !important;
     padding: 6px 4px 7px !important;
-    margin-left: 4px !important;
+    margin-left: 0 !important;
 }
 
 .nitro-catalog-admin-modal {
@@ -215,8 +178,8 @@
     --catalog-admin-border-dark: #5f5f59;
     --catalog-admin-text: #20201d;
     --catalog-admin-muted: #60605a;
-    --catalog-admin-blue: #2f8097;
-    --catalog-admin-blue-dark: #1c596c;
+    --catalog-admin-blue: #418db0;
+    --catalog-admin-blue-dark: #0e3f52;
     --catalog-admin-gold: #ffc828;
     --catalog-admin-gold-dark: #8a5b00;
     --catalog-admin-danger: #b83b32;
@@ -515,27 +478,28 @@
     box-shadow: none !important;
 }
 
+/* Air: bordo esterno #376275 (2px), body #0e3f52 -> border 2px + bg body. */
 .nitro-catalog-swf-header {
     position: relative;
     flex: 0 0 90px;
     height: 90px;
     margin: 0 1px;
-    border: 1px solid #376275;
+    border: 2px solid #376275;
     background: #0e3f52;
     overflow: hidden;
 }
 
+/* Air: header image blend 0.1, greyscale, zoom 2, pivot center.
+   L'immagine reale per-pagina arriva inline da currentPage.getImage(0);
+   se assente resta il body #0e3f52 (nessun finto gradiente). */
 .nitro-catalog-swf-header-bg {
     position: absolute;
     inset: 0;
     opacity: 0.1;
+    background-color: transparent;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background:
-        linear-gradient(135deg, transparent 0 46%, rgba(255, 255, 255, 0.35) 47% 49%, transparent 50%),
-        radial-gradient(circle at 18% 28%, rgba(255, 255, 255, 0.55), transparent 18%),
-        linear-gradient(180deg, #60a6bd, #0e3f52);
     filter: grayscale(1);
 }
 
@@ -563,6 +527,7 @@
 
 .nitro-catalog-swf-header-title {
     min-height: 24px;
+    font-family: UbuntuCondensed, Ubuntu, sans-serif;
     font-size: 24px;
     font-weight: 700;
     line-height: 24px;
@@ -574,56 +539,34 @@
     line-height: 15px;
 }
 
+/* Air tab_context: y=5 h=30 -> strip 35px, offset alto 5px, tab alte 30px. */
 .nitro-catalog-tabs-shell {
-    flex: 0 0 40px;
-    height: 40px;
-    min-height: 40px;
-    max-height: 40px;
+    flex: 0 0 35px;
+    height: 35px;
+    min-height: 35px;
+    max-height: 35px;
     gap: 0;
-    padding: 4px 6px 0 !important;
+    padding: 5px 6px 0 !important;
     align-items: flex-end;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
     flex-wrap: nowrap;
-    scrollbar-width: thin;
-    scrollbar-color: #8da3b3 transparent;
 }
 
-.nitro-catalog-tabs-shell::-webkit-scrollbar {
-    width: 6px !important;
-    height: 6px !important;
-}
-
-.nitro-catalog-tabs-shell::-webkit-scrollbar-thumb {
-    background: #8da3b3 !important;
-    background-image: none !important;
-    border-radius: 3px !important;
-    box-shadow: none !important;
-    min-height: 0 !important;
-}
-
-.nitro-catalog-tabs-shell::-webkit-scrollbar-track {
-    background: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
-}
-
-.nitro-catalog-tabs-shell::-webkit-scrollbar-button:single-button {
-    display: none !important;
-}
-
+/* Air tab_button style 3 (height 30). Width sizes to the label instead of a
+   fixed 110px cap, so long categories (e.g. "Imported Furniture") aren't
+   truncated; the dynamic window width grows to fit them. */
 .nitro-catalog-tabs-shell .nitro-card-tab-item {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    height: 36px;
+    height: 30px;
     min-width: 0;
-    flex: 1 1 0;
+    flex: 0 0 auto;
     max-width: none;
-    padding: 6px 6px 7px;
+    padding: 4px 8px 6px;
     margin: 0 2px 0 0;
-    flex-shrink: 1;
+    flex-shrink: 0;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -632,13 +575,17 @@
     margin-right: 0;
 }
 
+.nitro-catalog-tabs-shell .nitro-card-tab-item.nitro-catalog-admin-tab {
+    padding: 4px 4px 6px !important;
+}
+
 .nitro-catalog-tabs-shell .nitro-card-tab-item > div {
     align-items: center !important;
     justify-content: center !important;
     gap: 4px;
     min-width: 0;
     width: auto;
-    height: 20px;
+    height: 18px;
     line-height: 17px;
 }
 
@@ -654,6 +601,13 @@
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nitro-catalog-tab-count {
+    flex: 0 0 auto;
+    font-size: 10px;
+    opacity: 0.85;
 }
 
 .nitro-catalog-content-shell {
@@ -686,6 +640,7 @@
     overflow: hidden;
 }
 
+/* Air search: border x8 y131 w184 h24 style 105 (inset chiaro). */
 .nitro-catalog-search-shell {
     position: relative;
     display: flex;
@@ -696,6 +651,7 @@
     border: 1px solid #b7b7ae;
     border-radius: 3px;
     background: #f7f7f2;
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.07);
 }
 
 .nitro-catalog-search-shell input {
@@ -732,6 +688,7 @@
     right: 4px !important;
 }
 
+/* Air navigationContainer: x8 y159 w184 h433 style 6 (bordo beveled inset). */
 .nitro-catalog-navigation-shell {
     flex: 1 1 auto;
     min-height: 0;
@@ -739,6 +696,9 @@
     border: 1px solid #b4b4ae;
     border-radius: 3px;
     background: rgba(236, 236, 228, 0.5);
+    box-shadow:
+        inset 1px 1px 0 rgba(0, 0, 0, 0.08),
+        inset -1px -1px 0 rgba(255, 255, 255, 0.55);
     overflow: auto;
 }
 
@@ -1325,48 +1285,45 @@
     justify-content: center !important;
     min-height: 22px;
     padding: 2px 12px !important;
-    border: 3px solid transparent !important;
-    border-radius: 0 !important;
-    border-image-source: var(--habbo-slice-button-default) !important;
-    border-image-slice: 3 3 3 3 fill !important;
-    border-image-width: 3px !important;
-    border-image-repeat: stretch !important;
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    color: #222 !important;
+    border: 2px solid var(--catalog-swf-blue-border) !important;
+    border-radius: 4px !important;
+    border-image: none !important;
+    background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
+    color: var(--catalog-swf-text) !important;
     font-size: 11px !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
-    box-shadow: none !important;
-    transition: none !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+    transition: filter 0.1s ease !important;
 }
 
 .nitro-catalog-window button.nitro-catalog-preview-btn,
 .nitro-catalog-window button.nitro-catalog-preview-btn *,
 .nitro-catalog-window button.nitro-catalog-preview-btn svg {
-    border-radius: 0 !important;
-    box-shadow: none !important;
+    border-radius: 4px !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-button:hover,
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button:hover,
 .nitro-catalog-window button.nitro-catalog-preview-btn:hover {
-    border-image-source: var(--habbo-slice-button-hover) !important;
+    filter: brightness(1.04);
+    background: linear-gradient(180deg, #ffffff 0%, #e0eff6 44%, #b8d5e4 45%, #e8f3f8 100%) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-button:active,
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button:active,
 .nitro-catalog-window button.nitro-catalog-preview-btn:active {
-    border-image-source: var(--habbo-slice-button-pressed) !important;
+    filter: brightness(0.96);
+    background: linear-gradient(180deg, #a8c9d8 0%, #d4e6ef 55%, #f2f8fb 100%) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-button.pointer-events-none,
 .nitro-catalog-window button.nitro-catalog-swf-spinner-button:disabled,
 .nitro-catalog-window button.nitro-catalog-preview-btn:disabled {
-    border-image-source: var(--habbo-slice-button-disabled) !important;
+    opacity: 0.55 !important;
     color: #888 !important;
-    opacity: 1 !important;
+    cursor: not-allowed !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-buy-button {

@@ -713,7 +713,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = (prop
                                 )}
                                 {isModerator && (
                                     <button
-                                        className="w-full text-white text-xs bg-[#1e7295] hover:bg-[#1a617f] border border-[#ffffff33] rounded px-2 py-1 cursor-pointer transition-colors"
+                                        className="w-full text-white text-xs bg-[#418db0] hover:bg-[#3789a8] border border-[#ffffff33] rounded px-2 py-1 cursor-pointer transition-colors"
                                         onClick={() => {
                                             const roomObject = GetRoomEngine().getRoomObject(
                                                 roomSession.roomId,

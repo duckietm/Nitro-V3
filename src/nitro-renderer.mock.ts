@@ -261,6 +261,7 @@ export class MentionsListEvent extends MessageEvent {}
 // ---------------------------------------------------------------------------
 
 export class CanCreateRoomEventEvent extends MessageEvent {}
+export class CategoriesWithVisitorCountEvent extends MessageEvent {}
 export class FavouriteChangedEvent extends MessageEvent {}
 export class FavouritesEvent extends MessageEvent {}
 export class FlatCreatedEvent extends MessageEvent {}

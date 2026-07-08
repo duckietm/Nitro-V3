@@ -12,7 +12,7 @@ export const LayoutProgressBar: FC<LayoutProgressBarProps> = (props) => {
 
     const getClassNames = useMemo(() => {
         const newClassNames: string[] = [
-            'border border-[solid] border-[#fff] p-[2px] h-[20px] rounded-[.25rem] overflow-hidden bg-[#1E7295]        ',
+            'border border-[solid] border-[#fff] p-[2px] h-[20px] rounded-[.25rem] overflow-hidden bg-[#418db0]        ',
             'text-white'
         ];
 
