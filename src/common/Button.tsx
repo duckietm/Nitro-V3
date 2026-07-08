@@ -22,7 +22,7 @@ export const Button: FC<ButtonProps> = (props) => {
         if (variant) {
             if (variant == 'primary')
                 newClassNames.push(
-                    'text-white bg-[#1e7295] border-[#1e7295] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#1a617f] hover:border-[#185b77]'
+                    'text-white bg-[#418db0] border-[#2e6f8a] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#3789a8] hover:border-[#2e6f8a]'
                 );
 
             if (variant == 'success')
@@ -47,7 +47,7 @@ export const Button: FC<ButtonProps> = (props) => {
 
             if (variant == 'secondary')
                 newClassNames.push(
-                    'text-white  bg-[#185d79] border-[#185d79] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a]  hover:text-white hover:bg-[#144f67] hover:border-[#134a61]'
+                    'text-[#151515] bg-[#d4e6ef] border-[#376275] [box-shadow:inset_0_2px_#ffffff80,inset_0_-2px_#00000014,0_1px_#00000014] hover:text-[#151515] hover:bg-[#e0eff6] hover:border-[#376275]'
                 );
 
             if (variant == 'dark')
@@ -57,7 +57,7 @@ export const Button: FC<ButtonProps> = (props) => {
 
             if (variant == 'gray')
                 newClassNames.push(
-                    'text-white bg-[#1e7295] border-[#1e7295] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#1a617f] hover:border-[#185b77]'
+                    'text-white bg-[#418db0] border-[#2e6f8a] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#3789a8] hover:border-[#2e6f8a]'
                 );
         }
 

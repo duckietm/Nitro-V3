@@ -1,5 +1,5 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { FaBars, FaCog, FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa';
 import { CatalogType, GetConfigurationValue, LocalizeShortNumber, LocalizeText, SanitizeHtml } from '../../api';
 import { LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
@@ -15,6 +15,7 @@ import { CatalogNavigationView } from './views/navigation/CatalogNavigationView'
 import { CatalogSearchView } from './views/page/common/CatalogSearchView';
 import { GetCatalogLayout } from './views/page/layout/GetCatalogLayout';
 import { MarketplacePostOfferView } from './views/page/layout/marketplace/MarketplacePostOfferView';
+import { parseCatalogTabLabel, useCatalogWindowWidth } from './useCatalogWindowWidth';
 
 const CatalogViewInner: FC<{}> = () => {
     const { rootNode = null, currentPage = null, searchResult = null } = useCatalogData();
@@ -44,7 +45,31 @@ const CatalogViewInner: FC<{}> = () => {
     // Strip SWF-style suffixes like "(BC)" or "(Hot)" but keep the
     // pageId hint the gameserver appends when the viewer has
     // ACC_CATALOG_IDS - that's a pure-numeric "(6)" trailer.
-    const getSwfTabLabel = (label: string) => (label || '').replace(/\s*\(\D[^)]*\)\s*$/g, '').trim();
+    const stripSwfTabSuffix = (label: string) => (label || '').replace(/\s*\(\D[^)]*\)\s*$/g, '').trim();
+    const getSwfTabLabel = (label: string) => stripSwfTabSuffix(parseCatalogTabLabel(label).name);
+    const tabsShellRef = useRef<HTMLDivElement>(null);
+
+    const visibleRootTabCount = useMemo(() => {
+        if (!rootNode?.children?.length) return 0;
+
+        return rootNode.children.filter((child, index) => {
+            if (!adminMode && !child.isVisible) return false;
+            if (!adminMode && index === 0 && getSwfTabLabel(child.localization).toLowerCase().includes('rari')) return false;
+
+            return true;
+        }).length;
+    }, [adminMode, rootNode]);
+
+    const catalogWindowStyle = useCatalogWindowWidth(
+        tabsShellRef,
+        isVisible,
+        visibleRootTabCount,
+        adminMode,
+        isMod,
+        currentType,
+        rootNode?.pageId,
+        activeCatalogNode?.pageId
+    );
 
     useEffect(() => {
         const getCatalogTypeFromLink = (type?: string) => {
@@ -116,7 +141,13 @@ const CatalogViewInner: FC<{}> = () => {
     return (
         <>
             {isVisible && (
-                <NitroCardView classNames={['nitro-catalog-window']} isResizable={false} uniqueKey="catalog">
+                <NitroCardView
+                    classNames={['nitro-catalog-window']}
+                    dragStyle={catalogWindowStyle}
+                    isResizable={false}
+                    style={catalogWindowStyle}
+                    uniqueKey="catalog"
+                >
                     <NitroCardHeaderView
                         className={currentType === CatalogType.BUILDER ? 'builders-club-card-header' : ''}
                         headerText={LocalizeText('catalog.title')}
@@ -176,7 +207,7 @@ const CatalogViewInner: FC<{}> = () => {
                             {loading ? '...' : 'PUBLISH'}
                         </button>
                     )}
-                    <NitroCardTabsView classNames={['nitro-catalog-tabs-shell']} justifyContent="start">
+                    <NitroCardTabsView classNames={['nitro-catalog-tabs-shell']} innerRef={tabsShellRef} justifyContent="start">
                         {rootNode &&
                             rootNode.children.length > 0 &&
                             rootNode.children.map((child, index) => {
@@ -184,11 +215,13 @@ const CatalogViewInner: FC<{}> = () => {
                                 if (!adminMode && index === 0 && getSwfTabLabel(child.localization).toLowerCase().includes('rari')) return null;
 
                                 const isHidden = !child.isVisible;
+                                const tabLabel = parseCatalogTabLabel(child.localization);
 
                                 return (
                                     <NitroCardTabsItemView
                                         key={`${child.pageId}-${child.pageName}-${index}`}
                                         isActive={child.isActive}
+                                        title={child.localization}
                                         onClick={() => {
                                             if (searchResult) setSearchResult(null);
 
@@ -197,7 +230,10 @@ const CatalogViewInner: FC<{}> = () => {
                                     >
                                         <div className={`flex items-center gap-1 ${isHidden ? 'opacity-40' : ''}`}>
                                             {child.iconId > 0 && <CatalogIconView icon={child.iconId} className="nitro-catalog-tab-icon" />}
-                                            <span className="nitro-catalog-tab-label truncate">{getSwfTabLabel(child.localization)}</span>
+                                            <span className="nitro-catalog-tab-label">{getSwfTabLabel(child.localization)}</span>
+                                            {adminMode && tabLabel.count !== null && (
+                                                <span className="nitro-catalog-tab-count">({LocalizeShortNumber(tabLabel.count)})</span>
+                                            )}
                                             {adminMode && isHidden && <FaEyeSlash className="text-[8px] text-danger ml-1" />}
                                             {adminMode && (
                                                 <div className="flex items-center gap-0.5 ml-1" onClick={(e) => e.stopPropagation()}>

@@ -145,14 +145,14 @@ export const InventoryPrefixView: FC<{}> = () => {
             <div className="shrink-0 rounded border border-black/10 bg-[#C9C9C9] p-1">
                 <div className="flex items-center gap-2">
                     <button
-                        className={`rounded px-3 py-1.5 text-[11px] font-bold transition-colors ${activeTab === 'prefixes' ? 'bg-[#1e7295] text-white' : 'bg-white text-black'}`}
+                        className={`rounded px-3 py-1.5 text-[11px] font-bold transition-colors ${activeTab === 'prefixes' ? 'bg-[#418db0] text-white' : 'bg-white text-black'}`}
                         type="button"
                         onClick={() => setActiveTab('prefixes')}
                     >
                         Prefixes
                     </button>
                     <button
-                        className={`rounded px-3 py-1.5 text-[11px] font-bold transition-colors ${activeTab === 'icons' ? 'bg-[#1e7295] text-white' : 'bg-white text-black'}`}
+                        className={`rounded px-3 py-1.5 text-[11px] font-bold transition-colors ${activeTab === 'icons' ? 'bg-[#418db0] text-white' : 'bg-white text-black'}`}
                         type="button"
                         onClick={() => setActiveTab('icons')}
                     >
