@@ -445,6 +445,42 @@
     height: 15px;
 }
 
+.nitro-icon.icon-room-history-enabled {
+    background: url("@/assets/images/icons/room-history-enabled.png");
+    width: 33px;
+    height: 35px;
+}
+
+.nitro-icon.icon-room-history-disabled {
+    background: url("@/assets/images/icons/room-history-disabled.png");
+    width: 33px;
+    height: 35px;
+}
+
+.nitro-icon.icon-room-history-back-enabled {
+    background: url("@/assets/images/icons/room-history-back-enabled.png");
+    width: 34px;
+    height: 31px;
+}
+
+.nitro-icon.icon-room-history-back-disabled {
+    background: url("@/assets/images/icons/room-history-back-disabled.png");
+    width: 34px;
+    height: 31px;
+}
+
+.nitro-icon.icon-room-history-next-enabled {
+    background: url("@/assets/images/icons/room-history-next-enabled.png");
+    width: 34px;
+    height: 31px;
+}
+
+.nitro-icon.icon-room-history-next-disabled {
+    background: url("@/assets/images/icons/room-history-next-disabled.png");
+    width: 34px;
+    height: 31px;
+}
+
 .nitro-icon.icon-zoom-more {
     background: url("@/assets/images/icons/zoom-more.png");
     width: 12px;
