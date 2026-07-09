@@ -1,10 +1,8 @@
 import { FC, useEffect, useState } from 'react';
-import { FaEdit, FaPen, FaTrophy } from 'react-icons/fa';
+import { FaPen, FaTrophy } from 'react-icons/fa';
 import { LocalizeText, ProductTypeEnum, SanitizeHtml } from '../../../../../api';
 import { Text } from '../../../../../common';
 import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
-import { useCatalogAdmin } from '../../../CatalogAdminContext';
-import { CatalogAdminQuickActionsView } from '../../admin/CatalogAdminQuickActionsView';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogItemGridWidgetView } from '../widgets/CatalogItemGridWidgetView';
 import { CatalogPurchaseWidgetView } from '../widgets/CatalogPurchaseWidgetView';
@@ -17,8 +15,6 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = (props) => {
     const [trophyText, setTrophyText] = useState<string>('');
     const { currentOffer = null } = useCatalogData();
     const { setPurchaseOptions = null } = useCatalogUiState();
-    const catalogAdmin = useCatalogAdmin();
-    const adminMode = catalogAdmin?.adminMode ?? false;
 
     useEffect(() => {
         if (!currentOffer) return;
@@ -36,9 +32,6 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = (props) => {
 
     return (
         <div className="flex flex-col h-full gap-2">
-            {/* Admin: quick actions */}
-            <CatalogAdminQuickActionsView />
-
             {/* Selected trophy card. shrink-0 + no overflow-hidden so the
                  Buy button stays inside the panel even when the grid below
                  holds many trophies. */}
@@ -52,7 +45,7 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = (props) => {
                                 <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 right-1 absolute" />
                             </>
                         ) : (
-                            <CatalogAddOnBadgeWidgetView className="scale-2" />
+                            <CatalogAddOnBadgeWidgetView className="scale-200" />
                         )}
                     </div>
                     {/* Info */}
@@ -60,22 +53,7 @@ export const CatalogLayoutTrophiesView: FC<CatalogLayoutProps> = (props) => {
                         <div className="flex items-center gap-1.5">
                             <FaTrophy className="text-warning text-[11px]" />
                             <Text className="text-[12px]! font-bold text-dark leading-tight">{currentOffer.localizationName}</Text>
-                            {adminMode && (
-                                <FaEdit
-                                    className="text-primary text-[11px] cursor-pointer hover:text-dark transition-colors shrink-0"
-                                    title={LocalizeText('catalog.admin.offer.edit')}
-                                    onClick={() => catalogAdmin.setEditingOffer(currentOffer)}
-                                />
-                            )}
                         </div>
-                        {adminMode && (
-                            <div className="flex items-center gap-1 flex-wrap">
-                                <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">
-                                    ID: {currentOffer.product.productClassId}
-                                </span>
-                                <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: {currentOffer.offerId}</span>
-                            </div>
-                        )}
                         <CatalogTotalPriceWidget />
                         {!canPurchase && <span className="text-[9px] text-warning italic">{LocalizeText('catalog.trophies.write.hint')}</span>}
                         <div className="flex gap-1.5">
