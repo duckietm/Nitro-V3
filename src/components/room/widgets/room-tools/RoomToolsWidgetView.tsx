@@ -1,11 +1,38 @@
 import { CreateLinkEvent, GetGuestRoomResultEvent, GetRoomEngine, NavigatorSearchComposer, RateFlatMessageComposer } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { GetConfigurationValue, LocalizeText, SendMessageComposer, SetLocalStorage, TryVisitRoom } from '../../../../api';
 import { Text } from '../../../../common';
 import { useMessageEvent, useNavigatorData, useRoom } from '../../../../hooks';
 import { classNames } from '../../../../layout';
 import { getRegisteredPlugins, INitroPlugin, subscribePlugins } from '../../../plugins/NitroPluginApi';
+
+interface RoomHistoryEntry {
+    roomId: number;
+    roomName: string;
+}
+
+const ROOM_HISTORY_KEY = 'nitro.room.history';
+const ROOM_HISTORY_MAX = 10;
+const ROOM_NAME_MAX = 80;
+
+const readRoomHistory = (): RoomHistoryEntry[] => {
+    try {
+        const raw = window.localStorage.getItem(ROOM_HISTORY_KEY);
+        if (!raw) return [];
+
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+
+        return parsed
+            .filter((entry) => entry && Number.isInteger(entry.roomId) && entry.roomId > 0 && typeof entry.roomName === 'string')
+            .slice(-ROOM_HISTORY_MAX)
+            .map((entry) => ({ roomId: entry.roomId, roomName: entry.roomName.slice(0, ROOM_NAME_MAX) }));
+    } catch {
+        return [];
+    }
+};
 
 export const RoomToolsWidgetView: FC<{}> = (props) => {
     const [areBubblesMuted, setAreBubblesMuted] = useState(false);
@@ -15,12 +42,12 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
     const [roomTags, setRoomTags] = useState<string[]>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenHistory, setIsOpenHistory] = useState<boolean>(false);
-    const [roomHistory, setRoomHistory] = useState<{ roomId: number; roomName: string }[]>([]);
+    const [isHistoryControlsOpen, setIsHistoryControlsOpen] = useState<boolean>(false);
+    const [roomHistory, setRoomHistory] = useState<RoomHistoryEntry[]>([]);
     const [plugins, setPlugins] = useState<INitroPlugin[]>([]);
     const { navigatorData } = useNavigatorData();
     const { roomSession = null } = useRoom();
 
-    // Subscribe to external plugin changes
     useEffect(() => {
         setPlugins(getRegisteredPlugins());
         return subscribePlugins(() => setPlugins(getRegisteredPlugins()));
@@ -76,15 +103,22 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
         }
     };
 
-    const onChangeRoomHistory = (roomId: number, roomName: string) => {
-        let newStorage = JSON.parse(window.localStorage.getItem('nitro.room.history') || '[]');
-        if (newStorage.some((room: { roomId: number }) => room.roomId === roomId)) return;
+    const currentRoomHistoryIndex = navigatorData ? roomHistory.findIndex((room) => room.roomId === navigatorData.currentRoomId) : -1;
+    const hasHistory = roomHistory.length > 0;
+    const canGoBack = currentRoomHistoryIndex > 0;
+    const canGoNext = currentRoomHistoryIndex !== -1 && currentRoomHistoryIndex < roomHistory.length - 1;
 
-        if (newStorage.length >= 10) newStorage.shift();
-        newStorage = [...newStorage, { roomId, roomName }];
+    const onChangeRoomHistory = (roomId: number, roomName: string) => {
+        if (!Number.isInteger(roomId) || roomId <= 0) return;
+
+        let newStorage = readRoomHistory();
+        if (newStorage.some((room) => room.roomId === roomId)) return;
+
+        if (newStorage.length >= ROOM_HISTORY_MAX) newStorage.shift();
+        newStorage = [...newStorage, { roomId, roomName: (roomName || '').slice(0, ROOM_NAME_MAX) }];
 
         setRoomHistory(newStorage);
-        SetLocalStorage('nitro.room.history', newStorage);
+        SetLocalStorage(ROOM_HISTORY_KEY, newStorage);
     };
 
     useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, (event) => {
@@ -104,58 +138,96 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
     }, [roomName, roomOwner, roomTags]);
 
     useEffect(() => {
-        setRoomHistory(JSON.parse(window.localStorage.getItem('nitro.room.history') || '[]'));
+        setRoomHistory(readRoomHistory());
     }, []);
+
+    const tools = [
+        { action: 'settings', icon: 'icon-cog', label: LocalizeText('room.settings.button.text') },
+        { action: 'zoom', icon: isZoomedIn ? 'icon-zoom-more' : 'icon-zoom-less', label: LocalizeText('room.zoom.button.text') },
+        { action: 'chat_history', icon: 'icon-chat-history', label: LocalizeText('room.chathistory.button.text') },
+        {
+            action: 'hiddenbubbles',
+            icon: areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble',
+            label: areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')
+        },
+        ...(navigatorData.canRate ? [{ action: 'like_room', icon: 'icon-like-room', label: LocalizeText('room.like.button.text') }] : []),
+        { action: 'toggle_room_link', icon: 'icon-room-link', label: LocalizeText('navigator.embed.caption') }
+    ];
 
     return (
         <div className="flex space-x-2 nitro-room-tools-container">
-            <div className="flex flex-col items-center justify-center p-2 nitro-room-tools">
-                <div
-                    className="cursor-pointer nitro-icon icon-cog"
-                    title={LocalizeText('room.settings.button.text')}
-                    onClick={() => handleToolClick('settings')}
-                />
-                <div
-                    className={classNames('cursor-pointer', 'nitro-icon', !isZoomedIn && 'icon-zoom-less', isZoomedIn && 'icon-zoom-more')}
-                    title={LocalizeText('room.zoom.button.text')}
-                    onClick={() => handleToolClick('zoom')}
-                />
-                <div
-                    className="cursor-pointer nitro-icon icon-chat-history"
-                    title={LocalizeText('room.chathistory.button.text')}
-                    onClick={() => handleToolClick('chat_history')}
-                />
-                <div
-                    className={classNames('cursor-pointer', 'nitro-icon', areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble')}
-                    title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')}
-                    onClick={() => handleToolClick('hiddenbubbles')}
-                />
-
-                {navigatorData.canRate && (
+            <div className={classNames('flex flex-col justify-center p-2 nitro-room-tools', isHistoryControlsOpen ? 'items-start' : 'items-center')}>
+                {tools.map((tool) => (
                     <div
-                        className="cursor-pointer nitro-icon icon-like-room"
-                        title={LocalizeText('room.like.button.text')}
-                        onClick={() => handleToolClick('like_room')}
-                    />
-                )}
-                <div
-                    className="cursor-pointer nitro-icon icon-room-link"
-                    title={LocalizeText('navigator.embed.caption')}
-                    onClick={() => handleToolClick('toggle_room_link')}
-                />
-                <div
-                    className="cursor-pointer nitro-icon icon-room-history-enabled"
-                    title={LocalizeText('room.history.button.tooltip')}
-                    onClick={() => handleToolClick('room_history')}
-                />
+                        key={tool.action}
+                        className="flex items-center gap-2 cursor-pointer room-tool-row"
+                        title={tool.label}
+                        onClick={() => handleToolClick(tool.action)}
+                    >
+                        <div className="flex justify-center w-6 shrink-0">
+                            <div className={classNames('nitro-icon', tool.icon)} />
+                        </div>
+                        {isHistoryControlsOpen && (
+                            <Text noWrap small variant="white" className="room-tool-label">
+                                {tool.label}
+                            </Text>
+                        )}
+                    </div>
+                ))}
                 {plugins.map((plugin) => (
                     <div
                         key={plugin.name}
-                        className={`cursor-pointer nitro-icon ${plugin.icon || 'icon-cog'}`}
+                        className="flex items-center gap-2 cursor-pointer room-tool-row"
                         title={plugin.label}
                         onClick={() => plugin.onOpen()}
-                    />
+                    >
+                        <div className="flex justify-center w-6 shrink-0">
+                            <div className={classNames('nitro-icon', plugin.icon || 'icon-cog')} />
+                        </div>
+                        {isHistoryControlsOpen && (
+                            <Text noWrap small variant="white" className="room-tool-label">
+                                {plugin.label}
+                            </Text>
+                        )}
+                    </div>
                 ))}
+                <div
+                    className="flex items-center justify-center mt-1 cursor-pointer room-history-fold-toggle"
+                    title={LocalizeText('room.history.button.tooltip')}
+                    onClick={() =>
+                        setIsHistoryControlsOpen((prev) => {
+                            if (prev) setIsOpenHistory(false);
+                            return !prev;
+                        })
+                    }
+                >
+                    {isHistoryControlsOpen ? <FaChevronUp className="fa-icon" /> : <FaChevronDown className="fa-icon" />}
+                </div>
+                {isHistoryControlsOpen && (
+                    <div className="flex items-center justify-center gap-1">
+                        <div
+                            className={classNames(
+                                'nitro-icon',
+                                canGoBack ? 'cursor-pointer icon-room-history-back-enabled' : 'icon-room-history-back-disabled'
+                            )}
+                            title={LocalizeText('room.history.button.back.tooltip')}
+                            onClick={() => canGoBack && handleToolClick('room_history_back')}
+                        />
+                        <div
+                            className={classNames('nitro-icon', hasHistory ? 'cursor-pointer icon-room-history-enabled' : 'icon-room-history-disabled')}
+                            title={LocalizeText('room.history.button.tooltip')}
+                            onClick={() => hasHistory && handleToolClick('room_history')}
+                        />
+                        <div
+                            className={classNames(
+                                'nitro-icon',
+                                canGoNext ? 'cursor-pointer icon-room-history-next-enabled' : 'icon-room-history-next-disabled'
+                            )}
+                            title={LocalizeText('room.history.button.forward.tooltip')}
+                            onClick={() => canGoNext && handleToolClick('room_history_next')}
+                        />
+                    </div>
+                )}
             </div>
             <div className="flex flex-col justify-center">
                 <AnimatePresence>
@@ -204,8 +276,9 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
                                     <Text
                                         key={history.roomId}
                                         bold={history.roomId === navigatorData.currentRoomId}
-                                        variant={history.roomId === navigatorData.currentRoomId ? 'white' : 'muted'}
+                                        variant="white"
                                         pointer
+                                        className={classNames('room-history-item', history.roomId === navigatorData.currentRoomId && 'room-history-item--current')}
                                         onClick={() => TryVisitRoom(history.roomId)}
                                     >
                                         {history.roomName}

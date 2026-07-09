@@ -45,6 +45,38 @@
         }
     }
 
+    .room-tool-row {
+        width: 100%;
+
+        .room-tool-label {
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        &:hover .room-tool-label {
+            color: #fff;
+            text-decoration: underline;
+        }
+    }
+
+    .room-history-fold-toggle {
+        width: 34px;
+        height: 16px;
+        color: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 6px;
+
+        .fa-icon {
+            width: 12px;
+            height: 12px;
+        }
+
+        &:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.16);
+        }
+    }
+
     .nitro-room-tools {
         background: rgba(10, 10, 12, 0.58);
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -108,9 +140,35 @@
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
         transition: all .2s ease;
         width: 150px;
-        overflow: hidden;
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
+        overflow-x: hidden;
         z-index: 3;
         border-radius: 14px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 3px;
+        }
+
+        .room-history-item {
+            color: rgba(255, 255, 255, 0.72);
+
+            &:hover {
+                color: #fff;
+                text-decoration: underline;
+            }
+        }
+
+        .room-history-item--current {
+            color: #fff;
+        }
     }
 
     .nitro-room-tools-info {
@@ -125,7 +183,8 @@
 
 .nitro-room-tools-history {
     position: absolute;
-    top: 0;
+    bottom: 0;
+    top: auto;
     left: calc(100% + 4px);
     margin-left: 0;
     height: auto;
