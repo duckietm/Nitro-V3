@@ -100,9 +100,17 @@ const useAvatarInfoWidgetState = () => {
     };
 
     const getObjectName = (objectId: number, category: number) => {
-        const name = AvatarInfoUtilities.getObjectName(objectId, category);
+        let name = AvatarInfoUtilities.getObjectName(objectId, category);
 
         if (!name) return;
+
+        // getObjectName has no friend context; enrich it so the click-to-show-name
+        // bubble also shows the friend relationship icon.
+        if (category === RoomObjectCategory.UNIT) {
+            const friend = friends.find((friend) => friend.id === name.id);
+
+            if (friend) name = new AvatarInfoName(name.roomIndex, name.category, name.id, name.name, name.userType, true, friend.relationshipStatus);
+        }
 
         setActiveNameBubble(name);
 
@@ -174,8 +182,12 @@ const useAvatarInfoWidgetState = () => {
         event.addedUsers.forEach((user) => {
             if (user.webID === GetSessionDataManager().userId || user.type !== RoomObjectType.USER) return;
 
-            if (friends.find((friend) => friend.id === user.webID)) {
-                addedNameBubbles.push(new AvatarInfoName(user.roomIndex, RoomObjectCategory.UNIT, user.webID, user.name, user.type, true));
+            const friend = friends.find((friend) => friend.id === user.webID);
+
+            if (friend) {
+                addedNameBubbles.push(
+                    new AvatarInfoName(user.roomIndex, RoomObjectCategory.UNIT, user.webID, user.name, user.type, true, friend.relationshipStatus)
+                );
             }
         });
 

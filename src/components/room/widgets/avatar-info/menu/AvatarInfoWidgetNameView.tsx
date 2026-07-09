@@ -1,6 +1,6 @@
 import { GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, useMemo } from 'react';
-import { AvatarInfoName, SanitizeHtml } from '../../../../../api';
+import { AvatarInfoName, MessengerFriend, SanitizeHtml } from '../../../../../api';
 import { ContextMenuView } from '../../context-menu/ContextMenuView';
 
 interface AvatarInfoWidgetNameViewProps {
@@ -19,6 +19,19 @@ export const AvatarInfoWidgetNameView: FC<AvatarInfoWidgetNameViewProps> = (prop
         return newClassNames;
     }, [nameInfo]);
 
+    const relationIconClass = useMemo(() => {
+        switch (nameInfo.relationshipStatus) {
+            case MessengerFriend.RELATIONSHIP_HEART:
+                return 'icon-heart';
+            case MessengerFriend.RELATIONSHIP_SMILE:
+                return 'icon-smile';
+            case MessengerFriend.RELATIONSHIP_BOBBA:
+                return 'icon-bobba';
+            default:
+                return null;
+        }
+    }, [nameInfo]);
+
     return (
         <ContextMenuView
             category={nameInfo.category}
@@ -28,7 +41,10 @@ export const AvatarInfoWidgetNameView: FC<AvatarInfoWidgetNameViewProps> = (prop
             userType={nameInfo.userType}
             onClose={onClose}
         >
-            <div className="text-shadow" dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${nameInfo.name}`) }}></div>
+            <div className="flex items-center justify-center gap-1">
+                {relationIconClass && <div className={`nitro-friends-spritesheet ${relationIconClass}`} />}
+                <div className="text-shadow" dangerouslySetInnerHTML={{ __html: SanitizeHtml(`${nameInfo.name}`) }}></div>
+            </div>
         </ContextMenuView>
     );
 };
