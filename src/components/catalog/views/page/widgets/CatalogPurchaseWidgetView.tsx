@@ -1,28 +1,9 @@
 import { CreateLinkEvent, PurchaseFromCatalogComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-    BuilderFurniPlaceableStatus,
-    CatalogPurchaseState,
-    CatalogType,
-    DispatchUiEvent,
-    GetClubMemberLevel,
-    LocalizeText,
-    LocalStorageKeys,
-    NotificationBubbleType,
-    Offer,
-    ProductTypeEnum,
-    SendMessageComposer
-} from '../../../../../api';
+import { BuilderFurniPlaceableStatus, CatalogPurchaseState, CatalogType, DispatchUiEvent, GetClubMemberLevel, LocalizeText, NotificationBubbleType, Offer, ProductTypeEnum, SendMessageComposer } from '../../../../../api';
 import { Button, LayoutLoadingSpinnerView, Text } from '../../../../../common';
-import {
-    CatalogEvent,
-    CatalogInitGiftEvent,
-    CatalogPurchasedEvent,
-    CatalogPurchaseFailureEvent,
-    CatalogPurchaseNotAllowedEvent,
-    CatalogPurchaseSoldOutEvent
-} from '../../../../../events';
-import { useCatalogActions, useCatalogData, useCatalogUiState, useLocalStorage, useNotification, usePurse, useUiEvent } from '../../../../../hooks';
+import { CatalogEvent, CatalogInitGiftEvent, CatalogPurchasedEvent, CatalogPurchaseFailureEvent, CatalogPurchaseNotAllowedEvent, CatalogPurchaseSoldOutEvent } from '../../../../../events';
+import { useCatalogActions, useCatalogData, useCatalogSkipPurchaseConfirmation, useCatalogUiState, useNotification, usePurse, useUiEvent } from '../../../../../hooks';
 
 interface CatalogPurchaseWidgetViewProps {
     noGiftOption?: boolean;
@@ -36,7 +17,7 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = (pr
     const [builderPlaceableRefreshTick, setBuilderPlaceableRefreshTick] = useState(0);
     const [purchaseWillBeGift, setPurchaseWillBeGift] = useState(false);
     const [purchaseState, setPurchaseState] = useState(CatalogPurchaseState.NONE);
-    const [catalogSkipPurchaseConfirmation, setCatalogSkipPurchaseConfirmation] = useLocalStorage(LocalStorageKeys.CATALOG_SKIP_PURCHASE_CONFIRMATION, false);
+    const [catalogSkipPurchaseConfirmation] = useCatalogSkipPurchaseConfirmation();
     const { currentOffer = null, currentPage = null } = useCatalogData();
     const { currentType = CatalogType.NORMAL, purchaseOptions = null, setPurchaseOptions = null, setCatalogPlaceMultipleObjects = null } = useCatalogUiState();
     const { requestOfferToMover = null, getBuilderFurniPlaceableStatus = null, getNodesByOfferId = null } = useCatalogActions();
@@ -139,17 +120,8 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = (pr
         };
     }, [purchaseState]);
 
-    // Builders-club state — derived + hooks MUST run unconditionally on
-    // every render so the hook order stays stable even when currentOffer
-    // is null (the `if(!currentOffer) return null` below would otherwise
-    // hide the useMemo/useEffect block from the first render and React
-    // would flag "Rendered more hooks than during the previous render").
     const isBuildersClubOffer = currentType === CatalogType.BUILDER;
-    const isBuildersClubPlaceable =
-        isBuildersClubOffer &&
-        !!currentOffer &&
-        !!currentOffer.product &&
-        (currentOffer.product.productType === ProductTypeEnum.FLOOR || currentOffer.product.productType === ProductTypeEnum.WALL);
+    const isBuildersClubPlaceable = isBuildersClubOffer && !!currentOffer && !!currentOffer.product && (currentOffer.product.productType === ProductTypeEnum.FLOOR || currentOffer.product.productType === ProductTypeEnum.WALL);
     const builderPlaceableStatus = useMemo(() => {
         if (!isBuildersClubPlaceable || !getBuilderFurniPlaceableStatus || !currentOffer) return BuilderFurniPlaceableStatus.OKAY;
 
@@ -173,6 +145,8 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = (pr
     }, [isBuildersClubPlaceable]);
 
     if (!currentOffer) return null;
+
+    const isLimitedEditionOffer = !!(currentOffer.product && currentOffer.product.isUniqueLimitedItem);
 
     const PurchaseButton = () => {
         const swfButtonClassNames = ['nitro-catalog-swf-button'];
@@ -291,7 +265,7 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = (pr
                         classNames={[...swfButtonClassNames, 'nitro-catalog-swf-buy-button']}
                         variant="success"
                         disabled={purchaseOptions.extraParamRequired && (!purchaseOptions.extraData || !purchaseOptions.extraData.length)}
-                        onClick={(event) => setPurchaseState(CatalogPurchaseState.CONFIRM)}
+                        onClick={(event) => (catalogSkipPurchaseConfirmation && !isLimitedEditionOffer ? purchase() : setPurchaseState(CatalogPurchaseState.CONFIRM))}
                     >
                         {LocalizeText('catalog.purchase_confirmation.' + (currentOffer.isRentOffer ? 'rent' : 'buy'))}
                     </Button>

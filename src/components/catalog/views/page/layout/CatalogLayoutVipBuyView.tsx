@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CatalogPurchaseState, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { AutoGrid, Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogPurchasedEvent, CatalogPurchaseFailureEvent } from '../../../../../events';
-import { useCatalogData, useClubOffers, useMessageEvent, usePurse, useUiEvent, useUserDataSnapshot } from '../../../../../hooks';
+import { useCatalogData, useCatalogSkipPurchaseConfirmation, useClubOffers, useMessageEvent, usePurse, useUiEvent, useUserDataSnapshot } from '../../../../../hooks';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
 const VIP_WINDOW_ID = 1;
@@ -11,6 +11,7 @@ const VIP_WINDOW_ID = 1;
 export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = (props) => {
     const [pendingOffer, setPendingOffer] = useState<ClubOfferData>(null);
     const [purchaseState, setPurchaseState] = useState(CatalogPurchaseState.NONE);
+    const [catalogSkipPurchaseConfirmation] = useCatalogSkipPurchaseConfirmation();
     const [giftMode, setGiftMode] = useState(false);
     const [giftRecipient, setGiftRecipient] = useState('');
     const [giftError, setGiftError] = useState<string | null>(null);
@@ -188,12 +189,12 @@ export const CatalogLayoutVipBuyView: FC<CatalogLayoutProps> = (props) => {
             case CatalogPurchaseState.NONE:
             default:
                 return (
-                    <Button disabled={giftBlocked} fullWidth variant="success" onClick={() => setPurchaseState(CatalogPurchaseState.CONFIRM)}>
+                    <Button disabled={giftBlocked} fullWidth variant="success" onClick={() => (catalogSkipPurchaseConfirmation ? purchaseSubscription() : setPurchaseState(CatalogPurchaseState.CONFIRM))}>
                         {buyLabel}
                     </Button>
                 );
         }
-    }, [pendingOffer, purchaseState, purchaseSubscription, getCurrencyAmount, giftMode, giftRecipient, isSelfGift]);
+    }, [pendingOffer, purchaseState, purchaseSubscription, getCurrencyAmount, giftMode, giftRecipient, isSelfGift, catalogSkipPurchaseConfirmation]);
 
     return (
         <Grid>

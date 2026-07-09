@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CatalogPurchaseState, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../api';
 import { Button, Column, Flex, Grid, LayoutCurrencyIcon, LayoutGridItem, LayoutLoadingSpinnerView, Text } from '../../../../../common';
 import { CatalogEvent, CatalogPurchasedEvent, CatalogPurchaseFailureEvent } from '../../../../../events';
-import { useCatalogData, useClubOffers, usePurse, useUiEvent } from '../../../../../hooks';
+import { useCatalogData, useCatalogSkipPurchaseConfirmation, useClubOffers, usePurse, useUiEvent } from '../../../../../hooks';
 import { CatalogHeaderView } from '../../catalog-header/CatalogHeaderView';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 
@@ -13,6 +13,7 @@ const BUILDERS_CLUB_ADDONS_WINDOW_ID = 3;
 export const CatalogLayoutBuildersClubBuyView: FC<CatalogLayoutProps> = () => {
     const [pendingOffer, setPendingOffer] = useState<ClubOfferData>(null);
     const [purchaseState, setPurchaseState] = useState(CatalogPurchaseState.NONE);
+    const [catalogSkipPurchaseConfirmation] = useCatalogSkipPurchaseConfirmation();
     const { currentPage = null } = useCatalogData();
     const { getCurrencyAmount = null } = usePurse();
     const isPurchasingRef = useRef(false);
@@ -121,12 +122,12 @@ export const CatalogLayoutBuildersClubBuyView: FC<CatalogLayoutProps> = () => {
             case CatalogPurchaseState.NONE:
             default:
                 return (
-                    <Button fullWidth variant="success" onClick={() => setPurchaseState(CatalogPurchaseState.CONFIRM)}>
+                    <Button fullWidth variant="success" onClick={() => (catalogSkipPurchaseConfirmation ? purchaseOffer() : setPurchaseState(CatalogPurchaseState.CONFIRM))}>
                         {LocalizeText('buy')}
                     </Button>
                 );
         }
-    }, [getCurrencyAmount, pendingOffer, purchaseOffer, purchaseState]);
+    }, [getCurrencyAmount, pendingOffer, purchaseOffer, purchaseState, catalogSkipPurchaseConfirmation]);
 
     const pageDescription = useMemo(() => {
         if (!currentPage) return '';
