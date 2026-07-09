@@ -1,9 +1,8 @@
 import { MouseEventType } from '@nitrots/nitro-renderer';
 import { FC, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { FaHeart } from 'react-icons/fa';
 import { CatalogType, GetConfigurationValue, IPurchasableOffer, Offer, ProductTypeEnum } from '../../../../../api';
 import { LayoutAvatarImageView, LayoutGridItem, LayoutGridItemProps } from '../../../../../common';
-import { useCatalogActions, useCatalogFavorites, useCatalogUiState, useInventoryFurni } from '../../../../../hooks';
+import { useCatalogActions, useCatalogUiState, useInventoryFurni } from '../../../../../hooks';
 
 interface CatalogGridOfferViewProps extends LayoutGridItemProps {
     offer: IPurchasableOffer;
@@ -17,8 +16,6 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = (props) => {
     const { requestOfferToMover = null } = useCatalogActions();
     const { currentType = CatalogType.NORMAL } = useCatalogUiState();
     const { isVisible = false } = useInventoryFurni();
-    const { isFavoriteOffer, toggleFavoriteOffer } = useCatalogFavorites();
-    const isFav = offer ? isFavoriteOffer(offer.offerId) : false;
     const tileRef = useRef<HTMLDivElement>(null);
     const [iconVisible, setIconVisible] = useState(false);
 
@@ -166,17 +163,6 @@ export const CatalogGridOfferView: FC<CatalogGridOfferViewProps> = (props) => {
                     ))}
                 </span>
             )}
-            <div
-                className={`absolute top-0 right-0 z-10 p-0.5 cursor-pointer transition-opacity duration-100 ${isFav ? 'opacity-100' : 'opacity-0 group-hover/tile:opacity-100'}`}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    toggleFavoriteOffer(offer.offerId, offer.localizationName, resolvedIconUrl);
-                }}
-                onMouseDown={(e) => e.stopPropagation()}
-            >
-                <FaHeart className={`text-[10px] drop-shadow transition-colors duration-100 ${isFav ? 'text-danger' : 'text-muted hover:text-danger'}`} />
-            </div>
         </LayoutGridItem>
         </div>
     );

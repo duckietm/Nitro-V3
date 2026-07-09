@@ -1,5 +1,5 @@
 import { NodeData, RoomControllerLevel, RoomObjectCategory, RoomObjectType } from '@nitrots/nitro-renderer';
-import { BuilderFurniPlaceableStatus, CatalogNode, CatalogType, ICatalogNode, IPurchasableOffer } from '../../api';
+import { BuilderFurniPlaceableStatus, CatalogNode, CatalogPage, CatalogType, ICatalogNode, ICatalogPage, IPurchasableOffer } from '../../api';
 
 /**
  * Pure helpers extracted from `useCatalog.ts`. Each function takes the
@@ -200,6 +200,10 @@ export const resolveBuilderFurniPlaceableStatus = (input: BuilderPlacementStatus
     }
 
     return BuilderFurniPlaceableStatus.OKAY;
+};
+
+export const replaceCatalogPageOffers = (page: ICatalogPage, offers: IPurchasableOffer[]): CatalogPage => {
+    return new CatalogPage(page.pageId, page.layoutCode, page.localization, offers, page.acceptSeasonCurrencyAsCredits, page.mode);
 };
 
 // Re-exports for the legacy categories so the call site in useCatalog

@@ -192,24 +192,12 @@
     background: linear-gradient(180deg, #58a8c5 0%, var(--catalog-admin-blue) 45%, var(--catalog-admin-blue-dark) 100%) !important;
 }
 
-.nitro-catalog-admin-modal .nitro-catalog-admin-close {
-    display: grid;
-    width: 22px;
-    height: 22px;
-    place-items: center;
-    border: 2px solid #111111;
-    border-radius: 5px;
-    background: #c63b32;
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.34);
-}
-
-.nitro-catalog-admin-modal .nitro-catalog-admin-close:hover {
-    background: #d64a40;
-    border-color: #ffffff;
-}
-
-.nitro-catalog-admin-modal .nitro-catalog-admin-close svg {
-    color: #ffffff !important;
+.nitro-catalog-admin-modal .nitro-card-title {
+    padding: 0 28px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
 }
 
 .nitro-catalog-admin-body {
@@ -257,9 +245,21 @@
 }
 
 .nitro-catalog-admin-modal :where(input[type="checkbox"]) {
-    min-height: 0;
-    accent-color: var(--catalog-admin-blue);
+    appearance: auto;
+    -webkit-appearance: checkbox;
+    width: 14px !important;
+    height: 14px !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
     box-shadow: none !important;
+    accent-color: var(--catalog-admin-blue);
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .nitro-catalog-admin-input {
@@ -326,6 +326,266 @@
     color: var(--catalog-admin-text);
     font-size: 10px;
     cursor: pointer;
+}
+
+/* ---- Admin edit modals: structured form layout ---- */
+.nitro-catalog-admin-form {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.nitro-catalog-admin-form-sheet {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--catalog-admin-border);
+    border-radius: 6px;
+    background: linear-gradient(180deg, #fffdf8 0%, var(--catalog-admin-panel) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.nitro-catalog-admin-form-scroll {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.nitro-catalog-admin-form-hero,
+.nitro-catalog-admin-page-preview-card,
+.nitro-catalog-admin-offer-preview-card {
+    display: flex;
+    flex-shrink: 0;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid #c5d5dc;
+    background: linear-gradient(180deg, #eef6fa 0%, #e2edf2 100%);
+}
+
+.nitro-catalog-admin-form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.nitro-catalog-admin-form-section + .nitro-catalog-admin-form-section {
+    border-top: 1px solid #d8d8d0;
+}
+
+.nitro-catalog-admin-form-section .nitro-catalog-admin-section-title {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+    color: var(--catalog-admin-text);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.nitro-catalog-admin-label.is-field {
+    color: var(--catalog-admin-muted);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.nitro-catalog-admin-form-grid {
+    display: grid;
+    gap: 10px 12px;
+}
+
+.nitro-catalog-admin-form-grid.is-2col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nitro-catalog-admin-form-grid.is-3col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.nitro-catalog-admin-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.nitro-catalog-admin-form-field.is-span-2 {
+    grid-column: span 2;
+}
+
+.nitro-catalog-admin-form-field.is-span-3 {
+    grid-column: span 3;
+}
+
+.nitro-catalog-admin-form-field-hint {
+    color: var(--catalog-admin-muted);
+    font-size: 9px;
+    font-weight: 400;
+}
+
+.nitro-catalog-admin-form-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    min-height: 28px;
+}
+
+.nitro-catalog-admin-form-toggle {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 28px;
+    padding: 5px 10px;
+    border: 1px solid #c9c9c0;
+    border-radius: 4px;
+    background: #f7f7f2;
+    color: var(--catalog-admin-text);
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.nitro-catalog-admin-form-toggle:has(input:checked) {
+    border-color: var(--catalog-admin-blue);
+    background: rgba(65, 141, 176, 0.12);
+    color: var(--catalog-admin-blue-dark);
+}
+
+.nitro-catalog-admin-form-toggle input[type="checkbox"] {
+    pointer-events: none;
+}
+
+.nitro-catalog-admin-form-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-top: 1px solid #d8d8d0;
+    background: linear-gradient(180deg, var(--catalog-admin-panel-alt) 0%, #deded6 100%);
+}
+
+.nitro-catalog-admin-form .nitro-catalog-admin-input,
+.nitro-catalog-admin-form-sheet .nitro-catalog-admin-input {
+    min-height: 28px;
+    padding: 5px 9px;
+    border-width: 1px;
+    font-size: 11px;
+}
+
+.nitro-catalog-admin-page-preview-icon,
+.nitro-catalog-admin-offer-preview-icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid #b8c8cf;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+}
+
+.nitro-catalog-admin-page-preview-icon img,
+.nitro-catalog-admin-offer-preview-icon img {
+    width: 36px;
+    height: 36px;
+    image-rendering: pixelated;
+    object-fit: contain;
+}
+
+.nitro-catalog-admin-page-preview-info,
+.nitro-catalog-admin-offer-preview-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.nitro-catalog-admin-page-preview-name,
+.nitro-catalog-admin-offer-preview-name {
+    overflow: hidden;
+    color: var(--catalog-admin-blue-dark);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nitro-catalog-admin-page-preview-sub,
+.nitro-catalog-admin-offer-preview-sub {
+    color: var(--catalog-admin-muted);
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+.nitro-catalog-admin-translate-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid var(--catalog-admin-border);
+    border-radius: 4px;
+    background: var(--catalog-admin-panel-alt);
+}
+
+.nitro-catalog-admin-translate-error {
+    color: var(--catalog-admin-danger);
+    font-size: 9px;
+}
+
+/* Legacy preview card rules kept for specificity elsewhere */
+.nitro-catalog-admin-offer-preview-card {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.nitro-catalog-admin-offer-preview-icon-empty {
+    color: #8aa3ad;
+    font-size: 20px;
+}
+
+.nitro-catalog-admin-offer-preview-price {
+    display: flex;
+    gap: 6px;
+    margin-top: 1px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.nitro-catalog-admin-offer-preview-price .is-credits {
+    color: #b07a17;
+}
+
+.nitro-catalog-admin-offer-preview-price .is-points {
+    color: #2c7fb0;
+}
+
+.nitro-catalog-admin-offer-preview-price .is-free {
+    color: #6a8a3a;
 }
 
 .nitro-catalog-admin-modal button {
@@ -954,6 +1214,22 @@
     background-size: contain !important;
 }
 
+/* Badge offers: the black 3D-preview stage is meant for furni room previews.
+   Badges get a light panel, a dark title and a larger, centered badge. */
+.nitro-catalog-offer-preview.is-badge {
+    background: var(--catalog-swf-panel, #e9e9e1);
+}
+
+.nitro-catalog-offer-preview.is-badge .nitro-catalog-preview-title {
+    color: #33332e !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.nitro-catalog-offer-preview.is-badge .group-badge,
+.nitro-catalog-offer-preview.is-badge > *:not(.nitro-catalog-preview-title) {
+    image-rendering: pixelated;
+}
+
 .nitro-catalog-color-grid-shell {
     max-height: 154px;
 }
@@ -1119,9 +1395,53 @@
 .nitro-catalog-grid-offer-icon {
     width: auto !important;
     height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
     image-rendering: pixelated;
     object-fit: contain;
     pointer-events: none;
+}
+
+/* ---- Limited edition (LTD) tiles in the catalog grid ----
+   The unique-bg-override placeholder carries no image here (the furni is the
+   separate icon img), but its w-full/h-full sizing lives in the flex flow and
+   eats the whole 70px tile, pushing the icon and price down/out. Take it out
+   of the flow, layer the icon between the backdrop (z-2) and the glass (z-4),
+   and overlay the price as a chip so double-currency offers can't overflow.
+   Scoped to the catalog window: inventory/trade LTD tiles are untouched. */
+.nitro-catalog-window .unique-item .unique-bg-override {
+    position: absolute !important;
+    inset: 0 !important;
+}
+
+.nitro-catalog-window .unique-item .nitro-catalog-grid-offer-icon {
+    position: relative;
+    z-index: 3;
+    /* keep the furni inside the glass, clear of the bottom counter strip */
+    max-height: calc(100% - 22px) !important;
+    margin-bottom: 8px;
+}
+
+.nitro-catalog-window .unique-item .nitro-catalog-grid-price {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    z-index: 5;
+    width: auto;
+    max-width: calc(100% - 4px);
+    justify-content: center;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.nitro-catalog-window .unique-item .nitro-catalog-grid-price.is-multi-price {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 4px;
+    row-gap: 0;
 }
 
 
@@ -1862,4 +2182,805 @@
     .nitro-catalog-grid {
         grid-template-columns: repeat(auto-fill, minmax(47px, 47px)) !important;
     }
+}
+
+/* ============================================================================
+   Catalog Admin Editor window
+   Tabbed management console (Pages / Offers / Publish) that lives in its own
+   draggable window, so the main catalog chrome stays identical in browse and
+   admin mode (the tab strip no longer carries admin controls).
+   ============================================================================ */
+.nitro-catalog-admin-manager {
+    width: 760px;
+    max-width: calc(100vw - 16px);
+}
+
+.nitro-catalog-admin-manager-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 !important;
+    background: var(--catalog-swf-bg, #d7d7cf) !important;
+}
+
+/* Tab strip under the header */
+.nitro-catalog-admin-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px 8px 0;
+    background: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #9a9a90;
+}
+
+.nitro-catalog-admin-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 12px;
+    border: 1px solid #8f8f86;
+    border-bottom: 0;
+    border-radius: 7px 7px 0 0;
+    background: linear-gradient(180deg, #f4f4ef 0%, #dcdcd3 100%);
+    color: #45453f;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.nitro-catalog-admin-tab svg {
+    width: 11px;
+    height: 11px;
+    fill: currentColor;
+}
+
+.nitro-catalog-admin-tab:hover {
+    filter: brightness(1.03);
+}
+
+.nitro-catalog-admin-tab.is-active {
+    background: linear-gradient(180deg, #6aa4d8 0%, #4d8bc9 100%);
+    border-color: #35618f;
+    color: #ffffff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.nitro-catalog-admin-tab.has-pending:not(.is-active) {
+    box-shadow: inset 0 -2px 0 #f0a318;
+}
+
+.nitro-catalog-admin-tab-count {
+    padding: 0 5px;
+    border-radius: 8px;
+    background: rgba(65, 141, 176, 0.2);
+    color: #345f74;
+    font-size: 9px;
+}
+
+.nitro-catalog-admin-tab.is-active .nitro-catalog-admin-tab-count {
+    background: rgba(0, 0, 0, 0.18);
+    color: #ffffff;
+}
+
+.nitro-catalog-admin-panel {
+    flex: 1 1 auto;
+    height: 460px;
+    min-height: 0;
+    max-height: calc(100vh - 150px);
+    padding: 8px;
+    overflow: hidden;
+}
+
+/* Shared buttons */
+.nitro-catalog-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 12px;
+    border: 1px solid #7f7f78;
+    border-radius: 5px;
+    background: linear-gradient(180deg, #ffffff 0%, #eef2f5 45%, #dbe6ee 100%);
+    color: #20201d;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.nitro-catalog-admin-btn:hover {
+    filter: brightness(1.04);
+}
+
+.nitro-catalog-admin-btn:disabled {
+    cursor: default;
+    opacity: 0.5;
+    filter: none;
+}
+
+.nitro-catalog-admin-btn svg {
+    width: 11px;
+    height: 11px;
+    fill: currentColor;
+}
+
+.nitro-catalog-admin-btn.is-primary {
+    border-color: #35618f;
+    background: linear-gradient(180deg, #6aa4d8 0%, #4d8bc9 100%);
+    color: #ffffff;
+}
+
+.nitro-catalog-admin-btn.is-danger {
+    border-color: #a2372f;
+    color: #b83b32;
+}
+
+.nitro-catalog-admin-btn.is-danger:hover {
+    background: linear-gradient(180deg, #ffffff 0%, #f6dcd9 100%);
+}
+
+.nitro-catalog-admin-btn.is-publish {
+    height: 34px;
+    padding: 0 22px;
+    border-color: #8a5b00;
+    background: linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%);
+    color: #4a2b00;
+    font-size: 12px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.nitro-catalog-admin-btn.is-publish.has-pending {
+    box-shadow: 0 0 0 2px rgba(240, 163, 24, 0.5);
+}
+
+/* Empty / placeholder states */
+.nitro-catalog-admin-placeholder {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #8a8a80;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+}
+
+.nitro-catalog-admin-placeholder.is-small {
+    padding: 12px;
+    font-size: 11px;
+}
+
+/* ---- Pages tab: sidebar tree + detail pane ---- */
+.nitro-catalog-admin-pages {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 8px;
+    height: 100%;
+    min-height: 0;
+}
+
+.nitro-catalog-admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 0;
+}
+
+.nitro-catalog-admin-search-row {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 6px;
+    align-items: center;
+}
+
+.nitro-catalog-admin-search {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 10px;
+    border: 1px solid #b7b7ae;
+    border-radius: 13px;
+    background: #ffffff;
+}
+
+.nitro-catalog-admin-search svg {
+    width: 11px;
+    height: 11px;
+    fill: #9a9a90;
+}
+
+.nitro-catalog-admin-search input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: #20201d;
+    font-size: 11px;
+    outline: none;
+}
+
+.nitro-catalog-admin-add {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid #3f8f4e;
+    border-radius: 13px;
+    background: linear-gradient(180deg, #b6e6bd 0%, #8fd39a 100%);
+    color: #1f6f2e;
+    cursor: pointer;
+}
+
+.nitro-catalog-admin-add:hover {
+    filter: brightness(1.04);
+}
+
+.nitro-catalog-admin-add:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.nitro-catalog-admin-add svg {
+    width: 11px;
+    height: 11px;
+    fill: currentColor;
+}
+
+.nitro-catalog-admin-tree {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 4px;
+    border: 1px solid #b7b7ae;
+    border-radius: 4px;
+    background: #f7f7f2;
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.07);
+    overflow-y: auto;
+}
+
+.nitro-catalog-admin-tree-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    height: 26px;
+    padding-right: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.nitro-catalog-admin-tree-row:hover {
+    background: rgba(65, 141, 176, 0.1);
+}
+
+.nitro-catalog-admin-tree-row.is-selected {
+    background: linear-gradient(180deg, #cdeafb 0%, #a9d6ef 100%);
+    box-shadow: inset 0 0 0 1px rgba(65, 141, 176, 0.5);
+}
+
+.nitro-catalog-admin-tree-row.is-hidden {
+    opacity: 0.55;
+}
+
+.nitro-catalog-admin-tree-row.is-drag-over {
+    background: rgba(65, 141, 176, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(65, 141, 176, 0.55);
+}
+
+.nitro-catalog-admin-tree-drag {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    color: #9a9a90;
+    cursor: grab;
+    opacity: 0.45;
+}
+
+.nitro-catalog-admin-tree-row:hover .nitro-catalog-admin-tree-drag {
+    opacity: 0.85;
+}
+
+.nitro-catalog-admin-tree-caret {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+}
+
+.nitro-catalog-admin-tree-caret button {
+    display: grid;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #6b6b62;
+    cursor: pointer;
+}
+
+.nitro-catalog-admin-tree-caret button svg {
+    width: 8px;
+    height: 8px;
+    fill: currentColor;
+}
+
+.nitro-catalog-admin-tree-caret-spacer {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+}
+
+.nitro-catalog-admin-tree-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+.nitro-catalog-admin-tree-icon-empty {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #b7b7ae;
+    border-radius: 2px;
+    background: #ffffff;
+}
+
+.nitro-catalog-admin-tree-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: #20201d;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nitro-catalog-admin-tree-count {
+    flex: 0 0 auto;
+    color: #9a9a90;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.nitro-catalog-admin-detail {
+    display: flex;
+    min-height: 0;
+    border: 1px solid #b7b7ae;
+    border-radius: 4px;
+    background: #eceae2;
+    overflow: hidden;
+}
+
+.nitro-catalog-admin-detail-inner {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    height: 100%;
+    padding: 12px;
+}
+
+.nitro-catalog-admin-detail-head,
+.nitro-catalog-admin-detail-actions {
+    flex: 0 0 auto;
+}
+
+.nitro-catalog-admin-detail-head {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #c9c9c0;
+}
+
+.nitro-catalog-admin-detail-icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #c9c9c0;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.nitro-catalog-admin-detail-icon img {
+    width: 28px;
+    height: 28px;
+}
+
+.nitro-catalog-admin-detail-titles {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.nitro-catalog-admin-detail-title {
+    overflow: hidden;
+    color: #20201d;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nitro-catalog-admin-detail-sub {
+    color: #7a7a70;
+    font-size: 10px;
+}
+
+.nitro-catalog-admin-detail-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+.nitro-catalog-admin-detail-actions .nitro-catalog-admin-btn {
+    justify-content: flex-start;
+}
+
+/* ---- Offers (inside page detail) ---- */
+.nitro-catalog-admin-offers {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    min-height: 0;
+    padding-top: 10px;
+    border-top: 1px solid #c9c9c0;
+}
+
+.nitro-catalog-admin-offers-head {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nitro-catalog-admin-offers-title {
+    overflow: hidden;
+    color: #20201d;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nitro-catalog-admin-offers-list {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 3px;
+    min-height: 0;
+    padding: 4px;
+    border: 1px solid #b7b7ae;
+    border-radius: 4px;
+    background: #f7f7f2;
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.07);
+    overflow-y: auto;
+}
+
+.nitro-catalog-admin-offer-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 42px;
+    padding: 4px 6px;
+    border-radius: 3px;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.nitro-catalog-admin-offer-row.is-drag-over {
+    background: rgba(65, 141, 176, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(65, 141, 176, 0.45);
+}
+
+.nitro-catalog-admin-offer-drag {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    color: #9a9a90;
+    cursor: grab;
+    opacity: 0.55;
+}
+
+.nitro-catalog-admin-offer-row:hover .nitro-catalog-admin-offer-drag {
+    opacity: 0.95;
+}
+
+.nitro-catalog-admin-offer-drag svg {
+    width: 10px;
+    height: 10px;
+    fill: currentColor;
+}
+
+.nitro-catalog-admin-offer-icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d5d5cc;
+    border-radius: 4px;
+    background: #f4f4ef;
+    box-shadow: inset 0 0 0 1px #ffffff;
+}
+
+.nitro-catalog-admin-offer-icon img {
+    max-width: 32px;
+    max-height: 32px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.nitro-catalog-admin-offer-icon-empty {
+    width: 22px;
+    height: 22px;
+    border: 1px dashed #c2c2ba;
+    border-radius: 3px;
+    background: repeating-linear-gradient(45deg, #e7e7df 0, #e7e7df 3px, #f7f7f2 3px, #f7f7f2 6px);
+}
+
+.nitro-catalog-admin-offer-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: #20201d;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nitro-catalog-admin-offer-price {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    color: #60605a;
+    font-size: 10px;
+}
+
+.nitro-catalog-admin-offer-price-entry {
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.nitro-catalog-admin-offer-price-plus {
+    margin: 0 1px;
+    color: #9a9a90;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.nitro-catalog-admin-offer-preview-price .nitro-catalog-admin-offer-price {
+    font-size: 11px;
+}
+
+/* Shared reorder + control buttons (offer rows) */
+.nitro-catalog-admin-manager-reorder {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.nitro-catalog-admin-manager-reorder button {
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 12px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #52819a;
+    cursor: pointer;
+}
+
+.nitro-catalog-admin-manager-reorder button:disabled {
+    color: #c2c2ba;
+    cursor: default;
+}
+
+.nitro-catalog-admin-manager-reorder button svg {
+    width: 8px;
+    height: 8px;
+    fill: currentColor;
+}
+
+.nitro-catalog-admin-manager-controls {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 1px;
+    align-items: center;
+}
+
+.nitro-catalog-admin-manager-controls button {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    color: #418db0;
+    cursor: pointer;
+}
+
+.nitro-catalog-admin-manager-controls button:hover {
+    border-color: rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.nitro-catalog-admin-manager-controls button.danger {
+    color: #b83b32;
+}
+
+.nitro-catalog-admin-manager-controls button svg {
+    width: 11px;
+    height: 11px;
+    fill: currentColor;
+}
+
+/* ---- Publish tab ---- */
+.nitro-catalog-admin-publish {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: 100%;
+    min-height: 0;
+    padding: 16px 20px 20px;
+    text-align: left;
+}
+
+.nitro-catalog-admin-publish-status {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 8px 14px;
+    border-radius: 4px;
+    background: rgba(31, 111, 46, 0.12);
+    color: #1f6f2e;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.nitro-catalog-admin-publish-status.has-pending {
+    background: rgba(240, 163, 24, 0.18);
+    color: #8a5b00;
+}
+
+.nitro-catalog-admin-publish-text {
+    flex: 0 0 auto;
+    max-width: none;
+    margin: 0;
+    color: #60605a;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.nitro-catalog-admin-publish-changes {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 0;
+}
+
+.nitro-catalog-admin-publish-changes-head {
+    flex: 0 0 auto;
+    color: #20201d;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.nitro-catalog-admin-publish-changes-list {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+    margin: 0;
+    padding: 6px;
+    border: 1px solid #b7b7ae;
+    border-radius: 4px;
+    background: #f7f7f2;
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.07);
+    overflow-y: auto;
+    list-style: none;
+}
+
+.nitro-catalog-admin-publish-change {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: 3px;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.nitro-catalog-admin-publish-change-summary {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #20201d;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.nitro-catalog-admin-publish-change-time {
+    flex: 0 0 auto;
+    color: #9a9a90;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.nitro-catalog-admin-publish-actions {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    padding-top: 4px;
+}
+
+/* Scrollbars for the console scroll areas (the window isn't .nitro-catalog-window,
+   so the catalog-wide scrollbar theme doesn't reach it). */
+.nitro-catalog-admin-tree,
+.nitro-catalog-admin-offers-list,
+.nitro-catalog-admin-detail,
+.nitro-catalog-admin-publish-changes-list {
+    scrollbar-width: thin;
+    scrollbar-color: #a9b4bd #e7e7df;
+}
+
+.nitro-catalog-admin-tree::-webkit-scrollbar,
+.nitro-catalog-admin-offers-list::-webkit-scrollbar,
+.nitro-catalog-admin-detail::-webkit-scrollbar,
+.nitro-catalog-admin-publish-changes-list::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.nitro-catalog-admin-tree::-webkit-scrollbar-track,
+.nitro-catalog-admin-offers-list::-webkit-scrollbar-track,
+.nitro-catalog-admin-detail::-webkit-scrollbar-track,
+.nitro-catalog-admin-publish-changes-list::-webkit-scrollbar-track {
+    background: #e7e7df;
+    border-radius: 6px;
+}
+
+.nitro-catalog-admin-tree::-webkit-scrollbar-thumb,
+.nitro-catalog-admin-offers-list::-webkit-scrollbar-thumb,
+.nitro-catalog-admin-detail::-webkit-scrollbar-thumb,
+.nitro-catalog-admin-publish-changes-list::-webkit-scrollbar-thumb {
+    border: 3px solid #e7e7df;
+    border-radius: 6px;
+    background: #a9b4bd;
+}
+
+.nitro-catalog-admin-tree::-webkit-scrollbar-thumb:hover,
+.nitro-catalog-admin-offers-list::-webkit-scrollbar-thumb:hover,
+.nitro-catalog-admin-detail::-webkit-scrollbar-thumb:hover,
+.nitro-catalog-admin-publish-changes-list::-webkit-scrollbar-thumb:hover {
+    background: #8fa0ac;
 }

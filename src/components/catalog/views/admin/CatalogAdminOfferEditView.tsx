@@ -1,9 +1,34 @@
 import { FC, useEffect, useState } from 'react';
-import { FaSave, FaSpinner, FaTrash } from 'react-icons/fa';
-import { LocalizeText, localizeWithFallback } from '../../../../api';
+import { FaCubes, FaSave, FaSpinner, FaTrash } from 'react-icons/fa';
+import { GetConfigurationValue, IPurchasableOffer, LocalizeText, ProductTypeEnum, localizeWithFallback } from '../../../../api';
 import { useCatalogData } from '../../../../hooks';
 import { IOfferEditData, useCatalogAdmin } from '../../CatalogAdminContext';
 import { CatalogAdminModalView } from './CatalogAdminModalView';
+import { CatalogAdminOfferPriceView } from './CatalogAdminOfferPriceView';
+
+const getOfferIconUrl = (offer: IPurchasableOffer | null): string | null => {
+    const product = offer?.product;
+    if (!product) return null;
+
+    if (product.productType === ProductTypeEnum.FLOOR || product.productType === ProductTypeEnum.WALL) {
+        const className = product.furnitureData?.className;
+
+        if (className?.length) {
+            let param = '';
+
+            if (product.productType === ProductTypeEnum.WALL && product.extraParam?.length) {
+                param = `_${product.extraParam}`;
+            } else if (product.productType === ProductTypeEnum.FLOOR && product.furnitureData?.hasIndexedColor && product.furnitureData.colorIndex > 0) {
+                param = `_${product.furnitureData.colorIndex}`;
+            }
+
+            const configuredIconUrl = GetConfigurationValue<string>('furni.asset.icon.url', '');
+            if (configuredIconUrl?.length) return configuredIconUrl.replace('%libname%', className).replace('%param%', param);
+        }
+    }
+
+    return product.getIconUrl(offer) ?? null;
+};
 
 export const CatalogAdminOfferEditView: FC<{}> = () => {
     const { currentPage = null } = useCatalogData();
@@ -96,163 +121,165 @@ export const CatalogAdminOfferEditView: FC<{}> = () => {
 
         if (isNew) createOffer(data);
         else saveOffer(data);
-
-        if (setEditingOffer) setEditingOffer(null);
     };
 
     const handleDelete = () => {
         if (isNew || !deleteOffer || !confirm(LocalizeText('catalog.admin.delete.offer.confirm'))) return;
 
         deleteOffer(editingOffer.offerId);
-        if (setEditingOffer) setEditingOffer(null);
     };
 
     const inputClass = 'nitro-catalog-admin-input';
+    const previewIconUrl = isNew ? null : getOfferIconUrl(editingOffer);
+    const previewName = catalogName || editingOffer.localizationName || (isNew ? localizeWithFallback('catalog.admin.offer.new', 'New offer') : `#${editingOffer.offerId}`);
+    const previewFallbackIcon = isNew ? null : editingOffer.product?.getIconUrl(editingOffer);
 
     return (
         <CatalogAdminModalView
-            title={isNew ? LocalizeText('catalog.admin.offer.new') : `${LocalizeText('catalog.admin.offer.edit')} #${editingOffer.offerId}`}
-            widthClassName="w-[420px]"
+            title={isNew ? LocalizeText('catalog.admin.offer.new') : localizeWithFallback('catalog.admin.edit.offer', 'Edit offer')}
+            widthClassName="w-[500px]"
             onClose={() => setEditingOffer(null)}
         >
-            {/* Current name */}
-            {!isNew && <div className="nitro-catalog-admin-note font-mono">{editingOffer.localizationName}</div>}
+            <div className="nitro-catalog-admin-form">
+                <div className="nitro-catalog-admin-form-sheet">
+                    <div className="nitro-catalog-admin-form-scroll">
+                        <div className="nitro-catalog-admin-form-hero">
+                            <span className="nitro-catalog-admin-offer-preview-icon">
+                                {previewIconUrl ? (
+                                    <img
+                                        alt=""
+                                        draggable={false}
+                                        src={previewIconUrl}
+                                        onError={(event) => {
+                                            if (previewFallbackIcon && event.currentTarget.src !== previewFallbackIcon) event.currentTarget.src = previewFallbackIcon;
+                                            else event.currentTarget.style.visibility = 'hidden';
+                                        }}
+                                    />
+                                ) : (
+                                    <FaCubes className="nitro-catalog-admin-offer-preview-icon-empty" />
+                                )}
+                            </span>
+                            <div className="nitro-catalog-admin-offer-preview-info">
+                                <span className="nitro-catalog-admin-offer-preview-name" title={previewName}>
+                                    {previewName}
+                                </span>
+                                <span className="nitro-catalog-admin-offer-preview-sub">
+                                    {isNew ? localizeWithFallback('catalog.admin.offer.new', 'New offer') : `${localizeWithFallback('catalog.admin.offer.id', 'Offer ID')} #${editingOffer.offerId}`}
+                                    {amount > 1 ? ` · x${amount}` : ''}
+                                </span>
+                                <span className="nitro-catalog-admin-offer-preview-price">
+                                    <CatalogAdminOfferPriceView credits={costCredits} points={costPoints} pointsType={pointsType} />
+                                    {costCredits <= 0 && costPoints <= 0 && <span className="is-free">{localizeWithFallback('generic.free', 'Free')}</span>}
+                                </span>
+                            </div>
+                        </div>
 
-            {/* Catalog Name */}
-            <div className="flex flex-col gap-0.5">
-                <label className="nitro-catalog-admin-label is-primary">{LocalizeText('catalog.admin.offer.name')}</label>
-                <input
-                    className={inputClass}
-                    placeholder={localizeWithFallback('catalog.admin.offer.name.placeholder', 'e.g. rare_dragon_lamp')}
-                    type="text"
-                    value={catalogName}
-                    onChange={(e) => setCatalogName(e.target.value)}
-                />
-            </div>
+                        <section className="nitro-catalog-admin-form-section">
+                            <div className="nitro-catalog-admin-section-title">{localizeWithFallback('catalog.admin.offer.section.details', 'Details')}</div>
+                            <div className="nitro-catalog-admin-form-field">
+                                <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.offer.name')}</label>
+                                <input
+                                    className={inputClass}
+                                    placeholder={localizeWithFallback('catalog.admin.offer.name.placeholder', 'e.g. rare_dragon_lamp')}
+                                    type="text"
+                                    value={catalogName}
+                                    onChange={(e) => setCatalogName(e.target.value)}
+                                />
+                            </div>
+                            <div className="nitro-catalog-admin-form-grid is-3col">
+                                <div className="nitro-catalog-admin-form-field is-span-3">
+                                    <label className="nitro-catalog-admin-label is-field">{localizeWithFallback('catalog.admin.offer.item.ids', 'Item IDs')}</label>
+                                    <input
+                                        className={inputClass}
+                                        placeholder={localizeWithFallback('catalog.admin.offer.item.ids.placeholder', '1234 or 100;200')}
+                                        type="text"
+                                        value={itemIds}
+                                        onChange={(e) => setItemIds(e.target.value)}
+                                    />
+                                </div>
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.offer.quantity')}</label>
+                                    <input className={inputClass} min={1} type="number" value={amount} onChange={(e) => setAmount(parseInt(e.target.value) || 1)} />
+                                </div>
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.order')}</label>
+                                    <input className={inputClass} min={0} type="number" value={orderNumber} onChange={(e) => setOrderNumber(parseInt(e.target.value) || 0)} />
+                                </div>
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{localizeWithFallback('catalog.admin.offer.id', 'Offer ID')}</label>
+                                    <input className={inputClass} type="number" value={offerId} onChange={(e) => setOfferIdGroup(parseInt(e.target.value) || -1)} />
+                                </div>
+                            </div>
+                        </section>
 
-            {/* Generale */}
-            <div className="nitro-catalog-admin-panel">
-                <div className="nitro-catalog-admin-section-title">{LocalizeText('catalog.admin.offer.general')}</div>
-                <div className="grid grid-cols-3 gap-1.5">
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{localizeWithFallback('catalog.admin.offer.item.ids', 'Item IDs')}</label>
-                        <input
-                            className={inputClass}
-                            placeholder={localizeWithFallback('catalog.admin.offer.item.ids.placeholder', '1234 or 100;200')}
-                            type="text"
-                            value={itemIds}
-                            onChange={(e) => setItemIds(e.target.value)}
-                        />
+                        <section className="nitro-catalog-admin-form-section">
+                            <div className="nitro-catalog-admin-section-title">{LocalizeText('catalog.admin.offer.prices')}</div>
+                            <div className="nitro-catalog-admin-form-grid is-3col">
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.offer.credits')}</label>
+                                    <input className={inputClass} min={0} type="number" value={costCredits} onChange={(e) => setCostCredits(parseInt(e.target.value) || 0)} />
+                                </div>
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.offer.points')}</label>
+                                    <input className={inputClass} min={0} type="number" value={costPoints} onChange={(e) => setCostPoints(parseInt(e.target.value) || 0)} />
+                                </div>
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.offer.points.type')}</label>
+                                    <select className={inputClass} value={pointsType} onChange={(e) => setPointsType(parseInt(e.target.value))}>
+                                        <option value={0}>{localizeWithFallback('catalog.admin.currency.duckets', 'Duckets')}</option>
+                                        <option value={5}>{localizeWithFallback('catalog.admin.currency.diamonds', 'Diamonds')}</option>
+                                        <option value={101}>{localizeWithFallback('catalog.admin.currency.seasonal', 'Seasonal')}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="nitro-catalog-admin-form-section">
+                            <div className="nitro-catalog-admin-section-title">{LocalizeText('catalog.admin.offer.options')}</div>
+                            <div className="nitro-catalog-admin-form-grid is-3col">
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.offer.club.only')}</label>
+                                    <select className={inputClass} value={clubOnly} onChange={(e) => setClubOnly(e.target.value)}>
+                                        <option value="0">{localizeWithFallback('generic.no', 'No')}</option>
+                                        <option value="1">{localizeWithFallback('generic.yes', 'Yes')}</option>
+                                    </select>
+                                </div>
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{localizeWithFallback('catalog.admin.offer.limited.stack', 'Limited stack')}</label>
+                                    <input className={inputClass} min={0} type="number" value={limitedStack} onChange={(e) => setLimitedStack(parseInt(e.target.value) || 0)} />
+                                </div>
+                                <div className="nitro-catalog-admin-form-field">
+                                    <label className="nitro-catalog-admin-label is-field">{LocalizeText('catalog.admin.offer.extradata')}</label>
+                                    <input
+                                        className={inputClass}
+                                        placeholder={LocalizeText('catalog.admin.offer.extradata')}
+                                        type="text"
+                                        value={extradata}
+                                        onChange={(e) => setExtradata(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <label className="nitro-catalog-admin-form-toggle">
+                                <input checked={haveOffer === '1'} id="haveOffer" type="checkbox" onChange={(e) => setHaveOffer(e.target.checked ? '1' : '0')} />
+                                <span>{LocalizeText('catalog.admin.offer.have.offer')}</span>
+                            </label>
+                        </section>
                     </div>
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.quantity')}</label>
-                        <input className={inputClass} min={1} type="number" value={amount} onChange={(e) => setAmount(parseInt(e.target.value) || 1)} />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.order')}</label>
-                        <input
-                            className={inputClass}
-                            min={0}
-                            type="number"
-                            value={orderNumber}
-                            onChange={(e) => setOrderNumber(parseInt(e.target.value) || 0)}
-                        />
+
+                    <div className="nitro-catalog-admin-form-actions">
+                        {!isNew ? (
+                            <button className="nitro-catalog-admin-button is-danger" onClick={handleDelete}>
+                                <FaTrash className="text-[8px]" /> {LocalizeText('catalog.admin.delete')}
+                            </button>
+                        ) : (
+                            <div />
+                        )}
+                        <button className="nitro-catalog-admin-button is-primary" disabled={loading} onClick={handleSave}>
+                            {loading ? <FaSpinner className="text-[8px] animate-spin" /> : <FaSave className="text-[8px]" />}{' '}
+                            {isNew ? LocalizeText('catalog.admin.create') : LocalizeText('catalog.admin.save')}
+                        </button>
                     </div>
                 </div>
-            </div>
-
-            {/* Prezzi */}
-            <div className="nitro-catalog-admin-panel">
-                <div className="nitro-catalog-admin-section-title">{LocalizeText('catalog.admin.offer.prices')}</div>
-                <div className="grid grid-cols-3 gap-1.5">
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.credits')}</label>
-                        <input
-                            className={inputClass}
-                            min={0}
-                            type="number"
-                            value={costCredits}
-                            onChange={(e) => setCostCredits(parseInt(e.target.value) || 0)}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.points')}</label>
-                        <input className={inputClass} min={0} type="number" value={costPoints} onChange={(e) => setCostPoints(parseInt(e.target.value) || 0)} />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.points.type')}</label>
-                        <select className={inputClass} value={pointsType} onChange={(e) => setPointsType(parseInt(e.target.value))}>
-                            <option value={0}>{localizeWithFallback('catalog.admin.currency.duckets', 'Duckets')}</option>
-                            <option value={5}>{localizeWithFallback('catalog.admin.currency.diamonds', 'Diamonds')}</option>
-                            <option value={101}>{localizeWithFallback('catalog.admin.currency.seasonal', 'Seasonal')}</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            {/* Opzioni */}
-            <div className="nitro-catalog-admin-panel">
-                <div className="nitro-catalog-admin-section-title">{LocalizeText('catalog.admin.offer.options')}</div>
-                <div className="grid grid-cols-3 gap-1.5 mb-1.5">
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.club.only')}</label>
-                        <select className={inputClass} value={clubOnly} onChange={(e) => setClubOnly(e.target.value)}>
-                            <option value="0">{localizeWithFallback('generic.no', 'No')}</option>
-                            <option value="1">{localizeWithFallback('generic.yes', 'Yes')}</option>
-                        </select>
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{localizeWithFallback('catalog.admin.offer.limited.stack', 'Limited Stack')}</label>
-                        <input
-                            className={inputClass}
-                            min={0}
-                            type="number"
-                            value={limitedStack}
-                            onChange={(e) => setLimitedStack(parseInt(e.target.value) || 0)}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                        <label className="nitro-catalog-admin-label">{localizeWithFallback('catalog.admin.offer.id', 'Offer ID')}</label>
-                        <input className={inputClass} type="number" value={offerId} onChange={(e) => setOfferIdGroup(parseInt(e.target.value) || -1)} />
-                    </div>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                    <label className="nitro-catalog-admin-label">{LocalizeText('catalog.admin.offer.extradata')}</label>
-                    <input
-                        className={inputClass}
-                        placeholder={LocalizeText('catalog.admin.offer.extradata')}
-                        type="text"
-                        value={extradata}
-                        onChange={(e) => setExtradata(e.target.value)}
-                    />
-                </div>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                    <input
-                        className="accent-primary"
-                        checked={haveOffer === '1'}
-                        id="haveOffer"
-                        type="checkbox"
-                        onChange={(e) => setHaveOffer(e.target.checked ? '1' : '0')}
-                    />
-                    <label className="nitro-catalog-admin-check-label" htmlFor="haveOffer">
-                        {LocalizeText('catalog.admin.offer.have.offer')}
-                    </label>
-                </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex justify-between">
-                {!isNew ? (
-                    <button className="nitro-catalog-admin-button is-danger" onClick={handleDelete}>
-                        <FaTrash className="text-[8px]" /> {LocalizeText('catalog.admin.delete')}
-                    </button>
-                ) : (
-                    <div />
-                )}
-                <button className="nitro-catalog-admin-button is-primary" disabled={loading} onClick={handleSave}>
-                    {loading ? <FaSpinner className="text-[8px] animate-spin" /> : <FaSave className="text-[8px]" />}{' '}
-                    {isNew ? LocalizeText('catalog.admin.create') : LocalizeText('catalog.admin.save')}
-                </button>
             </div>
         </CatalogAdminModalView>
     );

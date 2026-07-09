@@ -2,7 +2,8 @@ import { InfiniteGrid } from '@layout/InfiniteGrid';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { IPurchasableOffer } from '../../../../../api';
 import { AutoGrid, AutoGridProps } from '../../../../../common';
-import { useCatalogActions, useCatalogData } from '../../../../../hooks';
+import { useCatalogActions, useCatalogData, useCatalogUiState } from '../../../../../hooks';
+import { replaceCatalogPageOffers } from '../../../../../hooks/catalog/useCatalog.helpers';
 import { useCatalogAdmin } from '../../../CatalogAdminContext';
 import { CatalogGridOfferView } from '../common/CatalogGridOfferView';
 
@@ -17,6 +18,7 @@ export const CatalogItemGridWidgetView: FC<CatalogItemGridWidgetViewProps> = (pr
     const { columnCount = 5, columnMinHeight = 80, tintColor = null, children = null, className = '', ...rest } = props;
     const { currentOffer = null, currentPage = null } = useCatalogData();
     const { selectCatalogOffer = null } = useCatalogActions();
+    const { setCurrentPage } = useCatalogUiState();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
     const elementRef = useRef<HTMLDivElement>(null);
@@ -47,15 +49,17 @@ export const CatalogItemGridWidgetView: FC<CatalogItemGridWidgetViewProps> = (pr
 
                 reordered.splice(index, 0, moved);
 
+                setCurrentPage(replaceCatalogPageOffers(currentPage, reordered));
+
                 const orders = reordered.map((o, i) => ({ id: o.offerId, orderNumber: i }));
 
-                catalogAdmin?.reorderOffers(orders);
+                catalogAdmin?.reorderOffers(orders, `Reordered offers on page #${currentPage.pageId}`);
             }
 
             setDragIndex(null);
             setDropIndex(null);
         },
-        [dragIndex, currentPage, catalogAdmin]
+        [dragIndex, currentPage, catalogAdmin, setCurrentPage]
     );
 
     const handleDragEnd = useCallback(() => {

@@ -1,10 +1,12 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { FaBars, FaCog, FaEdit, FaEye, FaEyeSlash, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaBars, FaCog } from 'react-icons/fa';
 import { CatalogType, GetConfigurationValue, LocalizeShortNumber, LocalizeText, SanitizeHtml } from '../../api';
 import { LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useCatalogActions, useCatalogData, useCatalogUiState, useHasPermission, usePurse } from '../../hooks';
 import { CatalogAdminProvider, useCatalogAdmin } from './CatalogAdminContext';
+import { parseCatalogTabLabel, useCatalogWindowWidth } from './useCatalogWindowWidth';
+import { CatalogAdminManagerView } from './views/admin/CatalogAdminManagerView';
 import { CatalogAdminOfferEditView } from './views/admin/CatalogAdminOfferEditView';
 import { CatalogAdminPageEditView } from './views/admin/CatalogAdminPageEditView';
 import { CatalogBuildersClubStatusView } from './views/catalog-header/CatalogBuildersClubStatusView';
@@ -15,7 +17,6 @@ import { CatalogNavigationView } from './views/navigation/CatalogNavigationView'
 import { CatalogSearchView } from './views/page/common/CatalogSearchView';
 import { GetCatalogLayout } from './views/page/layout/GetCatalogLayout';
 import { MarketplacePostOfferView } from './views/page/layout/marketplace/MarketplacePostOfferView';
-import { parseCatalogTabLabel, useCatalogWindowWidth } from './useCatalogWindowWidth';
 
 const CatalogViewInner: FC<{}> = () => {
     const { rootNode = null, currentPage = null, searchResult = null } = useCatalogData();
@@ -32,9 +33,6 @@ const CatalogViewInner: FC<{}> = () => {
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
     const setAdminMode = catalogAdmin?.setAdminMode ?? (() => {});
-    const hasPendingChanges = catalogAdmin?.hasPendingChanges ?? false;
-    const publishCatalog = catalogAdmin?.publishCatalog ?? (() => {});
-    const loading = catalogAdmin?.loading ?? false;
 
     const isMod = useHasPermission('acc_catalogfurni');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -53,12 +51,12 @@ const CatalogViewInner: FC<{}> = () => {
         if (!rootNode?.children?.length) return 0;
 
         return rootNode.children.filter((child, index) => {
-            if (!adminMode && !child.isVisible) return false;
-            if (!adminMode && index === 0 && getSwfTabLabel(child.localization).toLowerCase().includes('rari')) return false;
+            if (!child.isVisible) return false;
+            if (index === 0 && getSwfTabLabel(child.localization).toLowerCase().includes('rari')) return false;
 
             return true;
         }).length;
-    }, [adminMode, rootNode]);
+    }, [rootNode]);
 
     const catalogWindowStyle = useCatalogWindowWidth(
         tabsShellRef,
@@ -169,17 +167,6 @@ const CatalogViewInner: FC<{}> = () => {
                                         >
                                             {adminMode ? 'Exit Admin' : 'Admin'}
                                         </button>
-                                        {adminMode && (
-                                            <button
-                                                disabled={loading}
-                                                onClick={() => {
-                                                    publishCatalog();
-                                                    setMobileMenuOpen(false);
-                                                }}
-                                            >
-                                                {loading ? '...' : 'Publish'}
-                                            </button>
-                                        )}
                                     </div>
                                 )}
                             </div>
@@ -197,25 +184,12 @@ const CatalogViewInner: FC<{}> = () => {
                             ))}
                         </div>
                     </div>
-                    {adminMode && (
-                        <button
-                            className={`nitro-catalog-header-publish nitro-catalog-swf-button nitro-catalog-swf-buy-button ${hasPendingChanges ? 'has-pending' : ''}`}
-                            disabled={loading}
-                            onClick={() => publishCatalog()}
-                            title={hasPendingChanges ? 'You have unsaved changes - click to publish' : 'Publish catalog'}
-                        >
-                            {loading ? '...' : 'PUBLISH'}
-                        </button>
-                    )}
                     <NitroCardTabsView classNames={['nitro-catalog-tabs-shell']} innerRef={tabsShellRef} justifyContent="start">
                         {rootNode &&
                             rootNode.children.length > 0 &&
                             rootNode.children.map((child, index) => {
-                                if (!adminMode && !child.isVisible) return null;
-                                if (!adminMode && index === 0 && getSwfTabLabel(child.localization).toLowerCase().includes('rari')) return null;
-
-                                const isHidden = !child.isVisible;
-                                const tabLabel = parseCatalogTabLabel(child.localization);
+                                if (!child.isVisible) return null;
+                                if (index === 0 && getSwfTabLabel(child.localization).toLowerCase().includes('rari')) return null;
 
                                 return (
                                     <NitroCardTabsItemView
@@ -228,45 +202,9 @@ const CatalogViewInner: FC<{}> = () => {
                                             activateNode(child);
                                         }}
                                     >
-                                        <div className={`flex items-center gap-1 ${isHidden ? 'opacity-40' : ''}`}>
+                                        <div className="flex items-center gap-1">
                                             {child.iconId > 0 && <CatalogIconView icon={child.iconId} className="nitro-catalog-tab-icon" />}
                                             <span className="nitro-catalog-tab-label">{getSwfTabLabel(child.localization)}</span>
-                                            {adminMode && tabLabel.count !== null && (
-                                                <span className="nitro-catalog-tab-count">({LocalizeShortNumber(tabLabel.count)})</span>
-                                            )}
-                                            {adminMode && isHidden && <FaEyeSlash className="text-[8px] text-danger ml-1" />}
-                                            {adminMode && (
-                                                <div className="flex items-center gap-0.5 ml-1" onClick={(e) => e.stopPropagation()}>
-                                                    <FaEdit
-                                                        className="text-[8px] text-primary cursor-pointer hover:text-dark"
-                                                        title={LocalizeText('catalog.admin.edit.title')}
-                                                        onClick={() => {
-                                                            catalogAdmin.setEditingPageNode(child);
-                                                            catalogAdmin.setEditingRootPage(false);
-                                                            catalogAdmin.setEditingPageData(true);
-                                                        }}
-                                                    />
-                                                    <span
-                                                        className="cursor-pointer"
-                                                        title={isHidden ? LocalizeText('catalog.admin.show') : LocalizeText('catalog.admin.hide')}
-                                                        onClick={() => catalogAdmin.togglePageVisible(child.pageId)}
-                                                    >
-                                                        {isHidden ? (
-                                                            <FaEye className="text-[8px] text-success" />
-                                                        ) : (
-                                                            <FaEyeSlash className="text-[8px] text-muted" />
-                                                        )}
-                                                    </span>
-                                                    <FaTrash
-                                                        className="text-[8px] text-danger cursor-pointer hover:text-red-800"
-                                                        title={LocalizeText('catalog.admin.delete.title')}
-                                                        onClick={() => {
-                                                            if (confirm(LocalizeText('catalog.admin.delete.category.confirm', ['name'], [child.localization])))
-                                                                catalogAdmin.deletePage(child.pageId);
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
                                         </div>
                                     </NitroCardTabsItemView>
                                 );
@@ -303,41 +241,6 @@ const CatalogViewInner: FC<{}> = () => {
                     </div>
                     <NitroCardContentView classNames={['nitro-catalog-content-shell']}>
                         <CatalogBuildersClubStatusView />
-                        {adminMode && rootNode && (
-                            <div className="flex items-center gap-2 mb-1 nitro-catalog-admin-actions">
-                                <button
-                                    className="flex items-center gap-1 text-[9px] text-success hover:text-green-800 cursor-pointer transition-colors"
-                                    onClick={() =>
-                                        catalogAdmin.createPage({
-                                            caption: 'New Category',
-                                            captionSave: 'New Category',
-                                            catalogMode: currentType,
-                                            pageLayout: 'default_3x3',
-                                            iconImage: 0,
-                                            minRank: 1,
-                                            visible: '1',
-                                            enabled: '1',
-                                            orderNum: 99,
-                                            parentId: rootNode.pageId
-                                        })
-                                    }
-                                >
-                                    <FaPlus className="text-[8px]" />
-                                    <span>{LocalizeText('catalog.admin.new')}</span>
-                                </button>
-                                <button
-                                    className="flex items-center gap-1 text-[9px] text-primary hover:text-dark cursor-pointer transition-colors"
-                                    onClick={() => {
-                                        catalogAdmin.setEditingPageNode(null);
-                                        catalogAdmin.setEditingRootPage(true);
-                                        catalogAdmin.setEditingPageData(true);
-                                    }}
-                                >
-                                    <FaEdit className="text-[8px]" />
-                                    <span>{LocalizeText('catalog.admin.root')}</span>
-                                </button>
-                            </div>
-                        )}
                         <div className={`nitro-catalog-stage ${navigationHidden ? 'is-navigation-hidden' : ''}`}>
                             {!navigationHidden && (
                                 <div className="nitro-catalog-sidebar">
@@ -356,15 +259,14 @@ const CatalogViewInner: FC<{}> = () => {
                                         {!!currentPage?.localization?.getImage(0) && <img alt="" src={currentPage.localization.getImage(0)} />}
                                     </div>
                                 </div>
-                                <div className="nitro-catalog-layout-container">
-                                    {adminMode && <CatalogAdminPageEditView />}
-                                    {GetCatalogLayout(currentPage, () => setNavigationHidden(true))}
-                                </div>
+                                <div className="nitro-catalog-layout-container">{GetCatalogLayout(currentPage, () => setNavigationHidden(true))}</div>
                             </div>
                         </div>
                     </NitroCardContentView>
                 </NitroCardView>
             )}
+            <CatalogAdminManagerView />
+            <CatalogAdminPageEditView />
             <CatalogAdminOfferEditView />
             <CatalogGiftView />
             <MarketplacePostOfferView />

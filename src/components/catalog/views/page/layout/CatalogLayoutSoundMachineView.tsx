@@ -81,7 +81,7 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = (props) => 
                                         <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 inset-e-1" />
                                     </>
                                 )}
-                                {currentOffer.product.productType === ProductTypeEnum.BADGE && <CatalogAddOnBadgeWidgetView className="scale-2" />}
+                                {currentOffer.product.productType === ProductTypeEnum.BADGE && <CatalogAddOnBadgeWidgetView className="scale-200" />}
                             </div>
                             <Column grow gap={1}>
                                 <CatalogLimitedItemWidgetView />
