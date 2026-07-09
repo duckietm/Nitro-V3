@@ -67,7 +67,7 @@ export const DiskInventoryView: FC<DiskInventoryViewProps> = (props) => {
                                     itemActive={selectedItem === index}
                                     onClick={() => setSelectedItem((prev) => (prev === index ? -1 : index))}
                                 >
-                                    <div className="shrink-0 disk-image mb-n2" style={{ backgroundColor: GetDiskColor(songInfo?.songData) }}></div>
+                                    <div className="shrink-0 disk-image -mb-2" style={{ backgroundColor: GetDiskColor(songInfo?.songData) }}></div>
                                     <Text fullWidth truncate className="text-center">
                                         {songInfo?.name}
                                     </Text>

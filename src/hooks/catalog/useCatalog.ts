@@ -805,8 +805,6 @@ const useCatalogStore = () => {
         }
 
         applySelectedOffer(offer);
-
-        // (this._isObjectMoverRequested) && (this._purchasableOffer)
     });
 
     useMessageEvent<MarketplaceMakeOfferResult>(MarketplaceMakeOfferResult, (event) => {
@@ -948,7 +946,7 @@ const useCatalogStore = () => {
 
                 if (roomObject) roomObject.model.setValue(RoomObjectVariable.FURNITURE_ALPHA_MULTIPLIER, 0.5);
 
-                if (catalogSkipPurchaseConfirmation) {
+                if (catalogSkipPurchaseConfirmation && !(purchasableOffer.product && purchasableOffer.product.isUniqueLimitedItem)) {
                     SendMessageComposer(new PurchaseFromCatalogComposer(pageId, purchasableOffer.offerId, product.extraParam, 1));
 
                     if (catalogPlaceMultipleObjects) requestOfferToMover(purchasableOffer);
