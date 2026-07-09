@@ -900,4 +900,7 @@
     'wiredchests.logs.type.withdraw': "Prelievo",
     'wiredchests.ready': "Pronto",
     'wiredchests.cancel': "Annulla",
+	'avatar.widget.change_bot_motto': "Cambia motto del bot",
+	'room.mute.button.text': "Disattiva chat",
+	'room.unmute.button.text': "Riattiva chat",	
 }

@@ -715,4 +715,7 @@
     'wiredchests.logs.type.withdraw': "Withdrawal",
     'wiredchests.ready': "Done",
     'wiredchests.cancel': "Cancel",
+	'avatar.widget.change_bot_motto': "Verander bot motto",
+	'room.mute.button.text': "Mute chat",
+	'room.unmute.button.text': "Unmute chat",
 }

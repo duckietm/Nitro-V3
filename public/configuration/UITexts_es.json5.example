@@ -639,4 +639,7 @@
     'wiredfurni.sendsignal.users': "Usuarios a enviar adelante:",
     'wiredfurni.condition.room.active': "Mientras la sala está activa",
     'wiredfurni.sendsignal.furni': "Muebles a enviar adelante:",
+	'avatar.widget.change_bot_motto': "Cambiar lema del bot",
+	'room.mute.button.text': "Silenciar chat",
+	'room.unmute.button.text': "Activar sonido del chat",
 }

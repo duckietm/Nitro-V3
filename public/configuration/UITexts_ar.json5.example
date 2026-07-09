@@ -639,4 +639,7 @@
     'wiredfurni.sendsignal.users': "المستخدمون المراد إرسالهم:",
     'wiredfurni.condition.room.active': "أثناء نشاط الغرفة",
     'wiredfurni.sendsignal.furni': "الأثاث المراد إرساله:",
+	'avatar.widget.change_bot_motto': "تغيير شعار البوت",
+	'room.mute.button.text': "كتم الدردشة",
+	'room.unmute.button.text': "إلغاء كتم الدردشة",
 }

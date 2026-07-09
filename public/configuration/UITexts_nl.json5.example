@@ -639,4 +639,7 @@
     'wiredfurni.sendsignal.users': "Gebruikers om door te sturen:",
     'wiredfurni.condition.room.active': "Terwijl de kamer actief is",
     'wiredfurni.sendsignal.furni': "Meubels om door te sturen:",
+	'avatar.widget.change_bot_motto': "Verander bot motto",
+	'room.mute.button.text': "Mute chat",
+	'room.unmute.button.text': "Unmute chat",
 }
