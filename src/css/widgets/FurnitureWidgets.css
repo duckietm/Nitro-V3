@@ -269,6 +269,45 @@
     padding: 1px;
     pointer-events: all;
 
+    &.stickie-plain {
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3)) drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.25));
+
+        &::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 2px;
+            background-color: var(--stickie-color);
+            background-image:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.07) 0, rgba(0, 0, 0, 0.07) 18px, rgba(255, 255, 255, 0.18) 19px, rgba(255, 255, 255, 0) 32px),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.05) 100%);
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 22px;
+            height: 22px;
+            background-color: var(--stickie-color);
+            background-image: linear-gradient(to top left, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.12) 45%, rgba(255, 255, 255, 0.2) 100%);
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        .stickie-context {
+            font-family: 'Segoe Print', 'Bradley Hand', 'Lucida Handwriting', 'Comic Sans MS', cursive;
+            line-height: 1.4;
+
+            textarea {
+                font-style: normal;
+            }
+        }
+    }
+
     .stickie-header {
         width: 183px;
         height: 18px;
@@ -283,6 +322,7 @@
             width: 10px;
             height: 10px;
             cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.4);
         }
     }
 
@@ -308,6 +348,8 @@
             outline: none;
             box-shadow: none;
             resize: none;
+            font-family: inherit;
+            font-size: inherit;
             font-style: italic;
 
             &:active {
@@ -320,32 +362,6 @@
 }
 
 .nitro-stickie-image {
-    background-image: url('@/assets/images/room-widgets/stickie-widget/stickie-spritesheet.png');
-
-    &.stickie-blue,
-    &.stickie-yellow,
-    &.stickie-green,
-    &.stickie-pink {
-        width: 185px;
-        height: 178px;
-    }
-
-    &.stickie-blue {
-        background-position: -2px -2px;
-    }
-
-    &.stickie-yellow {
-        background-image: url('@/assets/images/room-widgets/stickie-widget/stickie-yellow.png');
-    }
-
-    &.stickie-green {
-        background-position: -191px -2px;
-    }
-
-    &.stickie-pink {
-        background-position: -2px -184px;
-    }
-
     &.stickie-christmas {
         background-image: url('@/assets/images/room-widgets/stickie-widget/stickie-christmas.png');
     }
@@ -369,13 +385,13 @@
     &.stickie-close {
         width: 10px;
         height: 10px;
-        background-position: -2px -366px;
+        background-image: url('@/assets/images/room-widgets/stickie-widget/stickie-close.png');
     }
 
     &.stickie-trash {
         width: 9px;
         height: 10px;
-        background-position: -16px -366px;
+        background-image: url('@/assets/images/room-widgets/stickie-widget/stickie-trash.png');
     }
 }
 
