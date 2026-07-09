@@ -1,11 +1,4 @@
-import {
-    AddLinkEventTracker,
-    AvatarEditorFigureCategory,
-    GetSessionDataManager,
-    ILinkEventTracker,
-    RemoveLinkEventTracker,
-    UserFigureComposer
-} from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, AvatarEditorFigureCategory, AvatarFigurePartType, GetSessionDataManager, ILinkEventTracker, RemoveLinkEventTracker, SetClothingChangeDataMessageComposer, UserFigureComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaDice, FaRedo, FaTrash } from 'react-icons/fa';
 import { AvatarEditorAction, LocalizeText, SendMessageComposer } from '../../api';
@@ -21,6 +14,8 @@ export const AvatarEditorView: FC<{}> = (props) => {
     const [isVisible, setIsVisible] = useState(false);
     const {
         setIsVisible: setEditorVisibility,
+        clothingChangeData = null,
+        setClothingChangeData = null,
         avatarModels,
         activeModelKey,
         setActiveModelKey,
@@ -47,7 +42,11 @@ export const AvatarEditorView: FC<{}> = (props) => {
                 randomizeCurrentFigure();
                 return;
             case AvatarEditorAction.ACTION_SAVE:
-                SendMessageComposer(new UserFigureComposer(gender, getFigureString));
+                if (clothingChangeData) {
+                    SendMessageComposer(new SetClothingChangeDataMessageComposer(clothingChangeData.objectId, gender, getFigureString));
+                } else {
+                    SendMessageComposer(new UserFigureComposer(gender, getFigureString));
+                }
                 setIsVisible(false);
                 return;
         }
@@ -62,12 +61,19 @@ export const AvatarEditorView: FC<{}> = (props) => {
 
                 switch (parts[1]) {
                     case 'show':
+                        if (parts[2] && parts[3] && (parts[2] === AvatarFigurePartType.MALE || parts[2] === AvatarFigurePartType.FEMALE)) {
+                            setClothingChangeData({ objectId: Number(parts[3]), gender: parts[2] });
+                        } else {
+                            setClothingChangeData(null);
+                        }
                         setIsVisible(true);
                         return;
                     case 'hide':
+                        setClothingChangeData(null);
                         setIsVisible(false);
                         return;
                     case 'toggle':
+                        setClothingChangeData(null);
                         setIsVisible((prevValue) => !prevValue);
                         return;
                 }
@@ -78,17 +84,22 @@ export const AvatarEditorView: FC<{}> = (props) => {
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, []);
+    }, [setClothingChangeData]);
 
     useEffect(() => {
         setEditorVisibility(isVisible);
-    }, [isVisible, setEditorVisibility]);
+
+        if (!isVisible) setClothingChangeData(null);
+    }, [isVisible, setEditorVisibility, setClothingChangeData]);
 
     if (!isVisible) return null;
 
     return (
         <NitroCardView className={`nitro-avatar-editor ${isWardrobeOpen ? 'w-[880px]' : 'w-[600px]'} h-[460px]`} isResizable={false} uniqueKey="avatar-editor">
-            <NitroCardHeaderView headerText={LocalizeText('avatareditor.title')} onCloseClick={(event) => setIsVisible(false)} />
+            <NitroCardHeaderView
+                headerText={LocalizeText(clothingChangeData ? 'widget.furni.clothingchange.editor.title' : 'avatareditor.title')}
+                onCloseClick={(event) => setIsVisible(false)}
+            />
             <NitroCardTabsView classNames={['avatar-editor-tabs']}>
                 {Object.keys(avatarModels).map((modelKey) => {
                     const isActive = activeModelKey === modelKey;
@@ -112,7 +123,6 @@ export const AvatarEditorView: FC<{}> = (props) => {
             </NitroCardTabsView>
             <NitroCardContentView>
                 <div className="flex gap-2 overflow-hidden h-full">
-                    {/* left: model view or wardrobe */}
                     <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
                         {activeModelKey.length > 0 && !isWardrobeOpen && !isPetsOpen && !isNftOpen && (
                             <AvatarEditorModelView categories={avatarModels[activeModelKey]} name={activeModelKey} />
@@ -121,21 +131,22 @@ export const AvatarEditorView: FC<{}> = (props) => {
                         {isPetsOpen && <AvatarEditorPetView categories={avatarModels[activeModelKey]} />}
                         {isNftOpen && <AvatarEditorNftView categories={avatarModels[activeModelKey]} />}
                     </div>
-                    {/* right: preview + actions */}
                     <div className="flex flex-col shrink-0 w-[120px] gap-1 overflow-hidden">
                         <AvatarEditorFigurePreviewView />
                         <div className="flex flex-col grow! gap-1">
-                            <ButtonGroup className="w-full">
-                                <Button variant="secondary" className="flex-1" onClick={(event) => processAction(AvatarEditorAction.ACTION_RESET)}>
-                                    <FaRedo className="fa-icon" />
-                                </Button>
-                                <Button variant="secondary" className="flex-1" onClick={(event) => processAction(AvatarEditorAction.ACTION_CLEAR)}>
-                                    <FaTrash className="fa-icon" />
-                                </Button>
-                                <Button variant="secondary" className="flex-1" onClick={(event) => processAction(AvatarEditorAction.ACTION_RANDOMIZE)}>
-                                    <FaDice className="fa-icon" />
-                                </Button>
-                            </ButtonGroup>
+                            {!clothingChangeData && (
+                                <ButtonGroup className="w-full">
+                                    <Button variant="secondary" className="flex-1" onClick={(event) => processAction(AvatarEditorAction.ACTION_RESET)}>
+                                        <FaRedo className="fa-icon" />
+                                    </Button>
+                                    <Button variant="secondary" className="flex-1" onClick={(event) => processAction(AvatarEditorAction.ACTION_CLEAR)}>
+                                        <FaTrash className="fa-icon" />
+                                    </Button>
+                                    <Button variant="secondary" className="flex-1" onClick={(event) => processAction(AvatarEditorAction.ACTION_RANDOMIZE)}>
+                                        <FaDice className="fa-icon" />
+                                    </Button>
+                                </ButtonGroup>
+                            )}
                             <Button className="w-full" variant="success" onClick={(event) => processAction(AvatarEditorAction.ACTION_SAVE)}>
                                 {LocalizeText('avatareditor.save')}
                             </Button>

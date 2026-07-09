@@ -30,8 +30,23 @@ import { useFigureData } from './useFigureData';
 
 const MAX_PALETTES: number = 2;
 
+const FOOTBALL_GATE_PART_IDS: { [setType: string]: number[] } = {
+    [AvatarFigurePartType.CHEST]: [3111, 3110, 3109, 3030, 3114, 266, 265, 262, 3113, 3112, 691, 690, 667],
+    [AvatarFigurePartType.CHEST_PRINT]: [3128, 3127, 3126, 3125, 3124, 3123, 3122, 3121, 3120, 3119],
+    [AvatarFigurePartType.LEGS]: [3116, 281, 275, 715, 700, 696, 3006],
+    [AvatarFigurePartType.SHOES]: [3115, 3068, 906]
+};
+const DEFAULT_MALE_FOOTBALL_GATE: string = 'ch-3109-92-1408.lg-3116-82-1408.sh-3115-1408-1408';
+const DEFAULT_FEMALE_FOOTBALL_GATE: string = 'ch-3112-1408-1408.lg-3116-71-1408.sh-3115-1408-1408';
+
+export interface IClothingChangeData {
+    objectId: number;
+    gender: string;
+}
+
 const useAvatarEditorState = () => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [clothingChangeData, setClothingChangeData] = useState<IClothingChangeData>(null);
     const [avatarModels, setAvatarModels] = useState<{ [index: string]: IAvatarEditorCategory[] }>({});
     const [activeModelKey, setActiveModelKey] = useState<string>('');
     const [maxPaletteCount, setMaxPaletteCount] = useState<number>(1);
@@ -92,7 +107,6 @@ const useAvatarEditorState = () => {
 
             selectPart(setType, partId);
 
-            // Pet (pt) and Misc (mc) cannot be equipped together — equipping one unequips the other.
             if (setType === AvatarFigurePartType.PET) selectPart(AvatarFigurePartType.MISC, -1);
             else if (setType === AvatarFigurePartType.MISC) selectPart(AvatarFigurePartType.PET, -1);
         },
@@ -272,7 +286,7 @@ const useAvatarEditorState = () => {
         const buildModeDefault = 'default';
         const buildModeNft = 'nft';
 
-        const buildCategory = (setType: string, buildMode: string = buildModeDefault) => {
+        const buildCategory = (setType: string, buildMode: string = buildModeDefault, allowedPartIds: number[] = null) => {
             const partItems: IAvatarEditorCategoryPartItem[] = [];
             const colorItems: IPartColor[][] = [];
 
@@ -306,6 +320,19 @@ const useAvatarEditorState = () => {
 
                 if (!partSet || !partSet.isSelectable || (partSet.gender !== gender && partSet.gender !== AvatarFigurePartType.UNISEX)) continue;
 
+                if (allowedPartIds) {
+
+                    if (allowedPartIds.indexOf(partSet.id) === -1) continue;
+
+                    let maxPaletteCount = 0;
+
+                    for (const part of partSet.parts) maxPaletteCount = Math.max(maxPaletteCount, part.colorLayerIndex);
+
+                    partItems.push({ id: partSet.id, partSet, usesColor, maxPaletteCount, isSellableNotOwned: false });
+
+                    continue;
+                }
+
                 const isNftPartSet =
                     nftFigureSetIds.size > 0 ? nftFigureSetIds.has(partSet.id) : GetAvatarRenderManager().downloadManager.isNftPartSet(partSet);
 
@@ -329,6 +356,20 @@ const useAvatarEditorState = () => {
 
             return { setType, partItems, colorItems };
         };
+
+        if (clothingChangeData) {
+            newAvatarModels[AvatarEditorFigureCategory.TORSO] = [AvatarFigurePartType.CHEST, AvatarFigurePartType.CHEST_PRINT]
+                .map((setType) => buildCategory(setType, buildModeDefault, FOOTBALL_GATE_PART_IDS[setType]))
+                .filter(Boolean);
+            newAvatarModels[AvatarEditorFigureCategory.LEGS] = [AvatarFigurePartType.LEGS, AvatarFigurePartType.SHOES]
+                .map((setType) => buildCategory(setType, buildModeDefault, FOOTBALL_GATE_PART_IDS[setType]))
+                .filter(Boolean);
+
+            setAvatarModels(newAvatarModels);
+            setActiveModelKey(AvatarEditorFigureCategory.TORSO);
+
+            return;
+        }
 
         newAvatarModels[AvatarEditorFigureCategory.GENERIC] = [AvatarFigurePartType.HEAD].map((setType) => buildCategory(setType, buildModeDefault));
         newAvatarModels[AvatarEditorFigureCategory.HEAD] = [
@@ -370,13 +411,22 @@ const useAvatarEditorState = () => {
 
         setAvatarModels(newAvatarModels);
         setActiveModelKey(AvatarEditorFigureCategory.GENERIC);
-    }, [isVisible, gender, figureSetIds, nftFigureSetIds]);
+    }, [isVisible, gender, figureSetIds, nftFigureSetIds, clothingChangeData]);
 
     useEffect(() => {
         if (!isVisible) return;
 
+        if (clothingChangeData) {
+            loadAvatarData(
+                clothingChangeData.gender === AvatarFigurePartType.MALE ? DEFAULT_MALE_FOOTBALL_GATE : DEFAULT_FEMALE_FOOTBALL_GATE,
+                clothingChangeData.gender
+            );
+
+            return;
+        }
+
         loadAvatarData(GetSessionDataManager().figure, GetSessionDataManager().gender);
-    }, [isVisible, loadAvatarData]);
+    }, [isVisible, loadAvatarData, clothingChangeData]);
 
     useEffect(() => {
         if (!isVisible || savedFigures) return;
@@ -388,6 +438,8 @@ const useAvatarEditorState = () => {
     return {
         isVisible,
         setIsVisible,
+        clothingChangeData,
+        setClothingChangeData,
         avatarModels,
         activeModelKey,
         setActiveModelKey,
