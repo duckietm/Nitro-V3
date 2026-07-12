@@ -558,8 +558,18 @@ export const GetCommunication = vi.fn(() => ({
         const wrapper = _msgEventWrappers.get(event);
         if (wrapper) msgListeners.get(event.type)?.delete(wrapper);
     },
-    // Stub for SendMessageComposer which calls GetCommunication().connection.send(...)
-    connection: { send: vi.fn() }
+    // Stub for SendMessageComposer and renderer-owned connection snapshots.
+    connection: {
+        send: vi.fn(),
+        connectionState: Object.freeze({
+            phase: 'disconnected',
+            reconnectAttempt: 0,
+            maxReconnectAttempts: 7,
+            authenticated: false,
+            closeCode: null,
+            closeReason: ''
+        })
+    }
 }));
 export const GetConfiguration = vi.fn(stubManager);
 export const GetLocalizationManager = vi.fn(stubManager);

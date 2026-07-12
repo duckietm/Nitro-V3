@@ -1,5 +1,7 @@
 export * from './useEventDispatcher';
 export * from './useExternalSnapshot';
+export * from './useConnectionState';
+export * from './connectionStateUi.helpers';
 export * from './useMessageEvent';
 export * from './useMessageEventReducer';
 export * from './useMessageEventState';

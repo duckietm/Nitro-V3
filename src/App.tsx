@@ -26,7 +26,7 @@ import { LoadingView } from './components/loading/LoadingView';
 import { LoginView } from './components/login/LoginView';
 import { MainView } from './components/MainView';
 import { ReconnectView } from './components/reconnect/ReconnectView';
-import { useMessageEvent, useNitroEvent } from './hooks';
+import { getConnectionFailureAction, useConnectionState, useMessageEvent } from './hooks';
 
 NitroVersion.UI_VERSION = GetUIVersion();
 
@@ -79,6 +79,7 @@ const asStringArray = (value: unknown): string[] => {
 const hasRememberLogin = (): boolean => !!GetRememberLogin();
 
 export const App: FC<{}> = (props) => {
+    const connectionState = useConnectionState();
     const [isReady, setIsReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [homeUrl, setHomeUrl] = useState('');
@@ -116,8 +117,7 @@ export const App: FC<{}> = (props) => {
     const tickersStartedRef = useRef(false);
     const heartbeatIntervalRef = useRef<number>(null);
     const rememberRotateIntervalRef = useRef<number>(null);
-    const isReadyRef = useRef(false);
-    const reconnectInProgressRef = useRef(false);
+    const previousConnectionPhaseRef = useRef(connectionState.phase);
 
     const clearStoredCredentials = useCallback(() => {
         ClearRememberLogin();
@@ -278,31 +278,19 @@ export const App: FC<{}> = (props) => {
     }, []);
 
     useEffect(() => {
-        isReadyRef.current = isReady;
-    }, [isReady]);
-    useNitroEvent(NitroEventType.SOCKET_RECONNECTING, () => {
-        reconnectInProgressRef.current = true;
-    });
-    useNitroEvent(NitroEventType.SOCKET_REAUTHENTICATED, () => {
-        reconnectInProgressRef.current = false;
-    });
+        const previousPhase = previousConnectionPhaseRef.current;
+        const currentPhase = connectionState.phase;
+        previousConnectionPhaseRef.current = currentPhase;
 
-    useNitroEvent(NitroEventType.SOCKET_CLOSED, () => {
-        console.warn('[App] SOCKET_CLOSED fired', {
-            isReady: isReadyRef.current,
-            reconnectInProgress: reconnectInProgressRef.current
-        });
+        const action = getConnectionFailureAction(previousPhase, currentPhase, isReady);
 
-        if (!isReadyRef.current) {
-            console.warn('[App] Socket closed before authentication completed — falling back to login');
+        if (action === 'login') {
+            console.warn('[App] Connection failed before authentication completed — falling back to login');
             fallbackToLogin();
-            return;
+        } else if (action === 'expired') {
+            showSessionExpired();
         }
-
-        if (reconnectInProgressRef.current) return;
-
-        showSessionExpired();
-    });
+    }, [connectionState.phase, fallbackToLogin, isReady, showSessionExpired]);
 
     useMessageEvent<LoadGameUrlEvent>(LoadGameUrlEvent, (event) => {
         const parser = event.getParser();
