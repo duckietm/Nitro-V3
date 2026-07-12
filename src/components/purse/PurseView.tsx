@@ -1,6 +1,5 @@
 import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { FaChartBar, FaCog, FaLanguage, FaSignOutAlt } from 'react-icons/fa';
 import { ClearRememberLogin, FriendlyTime, GetConfigurationValue, GetRememberLogin, LocalizeText, localizeWithFallback } from '../../api';
 import { Column, LayoutCurrencyIcon } from '../../common';
 import { usePurse } from '../../hooks';
@@ -52,6 +51,7 @@ export const PurseView: FC<{}> = (props) => {
 
     const earningsLabel = useMemo(() => localizeWithFallback('earnings.title', 'Earnings'), []);
     const helpLabel = useMemo(() => localizeWithFallback('help.button.name', 'Help'), []);
+    const translateLabel = useMemo(() => localizeWithFallback('purse.settings.translate', 'Translate'), []);
 
     const openClub = useCallback((event: React.MouseEvent) => {
         event.stopPropagation();
@@ -61,6 +61,11 @@ export const PurseView: FC<{}> = (props) => {
     const openEarnings = useCallback((event: React.MouseEvent) => {
         event.stopPropagation();
         CreateLinkEvent('habboUI/open/vault');
+    }, []);
+
+    const openTranslate = useCallback((event: React.MouseEvent) => {
+        event.stopPropagation();
+        CreateLinkEvent('translation-settings/toggle');
     }, []);
 
     const handleLogout = useCallback(async (event: React.MouseEvent) => {
@@ -110,25 +115,23 @@ export const PurseView: FC<{}> = (props) => {
                             </button>
                         )}
                         <button type="button" className="nitro-purse__btn nitro-purse__btn--earnings" onClick={openEarnings} title={earningsLabel}>
-                            <FaChartBar className="nitro-purse__btn-icon" />
+                            <span className="nitro-purse__glyph nitro-purse__glyph--earnings" aria-hidden="true" />
                             <span>{earningsLabel}</span>
                         </button>
                     </div>
+                    <div className="nitro-purse__divider" aria-hidden="true" />
                     <div className="nitro-purse__col nitro-purse__col--actions">
                         <button
                             type="button"
                             className="nitro-purse__btn nitro-purse__btn--icon nitro-purse__btn--translate"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                CreateLinkEvent('translation-settings/toggle');
-                            }}
-                            title="Google Translate"
+                            onClick={openTranslate}
+                            title={translateLabel}
                         >
-                            <FaLanguage className="nitro-purse__btn-icon" />
+                            <span>{translateLabel}</span>
                         </button>
                         <button
                             type="button"
-                            className="nitro-purse__btn nitro-purse__btn--help"
+                            className="nitro-purse__btn nitro-purse__btn--icon nitro-purse__btn--help"
                             onClick={(event) => {
                                 event.stopPropagation();
                                 CreateLinkEvent('help/show');
@@ -143,7 +146,7 @@ export const PurseView: FC<{}> = (props) => {
                             onClick={handleLogout}
                             title="Log out"
                         >
-                            <FaSignOutAlt />
+                            <span className="nitro-purse__glyph nitro-purse__glyph--logout" aria-hidden="true" />
                         </button>
                         <button
                             type="button"
@@ -154,7 +157,7 @@ export const PurseView: FC<{}> = (props) => {
                             }}
                             title={LocalizeText('widget.memenu.settings.title')}
                         >
-                            <FaCog />
+                            <span className="nitro-purse__glyph nitro-purse__glyph--settings" aria-hidden="true" />
                         </button>
                     </div>
                 </div>

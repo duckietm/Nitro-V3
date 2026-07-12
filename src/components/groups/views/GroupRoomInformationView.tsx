@@ -166,7 +166,7 @@ export const GroupRoomInformationView: FC<{}> = (props) => {
 
     return (
         <div
-            className={`pointer-events-auto mt-[6px] overflow-hidden rounded-[10px] border border-white/6 bg-[rgba(10,10,12,0.58)] text-sm shadow-[0_8px_18px_rgba(0,0,0,0.12)] transition-[width,max-width] duration-200 ease-out ${isCompact ? 'ml-auto w-[52px] max-w-[52px]' : 'w-full max-w-[188px]'}`}
+            className={`pointer-events-auto mt-[6px] overflow-hidden rounded-[10px] border border-white/6 bg-[rgba(10,10,12,0.58)] text-sm shadow-[0_8px_18px_rgba(0,0,0,0.12)] transition-[width,max-width] duration-200 ease-out ${isCompact ? 'ml-auto w-[52px] max-w-[52px]' : 'w-full max-w-[230px]'}`}
         >
             <div className="flex flex-col">
                 <Flex
