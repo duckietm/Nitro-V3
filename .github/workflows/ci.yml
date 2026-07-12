@@ -134,7 +134,7 @@ jobs:
           if [ -z "$IN_REF" ] && [ -z "$VAR_REF" ] && [ -n "$PR_HEAD_REF" ] && [ -n "$REPO" ]; then
             COMPANION_REFS="$PR_HEAD_REF"
             case "$PR_HEAD_REF" in
-              *-ui) COMPANION_REFS="${PR_HEAD_REF%-ui} $COMPANION_REFS" ;;
+              *-ui) COMPANION_REFS="${PR_HEAD_REF%-ui}-renderer ${PR_HEAD_REF%-ui} $COMPANION_REFS" ;;
             esac
             COMPANION_REFS="$COMPANION_REFS $AUTO_REF integration"
             for CAND in $COMPANION_REFS; do
