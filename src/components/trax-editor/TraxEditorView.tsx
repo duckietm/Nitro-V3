@@ -1,6 +1,6 @@
 import { AddLinkEventTracker, GetSoundManager, ILinkEventTracker, ITraxEditorSong, RemoveLinkEventTracker, SoundManagerEvent } from '@nitrots/nitro-renderer';
-import { FC, MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { GetConfigurationValue, GetDiskColor, localizeWithFallback } from '../../api';
+import { FC, MouseEvent, PointerEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { GetDiskColor, localizeWithFallback } from '../../api';
 import { GetTraxCartridgeUrl } from '../../assets/images/trax';
 import { Button, Column, Flex, LayoutCurrencyIcon, Text } from '../../common';
 import { useNitroEvent, usePurse, useTraxEditor } from '../../hooks';
@@ -11,6 +11,7 @@ import { GetTraxSampleId, GetTraxSoundSetForSample, TraxSoundSets } from './Trax
 const CELL_WIDTH = 22;
 const CARTRIDGES_PER_PAGE = 8;
 const RACK_PAGES = Math.ceil(TraxSoundSets.length / CARTRIDGES_PER_PAGE);
+
 const CHANNEL_COLORS = ['#e0433c', '#3f8fe0', '#43c243', '#e0c23c'];
 const DEFAULT_SLOT_SETS = [1, 2, 3, 4];
 const ERROR_TEXTS: Record<number, [string, string]> = {
@@ -68,36 +69,44 @@ export const TraxEditorView: FC<{}> = () =>
     const [isPlaying, setIsPlaying] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
     const [hoverCell, setHoverCell] = useState<{ channel: number; unit: number } | null>(null);
+    const [playheadUnit, setPlayheadUnit] = useState(0);
     const pendingBuyRef = useRef(false);
     const { songs, maxSongs, costCurrency, costAmount, lastError, loaded, requestSongs, buySong, saveSong, deleteSong, clearError } = useTraxEditor();
     const { getCurrencyAmount } = usePurse();
+
     const canAfford = costAmount <= 0 || getCurrencyAmount(costCurrency) >= costAmount;
+
     const isPlayingRef = useRef(false);
-    const auditionRef = useRef<HTMLAudioElement | null>(null);
     const playheadRef = useRef<HTMLDivElement | null>(null);
     const playheadRafRef = useRef(0);
+    const playheadUnitRef = useRef(0);
+    const previewTokenRef = useRef(0);
+
+    const movePlayhead = useCallback((unit: number) =>
+    {
+        playheadUnitRef.current = unit;
+        setPlayheadUnit(unit);
+
+        if (playheadRef.current) playheadRef.current.style.left = `${unit * CELL_WIDTH}px`;
+    }, []);
 
     const stopPlayhead = useCallback(() =>
     {
         cancelAnimationFrame(playheadRafRef.current);
 
-        if (playheadRef.current) playheadRef.current.style.display = 'none';
+        if (playheadRef.current) playheadRef.current.style.left = `${playheadUnitRef.current * CELL_WIDTH}px`;
     }, []);
 
-    const startPlayhead = useCallback((totalUnits: number) =>
+    const startPlayhead = useCallback((startUnit: number, totalUnits: number) =>
     {
         const startedAt = performance.now();
 
         const step = () =>
         {
-            const units = (performance.now() - startedAt) / 2000;
+            const units = startUnit + ((performance.now() - startedAt) / 2000);
             const node = playheadRef.current;
 
-            if (node)
-            {
-                node.style.display = 'block';
-                node.style.left = `${Math.min(units, totalUnits) * CELL_WIDTH}px`;
-            }
+            if (node) node.style.left = `${Math.min(units, totalUnits) * CELL_WIDTH}px`;
 
             if (units < totalUnits) playheadRafRef.current = requestAnimationFrame(step);
         };
@@ -108,23 +117,13 @@ export const TraxEditorView: FC<{}> = () =>
 
     const stopAudition = useCallback(() =>
     {
-        const audio = auditionRef.current;
-
-        auditionRef.current = null;
-
-        if (!audio) return;
-
-        try
-        {
-            audio.pause();
-            audio.currentTime = 0;
-        }
-        catch
-        {}
+        GetSoundManager().musicController?.stopSamplePreview();
     }, []);
 
     const stopPreview = useCallback(() =>
     {
+        previewTokenRef.current++;
+
         if (isPlayingRef.current) GetSoundManager().musicController?.stopPreview();
 
         isPlayingRef.current = false;
@@ -161,8 +160,9 @@ export const TraxEditorView: FC<{}> = () =>
             setSlotSamples([0, 0, 0, 0]);
             setActiveSlot(0);
             setIsDirty(false);
+            movePlayhead(0);
         },
-        [stopPreview, clearError]
+        [stopPreview, clearError, movePlayhead]
     );
 
     useEffect(() =>
@@ -210,19 +210,7 @@ export const TraxEditorView: FC<{}> = () =>
 
         if (isPlayingRef.current) GetSoundManager().musicController?.stopPreview();
 
-        const audio = auditionRef.current;
-
-        auditionRef.current = null;
-
-        if (audio)
-        {
-            try
-            {
-                audio.pause();
-            }
-            catch
-            {}
-        }
+        GetSoundManager().musicController?.stopSamplePreview();
     }, []);
 
     useNitroEvent<SoundManagerEvent>(SoundManagerEvent.TRAX_SONG_COMPLETE, () =>
@@ -234,29 +222,9 @@ export const TraxEditorView: FC<{}> = () =>
 
     const auditionSample = useCallback((sampleId: number) =>
     {
-        stopAudition();
-
-        const url = GetConfigurationValue<string>('external.samples.url', '');
-        if (!url) return;
-
-        try
-        {
-            const audio = new Audio(url.replace('%sample%', sampleId.toString()));
-
-            audio.volume = Math.min(1, Math.max(0, GetSoundManager().traxVolume ?? 0.5));
-            audio.onended = () =>
-            {
-                if (auditionRef.current === audio) auditionRef.current = null;
-            };
-            auditionRef.current = audio;
-            void audio.play().catch(() =>
-            {
-                if (auditionRef.current === audio) auditionRef.current = null;
-            });
-        }
-        catch
-        {}
-    }, [stopAudition]);
+        void GetSoundManager().musicController?.previewSample(sampleId).catch(() =>
+        {});
+    }, []);
 
     const loadCartridge = useCallback((cd: number) =>
     {
@@ -289,7 +257,8 @@ export const TraxEditorView: FC<{}> = () =>
 
             return next;
         });
-        auditionSample(GetTraxSampleId(slotSets[slot], sampleIndex));
+
+        if (!isPlayingRef.current) auditionSample(GetTraxSampleId(slotSets[slot], sampleIndex));
     }, [slotSets, auditionSample]);
 
     const placeSample = useCallback(
@@ -375,6 +344,30 @@ export const TraxEditorView: FC<{}> = () =>
         [songLength]
     );
 
+    const startPreviewAt = useCallback((startUnit: number) =>
+    {
+        if (isPlayingRef.current) GetSoundManager().musicController?.stopPreview();
+
+        const token = ++previewTokenRef.current;
+
+        isPlayingRef.current = true;
+        setIsPlaying(true);
+        void GetSoundManager()
+            .musicController?.previewTraxData(SerializeTraxSong(channels, songLength), startUnit * 2)
+            .then(() =>
+            {
+                if (isPlayingRef.current && (previewTokenRef.current === token)) startPlayhead(startUnit, songLength);
+            })
+            .catch(() =>
+            {
+                if (previewTokenRef.current !== token) return;
+
+                isPlayingRef.current = false;
+                setIsPlaying(false);
+                stopPlayhead();
+            });
+    }, [startPlayhead, stopPlayhead, channels, songLength]);
+
     const togglePreview = useCallback(() =>
     {
         stopAudition();
@@ -385,21 +378,65 @@ export const TraxEditorView: FC<{}> = () =>
             return;
         }
 
-        isPlayingRef.current = true;
-        setIsPlaying(true);
-        void GetSoundManager()
-            .musicController?.previewTraxData(SerializeTraxSong(channels, songLength))
-            .then(() =>
-            {
-                if (isPlayingRef.current) startPlayhead(songLength);
-            })
-            .catch(() =>
-            {
-                isPlayingRef.current = false;
-                setIsPlaying(false);
-                stopPlayhead();
-            });
-    }, [isPlaying, stopAudition, stopPreview, startPlayhead, stopPlayhead, channels, songLength]);
+        startPreviewAt(Math.min(playheadUnit, Math.max(0, songLength - 1)));
+    }, [isPlaying, stopAudition, stopPreview, startPreviewAt, songLength, playheadUnit]);
+
+    const scrubbingRef = useRef(false);
+    const scrubWasPlayingRef = useRef(false);
+
+    const scrubToPointer = useCallback(
+        (event: PointerEvent<HTMLDivElement>) =>
+        {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const unit = Math.min(songLength - 1, Math.max(0, Math.floor((event.clientX - rect.left) / CELL_WIDTH)));
+
+            movePlayhead(unit);
+        },
+        [songLength, movePlayhead]
+    );
+
+    const scrubPointerDown = useCallback(
+        (event: PointerEvent<HTMLDivElement>) =>
+        {
+            event.preventDefault();
+            event.currentTarget.setPointerCapture(event.pointerId);
+            scrubbingRef.current = true;
+            scrubWasPlayingRef.current = isPlayingRef.current;
+            stopPlayhead();
+            scrubToPointer(event);
+        },
+        [stopPlayhead, scrubToPointer]
+    );
+
+    const scrubPointerMove = useCallback(
+        (event: PointerEvent<HTMLDivElement>) =>
+        {
+            if (scrubbingRef.current) scrubToPointer(event);
+        },
+        [scrubToPointer]
+    );
+
+    const scrubPointerUp = useCallback(
+        (event: PointerEvent<HTMLDivElement>) =>
+        {
+            if (!scrubbingRef.current) return;
+
+            scrubbingRef.current = false;
+
+            if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+
+            if (scrubWasPlayingRef.current && isPlayingRef.current) startPreviewAt(playheadUnitRef.current);
+        },
+        [startPreviewAt]
+    );
+
+    const rewindPlayhead = useCallback(() =>
+    {
+        stopPlayhead();
+        movePlayhead(0);
+
+        if (isPlayingRef.current) startPreviewAt(0);
+    }, [stopPlayhead, movePlayhead, startPreviewAt]);
 
     const saveCurrentSong = useCallback(() =>
     {
@@ -429,14 +466,14 @@ export const TraxEditorView: FC<{}> = () =>
     const emptySlots = Math.max(0, maxSongs - songs.length);
     const rackCartridges = TraxSoundSets.slice(rackPage * CARTRIDGES_PER_PAGE, (rackPage + 1) * CARTRIDGES_PER_PAGE);
     return (
-        <NitroCard className="h-[640px] w-[920px] max-w-[98vw]" uniqueKey="trax-editor">
+        <NitroCard className="w-[920px] max-w-[98vw]" uniqueKey="trax-editor">
             <NitroCard.Header
                 headerText={localizeWithFallback('trax.editor.title', 'Trax Machine')}
                 onCloseClick={hideEditor}
             />
             <NitroCard.Content>
-                <Flex fullHeight gap={2} className="overflow-hidden">
-                    <Column gap={2} className="w-[200px] shrink-0 overflow-y-auto">
+                <div className="relative">
+                    <Column gap={2} className="absolute inset-y-0 left-0 w-[200px] overflow-y-auto">
                         <Text bold>{localizeWithFallback('trax.editor.my.songs', 'My songs')}</Text>
                         {loaded &&
                             songs.map((song) =>
@@ -509,9 +546,9 @@ export const TraxEditorView: FC<{}> = () =>
                             </Text>
                         )}
                     </Column>
-                    <Column fullWidth gap={2} className="min-w-0 rounded-lg p-2" style={{ background: 'linear-gradient(#55656f, #37444d)', boxShadow: 'inset 0 1px rgba(255,255,255,0.2)' }}>
+                    <Column gap={2} className="ml-[208px] min-h-[320px] min-w-0 rounded-lg p-2" style={{ background: 'linear-gradient(#55656f, #37444d)', boxShadow: 'inset 0 1px rgba(255,255,255,0.2)' }}>
                         {editingSongId < 0 && (
-                            <Flex center fullHeight>
+                            <Flex center className="flex-1">
                                 <Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                                     {localizeWithFallback('trax.editor.select.song', 'Select or buy a song on the left to start composing.')}
                                 </Text>
@@ -519,7 +556,6 @@ export const TraxEditorView: FC<{}> = () =>
                         )}
                         {editingSongId >= 0 && (
                             <>
-                                {/* Cartridge rack with pager */}
                                 <Flex alignItems="center" gap={2}>
                                     <MachineButton
                                         disabled={rackPage <= 0}
@@ -556,7 +592,6 @@ export const TraxEditorView: FC<{}> = () =>
                                     </MachineButton>
                                     <span className="w-10 shrink-0 text-center text-[11px] font-bold" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>{rackPage + 1}/{RACK_PAGES}</span>
                                 </Flex>
-                                {/* Four cartridge slots, one per channel */}
                                 <div className="grid grid-cols-4 gap-1">
                                     {Array.from({ length: TRAX_CHANNEL_COUNT }, (_, slot) =>
                                     {
@@ -620,6 +655,9 @@ export const TraxEditorView: FC<{}> = () =>
                                     <MachineButton accent="#c2493f" title={localizeWithFallback('trax.editor.stop', 'Stop')} disabled={!isPlaying} onClick={stopPreview}>
                                         ■
                                     </MachineButton>
+                                    <MachineButton title={localizeWithFallback('trax.editor.rewind', 'Back to start')} disabled={!isPlaying && playheadUnit === 0} onClick={rewindPlayhead}>
+                                        ⏮
+                                    </MachineButton>
                                     <MachineButton accent="#3f7fc2" title={localizeWithFallback('trax.editor.save', 'Save')} disabled={!isDirty} onClick={saveCurrentSong}>
                                         💾
                                     </MachineButton>
@@ -661,7 +699,7 @@ export const TraxEditorView: FC<{}> = () =>
                                             ref={playheadRef}
                                             className="pointer-events-none absolute"
                                             style={{
-                                                display: 'none',
+                                                left: playheadUnit * CELL_WIDTH,
                                                 top: 0,
                                                 bottom: 18,
                                                 width: 3,
@@ -670,6 +708,36 @@ export const TraxEditorView: FC<{}> = () =>
                                                 borderRadius: 2,
                                                 zIndex: 30
                                             }}
+                                        >
+                                            <div
+                                                className="absolute"
+                                                style={{
+                                                    top: 0,
+                                                    left: -4.5,
+                                                    width: 0,
+                                                    height: 0,
+                                                    borderLeft: '6px solid transparent',
+                                                    borderRight: '6px solid transparent',
+                                                    borderTop: '10px solid #ffffff',
+                                                    filter: 'drop-shadow(0 0 3px rgba(255, 255, 255, 0.8))'
+                                                }}
+                                            />
+                                        </div>
+                                        <div
+                                            className="relative mb-1 rounded"
+                                            style={{
+                                                height: 14,
+                                                cursor: 'col-resize',
+                                                touchAction: 'none',
+                                                background: 'rgba(255, 255, 255, 0.1)',
+                                                backgroundImage: `repeating-linear-gradient(to right, transparent, transparent ${(CELL_WIDTH * 5) - 1}px, rgba(255, 255, 255, 0.35) ${(CELL_WIDTH * 5) - 1}px, rgba(255, 255, 255, 0.35) ${CELL_WIDTH * 5}px)`,
+                                                boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.5)'
+                                            }}
+                                            title={localizeWithFallback('trax.editor.scrub.hint', 'Click or drag to set the play position')}
+                                            onPointerDown={scrubPointerDown}
+                                            onPointerMove={scrubPointerMove}
+                                            onPointerUp={scrubPointerUp}
+                                            onPointerCancel={scrubPointerUp}
                                         />
                                         <Column gap={1}>
                                             {Array.from({ length: TRAX_CHANNEL_COUNT }, (_, channel) => (
@@ -735,7 +803,15 @@ export const TraxEditorView: FC<{}> = () =>
                                                 </div>
                                             ))}
                                         </Column>
-                                        <div className="relative h-[18px]">
+                                        <div
+                                            className="relative cursor-pointer"
+                                            style={{ height: 18, touchAction: 'none' }}
+                                            title={localizeWithFallback('trax.editor.scrub.hint', 'Click or drag to set the play position')}
+                                            onPointerDown={scrubPointerDown}
+                                            onPointerMove={scrubPointerMove}
+                                            onPointerUp={scrubPointerUp}
+                                            onPointerCancel={scrubPointerUp}
+                                        >
                                             {Array.from({ length: Math.floor(songLength / 5) }, (_, index) => (
                                                 <div
                                                     key={index}
@@ -754,8 +830,11 @@ export const TraxEditorView: FC<{}> = () =>
                                         disabled={songLength <= TRAX_MIN_UNITS}
                                         onClick={() =>
                                         {
-                                            setSongLength((prev) => Math.max(TRAX_MIN_UNITS, prev - 4));
-                                            setChannels((prev) => prev.map((placements) => placements.filter((p) => p.position + p.length <= Math.max(TRAX_MIN_UNITS, songLength - 4))));
+                                            const nextLength = Math.max(TRAX_MIN_UNITS, songLength - 4);
+
+                                            setSongLength(nextLength);
+                                            setChannels((prev) => prev.map((placements) => placements.filter((p) => p.position + p.length <= nextLength)));
+                                            if (playheadUnitRef.current >= nextLength) movePlayhead(nextLength - 1);
                                             setIsDirty(true);
                                         }}
                                     >
@@ -775,7 +854,7 @@ export const TraxEditorView: FC<{}> = () =>
                             </>
                         )}
                     </Column>
-                </Flex>
+                </div>
             </NitroCard.Content>
         </NitroCard>
     );

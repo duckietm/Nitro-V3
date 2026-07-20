@@ -1,3 +1,8 @@
+// Editor-side model of a trax song and its (de)serialization to the classic
+// Habbo song-data string stored in soundtracks.track and played by the
+// renderer's MusicPlayer: `1:sampleId,units;...:2:...:3:...:4:...:` where one
+// unit is two seconds and sample id 0 is silence.
+
 export interface ITraxPlacement {
     position: number;
     sampleId: number;
@@ -5,7 +10,7 @@ export interface ITraxPlacement {
 }
 
 export const TRAX_CHANNEL_COUNT = 4;
-export const TRAX_MAX_UNITS = 120;
+export const TRAX_MAX_UNITS = 300;
 export const TRAX_MIN_UNITS = 8;
 export const TRAX_DEFAULT_UNITS = 32;
 
