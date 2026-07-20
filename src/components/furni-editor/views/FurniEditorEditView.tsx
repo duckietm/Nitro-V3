@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { CopyToClipboard } from '../../../api';
 import { Button, Column, Flex, LayoutFurniIconImageView, Text } from '../../../common';
 import { FurniDetail } from '../../../hooks/furni-editor';
 
@@ -96,16 +97,9 @@ const CopyValue: FC<{ value: string | number }> = ({ value }) => {
     const [copied, setCopied] = useState(false);
 
     const copy = useCallback(() => {
-        const text = String(value);
-        if (navigator.clipboard?.writeText)
-            navigator.clipboard
-                .writeText(text)
-                .then(() => setCopied(true))
-                .catch(() => setCopied(true));
-        else setCopied(true);
+        void CopyToClipboard(String(value)).then((ok) => setCopied(ok));
     }, [value]);
 
-    // Reset the "copied!" flag after 1s, with cleanup so the timer never fires after unmount.
     useEffect(() => {
         if (!copied) return;
 

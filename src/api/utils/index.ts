@@ -1,6 +1,7 @@
 export * from './CloneObject';
 export * from './ColorUtils';
 export * from './ConvertSeconds';
+export * from './CopyToClipboard';
 export * from './FixedSizeStack';
 export * from './FriendlyTime';
 export * from './GetLocalStorage';
