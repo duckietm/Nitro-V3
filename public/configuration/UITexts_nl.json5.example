@@ -666,5 +666,30 @@
     'trax.editor.shift.left': "Liedje naar links",
     'trax.editor.shift.right': "Liedje naar rechts",
     'trax.editor.rewind': "Terug naar begin",
-    'trax.editor.scrub.hint': "Klik om de afspeelpositie in te stellen"
+    'trax.editor.scrub.hint': "Klik om de afspeelpositie in te stellen",
+
+    // --- Purse settings menu (2026-07-21) ---
+    'purse.settings.audio': "Geluidsinstellingen",
+    'purse.settings.discord': "Discord instellingen",
+    'purse.settings.chat': "Chatinstellingen",
+    'purse.settings.other': "Overige instellingen",
+    'purse.settings.account': "Accountbeheer",
+    'purse.settings.wordfilter': "Woordfilter",
+
+    // --- Discord Settings (2026-07-21) ---
+    'discord.settings.title': "Discord instellingen",
+    'discord.settings.header': "Discord Rich Presence",
+    'discord.settings.subtitle': "Laat je activiteit zien op Discord",
+    'discord.settings.show_habbo': "Laat Habbo op Discord zien",
+    'discord.settings.show_habbo.desc': "Laat op je Discord-profiel zien dat je Habbo speelt",
+    'discord.settings.share_activity': "Deel activiteit",
+    'discord.settings.share_activity.desc': "Laat zien in welke kamer je bent en wat je aan het doen bent",
+    'discord.settings.hide_hidden': "Verberg verborgen kamers",
+    'discord.settings.hide_hidden.desc': "Toon geen details wanneer je in een verborgen kamer bent",
+    'discord.settings.allow_joining': "Aansluiten toestaan",
+    'discord.settings.allow_joining.desc': "Voeg een \"Bezoek kamer\" knop toe aan je presence",
+    'discord.settings.servers': "Discord servers",
+    'discord.settings.server.collectibles': "Collectibles",
+    'discord.settings.server.wired': "Wired",
+    'discord.settings.server.origins': "Origins"
 }

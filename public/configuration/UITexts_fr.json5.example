@@ -666,5 +666,30 @@
     'trax.editor.shift.left': "Décaler le morceau vers la gauche",
     'trax.editor.shift.right': "Décaler le morceau vers la droite",
     'trax.editor.rewind': "Revenir au début",
-    'trax.editor.scrub.hint': "Clique ici pour plus d'infos"
+    'trax.editor.scrub.hint': "Clique ici pour plus d'infos",
+
+    // --- Purse settings menu (2026-07-21) ---
+    'purse.settings.audio': "Paramètres audio",
+    'purse.settings.discord': "Paramètres Discord",
+    'purse.settings.chat': "Paramètres du chat",
+    'purse.settings.other': "Autres paramètres",
+    'purse.settings.account': "Gestion du compte",
+    'purse.settings.wordfilter': "Filtre de mots",
+
+    // --- Discord Settings (2026-07-21) ---
+    'discord.settings.title': "Paramètres Discord",
+    'discord.settings.header': "Discord Rich Presence",
+    'discord.settings.subtitle': "Affiche ton activité sur Discord",
+    'discord.settings.show_habbo': "Afficher Habbo sur Discord",
+    'discord.settings.show_habbo.desc': "Indique sur ton profil Discord que tu joues à Habbo",
+    'discord.settings.share_activity': "Partager l'activité",
+    'discord.settings.share_activity.desc': "Montre dans quel appart tu te trouves et ce que tu fais",
+    'discord.settings.hide_hidden': "Masquer les apparts cachés",
+    'discord.settings.hide_hidden.desc': "Ne révèle aucun détail quand tu es dans un appart caché",
+    'discord.settings.allow_joining': "Autoriser à rejoindre",
+    'discord.settings.allow_joining.desc': "Ajoute un bouton \"Visiter l'appart\" à ta presence",
+    'discord.settings.servers': "Serveurs Discord",
+    'discord.settings.server.collectibles': "Collectibles",
+    'discord.settings.server.wired': "Wired",
+    'discord.settings.server.origins': "Origins"
 }

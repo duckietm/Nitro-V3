@@ -742,5 +742,30 @@
     'trax.editor.shift.left': "Shift song left",
     'trax.editor.shift.right': "Shift song right",
     'trax.editor.rewind': "Rewind to start",
-    'trax.editor.scrub.hint': "Click here for information"
+    'trax.editor.scrub.hint': "Click here for information",
+
+    // --- Purse settings menu (2026-07-21) ---
+    'purse.settings.audio': "Audio Settings",
+    'purse.settings.discord': "Discord Settings",
+    'purse.settings.chat': "Chat Settings",
+    'purse.settings.other': "Other Settings",
+    'purse.settings.account': "Account Management",
+    'purse.settings.wordfilter': "Word Filter",
+
+    // --- Discord Settings (2026-07-21) ---
+    'discord.settings.title': "Discord Settings",
+    'discord.settings.header': "Discord Rich Presence",
+    'discord.settings.subtitle': "Show your activity on Discord",
+    'discord.settings.show_habbo': "Show Habbo on Discord",
+    'discord.settings.show_habbo.desc': "Display that you are playing Habbo on your Discord profile",
+    'discord.settings.share_activity': "Share activity",
+    'discord.settings.share_activity.desc': "Show which room you are in and what you are doing",
+    'discord.settings.hide_hidden': "Hide hidden rooms",
+    'discord.settings.hide_hidden.desc': "Don't reveal details while you are in a hidden room",
+    'discord.settings.allow_joining': "Allow joining",
+    'discord.settings.allow_joining.desc': "Add a \"Visit room\" button to your presence",
+    'discord.settings.servers': "Discord servers",
+    'discord.settings.server.collectibles': "Collectibles",
+    'discord.settings.server.wired': "Wired",
+    'discord.settings.server.origins': "Origins"
 }

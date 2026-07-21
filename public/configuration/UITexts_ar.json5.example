@@ -666,5 +666,30 @@
     'trax.editor.shift.left': "إزاحة الأغنية لليسار",
     'trax.editor.shift.right': "إزاحة الأغنية لليمين",
     'trax.editor.rewind': "العودة للبداية",
-    'trax.editor.scrub.hint': "انقر هنا للحصول على معلومات"
+    'trax.editor.scrub.hint': "انقر هنا للحصول على معلومات",
+
+    // --- Purse settings menu (2026-07-21) ---
+    'purse.settings.audio': "إعدادات الصوت",
+    'purse.settings.discord': "إعدادات ديسكورد",
+    'purse.settings.chat': "إعدادات الدردشة",
+    'purse.settings.other': "إعدادات أخرى",
+    'purse.settings.account': "إدارة الحساب",
+    'purse.settings.wordfilter': "فلتر الكلمات",
+
+    // --- Discord Settings (2026-07-21) ---
+    'discord.settings.title': "إعدادات ديسكورد",
+    'discord.settings.header': "Discord Rich Presence",
+    'discord.settings.subtitle': "اعرض نشاطك على ديسكورد",
+    'discord.settings.show_habbo': "إظهار هابو على ديسكورد",
+    'discord.settings.show_habbo.desc': "اعرض على ملفك الشخصي في ديسكورد أنك تلعب هابو",
+    'discord.settings.share_activity': "مشاركة النشاط",
+    'discord.settings.share_activity.desc': "اعرض الغرفة التي أنت فيها وما تفعله",
+    'discord.settings.hide_hidden': "إخفاء الغرف المخفية",
+    'discord.settings.hide_hidden.desc': "لا تكشف التفاصيل عندما تكون في غرفة مخفية",
+    'discord.settings.allow_joining': "السماح بالانضمام",
+    'discord.settings.allow_joining.desc': "أضف زر \"زيارة الغرفة\" إلى حالتك",
+    'discord.settings.servers': "خوادم ديسكورد",
+    'discord.settings.server.collectibles': "Collectibles",
+    'discord.settings.server.wired': "Wired",
+    'discord.settings.server.origins': "Origins"
 }

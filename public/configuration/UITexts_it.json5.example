@@ -927,5 +927,30 @@
     'trax.editor.shift.left': "Sposta canzone a sinistra",
     'trax.editor.shift.right': "Sposta canzone a destra",
     'trax.editor.rewind': "Torna all'inizio",
-    'trax.editor.scrub.hint': "Clicca qui per informazioni"
+    'trax.editor.scrub.hint': "Clicca qui per informazioni",
+
+    // --- Purse settings menu (2026-07-21) ---
+    'purse.settings.audio': "Impostazioni audio",
+    'purse.settings.discord': "Impostazioni Discord",
+    'purse.settings.chat': "Impostazioni chat",
+    'purse.settings.other': "Altre impostazioni",
+    'purse.settings.account': "Gestione account",
+    'purse.settings.wordfilter': "Filtro parole",
+
+    // --- Discord Settings (2026-07-21) ---
+    'discord.settings.title': "Impostazioni Discord",
+    'discord.settings.header': "Discord Rich Presence",
+    'discord.settings.subtitle': "Mostra la tua attività su Discord",
+    'discord.settings.show_habbo': "Mostra Habbo su Discord",
+    'discord.settings.show_habbo.desc': "Visualizza che stai giocando ad Habbo sul tuo profilo Discord",
+    'discord.settings.share_activity': "Condividi attività",
+    'discord.settings.share_activity.desc': "Mostra in quale stanza ti trovi e cosa stai facendo",
+    'discord.settings.hide_hidden': "Nascondi stanze nascoste",
+    'discord.settings.hide_hidden.desc': "Non rivelare i dettagli quando sei in una stanza nascosta",
+    'discord.settings.allow_joining': "Consenti di unirsi",
+    'discord.settings.allow_joining.desc': "Aggiungi un pulsante \"Visita stanza\" alla tua presence",
+    'discord.settings.servers': "Server Discord",
+    'discord.settings.server.collectibles': "Collectibles",
+    'discord.settings.server.wired': "Wired",
+    'discord.settings.server.origins': "Origins"
 }

@@ -666,5 +666,30 @@
     'trax.editor.shift.left': "Desplazar canción a la izquierda",
     'trax.editor.shift.right': "Desplazar canción a la derecha",
     'trax.editor.rewind': "Volver al inicio",
-    'trax.editor.scrub.hint': "Haz clic aquí para obtener información"
+    'trax.editor.scrub.hint': "Haz clic aquí para obtener información",
+
+    // --- Purse settings menu (2026-07-21) ---
+    'purse.settings.audio': "Ajustes de sonido",
+    'purse.settings.discord': "Ajustes de Discord",
+    'purse.settings.chat': "Ajustes del chat",
+    'purse.settings.other': "Otros ajustes",
+    'purse.settings.account': "Gestión de la cuenta",
+    'purse.settings.wordfilter': "Filtro de palabras",
+
+    // --- Discord Settings (2026-07-21) ---
+    'discord.settings.title': "Ajustes de Discord",
+    'discord.settings.header': "Discord Rich Presence",
+    'discord.settings.subtitle': "Muestra tu actividad en Discord",
+    'discord.settings.show_habbo': "Mostrar Habbo en Discord",
+    'discord.settings.show_habbo.desc': "Muestra en tu perfil de Discord que estás jugando a Habbo",
+    'discord.settings.share_activity': "Compartir actividad",
+    'discord.settings.share_activity.desc': "Muestra en qué sala estás y qué estás haciendo",
+    'discord.settings.hide_hidden': "Ocultar salas ocultas",
+    'discord.settings.hide_hidden.desc': "No reveles detalles cuando estés en una sala oculta",
+    'discord.settings.allow_joining': "Permitir unirse",
+    'discord.settings.allow_joining.desc': "Añade un botón \"Visitar sala\" a tu presence",
+    'discord.settings.servers': "Servidores de Discord",
+    'discord.settings.server.collectibles': "Collectibles",
+    'discord.settings.server.wired': "Wired",
+    'discord.settings.server.origins': "Origins"
 }
