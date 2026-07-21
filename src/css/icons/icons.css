@@ -228,10 +228,9 @@
 }
 
 .nitro-icon.icon-soundboard {
-    background-image: url("@/assets/images/toolbar/icons/game.png");
+    background-image: url("@/assets/images/toolbar/icons/soundboard.png");
     width: 44px;
     height: 25px;
-    filter: hue-rotate(90deg) saturate(1.5);
 }
 
 .nitro-icon.icon-message {
