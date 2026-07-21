@@ -1,5 +1,6 @@
 import {
     ISoundboardSound,
+    GetSessionDataManager,
     loadGamedata,
     SoundboardPlayComposer,
     SoundboardPlayEvent,
@@ -11,7 +12,6 @@ import { useBetween } from 'use-between';
 import { DispatchUiEvent, GetConfigurationValue, SendMessageComposer, setSoundboardRoomEnabled } from '../../api';
 import { SoundboardRoomMessageEvent } from '../../events';
 import { useMessageEvent } from '../events';
-import { useUserDataSnapshot } from '../session/useSessionSnapshots';
 import { getRemainingCooldownSeconds, shouldStartOwnCooldown } from './soundboardUi.helpers';
 
 // A pad as the client uses it. `local` marks pads that came from the JSON5 file
@@ -49,11 +49,7 @@ const useSoundboardState = () => {
     const fileLoadStartedRef = useRef(false);
     const cooldownSecondsRef = useRef(60);
     const cooldownUntilRef = useRef(0);
-    const ownUserId = useUserDataSnapshot().userId || -1;
-    const ownUserIdRef = useRef(ownUserId);
     const localFallbackEnabled = GetConfigurationValue<boolean>('soundboard.localFallback.enabled', false);
-
-    ownUserIdRef.current = ownUserId;
 
     const handleSettings = useCallback((event: SoundboardSettingsEvent) => {
         const parser = event.getParser();
@@ -71,7 +67,9 @@ const useSoundboardState = () => {
         setLastPlayed({ soundId: parser.soundId, username: parser.username });
         DispatchUiEvent(new SoundboardRoomMessageEvent(parser.username, parser.soundName, parser.actorUserId, parser.actorRoomIndex));
 
-        if (shouldStartOwnCooldown(parser.actorUserId, ownUserIdRef.current)) {
+        const sessionDataManager = GetSessionDataManager();
+        const ownUserId = sessionDataManager?.getUserDataSnapshot?.().userId || -1;
+        if (shouldStartOwnCooldown(parser.actorUserId, ownUserId)) {
             const now = Date.now();
             cooldownUntilRef.current = now + cooldownSecondsRef.current * 1_000;
             setCooldownRemainingSeconds(getRemainingCooldownSeconds(cooldownUntilRef.current, now));
