@@ -28,6 +28,7 @@
     "wired.action.mute.user.max.length": 100,
     "game.center.enabled": false,
     "radio_ui.enabled": false,
+    "soundboard.localFallback.enabled": false,
     "mentions_ui.enabled": true,
     "mentions_ui.sound": true,
 	"mentions_ui.aliases.everyone": [ "all", "everyone" ],

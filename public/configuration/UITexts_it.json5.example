@@ -654,6 +654,8 @@
     'soundboard.title':              'Soundboard',
     'soundboard.empty':              'Nessun suono disponibile',
     'soundboard.lastplayed':         'Riprodotto da %user%',
+    'soundboard.cooldown':           'Attendi %seconds%s prima di riprodurre un altro suono',
+    'soundboard.room.played':        '%user% ha riprodotto %sound%',
     'soundboard.room.setting.desc':  'Permetti alle persone in questa stanza di riprodurre effetti sonori',
 
     // ------------------------------------------------------------------------

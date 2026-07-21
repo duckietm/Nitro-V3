@@ -497,6 +497,8 @@
     'soundboard.title': "Soundboard",
     'soundboard.empty': "No sounds available",
     'soundboard.lastplayed': "Played by %user%",
+    'soundboard.cooldown': "Wait %seconds%s before playing another sound",
+    'soundboard.room.played': "%user% played %sound%",
     'soundboard.room.setting.desc': "Allow people in this room to play sound effects",
     'radio.title': "Radio",
     'radio.empty': "No stations",

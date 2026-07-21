@@ -7,7 +7,7 @@ import { NitroCard } from '../../layout';
 
 export const SoundboardView: FC<{}> = () => {
     const [isVisible, setIsVisible] = useState(false);
-    const { enabled, sounds, lastPlayed, play } = useSoundboard();
+    const { enabled, sounds, lastPlayed, cooldownRemainingSeconds, isCoolingDown, play } = useSoundboard();
 
     const PAGE_SIZE = 9;
     const [page, setPage] = useState(0);
@@ -69,9 +69,10 @@ export const SoundboardView: FC<{}> = () => {
                                 {pageSounds.map((sound) => (
                                     <button
                                         key={sound.id}
+                                        disabled={isCoolingDown}
                                         onClick={() => play(sound)}
                                         title={sound.name}
-                                        className="flex h-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg bg-[#3a7bb5] px-2 text-white shadow transition-transform hover:bg-[#336ea3] active:scale-95"
+                                        className="flex h-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg bg-[#3a7bb5] px-2 text-white shadow transition-transform hover:bg-[#336ea3] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#3a7bb5] disabled:active:scale-100"
                                     >
                                         <span className="text-2xl leading-none">🔊</span>
                                         <span className="line-clamp-2 text-center text-[11px] font-bold leading-tight">{sound.name}</span>
@@ -105,6 +106,13 @@ export const SoundboardView: FC<{}> = () => {
                         <Flex alignItems="center" justifyContent="center" className="pt-1">
                             <Text small className="text-[#2f6f95]">
                                 {LocalizeText('soundboard.lastplayed', ['user'], [lastPlayed.username])}
+                            </Text>
+                        </Flex>
+                    )}
+                    {isCoolingDown && (
+                        <Flex alignItems="center" justifyContent="center">
+                            <Text small className="text-[#2f6f95]">
+                                {LocalizeText('soundboard.cooldown', ['seconds'], [cooldownRemainingSeconds.toString()])}
                             </Text>
                         </Flex>
                     )}

@@ -8,8 +8,11 @@ import {
 } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
-import { GetConfigurationValue, SendMessageComposer, setSoundboardRoomEnabled } from '../../api';
+import { DispatchUiEvent, GetConfigurationValue, SendMessageComposer, setSoundboardRoomEnabled } from '../../api';
+import { SoundboardRoomMessageEvent } from '../../events';
 import { useMessageEvent } from '../events';
+import { useUserDataSnapshot } from '../session/useSessionSnapshots';
+import { getRemainingCooldownSeconds, shouldStartOwnCooldown } from './soundboardUi.helpers';
 
 // A pad as the client uses it. `local` marks pads that came from the JSON5 file
 // fallback rather than the server (DB) — those play locally on click because the
@@ -42,26 +45,57 @@ const useSoundboardState = () => {
     const [serverSounds, setServerSounds] = useState<ISoundboardSound[]>([]);
     const [fileSounds, setFileSounds] = useState<ClientSoundboardSound[]>([]);
     const [lastPlayed, setLastPlayed] = useState<{ soundId: number; username: string } | null>(null);
+    const [cooldownRemainingSeconds, setCooldownRemainingSeconds] = useState(0);
     const fileLoadStartedRef = useRef(false);
+    const cooldownSecondsRef = useRef(60);
+    const cooldownUntilRef = useRef(0);
+    const ownUserId = useUserDataSnapshot().userId || -1;
+    const ownUserIdRef = useRef(ownUserId);
+    const localFallbackEnabled = GetConfigurationValue<boolean>('soundboard.localFallback.enabled', false);
 
-    useMessageEvent<SoundboardSettingsEvent>(SoundboardSettingsEvent, (event) => {
+    ownUserIdRef.current = ownUserId;
+
+    const handleSettings = useCallback((event: SoundboardSettingsEvent) => {
         const parser = event.getParser();
+        cooldownSecondsRef.current = Math.max(0, parser.cooldownSeconds);
         setEnabled(parser.enabled);
         setServerSounds(parser.sounds);
         setSoundboardRoomEnabled(parser.enabled);
-    });
+    }, []);
 
-    useMessageEvent<SoundboardPlayEvent>(SoundboardPlayEvent, (event) => {
+    useMessageEvent<SoundboardSettingsEvent>(SoundboardSettingsEvent, handleSettings);
+
+    const handlePlay = useCallback((event: SoundboardPlayEvent) => {
         const parser = event.getParser();
         playLocal(resolveUrl(parser.url));
         setLastPlayed({ soundId: parser.soundId, username: parser.username });
-    });
+        DispatchUiEvent(new SoundboardRoomMessageEvent(parser.username, parser.soundName, parser.actorUserId, parser.actorRoomIndex));
+
+        if (shouldStartOwnCooldown(parser.actorUserId, ownUserIdRef.current)) {
+            const now = Date.now();
+            cooldownUntilRef.current = now + cooldownSecondsRef.current * 1_000;
+            setCooldownRemainingSeconds(getRemainingCooldownSeconds(cooldownUntilRef.current, now));
+        }
+    }, []);
+
+    useMessageEvent<SoundboardPlayEvent>(SoundboardPlayEvent, handlePlay);
+
+    const isCoolingDown = cooldownRemainingSeconds > 0;
+
+    useEffect(() => {
+        if (!isCoolingDown) return;
+
+        const updateRemaining = () => setCooldownRemainingSeconds(getRemainingCooldownSeconds(cooldownUntilRef.current, Date.now()));
+        const timer = window.setInterval(updateRemaining, 250);
+
+        return () => window.clearInterval(timer);
+    }, [isCoolingDown]);
 
     // Fallback: when the soundboard is on but the server (DB) provided no pads,
     // load them from the JSON5 file once. loadGamedata accepts plain JSON and
     // JSON5 (// comments) — same loader used for the avatar effect map.
     useEffect(() => {
-        if (!enabled || serverSounds.length || fileLoadStartedRef.current) return;
+        if (!localFallbackEnabled || !enabled || serverSounds.length || fileLoadStartedRef.current) return;
         fileLoadStartedRef.current = true;
 
         const url =
@@ -78,12 +112,12 @@ const useSoundboardState = () => {
                 setFileSounds(list);
             } catch {}
         })();
-    }, [enabled, serverSounds.length]);
+    }, [enabled, localFallbackEnabled, serverSounds.length]);
 
-    const sounds: ClientSoundboardSound[] = serverSounds.length ? serverSounds : fileSounds;
+    const sounds: ClientSoundboardSound[] = serverSounds.length ? serverSounds : localFallbackEnabled ? fileSounds : [];
 
     const play = useCallback((sound: ClientSoundboardSound) => {
-        if (!sound) return;
+        if (!sound || getRemainingCooldownSeconds(cooldownUntilRef.current, Date.now()) > 0) return;
         // File-defined pad: the server doesn't know it, so play it locally.
         if (sound.local) {
             playLocal(resolveUrl(sound.url));
@@ -103,11 +137,16 @@ const useSoundboardState = () => {
     const reset = useCallback(() => {
         setEnabled(false);
         setServerSounds([]);
+        setFileSounds([]);
         setLastPlayed(null);
+        setCooldownRemainingSeconds(0);
+        cooldownUntilRef.current = 0;
+        cooldownSecondsRef.current = 60;
+        fileLoadStartedRef.current = false;
         setSoundboardRoomEnabled(false);
     }, []);
 
-    return { enabled, sounds, lastPlayed, play, setRoomEnabled, reset };
+    return { enabled, sounds, lastPlayed, cooldownRemainingSeconds, isCoolingDown, play, setRoomEnabled, reset };
 };
 
 export const useSoundboard = () => useBetween(useSoundboardState);
