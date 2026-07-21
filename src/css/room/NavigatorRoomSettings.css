@@ -68,6 +68,12 @@
         outline: none !important;
     }
 
+    /* Checkboxes/radios are rendered by @tailwindcss/forms (appearance: none):
+     * the checked state is a white glyph on `background-color: currentColor`.
+     * They must NOT get the text-input skin above — its `background` shorthand
+     * with !important would wipe the glyph (that bug made the checked mark
+     * invisible). `color` here is what fills the checked box; not :where()d so
+     * it outranks NitroCardView's `input { color: var(--nitro-card-text) }`. */
     input[type="checkbox"],
     input[type="radio"] {
         min-height: 0;

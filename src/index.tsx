@@ -38,6 +38,8 @@ import './css/forms/form_select.css';
 import './css/friends/FriendsView.css';
 import './css/fortune-wheel/FortuneWheelView.css';
 
+import './css/game-center/GameCenterView.css';
+
 import './css/help/HelpView.css';
 
 import './css/hotelview/HotelView.css';

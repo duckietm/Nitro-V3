@@ -31,6 +31,7 @@ import { FortuneWheelView } from './fortune-wheel/FortuneWheelView';
 import { FriendsView } from './friends/FriendsView';
 import { FurniEditorView } from './furni-editor/FurniEditorView';
 import { GameCenterView } from './game-center/GameCenterView';
+import { SnowWarView } from './game-center/views/snowwar/SnowWarView';
 import { GroupsView } from './groups/GroupsView';
 import { GroupForumView } from './groups/views/forums/GroupForumView';
 import { GuideToolView } from './guide-tool/GuideToolView';
@@ -244,6 +245,7 @@ export const MainView: FC<{}> = (props) =>
             <HcCenterView />
             <CampaignView />
             <GameCenterView />
+            <SnowWarView />
             <FloorplanEditorView />
             <FurniEditorView />
             <RareValuesView />

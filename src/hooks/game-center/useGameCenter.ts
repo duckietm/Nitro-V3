@@ -53,7 +53,9 @@ const useGameCenterState = () => {
 
         switch (parser.gameTypeId) {
             case 2:
-                return console.log('snowwar');
+                // SnowWar runs natively (SnowWarView + useSnowWar), not in an
+                // iframe — the server drives it via the SnowWar packets.
+                return;
             default:
                 return setGameURL(parser.url);
         }
