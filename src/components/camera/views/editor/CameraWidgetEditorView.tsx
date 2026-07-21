@@ -215,7 +215,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = (props) =
             </NitroCardTabsView>
             <NitroCardContentView>
                 <Grid>
-                    <Column overflow="hidden" size={5}>
+                    <Column className="overflow-x-auto" size={5}>
                         <CameraWidgetEffectListView
                             myLevel={myLevel}
                             selectedEffects={selectedEffects}
@@ -224,7 +224,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = (props) =
                             processAction={processAction}
                         />
                     </Column>
-                    <Column justifyContent="between" overflow="hidden" size={7}>
+                    <Column justifyContent="between" className="overflow-x-auto" size={7}>
                         <Column center>
                             <div className="w-[325px] h-[325px] overflow-hidden">
                                 {currentPictureUrl && (
