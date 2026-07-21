@@ -52,7 +52,7 @@
         color: var(--room-settings-muted) !important;
     }
 
-    :where(input, select, textarea) {
+    :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
         min-height: 22px;
         border: 1px solid var(--room-settings-line-dark) !important;
         border-radius: 3px !important;
@@ -68,9 +68,12 @@
         outline: none !important;
     }
 
-    :where(input[type="checkbox"], input[type="radio"]) {
+    input[type="checkbox"],
+    input[type="radio"] {
         min-height: 0;
+        color: var(--room-settings-accent);
         accent-color: var(--room-settings-accent);
+        border-color: var(--room-settings-line-dark);
         box-shadow: none !important;
     }
 }
