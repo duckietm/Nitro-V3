@@ -29,9 +29,11 @@ export const LoginModal: FC<LoginModalProps> = ({ title, titleId, closeLabel, di
     return (
         <div className="nitro-login-modal" onClick={handleOverlayClick}>
             <div className={`dialog ${dialogClassName}`.trim()} role="dialog" aria-modal="true" aria-labelledby={titleId}>
-                <div className="nitro-login-card">
-                    <div className="card-title">
-                        <span id={titleId}>{title}</span>
+                <div className="nitro-login-card nitro-card-shell">
+                    <div className="card-title nitro-card-header-shell">
+                        <span id={titleId} className="nitro-card-title">
+                            {title}
+                        </span>
                         <button type="button" className="nitro-card-close-button" aria-label={closeLabel} onClick={onClose} />
                     </div>
                     {children}
