@@ -723,7 +723,7 @@
 
 .nitro-login-card .registration-wardrobe-preview .avatar-image {
     z-index: 2;
-    margin-bottom: 8px;
+    margin-bottom: -6px;
     transform-origin: center bottom;
 }
 
