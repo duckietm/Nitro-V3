@@ -1,6 +1,5 @@
 import { AvatarDirectionAngle, GetAvatarRenderManager, IPartColor } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, useEffect, useMemo, useState } from 'react';
-import { FaUndoAlt } from 'react-icons/fa';
 import { AvatarEditorThumbnailsHelper } from '../../../api';
 import faceTabIcon from '../../../assets/images/wardrobe/hd.png';
 import headTabIcon from '../../../assets/images/wardrobe/head.png';
@@ -211,7 +210,15 @@ export const RegistrationAvatarWardrobe: FC<RegistrationAvatarWardrobeProps> = (
                             title={t('nitro.login.register.wardrobe.rotate_left', 'Rotate left')}
                             onClick={() => rotateAvatar(1)}
                         >
-                            <FaUndoAlt aria-hidden="true" />
+                            <AvatarEditorIcon icon="arrow-left" />
+                        </button>
+                        <button
+                            type="button"
+                            aria-label={t('nitro.login.register.wardrobe.rotate_right', 'Rotate right')}
+                            title={t('nitro.login.register.wardrobe.rotate_right', 'Rotate right')}
+                            onClick={() => rotateAvatar(-1)}
+                        >
+                            <AvatarEditorIcon icon="arrow-right" />
                         </button>
                     </div>
                 </div>
