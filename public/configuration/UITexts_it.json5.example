@@ -380,6 +380,18 @@
     'nitro.login.firsttime.text':           'Non hai ancora un account habbo?',
     'nitro.login.firsttime.link':           'Puoi crearne uno qui',
     'nitro.login.card.title':               'Accedi a habbo',
+    'nitro.login.entering':                 'Accesso in corso…',
+    'login.title':                          'Accedi',
+    'nitro.login.language.loading':         'Caricamento…',
+    'nitro.login.language.title':           'Lingua',
+    'nitro.login.language.aria':            'Selezione della lingua',
+    'generic.password':                     'Password',
+    'login.remember_me':                    'Ricordami',
+    'generic.close':                        'Chiudi',
+    'nitro.login.register.gender.girl':     'Ragazza',
+    'nitro.login.register.gender.boy':      'Ragazzo',
+    'nitro.login.register.hotlooks':        'Look popolari',
+    'nitro.login.register.back':            'Indietro',
 
     // Server status checks
     'nitro.login.server.offline.short':     'Il server di gioco al momento non è attivo. Riprova tra poco.',

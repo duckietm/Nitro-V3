@@ -2,19 +2,15 @@ import { AvatarScaleType, AvatarSetType, GetAvatarRenderManager, GetConfiguratio
 import { FC, useActionState, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { ClearRememberLogin, GetConfigurationValue, GetRememberLogin, persistAccessTokenFromPayload, StoreRememberLoginFromPayload } from '../../api';
-import flagBr from '../../assets/images/flag_icon/flag_icon_br.png';
-import flagDe from '../../assets/images/flag_icon/flag_icon_de.png';
 import flagEn from '../../assets/images/flag_icon/flag_icon_en.png';
 import flagEs from '../../assets/images/flag_icon/flag_icon_es.png';
-import flagFi from '../../assets/images/flag_icon/flag_icon_fi.png';
 import flagFr from '../../assets/images/flag_icon/flag_icon_fr.png';
 import flagIt from '../../assets/images/flag_icon/flag_icon_it.png';
 import flagNl from '../../assets/images/flag_icon/flag_icon_nl.png';
-import flagSelected from '../../assets/images/flag_icon/flag_icon_selected.png';
-import flagTr from '../../assets/images/flag_icon/flag_icon_tr.png';
 import { applyTextTranslationLocale } from '../../hooks/translation/useTranslation';
 import { configFileUrl } from '../../secure-assets';
 import { NewsWindow } from './components/NewsWindow';
+import { LoginModal } from './components/LoginModal';
 import { TurnstileWidget } from './TurnstileWidget';
 import { t } from './utils/i18n';
 
@@ -76,11 +72,7 @@ const LOGIN_LOCALES: LoginLocale[] = [
     { code: 'en', file: 'com', label: 'English', flag: flagEn },
     { code: 'es', file: 'es', label: 'Español', flag: flagEs },
     { code: 'fr', file: 'fr', label: 'Français', flag: flagFr },
-    { code: 'de', file: 'de', label: 'Deutsch', flag: flagDe },
-    { code: 'pt-BR', file: 'br', label: 'Português', flag: flagBr },
-    { code: 'nl', file: 'nl', label: 'Nederlands', flag: flagNl },
-    { code: 'fi', file: 'fi', label: 'Suomi', flag: flagFi },
-    { code: 'tr', file: 'tr', label: 'Türkçe', flag: flagTr }
+    { code: 'nl', file: 'nl', label: 'Nederlands', flag: flagNl }
 ];
 
 type AttemptState = { attempts: number; firstAt: number; lockedUntil: number };
@@ -190,6 +182,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
     const [selectedLocale, setSelectedLocale] = useState<LoginLocale>(() => readCachedLocale());
     const [localeApplying, setLocaleApplying] = useState(false);
     const [localeError, setLocaleError] = useState('');
+    const initialLocaleRef = useRef(selectedLocale);
     const [loginViewConfig, setLoginViewConfig] = useState<Record<string, unknown>>(() => GetConfigurationValue<Record<string, unknown>>('loginview', {}));
     const submitTimeRef = useRef(0);
     const preloadedLoginImagesRef = useRef<Set<string>>(new Set());
@@ -244,6 +237,27 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
     }, []);
 
     useEffect(() => {
+        let cancelled = false;
+        const locale = initialLocaleRef.current;
+
+        setLocaleApplying(true);
+
+        void applyTextTranslationLocale(locale.code)
+            .catch(() => {
+                if (!cancelled) setLocaleError('Unable to load this language pack.');
+            })
+            .finally(() => {
+                if (!cancelled) setLocaleApplying(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const closeDialog = useCallback(() => setMode('login'), []);
+
+    useEffect(() => {
         setError(null);
         if (mode === 'login') resetLoginTurnstile();
     }, [mode, resetLoginTurnstile]);
@@ -275,21 +289,30 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
         };
     }, []);
 
-    const confirmLocaleSelection = useCallback(async () => {
-        if (localeApplying) return;
+    const changeLocaleSelection = useCallback(
+        async (localeCode: string) => {
+            const locale = LOGIN_LOCALES.find((candidate) => candidate.code === localeCode);
 
-        setLocaleApplying(true);
-        setLocaleError('');
+            if (!locale || localeApplying) return;
 
-        try {
-            applyLocaleSelection(selectedLocale);
-            await applyTextTranslationLocale(selectedLocale.code);
-        } catch {
-            setLocaleError('Unable to load this language pack.');
-        } finally {
-            setLocaleApplying(false);
-        }
-    }, [localeApplying, selectedLocale]);
+            const previousLocale = selectedLocale;
+
+            setSelectedLocale(locale);
+            setLocaleApplying(true);
+            setLocaleError('');
+
+            try {
+                await applyTextTranslationLocale(locale.code);
+                applyLocaleSelection(locale);
+            } catch {
+                setSelectedLocale(previousLocale);
+                setLocaleError('Unable to load this language pack.');
+            } finally {
+                setLocaleApplying(false);
+            }
+        },
+        [localeApplying, selectedLocale]
+    );
 
     useEffect(() => {
         if (!loginImageUrls.length) return;
@@ -661,40 +684,31 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
 
             {newsUrl && <NewsWindow newsUrl={newsUrl} />}
 
-            <div className="login-stack">
-                <div className="nitro-login-card login-language-card">
-                    <div className="card-title">{t('nitro.login.language.title', 'Choose your language')}</div>
-                    <div className="login-language-grid" role="list" aria-label={t('nitro.login.language.aria', 'Language selection')}>
+            <div className="login-language-picker">
+                <label htmlFor="login-language-select">
+                    {localeApplying ? t('nitro.login.language.loading', 'Loading...') : t('nitro.login.language.title', 'Language')}
+                </label>
+                <div className="login-language-select-wrap">
+                    <img src={selectedLocale.flag} alt="" draggable={false} />
+                    <select
+                        id="login-language-select"
+                        value={selectedLocale.code}
+                        disabled={localeApplying}
+                        aria-label={t('nitro.login.language.aria', 'Language selection')}
+                        onChange={(event) => void changeLocaleSelection(event.target.value)}
+                    >
                         {LOGIN_LOCALES.map((locale) => (
-                            <button
-                                key={locale.code}
-                                type="button"
-                                className={`login-language-option ${selectedLocale.code === locale.code ? 'selected' : ''}`}
-                                onClick={() => setSelectedLocale(locale)}
-                                title={locale.label}
-                                aria-label={locale.label}
-                                style={selectedLocale.code === locale.code ? { backgroundImage: `url(${flagSelected})` } : undefined}
-                            >
-                                <img src={locale.flag} alt="" draggable={false} />
-                                <span>{locale.label}</span>
-                            </button>
+                            <option key={locale.code} value={locale.code}>
+                                {locale.label}
+                            </option>
                         ))}
-                    </div>
-                    {localeError.length > 0 && <div className="language-error">{localeError}</div>}
-                    <button type="button" className="ok-button login-language-confirm" disabled={localeApplying} onClick={confirmLocaleSelection}>
-                        {localeApplying ? t('nitro.login.language.loading', 'Loading...') : t('nitro.login.language.ok', 'OK')}
-                    </button>
+                    </select>
                 </div>
+                {localeError.length > 0 && <div className="language-error">{localeError}</div>}
+            </div>
 
-                <div className="nitro-login-card">
-                    <div className="card-title">{t('nitro.login.firsttime.title', 'First time here?')}</div>
-                    <div className="card-body register-card-body">
-                        <span>{t('nitro.login.firsttime.text', "Don't have a Habbo yet?")}</span>
-                        <a onClick={() => setMode('register')}>{t('nitro.login.firsttime.link', 'You can create one here')}</a>
-                    </div>
-                </div>
-
-                <div className="nitro-login-card">
+            <div className="login-stack">
+                <div className="nitro-login-card login-auth-card">
                     <div className="card-title">{t('nitro.login.card.title', "What's your Habbo called?")}</div>
                     <form className="card-body" action={submitLoginAction} autoComplete="on">
                         <div className="field">
@@ -753,11 +767,21 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
                         </a>
                     </form>
                 </div>
+
+                <div className="nitro-login-card login-register-card">
+                    <div className="card-title">{t('nitro.login.firsttime.title', 'First time here?')}</div>
+                    <div className="card-body register-card-body">
+                        <span>{t('nitro.login.firsttime.text', "Don't have a Habbo yet?")}</span>
+                        <button type="button" className="register-link" onClick={() => setMode('register')}>
+                            {t('nitro.login.firsttime.link', 'You can create one here')}
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {mode === 'register' && (
                 <RegisterDialog
-                    onCancel={() => setMode('login')}
+                    onCancel={closeDialog}
                     onSubmit={handleRegisterSubmit}
                     onCheckEmail={checkEmailAvailable}
                     onCheckUsername={checkUsernameAvailable}
@@ -773,7 +797,7 @@ export const LoginView: FC<LoginViewProps> = ({ onAuthenticated, isEntering = fa
 
             {mode === 'forgot' && (
                 <ForgotDialog
-                    onCancel={() => setMode('login')}
+                    onCancel={closeDialog}
                     onSubmit={handleForgotSubmit}
                     submitting={submitting}
                     error={error}
@@ -1238,19 +1262,19 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
             setLocalError(null);
 
             if (!email.trim() || !password || !confirm) {
-                setLocalError(t('nitro.login.register.error.missing_fields', 'Please fill in every field.'));
+                setLocalError(t('nitro.login.error.missing_fields', 'Please fill in every field.'));
                 return null;
             }
             if (!EMAIL_REGEX.test(email.trim())) {
-                setLocalError(t('nitro.login.register.error.invalid_email', 'Please enter a valid email address.'));
+                setLocalError(t('nitro.login.error.invalid_email', 'Please enter a valid email address.'));
                 return null;
             }
             if (password.length < 8) {
-                setLocalError(t('nitro.login.register.error.password_too_short', 'Your password must be at least 8 characters.'));
+                setLocalError(t('nitro.login.error.password_too_short', 'Your password must be at least 8 characters.'));
                 return null;
             }
             if (password !== confirm) {
-                setLocalError(t('nitro.login.register.error.password_mismatch', 'Passwords do not match.'));
+                setLocalError(t('nitro.login.error.password_mismatch', 'Passwords do not match.'));
                 return null;
             }
 
@@ -1341,11 +1365,11 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
 
             const trimmed = username.trim();
             if (!trimmed) {
-                setLocalError(t('nitro.login.register.error.username_required', 'Please choose a Habbo name.'));
+                setLocalError(t('nitro.login.error.missing_username', 'Please choose a Habbo name.'));
                 return null;
             }
             if (trimmed.length < 3 || trimmed.length > 16) {
-                setLocalError(t('nitro.login.register.error.username_length', 'Habbo name must be 3–16 characters.'));
+                setLocalError(t('nitro.login.error.username_length', 'Habbo name must be 3–16 characters.'));
                 return null;
             }
 
@@ -1426,14 +1450,13 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
     const serverOffline = serverReachable === false;
 
     return (
-        <div className="nitro-login-modal">
-            <div className={`dialog ${step === 'avatar' ? 'dialog-avatar' : ''} ${step === 'room' ? 'dialog-room' : ''}`}>
-                <div className="nitro-login-card">
-                    <div className="card-title">
-                        <span>{t('nitro.login.register.title', 'Habbo Details')}</span>
-                        <span className="nitro-card-close-button" role="button" aria-label={t('generic.close', 'Close')} onClick={onCancel} />
-                    </div>
-
+        <LoginModal
+            title={t('nitro.login.register.title', 'Habbo Details')}
+            titleId="register-dialog-title"
+            closeLabel={t('generic.close', 'Close')}
+            dialogClassName={`${step === 'avatar' ? 'dialog-avatar' : ''} ${step === 'room' ? 'dialog-room' : ''}`}
+            onClose={onCancel}
+        >
                     {step === 'credentials' && (
                         <form className="card-body" action={submitCredentialsAction} autoComplete="on">
                             <div className="register-intro">
@@ -1445,7 +1468,7 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
                             {serverOffline && (
                                 <div className="error-line server-offline">
                                     {t(
-                                        'nitro.login.register.server.offline',
+                                        'nitro.login.server.offline.long',
                                         "The gameserver isn't running right now, so new accounts can't be created. Please try again in a moment."
                                     )}
                                     <button type="button" className="retry-link" onClick={pingServer} disabled={pingingServer}>
@@ -1454,7 +1477,7 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
                                 </div>
                             )}
                             <div className="field">
-                                <label htmlFor="register-email">{t('nitro.login.register.email', 'Email')}</label>
+                                <label htmlFor="register-email">{t('nitro.login.forgot.email.label', 'Email')}</label>
                                 <input
                                     id="register-email"
                                     name="email"
@@ -1478,7 +1501,7 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
                                 />
                             </div>
                             <div className="field">
-                                <label htmlFor="register-confirm">{t('nitro.login.register.confirm_password', 'Confirm password')}</label>
+                                <label htmlFor="register-confirm">{t('nitro.login.register.confirm.label', 'Confirm password')}</label>
                                 <input
                                     id="register-confirm"
                                     name="confirm"
@@ -1513,7 +1536,7 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
                             {serverOffline && (
                                 <div className="error-line server-offline">
                                     {t(
-                                        'nitro.login.register.server.offline',
+                                        'nitro.login.server.offline.long',
                                         "The gameserver isn't running right now, so new accounts can't be created. Please try again in a moment."
                                     )}
                                     <button type="button" className="retry-link" onClick={pingServer} disabled={pingingServer}>
@@ -1527,7 +1550,7 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
                                     type="text"
                                     maxLength={16}
                                     autoComplete="username"
-                                    placeholder={t('nitro.login.register.username_placeholder', 'HabboName')}
+                                    placeholder={t('nitro.login.register.username.placeholder', 'HabboName')}
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />
@@ -1608,7 +1631,7 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
                                     disabled={!hotLooks.length || busy}
                                     title={
                                         hotLooks.length
-                                            ? t('nitro.login.register.hotlooks.available', '%count% looks available', ['count'], [String(hotLooks.length)])
+                                            ? t('nitro.login.register.hotlooks.count', '%count% looks available', ['count'], [String(hotLooks.length)])
                                             : t('nitro.login.register.hotlooks.none', 'No hot looks loaded')
                                     }
                                 >
@@ -1729,9 +1752,7 @@ const RegisterDialog: FC<RegisterDialogProps> = (props) => {
                             </div>
                         </form>
                     )}
-                </div>
-            </div>
-        </div>
+        </LoginModal>
     );
 };
 
@@ -1744,7 +1765,7 @@ const ForgotSubmitButton: FC = () => {
 
     return (
         <button type="submit" className="ok-button" disabled={pending}>
-            {t('nitro.login.forgot.send_email', 'Send email')}
+            {t('nitro.login.forgot.send', 'Send email')}
         </button>
     );
 };
@@ -1768,7 +1789,7 @@ const ForgotDialog: FC<ForgotDialogProps> = (props) => {
             const emailInput = String(formData.get('email') || '').trim();
 
             if (!emailInput) {
-                setLocalError(t('nitro.login.forgot.error.email_required', 'Please enter your email address.'));
+                setLocalError(t('nitro.login.error.missing_email', 'Please enter your email address.'));
                 return null;
             }
 
@@ -1781,16 +1802,15 @@ const ForgotDialog: FC<ForgotDialogProps> = (props) => {
     const [, submitForgotAction] = useActionState<null, FormData>(forgotAction, null);
 
     return (
-        <div className="nitro-login-modal">
-            <div className="dialog">
-                <div className="nitro-login-card">
-                    <div className="card-title">
-                        <span>{t('nitro.login.forgot.title', 'Reset password')}</span>
-                        <span className="nitro-card-close-button" role="button" aria-label={t('generic.close', 'Close')} onClick={onCancel} />
-                    </div>
-                    <form className="card-body" action={submitForgotAction} autoComplete="on">
+        <LoginModal
+            title={t('nitro.login.forgot.title', 'Reset password')}
+            titleId="forgot-dialog-title"
+            closeLabel={t('generic.close', 'Close')}
+            onClose={onCancel}
+        >
+            <form className="card-body" action={submitForgotAction} autoComplete="on">
                         <div className="field">
-                            <label htmlFor="forgot-email">{t('nitro.login.forgot.email_label', 'Email address')}</label>
+                            <label htmlFor="forgot-email">{t('nitro.login.forgot.email.label', 'Email address')}</label>
                             <input
                                 id="forgot-email"
                                 name="email"
@@ -1816,9 +1836,7 @@ const ForgotDialog: FC<ForgotDialogProps> = (props) => {
                         <div className="submit-row">
                             <ForgotSubmitButton />
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+            </form>
+        </LoginModal>
     );
 };
