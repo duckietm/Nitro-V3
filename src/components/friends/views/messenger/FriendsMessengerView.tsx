@@ -2,15 +2,18 @@ import { AddLinkEventTracker, FollowFriendMessageComposer, GetSessionDataManager
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { GetUserProfile, LocalizeText, ReportType, SendMessageComposer } from '../../../../api';
-import { DraggableWindowPosition, LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
+import { UseHabbiconIcon } from '../../../../assets/images/habbicons';
+import { DraggableWindow, DraggableWindowPosition, LayoutAvatarImageView } from '../../../../common';
 import { useFriends, useHelp, useMessenger, useTranslation } from '../../../../hooks';
 import { resolveAvatarFigure } from '../friends-list/resolveAvatarFigure';
+import { FriendsMessengerHabbiconPickerView } from './FriendsMessengerHabbiconPickerView';
 import { FriendsMessengerThreadView } from './messenger-thread/FriendsMessengerThreadView';
 
 export const FriendsMessengerView: FC<{}> = (props) => {
     const [isVisible, setIsVisible] = useState(false);
     const [lastThreadId, setLastThreadId] = useState(-1);
     const [messageText, setMessageText] = useState('');
+    const [isHabbiconPickerVisible, setIsHabbiconPickerVisible] = useState(false);
     const {
         visibleThreads = [],
         activeThread = null,
@@ -98,6 +101,13 @@ export const FriendsMessengerView: FC<{}> = (props) => {
         void send();
     };
 
+    const sendHabbicon = (habbiconId: number) => {
+        if (!activeThread || habbiconId <= 0) return;
+
+        sendMessage(activeThread, GetSessionDataManager().userId, `\uE000${habbiconId}`);
+        setIsHabbiconPickerVisible(false);
+    };
+
     useEffect(() => {
         const linkTracker: ILinkEventTracker = {
             linkReceived: (url: string) => {
@@ -164,104 +174,89 @@ export const FriendsMessengerView: FC<{}> = (props) => {
     if (!isVisible) return null;
 
     return (
-        <NitroCardView
-            className="messenger-card min-w-0 w-[min(440px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
-            theme="primary-slim"
-            uniqueKey={null}
-            windowPosition={DraggableWindowPosition.TOP_CENTER}
-            offsetTop={8}
-            isResizable={false}
-        >
-            <NitroCardHeaderView
-                headerText={LocalizeText('messenger.window.title', ['OPEN_CHAT_COUNT'], [visibleThreads.length.toString()])}
-                onCloseClick={(event) => setIsVisible(false)}
-            />
-            <NitroCardContentView className="text-black p-0" gap={0} overflow="hidden">
-                <div className="messenger-card-body">
-                    <div className="messenger-avatar-bar">
-                        {visibleThreads &&
-                            visibleThreads.length > 0 &&
-                            visibleThreads.map((thread) => {
-                                const isStaff = thread.participant.id <= 0;
-                                // Read the live look from the friend list (same source the friends
-                                // list renders) so offline friends show their real avatar instead
-                                // of the standard/anonymous one; resolveAvatarFigure is the final
-                                // fallback when the look is genuinely missing.
-                                const liveFriend = isStaff ? null : getFriend(thread.participant.id);
-                                const figure = isStaff
-                                    ? thread.participant.figure === 'ADM'
-                                        ? 'ha-3409-1413-70.lg-285-89.ch-3032-1334-109.sh-3016-110.hd-185-1359.ca-3225-110-62.wa-3264-62-62.fa-1206-90.hr-3322-1403'
-                                        : thread.participant.figure
-                                    : resolveAvatarFigure(liveFriend?.figure || thread.participant.figure, liveFriend?.gender ?? thread.participant.gender);
+        <DraggableWindow handleSelector=".swf-messenger-drag" windowPosition={DraggableWindowPosition.TOP_CENTER} offsetTop={8}>
+            <div className="swf-messenger-window">
+                <div className="swf-messenger-drag" />
+                <button className="swf-messenger-minimize" onClick={(event) => setIsVisible(false)} />
+                <div className="swf-messenger-open-title">
+                    {LocalizeText('messenger.window.title', ['OPEN_CHAT_COUNT'], [visibleThreads.length.toString()])}
+                </div>
+                <div className="messenger-avatar-bar">
+                    {visibleThreads &&
+                        visibleThreads.length > 0 &&
+                        visibleThreads.map((thread) => {
+                            const isStaff = thread.participant.id <= 0;
+                            const liveFriend = isStaff ? null : getFriend(thread.participant.id);
+                            const figure = isStaff
+                                ? thread.participant.figure === 'ADM'
+                                    ? 'ha-3409-1413-70.lg-285-89.ch-3032-1334-109.sh-3016-110.hd-185-1359.ca-3225-110-62.wa-3264-62-62.fa-1206-90.hr-3322-1403'
+                                    : thread.participant.figure
+                                : resolveAvatarFigure(liveFriend?.figure || thread.participant.figure, liveFriend?.gender ?? thread.participant.gender);
 
-                                return (
-                                    <button
-                                        key={thread.threadId}
-                                        className={'messenger-avatar-tab' + (activeThread === thread ? ' active' : '') + (thread.unread ? ' unread' : '')}
-                                        onClick={(event) => setActiveThreadId(thread.threadId)}
-                                    >
-                                        <LayoutAvatarImageView figure={figure} headOnly={true} direction={isStaff ? 3 : 2} />
-                                    </button>
-                                );
-                            })}
-                    </div>
+                            return (
+                                <button
+                                    key={thread.threadId}
+                                    className={'messenger-avatar-tab' + (activeThread === thread ? ' active' : '') + (thread.unread ? ' unread' : '')}
+                                    onClick={(event) => setActiveThreadId(thread.threadId)}
+                                >
+                                    <LayoutAvatarImageView figure={figure} headOnly={true} direction={isStaff ? 3 : 2} />
+                                </button>
+                            );
+                        })}
+                </div>
 
-                    {activeThread && (
-                        <>
-                            <div className="messenger-thread-header">
-                                <span className="messenger-thread-name">
-                                    {LocalizeText('messenger.window.separator', ['FRIEND_NAME'], [activeThread.participant.name])}
-                                </span>
-                                <div className="messenger-actions">
-                                    {activeThread.participant.id > 0 && (
-                                        <>
-                                            <button className="messenger-btn icon-btn" onClick={followFriend}>
-                                                <div className="nitro-friends-spritesheet icon-follow" />
-                                            </button>
-                                            <button className="messenger-btn icon-btn" onClick={openProfile}>
-                                                <div className="nitro-friends-spritesheet icon-profile-sm" />
-                                            </button>
-                                            <button
-                                                className="messenger-btn danger"
-                                                onClick={() => report(ReportType.IM, { reportedUserId: activeThread.participant.id })}
-                                            >
-                                                {LocalizeText('messenger.window.button.report')}
-                                            </button>
-                                        </>
-                                    )}
-                                    <button className="messenger-btn close-btn" onClick={(event) => closeThread(activeThread.threadId)}>
-                                        <FaTimes />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div ref={messagesBox} className="chat-messages">
-                                <FriendsMessengerThreadView thread={activeThread} />
-                            </div>
-
-                            {activeThread.participant && activeThread.participant.id > 0 && typingUserIds.indexOf(activeThread.participant.id) >= 0 && (
-                                <div className="messenger-typing-indicator">
-                                    {LocalizeText('messenger.typing', ['FRIEND_NAME'], [activeThread.participant.name])}
-                                </div>
-                            )}
-
-                            <div className="messenger-input-row">
-                                <input
-                                    maxLength={255}
-                                    placeholder={LocalizeText('messenger.window.input.default', ['FRIEND_NAME'], [activeThread.participant.name])}
-                                    type="text"
-                                    value={messageText}
-                                    onChange={(event) => handleInputChange(event.target.value)}
-                                    onKeyDown={onKeyDown}
-                                />
-                                <button className="messenger-btn send" onClick={() => void send()}>
-                                    {LocalizeText('widgets.chatinput.say')}
+                {activeThread && (
+                    <>
+                        <div className="messenger-thread-header">
+                            <span className="messenger-thread-name">
+                                {LocalizeText('messenger.window.separator', ['FRIEND_NAME'], [activeThread.participant.name])}
+                            </span>
+                            <div className="messenger-actions">
+                                {activeThread.participant.id > 0 && (
+                                    <>
+                                        <button className="messenger-btn icon-btn follow" aria-label={LocalizeText('friendlist.tip.follow')} onClick={followFriend} />
+                                        <button className="messenger-btn icon-btn profile" aria-label={LocalizeText('infostand.profile.link.tooltip')} onClick={openProfile} />
+                                        <button className="messenger-btn danger" onClick={() => report(ReportType.IM, { reportedUserId: activeThread.participant.id })}>
+                                            {LocalizeText('messenger.window.button.report')}
+                                        </button>
+                                    </>
+                                )}
+                                <button className="messenger-btn close-btn" onClick={(event) => closeThread(activeThread.threadId)}>
+                                    <FaTimes />
                                 </button>
                             </div>
-                        </>
-                    )}
-                </div>
-            </NitroCardContentView>
-        </NitroCardView>
+                        </div>
+
+                        <div ref={messagesBox} className="chat-messages">
+                            <FriendsMessengerThreadView thread={activeThread} />
+                        </div>
+
+                        {activeThread.participant && activeThread.participant.id > 0 && typingUserIds.indexOf(activeThread.participant.id) >= 0 && (
+                            <div className="messenger-typing-indicator">
+                                {LocalizeText('messenger.typing', ['FRIEND_NAME'], [activeThread.participant.name])}
+                            </div>
+                        )}
+
+                        <div className="messenger-input-row">
+                            <input
+                                maxLength={255}
+                                placeholder={LocalizeText('messenger.window.input.default', ['FRIEND_NAME'], [activeThread.participant.name])}
+                                type="text"
+                                value={messageText}
+                                onChange={(event) => handleInputChange(event.target.value)}
+                                onKeyDown={onKeyDown}
+                            />
+                            <button className="messenger-btn send" onClick={() => void send()}>
+                                {LocalizeText('widgets.chatinput.say')}
+                            </button>
+                            <button className="messenger-btn habbicon" aria-label={LocalizeText('messenger.habbicons.tooltip')} onMouseDown={(event) => event.stopPropagation()} onClick={() => setIsHabbiconPickerVisible((value) => !value)}>
+                                <img alt="" src={UseHabbiconIcon} />
+                            </button>
+                        </div>
+                        {isHabbiconPickerVisible && <FriendsMessengerHabbiconPickerView onClose={() => setIsHabbiconPickerVisible(false)} onSelect={sendHabbicon} />}
+                    </>
+                )}
+            </div>
+        </DraggableWindow>
     );
 };

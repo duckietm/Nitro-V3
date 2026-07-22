@@ -1,169 +1,59 @@
 import { HabboSearchComposer, HabboSearchResultData, HabboSearchResultEvent } from '@nitrots/nitro-renderer';
-import { FC, useEffect, useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import { LocalizeText, OpenMessengerChat, SendMessageComposer } from '../../../../api';
-import {
-    Column,
-    LayoutAvatarImageView,
-    NitroCardAccordionItemView,
-    NitroCardAccordionSetView,
-    NitroCardAccordionSetViewProps,
-    Text,
-    UserProfileIconView
-} from '../../../../common';
+import { LayoutAvatarImageView, UserProfileIconView } from '../../../../common';
 import { useFriends, useMessageEvent } from '../../../../hooks';
 import { resolveAvatarFigure } from './resolveAvatarFigure';
 import { resolveAvatarGender } from './resolveAvatarGender';
 
-interface FriendsSearchViewProps extends NitroCardAccordionSetViewProps {}
-
-export const FriendsSearchView: FC<FriendsSearchViewProps> = (props) => {
-    const { ...rest } = props;
+export const FriendsSearchView: FC<{ className?: string }> = ({ className = '' }) => {
     const [searchValue, setSearchValue] = useState('');
     const [friendResults, setFriendResults] = useState<HabboSearchResultData[]>(null);
     const [otherResults, setOtherResults] = useState<HabboSearchResultData[]>(null);
     const { canRequestFriend = null, requestFriend = null } = useFriends();
 
-    const getSearchResultFigure = (result: HabboSearchResultData) => {
-        if (!result) return null;
-
-        const typedResult = result as HabboSearchResultData & { figureString?: string; avatarFigure?: string; figure?: string; avatarFigureString?: string };
-
-        return typedResult.figureString || typedResult.avatarFigure || typedResult.figure || typedResult.avatarFigureString || null;
-    };
-
-    const getSearchResultGender = (result: HabboSearchResultData) => {
-        const typedResult = result as HabboSearchResultData & { gender?: string | number; avatarGender?: string | number };
-
-        return resolveAvatarGender(typedResult.avatarGender ?? typedResult.gender);
-    };
-
     useMessageEvent<HabboSearchResultEvent>(HabboSearchResultEvent, (event) => {
         const parser = event.getParser();
-
         setFriendResults(parser.friends);
         setOtherResults(parser.others);
     });
 
-    useEffect(() => {
-        if (!searchValue || !searchValue.length) return;
+    const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-        const timeout = setTimeout(() => {
-            if (!searchValue || !searchValue.length) return;
+        const value = searchValue.trim();
 
-            SendMessageComposer(new HabboSearchComposer(searchValue));
-        }, 500);
+        if (!value.length) return;
 
-        return () => clearTimeout(timeout);
-    }, [searchValue]);
+        SendMessageComposer(new HabboSearchComposer(value));
+    };
 
-    return (
-        <NitroCardAccordionSetView {...rest}>
-            <input
-                className="search-input form-control form-control-sm w-full rounded-0"
-                maxLength={50}
-                placeholder={LocalizeText('generic.search')}
-                type="text"
-                value={searchValue}
-                onChange={(event) => setSearchValue(event.target.value)}
-            />
-            <div className="flex flex-col">
-                {friendResults && (
-                    <>
-                        {friendResults.length === 0 && (
-                            <Text bold small className="px-2 py-1">
-                                {LocalizeText('friendlist.search.nofriendsfound')}
-                            </Text>
-                        )}
-                        {friendResults.length > 0 && (
-                            <Column gap={0}>
-                                <Text bold small className="px-2 py-1">
-                                    {LocalizeText('friendlist.search.friendscaption', ['cnt'], [friendResults.length.toString()])}
-                                </Text>
-                                <hr className="mx-2 mt-0 mb-1 text-black" />
-                                <Column gap={0}>
-                                    {friendResults.map((result) => {
-                                        return (
-                                            <NitroCardAccordionItemView key={result.avatarId} className="friends-list-item px-2 py-1" justifyContent="between">
-                                                <div className="friends-list-user">
-                                                    <div className="friends-list-avatar">
-                                                        <LayoutAvatarImageView
-                                                            figure={resolveAvatarFigure(getSearchResultFigure(result), getSearchResultGender(result))}
-                                                            gender={getSearchResultGender(result)}
-                                                            headOnly={true}
-                                                            direction={2}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <UserProfileIconView userId={result.avatarId} />
-                                                    </div>
-                                                    <div className="friends-list-name">{result.avatarName}</div>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    {result.isAvatarOnline && (
-                                                        <div
-                                                            className="nitro-friends-spritesheet icon-chat cursor-pointer"
-                                                            title={LocalizeText('friendlist.tip.im')}
-                                                            onClick={(event) => OpenMessengerChat(result.avatarId)}
-                                                        />
-                                                    )}
-                                                </div>
-                                            </NitroCardAccordionItemView>
-                                        );
-                                    })}
-                                </Column>
-                            </Column>
-                        )}
-                    </>
-                )}
-                {otherResults && (
-                    <>
-                        {otherResults.length === 0 && (
-                            <Text bold small className="px-2 py-1">
-                                {LocalizeText('friendlist.search.noothersfound')}
-                            </Text>
-                        )}
-                        {otherResults.length > 0 && (
-                            <Column gap={0}>
-                                <Text bold small className="px-2 py-1">
-                                    {LocalizeText('friendlist.search.otherscaption', ['cnt'], [otherResults.length.toString()])}
-                                </Text>
-                                <hr className="mx-2 mt-0 mb-1 text-black" />
-                                <Column gap={0}>
-                                    {otherResults.map((result) => {
-                                        return (
-                                            <NitroCardAccordionItemView key={result.avatarId} className="friends-list-item px-2 py-1" justifyContent="between">
-                                                <div className="friends-list-user">
-                                                    <div className="friends-list-avatar">
-                                                        <LayoutAvatarImageView
-                                                            figure={resolveAvatarFigure(getSearchResultFigure(result), getSearchResultGender(result))}
-                                                            gender={getSearchResultGender(result)}
-                                                            headOnly={true}
-                                                            direction={2}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <UserProfileIconView userId={result.avatarId} />
-                                                    </div>
-                                                    <div className="friends-list-name">{result.avatarName}</div>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    {canRequestFriend(result.avatarId) && (
-                                                        <div
-                                                            className="nitro-friends-spritesheet icon-add cursor-pointer"
-                                                            title={LocalizeText('friendlist.tip.addfriend')}
-                                                            onClick={(event) => requestFriend(result.avatarId, result.avatarName)}
-                                                        />
-                                                    )}
-                                                </div>
-                                            </NitroCardAccordionItemView>
-                                        );
-                                    })}
-                                </Column>
-                            </Column>
-                        )}
-                    </>
-                )}
+    const figure = (result: HabboSearchResultData) => {
+        const typed = result as HabboSearchResultData & { figureString?: string; avatarFigure?: string; figure?: string; avatarFigureString?: string; gender?: string | number; avatarGender?: string | number };
+        const gender = resolveAvatarGender(typed.avatarGender ?? typed.gender);
+        return { gender, value: resolveAvatarFigure(typed.figureString || typed.avatarFigure || typed.figure || typed.avatarFigureString, gender) };
+    };
+    const renderResult = (result: HabboSearchResultData, other: boolean) => {
+        const avatar = figure(result);
+        return <div key={result.avatarId} className="hfl-search-result">
+            <div className="hfl-search-avatar"><LayoutAvatarImageView figure={avatar.value} gender={avatar.gender} headOnly direction={2} /></div>
+                <span className="hfl-search-profile"><UserProfileIconView userId={result.avatarId} /></span>
+                <span className="hfl-search-name">{result.avatarName}</span>
+            <div className="hfl-search-actions">
+                {!other && result.isAvatarOnline && <button type="button" className="hfl-action chat" onClick={() => OpenMessengerChat(result.avatarId)} />}
+                {other && canRequestFriend(result.avatarId) && <button type="button" className="hfl-action add" onClick={() => requestFriend(result.avatarId, result.avatarName)} />}
             </div>
-        </NitroCardAccordionSetView>
-    );
+        </div>;
+    };
+
+    return <div className={`hfl-search-results ${className}`}>
+        <div className="hfl-search-results-scroll">
+            {friendResults && <section className="hfl-search-section"><h4>{LocalizeText('friendlist.search.friendscaption', ['cnt'], [friendResults.length.toString()])}</h4>{friendResults.map((result) => renderResult(result, false))}</section>}
+            {otherResults && <section className="hfl-search-section"><h4>{LocalizeText('friendlist.search.otherscaption', ['cnt'], [otherResults.length.toString()])}</h4>{otherResults.map((result) => renderResult(result, true))}</section>}
+        </div>
+        <form className="hfl-search-form" onSubmit={submitSearch}>
+            <input maxLength={50} value={searchValue} onChange={(event) => setSearchValue(event.target.value)} />
+            <button type="submit"><span />{LocalizeText('generic.search')}</button>
+        </form>
+    </div>;
 };

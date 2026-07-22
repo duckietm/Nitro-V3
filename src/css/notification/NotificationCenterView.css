@@ -540,10 +540,179 @@
     margin-top: -6px;
 }
 
+.nitro-rightside-notifications {
+    width: 100%;
+    align-items: flex-end;
+    gap: 4px;
+    pointer-events: none;
+}
+
+.nitro-rightside-notifications > * {
+    margin-left: auto;
+    pointer-events: auto;
+}
+
+.nitro-swf-notification-bubble {
+    width: 188px;
+    max-width: 188px;
+    min-height: 42px;
+    margin-left: auto;
+    padding: 6px 7px !important;
+    border: 1px solid rgba(0, 0, 0, 0.72);
+    border-right: 0;
+    border-radius: 7px 0 0 7px !important;
+    background: rgba(46, 45, 44, 0.82) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.42),
+        0 2px 0 rgba(0, 0, 0, 0.24) !important;
+    color: #ffffff;
+    font-family: Ubuntu, sans-serif;
+    font-size: 11px !important;
+    line-height: 1.15;
+    text-shadow: 1px 1px 0 #000000;
+}
+
+.nitro-swf-notification-bubble .w-\[50px\],
+.nitro-swf-notification-bubble .h-\[50px\],
+.nitro-swf-notification-bubble .bubble-image-container {
+    width: 38px !important;
+    height: 38px !important;
+}
+
+.nitro-swf-notification-bubble img {
+    width: auto;
+    height: auto;
+    max-width: 38px;
+    max-height: 38px;
+    object-fit: contain;
+}
+
+.nitro-swf-notification-bubble .btn,
+.nitro-swf-notification-bubble button {
+    min-height: 24px;
+    padding: 0 8px;
+    border: 3px solid transparent !important;
+    border-image-source: var(--habbo-skin-button) !important;
+    border-image-slice: 3 fill !important;
+    border-image-width: 3px !important;
+    border-image-repeat: stretch !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #111111 !important;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: none;
+}
+
+.nitro-swf-notification-bubble .btn:hover,
+.nitro-swf-notification-bubble button:hover {
+    border-image-source: var(--habbo-skin-button-hover) !important;
+}
+
 .alertView_nitro-coolui-logo {
 	width: 150px;
 	height: 73px;
 	position: relative;
 	background-image: url("@/assets/images/notifications/nitro_v3.png");
 	background-repeat: no-repeat;
+}
+
+.nitro-friendonline-notification {
+    position: relative;
+    min-width: 86px;
+    height: 58px;
+    margin-left: auto;
+    cursor: pointer;
+    pointer-events: auto;
+    image-rendering: pixelated;
+    user-select: none;
+}
+
+.nitro-friendonline-notification__content {
+    position: absolute;
+    left: 0;
+    top: 12px;
+    display: flex;
+    height: 34px;
+    overflow: hidden;
+}
+
+.nitro-friendonline-notification__left,
+.nitro-friendonline-notification__right {
+    width: auto;
+    height: auto;
+    flex: 0 0 auto;
+}
+
+.nitro-friendonline-notification__middle {
+    height: 34px;
+    flex: 1 1 auto;
+    background-repeat: repeat-x;
+}
+
+.nitro-friendonline-notification__message {
+    position: absolute;
+    left: 8px;
+    top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 19px;
+    max-width: calc(100% - 16px);
+    color: #cfcfcf;
+    font-size: 12px;
+    line-height: 19px;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 #000;
+}
+
+.nitro-friendonline-notification__message span {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+
+.nitro-friendonline-notification__message img {
+    width: auto;
+    height: auto;
+    margin-top: 1px;
+    flex: 0 0 auto;
+}
+
+.nitro-friendonline-notification__avatar {
+    position: absolute;
+    left: 33px;
+    top: 3px;
+    width: 53px;
+    height: 53px;
+}
+
+.nitro-friendonline-notification__circle-inner,
+.nitro-friendonline-notification__circle {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+.nitro-friendonline-notification__head {
+    position: absolute;
+    left: 2px;
+    top: 1px;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.nitro-friendonline-notification__head .avatar-image {
+    width: 50px !important;
+    height: 50px !important;
+    background-size: 76px auto !important;
+    background-position: center 34% !important;
+    background-repeat: no-repeat !important;
 }

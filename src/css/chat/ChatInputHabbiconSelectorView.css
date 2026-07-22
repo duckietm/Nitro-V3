@@ -1,0 +1,349 @@
+.habbicon-chat-trigger {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    image-rendering: pixelated;
+}
+
+.habbicon-chat-trigger img {
+    width: auto;
+    height: auto;
+    max-width: 24px;
+    max-height: 24px;
+    pointer-events: none;
+}
+
+.habbicon-selector-popover {
+    z-index: 1070;
+}
+
+.habbicon-selector-window {
+    width: 245px;
+    height: 290px;
+    padding: 7px 5px 6px;
+    color: #fff;
+    background: rgba(18, 18, 18, 0.96);
+    border: 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.85);
+    image-rendering: pixelated;
+}
+
+.habbicon-selector-controls {
+    display: flex;
+    gap: 9px;
+    height: 28px;
+    margin-bottom: 6px;
+}
+
+.habbicon-selector-search {
+    position: relative;
+    width: 122px;
+    height: 28px;
+    background: #efefef;
+    border: 1px solid #777;
+    border-radius: 3px;
+    box-shadow: inset 0 1px #fff;
+}
+
+.habbicon-selector-search input {
+    position: absolute;
+    inset: 5px 24px 5px 6px;
+    padding: 0;
+    color: #333;
+    font-size: 12px;
+    line-height: 18px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+}
+
+.habbicon-selector-search span {
+    position: absolute;
+    top: 5px;
+    left: 6px;
+    color: #686868;
+    font-size: 12px;
+    font-style: italic;
+    pointer-events: none;
+}
+
+.habbicon-selector-search button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 17px;
+    height: 17px;
+    padding: 0;
+    color: #555;
+    font-weight: 700;
+    line-height: 15px;
+    border: 0;
+    background: transparent;
+}
+
+.habbicon-selector-book-button {
+    width: 100px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 5px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    text-shadow: 0 1px #000000;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    background: linear-gradient(#5a5a5a, #3b3b3b);
+    box-shadow: inset 0 1px rgba(255,255,255,.22);
+}
+
+.habbicon-selector-book-button img {
+    width: auto;
+    height: auto;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.habbicon-selector-sections {
+    width: 235px;
+    height: 244px;
+    overflow-y: auto;
+    padding-right: 5px;
+    scrollbar-color: #ffffff #202020;
+    scrollbar-width: auto;
+}
+
+.habbicon-selector-section {
+    margin-bottom: 7px;
+}
+
+.habbicon-selector-section-title {
+    height: 17px;
+    color: #fff;
+    font-family: Ubuntu, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 17px;
+}
+
+.habbicon-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 42px);
+    gap: 2px 2px;
+}
+
+.habbicon-selector-item {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: transparent;
+}
+
+.habbicon-selector-item:hover {
+    background: #343434;
+}
+
+.habbicon-selector-item span {
+    display: block;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+}
+
+.habbicon-selector-sections::-webkit-scrollbar {
+    width: 8px;
+}
+
+.habbicon-selector-sections::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 4px;
+}
+
+.habbicon-selector-sections::-webkit-scrollbar-thumb {
+    background: #6f6f6f;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+}
+
+.habbicon-selector-sections::-webkit-scrollbar-button {
+    display: none;
+}
+
+.habbicon-selector-empty {
+    height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,.83);
+    font-size: 11px;
+    text-align: center;
+}
+
+.habbicon-book-window {
+    z-index: 1075;
+    width: 560px;
+    height: 570px;
+    overflow: hidden;
+    color: #2b2b2b;
+    background: #d7d1be;
+    border: 3px solid #2b6f89;
+    border-radius: 6px;
+    box-shadow: 4px 4px 0 rgba(0,0,0,.35);
+    image-rendering: pixelated;
+}
+
+.habbicon-book-header {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px 12px;
+    color: #fff;
+    background-color: #1f5d78;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 2px, transparent 2px 8px);
+    cursor: move;
+}
+
+.habbicon-book-header img {
+    width: auto;
+    height: auto;
+    max-width: 66px;
+    max-height: 70px;
+}
+
+.habbicon-book-header strong {
+    display: block;
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.habbicon-book-header span {
+    display: block;
+    width: 250px;
+    color: #d7efe5;
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.habbicon-book-header button {
+    width: 20px;
+    height: 20px;
+    margin-left: auto;
+    padding: 0;
+    color: #fff;
+    font-weight: 700;
+    line-height: 18px;
+    background: #c7312f;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px #461010;
+}
+
+.habbicon-book-tabs {
+    height: 36px;
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    padding: 0 7px;
+    background: #d7d1be;
+}
+
+.habbicon-book-tabs button {
+    height: 32px;
+    min-width: 64px;
+    padding: 0 12px;
+    color: #222;
+    border: 1px solid #777;
+    border-bottom-color: #fff;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(#f7f4ea, #d4cfbf);
+}
+
+.habbicon-book-body {
+    display: grid;
+    grid-template-columns: 154px 1fr;
+    gap: 6px;
+    height: 424px;
+    padding: 0 7px 7px;
+}
+
+.habbicon-book-rail,
+.habbicon-book-page {
+    overflow-y: auto;
+    border: 1px solid #8d897d;
+    background: #f6ebd7;
+}
+
+.habbicon-book-rail {
+    padding: 4px;
+}
+
+.habbicon-book-rail button {
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 2px;
+    padding: 4px 6px;
+    color: #2b2b2b;
+    text-align: left;
+    background: #f8ebd6;
+    border: 1px solid #b9ad92;
+}
+
+.habbicon-book-rail small {
+    font-size: 10px;
+}
+
+.habbicon-book-page {
+    padding: 10px;
+}
+
+.habbicon-book-page h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+}
+
+.habbicon-book-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 52px);
+    gap: 7px;
+    margin-bottom: 18px;
+}
+
+.habbicon-book-grid button {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #9a9a9a;
+    background: #eee8d5;
+}
+
+.habbicon-book-grid button:hover {
+    border-color: #54a8e8;
+    background: #fff5d6;
+}
+
+.habbicon-book-grid span {
+    display: block;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+}

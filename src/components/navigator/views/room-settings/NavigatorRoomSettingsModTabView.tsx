@@ -44,7 +44,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
     }, [roomData.roomId]);
 
     return (
-        <Grid overflow="auto">
+        <Grid>
             <Column size={6}>
                 <NavigatorRoomSettingsSectionView
                     title={`${LocalizeText('navigator.roomsettings.moderation.banned.users')} (${bannedUsers.length})`}

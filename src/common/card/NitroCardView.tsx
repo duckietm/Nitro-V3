@@ -25,7 +25,7 @@ export const NitroCardView: FC<NitroCardViewProps> = (props) => {
     const elementRef = useRef<HTMLDivElement>(null);
 
     const getClassNames = useMemo(() => {
-        const newClassNames: string[] = [isResizable ? 'resize' : 'resize-none', 'nitro-card-shell'];
+        const newClassNames: string[] = [isResizable ? 'resize' : 'resize-none', 'nitro-card', 'nitro-card-shell', `theme-${theme}`];
 
         if (classNames.length) newClassNames.push(...classNames);
 

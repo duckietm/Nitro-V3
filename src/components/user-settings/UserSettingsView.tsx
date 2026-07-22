@@ -1,4 +1,4 @@
-import { AddLinkEventTracker, CreateLinkEvent, ILinkEventTracker, NitroSettingsEvent, RemoveLinkEventTracker, UserSettingsCameraFollowComposer, UserSettingsEvent, UserSettingsOldChatComposer, UserSettingsRoomInvitesComposer, UserSettingsSoundComposer } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, CreateLinkEvent, ILinkEventTracker, NitroSettingsEvent, RemoveLinkEventTracker, UserSettingsCameraFollowComposer, UserSettingsEvent, UserSettingsOldChatComposer, UserSettingsPrivacyComposer, UserSettingsRoomInvitesComposer, UserSettingsSoundComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaUserCog, FaVolumeDown, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import { DispatchMainEvent, DispatchUiEvent, LocalizeText, SendMessageComposer } from '../../api';
@@ -14,7 +14,7 @@ const localizeWithFallback = (key: string, fallback: string) =>
 
 // null = full window (legacy). 'audio' | 'chat' | 'other' = focused section
 // opened from the purse gear dropdown.
-type SettingsSection = null | 'audio' | 'chat' | 'other';
+type SettingsSection = null | 'audio' | 'chat' | 'other' | 'privacy';
 
 export const UserSettingsView: FC<{}> = props =>
 {
@@ -48,6 +48,18 @@ export const UserSettingsView: FC<{}> = props =>
             case 'camera_follow':
                 clone.cameraFollow = value as boolean;
                 SendMessageComposer(new UserSettingsCameraFollowComposer(clone.cameraFollow));
+                break;
+            case 'online_status_visible':
+                clone.onlineStatusVisible = value as boolean;
+                SendMessageComposer(new UserSettingsPrivacyComposer(clone.onlineStatusVisible, clone.friendsCanFollow, clone.friendRequestsAllowed));
+                break;
+            case 'friends_can_follow':
+                clone.friendsCanFollow = value as boolean;
+                SendMessageComposer(new UserSettingsPrivacyComposer(clone.onlineStatusVisible, clone.friendsCanFollow, clone.friendRequestsAllowed));
+                break;
+            case 'friend_requests_allowed':
+                clone.friendRequestsAllowed = value as boolean;
+                SendMessageComposer(new UserSettingsPrivacyComposer(clone.onlineStatusVisible, clone.friendsCanFollow, clone.friendRequestsAllowed));
                 break;
             case 'system_volume':
                 clone.volumeSystem = value as number;
@@ -94,6 +106,9 @@ export const UserSettingsView: FC<{}> = props =>
         settingsEvent.cameraFollow = parser.cameraFollow;
         settingsEvent.flags = parser.flags;
         settingsEvent.chatType = parser.chatType;
+        settingsEvent.onlineStatusVisible = parser.onlineStatusVisible;
+        settingsEvent.friendsCanFollow = parser.friendsCanFollow;
+        settingsEvent.friendRequestsAllowed = parser.friendRequestsAllowed;
 
         setUserSettings(settingsEvent);
         DispatchMainEvent(settingsEvent);
@@ -143,6 +158,7 @@ export const UserSettingsView: FC<{}> = props =>
     const showChat = (section === null || section === 'chat');
     const showOther = (section === null || section === 'other');
     const showAudio = (section === null || section === 'audio');
+    const showPrivacy = (section === 'privacy');
     const showAccountLink = (section === null);
 
     const headerText = (section === 'audio')
@@ -151,6 +167,8 @@ export const UserSettingsView: FC<{}> = props =>
             ? localizeWithFallback('room.chat.settings.title', 'Chat settings')
             : (section === 'other')
                 ? localizeWithFallback('memenu.settings.other', 'Other settings')
+                : (section === 'privacy')
+                    ? localizeWithFallback('privacy.settings.title', 'Game Privacy')
                 : LocalizeText('widget.memenu.settings.title');
 
     return (
@@ -185,6 +203,35 @@ export const UserSettingsView: FC<{}> = props =>
                         <div className="flex items-center gap-1">
                             <input checked={ catalogSkipPurchaseConfirmation } className="form-check-input" type="checkbox" onChange={ event => setCatalogSkipPurchaseConfirmation(event.target.checked) } />
                             <Text>{ LocalizeText('memenu.settings.other.skip.purchase.confirmation') }</Text>
+                        </div>
+                    </div> }
+                { showPrivacy &&
+                    <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                            <Text bold>{ localizeWithFallback('privacy.settings.online.title', 'Online status') }</Text>
+                            <Text>{ localizeWithFallback('settings.privacy.online_status_description', 'Who can see your online status:') }</Text>
+                            <label className="flex items-center gap-1">
+                                <input checked={ userSettings.onlineStatusVisible } className="form-check-input" name="online-status-visibility" type="radio" onChange={ () => processAction('online_status_visible', true) } />
+                                <Text>{ localizeWithFallback('settings.privacy.everyone', 'Everyone') }</Text>
+                            </label>
+                            <label className="flex items-center gap-1">
+                                <input checked={ !userSettings.onlineStatusVisible } className="form-check-input" name="online-status-visibility" type="radio" onChange={ () => processAction('online_status_visible', false) } />
+                                <Text>{ localizeWithFallback('settings.privacy.noone', 'Nobody') }</Text>
+                            </label>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <Text bold>{ localizeWithFallback('privacy.settings.follow.title', 'Follow settings') }</Text>
+                            <label className="flex items-center gap-1">
+                                <input checked={ userSettings.friendsCanFollow } className="form-check-input" type="checkbox" onChange={ event => processAction('friends_can_follow', event.target.checked) } />
+                                <Text>{ localizeWithFallback('settings.privacy.follow_description', 'My friends can follow me from one room to another') }</Text>
+                            </label>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <Text bold>{ localizeWithFallback('privacy.settings.friend_requests.title', 'Friend requests') }</Text>
+                            <label className="flex items-center gap-1">
+                                <input checked={ userSettings.friendRequestsAllowed } className="form-check-input" type="checkbox" onChange={ event => processAction('friend_requests_allowed', event.target.checked) } />
+                                <Text>{ localizeWithFallback('settings.privacy.friend_requests_description', 'Other Habbos can send me a friend request') }</Text>
+                            </label>
                         </div>
                     </div> }
                 { showAudio &&

@@ -10,6 +10,7 @@ import {
     RoomRotatingEffect,
     RoomSettingsComposer,
     RoomShakingEffect,
+    UseHabbiconComposer,
     RoomZoomEvent,
     TextureUtils
 } from '@nitrots/nitro-renderer';
@@ -116,6 +117,13 @@ export const useChatInputActions = () => {
                         roomSession?.sendSignMessage(parseInt(secondPart));
 
                         return null;
+                    case ':habbicon': {
+                        const habbiconId = parseInt(secondPart);
+
+                        if(Number.isFinite(habbiconId) && habbiconId > 0) SendMessageComposer(new UseHabbiconComposer(habbiconId));
+
+                        return null;
+                    }
                     case ':iddqd':
                     case ':flip':
                         if (roomSession) GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, -1, true));

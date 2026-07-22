@@ -18,7 +18,7 @@ export const ChatInputEmojiSelectorView: FC<ChatInputEmojiSelectorViewProps> = (
     return (
         <Popover.Root open={selectorVisible} onOpenChange={setSelectorVisible}>
             <Popover.Trigger asChild>
-                <div className="cursor-pointer text-lg select-none px-1">🙂</div>
+                <div className="swf-chat-emoji-trigger cursor-pointer select-none">??</div>
             </Popover.Trigger>
             <Popover.Portal>
                 <Popover.Content className="z-[1070]" side="top" sideOffset={8}>
@@ -28,3 +28,4 @@ export const ChatInputEmojiSelectorView: FC<ChatInputEmojiSelectorViewProps> = (
         </Popover.Root>
     );
 };
+

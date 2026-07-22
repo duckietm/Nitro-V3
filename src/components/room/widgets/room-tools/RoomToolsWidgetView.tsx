@@ -1,7 +1,6 @@
 import { CreateLinkEvent, GetGuestRoomResultEvent, GetRoomEngine, NavigatorSearchComposer, RateFlatMessageComposer } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { GetConfigurationValue, LocalizeText, SendMessageComposer, SetLocalStorage, TryVisitRoom } from '../../../../api';
 import { Text } from '../../../../common';
 import { useMessageEvent, useNavigatorData, useRoom } from '../../../../hooks';
@@ -16,6 +15,7 @@ interface RoomHistoryEntry {
 const ROOM_HISTORY_KEY = 'nitro.room.history';
 const ROOM_HISTORY_MAX = 10;
 const ROOM_NAME_MAX = 80;
+const ROOM_ZOOM_SCALES = [0.5, 1, 2, 4, 8, 16];
 
 const readRoomHistory = (): RoomHistoryEntry[] => {
     try {
@@ -34,15 +34,37 @@ const readRoomHistory = (): RoomHistoryEntry[] => {
     }
 };
 
+const getNearestZoomScale = (scale: number) => {
+    if (Number.isNaN(scale) || scale <= 0) return 1;
+
+    return ROOM_ZOOM_SCALES.reduce((nearest, current) => (Math.abs(current - scale) < Math.abs(nearest - scale) ? current : nearest), ROOM_ZOOM_SCALES[0]);
+};
+
+const getNextZoomScale = (scale: number, direction: number) => {
+    const currentScale = getNearestZoomScale(scale);
+
+    if (direction > 0) {
+        return ROOM_ZOOM_SCALES.find((zoomScale) => zoomScale > currentScale + 0.001) ?? currentScale;
+    }
+
+    if (direction < 0) {
+        return [...ROOM_ZOOM_SCALES].reverse().find((zoomScale) => zoomScale < currentScale - 0.001) ?? currentScale;
+    }
+
+    return currentScale;
+};
+
+const getZoomText = (scale: number) => (Math.round(Math.log(getNearestZoomScale(scale)) / Math.LN2) + 1).toString();
+
 export const RoomToolsWidgetView: FC<{}> = (props) => {
-    const [areBubblesMuted, setAreBubblesMuted] = useState(false);
-    const [isZoomedIn, setIsZoomedIn] = useState<boolean>(false);
+    const [zoomScale, setZoomScale] = useState<number>(1);
+    const [hasLikedRoom, setHasLikedRoom] = useState<boolean>(false);
+    const [isToolsOpen, setIsToolsOpen] = useState<boolean>(true);
     const [roomName, setRoomName] = useState<string>(null);
     const [roomOwner, setRoomOwner] = useState<string>(null);
     const [roomTags, setRoomTags] = useState<string[]>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenHistory, setIsOpenHistory] = useState<boolean>(false);
-    const [isHistoryControlsOpen, setIsHistoryControlsOpen] = useState<boolean>(false);
     const [roomHistory, setRoomHistory] = useState<RoomHistoryEntry[]>([]);
     const [plugins, setPlugins] = useState<INitroPlugin[]>([]);
     const { navigatorData } = useNavigatorData();
@@ -53,6 +75,35 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
         return subscribePlugins(() => setPlugins(getRegisteredPlugins()));
     }, []);
 
+    const updateZoomScale = () => {
+        if (!roomSession) return;
+
+        setZoomScale(getNearestZoomScale(GetRoomEngine().getRoomInstanceRenderingCanvasScale(roomSession.roomId, 1)));
+    };
+
+    const zoomRoom = (direction: number) => {
+        if (!roomSession || direction === 0) return;
+
+        if (!GetConfigurationValue('room.zoom.enabled', true)) {
+            const geometry = GetRoomEngine().getRoomInstanceGeometry(roomSession.roomId, 1);
+            if (!geometry) return;
+
+            if (direction > 0) geometry.performZoomIn();
+            else geometry.performZoomOut();
+
+            setZoomScale(direction > 0 ? 2 : 1);
+            return;
+        }
+
+        const currentScale = getNearestZoomScale(GetRoomEngine().getRoomInstanceRenderingCanvasScale(roomSession.roomId, 1));
+        const nextScale = getNextZoomScale(currentScale, direction);
+
+        if (Math.abs(nextScale - currentScale) <= 0.001) return;
+
+        GetRoomEngine().setRoomInstanceRenderingCanvasScale(roomSession.roomId, 1, nextScale);
+        setZoomScale(nextScale);
+    };
+
     const handleToolClick = (action: string, value?: string) => {
         if (!roomSession) return;
 
@@ -60,27 +111,19 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
             case 'settings':
                 CreateLinkEvent('navigator/toggle-room-info');
                 return;
-            case 'zoom':
-                setIsZoomedIn((prevValue) => {
-                    if (GetConfigurationValue('room.zoom.enabled', true)) {
-                        const scale = GetRoomEngine().getRoomInstanceRenderingCanvasScale(roomSession.roomId, 1);
-                        GetRoomEngine().setRoomInstanceRenderingCanvasScale(roomSession.roomId, 1, scale === 1 ? 0.5 : 1);
-                    } else {
-                        const geometry = GetRoomEngine().getRoomInstanceGeometry(roomSession.roomId, 1);
-                        if (geometry) geometry.performZoom();
-                    }
-                    return !prevValue;
-                });
+            case 'zoom_in':
+                zoomRoom(1);
+                return;
+            case 'zoom_out':
+                zoomRoom(-1);
                 return;
             case 'chat_history':
                 CreateLinkEvent('chat-history/toggle');
                 return;
-            case 'hiddenbubbles':
-                CreateLinkEvent('nitrobubblehidden/toggle');
-                setAreBubblesMuted((prev) => !prev);
-                return;
             case 'like_room':
+                if (hasLikedRoom) return;
                 SendMessageComposer(new RateFlatMessageComposer(1));
+                setHasLikedRoom(true);
                 return;
             case 'toggle_room_link':
                 CreateLinkEvent('navigator/toggle-room-link');
@@ -141,75 +184,62 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
         setRoomHistory(readRoomHistory());
     }, []);
 
+    useEffect(() => {
+        setHasLikedRoom(false);
+        updateZoomScale();
+    }, [roomSession?.roomId]);
+
     const tools = [
         { action: 'settings', icon: 'icon-cog', label: LocalizeText('room.settings.button.text') },
-        { action: 'zoom', icon: isZoomedIn ? 'icon-zoom-more' : 'icon-zoom-less', label: LocalizeText('room.zoom.button.text') },
         { action: 'chat_history', icon: 'icon-chat-history', label: LocalizeText('room.chathistory.button.text') },
-        {
-            action: 'hiddenbubbles',
-            icon: areBubblesMuted ? 'icon-chat-disablebubble' : 'icon-chat-enablebubble',
-            label: areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')
-        },
-        ...(navigatorData.canRate ? [{ action: 'like_room', icon: 'icon-like-room', label: LocalizeText('room.like.button.text') }] : []),
+        ...(navigatorData.canRate || hasLikedRoom ? [{ action: 'like_room', icon: 'icon-like-room', label: LocalizeText('room.like.button.text'), disabled: hasLikedRoom }] : []),
         { action: 'toggle_room_link', icon: 'icon-room-link', label: LocalizeText('navigator.embed.caption') }
     ];
 
+    const canZoomIn = getNextZoomScale(zoomScale, 1) !== getNearestZoomScale(zoomScale);
+    const canZoomOut = getNextZoomScale(zoomScale, -1) !== getNearestZoomScale(zoomScale);
+
     return (
-        <div className="flex space-x-2 nitro-room-tools-container">
-            <div className={classNames('flex flex-col justify-center p-2 nitro-room-tools', isHistoryControlsOpen ? 'items-start' : 'items-center')}>
-                {tools.map((tool) => (
-                    <div
-                        key={tool.action}
-                        className="flex items-center gap-2 cursor-pointer room-tool-row"
-                        title={tool.label}
-                        onClick={() => handleToolClick(tool.action)}
-                    >
-                        <div className="flex justify-center w-6 shrink-0">
-                            <div className={classNames('nitro-icon', tool.icon)} />
-                        </div>
-                        {isHistoryControlsOpen && (
-                            <Text noWrap small variant="white" className="room-tool-label">
-                                {tool.label}
-                            </Text>
-                        )}
+        <div className={classNames('nitro-room-tools-container', !isToolsOpen && 'is-collapsed')}>
+            <button className="room-tools-collapse-toggle" type="button" onClick={() => setIsToolsOpen((prevValue) => !prevValue)}>
+                {isToolsOpen ? '‹' : '›'}
+            </button>
+            {isToolsOpen && (
+                <div className="nitro-room-tools">
+                    <div className="room-tools-zoom-row">
+                        <span>{LocalizeText('room.zoom.text', ['zoom_level'], [getZoomText(zoomScale)])}</span>
+                        <button className="room-tools-zoom-button" type="button" title={LocalizeText('room.zoom.zoom_in.tooltip')} disabled={!canZoomIn} onClick={() => handleToolClick('zoom_in')}>
+                            +
+                        </button>
+                        <button className="room-tools-zoom-button" type="button" title={LocalizeText('room.zoom.zoom_out.tooltip')} disabled={!canZoomOut} onClick={() => handleToolClick('zoom_out')}>
+                            -
+                        </button>
                     </div>
-                ))}
-                {plugins.map((plugin) => (
-                    <div
-                        key={plugin.name}
-                        className="flex items-center gap-2 cursor-pointer room-tool-row"
-                        title={plugin.label}
-                        onClick={() => plugin.onOpen()}
-                    >
-                        <div className="flex justify-center w-6 shrink-0">
-                            <div className={classNames('nitro-icon', plugin.icon || 'icon-cog')} />
-                        </div>
-                        {isHistoryControlsOpen && (
-                            <Text noWrap small variant="white" className="room-tool-label">
-                                {plugin.label}
-                            </Text>
-                        )}
-                    </div>
-                ))}
-                <div
-                    className="flex items-center justify-center mt-1 cursor-pointer room-history-fold-toggle"
-                    title={LocalizeText('room.history.button.tooltip')}
-                    onClick={() =>
-                        setIsHistoryControlsOpen((prev) => {
-                            if (prev) setIsOpenHistory(false);
-                            return !prev;
-                        })
-                    }
-                >
-                    {isHistoryControlsOpen ? <FaChevronUp className="fa-icon" /> : <FaChevronDown className="fa-icon" />}
-                </div>
-                {isHistoryControlsOpen && (
-                    <div className="flex items-center justify-center gap-1">
+                    {tools.map((tool) => (
                         <div
-                            className={classNames(
-                                'nitro-icon',
-                                canGoBack ? 'cursor-pointer icon-room-history-back-enabled' : 'icon-room-history-back-disabled'
-                            )}
+                            key={tool.action}
+                            className={classNames('room-tool-row', tool.disabled && 'is-disabled')}
+                            title={tool.label}
+                            onClick={() => !tool.disabled && handleToolClick(tool.action)}
+                        >
+                            <div className={classNames('nitro-icon', tool.icon)} />
+                            <span className="room-tool-label">{tool.label}</span>
+                        </div>
+                    ))}
+                    {plugins.map((plugin) => (
+                        <div
+                            key={plugin.name}
+                            className="room-tool-row"
+                            title={plugin.label}
+                            onClick={() => plugin.onOpen()}
+                        >
+                            <div className={classNames('nitro-icon', plugin.icon || 'icon-cog')} />
+                            <span className="room-tool-label">{plugin.label}</span>
+                        </div>
+                    ))}
+                    <div className="room-history-controls">
+                        <div
+                            className={classNames('nitro-icon', canGoBack ? 'cursor-pointer icon-room-history-back-enabled' : 'icon-room-history-back-disabled')}
                             title={LocalizeText('room.history.button.back.tooltip')}
                             onClick={() => canGoBack && handleToolClick('room_history_back')}
                         />
@@ -219,17 +249,14 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
                             onClick={() => hasHistory && handleToolClick('room_history')}
                         />
                         <div
-                            className={classNames(
-                                'nitro-icon',
-                                canGoNext ? 'cursor-pointer icon-room-history-next-enabled' : 'icon-room-history-next-disabled'
-                            )}
+                            className={classNames('nitro-icon', canGoNext ? 'cursor-pointer icon-room-history-next-enabled' : 'icon-room-history-next-disabled')}
                             title={LocalizeText('room.history.button.forward.tooltip')}
                             onClick={() => canGoNext && handleToolClick('room_history_next')}
                         />
                     </div>
-                )}
-            </div>
-            <div className="flex flex-col justify-center">
+                </div>
+            )}
+            <div className={classNames('nitro-room-tools-side-container', !isToolsOpen && 'd-none')}>
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div initial={{ x: -100 }} animate={{ x: 0 }} exit={{ x: -100 }} transition={{ duration: 0.3 }}>

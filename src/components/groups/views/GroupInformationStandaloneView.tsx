@@ -17,9 +17,9 @@ export const GroupInformationStandaloneView: FC<{}> = (props) => {
     if (!groupInformation) return null;
 
     return (
-        <NitroCardView className="nitro-group-information-standalone" theme="primary-slim">
+        <NitroCardView className="nitro-groups-window nitro-group-information-standalone" theme="primary-slim">
             <NitroCardHeaderView headerText={LocalizeText('group.window.title')} onCloseClick={(event) => setGroupInformation(null)} />
-            <NitroCardContentView>
+            <NitroCardContentView className="nitro-groups-content">
                 <GroupInformationView groupInformation={groupInformation} onClose={() => setGroupInformation(null)} />
             </NitroCardContentView>
         </NitroCardView>

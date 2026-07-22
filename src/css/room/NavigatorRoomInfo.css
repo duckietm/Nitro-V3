@@ -1,0 +1,87 @@
+.nitro-room-info {
+    width: min(230px, calc(100vw - 16px));
+    border: 1px solid #1e1e1a;
+    border-radius: 6px;
+    background: #e7e7df;
+    box-shadow: 0 2px 0 #6d6d67, 0 6px 16px rgba(0, 0, 0, 0.32);
+    color: #20201d;
+}
+
+.nitro-room-info__content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 7px !important;
+    background: #e7e7df !important;
+}
+
+.nitro-room-info__heading {
+    display: flex;
+    min-height: 17px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.nitro-room-info__meta {
+    min-height: 14px;
+    font-size: 11px;
+}
+
+.nitro-room-info__meta .user-profile-icon {
+    width: 12px;
+    height: 12px;
+}
+
+.nitro-room-info__description {
+    min-height: 28px;
+    overflow-wrap: anywhere;
+    font-size: 11px;
+    line-height: 13px;
+}
+
+.nitro-room-info__thumbnail {
+    width: 112px !important;
+    height: 112px !important;
+    align-self: center;
+    overflow: hidden;
+    border: 1px solid #151513;
+    background: #c5c5be;
+}
+
+.nitro-room-info__quick-actions,
+.nitro-room-info__group {
+    min-height: 16px;
+}
+
+.nitro-room-info__room-link {
+    min-height: 17px;
+    margin: 1px 0 2px;
+    color: #20201d;
+    font-size: 11px;
+}
+
+.nitro-room-info__room-link:hover {
+    color: #1c789b;
+}
+
+.nitro-room-info__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 3px;
+}
+
+.nitro-room-info__actions button {
+    min-height: 28px;
+    border: 1px solid #111 !important;
+    border-radius: 3px !important;
+    background: linear-gradient(#fff, #d8d8d2) !important;
+    box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.35) !important;
+    color: #20201d !important;
+    font-size: 11px;
+}
+
+.nitro-room-info__actions button:hover:not(:disabled) {
+    background: linear-gradient(#fff, #c6e4ed) !important;
+}

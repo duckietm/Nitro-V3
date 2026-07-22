@@ -62,16 +62,16 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
         );
     };
 
-    const saveRoomName = () => {
-        if (roomName === roomData.roomName || roomName.length < ROOM_NAME_MIN_LENGTH || roomName.length > ROOM_NAME_MAX_LENGTH) return;
+    const saveRoomName = (value = roomName) => {
+        if (value === roomData.roomName || value.length < ROOM_NAME_MIN_LENGTH || value.length > ROOM_NAME_MAX_LENGTH) return;
 
-        handleChange('name', roomName);
+        handleChange('name', value);
     };
 
-    const saveRoomDescription = () => {
-        if (roomDescription === roomData.roomDescription || roomDescription.length > DESC_MAX_LENGTH) return;
+    const saveRoomDescription = (value = roomDescription) => {
+        if (value === roomData.roomDescription || value.length > DESC_MAX_LENGTH) return;
 
-        handleChange('description', roomDescription);
+        handleChange('description', value);
     };
 
     const saveTags = (index: number) => {
@@ -102,7 +102,10 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                     value={roomName}
                     maxLength={ROOM_NAME_MAX_LENGTH}
                     onChange={(event) => setRoomName(event.target.value)}
-                    onBlur={saveRoomName}
+                    onBlur={(event) => saveRoomName(event.currentTarget.value)}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter') saveRoomName(event.currentTarget.value);
+                    }}
                 />
                 {roomName.length < ROOM_NAME_MIN_LENGTH && (
                     <Text bold small variant="danger">
@@ -117,7 +120,7 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                     value={roomDescription}
                     maxLength={DESC_MAX_LENGTH}
                     onChange={(event) => setRoomDescription(event.target.value)}
-                    onBlur={saveRoomDescription}
+                    onBlur={(event) => saveRoomDescription(event.currentTarget.value)}
                 />
             </Column>
             <Column gap={1}>

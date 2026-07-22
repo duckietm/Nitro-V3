@@ -1,33 +1,15 @@
 import { FC } from 'react';
-import { LocalizeText } from '../../../../../api';
-import { Button, Column, NitroCardAccordionSetView, NitroCardAccordionSetViewProps } from '../../../../../common';
 import { useFriends } from '../../../../../hooks';
 import { FriendsListRequestItemView } from './FriendsListRequestItemView';
 
-export const FriendsListRequestView: FC<NitroCardAccordionSetViewProps> = (props) => {
-    const { children = null, ...rest } = props;
-    const { requests = [], requestResponse = null } = useFriends();
-
-    if (!requests.length) return null;
+export const FriendsListRequestView: FC = () => {
+    const { requests = [] } = useFriends();
 
     return (
-        <NitroCardAccordionSetView {...rest}>
-            <Column fullHeight gap={1} justifyContent="between">
-                <Column gap={0}>
-                    {requests.map((request, index) => (
-                        <FriendsListRequestItemView key={index} request={request} />
-                    ))}
-                </Column>
-                <div className="flex justify-center gap-2 px-2 py-1">
-                    <Button onClick={(event) => requests.forEach((request) => requestResponse(request.id, true))}>
-                        {LocalizeText('friendlist.requests.acceptall')}
-                    </Button>
-                    <Button variant="danger" onClick={(event) => requestResponse(-1, false)}>
-                        {LocalizeText('friendlist.requests.dismissall')}
-                    </Button>
-                </div>
-            </Column>
-            {children}
-        </NitroCardAccordionSetView>
+        <div className="hfl-requests">
+            <div className="hfl-request-list">
+                {requests.map((request) => <FriendsListRequestItemView key={request.id} request={request} />)}
+            </div>
+        </div>
     );
 };

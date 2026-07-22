@@ -1,9 +1,7 @@
 import { FC } from 'react';
 import { LocalizeText, MessengerRequest } from '../../../../../api';
-import { Button, LayoutAvatarImageView, NitroCardAccordionItemView, UserProfileIconView } from '../../../../../common';
+import { UserProfileIconView } from '../../../../../common';
 import { useFriends } from '../../../../../hooks';
-import { resolveAvatarFigure } from '../resolveAvatarFigure';
-import { resolveAvatarGender } from '../resolveAvatarGender';
 
 export const FriendsListRequestItemView: FC<{ request: MessengerRequest }> = (props) => {
     const { request = null } = props;
@@ -12,29 +10,15 @@ export const FriendsListRequestItemView: FC<{ request: MessengerRequest }> = (pr
     if (!request) return null;
 
     return (
-        <NitroCardAccordionItemView className="friends-list-item px-2 py-1" justifyContent="between">
-            <div className="friends-list-user">
-                <div className="friends-list-avatar">
-                    <LayoutAvatarImageView
-                        figure={resolveAvatarFigure(request.figureString)}
-                        gender={resolveAvatarGender(undefined)}
-                        headOnly={true}
-                        direction={2}
-                    />
-                </div>
-                <div>
+        <div className="hfl-request">
+                <div className="hfl-request-profile">
                     <UserProfileIconView userId={request.requesterUserId} />
                 </div>
-                <div className="friends-list-name">{request.name}</div>
+                <span className="hfl-request-name">{request.name}</span>
+            <div className="hfl-request-actions">
+                <button type="button" className="accept" title={LocalizeText('friendlist.request_accept')} onClick={() => requestResponse(request.id, true)} />
+                <button type="button" className="decline" title={LocalizeText('friendlist.request_decline')} onClick={() => requestResponse(request.id, false)} />
             </div>
-            <div className="flex items-center gap-1">
-                <Button size="sm" onClick={(event) => requestResponse(request.id, true)}>
-                    {LocalizeText('friendlist.request_accept')}
-                </Button>
-                <Button size="sm" variant="danger" onClick={(event) => requestResponse(request.id, false)}>
-                    {LocalizeText('friendlist.request_decline')}
-                </Button>
-            </div>
-        </NitroCardAccordionItemView>
+        </div>
     );
 };

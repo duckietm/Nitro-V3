@@ -76,17 +76,6 @@ export const ContextMenuView: FC<ContextMenuViewProps> = ({
     const getClassNames = useMemo(() => {
         const classes = [
             'nitro-context-menu',
-            'p-[2px]!',
-            'bg-[#1c323f]',
-            'border-2',
-            'border-[solid]',
-            'border-[rgba(255,255,255,.5)]',
-            'rounded-[.25rem]',
-            'text-[.7875rem]',
-            'text-white',
-            'z-40',
-            'pointer-events-auto',
-            'absolute',
             pos.x !== null ? 'visible' : 'invisible'
         ];
         if (isCollapsed) classes.push('menu-hidden');

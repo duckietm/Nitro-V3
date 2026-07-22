@@ -28,7 +28,7 @@ const CatalogViewInner: FC<{}> = () => {
         setSearchResult = null,
         currentType = CatalogType.NORMAL
     } = useCatalogUiState();
-    const { openPageByName = null, openPageByOfferId = null, activateNode = null, openCatalogByType = null, toggleCatalogByType = null } = useCatalogActions();
+    const { openPageById = null, openPageByName = null, openPageByOfferId = null, activateNode = null, openCatalogByType = null, toggleCatalogByType = null } = useCatalogActions();
     const catalogAdmin = useCatalogAdmin();
     const adminMode = catalogAdmin?.adminMode ?? false;
     const setAdminMode = catalogAdmin?.setAdminMode ?? (() => {});
@@ -121,7 +121,10 @@ const CatalogViewInner: FC<{}> = () => {
                                         return;
                                 }
                             } else {
-                                openPageByName(parts[2]);
+                                const pageId = Number(parts[2]);
+
+                                if (Number.isInteger(pageId) && pageId > 0) openPageById(pageId);
+                                else openPageByName(parts[2]);
                             }
                         } else {
                             setIsVisible(true);
@@ -136,7 +139,7 @@ const CatalogViewInner: FC<{}> = () => {
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [setIsVisible, openPageByOfferId, openPageByName, openCatalogByType, toggleCatalogByType, buildersClubEnabled]);
+    }, [setIsVisible, openPageById, openPageByOfferId, openPageByName, openCatalogByType, toggleCatalogByType, buildersClubEnabled]);
 
     return (
         <>

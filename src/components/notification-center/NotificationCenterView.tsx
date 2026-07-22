@@ -58,7 +58,7 @@ export const NotificationCenterView: FC<{}> = (props) => {
 
     return (
         <>
-            <div className="flex flex-col gap-1">{getBubbleAlerts}</div>
+            <div className="nitro-rightside-notifications flex flex-col gap-1">{getBubbleAlerts}</div>
             {getConfirms}
             {getAlerts}
         </>

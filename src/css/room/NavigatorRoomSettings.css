@@ -7,34 +7,74 @@
     --room-settings-text: #20201d;
     --room-settings-muted: #60605a;
 
-    width: min(420px, calc(100vw - 16px));
+    width: min(420px, calc(100vw - 16px)) !important;
+    height: min(620px, calc(100vh - 16px));
     min-width: 0;
     max-width: calc(100vw - 16px);
-    max-height: calc(100vh - 16px);
+    max-height: none;
+    resize: none !important;
+    overflow: hidden !important;
     color: var(--room-settings-text);
+    border: 1px solid #1e1e1a;
+    border-radius: 6px;
+    background: var(--room-settings-bg);
+    box-shadow: 0 2px 0 #6d6d67, 0 6px 16px rgba(0, 0, 0, 0.32);
 
     .list-container {
         height: 100px;
+        border: 1px solid #aaa9a2 !important;
+        border-radius: 3px;
+        background: #fffdf4 !important;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 
         .list-item {
             background-color: #ececec;
         }
     }
 
-    .nitro-card-tabs-shell {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        overflow-y: hidden;
+    .nitro-room-settings-section {
+        border: 1px solid #aaa9a2;
+        border-radius: 4px;
+        background: #f7f7f2;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        padding: 8px;
     }
 
-    .nitro-card-tab-item {
-        flex: 0 0 auto;
-        white-space: nowrap;
+    .nitro-room-settings-section > :first-child {
+        color: #30302b;
+        font-size: 11px;
+    }
+
+    button {
+        min-height: 23px;
+        border: 1px solid #6d6d66 !important;
+        border-radius: 3px !important;
+        background: linear-gradient(#fff, #d7d7d1) !important;
+        color: #262622 !important;
+        box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.28) !important;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    button:hover:not(:disabled) {
+        background: linear-gradient(#fff, #c5e6f0) !important;
+    }
+
+    button:disabled {
+        opacity: 0.55;
     }
 
     .nitro-card-content-shell {
+        flex: 1 1 0;
+        min-height: 0;
+        overflow: hidden !important;
         background: var(--room-settings-bg);
         color: var(--room-settings-text);
+        padding: 10px 14px !important;
+    }
+
+    :where(input, select, textarea, button, label) {
+        pointer-events: auto !important;
     }
 
     :where(.bg-white, .bg-light, .bg-muted, .bg-card-grid-item) {
@@ -69,19 +109,67 @@
     }
 
     :where(input[type="checkbox"], input[type="radio"]) {
-        min-height: 0;
-        accent-color: var(--room-settings-accent);
-        box-shadow: none !important;
+        width: 16px;
+        height: 16px;
+        min-height: 16px;
+        min-width: 16px;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        border: 1px solid #565650 !important;
+        border-radius: 3px !important;
+        background: #fffdf4 !important;
+        box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.2) !important;
+        cursor: pointer;
+        position: relative;
+    }
+
+    :where(input[type="radio"]) {
+        border-radius: 50% !important;
+    }
+
+    :where(input[type="checkbox"]:checked) {
+        border-color: #276b85 !important;
+        background: #e2f1f5 !important;
+    }
+
+    :where(input[type="checkbox"]:checked)::before {
+        content: '' !important;
+        position: absolute;
+        left: 4px;
+        top: 1px;
+        width: 5px;
+        height: 9px;
+        border: solid #1d5e76;
+        border-width: 0 2px 2px 0;
+        background: transparent !important;
+        transform: rotate(45deg) !important;
+    }
+
+    :where(input[type="checkbox"]:checked)::after {
+        content: none !important;
+    }
+
+    :where(input[type="radio"]:checked)::before {
+        content: '' !important;
+        position: absolute;
+        inset: 4px;
+        border-radius: 50%;
+        background: #1d5e76 !important;
+        transform: none !important;
+    }
+
+    :where(input[type="radio"]:checked)::after {
+        content: none !important;
     }
 }
 
 @media (max-width: 520px), (max-height: 520px) {
     .nitro-room-settings {
         width: calc(100vw - 16px);
-        max-height: calc(100vh - 16px);
+        height: calc(100vh - 16px);
 
         .nitro-card-content-shell {
-            max-height: calc(100vh - 84px);
+            max-height: none;
         }
 
         .col-span-6 {

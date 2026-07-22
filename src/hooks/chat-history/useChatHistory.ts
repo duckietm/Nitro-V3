@@ -12,6 +12,18 @@ const MESSENGER_HISTORY_MAX = 1000;
 let CHAT_HISTORY_COUNTER: number = 0;
 let MESSENGER_HISTORY_COUNTER: number = 0;
 
+export const ClearStoredChatHistory = () => {
+    CHAT_HISTORY_COUNTER = 0;
+    MESSENGER_HISTORY_COUNTER = 0;
+
+    try {
+        window.localStorage.removeItem('chatHistory');
+        window.localStorage.removeItem('roomHistory');
+        window.localStorage.removeItem('messengerHistory');
+        window.localStorage.removeItem('needsRoomInsert');
+    } catch {}
+};
+
 /**
  * Project a list of chat entries to the slim shape we want to persist in
  * localStorage. `imageUrl` is a base64 data URL of the avatar / pet head

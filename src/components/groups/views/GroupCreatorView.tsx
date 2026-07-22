@@ -120,9 +120,9 @@ export const GroupCreatorView: FC<GroupCreatorViewProps> = (props) => {
     if (!groupData) return null;
 
     return (
-        <NitroCardView className="h-[355px] w-[390px]" theme="primary-slim">
+        <NitroCardView className="nitro-groups-window nitro-group-creator h-[355px] w-[390px]" theme="primary-slim">
             <NitroCardHeaderView headerText={LocalizeText('group.create.title')} onCloseClick={onCloseClose} />
-            <NitroCardContentView>
+            <NitroCardContentView className="nitro-groups-content">
                 <div className="flex items-center justify-center creator-tabs">
                     {TABS.map((tab, index) => {
                         return (
@@ -164,11 +164,12 @@ export const GroupCreatorView: FC<GroupCreatorViewProps> = (props) => {
                         {currentTab === 3 && <GroupTabColorsView groupData={groupData} setCloseAction={setCloseAction} setGroupData={setGroupData} />}
                         {currentTab === 4 && <GroupTabCreatorConfirmationView groupData={groupData} purchaseCost={purchaseCost} setGroupData={setGroupData} />}
                     </Column>
-                    <div className="flex justify-between">
-                        <Button className="text-black" variant="link" onClick={previousStep}>
+                    <div className="nitro-groups-footer flex justify-between">
+                        <Button className="nitro-groups-button" variant="link" onClick={previousStep}>
                             {LocalizeText(currentTab === 1 ? 'generic.cancel' : 'group.create.previousstep')}
                         </Button>
                         <Button
+                            className="nitro-groups-button nitro-groups-button--primary"
                             disabled={currentTab === 4 && !HasHabboClub()}
                             variant={currentTab === 4 ? (HasHabboClub() ? 'success' : 'danger') : 'primary'}
                             onClick={nextStep}

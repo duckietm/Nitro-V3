@@ -1,0 +1,232 @@
+:root {
+    --habbo-skin-button: url("../../assets/images/habbo-skin/slices/button-default.png");
+    --habbo-skin-button-hover: url("../../assets/images/habbo-skin/slices/button-hover.png");
+    --habbo-skin-button-pressed: url("../../assets/images/habbo-skin/slices/button-pressed.png");
+    --habbo-skin-button-disabled: url("../../assets/images/habbo-skin/slices/button-disabled.png");
+    --habbo-skin-shiny: url("../../assets/images/habbo-skin/slices/button-shiny-default.png");
+    --habbo-skin-shiny-hover: url("../../assets/images/habbo-skin/slices/button-shiny-hover.png");
+    --habbo-skin-shiny-pressed: url("../../assets/images/habbo-skin/slices/button-shiny-pressed.png");
+    --habbo-skin-shiny-disabled: url("../../assets/images/habbo-skin/slices/button-shiny-disabled.png");
+    --habbo-skin-scroll-track-v: url("../../assets/images/habbo-skin/slices/scroll-track-v.png");
+    --habbo-skin-scroll-track-h: url("../../assets/images/habbo-skin/slices/scroll-track-h.png");
+    --habbo-skin-scroll-thumb-v: url("../../assets/images/habbo-skin/slices/scroll-thumb-v.png");
+    --habbo-skin-scroll-thumb-v-pressed: url("../../assets/images/habbo-skin/slices/scroll-thumb-v-pressed.png");
+    --habbo-skin-scroll-thumb-h: url("../../assets/images/habbo-skin/slices/scroll-thumb-h.png");
+    --habbo-skin-scroll-thumb-h-pressed: url("../../assets/images/habbo-skin/slices/scroll-thumb-h-pressed.png");
+    --habbo-skin-scroll-up: url("../../assets/images/habbo-skin/slices/scroll-up.png");
+    --habbo-skin-scroll-up-pressed: url("../../assets/images/habbo-skin/slices/scroll-up-pressed.png");
+    --habbo-skin-scroll-down: url("../../assets/images/habbo-skin/slices/scroll-down.png");
+    --habbo-skin-scroll-down-pressed: url("../../assets/images/habbo-skin/slices/scroll-down-pressed.png");
+    --habbo-skin-scroll-left: url("../../assets/images/habbo-skin/slices/scroll-left.png");
+    --habbo-skin-scroll-left-pressed: url("../../assets/images/habbo-skin/slices/scroll-left-pressed.png");
+    --habbo-skin-scroll-right: url("../../assets/images/habbo-skin/slices/scroll-right.png");
+    --habbo-skin-scroll-right-pressed: url("../../assets/images/habbo-skin/slices/scroll-right-pressed.png");
+}
+
+*::-webkit-scrollbar,
+.has-classic-scrollbar::-webkit-scrollbar,
+.has-classic-scrollbar *::-webkit-scrollbar {
+    width: 17px !important;
+    height: 17px !important;
+    background-color: transparent !important;
+}
+
+*::-webkit-scrollbar-track,
+.has-classic-scrollbar::-webkit-scrollbar-track,
+.has-classic-scrollbar *::-webkit-scrollbar-track {
+    background-color: transparent !important;
+    background-image: var(--habbo-skin-scroll-track-v) !important;
+    background-repeat: repeat-y !important;
+    background-position: center top !important;
+    background-size: 17px 1px !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+*::-webkit-scrollbar-track:horizontal,
+.has-classic-scrollbar::-webkit-scrollbar-track:horizontal,
+.has-classic-scrollbar *::-webkit-scrollbar-track:horizontal {
+    background-image: var(--habbo-skin-scroll-track-h) !important;
+    background-repeat: repeat-x !important;
+    background-size: 1px 17px !important;
+}
+
+*::-webkit-scrollbar-thumb,
+.has-classic-scrollbar::-webkit-scrollbar-thumb,
+.has-classic-scrollbar *::-webkit-scrollbar-thumb {
+    min-height: 24px !important;
+    min-width: 24px !important;
+    background-color: transparent !important;
+    background-image: var(--habbo-skin-scroll-thumb-v) !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: 17px 24px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+*::-webkit-scrollbar-thumb:horizontal,
+.has-classic-scrollbar::-webkit-scrollbar-thumb:horizontal,
+.has-classic-scrollbar *::-webkit-scrollbar-thumb:horizontal {
+    background-image: var(--habbo-skin-scroll-thumb-h) !important;
+    background-size: 24px 17px !important;
+}
+
+*::-webkit-scrollbar-thumb:active,
+.has-classic-scrollbar::-webkit-scrollbar-thumb:active,
+.has-classic-scrollbar *::-webkit-scrollbar-thumb:active {
+    background-image: var(--habbo-skin-scroll-thumb-v-pressed) !important;
+}
+
+*::-webkit-scrollbar-thumb:horizontal:active,
+.has-classic-scrollbar::-webkit-scrollbar-thumb:horizontal:active,
+.has-classic-scrollbar *::-webkit-scrollbar-thumb:horizontal:active {
+    background-image: var(--habbo-skin-scroll-thumb-h-pressed) !important;
+}
+
+*::-webkit-scrollbar-button:single-button:vertical:decrement,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:vertical:decrement,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:vertical:decrement {
+    display: block !important;
+    width: 17px !important;
+    height: 16px !important;
+    background: var(--habbo-skin-scroll-up) center center / 17px 16px no-repeat transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+*::-webkit-scrollbar-button:single-button:vertical:decrement:active,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:vertical:decrement:active,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:vertical:decrement:active {
+    background-image: var(--habbo-skin-scroll-up-pressed) !important;
+}
+
+*::-webkit-scrollbar-button:single-button:vertical:increment,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:vertical:increment,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:vertical:increment {
+    display: block !important;
+    width: 17px !important;
+    height: 16px !important;
+    background: var(--habbo-skin-scroll-down) center center / 17px 16px no-repeat transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+*::-webkit-scrollbar-button:single-button:vertical:increment:active,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:vertical:increment:active,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:vertical:increment:active {
+    background-image: var(--habbo-skin-scroll-down-pressed) !important;
+}
+
+*::-webkit-scrollbar-button:single-button:horizontal:decrement,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:horizontal:decrement,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:horizontal:decrement {
+    display: block !important;
+    width: 16px !important;
+    height: 17px !important;
+    background: var(--habbo-skin-scroll-left) center center / 16px 17px no-repeat transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+*::-webkit-scrollbar-button:single-button:horizontal:decrement:active,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:horizontal:decrement:active,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:horizontal:decrement:active {
+    background-image: var(--habbo-skin-scroll-left-pressed) !important;
+}
+
+*::-webkit-scrollbar-button:single-button:horizontal:increment,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:horizontal:increment,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:horizontal:increment {
+    display: block !important;
+    width: 16px !important;
+    height: 17px !important;
+    background: var(--habbo-skin-scroll-right) center center / 16px 17px no-repeat transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+*::-webkit-scrollbar-button:single-button:horizontal:increment:active,
+.has-classic-scrollbar::-webkit-scrollbar-button:single-button:horizontal:increment:active,
+.has-classic-scrollbar *::-webkit-scrollbar-button:single-button:horizontal:increment:active {
+    background-image: var(--habbo-skin-scroll-right-pressed) !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-button,
+.nitro-catalog-window button.nitro-catalog-preview-btn,
+.nitro-catalog-window .nitro-catalog-swf-gift-button {
+    border: 3px solid transparent !important;
+    border-image-source: var(--habbo-skin-button) !important;
+    border-image-slice: 3 fill !important;
+    border-image-width: 3px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    color: #111111 !important;
+    text-shadow: none !important;
+    image-rendering: pixelated !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-button:hover,
+.nitro-catalog-window button.nitro-catalog-preview-btn:hover,
+.nitro-catalog-window .nitro-catalog-swf-gift-button:hover {
+    border-image-source: var(--habbo-skin-button-hover) !important;
+    filter: none !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-button:active,
+.nitro-catalog-window button.nitro-catalog-preview-btn:active,
+.nitro-catalog-window .nitro-catalog-swf-gift-button:active {
+    border-image-source: var(--habbo-skin-button-pressed) !important;
+    filter: none !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-button:disabled,
+.nitro-catalog-window .nitro-catalog-swf-button.pointer-events-none,
+.nitro-catalog-window .nitro-catalog-swf-gift-button:disabled,
+.nitro-catalog-window .nitro-catalog-swf-gift-button.pointer-events-none {
+    border-image-source: var(--habbo-skin-button-disabled) !important;
+    color: #777777 !important;
+    opacity: 1 !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-buy-button,
+.nitro-catalog-window .nitro-catalog-swf-confirm-button {
+    border: 5px solid transparent !important;
+    border-image-source: var(--habbo-skin-shiny) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    text-shadow: 1px 1px 0 #003a00 !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-buy-button:hover,
+.nitro-catalog-window .nitro-catalog-swf-confirm-button:hover {
+    border-image-source: var(--habbo-skin-shiny-hover) !important;
+    filter: none !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-buy-button:active,
+.nitro-catalog-window .nitro-catalog-swf-confirm-button:active {
+    border-image-source: var(--habbo-skin-shiny-pressed) !important;
+    filter: none !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-buy-button:disabled,
+.nitro-catalog-window .nitro-catalog-swf-buy-button.pointer-events-none,
+.nitro-catalog-window .nitro-catalog-swf-confirm-button:disabled,
+.nitro-catalog-window .nitro-catalog-swf-confirm-button.pointer-events-none {
+    border-image-source: var(--habbo-skin-shiny-disabled) !important;
+    color: #eeeeee !important;
+    opacity: 1 !important;
+}

@@ -1,10 +1,9 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveFriendComposer, RemoveLinkEventTracker, SendRoomInviteComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { filterFriendsByCategory, LocalizeText, MessengerFriend, SendMessageComposer } from '../../../../api';
-import { Button, Flex, NitroCardAccordionSetView, NitroCardAccordionView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
+import { CreateLinkEvent, filterFriendsByCategory, LocalizeText, MessengerFriend, SendMessageComposer } from '../../../../api';
+import { DraggableWindow, DraggableWindowPosition } from '../../../../common';
 import { useFriends } from '../../../../hooks';
-import { FriendsCategoryManagerView } from './FriendsCategoryManagerView';
-import { FriendsListGroupChipsView } from './FriendsListGroupChipsView';
+import './FriendsListView.css';
 import { FriendsRemoveConfirmationView } from './FriendsListRemoveConfirmationView';
 import { FriendsRoomInviteView } from './FriendsListRoomInviteView';
 import { FriendsSearchView } from './FriendsListSearchView';
@@ -16,13 +15,16 @@ export const FriendsListView: FC<{}> = (props) => {
     const [selectedFriendsIds, setSelectedFriendsIds] = useState<number[]>([]);
     const [showRoomInvite, setShowRoomInvite] = useState<boolean>(false);
     const [showRemoveFriendsConfirmation, setShowRemoveFriendsConfirmation] = useState<boolean>(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
-    const [showCategoryManager, setShowCategoryManager] = useState<boolean>(false);
-    const { friends = [], onlineFriends = [], offlineFriends = [], requests = [], requestFriend = null, settings = null } = useFriends();
+    const [activePanel, setActivePanel] = useState<'friends' | 'requests' | 'search'>('friends');
+    const [isFriendSearchOpen, setIsFriendSearchOpen] = useState(false);
+    const [friendSearchValue, setFriendSearchValue] = useState('');
+    const [isOnlineExpanded, setIsOnlineExpanded] = useState<boolean>(true);
+    const [isOfflineExpanded, setIsOfflineExpanded] = useState<boolean>(false);
+    const { onlineFriends = [], offlineFriends = [], requests = [], requestFriend = null } = useFriends();
 
-    const categories = settings?.categories ?? [];
-    const filteredOnlineFriends = filterFriendsByCategory(onlineFriends, selectedCategoryId);
-    const filteredOfflineFriends = filterFriendsByCategory(offlineFriends, selectedCategoryId);
+    const friendSearch = friendSearchValue.trim().toLocaleLowerCase();
+    const filteredOnlineFriends = filterFriendsByCategory(onlineFriends, 0).filter((friend) => !friendSearch || friend.name.toLocaleLowerCase().includes(friendSearch));
+    const filteredOfflineFriends = filterFriendsByCategory(offlineFriends, 0).filter((friend) => !friendSearch || friend.name.toLocaleLowerCase().includes(friendSearch));
 
     const removeFriendsText = useMemo(() => {
         if (!selectedFriendsIds || !selectedFriendsIds.length) return '';
@@ -132,33 +134,32 @@ export const FriendsListView: FC<{}> = (props) => {
         return () => RemoveLinkEventTracker(linkTracker);
     }, [requestFriend]);
 
+    useEffect(() => {
+        if ((activePanel === 'requests') && !requests.length) setActivePanel('friends');
+    }, [activePanel, requests.length]);
+
     if (!isVisible) return null;
 
     return (
         <>
-            <NitroCardView
-                className="nitro-friends min-w-0 w-[min(310px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
-                theme="primary-slim"
-                uniqueKey="nitro-friends"
-            >
-                <NitroCardHeaderView headerText={LocalizeText('friendlist.friends')} onCloseClick={(event) => setIsVisible(false)} />
-                <NitroCardContentView className="text-black p-0" gap={1} overflow="hidden">
-                    <FriendsListGroupChipsView
-                        categories={categories}
-                        friends={friends}
-                        selectedCategoryId={selectedCategoryId}
-                        setSelectedCategoryId={setSelectedCategoryId}
-                        onManageClick={() => setShowCategoryManager(true)}
-                    />
-                    <NitroCardAccordionView fullHeight overflow="hidden">
-                        <NitroCardAccordionSetView
-                            className="friends-list-section"
-                            headerText={LocalizeText('friendlist.friends') + ` (${filteredOnlineFriends.length})`}
-                            isExpanded={true}
-                        >
-                            <Flex className="friends-list-toolbar px-2 py-1" justifyContent="end">
+            <DraggableWindow uniqueKey="nitro-friends" handleSelector=".hfl-titlebar" windowPosition={DraggableWindowPosition.TOP_LEFT} offsetLeft={110} offsetTop={50}>
+                <div className={`habbo-friend-list${requests.length ? ' has-requests' : ''}${activePanel === 'search' ? ' search-mode' : ''}${activePanel === 'requests' ? ' requests-mode' : ''}`}>
+                    <div className="hfl-titlebar drag-handler">
+                        <span className="hfl-titlebar-grip" />
+                        <span className="hfl-title">{LocalizeText('friendlist.friends')}</span>
+                        <button type="button" className="hfl-close" onClick={() => setIsVisible(false)} />
+                    </div>
+                    <div className="hfl-category">
+                        <button type="button" className="hfl-category-current" onClick={() => setActivePanel('friends')}>{LocalizeText('friendlist.friends')}</button>
+                    </div>
+                    <div className="hfl-content">
+                        {activePanel === 'search' && <FriendsSearchView />}
+                        {activePanel === 'requests' && <FriendsListRequestView />}
+                        {activePanel === 'friends' && <><section className="hfl-section">
+                            <button type="button" className={`hfl-section-header${isOnlineExpanded ? '' : ' collapsed'}`} onClick={() => setIsOnlineExpanded((value) => !value)}>
+                                <span>{LocalizeText('friendlist.friends') + ` (${filteredOnlineFriends.length})`}</span>
                                 <span
-                                    className="friends-list-toolbar-link"
+                                    className="hfl-select-all"
                                     onClick={(event) => {
                                         event.stopPropagation();
                                         toggleSelectFriends(filteredOnlineFriends.map((friend) => friend.id));
@@ -168,40 +169,49 @@ export const FriendsListView: FC<{}> = (props) => {
                                         ? LocalizeText('friendlist.unselect_all')
                                         : LocalizeText('friendlist.select_all')}
                                 </span>
-                            </Flex>
-                            <FriendsListGroupView list={filteredOnlineFriends} selectedFriendsIds={selectedFriendsIds} selectFriend={selectFriend} />
-                        </NitroCardAccordionSetView>
-                        <NitroCardAccordionSetView headerText={LocalizeText('friendlist.friends.offlinecaption') + ` (${filteredOfflineFriends.length})`}>
-                            <Flex className="friends-list-toolbar px-2 py-1" justifyContent="end">
-                                <span
-                                    className="friends-list-toolbar-link"
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        toggleSelectFriends(filteredOfflineFriends.map((friend) => friend.id));
-                                    }}
-                                >
-                                    {filteredOfflineFriends.length && filteredOfflineFriends.every((friend) => selectedFriendsIds.indexOf(friend.id) >= 0)
-                                        ? LocalizeText('friendlist.unselect_all')
-                                        : LocalizeText('friendlist.select_all')}
-                                </span>
-                            </Flex>
-                            <FriendsListGroupView list={filteredOfflineFriends} selectedFriendsIds={selectedFriendsIds} selectFriend={selectFriend} />
-                        </NitroCardAccordionSetView>
-                        <FriendsListRequestView headerText={LocalizeText('friendlist.tab.friendrequests') + ` (${requests.length})`} isExpanded={true} />
-                        <FriendsSearchView headerText={LocalizeText('people.search.title')} />
-                    </NitroCardAccordionView>
-                    {selectedFriendsIds && selectedFriendsIds.length > 0 && (
-                        <Flex className="p-1" gap={1}>
-                            <Button fullWidth onClick={() => setShowRoomInvite(true)}>
-                                {LocalizeText('friendlist.tip.invite')}
-                            </Button>
-                            <Button fullWidth variant="danger" onClick={(event) => setShowRemoveFriendsConfirmation(true)}>
-                                {LocalizeText('generic.delete')}
-                            </Button>
-                        </Flex>
-                    )}
-                </NitroCardContentView>
-            </NitroCardView>
+                            </button>
+                            {isOnlineExpanded && <div className="hfl-list">
+                                <FriendsListGroupView list={filteredOnlineFriends} selectedFriendsIds={selectedFriendsIds} selectFriend={selectFriend} />
+                            </div>}
+                        </section>
+                        <section className="hfl-section">
+                            <button type="button" className={`hfl-section-header${isOfflineExpanded ? '' : ' collapsed'}`} onClick={() => setIsOfflineExpanded((value) => !value)}>
+                                <span>{LocalizeText('friendlist.friends.offlinecaption') + ` (${filteredOfflineFriends.length})`}</span>
+                            </button>
+                            {isOfflineExpanded && <div className="hfl-list"><FriendsListGroupView list={filteredOfflineFriends} selectedFriendsIds={selectedFriendsIds} selectFriend={selectFriend} /></div>}
+                        </section>
+                        </>}
+                    </div>
+                    <div className="hfl-footer">
+                        <div className="hfl-footer-border">
+                        <button type="button" className="hfl-footer-button invite" title={LocalizeText('friendlist.tip.invite')} onClick={() => setShowRoomInvite(true)} />
+                        <button type="button" className="hfl-footer-button home" title={LocalizeText('friendlist.tip.home')} onClick={() => CreateLinkEvent('navigator/goto/home')} />
+                        {isFriendSearchOpen
+                            ? <div className="hfl-footer-search">
+                                <input autoFocus value={friendSearchValue} onChange={(event) => setFriendSearchValue(event.target.value)} />
+                                <button type="button" title={LocalizeText('generic.clear')} onClick={() => {
+                                    if (friendSearchValue.length) setFriendSearchValue('');
+                                    else setIsFriendSearchOpen(false);
+                                }} />
+                            </div>
+                            : <button type="button" className="hfl-footer-button search" title={LocalizeText('people.search.title')} onClick={() => {
+                                setActivePanel('friends');
+                                setIsFriendSearchOpen(true);
+                            }} />}
+                        <button
+                            type="button"
+                            className="hfl-footer-button delete"
+                            disabled={!selectedFriendsIds.length}
+                            title={LocalizeText('generic.delete')}
+                            onClick={() => selectedFriendsIds.length && setShowRemoveFriendsConfirmation(true)}
+                        />
+                        </div>
+                    </div>
+                    {!!requests.length && <button type="button" className="hfl-request-strip" onClick={() => setActivePanel((value) => value === 'requests' ? 'friends' : 'requests')}>{LocalizeText('friendlist.tab.friendrequests')}</button>}
+                    <button type="button" className="hfl-search-strip" onClick={() => setActivePanel((value) => value === 'search' ? 'friends' : 'search')}>{LocalizeText('generic.search')}</button>
+                    <div className="hfl-bottom" />
+                </div>
+            </DraggableWindow>
             {showRoomInvite && (
                 <FriendsRoomInviteView selectedFriendsIds={selectedFriendsIds} sendRoomInvite={sendRoomInvite} onCloseClick={() => setShowRoomInvite(false)} />
             )}
@@ -213,7 +223,6 @@ export const FriendsListView: FC<{}> = (props) => {
                     onCloseClick={() => setShowRemoveFriendsConfirmation(false)}
                 />
             )}
-            {showCategoryManager && <FriendsCategoryManagerView categories={categories} onCloseClick={() => setShowCategoryManager(false)} />}
         </>
     );
 };

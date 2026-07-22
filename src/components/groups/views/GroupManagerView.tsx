@@ -73,7 +73,7 @@ export const GroupManagerView: FC<{}> = (props) => {
     if (!groupData || groupData.groupId <= 0) return null;
 
     return (
-        <NitroCardView className="nitro-group-manager w-[560px]">
+        <NitroCardView className="nitro-groups-window nitro-group-manager w-[560px]">
             <NitroCardHeaderView headerText={LocalizeText('group.window.title')} onCloseClick={onClose} />
             <NitroCardTabsView>
                 {TABS.map((tab) => {
@@ -84,8 +84,8 @@ export const GroupManagerView: FC<{}> = (props) => {
                     );
                 })}
             </NitroCardTabsView>
-            <NitroCardContentView>
-                <div className="items-center gap-2">
+            <NitroCardContentView className="nitro-groups-content">
+                <div className="nitro-groups-tab-header items-center gap-2">
                     <div className={`nitro-group-tab-image tab-${currentTab}`} />
                     <Column grow gap={0}>
                         <Text bold fontSize={4}>

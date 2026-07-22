@@ -1,183 +1,221 @@
 .nitro-room-tools-container {
     position: absolute;
-    bottom: 118px;
+    bottom: 69px;
     left: 0;
     display: flex;
-    align-items: stretch;
-    gap: 0;
+    align-items: flex-end;
+    gap: 8px;
     z-index: 71;
 
-    .nitro-room-tools-rail {
-        display: flex;
-        align-items: center;
+    .nitro-room-tools {
         position: relative;
+        width: 158px;
+        min-height: 177px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 10px 7px 22px;
+        border-radius: 0 6px 6px 0;
+        background: rgba(34, 34, 30, 0.86);
+        box-shadow: inset -1px 0 rgba(255, 255, 255, 0.05), 0 2px 0 rgba(0, 0, 0, 0.45);
+        color: #c9c9c9;
+        image-rendering: pixelated;
     }
 
-    .nitro-room-tools-toggle {
+    .room-tools-collapse-toggle {
         position: absolute;
-        left: calc(100% - 1px);
+        left: 0;
         top: 50%;
-        width: 22px;
-        height: 96px;
+        width: 13px;
+        height: 31px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
-        background: rgba(10, 10, 12, 0.58);
-        color: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-        transition: background .2s ease, border-color .2s ease;
-        padding: 0;
         transform: translateY(-50%);
-        z-index: 72;
+        border-radius: 0 4px 4px 0;
+        background: rgba(42, 42, 38, 0.9);
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 20px;
+        line-height: 1;
+        text-shadow: 0 1px #000000;
+        padding: 0;
+        border: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
 
-        &:hover {
-            background: rgba(18, 18, 22, 0.72);
-            border-color: rgba(255, 255, 255, 0.12);
-        }
+    &.is-collapsed {
+        bottom: 69px;
+        width: 158px;
+        height: 177px;
+    }
 
-        &.is-open {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-        }
+    &.is-collapsed .room-tools-collapse-toggle {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .room-tools-zoom-row {
+        height: 23px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding-bottom: 4px;
+        margin-bottom: 3px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+        color: #d7d7d7;
+        font-family: Ubuntu, sans-serif;
+        font-size: 11px;
+        line-height: 18px;
+    }
+
+    .room-tools-zoom-row span {
+        flex: 1 1 auto;
+        white-space: nowrap;
+    }
+
+    .room-tools-zoom-button {
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid #0f0f0f;
+        border-radius: 50%;
+        background: linear-gradient(#8b8b8b, #575757);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.45);
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 16px;
+        text-shadow: 0 1px #000000;
+        cursor: pointer;
+    }
+
+    .room-tools-zoom-button:hover {
+        filter: brightness(1.12);
+    }
+
+    .room-tools-zoom-button:disabled {
+        opacity: 0.45;
+        filter: grayscale(1);
+        cursor: default;
+    }
+
+    .room-tools-zoom-button:disabled:hover {
+        filter: grayscale(1);
     }
 
     .room-tool-row {
-        width: 100%;
-
-        .room-tool-label {
-            color: rgba(255, 255, 255, 0.82);
-        }
-
-        &:hover .room-tool-label {
-            color: #fff;
-            text-decoration: underline;
-        }
+        height: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #c7c7c7;
+        cursor: pointer;
+        font-family: Ubuntu, sans-serif;
+        font-size: 11px;
+        line-height: 20px;
     }
 
-    .room-history-fold-toggle {
-        width: 34px;
-        height: 16px;
-        color: rgba(255, 255, 255, 0.85);
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 6px;
-
-        .fa-icon {
-            width: 12px;
-            height: 12px;
-        }
-
-        &:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.16);
-        }
+    .room-tool-row.is-disabled {
+        opacity: 0.45;
+        cursor: default;
     }
 
-    .nitro-room-tools {
-        background: rgba(10, 10, 12, 0.58);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-        transition: all .2s ease;
-        z-index: 71;
-        margin-left: 0;
+    .room-tool-row.is-disabled .room-tool-label {
+        color: #9a9a9a;
+    }
+
+    .room-tool-row.is-disabled:hover .room-tool-label {
+        color: #9a9a9a;
+    }
+
+    .room-tool-row .nitro-icon {
+        flex: 0 0 22px;
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
+        background-size: auto !important;
+        filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.65));
+    }
+
+    .room-tool-label {
+        color: #bfbfbf;
+        text-decoration: underline;
+        text-shadow: 0 1px #000000;
+        white-space: nowrap;
+    }
+
+    .room-tool-row:hover .room-tool-label {
+        color: #ffffff;
+    }
+
+    .room-history-controls {
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 4px;
-        padding: 6px 5px;
-        min-width: 36px;
-        min-height: 96px;
+        margin-top: 3px;
+    }
 
-        .list-group-item {
-            background: transparent;
-            padding: 3px 0px;
-            color: #FFF;
-            border-color: rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-
-            &:hover {
-                text-decoration: underline;
-            }
-
-            &:first-child {
-                padding-top: 8px;
-            }
-
-            &:last-child {
-                border-bottom: none;
-                padding-bottom: 8px;
-            }
-
-            .tools-item {
-                .icon {
-                    width: 22px;
-                    background-repeat: no-repeat;
-                    background-position: center;
-                }
-
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-        }
+    .room-history-controls .nitro-icon {
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
+        background-size: auto !important;
     }
 
     .nitro-room-tools-side-container {
         display: flex;
         flex-direction: column;
-        margin-left: 26px;
-        gap: 10px;
+        margin-left: 0;
+        margin-bottom: 0;
+        gap: 8px;
     }
 
     .nitro-room-history {
-        background: rgba(10, 10, 12, 0.58);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-        transition: all .2s ease;
-        width: 150px;
+        width: 160px;
         max-height: calc(100vh - 140px);
         overflow-y: auto;
         overflow-x: hidden;
         z-index: 3;
-        border-radius: 14px;
+        padding: 8px;
+        border-radius: 6px;
+        background: rgba(34, 34, 30, 0.9);
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+        color: #ffffff;
         scrollbar-width: thin;
-        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+        scrollbar-color: rgba(255, 255, 255, 0.45) transparent;
+    }
 
-        &::-webkit-scrollbar {
-            width: 6px;
-        }
+    .nitro-room-history::-webkit-scrollbar {
+        width: 6px;
+    }
 
-        &::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 3px;
-        }
+    .nitro-room-history::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.45);
+        border-radius: 3px;
+    }
 
-        .room-history-item {
-            color: rgba(255, 255, 255, 0.72);
+    .nitro-room-history .room-history-item {
+        color: rgba(255, 255, 255, 0.76);
+    }
 
-            &:hover {
-                color: #fff;
-                text-decoration: underline;
-            }
-        }
-
-        .room-history-item--current {
-            color: #fff;
-        }
+    .nitro-room-history .room-history-item:hover,
+    .nitro-room-history .room-history-item--current {
+        color: #ffffff;
+        text-decoration: underline;
     }
 
     .nitro-room-tools-info {
-        background: rgba(10, 10, 12, 0.58);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-        transition: all .2s ease;
         max-width: 250px;
-        border-radius: 14px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: rgba(34, 34, 30, 0.9);
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
     }
 }
 
@@ -309,6 +347,348 @@
     }
 }
 
+.nitro-chat-input-container.swf-chat-input {
+    width: 466px !important;
+    max-width: 100%;
+    height: 38px !important;
+    min-height: 38px;
+    gap: 14px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    image-rendering: pixelated;
+}
+
+.swf-chat-input .swf-chat-style-trigger {
+    position: relative;
+    width: 55px;
+    min-width: 55px;
+    height: 38px;
+    margin: 0 -55px 0 0;
+    padding: 0;
+    background: url('@/assets/images/chat-input-swf/chat_style_block.png') 0 0 / 57px 38px no-repeat;
+    z-index: 2;
+    image-rendering: pixelated;
+}
+
+.swf-chat-input .swf-chat-style-arrow {
+    position: absolute;
+    left: 10px;
+    top: 17px;
+    width: 10px;
+    height: 6px;
+    color: #4c4c4c;
+    filter: drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.65));
+}
+
+.swf-chat-input .swf-chat-style-icon {
+    position: absolute;
+    left: 25px;
+    top: 10px;
+    width: 17px;
+    height: 19px;
+    background: url('@/assets/images/chat-input-swf/chat_styles.png') center / auto no-repeat;
+    image-rendering: pixelated;
+}
+
+.bubble-container.chat-text-size .chat-bubble,
+.bubble-container.chat-text-size .chat-content,
+.bubble-container.chat-text-size .message,
+.bubble-container.chat-text-size .username,
+.bubble-container.chat-text-size .prefix {
+    font-size: var(--chat-text-size) !important;
+}
+
+.bubble-container.chat-text-size .chat-content {
+    line-height: 1 !important;
+}
+
+.bubble-container.chat-text-size .username,
+.bubble-container.chat-text-size .message,
+.bubble-container.chat-text-size .prefix,
+.bubble-container.chat-text-size .prefix span {
+    line-height: 1 !important;
+}
+
+.swf-chat-style-menu {
+    z-index: 1070;
+    width: 304px;
+    padding: 9px 9px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 7px;
+    background: rgba(31, 31, 31, 0.92);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 2px 0 rgba(0, 0, 0, 0.9),
+        4px 4px 0 rgba(0, 0, 0, 0.45);
+    image-rendering: pixelated;
+}
+
+.swf-chat-style-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 41px);
+    grid-auto-rows: 25px;
+    gap: 8px 7px;
+    width: 281px;
+    overflow: visible;
+}
+
+.swf-chat-style-option {
+    position: relative;
+    width: 41px;
+    height: 25px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    image-rendering: pixelated;
+}
+
+.swf-chat-style-option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.swf-chat-style-option:hover::before,
+.swf-chat-style-option.is-active::before {
+    border-color: #ffffff;
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.swf-chat-style-preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 41px;
+    height: 25px;
+    transform: none;
+    transition: none;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.swf-chat-style-preview .chat-bubble {
+    display: block;
+    width: 38px;
+    min-width: 38px;
+    max-width: 38px;
+    min-height: 17px;
+    margin: 3px auto 0;
+    border-image-width: 12px 5px 5px 20px;
+    border-image-slice: 17 6 6 29 fill;
+    border-image-outset: 1px 0 0 0;
+    border-image-repeat: repeat repeat;
+}
+
+.swf-chat-font-row {
+    display: flex;
+    align-items: center;
+    height: 22px;
+    margin-top: 8px;
+    padding: 0 4px 0 8px;
+    border-radius: 4px;
+    background: rgba(44, 44, 44, 0.92);
+    color: #b8b8b8;
+    font-family: Ubuntu, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+}
+
+.swf-chat-font-label {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.swf-chat-font-option {
+    width: 22px;
+    height: 18px;
+    margin-left: 3px;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #d2d2d2;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+}
+
+.swf-chat-font-option.is-active {
+    background: #ffffff;
+    color: #242424;
+}
+
+.swf-chat-input .swf-chat-input-sizer {
+    position: relative;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    flex: 0 0 407px !important;
+    width: 407px !important;
+    max-width: calc(100vw - 92px);
+    margin: 0;
+    padding: 0 0 0 54px !important;
+    align-self: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: transparent !important;
+    image-rendering: pixelated;
+}
+
+.swf-chat-input .swf-chat-input-sizer::before,
+.swf-chat-input .swf-chat-flood::before {
+    content: '';
+    display: block;
+    visibility: visible !important;
+    position: absolute;
+    inset: 0 12px 0 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        url('@/assets/images/chat-input-swf/chatinput_bubble_left.png'),
+        url('@/assets/images/chat-input-swf/chatinput_bubble_middle.png');
+    background-position:
+        left top,
+        17px top;
+    background-repeat:
+        no-repeat,
+        repeat-x;
+    background-size:
+        17px 38px,
+        1px 38px;
+    image-rendering: pixelated;
+}
+
+.swf-chat-input .swf-chat-input-sizer::after,
+.swf-chat-input .swf-chat-flood::after {
+    content: '';
+    display: block;
+    visibility: visible !important;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 0;
+    width: 12px;
+    height: 38px;
+    pointer-events: none;
+    background: url('@/assets/images/chat-input-swf/chatinput_bubble_right.png') right top / 12px 38px no-repeat;
+    image-rendering: pixelated;
+}
+
+.swf-chat-input .swf-chat-input-field {
+    position: relative;
+    z-index: 1;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    padding: 6px 3px 7px 8px !important;
+    color: #777777 !important;
+    font-family: Ubuntu, sans-serif;
+    font-size: 17px !important;
+    line-height: 25px !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    box-sizing: border-box;
+}
+
+.swf-chat-input .swf-chat-input-field::placeholder {
+    color: #777777 !important;
+    opacity: 1;
+}
+
+.swf-chat-input .swf-chat-flood {
+    position: relative;
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
+    flex: 0 0 407px !important;
+    width: 407px !important;
+    margin: 0;
+    padding: 7px 8px 6px 64px !important;
+    align-self: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: transparent !important;
+}
+
+.swf-chat-input .swf-chat-flood > * {
+    position: relative;
+    z-index: 1;
+}
+
+.swf-chat-input .habbicon-chat-trigger {
+    position: relative;
+    width: 41px;
+    min-width: 41px;
+    height: 38px;
+    margin: 0;
+    background: transparent url('@/assets/images/chat-input-swf/sticky_note.png') 0 0 / auto no-repeat;
+}
+
+.swf-chat-input .habbicon-chat-trigger:hover {
+    transform: translateY(-1px);
+}
+
+.swf-chat-input .habbicon-chat-trigger img {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: auto;
+    height: auto;
+    max-width: 30px;
+    max-height: 30px;
+}
+
+.swf-chat-input .habbicon-chat-trigger::before {
+    content: '';
+    position: absolute;
+    left: 23px;
+    top: 2px;
+    width: 18px;
+    height: 15px;
+    background: url('@/assets/images/chat-input-swf/clip.png') center / auto no-repeat;
+    image-rendering: pixelated;
+}
+
+.swf-chat-input .habbicon-chat-trigger::after {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 26px;
+    width: 12px;
+    height: 12px;
+    background: url('@/assets/images/chat-input-swf/sticky_note2.png') center / auto no-repeat;
+    image-rendering: pixelated;
+}
+
+.swf-chat-input .swf-chat-emoji-trigger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    min-width: 20px;
+    height: 38px;
+    margin: 0 8px 6px 0;
+    padding: 0;
+    font-size: 17px;
+    line-height: 1;
+    filter: drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.7));
+}
+
 .nitro-mobile-furni-infostand-trigger {
     pointer-events: auto;
     display: flex;
@@ -370,65 +750,235 @@
 }
 
 .nitro-avatar-action-menu {
-    min-width: 132px;
-    padding: 4px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 12px;
-    background: rgba(10, 10, 12, 0.58) !important;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    min-width: 143px;
+}
+
+.nitro-context-menu {
+    position: absolute;
+    z-index: 40;
+    width: 151px;
+    min-width: 151px;
+    padding: 7px 4px 5px;
     overflow: hidden;
+    border: 1px solid #1c1b1a;
+    border-radius: 4px;
+    background: #6e6b67;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    font-family: Ubuntu, Arial, sans-serif;
+    font-size: 11px;
+    line-height: 16px;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+    pointer-events: auto;
+}
+
+.nitro-context-menu .nitro-context-menu-header {
+    min-width: 0;
+    height: 16px;
+    margin: 0 0 4px;
+    padding: 0 6px 0 26px;
+    overflow: hidden;
+    border: 0;
+    border-bottom: 1px solid #171717;
+    border-radius: 0;
+    background: transparent;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+}
+
+.nitro-context-menu .nitro-context-menu-item {
+    position: relative;
+    height: 26px;
+    min-height: 26px;
+    margin: 0;
+    padding: 0 4px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: #2d2a27;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 26px;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+}
+
+.nitro-context-menu .nitro-context-menu-item + .nitro-context-menu-item {
+    border-top: 1px solid #151515;
+}
+
+.nitro-context-menu .nitro-context-menu-item:hover {
+    background: #45413d;
+}
+
+.nitro-context-menu .nitro-context-menu-item.disabled {
+    color: #9a9895;
+    cursor: default;
+    opacity: 1;
+}
+
+.nitro-context-menu .nitro-context-menu-item .right.fa-icon,
+.nitro-context-menu .nitro-context-menu-item .left.fa-icon {
+    position: absolute;
+    top: 7px;
+    font-size: 11px;
+}
+
+.nitro-context-menu .nitro-context-menu-item .right.fa-icon {
+    right: 7px;
+}
+
+.nitro-context-menu .nitro-context-menu-item .left.fa-icon {
+    left: 7px;
+}
+
+.nitro-context-menu .nitro-context-menu-footer {
+    position: relative;
+    height: 18px;
+    margin: 0;
+    border-radius: 0 0 2px 2px;
+    background: #45413d;
+    color: #fff;
+    cursor: pointer;
+}
+
+.nitro-context-menu .nitro-context-menu-footer .fa-icon {
+    font-size: 12px;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+}
+
+.nitro-avatar-action-menu {
+    width: 112px;
+    min-width: 112px;
+    padding: 1px 0 0;
+    border: 1px solid #050505;
+    border-radius: 4px;
+    background: rgba(39, 40, 37, 0.94);
+    box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.58);
 }
 
 .nitro-avatar-action-menu .nitro-context-menu-header {
-    min-width: 0;
-    height: 28px;
-    max-height: 28px;
-    margin-bottom: 4px;
-    padding: 0 10px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 9px;
-    background: rgba(10, 10, 12, 0.58);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    text-shadow: none;
+    height: 25px;
+    margin: 0;
+    padding: 0 5px;
+    border: 0;
+    border-radius: 3px 3px 0 0;
+    background: #6d6c67;
+    font-size: 11px;
+    line-height: 25px;
+    text-align: center;
 }
 
 .nitro-avatar-action-menu .nitro-context-menu-item {
-    min-height: 26px;
-    max-height: none;
-    margin-bottom: 2px;
-    padding: 0 10px;
-    border: 1px solid transparent;
-    border-radius: 8px;
+    height: 25px;
+    min-height: 25px;
+    padding: 0 5px;
     background: transparent;
-    color: #fff;
-    font-size: 13px;
-    line-height: 1;
-    text-decoration: none;
-    text-shadow: none;
+    color: #ffffff;
+    font-size: 11px;
+    line-height: 25px;
+}
+
+.nitro-avatar-action-menu .nitro-context-menu-item + .nitro-context-menu-item {
+    border-top: 1px solid #4a4a46;
 }
 
 .nitro-avatar-action-menu .nitro-context-menu-item:hover {
-    background: rgba(18, 18, 22, 0.72);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.nitro-avatar-action-menu .nitro-context-menu-item.disabled {
-    opacity: 0.55;
+    background: #3d3d39;
 }
 
 .nitro-avatar-action-menu .nitro-context-menu-item .right.fa-icon,
 .nitro-avatar-action-menu .nitro-context-menu-item .left.fa-icon {
-    font-size: 12px;
+    top: 7px;
+    font-size: 10px;
 }
 
 .nitro-avatar-action-menu .nitro-context-menu-footer {
-    height: 20px;
-    margin-top: 2px;
-    border-radius: 8px;
-    background: rgba(10, 10, 12, 0.58);
-    color: #fff;
+    height: 22px;
+    margin: 0;
+    border-top: 1px solid #4a4a46;
+    border-radius: 0 0 3px 3px;
+    background: #676762;
+}
+
+.nitro-avatar-action-menu:not(.menu-hidden)::after {
+    position: absolute;
+    bottom: -6px;
+    left: calc(50% - 6px);
+    width: 0;
+    height: 0;
+    content: '';
+    border-top: 6px solid #292a27;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    filter: drop-shadow(0 1px 0 #050505);
+    pointer-events: none;
+}
+
+.nitro-avatar-action-menu.menu-hidden {
+    width: 32px;
+    min-width: 32px;
+    height: 23px;
+    min-height: 23px;
+    padding: 1px;
+    border-radius: 4px;
+    background: #292a27;
+    box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.58);
+}
+
+.nitro-avatar-action-menu.menu-hidden .nitro-context-menu-footer {
+    width: 28px;
+    height: 19px;
+    border: 0;
+    border-radius: 3px;
+    background: #454640;
+}
+
+.nitro-avatar-action-menu.menu-hidden .nitro-context-menu-footer:hover {
+    background: #595a54;
+}
+
+.nitro-avatar-action-menu.menu-hidden .nitro-context-menu-footer .fa-icon {
+    color: #e6e6e2;
+    font-size: 11px;
+}
+
+.nitro-context-menu.name-only {
+    width: auto;
+    min-width: 72px;
+    height: 28px;
+    min-height: 28px;
+    padding: 1px 8px;
+    border: 1px solid #050505;
+    border-radius: 4px;
+    background: #292a27;
+    box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.58);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 24px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.nitro-context-menu.name-only::after {
+    position: absolute;
+    bottom: -6px;
+    left: calc(50% - 6px);
+    width: 0;
+    height: 0;
+    content: '';
+    border-top: 6px solid #292a27;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    filter: drop-shadow(0 1px 0 #050505);
+    pointer-events: none;
 }

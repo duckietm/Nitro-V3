@@ -31,9 +31,9 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
         <>
             <Column gap={1}>
                 <Text bold>{LocalizeText('navigator.roomsettings.roomaccess.caption')}</Text>
-                <Text>{LocalizeText('navigator.roomsettings.roomaccess.info')}</Text>
+                <Text small>{LocalizeText('navigator.roomsettings.roomaccess.info')}</Text>
             </Column>
-            <Column overflow="auto" gap={2}>
+            <Column gap={2}>
                 <NavigatorRoomSettingsSectionView title={LocalizeText('navigator.roomsettings.doormode')} gap={1}>
                     <Flex alignItems="center" gap={1}>
                         <input
@@ -110,6 +110,15 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
                     </Flex>
                 </NavigatorRoomSettingsSectionView>
                 <NavigatorRoomSettingsSectionView title={LocalizeText('navigator.roomsettings.pets')} gap={1}>
+                    <Flex alignItems="center" gap={1}>
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={roomData.muteAllPets}
+                            onChange={(event) => handleChange('mute_all_pets', event.target.checked)}
+                        />
+                        <Text>{LocalizeText('navigator.roomsettings.mute_all_pets')}</Text>
+                    </Flex>
                     <Flex alignItems="center" gap={1}>
                         <input
                             className="form-check-input"

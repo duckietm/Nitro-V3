@@ -267,6 +267,7 @@ const useChatWidgetState = () => {
                       webId: userData.webID,
                       entityId: userData.roomIndex,
                       name: username,
+                      look: userData.figure,
                       imageUrl,
                       style: styleId,
                       chatType: chatType,

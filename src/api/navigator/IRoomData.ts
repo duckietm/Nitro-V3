@@ -11,6 +11,12 @@ export interface IRoomData {
     tradeState: number;
     allowWalkthrough: boolean;
     allowUnderpass: boolean;
+    muteAllPets: boolean;
+    leaveOnDoorTileEnabled: boolean;
+    idleSleepEnabled: boolean;
+    idleSleepTimeoutSeconds: number;
+    idleAutokickEnabled: boolean;
+    idleAutokickTimeoutSeconds: number;
     lockState: number;
     password: string;
     allowPets: boolean;

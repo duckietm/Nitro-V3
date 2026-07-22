@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { GetConfigurationValue } from '../../api';
 import { Base, BaseProps } from '../Base';
 
@@ -9,6 +9,7 @@ export interface LayoutRoomThumbnailViewProps extends BaseProps<HTMLDivElement> 
 
 export const LayoutRoomThumbnailView: FC<LayoutRoomThumbnailViewProps> = (props) => {
     const { roomId = -1, customUrl = null, shrink = true, overflow = 'hidden', classNames = [], children = null, ...rest } = props;
+    const [hasImage, setHasImage] = useState(true);
 
     const getClassNames = useMemo(() => {
         const newClassNames: string[] = [
@@ -28,9 +29,11 @@ export const LayoutRoomThumbnailView: FC<LayoutRoomThumbnailViewProps> = (props)
         return GetConfigurationValue<string>('thumbnails.url').replace('%thumbnail%', roomId.toString());
     }, [customUrl, roomId]);
 
+    useEffect(() => setHasImage(true), [getImageUrl]);
+
     return (
         <Base classNames={getClassNames} overflow={overflow} shrink={shrink} {...rest}>
-            {getImageUrl && <img alt="" src={getImageUrl} />}
+            {hasImage && getImageUrl && <img alt="" className="block h-full w-full object-cover" src={getImageUrl} onError={() => setHasImage(false)} />}
             {children}
         </Base>
     );

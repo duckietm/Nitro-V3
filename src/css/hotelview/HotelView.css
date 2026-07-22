@@ -1,502 +1,902 @@
+.nitro-hotel-view {
+    background: #27afcf;
+    background-image: var(--hotel-view-background);
+    background-position: bottom left;
+    background-repeat: repeat;
+    z-index: 0;
+}
+
+.hotelview-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--hotel-view-scaled-width);
+    height: var(--hotel-view-scaled-height);
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
 .hotelview {
     position: relative;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, transparent 1185px, #51841E 1185px);
+    width: 1172px;
+    height: 822px;
+    overflow: hidden;
+    color: #fff;
+    font-family: Ubuntu, Arial, sans-serif;
+    transform: scale(var(--hotel-view-scale));
+    transform-origin: top left;
 }
 
 .hotelview-background {
-    position: relative;
-    margin-left: -400px;
-    margin-top: 0;
-    top: 0px;
-    left: 0px;
-    height: 1185px;
-    width: 3000px;
+    position: absolute;
     pointer-events: none;
-    background-image: url(@/assets/images/hotelview/hotelview.png);
-    background-repeat: no-repeat;
 }
 
-.nitro-hotel-view {
+.hotelview-background {
+    inset: 0;
+    background-color: transparent;
+}
+
+.hotelview-edge {
+    position: absolute;
+    z-index: 3;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+.hotelview-edge > img {
     display: block;
-    position: fixed;
-    width: 100%;
-    height: calc(100% - 55px);
-    background: #000;
-    color: #000;
-    box-shadow: 0px 55px 0px 0px #51841E;
-    z-index: 0;
+    width: auto;
+    height: auto;
 }
 
-.nitro-hotel-view-rooftop {
-    background-image: url(@/assets/images/hotelview/rooftop.gif);
-    background-repeat: no-repeat;
-    width: 120px;
-    height: 164px;
-    position: absolute;
-    top: calc(52px + 40px);
-    left: calc(1062px - 90px);
-    cursor: pointer;
-
-    .arrow {
-        width: 30px;
-        height: 42px;
-        position: absolute;
-        background-image: url(@/assets/images/hotelview/arrow_down.png);
-        background-repeat: no-repeat;
-        left: 39px;
-        top: 15px;
-        display: none;
-        animation: MoveUpDown 1s linear infinite;
-        z-index: 9999;
-    }
-
-    &:hover {
-        -webkit-filter: drop-shadow(1px 3px 20px #000000);
-        .arrow {
-            display: block;
-        }
-    }
+.hotelview-edge-left {
+    left: 0;
 }
 
-.nitro-hotel-view-rooftop-pool {
-    background-image: url(@/assets/images/hotelview/rooftop_pool.gif);
-    background-repeat: no-repeat;
-    width: 183px;
-    height: 164px;
-    position: absolute;
-    top: calc(272px + 40px);
-    left: calc(1324px - 200px);
-    cursor: pointer;
-
-    .arrow {
-        width: 30px;
-        height: 42px;
-        position: absolute;
-        background-image: url(@/assets/images/hotelview/arrow_down.png);
-        background-repeat: no-repeat;
-        left: 75px;
-        top: 0px;
-        display: none;
-        animation: MoveUpDown 1s linear infinite;
-        z-index: 9999;
-    }
-
-    &:hover {
-        -webkit-filter: drop-shadow(1px 3px 20px #000000);
-        .arrow {
-            display: block;
-        }
-    }
+.hotelview-edge-right {
+    right: 0;
 }
 
-.nitro-hotel-view-lobby {
-    background-image: url(@/assets/images/hotelview/lobby.png);
-    background-repeat: no-repeat;
-    width: 73px;
-    height: 65px;
+.hotelview-edge-drape {
     position: absolute;
-    top: calc(597px + 40px);
-    left: calc(1264px - 200px);
-    cursor: pointer;
-
-    .arrow {
-        width: 30px;
-        height: 42px;
-        position: absolute;
-        background-image: url(@/assets/images/hotelview/arrow_down.png);
-        background-repeat: no-repeat;
-        left: 19px;
-        top: 0px;
-        display: none;
-        animation: MoveUpDown 1s linear infinite;
-        z-index: 9999;
-    }
-
-    &:hover {
-        -webkit-filter: drop-shadow(1px 3px 20px #000000);
-        .arrow {
-            display: block;
-        }
-    }
+    z-index: 4;
+    top: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    pointer-events: none;
 }
 
-.nitro-hotel-view-picnic {
-    background-image: url(@/assets/images/hotelview/picnic.gif);
-    background-repeat: no-repeat;
-    width: 575px;
-    height: 436px;
+.hotelview-scene-drag-handle,
+.hotelview-hall-of-fame-drag-handle {
     position: absolute;
-    top: calc(240px + 248px);
-    left: calc(889px - 412px);
-    cursor: pointer;
-
-    .arrow {
-        width: 30px;
-        height: 42px;
-        position: absolute;
-        background-image: url(@/assets/images/hotelview/arrow_down.png);
-        background-repeat: no-repeat;
-        left: 315px;
-        top: 110px;
-        display: none;
-        animation: MoveUpDown 1s linear infinite;
-        z-index: 9999;
-    }
-
-    &:hover {
-        -webkit-filter: drop-shadow(1px 3px 20px #000000);
-        .arrow {
-            display: block;
-        }
-    }
-}
-
-.nitro-hotel-view-infobus {
-    background-image: url(@/assets/images/hotelview/infobus.gif);
-    background-repeat: no-repeat;
-    width: 181px;
-    height: 175px;
-    position: absolute;
-    top: calc(92px + 241px);
-    left: calc(1690px - 399px);
-    cursor: pointer;
     z-index: 5;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgb(15 96 121 / 70%);
+    border-radius: 50%;
+    background: rgb(233 247 250 / 78%);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+    color: rgb(15 96 121 / 85%);
+    cursor: grab;
+    font: 700 15px Arial, sans-serif;
+    line-height: 1;
     pointer-events: auto;
-
-    .arrow-infobus {
-        width: 30px;
-        height: 42px;
-        position: absolute;
-        background-image: url(@/assets/images/hotelview/arrow_down.png);
-        background-repeat: no-repeat;
-        left: 60px;
-        top: 5px;
-        display: none;
-        animation: MoveUpDown 1s linear infinite;
-        z-index: 9999;
-        pointer-events: none;
-    }
-
-    &:hover {
-        -webkit-filter: drop-shadow(1px 3px 20px #000000);
-        .arrow-infobus {
-            display: block;
-        }
-    }
+    touch-action: none;
 }
 
-.nitro-hotel-view-peaceful {
-    background-image: url(@/assets/images/hotelview/peacefulpark.gif);
-    background-repeat: no-repeat;
-    width: 384px;
-    height: 269px;
+.hotelview-scene-drag-handle {
+    top: 8px;
+    left: 8px;
+}
+
+.hotelview-scene-drag-handle:active,
+.hotelview-hall-of-fame-drag-handle:active {
+    cursor: grabbing;
+}
+
+.hotelview-avatar {
     position: absolute;
-    top: calc(119px + 240px);
-    left: calc(1728px - 400px);
+    top: 84%;
+    left: 35%;
+    width: 90px;
+    height: 130px;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+}
+
+.hotelview-avatar-fallback {
+    bottom: 37px;
+    left: 109px;
+    top: auto;
+    transform: none;
+}
+
+.hotelview-slots {
+    position: absolute;
+    inset: 0;
+    width: 1172px;
+    height: 822px;
+}
+
+.hotelview-slot {
+    position: absolute;
+    display: flex;
+    gap: 12px;
+    width: 360px;
+    min-height: 118px;
+}
+
+.hotelview-slot-edit {
+    position: absolute;
+    top: -16px;
+    left: -6px;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgb(15 96 121 / 70%);
+    border-radius: 50%;
+    background: rgb(233 247 250 / 70%);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+    color: rgb(15 96 121 / 85%);
     cursor: pointer;
-    z-index: 6;
-    pointer-events: none;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 10%;
-        left: 38%;
-        width: 60%;
-        height: 65%;
-        pointer-events: auto;
-        z-index: 8;
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 50%;
-        height: 50%;
-        pointer-events: auto;
-        z-index: 8;
-    }
-
-    .arrow-peaceful {
-        width: 30px;
-        height: 42px;
-        position: absolute;
-        background-image: url(@/assets/images/hotelview/arrow_down.png);
-        background-repeat: no-repeat;
-        left: 250px;
-        top: 100px;
-        display: none;
-        animation: MoveUpDown 1s linear infinite;
-        z-index: 9999;
-        pointer-events: none;
-    }
-
-    &:hover {
-        -webkit-filter: drop-shadow(1px 3px 20px #000000);
-        .arrow-peaceful {
-            display: block;
-        }
-    }
+    font: 700 17px Arial, sans-serif;
+    line-height: 1;
 }
 
-.nitro-hotel-view-pool {
-    background-image: url(@/assets/images/hotelview/pool.gif);
-    background-repeat: no-repeat;
-    width: 433px;
-    height: 361px;
+.hotelview-slot-drag-handle {
     position: absolute;
-    top: calc(237px + 240px);
-    left: calc(1633px - 400px);
+    top: -16px;
+    left: 24px;
+    z-index: 2;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgb(15 96 121 / 70%);
+    border-radius: 50%;
+    background: rgb(233 247 250 / 70%);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+    color: rgb(15 96 121 / 85%);
+    cursor: grab;
+    font: 700 15px Arial, sans-serif;
+    line-height: 1;
+    touch-action: none;
+}
+
+.hotelview-slot-drag-handle:active {
+    cursor: grabbing;
+}
+
+.hotelview-scene-edit {
+    position: absolute;
+    z-index: 4;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border: 1px solid #0f6079;
+    border-radius: 50%;
+    background: #e9f7fa;
+    color: #0f6079;
     cursor: pointer;
-    z-index: 7;
-    pointer-events: none;
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 50%;
-        pointer-events: auto;
-        z-index: 8;
-    }
-
-    .arrow-pool {
-        width: 30px;
-        height: 42px;
-        position: absolute;
-        background-image: url(@/assets/images/hotelview/arrow_down.png);
-        background-repeat: no-repeat;
-        left: 195px;
-        top: 250px;
-        display: none;
-        animation: MoveUpDown 1s linear infinite;
-        z-index: 9999;
-        pointer-events: none;
-    }
-
-    &:hover {
-        -webkit-filter: drop-shadow(1px 3px 20px #000000);
-        .arrow-pool {
-            display: block;
-        }
-    }
+    font: 700 17px Arial, sans-serif;
+    line-height: 1;
 }
 
-@keyframes MoveUpDown {
-    0%, 100% {
-        top: 1px;
-    }
-    50% {
-        top: 10px;
-    }
+.hotelview-scene-edit-left {
+    bottom: 28px;
+    left: 24px;
 }
 
-@media only screen and (min-width: 1700px) {
-    .left {
-        left: 18vw !important;
-    }
+.hotelview-scene-edit-right {
+    right: 24px;
+    bottom: 28px;
 }
 
-@media only screen and (min-width: 2000px) {
-    .left {
-        left: 23vw !important;
-    }
+.hotelview-scene-edit-drape {
+    top: 14px;
+    left: 250px;
 }
 
-@media only screen and (min-width: 2500px) {
-    .left {
-        left: 28% !important;
-    }
+.hotelview-scene-edit-left,
+.hotelview-scene-edit-right,
+.hotelview-scene-edit-drape {
+    display: none;
 }
 
-/* ─── Time-of-day overrides ────────────────────────────────────────────────
-   The class hotel-{period} is stamped on .nitro-hotel-view by HotelView.tsx.
-   Controlled by timezone.settings in renderer-config.json.
-   Periods: morning (06-09) | day (10-16) | sunset (17-19) | evening (20-23) | night (00-05)
-─────────────────────────────────────────────────────────────────────────── */
-
-/* Morning: orange-tinted building, warm sky */
-.hotel-morning {
-    box-shadow: 0px 55px 0px 0px #E67451;
-}
-.hotel-morning .hotelview-background {
-    background-image: url(@/assets/images/hotelview/hotelview-morning.png);
-}
-
-/* Day: default — no overrides needed, base styles already use day assets */
-
-/* Sunset: warm orange sky + amber-earth ground */
-.hotel-sunset {
-    box-shadow: 0px 55px 0px 0px #D4651A;
-}
-.hotel-sunset .hotelview {
-    background: linear-gradient(to bottom, transparent 1185px, #353B31 1185px);
-}
-.hotel-sunset .hotelview-background {
-    background-image: url(@/assets/images/hotelview/hotelview-sunset.png);
+.hotelview-scene-edit-background {
+    top: 12px;
+    right: auto;
+    left: 12px;
+    width: 30px;
+    height: 22px;
+    border-color: #0b4355;
+    border-radius: 4px;
+    background: #174e60;
+    box-shadow: inset 0 1px rgb(255 255 255 / 22%), 0 1px 2px rgb(0 0 0 / 35%);
+    color: #fff;
+    font: 700 9px Ubuntu, Arial, sans-serif;
 }
 
-/* ─── Sunset widget dimming via ::before pseudo-element ─────────────────────
-   We cannot use opacity on the parent because it would also dim the arrow.
-   Instead we hide the original background-image and redraw it at 0.1 opacity
-   on a ::before layer, leaving the arrow child at full opacity.
-─────────────────────────────────────────────────────────────────────────── */
-
-.hotel-sunset .nitro-hotel-view-rooftop,
-.hotel-sunset .nitro-hotel-view-rooftop-pool,
-.hotel-sunset .nitro-hotel-view-lobby,
-.hotel-sunset .nitro-hotel-view-picnic,
-.hotel-sunset .nitro-hotel-view-infobus,
-.hotel-sunset .nitro-hotel-view-peaceful,
-.hotel-sunset .nitro-hotel-view-pool {
-    background-image: none !important;
+.hotelview-slot-1 {
+    top: 8px;
+    left: 200px;
+    width: 400px;
+    min-height: 64px;
+    padding: 7px 11px;
 }
 
-.hotel-sunset .nitro-hotel-view-rooftop::before {
-    content: '';
+.hotelview-slot-2 {
+    top: 155px;
+    left: 200px;
+    width: 380px;
+}
+
+.hotelview-slot-3 {
+    top: 155px;
+    left: 640px;
+    width: 340px;
+}
+
+.hotelview-slot-4 {
+    top: 410px;
+    left: 240px;
+    width: 360px;
+}
+
+.hotelview-slot-5 {
+    top: 410px;
+    left: 640px;
+    width: 340px;
+}
+
+.hotelview-slot-6 {
+    top: 590px;
+    left: 640px;
+    width: 340px;
+}
+
+.hotelview-slot-disabled {
+    display: grid;
+    min-height: 74px;
+    place-items: center;
+    border: 1px dashed rgb(255 255 255 / 70%);
+    color: rgb(255 255 255 / 90%);
+    font-weight: 700;
+    font-style: italic;
+}
+
+.hotelview-slot-2 .hotelview-slot-image {
+    order: 2;
+}
+
+.hotelview-slot-2 .hotelview-slot-copy {
+    order: 1;
+}
+
+.hotelview-slot-image {
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+    align-self: center;
+}
+
+.hotelview-slot-1 .hotelview-slot-image {
+    flex-basis: auto;
+}
+
+.hotelview-slot-nextlimitedrarecountdown {
+    align-items: center;
+    width: 541px;
+    min-height: 60px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    background: rgb(20 93 117 / 24%);
+}
+
+.hotelview-slot-6.hotelview-slot-nextlimitedrarecountdown {
+    left: 315px;
+}
+
+.hotelview-ltd-countdown-icon {
+    width: 34px;
+    height: 37px;
+    margin-left: 1px;
+    image-rendering: pixelated;
+}
+
+.hotelview-slot-nextlimitedrarecountdown .hotelview-slot-copy {
+    display: block;
+}
+
+.hotelview-slot-nextlimitedrarecountdown .hotelview-slot-copy h2 {
+    margin-bottom: 2px;
+}
+
+.hotelview-slot-nextlimitedrarecountdown .hotelview-slot-copy p,
+.hotelview-slot-nextlimitedrarecountdown .hotelview-slot-copy > button {
+    width: 230px;
+}
+
+.hotelview-slot-nextlimitedrarecountdown .hotelview-countdown {
+    width: 230px;
+    min-height: 46px;
+    margin: 6px 0 0;
+    padding: 0 4px;
+    border: 1px solid rgb(255 255 255 / 85%);
+    border-radius: 4px;
+    background: rgb(38 52 56 / 88%);
+    box-shadow: inset 0 1px rgb(255 255 255 / 18%), 0 1px 2px rgb(0 0 0 / 45%);
+    color: #fff;
+    font-size: 22px !important;
+}
+
+.hotelview-slot-nextlimitedrarecountdown .hotelview-ltd-countdown {
+    display: grid;
+    place-items: center;
+    text-align: center;
+}
+
+.hotelview-ltd-countdown-values {
+    display: block;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .25px;
+    line-height: 24px;
+}
+
+.hotelview-ltd-countdown small {
+    display: block;
+    color: rgb(255 255 255 / 86%);
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 11px;
+    white-space: nowrap;
+}
+
+.hotelview-reset-votes {
+    grid-column: 1 / -1;
+    height: 25px;
+    margin: 0;
+    border: 1px solid #8b3737;
+    border-radius: 3px;
+    background: #f7eeee;
+    color: #7c1f1f;
+    cursor: pointer;
+    font: 700 12px Ubuntu, Arial, sans-serif;
+}
+
+.hotelview-slot-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+.hotelview-slot h2,
+.hotelview-slot p,
+.hotelview-slot strong {
+    display: block;
+    margin: 0;
+    color: #fff;
+    text-shadow: 1px 1px rgb(0 0 0 / 22%);
+}
+
+.hotelview-slot h2 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hotelview-slot p {
+    margin-top: 3px;
+    font-size: 12px;
+    line-height: 13px;
+}
+
+.hotelview-slot strong {
+    margin-top: 3px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.hotelview-slot-copy > button {
+    width: 100%;
+    height: 25px;
+    margin-top: 9px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    background: linear-gradient(#fff, #d5d5d5);
+    box-shadow: inset 0 1px #fff, 0 1px rgb(0 0 0 / 35%);
+    color: #111;
+    cursor: pointer;
+    font: 700 12px Ubuntu, Arial, sans-serif;
+}
+
+.hotelview-slot-copy > button:hover {
+    background: linear-gradient(#fff, #c2c2c2);
+}
+
+.hotelview-slot-copy > button:disabled {
+    cursor: default;
+    filter: grayscale(1);
+    opacity: .72;
+}
+
+.hotelview-slot-copy > button + button {
+    margin-top: 5px;
+}
+
+.hotelview-countdown {
+    padding: 4px 0 0;
+    font-size: 15px !important;
+    letter-spacing: .5px;
+}
+
+.hotelview-vote-options {
+    display: grid;
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.hotelview-vote-options button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 25px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    background: linear-gradient(#fff, #d5d5d5);
+    box-shadow: inset 0 1px #fff, 0 1px rgb(0 0 0 / 35%);
+    color: #111;
+    cursor: pointer;
+    font: 700 12px Ubuntu, Arial, sans-serif;
+}
+
+.hotelview-vote-options span {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url(@/assets/images/hotelview/rooftop.gif);
-    background-repeat: no-repeat;
-    opacity: 0.2;
-    z-index: 0;
-    pointer-events: none;
+    right: 8px;
+    min-width: 20px;
+    text-align: right;
 }
 
-.hotel-sunset .nitro-hotel-view-rooftop-pool::before {
-    content: '';
+.hotelview-vote-options button:disabled {
+    cursor: default;
+    opacity: .72;
+}
+
+.hotelview-vote-options button.hotelview-vote-selected:disabled {
+    border-color: #0f6079;
+    background: linear-gradient(#e8fbff, #b8e2ed);
+    color: #0d4557;
+    opacity: 1;
+}
+
+.hotelview-progress {
+    height: 19px;
+    margin-top: 5px;
+    padding: 2px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background: #353535;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 65%);
+}
+
+.hotelview-progress span {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background: #9e9e9e;
+}
+
+.hotelview-community-progress {
+    display: flex;
+    padding: 0;
+    overflow: hidden;
+}
+
+.hotelview-community-progress span {
+    flex: 0 0 auto;
+    border-radius: 0;
+}
+
+.hotelview-community-progress .hotelview-community-progress-option-1 {
+    background: linear-gradient(90deg, #4c9db7, #75c6df);
+}
+
+.hotelview-community-progress .hotelview-community-progress-option-2 {
+    background: linear-gradient(90deg, #ce873d, #efbd61);
+}
+
+.hotelview-editor {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url(@/assets/images/hotelview/rooftop_pool.gif);
-    background-repeat: no-repeat;
-    opacity: 0.1;
-    z-index: 0;
-    pointer-events: none;
+    z-index: 10;
+    top: 24px;
+    left: 50%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: start;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 520px;
+    max-height: calc(100% - 48px);
+    padding: 0 12px 12px;
+    border: 2px solid #1d6078;
+    border-radius: 6px;
+    background: #ececea;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 78%), 0 3px 10px rgb(0 0 0 / 55%);
+    color: #222;
+    font: 12px Ubuntu, Arial, sans-serif;
+    overflow-y: auto;
+    transform: translateX(-50%);
 }
 
-.hotel-sunset .nitro-hotel-view-lobby::before {
-    content: '';
+.hotelview-editor header,
+.hotelview-editor footer {
+    grid-column: 1 / -1;
+}
+
+.hotelview-editor header {
+    margin: 0 -12px 4px;
+    padding: 7px 34px;
+    border-bottom: 1px solid #0b4355;
+    border-radius: 4px 4px 0 0;
+    background: #337f99;
+    box-shadow: inset 0 1px rgb(255 255 255 / 24%);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 1px rgb(0 0 0 / 45%);
+}
+
+.hotelview-editor-preview {
+    position: relative;
+    grid-column: 1 / -1;
+    overflow: hidden;
+    border: 1px solid #7395a0;
+    border-radius: 4px;
+    background: #d8e7e9;
+    box-shadow: inset 0 1px rgb(255 255 255 / 80%);
+}
+
+.hotelview-editor-preview-label {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url(@/assets/images/hotelview/lobby.png);
-    background-repeat: no-repeat;
-    opacity: 0.1;
-    z-index: 0;
+    z-index: 2;
+    top: 4px;
+    left: 4px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    background: rgb(18 56 69 / 78%);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.hotelview-editor-slot-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 90px;
+    padding: 12px 10px 8px;
+}
+
+.hotelview-editor-slot-preview > img {
+    flex: 0 0 78px;
+    width: auto;
+    max-width: 78px;
+    height: auto;
+    max-height: 68px;
+    object-fit: contain;
+}
+
+.hotelview-editor-slot-preview > div {
+    display: grid;
+    flex: 1;
+    gap: 4px;
+    min-width: 0;
+}
+
+.hotelview-editor-slot-preview strong {
+    overflow: hidden;
+    color: #174e60;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hotelview-editor-slot-preview p {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: #24464d;
+    font-size: 11px;
+    line-height: 1.2;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.hotelview-editor-slot-preview button {
+    min-height: 20px;
+    padding: 2px 8px;
+    border: 1px solid #5c6f73;
+    border-radius: 3px;
+    background: linear-gradient(#fff, #d9d9d9);
+    color: #161616;
+    font: 700 11px Ubuntu, Arial, sans-serif;
     pointer-events: none;
 }
 
-.hotel-sunset .nitro-hotel-view-picnic::before {
-    content: '';
+.hotelview-editor-preview-votes {
+    grid-template-columns: 1fr 1fr;
+}
+
+.hotelview-editor-slot-preview em {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url(@/assets/images/hotelview/picnic.gif);
-    background-repeat: no-repeat;
-    opacity: 0.2;
-    z-index: 0;
-    pointer-events: none;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgb(32 44 47 / 55%);
+    color: #fff;
+    font-weight: 700;
 }
 
-.hotel-sunset .nitro-hotel-view-infobus::before {
-    content: '';
+.hotelview-editor-scene-preview {
+    height: 154px;
+    padding-top: 0;
+}
+
+.hotelview-editor-scene-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #4caec7;
+    background-position: center;
+    background-repeat: repeat;
+    background-size: auto;
+}
+
+.hotelview-editor-scene-canvas img {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url(@/assets/images/hotelview/infobus.gif);
-    background-repeat: no-repeat;
-    opacity: 0.1;
-    z-index: 0;
-    pointer-events: none;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    max-width: 42%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
-.hotel-sunset .nitro-hotel-view-peaceful::before {
-    content: '';
+.hotelview-editor-scene-left {
+    left: 0;
+}
+
+.hotelview-editor-scene-right {
+    right: 0;
+}
+
+.hotelview-editor-scene-drape {
+    top: 0;
+    bottom: auto !important;
+    left: 0;
+    max-width: 50% !important;
+    transform: none;
+}
+
+.hotelview-hall-of-fame {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url(@/assets/images/hotelview/peacefulpark.gif);
-    background-repeat: no-repeat;
-    opacity: 0.1;
-    z-index: 0;
+    z-index: 3;
+    bottom: -18px;
+    left: 50%;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    width: min(900px, 82%);
+    min-height: 148px;
+    padding: 0 12px;
+    transform: translateX(-50%);
     pointer-events: none;
 }
 
-.hotel-sunset .nitro-hotel-view-pool::before {
-    content: '';
+.hotelview-hall-of-fame header {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url(@/assets/images/hotelview/pool.gif);
-    background-repeat: no-repeat;
-    opacity: 0.1;
-    z-index: 0;
-    pointer-events: none;
+    top: -48px;
+    left: 12px;
+    width: 250px;
+    margin: 0;
+    padding-bottom: 7px;
+    border-bottom: 1px solid rgb(255 255 255 / 32%);
 }
 
-/* Evening: night building, dark teal sky + ground */
-.hotel-evening {
-    box-shadow: 0px 55px 0px 0px #163635;
-}
-.hotel-evening .hotelview {
-    background: linear-gradient(to bottom, transparent 1185px, #163635 1185px);
-}
-.hotel-evening .hotelview-background {
-    background-image: url(@/assets/images/hotelview/hotelview-night.png);
+.hotelview-hall-of-fame-drag-handle {
+    top: -28px;
+    right: 10px;
 }
 
-/* Night: night building, dark teal sky + ground */
-.hotel-night {
-    box-shadow: 0px 55px 0px 0px #163635;
-}
-.hotel-night .hotelview {
-    background: linear-gradient(to bottom, transparent 1185px, #163635 1185px);
-}
-.hotel-night .hotelview-background {
-    background-image: url(@/assets/images/hotelview/hotelview-night.png);
+.hotelview-hall-of-fame h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 18px;
+    line-height: 20px;
+    text-shadow: 0 2px 2px rgb(0 0 0 / 65%);
 }
 
-/* ─── Night / Evening room-widget sprite swaps ─────────────────────────── */
-
-.hotel-evening .nitro-hotel-view-rooftop,
-.hotel-night .nitro-hotel-view-rooftop {
-    background-image: url(@/assets/images/hotelview/night/night-rooftop.png);
+.hotelview-hall-of-fame header p {
+    margin: 2px 0 0;
+    color: rgb(255 255 255 / 82%);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1px;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
 }
 
-.hotel-evening .nitro-hotel-view-rooftop-pool,
-.hotel-night .nitro-hotel-view-rooftop-pool {
-    background-image: url(@/assets/images/hotelview/night/night-rooftop_pool.gif);
+.hotelview-hall-of-fame-user {
+    position: relative;
+    display: flex;
+    flex: 0 1 90px;
+    align-items: center;
+    justify-content: end;
+    min-width: 72px;
+    height: 148px;
 }
 
-.hotel-evening .nitro-hotel-view-picnic,
-.hotel-night .nitro-hotel-view-picnic {
-    background-image: url(@/assets/images/hotelview/night/night-picnic.gif);
+.hotelview-hall-of-fame-avatar {
+    position: absolute !important;
+    bottom: -6px;
+    left: 50%;
+    transform-origin: bottom center;
+    translate: -50% 0;
 }
 
-.hotel-evening .nitro-hotel-view-infobus,
-.hotel-night .nitro-hotel-view-infobus {
-    background-image: url(@/assets/images/hotelview/night/night-infobus.gif);
+.hotelview-hall-of-fame-user span {
+    position: absolute;
+    bottom: 126px;
+    left: 50%;
+    max-width: 82px;
+    overflow: hidden;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px #000;
+    transform: translateX(-50%);
+    white-space: nowrap;
 }
 
-.hotel-evening .nitro-hotel-view-pool,
-.hotel-night .nitro-hotel-view-pool {
-    background-image: url(@/assets/images/hotelview/night/night-pool.gif);
+.hotelview-editor label {
+    display: grid;
+    gap: 2px;
+    font-weight: 700;
 }
 
-.hotel-evening .nitro-hotel-view-lobby,
-.hotel-night .nitro-hotel-view-lobby {
-    background-image: url(@/assets/images/hotelview/night/night-lobby.png);
+.hotelview-editor input,
+.hotelview-editor select,
+.hotelview-editor textarea {
+    min-width: 0;
+    padding: 3px 6px;
+    border: 1px solid #8d8d8d;
+    border-radius: 4px;
+    background: #f6f6f6;
+    box-shadow: inset 0 1px rgb(255 255 255 / 95%);
+    color: #111;
+    font: inherit;
 }
 
-.hotel-evening .nitro-hotel-view-peaceful,
-.hotel-night .nitro-hotel-view-peaceful {
-    background-image: url(@/assets/images/hotelview/night/night-park.png);
+.hotelview-editor .hotelview-editor-toggle {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 7px;
+    min-height: 24px;
+    cursor: pointer;
+}
+
+.hotelview-editor .hotelview-editor-toggle input[type='checkbox'] {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin: 0;
+    border: 1px solid #3c6977;
+    border-radius: 3px;
+    background: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.hotelview-editor .hotelview-editor-toggle input[type='checkbox']::before,
+.hotelview-editor .hotelview-editor-toggle input[type='checkbox']::after {
+    content: none;
+}
+
+.hotelview-editor .hotelview-editor-toggle input[type='checkbox']:checked {
+    border-color: #124d60;
+    background: #1e748f;
+}
+
+.hotelview-editor .hotelview-editor-toggle input[type='checkbox']:checked::after {
+    content: '✓';
+    position: absolute;
+    inset: -1px 0 0;
+    width: auto;
+    height: auto;
+    background: none;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    transform: none;
+}
+
+.hotelview-editor .hotelview-editor-toggle span {
+    line-height: 18px;
+}
+
+.hotelview-editor textarea {
+    min-height: 52px;
+    resize: vertical;
+}
+
+.hotelview-vote-reward-panel {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    margin: 0;
+    padding: 8px;
+    border: 1px solid #94a9ae;
+    border-radius: 4px;
+    background: rgb(255 255 255 / 42%);
+}
+
+.hotelview-vote-rewards {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.hotelview-vote-reward-panel legend {
+    padding: 0 4px;
+    color: #174e60;
+    font-weight: 700;
+}
+
+.hotelview-editor footer {
+    display: flex;
+    justify-content: end;
+    gap: 7px;
+    padding-top: 4px;
+}
+
+.hotelview-editor footer button {
+    width: 86px;
+    height: 25px;
+    margin: 0;
+    border: 1px solid #4f4f4f;
+    border-radius: 4px;
+    background: linear-gradient(#fff, #d8d8d8);
+    color: #111;
+    font-weight: 700;
+}
+
+@media (max-width: 949px), (max-height: 599px) {
+    .hotelview-stage {
+        top: 0;
+        transform: translateX(-50%);
+    }
 }

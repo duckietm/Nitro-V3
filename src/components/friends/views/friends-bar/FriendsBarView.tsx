@@ -90,7 +90,7 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
     return (
         <motion.div
             ref={elementRef}
-            className="flex h-[40px] items-center gap-[6px] px-[2px] py-[3px]"
+            className="friend-bar flex h-[40px] items-center gap-[6px] px-[2px] py-[3px]"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -98,19 +98,19 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
         >
             {requestsCount > 0 && (
                 <motion.div variants={itemVariants}>
-                    <div className="flex h-[34px] items-center rounded-[7px] border border-[#9fc56f] bg-[#5f7d2f] px-[10px] text-[0.83rem] whitespace-nowrap text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_2px_0_rgba(0,0,0,0.25)]">
+                    <div className="friend-bar-item friend-bar-request find-friends-active flex h-[34px] items-center px-[10px] text-[0.83rem] whitespace-nowrap text-white">
                         {requestsCount} {LocalizeText('friendbar.requests.title')}
                     </div>
                 </motion.div>
             )}
             <motion.div variants={itemVariants}>
                 <div
-                    className={`flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-all ${!canScrollLeft ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer hover:text-white active:scale-95'}`}
+                    className={`friend-bar-button left flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-all ${!canScrollLeft ? 'is-disabled opacity-30 cursor-not-allowed' : 'cursor-pointer hover:text-white active:scale-95'}`}
                     onClick={() => {
                         if (canScrollLeft) setIndexOffset(safeOffset - 1);
                     }}
                 >
-                    <FaChevronLeft className="text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
+                    <FaChevronLeft className="friend-bar-chevron text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
                 </div>
             </motion.div>
 
@@ -125,7 +125,7 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
                 </motion.div>
                 {!validFriends.length && requestsCount <= 0 && (
                     <motion.div key="friend-empty" variants={itemVariants} layout initial="hidden" animate="visible" exit="exit">
-                        <div className="flex h-[34px] items-center rounded-[7px] border border-[#9fc56f] bg-[#5f7d2f] px-[10px] text-[0.83rem] font-medium whitespace-nowrap text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_2px_0_rgba(0,0,0,0.25)]">
+                        <div className="friend-bar-item friend-bar-empty find-friends-active flex h-[34px] items-center px-[10px] text-[0.83rem] font-medium whitespace-nowrap text-white">
                             {localizeWithFallback('friendbar.empty.online', 'No friends online')}
                         </div>
                     </motion.div>
@@ -134,12 +134,12 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
 
             <motion.div variants={itemVariants}>
                 <div
-                    className={`flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-all ${!canScrollRight ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer hover:text-white active:scale-95'}`}
+                    className={`friend-bar-button right flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-all ${!canScrollRight ? 'is-disabled opacity-30 cursor-not-allowed' : 'cursor-pointer hover:text-white active:scale-95'}`}
                     onClick={() => {
                         if (canScrollRight) setIndexOffset(safeOffset + 1);
                     }}
                 >
-                    <FaChevronRight className="text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
+                    <FaChevronRight className="friend-bar-chevron text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
                 </div>
             </motion.div>
         </motion.div>

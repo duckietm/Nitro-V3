@@ -11,18 +11,12 @@ describe('Toolbar feature config', () => {
 
         expect(config['buildersclub.enabled']).toBe(true);
         expect(config['toolbar.buildersclub.enabled']).toBe(true);
-        expect(config['toolbar.rarevalues.enabled']).toBe(true);
-        expect(config['toolbar.fortunewheel.enabled']).toBe(true);
         expect(source).toContain(
             "GetConfigurationValue<boolean>('buildersclub.enabled', GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true))"
         );
-        expect(source).toContain("GetConfigurationValue<boolean>('toolbar.rarevalues.enabled', true)");
-        expect(source).toContain("GetConfigurationValue<boolean>('toolbar.fortunewheel.enabled', true)");
         expect(source.match(/buildersClubEnabled\s*&&/g)).toHaveLength(2);
-        expect(source.match(/rareValuesEnabled\s*&&/g)).toHaveLength(2);
-        expect(source.match(/fortuneWheelEnabled\s*&&/g)).toHaveLength(2);
         expect(source.match(/icon=\"buildersclub\"/g)).toHaveLength(2);
-        expect(source.match(/icon=\"rare-values\"/g)).toHaveLength(2);
-        expect(source.match(/icon=\"fortune-wheel\"/g)).toHaveLength(2);
+        expect(source).not.toContain('rare-values/toggle');
+        expect(source).not.toContain('fortune-wheel/toggle');
     });
 });

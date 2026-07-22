@@ -1,7 +1,7 @@
 import { RoomChatSettings } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { GetClubMemberLevel, IRoomData, LocalizeText } from '../../../../api';
-import { Column, Grid, Text } from '../../../../common';
+import { Column, Flex, Grid, Text } from '../../../../common';
 import { NitroInput } from '../../../../layout';
 import { NavigatorRoomSettingsSectionView } from './NavigatorRoomSettingsSectionView';
 
@@ -13,11 +13,16 @@ interface NavigatorRoomSettingsTabViewProps {
 export const NavigatorRoomSettingsVipChatTabView: FC<NavigatorRoomSettingsTabViewProps> = (props) => {
     const { roomData = null, handleChange = null } = props;
     const [chatDistance, setChatDistance] = useState<number>(0);
+    const [idleSleepTimeoutSeconds, setIdleSleepTimeoutSeconds] = useState<string>('');
+    const [idleAutokickTimeoutSeconds, setIdleAutokickTimeoutSeconds] = useState<string>('');
     const isHC = GetClubMemberLevel() > 0;
+    const minimumAutokickTimeoutSeconds = Math.max(60, (Number(idleSleepTimeoutSeconds) || 30) + 30);
 
     useEffect(() => {
         setChatDistance(roomData.chatSettings.distance);
-    }, [roomData.chatSettings]);
+        setIdleSleepTimeoutSeconds(roomData.idleSleepTimeoutSeconds ? roomData.idleSleepTimeoutSeconds.toString() : '');
+        setIdleAutokickTimeoutSeconds(roomData.idleAutokickTimeoutSeconds ? roomData.idleAutokickTimeoutSeconds.toString() : '');
+    }, [roomData.chatSettings, roomData.idleSleepTimeoutSeconds, roomData.idleAutokickTimeoutSeconds]);
 
     return (
         <>
@@ -27,7 +32,7 @@ export const NavigatorRoomSettingsVipChatTabView: FC<NavigatorRoomSettingsTabVie
                 </Text>
                 <Text small>{LocalizeText('navigator.roomsettings.vip.info')}</Text>
             </div>
-            <Grid className={!isHC ? 'opacity-50 pointer-events-none' : ''} overflow="auto">
+            <Grid>
                 <Column gap={1} size={6}>
                     <NavigatorRoomSettingsSectionView title={LocalizeText('navigator.roomsettings.chat_settings')} gap={1} className="h-full">
                         <Text small>{LocalizeText('navigator.roomsettings.chat_settings.info')}</Text>
@@ -118,6 +123,77 @@ export const NavigatorRoomSettingsVipChatTabView: FC<NavigatorRoomSettingsTabVie
                             <option value="-1">{LocalizeText('navigator.roomsettings.floor_thickness.thin')}</option>
                             <option value="-2">{LocalizeText('navigator.roomsettings.floor_thickness.thinnest')}</option>
                         </select>
+                    </NavigatorRoomSettingsSectionView>
+                </Column>
+                <Column gap={1} size={12}>
+                    <NavigatorRoomSettingsSectionView title={LocalizeText('navigator.roomsettings.room_behavior')} gap={1}>
+                        <Flex alignItems="center" gap={1}>
+                            <input
+                                checked={!roomData.leaveOnDoorTileEnabled}
+                                className="form-check-input"
+                                type="checkbox"
+                                onChange={(event) => handleChange('leave_on_door_tile_enabled', !event.target.checked)}
+                            />
+                            <Text small>{LocalizeText('navigator.roomsettings.do_not_leave_on_door_tile')}</Text>
+                        </Flex>
+                        <Flex alignItems="center" gap={1}>
+                            <input
+                                checked={roomData.idleSleepEnabled}
+                                className="form-check-input"
+                                type="checkbox"
+                                onChange={(event) => handleChange('idle_sleep_enabled', event.target.checked)}
+                            />
+                            <Text small>{LocalizeText('navigator.roomsettings.idle_sleep')}</Text>
+                            <NitroInput
+                                className="form-control-sm w-20"
+                                disabled={!roomData.idleSleepEnabled}
+                                min="30"
+                                max="3600"
+                                type="number"
+                                value={idleSleepTimeoutSeconds}
+                                onBlur={(event) => {
+                                    const value = Math.max(30, Math.min(3600, Number(event.currentTarget.value) || 30));
+                                    const requiredAutokickTimeout = Math.max(60, value + 30);
+                                    setIdleSleepTimeoutSeconds(value.toString());
+
+                                    if (roomData.idleAutokickEnabled && (Number(idleAutokickTimeoutSeconds) || 0) < requiredAutokickTimeout) {
+                                        setIdleAutokickTimeoutSeconds(requiredAutokickTimeout.toString());
+                                        handleChange('idle_autokick_timeout_seconds', requiredAutokickTimeout);
+                                    }
+
+                                    handleChange('idle_sleep_timeout_seconds', value);
+                                }}
+                                onChange={(event) => setIdleSleepTimeoutSeconds(event.target.value)}
+                            />
+                            <Text small>{LocalizeText('navigator.roomsettings.timeout.seconds')}</Text>
+                        </Flex>
+                        <Flex alignItems="center" gap={1}>
+                            <input
+                                checked={roomData.idleAutokickEnabled}
+                                className="form-check-input"
+                                type="checkbox"
+                                onChange={(event) => handleChange('idle_autokick_enabled', event.target.checked)}
+                            />
+                            <Text small>{LocalizeText('navigator.roomsettings.idle_autokick')}</Text>
+                            <NitroInput
+                                className="form-control-sm w-20"
+                                disabled={!roomData.idleAutokickEnabled}
+                                min={minimumAutokickTimeoutSeconds}
+                                max="36000"
+                                type="number"
+                                value={idleAutokickTimeoutSeconds}
+                                onBlur={(event) => {
+                                    const value = Math.max(
+                                        minimumAutokickTimeoutSeconds,
+                                        Math.min(36000, Number(event.currentTarget.value) || minimumAutokickTimeoutSeconds)
+                                    );
+                                    setIdleAutokickTimeoutSeconds(value.toString());
+                                    handleChange('idle_autokick_timeout_seconds', value);
+                                }}
+                                onChange={(event) => setIdleAutokickTimeoutSeconds(event.target.value)}
+                            />
+                            <Text small>{LocalizeText('navigator.roomsettings.timeout.seconds')}</Text>
+                        </Flex>
                     </NavigatorRoomSettingsSectionView>
                 </Column>
             </Grid>

@@ -1,20 +1,165 @@
+.nitro-chat-history {
+    position: absolute;
+    inset: 0 auto 54px 0;
+    width: min(413px, calc(100vw - 18px));
+    z-index: 70;
+    pointer-events: auto;
+    animation: nitro-chat-history-open 140ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.nitro-chat-history-tray-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 21px;
+    background: rgba(30, 31, 28, 0.82);
+    box-shadow: inset -1px 0 rgba(255, 255, 255, 0.08);
+}
+
 .nitro-chat-history-content {
-    display: flex;
-    height: calc(100% - 40px);
-    min-height: 0;
-    flex-direction: column;
+    position: absolute;
+    inset: 0 21px 0 21px;
+    background: rgba(34, 35, 32, 0.72);
 }
 
 .nitro-chat-history-scroll {
-    flex: 1 1 auto;
-    min-height: 0;
+    position: absolute;
+    inset: 0;
+    overflow-x: hidden;
     overflow-y: auto;
-    background: inherit;
+    padding: 10px 8px 18px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #2fbdea rgba(16, 16, 15, 0.35);
+}
+
+.nitro-chat-history-scroll::-webkit-scrollbar {
+    width: 13px;
+}
+
+.nitro-chat-history-scroll::-webkit-scrollbar-track {
+    border-left: 1px solid rgba(0, 0, 0, 0.45);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(16, 16, 15, 0.35);
+}
+
+.nitro-chat-history-scroll::-webkit-scrollbar-thumb {
+    min-height: 34px;
+    border: 2px solid rgba(16, 16, 15, 0.35);
+    border-radius: 7px;
+    background: #2fbdea;
+}
+
+.nitro-chat-history-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 0 0 6px 0;
+}
+
+.nitro-chat-history-time {
+    flex: 0 0 54px;
+    margin: 6px 0 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-family: Ubuntu, sans-serif;
+    font-size: 11px;
+    line-height: 13px;
+    text-shadow: 0 1px #000000;
+}
+
+.nitro-chat-history-message {
+    display: flex;
+    align-items: flex-start;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .nitro-chat-history-bubble-wrap {
     position: relative;
     display: inline-flex;
     align-items: center;
+    min-width: 0;
     max-width: 100%;
+}
+
+.nitro-chat-history-bubble-wrap .chat-bubble {
+    margin: 0;
+    filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35));
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.nitro-chat-history-bubble-wrap .chat-content {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.nitro-chat-history-bubble-wrap .message {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.nitro-chat-history-room-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+    margin: 0 0 3px 0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.82);
+    color: #222222;
+    font-family: Ubuntu, sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.nitro-chat-history-handle {
+    position: absolute;
+    right: 0;
+    bottom: 165px;
+    width: 21px;
+    height: 42px;
+    padding: 0;
+    border: 0;
+    border-radius: 0 5px 5px 0;
+    background: rgba(30, 31, 28, 0.9);
+    box-shadow: inset 1px 0 rgba(255, 255, 255, 0.12), 1px 1px 0 rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+}
+
+.nitro-chat-history-handle::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 15px;
+    width: 9px;
+    height: 9px;
+    border-left: 2px solid rgba(255, 255, 255, 0.85);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.85);
+    transform: rotate(45deg);
+}
+
+.nitro-chat-history-handle:hover {
+    filter: brightness(1.15);
+}
+
+@keyframes nitro-chat-history-open {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: min(413px, calc(100vw - 18px));
+    }
+}
+
+@media (max-width: 768px) {
+    .nitro-chat-history {
+        bottom: 48px;
+    }
 }

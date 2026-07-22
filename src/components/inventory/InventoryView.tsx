@@ -11,8 +11,7 @@ import {
     RoomPreviewer,
     RoomSessionEvent
 } from '@nitrots/nitro-renderer';
-import { FC, ReactNode, useEffect, useState } from 'react';
-import { FaAward, FaCouch, FaPaw, FaRobot, FaTag } from 'react-icons/fa';
+import { FC, useEffect, useState } from 'react';
 import { GroupItem, isObjectMoverRequested, LocalizeText, setObjectMoverRequested, UnseenItemCategory } from '../../api';
 import { NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import {
@@ -50,13 +49,6 @@ const TAB_BY_CODE: Record<string, string> = {
     bots: TAB_BOTS
 };
 const UNSEEN_CATEGORIES = [UnseenItemCategory.FURNI, UnseenItemCategory.PET, UnseenItemCategory.BADGE, UnseenItemCategory.PREFIX, UnseenItemCategory.BOT];
-const TAB_ICONS: Record<string, ReactNode> = {
-    [TAB_FURNITURE]: <FaCouch />,
-    [TAB_PETS]: <FaPaw />,
-    [TAB_BADGES]: <FaAward />,
-    [TAB_PREFIXES]: <FaTag />,
-    [TAB_BOTS]: <FaRobot />
-};
 
 export const InventoryView: FC<{}> = (props) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -169,9 +161,6 @@ export const InventoryView: FC<{}> = (props) => {
                                         isActive={currentTab === name}
                                         onClick={(event) => setCurrentTab(name)}
                                     >
-                                        <span className="nitro-inventory-tab-icon" title={LocalizeText(name)}>
-                                            {TAB_ICONS[name]}
-                                        </span>
                                         <span className="nitro-inventory-tab-label">{LocalizeText(name)}</span>
                                     </NitroCardTabsItemView>
                                 );

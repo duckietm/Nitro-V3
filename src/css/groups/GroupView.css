@@ -1,0 +1,502 @@
+.nitro-groups-window {
+    font-family: Ubuntu, sans-serif;
+    color: #111111;
+}
+
+.nitro-groups-window .nitro-card-content,
+.nitro-groups-window .nitro-card-content-shell,
+.nitro-groups-content {
+    background: #eeeee7 !important;
+    color: #111111;
+}
+
+.nitro-groups-window .nitro-card-tabs {
+    background: #d6d5cc;
+    border-bottom: 1px solid #77776f;
+}
+
+.nitro-groups-window .nitro-card-tabs-item {
+    min-height: 25px;
+    border: 1px solid #111111;
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    background: #c8c7bf;
+    color: #111111;
+    text-shadow: none;
+}
+
+.nitro-groups-window .nitro-card-tabs-item.active,
+.nitro-groups-window .nitro-card-tabs-item:hover {
+    background: #eeeee7;
+}
+
+.nitro-groups-window input,
+.nitro-groups-window textarea,
+.nitro-groups-window select,
+.nitro-groups-input,
+.nitro-groups-select {
+    border: 1px solid #9c9c94 !important;
+    border-radius: 3px !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.08);
+    font-size: 12px;
+}
+
+.nitro-groups-tab-header {
+    display: flex;
+    min-height: 70px;
+    padding: 6px;
+    margin-bottom: 6px;
+    border: 1px solid #b4b4ad;
+    border-radius: 6px;
+    background: #f7f7f2;
+}
+
+.nitro-group-tab-image {
+    flex: 0 0 auto;
+}
+
+.nitro-groups-footer {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #c7c7bf;
+}
+
+.nitro-groups-button,
+.nitro-groups-window button:not(.nitro-card-header-close),
+.nitro-group-room-info .nitro-groups-button {
+    min-height: 24px;
+    border: 3px solid transparent !important;
+    border-image-source: var(--habbo-skin-button) !important;
+    border-image-slice: 3 fill !important;
+    border-image-width: 3px !important;
+    border-image-repeat: stretch !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #111111 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.nitro-groups-button:hover,
+.nitro-groups-window button:not(.nitro-card-header-close):hover,
+.nitro-group-room-info .nitro-groups-button:hover {
+    border-image-source: var(--habbo-skin-button-hover) !important;
+    filter: none !important;
+}
+
+.nitro-groups-button:active,
+.nitro-groups-window button:not(.nitro-card-header-close):active,
+.nitro-group-room-info .nitro-groups-button:active {
+    border-image-source: var(--habbo-skin-button-pressed) !important;
+}
+
+.nitro-groups-button:disabled,
+.nitro-groups-window button:disabled,
+.nitro-group-room-info .nitro-groups-button:disabled {
+    border-image-source: var(--habbo-skin-button-disabled) !important;
+    color: #777777 !important;
+    opacity: 1 !important;
+}
+
+.nitro-groups-button--primary {
+    border-image-source: var(--habbo-skin-shiny) !important;
+    color: #ffffff !important;
+    text-shadow: 1px 1px 0 #003a00 !important;
+}
+
+.nitro-groups-button--primary:hover {
+    border-image-source: var(--habbo-skin-shiny-hover) !important;
+}
+
+.nitro-groups-button--primary:active {
+    border-image-source: var(--habbo-skin-shiny-pressed) !important;
+}
+
+.nitro-group-members-search {
+    padding: 6px;
+    border: 1px solid #b4b4ad;
+    border-radius: 6px;
+    background: #f7f7f2;
+}
+
+.nitro-group-members-list-grid {
+    padding: 4px;
+    border: 1px solid #b4b4ad;
+    border-radius: 6px;
+    background: #d7d7d0;
+}
+
+.nitro-group-member-row {
+    border: 1px solid #b4b4ad !important;
+    border-radius: 5px !important;
+    background: #f2f2ed !important;
+    box-shadow: inset 0 1px 0 #ffffff;
+    color: #111111;
+}
+
+.nitro-group-member-row:hover {
+    background: #ffffff !important;
+}
+
+.nitro-group-information-standalone {
+    width: 360px;
+}
+
+.nitro-extended-profile-group-info {
+    background: #d6d6d1;
+    border: 1px solid #7b7b75;
+    border-radius: 7px;
+    color: #111111;
+}
+
+.nitro-extended-profile-group-info__button {
+    min-height: 26px;
+}
+
+.nitro-group-room-info {
+    margin-left: auto;
+    margin-right: 0;
+    width: 188px;
+    max-width: 188px;
+    height: 113px;
+    border: 1px solid #707070;
+    border-radius: 4px;
+    background: rgba(24, 24, 24, 0.92);
+    color: #ffffff;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+        0 2px 0 rgba(0, 0, 0, 0.35);
+    font-family: Ubuntu, sans-serif;
+    image-rendering: pixelated;
+    transition: height 0.18s ease;
+}
+
+.nitro-group-room-info.is-closed {
+    height: 22px;
+}
+
+.nitro-group-room-info__contracted {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 186px;
+    height: 21px;
+    padding: 0 21px 0 4px;
+    cursor: pointer;
+    background: linear-gradient(180deg, rgba(54, 54, 54, 0.98), rgba(33, 33, 33, 0.98));
+    border-bottom: 1px solid #000000;
+    border-radius: 3px 3px 0 0;
+}
+
+.nitro-group-room-info__base-icon {
+    width: auto;
+    height: auto;
+    flex: 0 0 auto;
+    margin-right: 3px;
+}
+
+.nitro-group-room-info__toggle {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 17px;
+    height: 17px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
+.nitro-group-room-info__toggle::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #d7d7d7;
+    filter: drop-shadow(1px 1px 0 #000000);
+}
+
+.nitro-group-room-info.is-closed .nitro-group-room-info__toggle {
+    transform: none;
+}
+
+.nitro-group-room-info.is-closed .nitro-group-room-info__toggle::after {
+    transform: rotate(180deg);
+}
+
+.nitro-group-room-info__title,
+.nitro-group-room-info .text-white {
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 15px;
+    letter-spacing: -0.2px;
+    text-shadow: 1px 1px 0 #000000;
+}
+
+.nitro-group-room-info__content {
+    height: 90px;
+    overflow: hidden;
+    transition: opacity 0.14s ease;
+    background: rgba(27, 27, 27, 0.94);
+}
+
+.nitro-group-room-info.is-closed .nitro-group-room-info__content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nitro-group-room-info__main {
+    height: 57px;
+    padding: 7px 8px 0 10px;
+    gap: 7px;
+}
+
+.nitro-group-room-info__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 39px;
+    height: 39px;
+    flex: 0 0 39px;
+    filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.75));
+}
+
+.nitro-group-room-info__badge .layout-badge-image,
+.nitro-group-room-info__badge .badge-image {
+    width: 39px !important;
+    height: 39px !important;
+    background-size: contain !important;
+    background-position: center !important;
+}
+
+.nitro-group-room-info__group-name {
+    display: -webkit-box;
+    width: 124px;
+    height: 42px;
+    overflow: hidden;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 700;
+    line-height: 13px;
+    text-shadow: 1px 1px 0 #000000;
+    word-break: break-word;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.nitro-group-room-info__button-wrap {
+    padding: 3px 8px 0;
+}
+
+.nitro-group-room-info__button {
+    width: 170px;
+    height: 27px;
+    min-height: 27px;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+}
+
+/* SWF group_room_info.xml coordinates. */
+.nitro-group-room-info {
+    width: 195px !important;
+    max-width: 195px !important;
+    height: 119px !important;
+    margin-left: auto !important;
+    border-radius: 4px !important;
+}
+
+.nitro-group-room-info.is-closed {
+    height: 25px !important;
+}
+
+.nitro-group-room-info__contracted {
+    width: 195px !important;
+    height: 25px !important;
+    padding: 0 24px 0 5px !important;
+}
+
+.nitro-group-room-info__base-icon {
+    width: 21px !important;
+    max-width: 21px !important;
+    height: 16px !important;
+    max-height: 16px !important;
+    margin: 0 -11px 0 0 !important;
+}
+
+.nitro-group-room-info__title,
+.nitro-group-room-info .text-white {
+    font-size: 13px !important;
+    line-height: 18px !important;
+    letter-spacing: -0.4px !important;
+}
+
+.nitro-group-room-info__content {
+    height: 94px !important;
+}
+
+.nitro-group-room-info__main {
+    height: 51px !important;
+    padding: 7px 11px 0 12px !important;
+    gap: 8px !important;
+}
+
+.nitro-group-room-info__badge {
+    width: 39px !important;
+    height: 39px !important;
+    flex: 0 0 39px !important;
+}
+
+.nitro-group-room-info__group-name {
+    width: 125px !important;
+    height: 50px !important;
+    font-size: 13px !important;
+    line-height: 14px !important;
+}
+
+.nitro-group-room-info__button-wrap {
+    padding: 1px 10px 0 !important;
+}
+
+.nitro-group-room-info__button {
+    width: 175px !important;
+    height: 29px !important;
+    min-height: 29px !important;
+}
+
+/* group_room_info.xml: fixed 195x119 surface, using the same dark treatment as
+ * the original right-side widgets. The content is positioned by the SWF x/y values. */
+.nitro-group-room-info {
+    position: relative !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(0, 0, 0, 0.92) !important;
+    border-radius: 5px !important;
+    background: rgba(117, 116, 111, 0.40) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+        0 2px 0 rgba(0, 0, 0, 0.32) !important;
+}
+
+.nitro-group-room-info__contracted {
+    position: relative !important;
+    width: 195px !important;
+    height: 25px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 4px 4px 0 0 !important;
+    background: rgba(28, 34, 37, 0.40) !important;
+}
+
+.nitro-group-room-info__contracted::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: #000000;
+    pointer-events: none;
+}
+
+.nitro-group-room-info__base-icon {
+    position: absolute !important;
+    top: 3px !important;
+    left: 5px !important;
+    width: 21px !important;
+    height: 16px !important;
+    margin: 0 !important;
+}
+
+.nitro-group-room-info__title {
+    position: absolute !important;
+    top: 2px !important;
+    left: 27px !important;
+    width: 143px !important;
+    height: 18px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+}
+
+.nitro-group-room-info__toggle {
+    top: 4px !important;
+    right: 5px !important;
+}
+
+.nitro-group-room-info__content {
+    position: relative !important;
+    width: 195px !important;
+    height: 94px !important;
+    overflow: hidden !important;
+    background: rgba(117, 116, 111, 0.40) !important;
+}
+
+.nitro-group-room-info__main {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 195px !important;
+    height: 54px !important;
+    padding: 0 !important;
+}
+
+.nitro-group-room-info__badge {
+    position: absolute !important;
+    top: 7px !important;
+    left: 12px !important;
+}
+
+.nitro-group-room-info__group-name {
+    position: absolute !important;
+    top: 7px !important;
+    left: 59px !important;
+    width: 125px !important;
+    height: 50px !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+}
+
+.nitro-group-room-info__button-wrap {
+    position: absolute !important;
+    top: 54px !important;
+    left: 10px !important;
+    width: 175px !important;
+    height: 29px !important;
+    padding: 0 !important;
+}
+
+.nitro-group-room-info .nitro-group-room-info__button {
+    width: 175px !important;
+    height: 29px !important;
+    min-height: 29px !important;
+    box-sizing: border-box !important;
+    border: 1px solid #050505 !important;
+    border-image: none !important;
+    border-radius: 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f4f4f2 45%, #d7d7d3 100%) !important;
+    color: #111111 !important;
+    text-align: center !important;
+    text-shadow: none !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 #a7a7a3,
+        0 1px 0 rgba(0, 0, 0, 0.45) !important;
+}
+
+.nitro-group-room-info__button .text-white {
+    color: #111111 !important;
+}
