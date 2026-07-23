@@ -355,7 +355,8 @@
     display: block;
     text-align: center;
     margin-top: 6px;
-    font-size: 13px;
+    font-size: 11px;
+    line-height: 14px;
     color: var(--habbo-blue-dark, #2e6f8a);
     text-decoration: underline;
     cursor: pointer;
@@ -706,7 +707,7 @@
 }
 
 .nitro-login-card .registration-wardrobe-preview {
-    align-self: center;
+    align-self: end;
     width: 170px;
     height: 270px;
     min-height: 0;
@@ -799,13 +800,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 42px;
     min-width: 42px;
+    max-width: 42px;
     height: 30px;
-    padding: 3px 8px;
+    padding: 3px 4px;
+    overflow: hidden;
     border: 1px solid transparent;
     border-radius: 4px;
     background: transparent;
     cursor: pointer;
+}
+
+.nitro-login-card .registration-wardrobe-set-tabs button > div {
+    width: 100%;
+    height: 100%;
+}
+
+.nitro-login-card .registration-wardrobe-set-tabs button img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 30px;
+    max-height: 20px;
+    object-fit: contain;
 }
 
 .nitro-login-card .registration-wardrobe-set-tabs button:hover,
@@ -823,6 +840,7 @@
 }
 
 .nitro-login-card .registration-wardrobe-parts {
+    position: relative;
     min-height: 0;
     overflow: hidden;
     border: 1px solid #9f9f9f;
@@ -831,10 +849,26 @@
     padding: 5px;
 }
 
+.nitro-login-card .registration-wardrobe-parts > div {
+    position: absolute;
+    inset: 5px;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0;
+    padding-right: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-width: auto;
+}
+
 .nitro-login-card .registration-wardrobe-part {
     min-height: 48px;
-    background-size: 88% auto !important;
+    background-size: 75% auto !important;
     background-position: center !important;
+}
+
+.nitro-login-card .registration-wardrobe-part.wardrobe-part-hd {
+    background-size: 64% auto !important;
 }
 
 .nitro-login-card .registration-wardrobe-part:focus-visible {

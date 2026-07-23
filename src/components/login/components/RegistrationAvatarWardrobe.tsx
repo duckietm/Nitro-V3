@@ -67,6 +67,7 @@ const WardrobePartItem: FC<WardrobePartItemProps> = ({ setType, partId, colorIds
             return;
         }
 
+        setAssetUrl('');
         let cancelled = false;
 
         const loadThumbnail = async () => {
@@ -115,7 +116,7 @@ const WardrobePartItem: FC<WardrobePartItemProps> = ({ setType, partId, colorIds
         <InfiniteGrid.Item
             itemActive={selected}
             itemImage={partId >= 0 ? assetUrl || undefined : undefined}
-            className={`registration-wardrobe-part avatar-parts${selected ? ' part-selected' : ''}${partId >= 0 && !assetUrl ? ' wardrobe-part-loading' : ''}`}
+            className={`registration-wardrobe-part wardrobe-part-${setType} avatar-parts${selected ? ' part-selected' : ''}${partId >= 0 && !assetUrl ? ' wardrobe-part-loading' : ''}`}
             role="button"
             tabIndex={0}
             aria-label={partId < 0 ? t('nitro.login.register.wardrobe.none', 'None') : `${label} ${partId}`}
