@@ -1,4 +1,6 @@
 {
+    // Opt in with `soundboard.localFallback.enabled: true` in ui-config.
+    // Keep it disabled for the moderated, server-authoritative soundboard.
     // Soundboard pads loaded from a file — used as a FALLBACK when the server
     // (soundboard_sounds DB table) returns no sounds. Copy this file to
     // `soundboard-sounds.json5` (without .example) and add your sounds. JSON5:
