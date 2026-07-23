@@ -33,7 +33,8 @@ import {
     MessengerSettings,
     NotificationAlertType,
     NotificationBubbleType,
-    SendMessageComposer
+    SendMessageComposer,
+    withUpdatedFriendCategories
 } from '../../api';
 import { useMessageEvent } from '../events';
 import { useNotification } from '../notification';

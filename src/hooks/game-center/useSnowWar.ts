@@ -23,6 +23,7 @@ import {
     SnowWarQueuePositionEvent,
     SnowWarRejoinPreviousRoomEvent,
     SnowWarRequestFullGameStatusComposer,
+    SnowWarSaveEditorComposer,
     SnowWarStartLobbyCounterEvent,
     SnowWarThrowAtLocationComposer,
     SnowWarThrowAtPlayerComposer,
@@ -30,7 +31,7 @@ import {
     SnowWarUserRematchedEvent,
     SnowWarWalkComposer,
 } from '@nitrots/nitro-renderer';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer } from '../../api';
 import { SnowWarSimEvent, SnowWarSimulation } from '../../api/snowwar';
@@ -52,7 +53,7 @@ export interface SnowWarLevelState {
     mapId: number;
     teamCount: number;
     heightmapRows: string[];
-    items: { name: string; x: number; y: number; rotation: number; imageUrl: string }[];
+    items: { name: string; x: number; y: number; rotation: number; imageUrl: string; offsetZ: number }[];
     machines: { objectId: number; x: number; y: number }[];
     players: { objectId: number; userId: number; teamId: number; name: string; figure: string; gender: string }[];
 }
@@ -131,10 +132,17 @@ const useSnowWarState = () =>
     const [errorCode, setErrorCode] = useState<number>(null);
     const [gamesLeft, setGamesLeft] = useState(-1);
     const [queueInfo, setQueueInfo] = useState<{ playersInQueue: number; gamesPlayed: number }>(null);
+    // In-arena WYSIWYG editor: the client edits the current level snapshot and
+    // publishes it with the save packet. editingRef mirrors it for the stable
+    // packet callbacks (which capture [] deps).
+    const [editing, setEditing] = useState(false);
+    const editingRef = useRef(false);
 
     const resetToIdle = useCallback(() =>
     {
         SNOWWAR_SIMULATION.reset();
+        editingRef.current = false;
+        setEditing(false);
         setPhase('idle');
         setQueuePosition(0);
         setQueueSize(0);
@@ -287,7 +295,14 @@ const useSnowWarState = () =>
         setPhase(current => (current === 'results') ? current : 'results');
     }, []);
 
-    const onRejoinPreviousRoom = useCallback(() => resetToIdle(), [resetToIdle]);
+    const onRejoinPreviousRoom = useCallback(() =>
+    {
+        // Entering the editor makes the server take us out of the game, which
+        // echoes a rejoin-previous-room. Swallow it while editing so the level
+        // snapshot the editor works on is kept intact.
+        if (editingRef.current) return;
+        resetToIdle();
+    }, [resetToIdle]);
 
     const onPlayerExitedArena = useCallback((event: SnowWarPlayerExitedArenaEvent) =>
     {
@@ -371,12 +386,30 @@ const useSnowWarState = () =>
         resetToIdle();
     }, [resetToIdle]);
 
-    const editRoom = useCallback(() =>
+    const startEditing = useCallback(() =>
     {
-        // Server verifies acc_snowwar_edit, removes us from the game and
-        // forwards into the editor room; the exit packets reset our state.
+        // Server verifies acc_snowwar_edit and removes us from the running
+        // game/queue; we keep the level snapshot and edit it in place.
+        editingRef.current = true;
+        setEditing(true);
         SendMessageComposer(new SnowWarEditRoomComposer());
     }, []);
+
+    const saveArena = useCallback((
+        mapId: number,
+        items: { name: string; x: number; y: number; rotation: number; imageUrl: string; offsetZ: number }[],
+        spawns: { x: number; y: number }[],
+        heightmap: string[]) =>
+    {
+        SendMessageComposer(new SnowWarSaveEditorComposer(mapId, items, spawns, heightmap));
+    }, []);
+
+    const stopEditing = useCallback(() =>
+    {
+        editingRef.current = false;
+        setEditing(false);
+        resetToIdle();
+    }, [resetToIdle]);
 
     const exitGame = useCallback(() =>
     {
@@ -421,11 +454,14 @@ const useSnowWarState = () =>
         errorCode,
         gamesLeft,
         queueInfo,
+        editing,
         simulation: SNOWWAR_SIMULATION,
         joinQueue,
         leaveQueue,
         exitGame,
-        editRoom,
+        startEditing,
+        saveArena,
+        stopEditing,
         playAgain,
         walkTo,
         throwAtLocation,

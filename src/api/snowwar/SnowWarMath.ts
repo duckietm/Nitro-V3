@@ -15,6 +15,8 @@ export const SUBTURN_MS = SERVER_TICK_MS / SUBTURNS_PER_TICK;
 
 export const tileToWorld = (tile: number): number => (tile * TILE_SIZE_WORLD) | 0;
 
+// Throw ranges in tiles (circle around the thrower) - mirrors
+// SnowWarConstants on the emulator, which validates every throw.
 export const THROW_RANGE_NORMAL = 5;
 export const THROW_RANGE_LONG = 15;
 

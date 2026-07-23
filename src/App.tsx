@@ -26,7 +26,7 @@ import { LoadingView } from './components/loading/LoadingView';
 import { LoginView } from './components/login/LoginView';
 import { MainView } from './components/MainView';
 import { ReconnectView } from './components/reconnect/ReconnectView';
-import { ClearStoredChatHistory, useMessageEvent, useNitroEvent } from './hooks';
+import { ClearStoredChatHistory, getConnectionFailureAction, useConnectionState, useMessageEvent, useNitroEvent } from './hooks';
 
 NitroVersion.UI_VERSION = GetUIVersion();
 

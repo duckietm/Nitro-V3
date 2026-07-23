@@ -267,19 +267,39 @@
     transform: translateX(-50%) scale(1.06);
   }
 }
+/* Centres the (capped) viewport in the space below the HUD. */
+.snowwar-viewport-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* The visible camera window is capped to the 1920x1080 design base: on a
+   larger screen it stays 1920x1080 centred, on a smaller screen it shrinks to
+   the screen and the camera follows the player. */
 .snowwar-viewport {
   position: relative;
-  flex: 1;
+  width: min(100%, 1920px);
+  height: min(100%, 1080px);
   overflow: hidden;
   cursor: pointer;
   user-select: none;
 }
 
+/* The 1920x1080 (or larger, for big maps) stage the camera pans. */
 .snowwar-world {
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 1;
+  will-change: transform;
+}
+
+/* The isometric floor + pieces, scaled by zoom and centred on the stage. */
+.snowwar-floor-layer {
+  position: absolute;
   will-change: transform;
 }
 
@@ -590,4 +610,187 @@
   object-fit: cover;
   pointer-events: none;
   z-index: 0;
+}
+
+/* Backdrop overlaid on the floor tiles (offsetZ flag on): above the floor
+   canvas, below the furni/avatars (z-index 100+), so tiles hide but pieces
+   still show. Sits inside .snowwar-world so it pans/zooms with the arena. */
+.snowwar-arena-bg-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.snowwar-banner--saved {
+  top: 110px;
+  border-color: #2f7a43;
+  background: rgba(47, 122, 67, 0.92);
+  font-size: 14px;
+}
+
+/* In-arena WYSIWYG editor */
+.snowwar-editor {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 320px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(18, 32, 46, 0.92);
+  color: #eef5fb;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.snowwar-editor__hint {
+  font-size: 11px;
+  line-height: 1.3;
+  opacity: 0.85;
+}
+
+.snowwar-editor__palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 148px;
+  overflow-y: auto;
+}
+
+.snowwar-editor__chip {
+  padding: 3px 7px;
+  border: 1px solid #3a5064;
+  border-radius: 5px;
+  background: #24384c;
+  color: #dce8f2;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.snowwar-editor__chip:hover {
+  background: #2f4a60;
+}
+
+.snowwar-editor__chip--active {
+  border-color: #7fd0ff;
+  background: #2f5b7a;
+  color: #ffffff;
+}
+
+.snowwar-editor__chip--spawn {
+  border-color: #e6c245;
+  color: #ffe9a8;
+}
+
+.snowwar-editor__chip--floor {
+  border-color: #6fbf73;
+  color: #c8f0cb;
+}
+
+.snowwar-editor__palette--furni {
+  max-height: 96px;
+}
+
+.snowwar-editor__search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 7px;
+  border: 1px solid #3a5064;
+  border-radius: 5px;
+  background: #1b2c3c;
+  color: #eef5fb;
+  font-size: 11px;
+}
+
+.snowwar-editor__search::placeholder {
+  color: #7f93a6;
+}
+
+.snowwar-editor__tools {
+  display: flex;
+  gap: 6px;
+}
+
+.snowwar-editor__preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px 6px;
+  border-radius: 5px;
+  background: #24384c;
+  font-size: 11px;
+}
+
+.snowwar-editor__preview-label {
+  opacity: 0.8;
+}
+
+.snowwar-editor__selected {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 5px;
+  border-top: 1px solid #33475b;
+}
+
+.snowwar-editor__field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.snowwar-editor__field--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.snowwar-editor__number {
+  width: 72px;
+  padding: 3px 6px;
+  border: 1px solid #3a5064;
+  border-radius: 5px;
+  background: #1b2c3c;
+  color: #eef5fb;
+  font-size: 11px;
+}
+
+.snowwar-edit-admarker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+  z-index: 92;
+}
+
+.snowwar-edit-spawn {
+  position: absolute;
+  width: 24px;
+  height: 12px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: rgba(230, 194, 69, 0.55);
+  border: 1px solid #e6c245;
+  pointer-events: none;
+  z-index: 90;
+}
+
+.snowwar-edit-selection {
+  position: absolute;
+  width: 26px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #7fd0ff;
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(127, 208, 255, 0.7);
+  pointer-events: none;
+  z-index: 95;
 }

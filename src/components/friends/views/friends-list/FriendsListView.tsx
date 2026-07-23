@@ -20,7 +20,9 @@ export const FriendsListView: FC<{}> = (props) => {
     const [friendSearchValue, setFriendSearchValue] = useState('');
     const [isOnlineExpanded, setIsOnlineExpanded] = useState<boolean>(true);
     const [isOfflineExpanded, setIsOfflineExpanded] = useState<boolean>(false);
-    const { onlineFriends = [], offlineFriends = [], requests = [], requestFriend = null } = useFriends();
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+    const { onlineFriends = [], offlineFriends = [], requests = [], requestFriend = null, settings = null } = useFriends();
+    const categories = settings?.categories ?? [];
 
     const friendSearch = friendSearchValue.trim().toLocaleLowerCase();
     const filteredOnlineFriends = filterFriendsByCategory(onlineFriends, 0).filter((friend) => !friendSearch || friend.name.toLocaleLowerCase().includes(friendSearch));

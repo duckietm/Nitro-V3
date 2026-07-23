@@ -1,6 +1,7 @@
 import { CreateLinkEvent, GetGuestRoomResultEvent, GetRoomEngine, NavigatorSearchComposer, RateFlatMessageComposer, RoomEngineEvent } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { GetConfigurationValue, LocalizeText, SendMessageComposer, SetLocalStorage, TryVisitRoom } from '../../../../api';
 import { Text } from '../../../../common';
 import { useMessageEvent, useNavigatorData, useNitroEvent, useRoom } from '../../../../hooks';
@@ -65,6 +66,7 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
     const [roomOwner, setRoomOwner] = useState<string>(null);
     const [roomTags, setRoomTags] = useState<string[]>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
     const [isOpenHistory, setIsOpenHistory] = useState<boolean>(false);
     const [roomHistory, setRoomHistory] = useState<RoomHistoryEntry[]>([]);
     const [plugins, setPlugins] = useState<INitroPlugin[]>([]);
@@ -342,7 +344,9 @@ export const RoomToolsWidgetView: FC<{}> = (props) => {
                                     onClick={() => canGoNext && handleToolClick('room_history_next')}
                                 />
                             </div>
-                </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <button
                     type="button"
                     className={classNames('nitro-room-tools-toggle', !isCollapsed && 'is-open')}
