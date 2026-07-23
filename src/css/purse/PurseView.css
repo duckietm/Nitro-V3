@@ -571,7 +571,7 @@
 
 .nitro-purse-container .nitro-purse .nitro-purse__body {
     display: grid !important;
-    grid-template-columns: 52px 101px 50px !important;
+    grid-template-columns: 52px 101px 1px 50px !important;
     grid-template-rows: 62px !important;
     column-gap: 5px !important;
     align-items: start !important;
@@ -686,6 +686,7 @@
 }
 
 .nitro-purse-container .nitro-purse .nitro-purse__col--actions {
+    grid-column: 4;
     width: 50px !important;
     height: 61px !important;
     display: flex !important;
