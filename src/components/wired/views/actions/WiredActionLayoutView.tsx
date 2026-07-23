@@ -73,6 +73,7 @@ import { WiredActionControlClockView } from './WiredActionControlClockView';
 import { WiredActionFleeView } from './WiredActionFleeView';
 import { WiredActionFreezeView } from './WiredActionFreezeView';
 import { WiredActionFurniToFurniView } from './WiredActionFurniToFurniView';
+import { WiredActionFurniOpacityView } from './WiredActionFurniOpacityView';
 import { WiredActionGiveCurrencyFromChestView } from './WiredActionGiveCurrencyFromChestView';
 import { WiredActionGiveFurniFromChestView } from './WiredActionGiveFurniFromChestView';
 import { WiredActionGiveOrTakeFurniView } from './WiredActionGiveOrTakeFurniView';
@@ -144,6 +145,8 @@ export const WiredActionLayoutView = (code: number) => {
             return <WiredActionTeleportView />;
         case WiredActionLayoutCode.FURNI_TO_FURNI:
             return <WiredActionFurniToFurniView />;
+        case WiredActionLayoutCode.FURNI_OPACITY:
+            return <WiredActionFurniOpacityView />;
         case WiredActionLayoutCode.SET_ALTITUDE:
             return <WiredActionSetAltitudeView />;
         case WiredActionLayoutCode.GIVE_REWARD:
