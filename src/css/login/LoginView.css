@@ -839,12 +839,25 @@
 }
 
 .nitro-login-card .registration-wardrobe-parts {
+    position: relative;
     min-height: 0;
     overflow: hidden;
     border: 1px solid #9f9f9f;
     border-radius: 4px;
     background: #eeeeeb;
     padding: 5px;
+}
+
+.nitro-login-card .registration-wardrobe-parts > div {
+    position: absolute;
+    inset: 5px;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0;
+    padding-right: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-width: auto;
 }
 
 .nitro-login-card .registration-wardrobe-part {
