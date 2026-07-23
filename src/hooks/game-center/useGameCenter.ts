@@ -5,9 +5,10 @@ import {
     GameListMessageEvent,
     GameStatusMessageEvent,
     GetGameListMessageComposer,
-    LoadGameUrlEvent
+    LoadGameUrlEvent,
+    RoomEnterEvent
 } from '@nitrots/nitro-renderer';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { SendMessageComposer, VisitDesktop } from '../../api';
 import { useMessageEvent } from '../events';
@@ -46,6 +47,14 @@ const useGameCenterState = () => {
         setGameOffline(parser.isInMaintenance);
     });
 
+    // Entering a room while the hub is open (e.g. the SnowWar arena editor
+    // forwarding the player) must close the fullscreen hub overlay, or the
+    // loaded room sits invisible behind it. Normal hub usage never enters a
+    // room (opening it calls VisitDesktop), so this only fires on forwards.
+    const onRoomEnter = useCallback(() => setIsVisible(false), []);
+
+    useMessageEvent<RoomEnterEvent>(RoomEnterEvent, onRoomEnter);
+
     useMessageEvent<LoadGameUrlEvent>(LoadGameUrlEvent, (event) => {
         let parser = event.getParser();
 
@@ -53,7 +62,9 @@ const useGameCenterState = () => {
 
         switch (parser.gameTypeId) {
             case 2:
-                return console.log('snowwar');
+                // SnowWar runs natively (SnowWarView + useSnowWar), not in an
+                // iframe — the server drives it via the SnowWar packets.
+                return;
             default:
                 return setGameURL(parser.url);
         }

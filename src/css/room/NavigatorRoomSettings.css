@@ -92,7 +92,7 @@
         color: var(--room-settings-muted) !important;
     }
 
-    :where(input, select, textarea) {
+    :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
         min-height: 22px;
         border: 1px solid var(--room-settings-line-dark) !important;
         border-radius: 3px !important;

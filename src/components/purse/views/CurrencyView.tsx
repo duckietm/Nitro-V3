@@ -10,6 +10,12 @@ interface CurrencyViewProps {
 
 export const CurrencyView: FC<CurrencyViewProps> = (props) => {
     const { type = -1, amount = -1, short = false } = props;
+    const shouldShorten = short || Math.abs(amount) >= 1000;
+    const displayAmount = useMemo(() => {
+        if (!shouldShorten) return LocalizeFormattedNumber(amount);
+
+        return LocalizeShortNumber(amount).toLowerCase();
+    }, [amount, shouldShorten]);
 
     const element = useMemo(() => {
         return (
@@ -20,9 +26,9 @@ export const CurrencyView: FC<CurrencyViewProps> = (props) => {
                 <LayoutCurrencyIcon type={type} />
             </Flex>
         );
-    }, [amount, short, type]);
+    }, [displayAmount, type]);
 
-    if (!short) return element;
+    if (!shouldShorten) return element;
 
     return (
         <div className="group relative">

@@ -106,25 +106,11 @@ export const NewsWindow: FC<NewsWindowProps> = ({ newsUrl }) => {
     return (
         <div className="login-news-stack">
             <div className="news-card-wrapper" key={current.id}>
-                <span className="news-sparkle news-sparkle-1" aria-hidden="true">
-                    ★
-                </span>
-                <span className="news-sparkle news-sparkle-2" aria-hidden="true">
-                    ✦
-                </span>
-                <span className="news-sparkle news-sparkle-3" aria-hidden="true">
-                    ✧
-                </span>
-
-                <div className="news-new-badge" aria-hidden="true">
-                    <span>{t('nitro.login.news.new', 'NEW!')}</span>
-                </div>
-
-                <div className="nitro-login-card nitro-news-card">
-                    <div className="card-title news-ribbon">
-                        <span className="news-ribbon-text">{t('nitro.login.news.title', 'Hotel News')}</span>
+                <div className="nitro-login-card nitro-card-shell nitro-news-card">
+                    <div className="card-title nitro-card-header-shell">
+                        <span className="nitro-card-title">{t('nitro.login.news.title', 'Hotel News')}</span>
                     </div>
-                    <div className="card-body news-body">
+                    <div className="card-body nitro-card-content-shell news-body">
                         {safeImageSrc && (
                             <div className="news-image">
                                 <img

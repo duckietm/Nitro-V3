@@ -114,7 +114,7 @@ jobs:
             # instead of upstream Dev which may not yet carry the companion wire.
             if [ -n "$PR_HEAD_OWNER" ] && [ "$PR_HEAD_OWNER" != "${{ github.repository_owner }}" ]; then
               HEAD_RENDERER="${PR_HEAD_OWNER}/Nitro_Render_V3"
-              if has_ref "$HEAD_RENDERER" "$REF" || has_ref "$HEAD_RENDERER" "integration"; then
+              if has_ref "$HEAD_RENDERER" "$REF"; then
                 REPO="$HEAD_RENDERER"
               fi
             fi
@@ -130,13 +130,14 @@ jobs:
 
           # Fork PR auto mode: prefer the companion renderer branch that matches
           # the client head (e.g. feat/chest-furni-v2-ui → feat/chest-furni-v2),
-          # then integration, then the base-ref default (Dev/main).
+          # then the base-ref default (Dev/main), then integration. A matching
+          # renderer feature branch may itself be stacked on required protocol PRs.
           if [ -z "$IN_REF" ] && [ -z "$VAR_REF" ] && [ -n "$PR_HEAD_REF" ] && [ -n "$REPO" ]; then
             COMPANION_REFS="$PR_HEAD_REF"
             case "$PR_HEAD_REF" in
-              *-ui) COMPANION_REFS="${PR_HEAD_REF%-ui} $COMPANION_REFS" ;;
+              *-ui) COMPANION_REFS="${PR_HEAD_REF%-ui}-renderer ${PR_HEAD_REF%-ui} $COMPANION_REFS" ;;
             esac
-            COMPANION_REFS="$COMPANION_REFS integration $AUTO_REF"
+            COMPANION_REFS="$COMPANION_REFS $AUTO_REF integration"
             for CAND in $COMPANION_REFS; do
               if has_ref "$REPO" "$CAND"; then
                 REF="$CAND"

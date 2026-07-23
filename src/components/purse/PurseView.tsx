@@ -54,6 +54,7 @@ export const PurseView: FC<{}> = (props) => {
 
     const earningsLabel = useMemo(() => localizeWithFallback('earnings.title', 'Earnings'), []);
     const helpLabel = useMemo(() => localizeWithFallback('help.button.name', 'Help'), []);
+    const translateLabel = useMemo(() => localizeWithFallback('purse.settings.translate', 'Translate'), []);
 
     const openClub = useCallback((event: React.MouseEvent) => {
         event.stopPropagation();
@@ -63,6 +64,11 @@ export const PurseView: FC<{}> = (props) => {
     const openEarnings = useCallback((event: React.MouseEvent) => {
         event.stopPropagation();
         CreateLinkEvent('habboUI/open/vault');
+    }, []);
+
+    const openTranslate = useCallback((event: React.MouseEvent) => {
+        event.stopPropagation();
+        CreateLinkEvent('translation-settings/toggle');
     }, []);
 
     const handleLogout = useCallback(async (event: React.MouseEvent) => {
@@ -130,6 +136,7 @@ export const PurseView: FC<{}> = (props) => {
                             <span>{earningsLabel}</span>
                         </button>
                     </div>
+                    <div className="nitro-purse__divider" aria-hidden="true" />
                     <div className="nitro-purse__col nitro-purse__col--actions">
                         <button
                             type="button"

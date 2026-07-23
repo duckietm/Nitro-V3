@@ -1,5 +1,7 @@
+import { FurnitureType } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { LayoutFurniImageView, LayoutLimitedEditionStyledNumberView, LayoutRarityLevelView } from '../../../../common';
+import { ProductImageUtility } from '../../../../api';
+import { LayoutLimitedEditionStyledNumberView, LayoutRarityLevelView } from '../../../../common';
 import { ChestFurniGroup } from './chestFurniGrouping';
 
 const BORDER_IDLE = '#cbcbcb';
@@ -38,13 +40,17 @@ export const FurniChestGridItem: FC<{
                         </div>
                     </>
                 )}
+                {/* Same gamedata icon (and sizing) as the deposit panel, so both grids look identical. */}
                 <div className="nitro-chest__grid-icon">
-                    <LayoutFurniImageView
-                        productType={group.wallItem ? 'i' : 's'}
-                        productClassId={group.baseItemId}
-                        extraData={group.legacyPosterId}
-                        direction={2}
-                        scale={0.55}
+                    <img
+                        src={ProductImageUtility.getProductImageUrl(
+                            group.wallItem ? FurnitureType.WALL : FurnitureType.FLOOR,
+                            group.baseItemId,
+                            group.legacyPosterId,
+                        )}
+                        alt=""
+                        draggable={false}
+                        style={{ maxWidth: 38, maxHeight: 38, objectFit: 'contain', imageRendering: 'pixelated' }}
                     />
                 </div>
                 {isRarity && (

@@ -211,6 +211,8 @@ const useFriendsStore = () => {
             if (previousFriend && !previousFriend.online && newFriend.online) onlineNotifications.push(newFriend);
         }
 
+        setSettings((previous) => withUpdatedFriendCategories(previous, parser.categories));
+
         setFriends((prevValue) => {
             const newValue = [...prevValue];
 

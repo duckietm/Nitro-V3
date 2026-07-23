@@ -4,6 +4,7 @@ import { LayoutAvatarImageView, UserProfileIconView } from '../../../../../commo
 import { useFriends } from '../../../../../hooks';
 import { resolveAvatarFigure } from '../resolveAvatarFigure';
 import { resolveAvatarGender } from '../resolveAvatarGender';
+import { canFollowFriendListEntry } from './friendsListActions.helpers';
 
 export const FriendsListGroupItemView: FC<{ friend: MessengerFriend; selected: boolean; selectFriend: (userId: number) => void }> = ({ friend, selected, selectFriend }) => {
     const [isRelationshipOpen, setIsRelationshipOpen] = useState(false);

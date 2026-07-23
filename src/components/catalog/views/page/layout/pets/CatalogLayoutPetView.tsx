@@ -6,13 +6,11 @@ import {
     SellablePetPaletteData
 } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { FaCheck, FaEdit, FaFillDrip, FaPaw, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaFillDrip, FaPaw, FaTimes } from 'react-icons/fa';
 import { DispatchUiEvent, GetPetAvailableColors, GetPetIndexFromLocalization, LocalizeText, SanitizeHtml, SendMessageComposer } from '../../../../../../api';
 import { LayoutGridItem, LayoutPetImageView } from '../../../../../../common';
 import { CatalogPurchaseFailureEvent } from '../../../../../../events';
 import { useCatalogData, useCatalogUiState, useMessageEvent, useSellablePetPalette } from '../../../../../../hooks';
-import { useCatalogAdmin } from '../../../../CatalogAdminContext';
-import { CatalogAdminQuickActionsView } from '../../../admin/CatalogAdminQuickActionsView';
 import { CatalogAddOnBadgeWidgetView } from '../../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogTotalPriceWidget } from '../../widgets/CatalogTotalPriceWidget';
 import { CatalogViewProductWidgetView } from '../../widgets/CatalogViewProductWidgetView';
@@ -31,8 +29,6 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = (props) => {
     const [approvalResult, setApprovalResult] = useState(-1);
     const { currentOffer = null, roomPreviewer = null } = useCatalogData();
     const { setCurrentOffer = null, setPurchaseOptions = null } = useCatalogUiState();
-    const catalogAdmin = useCatalogAdmin();
-    const adminMode = catalogAdmin?.adminMode ?? false;
     const breed: string = (currentOffer?.product?.productData?.type as unknown as string) ?? '';
     const { data: petPalette = null } = useSellablePetPalette(breed);
 
@@ -174,9 +170,6 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = (props) => {
 
     return (
         <div className="flex flex-col h-full gap-2">
-            {/* Admin: quick actions */}
-            <CatalogAdminQuickActionsView />
-
             {/* Top card: preview + name + purchase */}
             <div className="nitro-catalog-pet-card flex gap-3 p-2.5 bg-white rounded border-2 border-card-grid-item-border">
                 {/* Pet preview */}
@@ -200,22 +193,7 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = (props) => {
                         <div className="flex items-center gap-1.5">
                             <FaPaw className="text-primary text-xs" />
                             <span className="text-sm font-bold">{petBreedName || LocalizeText('catalog.pet.breed')}</span>
-                            {adminMode && currentOffer && (
-                                <FaEdit
-                                    className="text-primary text-[11px] cursor-pointer hover:text-dark transition-colors shrink-0"
-                                    title={LocalizeText('catalog.admin.offer.edit')}
-                                    onClick={() => catalogAdmin.setEditingOffer(currentOffer)}
-                                />
-                            )}
                         </div>
-                        {adminMode && currentOffer && (
-                            <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                                <span className="text-[8px] font-mono text-white bg-gray-600 px-1 py-px rounded">
-                                    ID: {currentOffer.product.productClassId}
-                                </span>
-                                <span className="text-[8px] font-mono text-white bg-primary px-1 py-px rounded">Offer: {currentOffer.offerId}</span>
-                            </div>
-                        )}
                         {!!page.localization.getText(0) && (
                             <p className="text-[10px] text-dark mt-0.5" dangerouslySetInnerHTML={{ __html: SanitizeHtml(page.localization.getText(0)) }} />
                         )}
@@ -226,7 +204,7 @@ export const CatalogLayoutPetView: FC<CatalogLayoutProps> = (props) => {
                         <label className="text-[9px] text-dark uppercase font-bold">{LocalizeText('widgets.petpackage.name.title')}</label>
                         <div className="relative">
                             <input
-                                className={`w-full text-[11px] border-2 rounded px-2 py-1.5 focus:outline-none transition-colors ${approvalResult > 0 ? 'border-danger bg-danger/5' : approvalResult === 0 ? 'border-success bg-success/5' : 'border-card-grid-item-border focus:border-primary bg-white'}`}
+                                className={`w-full text-[11px] text-black placeholder:text-black placeholder:italic border-2 rounded px-2 py-1.5 focus:outline-none transition-colors ${approvalResult > 0 ? 'border-danger bg-danger/5' : approvalResult === 0 ? 'border-success bg-success/5' : 'border-card-grid-item-border focus:border-primary bg-white'}`}
                                 placeholder={LocalizeText('widgets.petpackage.name.title')}
                                 type="text"
                                 value={petName}

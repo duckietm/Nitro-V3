@@ -9,7 +9,7 @@ import {
 } from '@nitrots/nitro-renderer';
 import { useCallback, useState } from 'react';
 import { useBetween } from 'use-between';
-import { DoorStateType } from '../../../api';
+import { DoorStateType, GenericErrorCode } from '../../../api';
 import { useMessageEvent } from '../../events';
 
 export type DoorStateSnapshot = {
@@ -42,7 +42,7 @@ const useDoorStateStore = () => {
 
     const handleGenericError = useCallback((event: GenericErrorEvent) => {
         const parser = event.getParser();
-        if (parser.errorCode !== -100002) return;
+        if (parser.errorCode !== GenericErrorCode.WRONG_ROOM_PASSWORD) return;
         setSnapshot((prev) => ({ ...prev, state: DoorStateType.STATE_WRONG_PASSWORD }));
     }, []);
 

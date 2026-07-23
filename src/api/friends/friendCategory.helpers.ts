@@ -1,4 +1,6 @@
+import { FriendCategoryData } from '@nitrots/nitro-renderer';
 import { MessengerFriend } from './MessengerFriend';
+import { MessengerSettings } from './MessengerSettings';
 
 /**
  * Filter a friend list to a single category. categoryId 0 means
@@ -26,4 +28,10 @@ export const countFriendsByCategory = (friends: MessengerFriend[]): Map<number, 
     }
 
     return counts;
+};
+
+export const withUpdatedFriendCategories = (settings: MessengerSettings, categories: FriendCategoryData[]): MessengerSettings => {
+    if (!settings) return settings;
+
+    return new MessengerSettings(settings.userFriendLimit, settings.normalFriendLimit, settings.extendedFriendLimit, [ ...(categories ?? []) ]);
 };

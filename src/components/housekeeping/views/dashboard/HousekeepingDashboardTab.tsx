@@ -240,7 +240,7 @@ export const HousekeepingDashboardTab: FC = () => {
                                     }
                                 }}
                                 placeholder={LocalizeText('housekeeping.hotel.alert.placeholder')}
-                                className="grow rounded border border-amber-200 bg-white px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-400 placeholder:text-zinc-400"
+                                className="grow rounded border border-amber-200 bg-white px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-400 placeholder:text-black placeholder:italic"
                                 maxLength={280}
                             />
                             <Button

@@ -109,7 +109,7 @@ export const HousekeepingEconomyTab: FC = () => {
                     <input
                         type="number"
                         min={1}
-                        className="w-24 px-1.5 py-1 rounded border border-violet-200 bg-white text-xs tabular-nums focus:outline-none focus:ring-1 focus:ring-violet-400"
+                        className="w-24 px-1.5 py-1 rounded border border-violet-200 bg-white text-xs tabular-nums focus:outline-none focus:ring-1 focus:ring-violet-400 placeholder:text-black placeholder:italic"
                         placeholder={LocalizeText('housekeeping.economy.item_id')}
                         value={itemId || ''}
                         onChange={(event) => setItemId(parseInt(event.target.value) || 0)}
@@ -117,7 +117,7 @@ export const HousekeepingEconomyTab: FC = () => {
                     <input
                         type="number"
                         min={1}
-                        className="w-16 px-1.5 py-1 rounded border border-violet-200 bg-white text-xs tabular-nums focus:outline-none focus:ring-1 focus:ring-violet-400"
+                        className="w-16 px-1.5 py-1 rounded border border-violet-200 bg-white text-xs tabular-nums focus:outline-none focus:ring-1 focus:ring-violet-400 placeholder:text-black placeholder:italic"
                         placeholder={LocalizeText('housekeeping.economy.item_quantity')}
                         value={itemQuantity}
                         onChange={(event) => setItemQuantity(parseInt(event.target.value) || 0)}
@@ -154,7 +154,7 @@ export const HousekeepingEconomyTab: FC = () => {
                     {LocalizeText('housekeeping.hotel.alert.label')}
                 </label>
                 <textarea
-                    className="min-h-[60px] px-2 py-1 rounded text-sm border border-rose-200 bg-white focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-zinc-400"
+                    className="min-h-[60px] px-2 py-1 rounded text-sm border border-rose-200 bg-white focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-black placeholder:italic"
                     placeholder={LocalizeText('housekeeping.hotel.alert.placeholder')}
                     value={alertText}
                     onChange={(event) => setAlertText(event.target.value)}

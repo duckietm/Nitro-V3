@@ -1,55 +1,10 @@
-import { NitroEventType, ReconnectEvent } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useState } from 'react';
+import { FC } from 'react';
 import { Base, Column, Text } from '../../common';
-import { useNitroEvent } from '../../hooks';
+import { getReconnectPresentation, useConnectionState } from '../../hooks';
 
-export const ReconnectView: FC<{}> = (props) => {
-    const [isReconnecting, setIsReconnecting] = useState(false);
-    const [attempt, setAttempt] = useState(0);
-    const [maxAttempts, setMaxAttempts] = useState(0);
-    const [hasFailed, setHasFailed] = useState(false);
-
-    const onReconnecting = useCallback((event: ReconnectEvent) => {
-        setIsReconnecting(true);
-        setHasFailed(false);
-        setAttempt(event.attempt);
-        setMaxAttempts(event.maxAttempts);
-    }, []);
-
-    const onReconnected = useCallback(() => {
-        // Socket is open but not yet re-authenticated.
-        // Update attempt display but keep the overlay visible until
-        // re-authentication completes (SOCKET_REAUTHENTICATED).
-        setHasFailed(false);
-    }, []);
-
-    const onReauthenticated = useCallback(() => {
-        // Fully re-authenticated — dismiss the overlay so the room view
-        // (which stayed alive behind the overlay) is visible again.
-        setIsReconnecting(false);
-        setHasFailed(false);
-        setAttempt(0);
-    }, []);
-
-    const onReconnectFailed = useCallback(() => {
-        setIsReconnecting(false);
-        setHasFailed(true);
-    }, []);
-
-    useNitroEvent<ReconnectEvent>(NitroEventType.SOCKET_RECONNECTING, onReconnecting);
-    useNitroEvent(NitroEventType.SOCKET_RECONNECTED, onReconnected);
-    useNitroEvent(NitroEventType.SOCKET_REAUTHENTICATED, onReauthenticated);
-    useNitroEvent(NitroEventType.SOCKET_RECONNECT_FAILED, onReconnectFailed);
-
-    const handleReload = useCallback(() => {
-        window.location.href = window.location.origin + '/';
-    }, []);
-
-    const handleGoHome = useCallback(() => {
-        sessionStorage.removeItem('nitro.session.lastRoomId');
-        sessionStorage.removeItem('nitro.session.lastRoomPassword');
-        window.location.href = window.location.origin + '/';
-    }, []);
+export const ReconnectView: FC<{}> = () => {
+    const connectionState = useConnectionState();
+    const { isReconnecting, hasFailed, attempt, maxAttempts } = getReconnectPresentation(connectionState);
 
     if (!isReconnecting && !hasFailed) return null;
 
@@ -68,7 +23,7 @@ export const ReconnectView: FC<{}> = (props) => {
                         <Base className="w-full h-[4px] rounded-full bg-white/10 overflow-hidden mt-1">
                             <Base
                                 className="h-full bg-[#4dabf7] rounded-full transition-all duration-300"
-                                style={{ width: `${(attempt / maxAttempts) * 100}%` }}
+                                style={{ width: `${maxAttempts > 0 ? (attempt / maxAttempts) * 100 : 0}%` }}
                             />
                         </Base>
                         <Text fontSizeCustom={12} variant="white" className="text-center opacity-50">

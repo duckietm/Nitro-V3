@@ -7,7 +7,7 @@ import {
     YouTubeRoomWatchingComposer
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
-import { GetRoomSession, getYoutubeRoomEnabled, LocalizeText, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../api';
+import { CopyToClipboard, GetRoomSession, getYoutubeRoomEnabled, LocalizeText, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../api';
 import { LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { useFurnitureYoutubeWidget, useHasPermission, useMessageEvent } from '../../hooks';
 import ReactPlayer from '../youtube/YoutubeReactPlayer';
@@ -466,7 +466,7 @@ export const YouTubePlayerView: FC<{}> = () => {
                                         />
                                         <button
                                             onClick={() => {
-                                                navigator.clipboard.writeText(`https://youtube.com/watch?v=${videoId}`);
+                                                void CopyToClipboard(`https://youtube.com/watch?v=${videoId}`);
                                             }}
                                             className="px-3 bg-blue-600 rounded text-white text-sm"
                                         >

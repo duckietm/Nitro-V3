@@ -1,6 +1,6 @@
 import { CreateLinkEvent, GetSoundManager, IAdvancedMap, MusicPriorities } from '@nitrots/nitro-renderer';
 import { FC, MouseEvent, useCallback, useEffect, useState } from 'react';
-import { CatalogPageName, GetConfigurationValue, GetDiskColor, LocalizeText } from '../../../../../api';
+import { CatalogPageName, GetConfigurationValue, GetDiskColor, LocalizeText, localizeWithFallback } from '../../../../../api';
 import { AutoGrid, Button, Flex, LayoutGridItem, Text } from '../../../../../common';
 
 export interface DiskInventoryViewProps {
@@ -8,19 +8,22 @@ export interface DiskInventoryViewProps {
     addToPlaylist: (diskId: number, slotNumber: number) => void;
 }
 
-export const DiskInventoryView: FC<DiskInventoryViewProps> = (props) => {
+export const DiskInventoryView: FC<DiskInventoryViewProps> = (props) =>
+{
     const { diskInventory = null, addToPlaylist = null } = props;
     const [selectedItem, setSelectedItem] = useState<number>(-1);
     const [previewSongId, setPreviewSongId] = useState<number>(-1);
 
-    const previewSong = useCallback((event: MouseEvent, songId: number) => {
+    const previewSong = useCallback((event: MouseEvent, songId: number) =>
+    {
         event.stopPropagation();
 
         setPreviewSongId((prevValue) => (prevValue === songId ? -1 : songId));
     }, []);
 
     const addSong = useCallback(
-        (event: MouseEvent, diskId: number) => {
+        (event: MouseEvent, diskId: number) =>
+        {
             event.stopPropagation();
 
             addToPlaylist(diskId, GetSoundManager().musicController?.getRoomItemPlaylist()?.length);
@@ -28,21 +31,25 @@ export const DiskInventoryView: FC<DiskInventoryViewProps> = (props) => {
         [addToPlaylist]
     );
 
-    const openCatalogPage = () => {
+    const openCatalogPage = () =>
+    {
         CreateLinkEvent('catalog/open/' + CatalogPageName.TRAX_SONGS);
     };
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (previewSongId === -1) return;
 
         GetSoundManager().musicController?.playSong(previewSongId, MusicPriorities.PRIORITY_SONG_PLAY, 0, 0, 0, 0);
 
-        return () => {
+        return () =>
+        {
             GetSoundManager().musicController?.stop(MusicPriorities.PRIORITY_SONG_PLAY);
         };
     }, [previewSongId]);
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         return () => setPreviewSongId(-1);
     }, []);
 
@@ -55,7 +62,8 @@ export const DiskInventoryView: FC<DiskInventoryViewProps> = (props) => {
             <div className="h-full py-2 mt-4 overflow-y-scroll">
                 <AutoGrid columnCount={3} columnMinWidth={95} gap={1}>
                     {diskInventory &&
-                        diskInventory.getKeys().map((key, index) => {
+                        diskInventory.getKeys().map((key, index) =>
+                        {
                             const diskId = diskInventory.getKey(index);
                             const songId = diskInventory.getWithIndex(index);
                             const songInfo = GetSoundManager().musicController?.getSongInfo(songId);
@@ -98,6 +106,9 @@ export const DiskInventoryView: FC<DiskInventoryViewProps> = (props) => {
                 <div>{LocalizeText('playlist.editor.text.you.can.buy.some.from.the.catalogue')}</div>
                 <button className="btn btn-primary btn-sm" onClick={() => openCatalogPage()}>
                     {LocalizeText('playlist.editor.button.open.catalogue')}
+                </button>
+                <button className="mt-1 btn btn-primary btn-sm" onClick={() => CreateLinkEvent('trax-editor/show')}>
+                    {localizeWithFallback('trax.editor.open', 'Compose your own music')}
                 </button>
             </div>
             <img alt="" className="get-more" src={`${GetConfigurationValue('image.library.url')}playlist/background_get_more_music.gif`} />

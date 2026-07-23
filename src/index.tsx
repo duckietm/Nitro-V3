@@ -41,6 +41,8 @@ import './css/friends/FriendsView.css';
 import './css/fortune-wheel/FortuneWheelView.css';
 import './css/groups/GroupView.css';
 
+import './css/game-center/GameCenterView.css';
+
 import './css/help/HelpView.css';
 
 import './css/hotelview/HotelView.css';

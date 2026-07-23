@@ -135,7 +135,7 @@ export const HousekeepingUsersTab: FC = () => {
                     <div className="flex items-center gap-1 grow rounded border border-zinc-300 bg-white px-2 py-1">
                         <FaSearch className="text-zinc-400 shrink-0" size={11} />
                         <input
-                            className="grow text-sm bg-transparent outline-none"
+                            className="grow text-sm bg-transparent outline-none placeholder:text-black placeholder:italic"
                             placeholder={LocalizeText('housekeeping.user.search.placeholder')}
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
@@ -372,7 +372,7 @@ export const HousekeepingUsersTab: FC = () => {
                 </div>
                 <label className="text-[10px] uppercase tracking-wider font-semibold opacity-60">{LocalizeText('housekeeping.field.reason')}</label>
                 <textarea
-                    className="min-h-[48px] px-2 py-1 rounded text-sm border border-zinc-300 bg-white focus:outline-none focus:ring-1 focus:ring-sky-400 placeholder:text-zinc-400"
+                    className="min-h-[48px] px-2 py-1 rounded text-sm border border-zinc-300 bg-white focus:outline-none focus:ring-1 focus:ring-sky-400 placeholder:text-black placeholder:italic"
                     placeholder={LocalizeText('housekeeping.field.reason.placeholder')}
                     value={reason}
                     onChange={(event) => setReason(event.target.value)}

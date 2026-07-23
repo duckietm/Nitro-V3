@@ -1,6 +1,7 @@
 import { AvatarScaleType, AvatarSetType, GetAvatarRenderManager } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Base, BaseProps } from '../Base';
+import { cropTransparentImageUrl } from './avatarImageCrop';
 
 const AVATAR_CACHE_MAX_SIZE = 200;
 const AVATAR_IMAGE_CACHE: Map<string, string> = new Map();
@@ -12,10 +13,13 @@ export interface LayoutAvatarImageViewProps extends BaseProps<HTMLDivElement> {
     direction?: number;
     scale?: number;
     fit?: boolean;
+    compactHead?: boolean;
+    compactHeadSize?: number;
+    compactHeadPadding?: number;
 }
 
 export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => {
-    const { figure = '', gender = '', headOnly = false, direction = 0, scale = 1, fit = false, classNames = [], style = {}, ...rest } = props;
+    const { figure = '', gender = '', headOnly = false, direction = 0, scale = 1, fit = false, compactHead = false, compactHeadSize = 22, compactHeadPadding = 1, classNames = [], style = {}, ...rest } = props;
     const [avatarUrl, setAvatarUrl] = useState<string>(null);
     const [isReady, setIsReady] = useState<boolean>(false);
     const isDisposed = useRef(false);
@@ -33,9 +37,10 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
         }
 
         if (classNames.length) newClassNames.push(...classNames);
+        if (compactHead) newClassNames.push('compact-head');
 
         return newClassNames;
-    }, [classNames, headOnly, fit]);
+    }, [classNames, headOnly, fit, compactHead]);
 
     const getStyle = useMemo(() => {
         let newStyle: CSSProperties = {};
@@ -43,9 +48,9 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
         if (!fit && avatarUrl && avatarUrl.length) newStyle.backgroundImage = `url('${avatarUrl}')`;
 
         if (headOnly && !fit) {
-            newStyle.backgroundSize = '130px auto';
-            newStyle.backgroundPosition = '51% 40%';
-            newStyle.imageRendering = 'pixelated';
+            newStyle.backgroundSize = compactHead ? `${ compactHeadSize }px ${ compactHeadSize }px` : '130px auto';
+            newStyle.backgroundPosition = compactHead ? 'center' : '51% 40%';
+            newStyle.imageRendering = compactHead ? 'auto' : 'pixelated';
         }
 
         if (scale !== 1) {
@@ -57,18 +62,18 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
         if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [avatarUrl, scale, style, headOnly, fit]);
+    }, [avatarUrl, scale, style, headOnly, fit, compactHead, compactHeadSize]);
 
     useEffect(() => {
         if (!isReady) return;
 
         const requestId = ++requestIdRef.current;
-        const figureKey = [figure, gender, direction, headOnly].join('-');
+        const figureKey = [figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding].join('-');
 
         if (AVATAR_IMAGE_CACHE.has(figureKey)) {
             setAvatarUrl(AVATAR_IMAGE_CACHE.get(figureKey));
         } else {
-            const resetFigure = (_figure: string) => {
+            const resetFigure = async (_figure: string) => {
                 if (isDisposed.current || requestIdRef.current !== requestId) return;
 
                 const avatarImage = GetAvatarRenderManager().createAvatarImage(_figure, AvatarScaleType.LARGE, gender, {
@@ -83,7 +88,9 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
 
                 avatarImage.setDirection(setType, direction);
 
-                const imageUrl = avatarImage.processAsImageUrl(setType);
+                let imageUrl = avatarImage.processAsImageUrl(setType);
+
+                if(imageUrl && headOnly && compactHead) imageUrl = await cropTransparentImageUrl(imageUrl, compactHeadSize, compactHeadPadding);
 
                 if (imageUrl && !isDisposed.current && requestIdRef.current === requestId) {
                     if (!avatarImage.isPlaceholder()) {
@@ -103,7 +110,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
 
             resetFigure(figure);
         }
-    }, [figure, gender, direction, headOnly, isReady]);
+    }, [figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding, isReady]);
 
     useEffect(() => {
         isDisposed.current = false;

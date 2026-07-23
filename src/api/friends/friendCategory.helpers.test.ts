@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { countFriendsByCategory, filterFriendsByCategory } from './friendCategory.helpers';
+import { countFriendsByCategory, filterFriendsByCategory, withUpdatedFriendCategories } from './friendCategory.helpers';
 import { MessengerFriend } from './MessengerFriend';
+import { MessengerSettings } from './MessengerSettings';
 
 const makeFriend = (id: number, categoryId: number): MessengerFriend => {
     const friend = new MessengerFriend();
@@ -40,5 +41,17 @@ describe('countFriendsByCategory', () => {
 
     it('is null-safe', () => {
         expect(countFriendsByCategory(null).size).toBe(0);
+    });
+});
+
+describe('withUpdatedFriendCategories', () => {
+    it('preserves limits and replaces categories, including an empty server list', () => {
+        const settings = new MessengerSettings(100, 200, 300, [ { id: 1, name: 'Old' } as any ]);
+        const updated = withUpdatedFriendCategories(settings, [ { id: 2, name: 'New' } as any ]);
+        const cleared = withUpdatedFriendCategories(updated, []);
+
+        expect(updated).toMatchObject({ userFriendLimit: 100, normalFriendLimit: 200, extendedFriendLimit: 300 });
+        expect(updated.categories.map(category => category.id)).toEqual([ 2 ]);
+        expect(cleared.categories).toEqual([]);
     });
 });

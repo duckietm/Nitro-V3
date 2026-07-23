@@ -558,8 +558,18 @@ export const GetCommunication = vi.fn(() => ({
         const wrapper = _msgEventWrappers.get(event);
         if (wrapper) msgListeners.get(event.type)?.delete(wrapper);
     },
-    // Stub for SendMessageComposer which calls GetCommunication().connection.send(...)
-    connection: { send: vi.fn() }
+    // Stub for SendMessageComposer and renderer-owned connection snapshots.
+    connection: {
+        send: vi.fn(),
+        connectionState: Object.freeze({
+            phase: 'disconnected',
+            reconnectAttempt: 0,
+            maxReconnectAttempts: 7,
+            authenticated: false,
+            closeCode: null,
+            closeReason: ''
+        })
+    }
 }));
 export const GetConfiguration = vi.fn(stubManager);
 export const GetLocalizationManager = vi.fn(stubManager);
@@ -633,3 +643,39 @@ export const NitroVersion = stubManager();
 // missing symbol above with a real stub. Avoid the temptation to
 // blanket-mock everything — explicit stubs surface intent and let
 // failing tests pinpoint what behavior they actually rely on.
+
+// ---------------------------------------------------------------------------
+// SnowWar (SnowStorm) — events consumed by useSnowWar, composers sent by it.
+// ---------------------------------------------------------------------------
+
+export class SnowWarQueuePositionEvent extends MessageEvent {}
+export class SnowWarStartLobbyCounterEvent extends MessageEvent {}
+export class SnowWarGameEndedEvent extends MessageEvent {}
+export class SnowWarGamesLeftEvent extends MessageEvent {}
+export class SnowWarGamesInformationEvent extends MessageEvent {}
+export class SnowWarGameStatusEvent extends MessageEvent {}
+export class SnowWarFullGameStatusEvent extends MessageEvent {}
+export class SnowWarOnStageStartEvent extends MessageEvent {}
+export class SnowWarInitArenaEvent extends MessageEvent {}
+export class SnowWarRejoinPreviousRoomEvent extends MessageEvent {}
+export class SnowWarLevelDataEvent extends MessageEvent {}
+export class SnowWarOnGameEndingEvent extends MessageEvent {}
+export class SnowWarUserChatEvent extends MessageEvent {}
+export class SnowWarOnStageRunningEvent extends MessageEvent {}
+export class SnowWarOnStageEndingEvent extends MessageEvent {}
+export class SnowWarPlayerExitedArenaEvent extends MessageEvent {}
+export class SnowWarGenericErrorEvent extends MessageEvent {}
+export class SnowWarUserRematchedEvent extends MessageEvent {}
+
+export class SnowWarLoadStageReadyComposer extends StubClass {}
+export class SnowWarEditRoomComposer extends StubClass {}
+export class SnowWarExitGameComposer extends StubClass {}
+export class SnowWarWalkComposer extends StubClass {}
+export class SnowWarThrowAtLocationComposer extends StubClass {}
+export class SnowWarThrowAtPlayerComposer extends StubClass {}
+export class SnowWarCreateSnowballComposer extends StubClass {}
+export class SnowWarRequestFullGameStatusComposer extends StubClass {}
+export class SnowWarPlayAgainComposer extends StubClass {}
+export class SnowWarGameChatComposer extends StubClass {}
+export class SnowWarJoinQueueComposer extends StubClass {}
+export class SnowWarLeaveQueueComposer extends StubClass {}

@@ -5,6 +5,8 @@ import MessengerNotificationIcon from '../../../../../assets/images/friends/mess
 import { LayoutAvatarImageView } from '../../../../../common';
 import { useFriends } from '../../../../../hooks';
 import { resolveAvatarFigure } from '../../friends-list/resolveAvatarFigure';
+import { getMessageStatusPresentation } from './messageStatus.helpers';
+import { MessengerMessageStatusView } from '../MessengerMessageStatusView';
 
 type HabbiconFrame = { x: number; y: number; width: number; height: number };
 const habbiconFrameCache = new Map<string, Map<number, HabbiconFrame>>();

@@ -124,7 +124,7 @@ export const HousekeepingAuditTab: FC = () => {
             </div>
 
             <input
-                className="px-2 py-1 rounded-md border border-zinc-300 bg-white text-xs focus:outline-none focus:ring-1 focus:ring-sky-300 focus:border-sky-400 transition-colors placeholder:text-zinc-400"
+                className="px-2 py-1 rounded-md border border-zinc-300 bg-white text-xs focus:outline-none focus:ring-1 focus:ring-sky-300 focus:border-sky-400 transition-colors placeholder:text-black placeholder:italic"
                 placeholder={LocalizeText('housekeeping.audit.search.placeholder')}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}

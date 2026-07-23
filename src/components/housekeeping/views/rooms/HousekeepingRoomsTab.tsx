@@ -69,7 +69,7 @@ export const HousekeepingRoomsTab: FC = () => {
                     <input
                         type="number"
                         min={1}
-                        className="grow text-sm bg-transparent outline-none placeholder:text-zinc-400"
+                        className="grow text-sm bg-transparent outline-none placeholder:text-black placeholder:italic"
                         placeholder={
                             currentRoomId > 0
                                 ? `${LocalizeText('housekeeping.room.search.placeholder')} · empty → current #${currentRoomId}`
@@ -206,7 +206,7 @@ export const HousekeepingRoomsTab: FC = () => {
                     <input
                         type="number"
                         min={1}
-                        className="w-24 px-1.5 py-1 rounded border border-violet-200 bg-white text-xs tabular-nums focus:outline-none focus:ring-1 focus:ring-violet-400"
+                        className="w-24 px-1.5 py-1 rounded border border-violet-200 bg-white text-xs tabular-nums focus:outline-none focus:ring-1 focus:ring-violet-400 placeholder:text-black placeholder:italic"
                         placeholder={LocalizeText('housekeeping.room.transfer.new_owner')}
                         value={newOwnerId || ''}
                         onChange={(event) => setNewOwnerId(parseInt(event.target.value) || 0)}

@@ -6,6 +6,8 @@ const DISK_COLOR_BLUE_MIN: number = 130;
 const DISK_COLOR_BLUE_RANGE: number = 100;
 
 export const GetDiskColor = (name: string) => {
+    if (!name) return 'rgb(180,180,180)';
+
     let r: number = 0;
     let g: number = 0;
     let b: number = 0;

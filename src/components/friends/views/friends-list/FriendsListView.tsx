@@ -26,6 +26,10 @@ export const FriendsListView: FC<{}> = (props) => {
     const filteredOnlineFriends = filterFriendsByCategory(onlineFriends, 0).filter((friend) => !friendSearch || friend.name.toLocaleLowerCase().includes(friendSearch));
     const filteredOfflineFriends = filterFriendsByCategory(offlineFriends, 0).filter((friend) => !friendSearch || friend.name.toLocaleLowerCase().includes(friendSearch));
 
+    useEffect(() => {
+        if (selectedCategoryId && !categories.some((category) => category.id === selectedCategoryId)) setSelectedCategoryId(0);
+    }, [categories, selectedCategoryId]);
+
     const removeFriendsText = useMemo(() => {
         if (!selectedFriendsIds || !selectedFriendsIds.length) return '';
 

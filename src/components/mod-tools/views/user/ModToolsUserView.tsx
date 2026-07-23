@@ -208,16 +208,16 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = (props) => {
 
                     {/* Action bar */}
                     <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-200">
-                        <Button gap={1} variant="secondary" onClick={() => CreateLinkEvent(`mod-tools/open-user-chatlog/${userId}`)}>
+                        <Button gap={1} variant="primary" classNames={['mod-tools-action-button']} onClick={() => CreateLinkEvent(`mod-tools/open-user-chatlog/${userId}`)}>
                             <FaCommentDots size={12} /> {LocalizeText('modtools.userinfo.button.room.chat')}
                         </Button>
-                        <Button gap={1} variant="secondary" onClick={() => setSendMessageVisible((prev) => !prev)}>
+                        <Button gap={1} variant="primary" classNames={['mod-tools-action-button']} onClick={() => setSendMessageVisible((prev) => !prev)}>
                             <FaEnvelope size={12} /> {LocalizeText('modtools.userinfo.button.send.message')}
                         </Button>
-                        <Button gap={1} variant="secondary" onClick={() => setRoomVisitsVisible((prev) => !prev)}>
+                        <Button gap={1} variant="primary" classNames={['mod-tools-action-button']} onClick={() => setRoomVisitsVisible((prev) => !prev)}>
                             <FaDoorOpen size={12} /> {LocalizeText('modtools.userinfo.button.room.visits')}
                         </Button>
-                        <Button gap={1} variant="danger" onClick={() => setModActionVisible((prev) => !prev)}>
+                        <Button gap={1} variant="danger" classNames={['mod-tools-danger-button']} onClick={() => setModActionVisible((prev) => !prev)}>
                             <FaGavel size={12} /> {LocalizeText('modtools.userinfo.button.mod.action')}
                         </Button>
                     </div>

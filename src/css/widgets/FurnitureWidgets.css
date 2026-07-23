@@ -413,62 +413,119 @@
     }
 }
 
+/* lovelock_engraving_xml.xml — 375×210, absolute layout */
 .nitro-engraving-lock-view {
+    position: relative;
     width: 375px;
     height: 210px;
-    background-position: 0px 0px;
     background-image: url('@/assets/images/room-widgets/engraving-lock-widget/engraving-lock-spritesheet.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: 411px 630px;
+    image-rendering: pixelated;
+    color: #59224a;
+    font-family: UbuntuCondensed, Ubuntu, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 17px;
+    text-shadow: 0 1px 0 #ffffff;
+    user-select: none;
+}
 
-    color: #622e54;
-    font-weight: bold;
-    font-size: 16px;
-    text-shadow: 0px 1px white;
+.nitro-engraving-lock-view.engraving-lock-3 {
+    background-position: 0 -210px;
+    color: #614110;
+}
 
-    &.engraving-lock-3 {
-        background-position: 0px -210px;
-        color: #614110;
-    }
+.nitro-engraving-lock-view.engraving-lock-4 {
+    background-position: 0 -420px;
+    color: #f1dcc8;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
 
-    &.engraving-lock-4 {
-        background-position: 0px -420px;
-        color: #f1dcc8;
-        text-shadow: 0px 2px rgba(0, 0, 0, 0.4);
+.nitro-engraving-lock-view .engraving-lock-close {
+    position: absolute;
+    top: 33px;
+    right: 24px;
+    width: 21px;
+    height: 17px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
 
-        .engraving-lock-avatar {
-            margin-bottom: 10px;
-        }
-    }
+.nitro-engraving-lock-view .engraving-lock-avatar {
+    position: absolute;
+    top: 7px;
+    width: 70px;
+    height: 115px;
+    overflow: hidden;
+    pointer-events: none;
+}
 
-    .engraving-lock-close {
-        position: absolute;
-        cursor: pointer;
-        width: 15px;
-        height: 15px;
-        top: 34px;
-        right: 27px;
-    }
+.nitro-engraving-lock-view .engraving-lock-avatar .avatar-image {
+    position: absolute !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    width: 90px !important;
+    height: 130px !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+    image-rendering: pixelated;
+}
 
-    .engraving-lock-avatar {
-        width: 70px;
-        height: 120px;
+.nitro-engraving-lock-view .engraving-lock-avatar--left {
+    left: 115px;
+}
 
-        div {
-            position: absolute;
-            margin-top: -5px;
-        }
+.nitro-engraving-lock-view .engraving-lock-avatar--right {
+    left: 186px;
+}
 
-        &:nth-child(1) {
-            div {
-                margin-left: -10px;
-            }
-        }
+.nitro-engraving-lock-view .engraving-lock-header,
+.nitro-engraving-lock-view .engraving-lock-date,
+.nitro-engraving-lock-view .engraving-lock-name {
+    position: absolute;
+    display: block;
+    height: 17px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
 
-        &:nth-child(2) {
-            div {
-                margin-left: -15px;
-            }
-        }
-    }
+.nitro-engraving-lock-view .engraving-lock-header {
+    top: 126px;
+    left: 82px;
+    width: 217px;
+    text-align: center;
+}
+
+.nitro-engraving-lock-view .engraving-lock-date {
+    top: 151px;
+    left: 143px;
+    width: 97px;
+    text-align: center;
+}
+
+.nitro-engraving-lock-view .engraving-lock-name {
+    top: 175px;
+}
+
+.nitro-engraving-lock-view .engraving-lock-name--left {
+    left: 19px;
+    width: 150px;
+    text-align: right;
+}
+
+.nitro-engraving-lock-view .engraving-lock-name--right {
+    left: 199px;
+    width: 87px;
+    text-align: left;
 }
 
 .nitro-widget-high-score {
