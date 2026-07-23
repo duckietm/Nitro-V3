@@ -112,4 +112,5 @@ export class WiredActionLayoutCode {
     public static CONTRACT_TRADE: number = 112;
     public static CUSTOM_CONTRACT: number = 113;
     public static FURNI_OPACITY: number = 114;
+    public static MOVEMENT_ANIMATION_EXTRA: number = 115;
 }

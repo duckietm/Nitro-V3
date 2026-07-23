@@ -1,12 +1,13 @@
 import {
     AddLinkEventTracker,
+    GetSessionDataManager,
     ILinkEventTracker,
     RemoveLinkEventTracker,
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaDiscord } from 'react-icons/fa';
 import { GetConfigurationValue, LocalizeText, OpenUrl } from '../../api';
-import { NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
+import { LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { DiscordPreferences, useDiscordSettings } from '../../hooks';
 
 const localizeWithFallback = (key: string, fallback: string) => {
@@ -70,6 +71,74 @@ const ServerLink: FC<ServerLinkProps> = ({ label, configKey }) => {
     );
 };
 
+interface DiscordPresencePreviewProps {
+    preferences: DiscordPreferences;
+}
+
+const DiscordHabboIcon: FC<{ small?: boolean }> = ({ small = false }) => (
+    <div
+        className={
+            'flex shrink-0 items-center justify-center rounded-[3px] bg-[#ffd829] text-[#5a4100] shadow-[inset_0_2px_#fff178,inset_0_-2px_#c39200] ' +
+            (small ? 'h-[26px] w-[26px] text-[20px]' : 'h-[32px] w-[32px] text-[24px]')
+        }
+    >
+        <span className="font-black leading-none drop-shadow-[1px_1px_0_#ffffff99]">H</span>
+    </div>
+);
+
+const DiscordPresencePreview: FC<DiscordPresencePreviewProps> = ({ preferences }) => {
+    const sessionData = GetSessionDataManager();
+    const userName = sessionData?.userName || 'Spartano1996';
+    const userFigure = sessionData?.figure || null;
+    const hotelName = GetConfigurationValue<string>('hotel.name', 'Habbo IT');
+    const details = preferences.shareActivity
+        ? localizeWithFallback('discord.settings.preview.details', 'Working in ragg appis e...')
+        : localizeWithFallback('discord.settings.preview.hidden_activity', 'Activity hidden');
+    const elapsed = localizeWithFallback('discord.settings.preview.elapsed', '28:10 trascorsi');
+
+    return (
+        <div className="overflow-hidden rounded-[14px] border border-white/5 bg-[#29292e] text-white shadow-[0_10px_28px_#00000055,inset_0_1px_0_#ffffff0d]">
+            <div className="flex items-center gap-3 px-4 py-3">
+                <div className="relative flex h-[38px] w-[38px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#1f2024]">
+                    {userFigure ? (
+                        <LayoutAvatarImageView
+                            figure={userFigure}
+                            headOnly
+                            direction={2}
+                            className="absolute left-1/2 top-1/2 h-auto w-auto -translate-x-1/2 -translate-y-1/2"
+                        />
+                    ) : (
+                        <FaDiscord className="text-[#5865F2]" size={20} />
+                    )}
+                    <span className="absolute bottom-0 right-0 h-[10px] w-[10px] rounded-full border-2 border-[#29292e] bg-[#43b581]" />
+                </div>
+                <div className="min-w-0 flex-1 leading-tight">
+                    <div className="truncate text-[15px] font-bold text-white">{userName}</div>
+                    <div className="truncate text-[13px] text-[#9aa0aa]">
+                        {preferences.showHabbo
+                            ? localizeWithFallback('discord.settings.preview.status', 'Habbo Hotel – 28m')
+                            : localizeWithFallback('discord.settings.preview.disabled', 'Rich Presence disabled')}
+                    </div>
+                </div>
+                <DiscordHabboIcon />
+            </div>
+
+            <div className="flex items-center gap-3 bg-[#202124] px-4 py-3">
+                <DiscordHabboIcon small />
+                <div className="min-w-0 flex-1 leading-tight">
+                    <div className="truncate text-[14px] font-bold text-white">
+                        {preferences.showHabbo
+                            ? localizeWithFallback('discord.settings.preview.playing', `Playing ${hotelName}`)
+                            : localizeWithFallback('discord.settings.preview.not_sharing', 'Not sharing on Discord')}
+                    </div>
+                    <div className="truncate text-[12px] text-[#b5bac1]">{preferences.showHabbo ? details : ''}</div>
+                    {preferences.showHabbo && <div className="truncate text-[11px] text-[#8a9099]">{elapsed}</div>}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const DiscordSettingsView: FC = () => {
     const [isVisible, setIsVisible] = useState(false);
     const { preferences, updatePreferences } = useDiscordSettings();
@@ -112,7 +181,7 @@ export const DiscordSettingsView: FC = () => {
     const subOptionDisabled = !preferences.showHabbo || !preferences.shareActivity;
 
     return (
-        <NitroCardView className="discord-settings-window w-[360px]" theme="primary-slim" uniqueKey="discord-settings">
+        <NitroCardView className="discord-settings-window w-[390px]" theme="primary-slim" uniqueKey="discord-settings">
             <NitroCardHeaderView
                 headerText={localizeWithFallback('discord.settings.title', 'Impostazioni Discord')}
                 onCloseClick={() => setIsVisible(false)}
@@ -133,6 +202,8 @@ export const DiscordSettingsView: FC = () => {
             </div>
 
             <NitroCardContentView className="flex flex-col gap-2 text-black">
+                <DiscordPresencePreview preferences={preferences} />
+
                 <CheckboxRow
                     label={localizeWithFallback('discord.settings.show_habbo', 'Mostra Habbo su Discord')}
                     description={localizeWithFallback(

@@ -173,21 +173,8 @@ export const PurseView: FC<{}> = (props) => {
             </div>
             {settingsMenuOpen && (
                 <div className="nitro-purse-menu">
-                    <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('audio')}>
-                        {localizeWithFallback('purse.settings.audio', 'Audio Settings')}
-                    </button>
-                    <button
-                        type="button"
-                        className="nitro-purse-menu__item"
-                        onClick={() => {
-                            CreateLinkEvent('discord-settings/show');
-                            setSettingsMenuOpen(false);
-                        }}
-                    >
-                        {localizeWithFallback('purse.settings.discord', 'Discord Settings')}
-                    </button>
-                    <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('chat')}>
-                        {localizeWithFallback('purse.settings.chat', 'Chat Settings')}
+                    <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('')}>
+                        {localizeWithFallback('widget.memenu.settings.title', 'Settings')}
                     </button>
                     <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('privacy')}>
                         {localizeWithFallback('purse.settings.game_privacy', 'Game Privacy')}
@@ -201,9 +188,6 @@ export const PurseView: FC<{}> = (props) => {
                         }}
                     >
                         {localizeWithFallback('purse.settings.language', 'Language Settings')}
-                    </button>
-                    <button type="button" className="nitro-purse-menu__item" onClick={() => openSettingsSection('other')}>
-                        {localizeWithFallback('purse.settings.other', 'Other Settings')}
                     </button>
                     <button
                         type="button"
