@@ -1,4 +1,5 @@
 import { GetConfiguration, GetLocalizationManager, GetSessionDataManager, TranslationLanguagesEvent, TranslationLanguagesRequestComposer, TranslationResultEvent, TranslationTextRequestComposer } from '@nitrots/nitro-renderer';
+import JSON5 from 'json5';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
 import { LocalStorageKeys, SendMessageComposer } from '../../api';
@@ -121,6 +122,43 @@ const getTextTranslationUrl = (file: string) =>
     return `${ basePath }/text_translate/ExternalTexts_${ file }.json`;
 };
 
+const getBundledTextTranslationUrl = (file: string) =>
+{
+    const relativeUrl = `configuration/UITexts_${ file }.json5.example`;
+
+    if(typeof document === 'undefined') return `/${ relativeUrl }`;
+
+    return new URL(relativeUrl, document.baseURI).toString();
+};
+
+const loadTextTranslationData = async (file: string, configuredUrl: string): Promise<Record<string, string>> =>
+{
+    const urls = Array.from(new Set([ configuredUrl, getBundledTextTranslationUrl(file) ].filter(Boolean)));
+    let lastError: unknown = null;
+
+    for(const url of urls)
+    {
+        try
+        {
+            const response = await fetch(url);
+
+            if(!response.ok) throw new Error(`Unable to load ${ url }`);
+
+            const data = JSON5.parse(await response.text());
+
+            if(!data || (typeof data !== 'object') || Array.isArray(data)) throw new Error(`Invalid translation data from ${ url }`);
+
+            return Object.fromEntries(Object.entries(data).filter((entry): entry is [string, string] => (typeof entry[1] === 'string')));
+        }
+        catch(error)
+        {
+            lastError = error;
+        }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error(`Unable to load translations for ${ file }`);
+};
+
 const getFurnitureTranslationUrl = (file: string) =>
 {
     const configuredTranslationUrl = GetConfiguration().getValue<string>('furnidata.translation.url') || '';
@@ -164,28 +202,27 @@ export const applyTextTranslationLocale = async (languageCode: string): Promise<
         return;
     }
 
+    // English is already provided by the base ExternalTexts/UITexts files.
+    // Some local asset packs do not ship a redundant English override file.
+    if(selectedLocale.file === 'en')
+    {
+        localizationManager.clearOverrideValues();
+        sessionDataManager.clearFurnitureDataOverrides();
+        dispatchLocalizationUpdated();
+        return;
+    }
+
     const textUrl = getTextTranslationUrl(selectedLocale.file);
     const furnitureUrl = getFurnitureTranslationUrl(selectedLocale.file);
-    const response = await fetch(textUrl);
-
-    if(response.status !== 200) throw new Error(`Unable to load ${ textUrl }`);
-
-    const data = await response.json();
+    const data = await loadTextTranslationData(selectedLocale.file, textUrl);
     const overrideValues = new Map<string, string>();
 
     Object.keys(data || {}).forEach(key => overrideValues.set(key, data[key]));
     localizationManager.setOverrideValues(overrideValues);
 
-    try
-    {
-        await sessionDataManager.applyFurnitureDataOverrides(furnitureUrl);
-    }
-    catch
-    {
-        sessionDataManager.clearFurnitureDataOverrides();
-    }
-
     dispatchLocalizationUpdated();
+
+    void sessionDataManager.applyFurnitureDataOverrides(furnitureUrl).catch(() => sessionDataManager.clearFurnitureDataOverrides());
 };
 
 const getBrowserLanguageCode = () =>
