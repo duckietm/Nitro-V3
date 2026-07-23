@@ -34,6 +34,7 @@ import {
     StartRoomSession
 } from '../../api';
 import { useMessageEvent, useNitroEvent, useUiEvent } from '../events';
+import { useWiredFurniOpacity } from './useWiredFurniOpacity';
 
 const getViewportSize = () => {
     const viewport = window.visualViewport;
@@ -50,6 +51,8 @@ const useRoomState = () => {
     const [roomBackground, setRoomBackground] = useState<NitroSprite>(null);
     const [roomFilter, setRoomFilter] = useState<NitroAdjustmentFilter>(null);
     const [originalRoomBackgroundColor, setOriginalRoomBackgroundColor] = useState(0);
+
+    useWiredFurniOpacity(roomSession?.roomId ?? 0);
 
     const updateRoomBackgroundColor = (hue: number, saturation: number, lightness: number, original: boolean = false) => {
         if (!roomBackground) return;

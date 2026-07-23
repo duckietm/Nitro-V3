@@ -28,6 +28,8 @@ import {
     Vector3d,
     WiredMonitorDataEvent,
     WiredMonitorRequestComposer,
+    WiredFurniRuntimeStateEvent,
+    WiredFurniRuntimeStateRequestComposer,
     WiredUserInspectMoveComposer
 } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -70,6 +72,8 @@ import {
     VARIABLES_ELEMENTS,
     WEEKDAY_NAMES,
     WIRED_CLOCK_REFRESH_MS,
+    WIRED_FURNI_RUNTIME_ACTION_READ,
+    WIRED_FURNI_RUNTIME_ACTION_WRITE,
     WIRED_FREEZE_EFFECT_IDS,
     WIRED_INSPECTION_REFRESH_MS,
     WIRED_MONITOR_ACTION_CLEAR_LOGS,
@@ -130,6 +134,12 @@ export const WiredCreatorToolsView: FC<{}> = () => {
     const setSelectedFurni = useWiredCreatorToolsUiStore((s) => s.setSelectedFurni);
     const selectedFurniLiveState = useWiredCreatorToolsUiStore((s) => s.selectedFurniLiveState);
     const setSelectedFurniLiveState = useWiredCreatorToolsUiStore((s) => s.setSelectedFurniLiveState);
+    const [selectedFurniRuntimeState, setSelectedFurniRuntimeState] = useState<{
+        itemId: number;
+        key: string;
+        value: number;
+        supported: boolean;
+    }>(null);
     const selectedUser = useWiredCreatorToolsUiStore((s) => s.selectedUser);
     const setSelectedUser = useWiredCreatorToolsUiStore((s) => s.setSelectedUser);
     const selectedUserLiveState = useWiredCreatorToolsUiStore((s) => s.selectedUserLiveState);
@@ -659,6 +669,19 @@ export const WiredCreatorToolsView: FC<{}> = () => {
             heavyDelayedThresholdPercent: Number(parser.heavyDelayedThresholdPercent ?? 0),
             logs: [...(parser.logs ?? [])],
             history: [...(parser.history ?? [])]
+        });
+    });
+
+    useMessageEvent<WiredFurniRuntimeStateEvent>(WiredFurniRuntimeStateEvent, (event) => {
+        const parser = event.getParser();
+
+        if (parser.key !== '@gravity' || parser.itemId !== selectedFurni?.objectId) return;
+
+        setSelectedFurniRuntimeState({
+            itemId: parser.itemId,
+            key: parser.key,
+            value: parser.value,
+            supported: parser.supported
         });
     });
 
@@ -1246,6 +1269,11 @@ export const WiredCreatorToolsView: FC<{}> = () => {
             { key: '@position_y', value: String(liveState?.positionY ?? 0), editable: canEditInspection },
             { key: '@rotation', value: String(liveState?.rotation ?? 0), editable: canEditInspection },
             { key: '@altitude', value: String(liveState?.altitude ?? 0), editable: canEditInspection },
+            ...(selectedFurni.category === RoomObjectCategory.FLOOR &&
+            selectedFurniRuntimeState?.itemId === selectedFurni.objectId &&
+            selectedFurniRuntimeState.supported
+                ? [{ key: '@gravity', value: String(selectedFurniRuntimeState.value), editable: canEditInspection }]
+                : []),
             { key: '@is_invisible', value: '0' },
             ...(wallItemOffset ? [{ key: '@wallitem_offset', value: wallItemOffset, editable: canEditInspection }] : []),
             {
@@ -1267,7 +1295,8 @@ export const WiredCreatorToolsView: FC<{}> = () => {
         wallItemOffset,
         canEditInspection,
         selectedFurniCustomVariableDefinitions,
-        selectedFurniAssignmentMap
+        selectedFurniAssignmentMap,
+        selectedFurniRuntimeState
     ]);
     const canEditSelectedUser = useMemo(() => {
         return !!selectedUser && !!roomSession && roomSettings.canModify;
@@ -2672,6 +2701,23 @@ export const WiredCreatorToolsView: FC<{}> = () => {
             return;
         }
 
+        if (editingVariable === '@gravity') {
+            const parsed = parseInt(editingValue.trim(), 10);
+            if (!selectedFurni || !roomSession || (parsed !== 0 && parsed !== 1)) {
+                cancelVariableEdit();
+                return;
+            }
+            if (selectedFurniRuntimeState?.itemId === selectedFurni.objectId && selectedFurniRuntimeState.value === parsed) {
+                cancelVariableEdit();
+                return;
+            }
+
+            SendMessageComposer(new WiredFurniRuntimeStateRequestComposer(selectedFurni.objectId, WIRED_FURNI_RUNTIME_ACTION_WRITE, '@gravity', parsed));
+            setEditingVariable(null);
+            setEditingValue('');
+            return;
+        }
+
         if (!editingVariable || !selectedFurni || !selectedRoomObject || !roomSession) return;
 
         const currentLiveState = selectedFurniLiveState ?? getFurniLiveState(selectedFurni.objectId, selectedFurni.category);
@@ -3057,6 +3103,14 @@ export const WiredCreatorToolsView: FC<{}> = () => {
 
         setSelectedFurniLiveState(getFurniLiveState(selectedFurni.objectId, selectedFurni.category));
     }, [inspectionType, selectedFurni?.objectId, selectedFurni?.category]);
+
+    useEffect(() => {
+        setSelectedFurniRuntimeState(null);
+        if (!isVisible || inspectionType !== 'furni' || !roomSettings.canInspect || !selectedFurni || selectedFurni.category !== RoomObjectCategory.FLOOR)
+            return;
+
+        SendMessageComposer(new WiredFurniRuntimeStateRequestComposer(selectedFurni.objectId, WIRED_FURNI_RUNTIME_ACTION_READ, '@gravity', 0));
+    }, [isVisible, inspectionType, roomSettings.canInspect, selectedFurni?.objectId, selectedFurni?.category]);
 
     useEffect(() => {
         if (inspectionType !== 'user' || !selectedUser) {

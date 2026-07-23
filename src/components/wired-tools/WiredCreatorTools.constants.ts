@@ -91,7 +91,9 @@ export const VARIABLES_ELEMENTS: VariablesElementButton[] = [
     { key: 'context', label: 'Context', icon: contextInspectionIcon }
 ];
 
-export const EDITABLE_FURNI_VARIABLES: string[] = ['@position_x', '@position_y', '@rotation', '@altitude', '@state', '@wallitem_offset'];
+export const EDITABLE_FURNI_VARIABLES: string[] = ['@position_x', '@position_y', '@rotation', '@altitude', '@state', '@gravity', '@wallitem_offset'];
+export const WIRED_FURNI_RUNTIME_ACTION_READ = 0;
+export const WIRED_FURNI_RUNTIME_ACTION_WRITE = 1;
 export const EDITABLE_USER_VARIABLES: string[] = ['@position_x', '@position_y', '@direction'];
 
 const createVariableDefinition = (
@@ -125,6 +127,7 @@ export const VARIABLE_DEFINITIONS: Record<VariablesElementType, VariableDefiniti
         createVariableDefinition('@position_y', 'Furni', 'Always', true),
         createVariableDefinition('@rotation', 'Furni', 'Always', true),
         createVariableDefinition('@altitude', 'Furni', 'Always', true),
+        createVariableDefinition('@gravity', 'Furni', 'Conditional', true),
         createVariableDefinition('@is_invisible', 'Furni', 'Conditional'),
         createVariableDefinition('@wallitem_offset', 'Furni', 'Conditional', true),
         createVariableDefinition('@type', 'Furni'),
