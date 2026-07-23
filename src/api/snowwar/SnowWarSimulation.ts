@@ -154,15 +154,32 @@ export class SnowWarSimulation
     private _subturnCount = 0; // total subturns processed (monotonic)
     private _lastAdvanceAt: number | null = null;
 
+    // The server delivers one whole tick (SUBTURNS_PER_TICK subturns) every
+    // SERVER_TICK_MS, and the client plays them back at exactly that rate, so
+    // there is no buffer to hide network jitter: a packet that lands a few ms
+    // late leaves the interpolation with nothing to advance toward and motion
+    // freezes for a frame or two. It is barely visible with a static camera,
+    // but a clear stutter once the camera follows the avatar. Rather than add a
+    // playout buffer (which would read as input lag), we let the interpolation
+    // extrapolate a little past the last known subturn - continuing existing
+    // motion through the gap. A stopped avatar has prev == cur, so it never
+    // drifts; only genuinely-moving entities coast, and they correct on the
+    // next packet. Capped so a longer stall settles instead of sliding away.
+    private static readonly MAX_EXTRAPOLATION_ALPHA = 2;
+
     public get subturnCount(): number
     {
         return this._subturnCount;
     }
 
-    /** 0..1 progress between the last processed subturn and the next. */
+    /**
+     * Progress between the last processed subturn and the next. 0..1 during
+     * normal playback; allowed up to MAX_EXTRAPOLATION_ALPHA while starved so
+     * brief jitter reads as continued motion instead of a freeze.
+     */
     public get interpolationAlpha(): number
     {
-        return Math.min(1, this._subturnClock / SUBTURN_MS);
+        return Math.min(SnowWarSimulation.MAX_EXTRAPOLATION_ALPHA, this._subturnClock / SUBTURN_MS);
     }
 
     public reset(): void
@@ -312,10 +329,14 @@ export class SnowWarSimulation
             this.advanceSubturn();
         }
 
-        // Idle (no pending data): freeze the clock so alpha caps at 1.
-        if (this._pendingSubturns.length === 0 && this._subturnClock > SUBTURN_MS)
+        // Starved (no pending data): let the clock run a little past one subturn
+        // so interpolationAlpha extrapolates the current motion through short
+        // network jitter instead of hard-freezing, then cap it so a longer
+        // stall settles at a bounded lead rather than sliding away.
+        const maxClock = SUBTURN_MS * SnowWarSimulation.MAX_EXTRAPOLATION_ALPHA;
+        if (this._pendingSubturns.length === 0 && this._subturnClock > maxClock)
         {
-            this._subturnClock = SUBTURN_MS;
+            this._subturnClock = maxClock;
         }
     }
 

@@ -15,10 +15,6 @@ export const LayoutFurniImageView: FC<LayoutFurniImageViewProps> = (props) => {
     const { productType = 's', productClassId = -1, direction = 2, extraData = '', scale = 1, style = {}, ...rest } = props;
     const [imageElement, setImageElement] = useState<HTMLImageElement>(null);
     const isMounted = useRef(true);
-    // Request id bumped by the effect on every prop change. The async
-    // generateImage / imageReady callbacks capture it and only write
-    // back if it still matches — prevents an older, slower fetch from
-    // overwriting a newer one when props change in quick succession.
     const requestIdRef = useRef(0);
 
     useEffect(() => {
@@ -66,7 +62,7 @@ export const LayoutFurniImageView: FC<LayoutFurniImageViewProps> = (props) => {
 
         const listener: IGetImageListener = {
             imageReady: (result) => updateImage(result?.data, requestId),
-            imageFailed: null
+            imageFailed: () => updateImage(null, requestId)
         };
 
         switch (productType.toLocaleLowerCase()) {

@@ -33,8 +33,8 @@ import {
 } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBetween } from 'use-between';
-import { SendMessageComposer } from '../../api';
-import { SnowWarSimEvent, SnowWarSimulation } from '../../api/snowwar';
+import { SendMessageComposer, TryVisitRoom } from '../../api';
+import { consumeSnowWarReturnRoom, SnowWarSimEvent, SnowWarSimulation } from '../../api/snowwar';
 import { useMessageEvent } from '../events';
 
 export type SnowWarPhase =
@@ -302,6 +302,10 @@ const useSnowWarState = () =>
         // snapshot the editor works on is kept intact.
         if (editingRef.current) return;
         resetToIdle();
+        // The game center dropped our room when the hub opened; the rejoin
+        // packet carries no room id, so re-enter the one we remembered.
+        const roomId = consumeSnowWarReturnRoom();
+        if (roomId) TryVisitRoom(roomId);
     }, [resetToIdle]);
 
     const onPlayerExitedArena = useCallback((event: SnowWarPlayerExitedArenaEvent) =>
@@ -409,6 +413,10 @@ const useSnowWarState = () =>
         editingRef.current = false;
         setEditing(false);
         resetToIdle();
+        // The rejoin-previous-room echo was swallowed on edit entry, so restore
+        // the room we came from here instead (no-op if we were never in one).
+        const roomId = consumeSnowWarReturnRoom();
+        if (roomId) TryVisitRoom(roomId);
     }, [resetToIdle]);
 
     const exitGame = useCallback(() =>

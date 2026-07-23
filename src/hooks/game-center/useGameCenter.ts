@@ -10,7 +10,7 @@ import {
 } from '@nitrots/nitro-renderer';
 import { useCallback, useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
-import { SendMessageComposer, VisitDesktop } from '../../api';
+import { GetRoomSession, SendMessageComposer, setSnowWarReturnRoom, VisitDesktop } from '../../api';
 import { useMessageEvent } from '../events';
 
 const useGameCenterState = () => {
@@ -72,6 +72,10 @@ const useGameCenterState = () => {
 
     useEffect(() => {
         if (isVisible) {
+            // Remember the room we're leaving so SnowWar can return us to it on
+            // exit; VisitDesktop() below drops the room session. Overwrites any
+            // stale value (null when we open the hub from outside a room).
+            setSnowWarReturnRoom(GetRoomSession()?.roomId ?? null);
             SendMessageComposer(new GetGameListMessageComposer());
             VisitDesktop();
         } else {
