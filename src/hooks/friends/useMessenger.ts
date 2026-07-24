@@ -22,6 +22,7 @@ import {
     PlaySound,
     selectMessengerIconState,
     SendMessageComposer,
+    selectMessages,
     SoundNames
 } from '../../api';
 import { useMessageEvent } from '../events';
@@ -44,6 +45,7 @@ const useMessengerState = () => {
 
     const [typingUserIds, setTypingUserIds] = useState<number[]>([]);
     const typingTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+    const historyMessageIdsRef = useRef<Map<number, Set<number>>>(new Map());
     const hiddenThreadIdsRef = useRef(hiddenThreadIds);
 
     const messageThreadsRef = useRef(messageThreads);
@@ -238,6 +240,62 @@ const useMessengerState = () => {
             return changed ? newValue : prevValue;
         });
     });
+
+    useEffect(() => {
+        for (const thread of messageThreads) {
+            const participantId = thread.participant?.id ?? 0;
+            if (participantId <= 0) continue;
+
+            const conversation = persistentState.conversationIds
+                .map((conversationId) => persistentState.conversationsById[conversationId])
+                .find((candidate) => candidate?.type === 0 && candidate.participantId === participantId);
+
+            if (conversation?.id > 0) persistentHistory.loadInitial(conversation.id);
+        }
+    }, [messageThreads, persistentHistory, persistentState.conversationIds, persistentState.conversationsById]);
+
+    useEffect(() => {
+        const now = Math.floor(Date.now() / 1000);
+
+        setMessageThreads((previousThreads) => {
+            let changed = false;
+            const nextThreads = [...previousThreads];
+
+            for (let index = 0; index < nextThreads.length; index++) {
+                const currentThread = nextThreads[index];
+                const participantId = currentThread.participant?.id ?? 0;
+                if (participantId <= 0) continue;
+
+                const conversation = persistentState.conversationIds
+                    .map((conversationId) => persistentState.conversationsById[conversationId])
+                    .find((candidate) => candidate?.type === 0 && candidate.participantId === participantId);
+                if (!conversation || !persistentState.historyByConversation[conversation.id]?.loaded) continue;
+
+                const knownMessageIds = historyMessageIdsRef.current.get(conversation.id) ?? new Set<number>();
+                const historyMessages = selectMessages(persistentState, conversation.id)
+                    .filter((message) => message.id > 0 && !knownMessageIds.has(message.id));
+                if (!historyMessages.length) continue;
+
+                const thread = CloneObject(currentThread);
+                for (const message of historyMessages) {
+                    thread.addMessage(
+                        message.senderId,
+                        message.message,
+                        Math.max(0, now - message.createdAt),
+                        message.metadata || null,
+                        message.type
+                    );
+                    knownMessageIds.add(message.id);
+                }
+                thread.setRead();
+                historyMessageIdsRef.current.set(conversation.id, knownMessageIds);
+                nextThreads[index] = thread;
+                changed = true;
+            }
+
+            return changed ? nextThreads : previousThreads;
+        });
+    }, [persistentState]);
 
     useMessageEvent<RoomInviteEvent>(RoomInviteEvent, (event) => {
         const parser = event.getParser();

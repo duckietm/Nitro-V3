@@ -82,7 +82,7 @@ export const GroupInformationView: FC<GroupInformationViewProps> = (props) => {
     const handleAction = (action: string) => {
         switch (action) {
             case 'members':
-                GetGroupMembers(groupInformation.id);
+                GetGroupMembers(groupInformation.id, 0);
                 break;
             case 'members_pending':
                 GetGroupMembers(groupInformation.id, 2);
@@ -114,16 +114,40 @@ export const GroupInformationView: FC<GroupInformationViewProps> = (props) => {
                     <LayoutBadgeImageView badgeCode={groupInformation.badge} isGroup={true} scale={2.1} />
                 </div>
                 <div className="nitro-extended-profile-group-info__meta">
-                    <Text pointer small bold underline onClick={() => handleAction('members')}>
+                    <span
+                        className="nitro-extended-profile-group-info__member-link"
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={(event) => event.stopPropagation()}
+                        onClick={(event) => { event.stopPropagation(); handleAction('members'); }}
+                        onKeyDown={(event) => {
+                            if (event.key !== 'Enter' && event.key !== ' ') return;
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleAction('members');
+                        }}
+                    >
                         {LocalizeText('group.membercount', ['totalMembers'], [groupInformation.membersCount.toString()])}
-                    </Text>
+                    </span>
                     {groupInformation.pendingRequestsCount > 0 && (
-                        <Text pointer small underline onClick={() => handleAction('members_pending')}>
+                        <span
+                            className="nitro-extended-profile-group-info__member-link"
+                            role="button"
+                            tabIndex={0}
+                            onMouseDown={(event) => event.stopPropagation()}
+                            onClick={(event) => { event.stopPropagation(); handleAction('members_pending'); }}
+                            onKeyDown={(event) => {
+                                if (event.key !== 'Enter' && event.key !== ' ') return;
+                                event.preventDefault();
+                                event.stopPropagation();
+                                handleAction('members_pending');
+                            }}
+                        >
                             {LocalizeText('group.pendingmembercount', ['amount'], [groupInformation.pendingRequestsCount.toString()])}
-                        </Text>
+                        </span>
                     )}
                 </div>
-                <div className="nitro-extended-profile-group-info__role">{getRoleIcon()}</div>
+                <div className="nitro-extended-profile-group-info__role" aria-hidden="true">{getRoleIcon()}</div>
             </div>
             <div className="nitro-extended-profile-group-info__content">
                 <div className="nitro-extended-profile-group-info__header-copy">

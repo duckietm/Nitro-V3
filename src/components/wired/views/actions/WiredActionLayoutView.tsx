@@ -15,6 +15,7 @@ import { WiredExtraFilterUsersByVariableView } from '../extras/WiredExtraFilterU
 import { WiredExtraFilterUserView } from '../extras/WiredExtraFilterUserView';
 import { WiredExtraFurniVariableView } from '../extras/WiredExtraFurniVariableView';
 import { WiredExtraMoveCarryUsersView } from '../extras/WiredExtraMoveCarryUsersView';
+import { WiredExtraMovementAnimationView } from '../extras/WiredExtraMovementAnimationView';
 import { WiredExtraMovementCurveView } from '../extras/WiredExtraMovementCurveView';
 import { WiredExtraMoveNoAnimationView } from '../extras/WiredExtraMoveNoAnimationView';
 import { WiredExtraMovePhysicsView } from '../extras/WiredExtraMovePhysicsView';
@@ -73,6 +74,7 @@ import { WiredActionControlClockView } from './WiredActionControlClockView';
 import { WiredActionFleeView } from './WiredActionFleeView';
 import { WiredActionFreezeView } from './WiredActionFreezeView';
 import { WiredActionFurniToFurniView } from './WiredActionFurniToFurniView';
+import { WiredActionFurniOpacityView } from './WiredActionFurniOpacityView';
 import { WiredActionGiveCurrencyFromChestView } from './WiredActionGiveCurrencyFromChestView';
 import { WiredActionGiveFurniFromChestView } from './WiredActionGiveFurniFromChestView';
 import { WiredActionGiveOrTakeFurniView } from './WiredActionGiveOrTakeFurniView';
@@ -144,6 +146,8 @@ export const WiredActionLayoutView = (code: number) => {
             return <WiredActionTeleportView />;
         case WiredActionLayoutCode.FURNI_TO_FURNI:
             return <WiredActionFurniToFurniView />;
+        case WiredActionLayoutCode.FURNI_OPACITY:
+            return <WiredActionFurniOpacityView />;
         case WiredActionLayoutCode.SET_ALTITUDE:
             return <WiredActionSetAltitudeView />;
         case WiredActionLayoutCode.GIVE_REWARD:
@@ -300,6 +304,8 @@ export const WiredActionLayoutView = (code: number) => {
             return <WiredSelectorRemoteView />;
         case WiredActionLayoutCode.MOVEMENT_CURVE_EXTRA:
             return <WiredExtraMovementCurveView />;
+        case WiredActionLayoutCode.MOVEMENT_ANIMATION_EXTRA:
+            return <WiredExtraMovementAnimationView />;
         case WiredActionLayoutCode.TIME_UTILITIES_EXTRA:
             return <WiredExtraTimeUtilitiesView />;
         case WiredActionLayoutCode.GIVE_CURRENCY_FROM_CHEST:
