@@ -11,6 +11,18 @@ export const FriendsListGroupItemView: FC<{ friend: MessengerFriend; selected: b
     const { followFriend = null, updateRelationship = null } = useFriends();
     const relationshipMenuRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        if (!isRelationshipOpen) return;
+
+        const close = (event: globalThis.MouseEvent) => {
+            if (!relationshipMenuRef.current?.contains(event.target as Node)) setIsRelationshipOpen(false);
+        };
+
+        window.addEventListener('mousedown', close);
+
+        return () => window.removeEventListener('mousedown', close);
+    }, [isRelationshipOpen]);
+
     if (!friend) return null;
 
     const stop = (event: MouseEvent<HTMLElement>) => event.stopPropagation();
@@ -28,18 +40,6 @@ export const FriendsListGroupItemView: FC<{ friend: MessengerFriend; selected: b
         updateRelationship(friend, type);
         setIsRelationshipOpen(false);
     };
-
-    useEffect(() => {
-        if (!isRelationshipOpen) return;
-
-        const close = (event: globalThis.MouseEvent) => {
-            if (!relationshipMenuRef.current?.contains(event.target as Node)) setIsRelationshipOpen(false);
-        };
-
-        window.addEventListener('mousedown', close);
-
-        return () => window.removeEventListener('mousedown', close);
-    }, [isRelationshipOpen]);
 
     return (
         <div className={`hfl-friend ${friend.online ? 'online' : 'offline'}${selected ? ' selected' : ''}`} role="button" tabIndex={0} onClick={() => selectFriend(friend.id)} onKeyDown={(event) => event.key === 'Enter' && selectFriend(friend.id)}>
