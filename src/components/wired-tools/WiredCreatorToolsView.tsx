@@ -26,7 +26,6 @@ import {
     RoomUnitStatusEvent,
     UpdateFurniturePositionComposer,
     Vector3d,
-    WiredFurniGravityMessageEvent,
     WiredMonitorDataEvent,
     WiredMonitorRequestComposer,
     WiredUserInspectMoveComposer
@@ -62,8 +61,6 @@ import {
     EDITABLE_FURNI_VARIABLES,
     EDITABLE_USER_VARIABLES,
     INSPECTION_ELEMENTS,
-    INTERNAL_FURNI_GRAVITY_VARIABLE_ITEM_ID,
-    INTERNAL_FURNI_OPACITY_VARIABLE_ITEM_ID,
     MONITOR_ERROR_INFO,
     MONITOR_LOG_ORDER,
     MONTH_NAMES,
@@ -114,14 +111,11 @@ import {
     VariableTextValue,
     WiredToolsTab
 } from './WiredCreatorTools.types';
-
 import { WiredInspectionTabView } from './WiredInspectionTabView';
 import { WiredMonitorTabView } from './WiredMonitorTabView';
 import { WiredToolsSettingsTabView } from './WiredToolsSettingsTabView';
 import { WiredVariablesTabView } from './WiredVariablesTabView';
 import { useWiredCreatorToolsUiStore } from './wiredCreatorToolsUiStore';
-
-const WIRED_FURNI_GRAVITY_MODEL_KEY = 'wired_furni_gravity';
 
 export const WiredCreatorToolsView: FC<{}> = () => {
     const isVisible = useWiredCreatorToolsUiStore((s) => s.isVisible);
@@ -143,7 +137,6 @@ export const WiredCreatorToolsView: FC<{}> = () => {
     const selectedUserActionVersion = useWiredCreatorToolsUiStore((s) => s.selectedUserActionVersion);
     const setSelectedUserActionVersion = useWiredCreatorToolsUiStore((s) => s.setSelectedUserActionVersion);
     const [globalClock, setGlobalClock] = useState(Date.now());
-    const [furniInternalRevision, setFurniInternalRevision] = useState(0);
     const [roomEnteredAt, setRoomEnteredAt] = useState(Date.now());
     const monitorSnapshot = useWiredCreatorToolsUiStore((s) => s.monitorSnapshot);
     const setMonitorSnapshot = useWiredCreatorToolsUiStore((s) => s.setMonitorSnapshot);
@@ -667,28 +660,6 @@ export const WiredCreatorToolsView: FC<{}> = () => {
             logs: [...(parser.logs ?? [])],
             history: [...(parser.history ?? [])]
         });
-    });
-
-    useMessageEvent<WiredFurniGravityMessageEvent>(WiredFurniGravityMessageEvent, (event) => {
-        if (!roomSession) return;
-
-        const data = event.getParser()?.data;
-        if (!data) return;
-
-        const gravity = data.gravity > 0 ? 1 : 0;
-        let selectedChanged = false;
-
-        for (const furniId of data.furniIds) {
-            const floorObject = GetRoomEngine().getRoomObject(roomSession.roomId, furniId, RoomObjectCategory.FLOOR);
-            const wallObject = GetRoomEngine().getRoomObject(roomSession.roomId, furniId, RoomObjectCategory.WALL);
-
-            floorObject?.model?.setValue(WIRED_FURNI_GRAVITY_MODEL_KEY, gravity);
-            wallObject?.model?.setValue(WIRED_FURNI_GRAVITY_MODEL_KEY, gravity);
-
-            if (selectedFurni?.objectId === furniId) selectedChanged = true;
-        }
-
-        if (selectedChanged) setFurniInternalRevision((previousValue) => previousValue + 1);
     });
 
     useMessageEvent<FurnitureFloorUpdateEvent>(FurnitureFloorUpdateEvent, (event) => {
@@ -1244,8 +1215,6 @@ export const WiredCreatorToolsView: FC<{}> = () => {
         const classId = selectedRoomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_TYPE_ID);
         const tileSizeZ = Number(selectedFurnitureData?.tileSizeZ ?? 0);
         const liveState = selectedFurniLiveState ?? getFurniLiveState(selectedFurni.objectId, selectedFurni.category);
-        const opacity = Math.round(Math.max(0, Math.min(1, selectedRoomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_ALPHA_MULTIPLIER) ?? 1)) * 100);
-        const gravity = Math.max(0, Math.min(1, selectedRoomObject.model.getValue<number>(WIRED_FURNI_GRAVITY_MODEL_KEY) ?? 0));
 
         const dynamicFlags: InspectionVariable[] = [];
 
@@ -1277,8 +1246,6 @@ export const WiredCreatorToolsView: FC<{}> = () => {
             { key: '@position_y', value: String(liveState?.positionY ?? 0), editable: canEditInspection },
             { key: '@rotation', value: String(liveState?.rotation ?? 0), editable: canEditInspection },
             { key: '@altitude', value: String(liveState?.altitude ?? 0), editable: canEditInspection },
-            { key: '@opacity', value: String(opacity), editable: canEditInspection },
-            { key: '@gravity', value: String(gravity), editable: canEditInspection },
             { key: '@is_invisible', value: '0' },
             ...(wallItemOffset ? [{ key: '@wallitem_offset', value: wallItemOffset, editable: canEditInspection }] : []),
             {
@@ -1300,8 +1267,7 @@ export const WiredCreatorToolsView: FC<{}> = () => {
         wallItemOffset,
         canEditInspection,
         selectedFurniCustomVariableDefinitions,
-        selectedFurniAssignmentMap,
-        furniInternalRevision
+        selectedFurniAssignmentMap
     ]);
     const canEditSelectedUser = useMemo(() => {
         return !!selectedUser && !!roomSession && roomSettings.canModify;
@@ -2720,8 +2686,6 @@ export const WiredCreatorToolsView: FC<{}> = () => {
         let nextZ = currentLiveState.altitude / 100;
         let nextRotation = currentLiveState.rotation;
         let nextState: number = null;
-        let nextOpacity: number = null;
-        let nextGravity: number = null;
         let nextWallOffsetX: number = null;
         let nextWallOffsetY: number = null;
         let isValid = true;
@@ -2782,28 +2746,6 @@ export const WiredCreatorToolsView: FC<{}> = () => {
                 nextState = parsed;
                 break;
             }
-            case '@opacity': {
-                const parsed = parseInt(editingValue.trim(), 10);
-
-                if (Number.isNaN(parsed)) {
-                    isValid = false;
-                    break;
-                }
-
-                nextOpacity = Math.max(0, Math.min(100, parsed));
-                break;
-            }
-            case '@gravity': {
-                const parsed = parseInt(editingValue.trim(), 10);
-
-                if (Number.isNaN(parsed)) {
-                    isValid = false;
-                    break;
-                }
-
-                nextGravity = parsed > 0 ? 1 : 0;
-                break;
-            }
             case '@wallitem_offset': {
                 if (selectedFurni.category !== RoomObjectCategory.WALL) {
                     isValid = false;
@@ -2825,39 +2767,6 @@ export const WiredCreatorToolsView: FC<{}> = () => {
 
         if (!isValid) {
             cancelVariableEdit();
-            return;
-        }
-
-        if (editingVariable === '@opacity') {
-            const currentOpacity = Math.round(
-                Math.max(0, Math.min(1, selectedRoomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_ALPHA_MULTIPLIER) ?? 1)) * 100
-            );
-
-            if (nextOpacity === currentOpacity) {
-                cancelVariableEdit();
-                return;
-            }
-
-            selectedRoomObject.model.setValue(RoomObjectVariable.FURNITURE_ALPHA_MULTIPLIER, nextOpacity / 100);
-            updateFurniVariableValue(selectedFurni.objectId, INTERNAL_FURNI_OPACITY_VARIABLE_ITEM_ID, nextOpacity);
-            setEditingVariable(null);
-            setEditingValue('');
-            return;
-        }
-
-        if (editingVariable === '@gravity') {
-            const currentGravity = Math.max(0, Math.min(1, selectedRoomObject.model.getValue<number>(WIRED_FURNI_GRAVITY_MODEL_KEY) ?? 0));
-
-            if (nextGravity === currentGravity) {
-                cancelVariableEdit();
-                return;
-            }
-
-            selectedRoomObject.model.setValue(WIRED_FURNI_GRAVITY_MODEL_KEY, nextGravity);
-            setFurniInternalRevision((previousValue) => previousValue + 1);
-            updateFurniVariableValue(selectedFurni.objectId, INTERNAL_FURNI_GRAVITY_VARIABLE_ITEM_ID, nextGravity);
-            setEditingVariable(null);
-            setEditingValue('');
             return;
         }
 

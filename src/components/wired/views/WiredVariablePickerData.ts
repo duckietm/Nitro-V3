@@ -73,8 +73,6 @@ const INTERNAL_VARIABLES: Record<'user' | 'furni' | 'global' | 'context', IInter
         createInternalMeta('@position_y', true, true),
         createInternalMeta('@rotation', true, true),
         createInternalMeta('@altitude', true, true),
-        createInternalMeta('@opacity', true, true),
-        createInternalMeta('@gravity', true, true),
         createInternalMeta('@is_invisible', false, true),
         createInternalMeta('@type', false, true),
         createInternalMeta('@is_stackable', false, true),

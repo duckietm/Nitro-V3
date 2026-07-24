@@ -91,10 +91,7 @@ export const VARIABLES_ELEMENTS: VariablesElementButton[] = [
     { key: 'context', label: 'Context', icon: contextInspectionIcon }
 ];
 
-export const INTERNAL_FURNI_OPACITY_VARIABLE_ITEM_ID = -1001;
-export const INTERNAL_FURNI_GRAVITY_VARIABLE_ITEM_ID = -1002;
-
-export const EDITABLE_FURNI_VARIABLES: string[] = ['@position_x', '@position_y', '@rotation', '@altitude', '@state', '@opacity', '@gravity', '@wallitem_offset'];
+export const EDITABLE_FURNI_VARIABLES: string[] = ['@position_x', '@position_y', '@rotation', '@altitude', '@state', '@wallitem_offset'];
 export const EDITABLE_USER_VARIABLES: string[] = ['@position_x', '@position_y', '@direction'];
 
 const createVariableDefinition = (
@@ -128,8 +125,6 @@ export const VARIABLE_DEFINITIONS: Record<VariablesElementType, VariableDefiniti
         createVariableDefinition('@position_y', 'Furni', 'Always', true),
         createVariableDefinition('@rotation', 'Furni', 'Always', true),
         createVariableDefinition('@altitude', 'Furni', 'Always', true),
-        createVariableDefinition('@opacity', 'Furni', 'Always', true),
-        createVariableDefinition('@gravity', 'Furni', 'Always', true),
         createVariableDefinition('@is_invisible', 'Furni', 'Conditional'),
         createVariableDefinition('@wallitem_offset', 'Furni', 'Conditional', true),
         createVariableDefinition('@type', 'Furni'),
