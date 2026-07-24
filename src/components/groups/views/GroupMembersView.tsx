@@ -146,7 +146,7 @@ export const GroupMembersView: FC<{}> = (props) => {
                 if (parts.length < 2) return;
 
                 const groupId = parseInt(parts[1]) || -1;
-                const levelId = parseInt(parts[2]) || 3;
+                const levelId = Number.isInteger(parseInt(parts[2])) ? parseInt(parts[2]) : 0;
 
                 setGroupId(groupId);
                 setLevelId(levelId);
@@ -173,7 +173,6 @@ export const GroupMembersView: FC<{}> = (props) => {
     useEffect(() => {
         if (groupId === -1) return;
 
-        setLevelId(-1);
         setMembersData(null);
         setTotalPages(0);
         setSearchQuery('');
@@ -183,17 +182,17 @@ export const GroupMembersView: FC<{}> = (props) => {
     if (groupId === -1 || !membersData) return null;
 
     return (
-        <NitroCardView className="nitro-groups-window nitro-group-members w-[400px] max-h-[380px]" theme="primary-slim">
+        <NitroCardView className="nitro-groups-window nitro-group-members" theme="primary-slim" isResizable={false}>
             <NitroCardHeaderView
                 headerText={LocalizeText('group.members.title', ['groupName'], [membersData ? membersData.groupTitle : ''])}
                 onCloseClick={(event) => setGroupId(-1)}
             />
             <NitroCardContentView className="nitro-groups-content" overflow="hidden">
                 <div className="nitro-group-members-search flex gap-2">
-                    <Flex center className="group-badge">
+                    <Flex center className="group-badge nitro-group-members-search__badge">
                         <LayoutBadgeImageView badgeCode={membersData.badge} className="mx-auto block" isGroup={true} />
                     </Flex>
-                    <Column fullWidth gap={1}>
+                    <Column fullWidth gap={1} className="nitro-group-members-search__controls">
                         <input
                             className="nitro-groups-input min-h-[calc(1.5em+.5rem+2px)] px-[.5rem] py-[.25rem] text-[.7875rem] rounded-[.2rem] w-full"
                             placeholder={LocalizeText('group.members.searchinfo')}
@@ -211,21 +210,29 @@ export const GroupMembersView: FC<{}> = (props) => {
                 <Grid className="nitro-group-members-list-grid" columnCount={2} overflow="auto">
                     {membersData.result.map((member, index) => {
                         return (
-                            <Flex key={index} alignItems="center" className="nitro-group-member-row p-2 bg-white rounded h-[50px] max-h-[50px]" gap={2} overflow="hidden">
-                                <div className="cursor-pointer relative overflow-hidden w-[40px] h-[50px]" onClick={() => GetUserProfile(member.id)}>
-                                    <LayoutAvatarImageView className="absolute -left-[25px] -top-[20px]" direction={2} figure={member.figure} headOnly={true} />
+                            <Flex key={index} alignItems="center" className="nitro-group-member-row" gap={0} overflow="hidden">
+                                <div className="nitro-group-member-row__avatar cursor-pointer" onClick={() => GetUserProfile(member.id)}>
+                                    <LayoutAvatarImageView
+                                        className="nitro-group-member-row__head"
+                                        direction={2}
+                                        figure={member.figure}
+                                        headOnly={true}
+                                        compactHead
+                                        compactHeadSize={40}
+                                        compactHeadPadding={0}
+                                    />
                                 </div>
-                                <Column grow gap={1}>
-                                    <Text bold pointer small onClick={(event) => GetUserProfile(member.id)}>
+                                <Column className="nitro-group-member-row__copy" grow gap={0}>
+                                    <Text bold pointer small className="nitro-group-member-row__name" onClick={(event) => GetUserProfile(member.id)}>
                                         {member.name}
                                     </Text>
                                     {member.rank !== GroupRank.REQUESTED && (
-                                        <Text italics small variant="muted">
+                                        <Text italics small variant="muted" className="nitro-group-member-row__since">
                                             {LocalizeText('group.members.since', ['date'], [member.joinedAt])}
                                         </Text>
                                     )}
                                 </Column>
-                                <div className="flex flex-col gap-1">
+                                <div className="nitro-group-member-row__actions">
                                     {member.rank !== GroupRank.REQUESTED && (
                                         <div className="flex items-center justify-center">
                                             <div
@@ -261,17 +268,29 @@ export const GroupMembersView: FC<{}> = (props) => {
                         );
                     })}
                 </Grid>
-                <Flex alignItems="center" gap={1} justifyContent="between" className="nitro-groups-footer">
+                <Flex alignItems="center" gap={1} justifyContent="between" className="nitro-groups-footer nitro-group-members-footer">
                     <Button className="nitro-groups-button nitro-groups-button--pager" disabled={pageId <= 0} onClick={(event) => setPageId((prevValue) => Math.max(0, prevValue - 1))}>
                         <FaChevronLeft className="fa-icon" />
                     </Button>
-                    <Text small>
-                        {LocalizeText(
-                            'group.members.pageinfo',
-                            ['amount', 'page', 'totalPages'],
-                            [membersData.totalMembersCount.toString(), (membersData.pageIndex + 1).toString(), totalPages.toString()]
-                        )}
-                    </Text>
+                    <div className="nitro-group-members-footer__page">
+                        <Text small className="nitro-group-members-footer__label">
+                            {membersData.totalMembersCount} Habbo Membri. Pagina
+                        </Text>
+                        <input
+                            className="nitro-group-members-footer__input"
+                            type="number"
+                            min={1}
+                            max={Math.max(1, totalPages)}
+                            value={membersData.pageIndex + 1}
+                            onChange={(event) => {
+                                const value = Math.min(Math.max(parseInt(event.target.value) || 1, 1), Math.max(1, totalPages));
+                                setPageId(value - 1);
+                            }}
+                        />
+                        <Text small className="nitro-group-members-footer__total">
+                            / {Math.max(1, totalPages)}
+                        </Text>
+                    </div>
                     <Button
                         className="nitro-groups-button nitro-groups-button--pager"
                         disabled={totalPages === 0 || pageId >= totalPages - 1}
