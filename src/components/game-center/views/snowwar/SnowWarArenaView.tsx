@@ -21,15 +21,31 @@ const localizeWithFallback = (key: string, fallback: string) =>
 
 const TILE_HALF_W = 12;
 const TILE_HALF_H = 6;
+
 const TEAM_COLORS = ['#e64545', '#4577e6', '#3fb550', '#e6c245'];
+
+// Fixed "normal" zoom - the middle of the old 0/1/2 levels. The selectable
+// zoom was removed; the arena always renders at this scale, in game and edit.
 const ZOOM = 2;
+
+// Design base: the arena is authored for a 1920x1080 stage. Larger screens
+// centre this stage; smaller screens cap the viewport to the screen and follow
+// the player.
 const DESIGN_W = 1920;
 const DESIGN_H = 1080;
+
+// Camera dead zone: the avatar roams the central (1 - 2*DEADZONE) of the
+// viewport with the camera held still; only when it pushes into the outer
+// DEADZONE band near an edge does the camera ease back to re-centre it. This
+// keeps the background static most of the time (no per-step scroll, so jitter
+// stays invisible) and only follows when the avatar is about to leave the view.
 const CAMERA_DEADZONE = 0.2;
 const CAMERA_EASE = 0.15;
 
-interface EditItem { name: string; x: number; y: number; rotation: number; imageUrl: string; offsetZ: number }
+interface EditItem { name: string; x: number; y: number; rotation: number; imageUrl: string; offsetZ: number; width?: number; length?: number }
 
+// Placeable classnames for the in-arena editor, mirroring the server's
+// SnowWarItemProperties registry. 'spawn' is the special player-spawn marker.
 const EDITOR_PALETTE = [
     'sw_tree1', 'sw_tree2', 'sw_tree3', 'sw_tree4',
     'block_basic', 'block_basic2', 'block_basic3', 'block_small',
@@ -37,6 +53,7 @@ const EDITOR_PALETTE = [
     'sw_fence', 'snowball_machine',
 ];
 
+/** Server rule: normal throws reach 5 tiles, long throws 15. */
 const isThrowInRange = (fromX: number, fromY: number, toX: number, toY: number, trajectory: number) =>
 {
     const maxRange = (trajectory === 2) ? THROW_RANGE_LONG : THROW_RANGE_NORMAL;
@@ -73,21 +90,36 @@ export const SnowWarArenaView: FC = () =>
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const viewportRef = useRef<HTMLDivElement>(null);
+    // Dead-zone follow camera: persisted translate + per-axis "recentring"
+    // latch. Advanced at most once per animation frame (see the camera block).
     const cameraRef = useRef({ x: 0, y: 0, frame: -1, recenterX: false, recenterY: false, initialized: false });
+    // Wall-clock of the last animation frame; doubles as the re-render tick.
     const [frameNow, setFrameNow] = useState(0);
     const [chatInput, setChatInput] = useState('');
     const zoom = ZOOM;
     const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+    // Bumped a few seconds after level load: remounts the furni images so
+    // any that rendered the "still downloading" placeholder retry against
+    // the now-cached assets.
     const [furniRetryTick, setFurniRetryTick] = useState(0);
+    // Set when a throw is blocked for being out of range; shows a short hint.
     const [rangeWarningAt, setRangeWarningAt] = useState(0);
     const ownUserId = GetSessionDataManager()?.userId ?? 0;
+
+    // In-arena editor state (only meaningful while `editing`).
     const [editItems, setEditItems] = useState<EditItem[]>([]);
     const [editSpawns, setEditSpawns] = useState<{ x: number; y: number }[]>([]);
     const [editHeightmap, setEditHeightmap] = useState<string[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
+    // Palette selection: a classname to place, 'spawn' for a spawn marker,
+    // 'floor' to paint tiles, or null for select/move mode.
     const [paletteSel, setPaletteSel] = useState<string | null>(null);
     const [furniSearch, setFurniSearch] = useState('');
     const [savedAt, setSavedAt] = useState(0);
+
+    // Hotel furni matching the current search - lets the editor place any
+    // real furniture (like decorating a room), not just the classic SnowWar
+    // props. Floor furni only; capped so the list stays usable.
     const furniMatches = useMemo(() =>
     {
         const term = furniSearch.trim().toLowerCase();
@@ -99,19 +131,25 @@ export const SnowWarArenaView: FC = () =>
             .slice(0, 40);
     }, [furniSearch]);
 
+    // Seed the working copy from the current level snapshot when the editor
+    // opens; the game furni become editable items.
     useEffect(() =>
     {
         if (!editing) return;
         setEditItems((levelData?.items ?? []).map(item => ({
             name: item.name, x: item.x, y: item.y, rotation: item.rotation, imageUrl: item.imageUrl, offsetZ: item.offsetZ ?? 0,
+            width: item.width, length: item.length,
         })));
         setEditSpawns([]);
         setEditHeightmap([...(levelData?.heightmapRows ?? [])]);
         setSelectedIndex(-1);
         setPaletteSel(null);
         setFurniSearch('');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editing]);
 
+    // The arena renders the editor's working copy while editing, the live
+    // level items otherwise. Both references are stable across renders.
     const displayItems = editing ? editItems : (levelData?.items ?? []);
 
     const mapRows = editing ? editHeightmap : (levelData?.heightmapRows ?? []);
@@ -137,6 +175,7 @@ export const SnowWarArenaView: FC = () =>
         };
     }, [originX]);
 
+    // Static floor: tiles + obstacles drawn once per level.
     useEffect(() =>
     {
         const canvas = canvasRef.current;
@@ -171,6 +210,9 @@ export const SnowWarArenaView: FC = () =>
 
         for (const item of displayItems)
         {
+            // Hotel furniture saved by the arena editor is rendered as its
+            // real furni image in the DOM layer below - only the classic
+            // SnowWar props are drawn as canvas shapes.
             if (!isClassicItem(item.name)) continue;
 
             const { x: sx, y: sy } = toScreen(item.x, item.y);
@@ -205,6 +247,7 @@ export const SnowWarArenaView: FC = () =>
             }
             else
             {
+                // Generic block / fence / obstacle: raised cube.
                 const height = item.name.includes('3') ? 26 : item.name.includes('2') ? 18 : 10;
                 const isIce = item.name.includes('ice');
                 context.beginPath();
@@ -223,6 +266,7 @@ export const SnowWarArenaView: FC = () =>
         }
     }, [displayItems, mapHeight, mapWidth, mapRows, toScreen]);
 
+    // Drive the simulation clock + re-render at display rate.
     useEffect(() =>
     {
         let running = true;
@@ -244,6 +288,7 @@ export const SnowWarArenaView: FC = () =>
         };
     }, [simulation]);
 
+    // Track the viewport size; the camera transform is computed from it.
     useEffect(() =>
     {
         const viewport = viewportRef.current;
@@ -257,6 +302,7 @@ export const SnowWarArenaView: FC = () =>
         return () => observer.disconnect();
     }, [levelData]);
 
+    // Furni image retry passes (see furniRetryTick).
     useEffect(() =>
     {
         if (!levelData) return;
@@ -268,6 +314,7 @@ export const SnowWarArenaView: FC = () =>
         return () => timers.forEach(timer => clearTimeout(timer));
     }, [levelData]);
 
+    // Periodic authoritative resync.
     useEffect(() =>
     {
         if (phase !== 'playing') return;
@@ -277,6 +324,10 @@ export const SnowWarArenaView: FC = () =>
 
     const screenToTile = useCallback((event: MouseEvent<HTMLDivElement>) =>
     {
+        // Measure the floor canvas itself, NOT the viewport: the world is
+        // centered inside a scrollable viewport, so the viewport rect is
+        // offset from the isometric origin and clicks landed on the wrong
+        // tile (or outside the map) whenever the arena didn't exactly fill it.
         const canvas = canvasRef.current;
         if (!canvas) return { tileX: -1, tileY: -1 };
 
@@ -294,6 +345,7 @@ export const SnowWarArenaView: FC = () =>
     {
         if (paletteSel === 'floor')
         {
+            // Toggle the tile between walkable ('0') and void ('x').
             setEditHeightmap(rows => rows.map((row, ry) =>
             {
                 if (ry !== tileY || tileX >= row.length) return row;
@@ -320,6 +372,8 @@ export const SnowWarArenaView: FC = () =>
             return;
         }
 
+        // Select/move mode: click an item to select it, click an empty tile
+        // with something selected to move it there.
         let hitIndex = -1;
         for (let i = editItems.length - 1; i >= 0; i--)
         {
@@ -376,6 +430,8 @@ export const SnowWarArenaView: FC = () =>
         setSelectedIndex(-1);
     }, [selectedIndex]);
 
+    // The arena backdrop is a single always-full-screen ad image, edited via
+    // the dedicated background control rather than by selecting a tile.
     const setBackdropUrl = useCallback((url: string) =>
         setEditItems(items =>
         {
@@ -404,6 +460,11 @@ export const SnowWarArenaView: FC = () =>
 
     const ownAvatar = simulation.getAvatarByUserId(ownUserId);
     const alpha = simulation.interpolationAlpha;
+
+    // First room-ad furni's image is the arena backdrop. offsetZ doubles as an
+    // overlay flag: 0 = drawn behind the arena (full-screen), 1 = overlaid on
+    // top of the floor tiles (hiding them, but they stay walkable) while still
+    // sitting under the furni and avatars. Edit-aware so it previews live.
     const arenaBackdrop = displayItems.find(item => item.imageUrl) ?? null;
     const backdropOverlay = !!(arenaBackdrop && (arenaBackdrop.offsetZ ?? 0) > 0);
     const selectedItem = (editing && selectedIndex >= 0 && editItems[selectedIndex]) ? editItems[selectedIndex] : null;
@@ -411,6 +472,12 @@ export const SnowWarArenaView: FC = () =>
         ? GetSessionDataManager()?.getFloorItemDataByName?.(paletteSel) : null;
     const selectedFurni = selectedItem ? GetSessionDataManager()?.getFloorItemDataByName?.(selectedItem.name) : null;
     const backdropItem = editing ? (editItems.find(item => item.imageUrl) ?? null) : null;
+
+    // Fixed 1920x1080 design stage: the background fills it and the floor sits
+    // centred on it. On screens >= the stage the whole stage is centred in the
+    // viewport; on smaller screens the viewport is capped to the screen and the
+    // camera follows the own avatar (like a normal room), so background + tiles
+    // pan together. The stage grows past the base only if a map is larger.
     const floorW = canvasWidth * zoom;
     const floorH = canvasHeight * zoom;
     const stageW = Math.max(DESIGN_W, floorW);
@@ -418,6 +485,11 @@ export const SnowWarArenaView: FC = () =>
     const floorOffsetX = (stageW - floorW) / 2;
     const floorOffsetY = (stageH - floorH) / 2;
 
+    // Camera as a GPU translate on the stage. Instead of hard-locking the
+    // avatar to centre (which scrolls the background on every step and makes
+    // the smallest jitter obvious), the camera holds still while the avatar
+    // roams a central dead zone and only eases back to centre once the avatar
+    // pushes into the outer CAMERA_DEADZONE band near a screen edge.
     let cameraX = (viewportSize.width - stageW) / 2;
     let cameraY = (viewportSize.height - stageH) / 2;
 
@@ -442,6 +514,8 @@ export const SnowWarArenaView: FC = () =>
             cam.initialized = true;
         }
 
+        // Advance the dead-zone camera at most once per animation frame; the
+        // frame gate also makes a Strict-Mode double render idempotent.
         if (cam.frame !== frameNow)
         {
             cam.frame = frameNow;
@@ -491,6 +565,7 @@ export const SnowWarArenaView: FC = () =>
             scores.set(avatar.teamId, (scores.get(avatar.teamId) ?? 0) + avatar.score);
         }
         return [...scores.entries()].sort((a, b) => a[0] - b[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [simulation, simulation.subturnCount]);
 
     const formatClock = (totalSeconds: number) =>
@@ -712,7 +787,12 @@ export const SnowWarArenaView: FC = () =>
             >
                 <div
                     className="snowwar-world"
-                    style={{ width: stageW, height: stageH, transform: `translate(${cameraX}px, ${cameraY}px)`, transformOrigin: '0 0' }}
+                    // Snap the camera translate to whole pixels. The easing keeps
+                    // running in floats (cam.x/cam.y), but a fractional translate here
+                    // makes the browser rasterise the whole arena subtree at a sub-pixel
+                    // offset, so every scaled sprite (furni at 0.375, avatars) samples
+                    // between pixels and looks blurry / shimmers while the camera moves.
+                    style={{ width: stageW, height: stageH, transform: `translate(${Math.round(cameraX)}px, ${Math.round(cameraY)}px)`, transformOrigin: '0 0' }}
                 >
                     {arenaBackdrop && !backdropOverlay && (
                         <img
@@ -740,20 +820,39 @@ export const SnowWarArenaView: FC = () =>
 
                     {displayItems.filter(item => !isClassicItem(item.name) && !item.imageUrl).map((item, index) =>
                     {
-                        const { x, y } = toScreen(item.x, item.y);
+                        // A multi-tile furni occupies width x length tiles from its
+                        // origin (+x/+y, swapped for the 90/270 rotations) - the same
+                        // footprint the server blocks. Draw the sprite over the
+                        // footprint CENTRE (a 1x1 prop is unchanged) and depth-sort by
+                        // the FRONT (nearest-camera) tile, so a 3x3 prop sits on and
+                        // occludes its whole footprint instead of drawing over an
+                        // avatar standing beside or in front of it.
+                        const swap = item.rotation === 2 || item.rotation === 6;
+                        const effW = Math.max(1, (swap ? item.length : item.width) ?? 1);
+                        const effL = Math.max(1, (swap ? item.width : item.length) ?? 1);
+                        // Ground the furni at the FRONT (nearest-camera) corner of its
+                        // footprint and anchor the image by its BOTTOM-CENTRE there, so
+                        // its base rests on the floor (size-independent; a fixed % lift
+                        // floated tall props). Depth, however, sorts by the ORIGIN (back)
+                        // tile - the same rule Nitro uses for a real floor furni - so an
+                        // avatar on the near sides (left/front) draws in front of the
+                        // furni and only one standing behind it is covered.
+                        const front = toScreen(item.x + effW - 1, item.y + effL - 1);
+                        const originY = toScreen(item.x, item.y).y;
+
                         const furniData = GetSessionDataManager()?.getFloorItemDataByName?.(item.name);
                         return (
                             <div
                                 key={`furni-${index}-${furniRetryTick}`}
                                 className="snowwar-furni"
-                                style={{ left: x, top: y + (TILE_HALF_H * 2), zIndex: 100 + Math.round(y + TILE_HALF_H) }}
+                                style={{ left: front.x, top: front.y + (TILE_HALF_H * 2), zIndex: 100 + Math.round(originY) }}
                             >
                                 {furniData
                                     ? <LayoutFurniImageView
                                         direction={item.rotation}
                                         productClassId={furniData.id}
                                         productType="s"
-                                        style={{ position: 'absolute', transform: 'translate(-50%, -80%) scale(0.375)' }}
+                                        style={{ position: 'absolute', transformOrigin: 'center bottom', transform: 'translate(-50%, -100%) scale(0.5)' }}
                                     />
                                     : <div className="snowwar-furni__fallback" />}
                             </div>
@@ -798,6 +897,10 @@ export const SnowWarArenaView: FC = () =>
                         const ly = ball.prevLocV + (ball.locV - ball.prevLocV) * alpha;
                         const lh = Math.max(0, ball.prevHeight + (ball.height - ball.prevHeight) * alpha);
                         const { x, y } = worldToScreen(lx, ly);
+                        // Rendered arc = height above the throwing hand (world
+                        // 3000), amplified so the 10x flatter/steeper parabola
+                        // between normal (traj 1) and long (traj 2) throws is
+                        // actually visible; the ball also grows near its peak.
                         const rise = 6 + Math.min(120, Math.max(0, lh - 3000) / 60);
                         const peakScale = 1 + Math.min(0.8, Math.max(0, lh - 3000) / 8000);
                         return (

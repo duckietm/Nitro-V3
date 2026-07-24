@@ -53,7 +53,7 @@ export interface SnowWarLevelState {
     mapId: number;
     teamCount: number;
     heightmapRows: string[];
-    items: { name: string; x: number; y: number; rotation: number; imageUrl: string; offsetZ: number }[];
+    items: { name: string; x: number; y: number; rotation: number; imageUrl: string; offsetZ: number; walkableHeight?: number; width?: number; length?: number }[];
     machines: { objectId: number; x: number; y: number }[];
     players: { objectId: number; userId: number; teamId: number; name: string; figure: string; gender: string }[];
 }

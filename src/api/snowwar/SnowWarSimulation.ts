@@ -198,12 +198,13 @@ export class SnowWarSimulation
 
     /**
      * Build the walkability grid from LevelData - the mirror of the server's
-     * SnowWarMap tile construction: heightmap x/X tiles are blocked, any tile
-     * carrying an item is blocked, and each machine occupies (x,y)..(x+2,y).
+     * SnowWarMap tile construction: heightmap x/X tiles are blocked, a tile is
+     * blocked only when it carries a solid item (walkableHeight > 0) so walkable
+     * props (rugs/tiles) stay walkable, and each machine occupies (x,y)..(x+2,y).
      */
     public setLevel(
         heightmapRows: string[],
-        items: { x: number; y: number }[],
+        items: { x: number; y: number; rotation?: number; walkableHeight?: number; width?: number; length?: number }[],
         machines: { x: number; y: number }[]): void
     {
         this._mapHeight = heightmapRows.length;
@@ -224,7 +225,22 @@ export class SnowWarSimulation
             if (x >= 0 && y >= 0 && x < this._mapWidth && y < this._mapHeight) this._blockedTiles[y][x] = true;
         };
 
-        for (const item of items) block(item.x, item.y);
+        // Only solid furni block a tile; walkable props (walkableHeight 0, e.g.
+        // rugs/ice) stay walkable, matching the server's SnowWarTile. Default to
+        // blocking if the height is missing (older packet) to stay safe. A furni
+        // blocks its WHOLE footprint (width x length, extending +x/+y from its
+        // origin, swapped for the 90/270 rotations) - the same rectangle the
+        // server's SnowWarMap blocks - so a 3x3 prop blocks all nine tiles.
+        for (const item of items)
+        {
+            if ((item.walkableHeight ?? 3) <= 0) continue;
+            const swap = item.rotation === 2 || item.rotation === 6;
+            const effW = Math.max(1, (swap ? item.length : item.width) ?? 1);
+            const effL = Math.max(1, (swap ? item.width : item.length) ?? 1);
+            for (let dx = 0; dx < effW; dx++)
+                for (let dy = 0; dy < effL; dy++)
+                    block(item.x + dx, item.y + dy);
+        }
         for (const machine of machines)
         {
             block(machine.x, machine.y);
