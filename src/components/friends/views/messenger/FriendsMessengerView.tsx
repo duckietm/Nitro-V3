@@ -8,7 +8,6 @@ import { useFriends, useHelp, useMessenger, useTranslation } from '../../../../h
 import { resolveAvatarFigure } from '../friends-list/resolveAvatarFigure';
 import { FriendsMessengerHabbiconPickerView } from './FriendsMessengerHabbiconPickerView';
 import { FriendsMessengerThreadView } from './messenger-thread/FriendsMessengerThreadView';
-import { FriendsPersistentMessengerView } from './FriendsPersistentMessengerView';
 
 export const FriendsMessengerView: FC<{}> = (props) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -23,8 +22,7 @@ export const FriendsMessengerView: FC<{}> = (props) => {
         setActiveThreadId = null,
         closeThread = null,
         typingUserIds = [],
-        sendTypingStatus = null,
-        persistentMessenger = null
+        sendTypingStatus = null
     } = useMessenger();
     const { getFriend = null } = useFriends();
     const { report = null } = useHelp();
@@ -141,13 +139,6 @@ export const FriendsMessengerView: FC<{}> = (props) => {
                         return;
                     }
 
-                    if(persistentMessenger)
-                    {
-                        persistentMessenger.actions.openDirectConversation(participantId, friend.name);
-                        setIsVisible(true);
-                        return;
-                    }
-
                     const thread = getMessageThread(participantId);
 
                     if (!thread) return;
@@ -162,7 +153,7 @@ export const FriendsMessengerView: FC<{}> = (props) => {
         AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [getFriend, getMessageThread, persistentMessenger, setActiveThreadId]);
+    }, [getFriend, getMessageThread, setActiveThreadId]);
 
     useEffect(() => {
         if (!isVisible || !activeThread) return;
@@ -195,16 +186,6 @@ export const FriendsMessengerView: FC<{}> = (props) => {
     }, [isVisible, activeThread, lastThreadId, visibleThreads, setActiveThreadId]);
 
     if (!isVisible) return null;
-
-    if (persistentMessenger) {
-        return <FriendsPersistentMessengerView
-            messenger={persistentMessenger}
-            legacyStaffThread={activeThread?.participant?.id === -1 ? activeThread : null}
-            onClose={() => setIsVisible(false)}
-            onCloseStaff={() => activeThread && closeThread(activeThread.threadId)}
-            onSendStaff={(text) => activeThread && sendMessage(activeThread, GetSessionDataManager().userId, text)}
-        />;
-    }
 
     return (
         <DraggableWindow handleSelector=".swf-messenger-drag" windowPosition={DraggableWindowPosition.TOP_CENTER} offsetTop={8}>

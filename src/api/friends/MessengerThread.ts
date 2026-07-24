@@ -7,7 +7,7 @@ import { MessengerThreadChatGroup } from './MessengerThreadChatGroup';
 export class MessengerThread {
     public static MESSAGE_RECEIVED: string = 'MT_MESSAGE_RECEIVED';
     public static THREAD_ID: number = 0;
-    private static MAX_CHATS: number = 250;
+    private static MAX_CHATS: number = 500;
 
     private _threadId: number;
     private _participant: MessengerFriend;
