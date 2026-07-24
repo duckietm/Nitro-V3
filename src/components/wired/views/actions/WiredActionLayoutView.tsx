@@ -66,6 +66,7 @@ import { WiredActionBotTalkView } from './WiredActionBotTalkView';
 import { WiredActionBotTeleportView } from './WiredActionBotTeleportView';
 import { WiredActionCallAnotherStackView } from './WiredActionCallAnotherStackView';
 import { WiredActionCancelTransactionView } from './WiredActionCancelTransactionView';
+import { WiredActionChangeOpacityView } from './WiredActionChangeOpacityView';
 import { WiredActionChangeVariableValueView } from './WiredActionChangeVariableValueView';
 import { WiredActionChaseView } from './WiredActionChaseView';
 import { WiredActionChatView } from './WiredActionChatView';
@@ -332,6 +333,8 @@ export const WiredActionLayoutView = (code: number) => {
             return <WiredContractTradeView />;
         case WiredActionLayoutCode.CUSTOM_CONTRACT:
             return <WiredCustomContractView />;
+        case WiredActionLayoutCode.CHANGE_OPACITY:
+            return <WiredActionChangeOpacityView />;
     }
 
     return null;

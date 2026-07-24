@@ -111,4 +111,5 @@ export class WiredActionLayoutCode {
     public static CONTRACT_REWARD: number = 111;
     public static CONTRACT_TRADE: number = 112;
     public static CUSTOM_CONTRACT: number = 113;
+    public static CHANGE_OPACITY: number = 114;
 }
