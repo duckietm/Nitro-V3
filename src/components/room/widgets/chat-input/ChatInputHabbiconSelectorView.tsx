@@ -176,7 +176,7 @@ export const ChatInputHabbiconSelectorView: FC = () => {
 
     if(!enabled || !baseUrl) return null;
 
-    const useHabbicon = async (habbiconId: number) => {
+    const applyHabbicon = async (habbiconId: number) => {
         await HabbiconAssetManager.getInstance().preload();
         SendMessageComposer(new UseHabbiconComposer(habbiconId));
         const nextRecent = [habbiconId, ...recentHabbiconIds.filter(id => id !== habbiconId)].slice(0, RECENT_HABBICONS_LIMIT);
@@ -226,7 +226,7 @@ export const ChatInputHabbiconSelectorView: FC = () => {
                                                     className="habbicon-selector-item"
                                                     title={formatHabbiconTitle(entry.name, entry.id)}
                                                     type="button"
-                                                    onClick={() => void useHabbicon(entry.id)}
+                                                    onClick={() => void applyHabbicon(entry.id)}
                                                 >
                                                     <span
                                                         style={{
@@ -279,7 +279,7 @@ export const ChatInputHabbiconSelectorView: FC = () => {
                                     <h3>{section.title}</h3>
                                     <div className="habbicon-book-grid">
                                         {section.entries.map(entry => (
-                                            <button key={entry.id} type="button" onClick={() => void useHabbicon(entry.id)}>
+                                            <button key={entry.id} type="button" onClick={() => void applyHabbicon(entry.id)}>
                                                 <span
                                                     style={{
                                                         width: entry.width,
