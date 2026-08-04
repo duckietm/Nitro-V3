@@ -29,4 +29,13 @@ describe('Messenger and Friend List visual CSS', () =>
     {
         expect(css).toMatch(/\.friends-list-group-assign\s*\{[^}]*position:\s*relative;/s);
     });
+
+    it('hides an exiting friend-bar panel as soon as its tab is deselected', () =>
+    {
+        const closingPanelRule = css.match(/\.friend-bar\s+\.friend-bar-friend:not\(\.is-selected\)\s+\.friend-bar-actions\s*\{([^}]*)\}/s);
+
+        expect(closingPanelRule?.[1]).toMatch(/display:\s*none;/);
+        expect(closingPanelRule?.[1]).not.toMatch(/width:\s*262px;/);
+        expect(closingPanelRule?.[1]).not.toMatch(/border-top-color:\s*#9ac35d;/);
+    });
 });
