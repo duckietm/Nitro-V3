@@ -1,6 +1,10 @@
 import {
     CreateLinkEvent,
     GetSessionDataManager,
+    IWiredArrayInspectionData,
+    WiredArrayInspectionDataEvent,
+    WiredArrayInspectionRequestComposer,
+    WiredArrayInspectionUpdateComposer,
     WiredRoomSettingsDataEvent,
     WiredRoomSettingsRequestComposer,
     WiredRoomSettingsSaveComposer,
@@ -31,7 +35,16 @@ export interface IWiredRoomSettings {
     roomId: number;
 }
 
-export interface IWiredUserVariableDefinition {
+export interface IWiredArrayVariableMetadata {
+    arrayFormat?: 'simple' | 'record';
+    arrayMode?: 'list' | 'slots';
+    fields?: { id: number; name: string; order: number }[];
+    maxEntries?: number;
+    permanent?: boolean;
+    valueShape?: 'single' | 'array';
+}
+
+export interface IWiredUserVariableDefinition extends IWiredArrayVariableMetadata {
     availability: number;
     hasValue: boolean;
     isReadOnly?: boolean;
@@ -48,7 +61,7 @@ export interface IWiredUserVariableAssignment {
     variableItemId: number;
 }
 
-export interface IWiredFurniVariableDefinition {
+export interface IWiredFurniVariableDefinition extends IWiredArrayVariableMetadata {
     availability: number;
     hasValue: boolean;
     isReadOnly?: boolean;
@@ -65,7 +78,7 @@ export interface IWiredFurniVariableAssignment {
     variableItemId: number;
 }
 
-export interface IWiredRoomVariableDefinition {
+export interface IWiredRoomVariableDefinition extends IWiredArrayVariableMetadata {
     availability: number;
     hasValue: boolean;
     isReadOnly?: boolean;
@@ -82,7 +95,7 @@ export interface IWiredRoomVariableAssignment {
     variableItemId: number;
 }
 
-export interface IWiredContextVariableDefinition {
+export interface IWiredContextVariableDefinition extends IWiredArrayVariableMetadata {
     availability: number;
     hasValue: boolean;
     isReadOnly?: boolean;
@@ -139,6 +152,7 @@ export const useWiredToolsStore = () => {
     const [roomVariableAssignments, setRoomVariableAssignments] = useState<IWiredRoomVariableAssignment[]>([]);
     const [contextVariableDefinitions, setContextVariableDefinitions] = useState<IWiredContextVariableDefinition[]>([]);
     const [areUserVariablesLoaded, setAreUserVariablesLoaded] = useState(false);
+    const [arrayInspection, setArrayInspection] = useState<IWiredArrayInspectionData | null>(null);
 
     const storageKey = useMemo(() => {
         const userId = GetSessionDataManager().userId;
@@ -183,6 +197,7 @@ export const useWiredToolsStore = () => {
             setRoomVariableAssignments([]);
             setContextVariableDefinitions([]);
             setAreUserVariablesLoaded(false);
+            setArrayInspection(null);
             return;
         }
 
@@ -255,6 +270,12 @@ export const useWiredToolsStore = () => {
         setAreUserVariablesLoaded(true);
     });
 
+    useMessageEvent<WiredArrayInspectionDataEvent>(WiredArrayInspectionDataEvent, (event) => {
+        const data = event.getParser().data;
+
+        if (data) setArrayInspection(data);
+    });
+
     const updateAccountPreferences = useCallback((partialPreferences: Partial<IWiredAccountPreferences>) => {
         setAccountPreferences((prevValue) => ({
             ...prevValue,
@@ -282,6 +303,37 @@ export const useWiredToolsStore = () => {
 
         SendMessageComposer(new WiredUserVariablesRequestComposer());
     }, [roomSettings.canInspect]);
+
+    const requestArrayInspection = useCallback(
+        (variableType: number, requestedOwnerId: number, definitionItemId: number, page = 0, pageSize = 25) => {
+            if (!roomSettings.canInspect) return;
+
+            SendMessageComposer(new WiredArrayInspectionRequestComposer(variableType, requestedOwnerId, definitionItemId, page, pageSize));
+        },
+        [roomSettings.canInspect]
+    );
+
+    const updateArrayInspectionField = useCallback(
+        (
+            variableType: number,
+            requestedOwnerId: number,
+            definitionItemId: number,
+            index: number,
+            fieldId: number,
+            value: string,
+            page: number,
+            pageSize: number
+        ) => {
+            if (!roomSettings.canModify) return;
+
+            SendMessageComposer(
+                new WiredArrayInspectionUpdateComposer(variableType, requestedOwnerId, definitionItemId, index, fieldId, value, page, pageSize)
+            );
+        },
+        [roomSettings.canModify]
+    );
+
+    const clearArrayInspection = useCallback(() => setArrayInspection(null), []);
 
     const updateUserVariableValue = useCallback(
         (userId: number, variableItemId: number, value: number) => {
@@ -611,9 +663,13 @@ export const useWiredToolsStore = () => {
         roomVariableAssignments,
         contextVariableDefinitions,
         areUserVariablesLoaded,
+        arrayInspection,
         updateAccountPreferences,
         saveRoomSettings,
         requestUserVariables,
+        requestArrayInspection,
+        updateArrayInspectionField,
+        clearArrayInspection,
         assignUserVariable,
         removeUserVariable,
         updateUserVariableValue,
