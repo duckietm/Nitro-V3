@@ -48,4 +48,5 @@ export class WiredConditionlayout {
     public static TRG_FURNI_ADJACENT_STATE: number = 46;
     public static CHEST_HAS_ITEMS: number = 47;
     public static CHEST_HAS_ITEM_TYPE: number = 48;
+    public static CHECK_ARRAY: number = 49;
 }

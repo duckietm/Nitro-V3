@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { GetWiredTimeLocale, LocalizeText, WiredFurniType, localizeWithFallback } from '../../../../api';
+import { GetWiredTimeLocale, LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import contextVariableIcon from '../../../../assets/images/wired/var/icon_source_context_clean.png';
 import furniVariableIcon from '../../../../assets/images/wired/var/icon_source_furni.png';
 import userVariableIcon from '../../../../assets/images/wired/var/icon_source_user.png';
@@ -144,7 +144,7 @@ export const WiredActionGiveVariableView: FC<{}> = () => {
 
     useEffect(() => {
         if (!selectedVariableDefinition) return;
-        if (selectedVariableDefinition.hasValue) return;
+        if (selectedVariableDefinition.hasValue && selectedVariableDefinition.valueShape !== 'array') return;
 
         setInitialValueInput('0');
     }, [selectedVariableDefinition]);
@@ -239,8 +239,8 @@ export const WiredActionGiveVariableView: FC<{}> = () => {
                         <div className="nitro-wired__give-var-input-row">
                             <Text>{LocalizeText('wiredfurni.params.variables.value_settings.initial_value')}</Text>
                             <NitroInput
-                                className={`nitro-wired__give-var-number ${!selectedVariableDefinition?.hasValue ? 'nitro-wired__give-var-number--blurred' : ''}`}
-                                readOnly={!selectedVariableDefinition?.hasValue}
+                                className={`nitro-wired__give-var-number ${!selectedVariableDefinition?.hasValue || selectedVariableDefinition.valueShape === 'array' ? 'nitro-wired__give-var-number--blurred' : ''}`}
+                                readOnly={!selectedVariableDefinition?.hasValue || selectedVariableDefinition.valueShape === 'array'}
                                 type="number"
                                 value={initialValueInput}
                                 onChange={(event) => setInitialValueInput(event.target.value)}
@@ -262,7 +262,9 @@ export const WiredActionGiveVariableView: FC<{}> = () => {
                             <div className="nitro-wired__divider" />
 
                             <div className="nitro-wired__give-var-section">
-                                <div className="nitro-wired__give-var-section-title">{localizeWithFallback('wiredfurni.params.sources.merged.title.variables_destination', 'Destinazione variabile:')}</div>
+                                <div className="nitro-wired__give-var-section-title">
+                                    {localizeWithFallback('wiredfurni.params.sources.merged.title.variables_destination', 'Destinazione variabile:')}
+                                </div>
                                 <div className="flex items-center gap-1">
                                     <Button
                                         disabled={resolvedSourceOptions.length <= 1}

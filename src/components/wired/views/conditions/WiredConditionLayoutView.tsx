@@ -6,6 +6,7 @@ import { WiredConditionActorIsOnFurniView } from './WiredConditionActorIsOnFurni
 import { WiredConditionActorIsTeamMemberView } from './WiredConditionActorIsTeamMemberView';
 import { WiredConditionActorIsWearingBadgeView } from './WiredConditionActorIsWearingBadgeView';
 import { WiredConditionActorIsWearingEffectView } from './WiredConditionActorIsWearingEffectView';
+import { WiredConditionCheckArrayView } from './WiredConditionCheckArrayView';
 import { WiredConditionChestHasItemsView } from './WiredConditionChestHasItemsView';
 import { WiredConditionChestHasItemTypeView } from './WiredConditionChestHasItemTypeView';
 import { WiredConditionCounterTimeMatchesView } from './WiredConditionCounterTimeMatchesView';
@@ -26,8 +27,8 @@ import { WiredConditionTeamHasRankView } from './WiredConditionTeamHasRankView';
 import { WiredConditionTeamHasScoreView } from './WiredConditionTeamHasScoreView';
 import { WiredConditionTimeElapsedLessView } from './WiredConditionTimeElapsedLessView';
 import { WiredConditionTimeElapsedMoreView } from './WiredConditionTimeElapsedMoreView';
-import { WiredConditionTriggerFurniAdjacentStateView } from './WiredConditionTriggerFurniAdjacentStateView';
 import { WiredConditionTriggererMatchView } from './WiredConditionTriggererMatchView';
+import { WiredConditionTriggerFurniAdjacentStateView } from './WiredConditionTriggerFurniAdjacentStateView';
 import { WiredConditionUserCountInRoomView } from './WiredConditionUserCountInRoomView';
 import { WiredConditionUserOnFurniWithStateView } from './WiredConditionUserOnFurniWithStateView';
 import { WiredConditionUserPerformsActionView } from './WiredConditionUserPerformsActionView';
@@ -129,6 +130,8 @@ export const WiredConditionLayoutView = (code: number) => {
             return <WiredConditionChestHasItemsView />;
         case WiredConditionlayout.CHEST_HAS_ITEM_TYPE:
             return <WiredConditionChestHasItemTypeView />;
+        case WiredConditionlayout.CHECK_ARRAY:
+            return <WiredConditionCheckArrayView />;
     }
 
     return null;
