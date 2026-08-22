@@ -163,7 +163,10 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
                         </div>
                     )}
                 </div>
-                <div className="pointer absolute left-[50%] translate-x-[-50%] w-[9px] h-[6px] bottom-[-5px]" />
+                <div
+                    className="pointer absolute translate-x-[-50%] w-[9px] h-[6px] bottom-[-5px]"
+                    style={{ left: 'var(--chat-pointer-x, 50%)' }}
+                />
             </div>
         </div>
     );

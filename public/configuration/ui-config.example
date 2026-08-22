@@ -7,7 +7,7 @@
     "habbopages.url": "/gamedata/habbopages/",
     "group.homepage.url": "${url.prefix}/groups/%groupid%/id",
     "guide.help.alpha.groupid": 0,
-    "chat.viewer.height.percentage": 0.4,
+    "chat.viewer.height.percentage": 0.25,
     "widget.dimmer.colorwheel": false,
     "avatar.wardrobe.max.slots": 10,
     "user.badges.max.slots": 5,

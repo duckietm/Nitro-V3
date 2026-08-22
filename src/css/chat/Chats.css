@@ -1,5 +1,5 @@
 .bubble-container {
-    transition: top 0.2s ease 0s;
+    transition: top 0.15s linear, left 0.15s linear;
 
     .chat-bubble {
         border-image-slice: 17 6 6 29 fill;

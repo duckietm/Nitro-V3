@@ -1,12 +1,13 @@
-import { RoomChatSettings } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useRef } from 'react';
-import { ChatBubbleMessage, GetConfigurationValue } from '../../../../api';
+import { ChatBubbleMessage, GetConfigurationValue, GetRoomObjectScreenLocation } from '../../../../api';
 import { useChatWidget, useChatWindow } from '../../../../hooks';
 import IntervalWebWorker from '../../../../workers/IntervalWebWorker';
 import { WorkerBuilder } from '../../../../workers/WorkerBuilder';
 import { CHAT_TEXT_SIZE_EVENT } from '../chat-input/chatTextSize';
 import { ChatWidgetMessageView } from './ChatWidgetMessageView';
 import { ChatWidgetWindowView } from './ChatWidgetWindowView';
+import { followFreeFlowAnchor, getChatViewerHeight, resolveFreeFlowLayout } from './freeFlowChatLayout';
 
 const CHAT_MOVE_UP_PIXELS = 19;
 const CHAT_COLLISION_ITERATIONS = 20;
@@ -55,6 +56,30 @@ export const ChatWidgetView: FC<{}> = (props) => {
     const resolveOverlappingChats = useCallback(() => {
         const visibleChats = chatMessages.filter((chat) => chat.elementRef && chat.width > 0 && chat.height > 0);
 
+        if (chatSettings?.mode === RoomChatSettings.CHAT_MODE_FREE_FLOW) {
+            const positions = resolveFreeFlowLayout(visibleChats.map((chat) => ({
+                id: chat.id,
+                left: chat.left,
+                top: chat.top,
+                width: chat.width,
+                height: chat.height,
+                anchorX: chat.location?.x ?? (chat.left + (chat.width / 2))
+            })));
+            const positionsById = new Map(positions.map((position) => [position.id, position]));
+
+            visibleChats.forEach((chat) => {
+                const position = positionsById.get(chat.id);
+
+                if (!position) return;
+
+                chat.left = position.left;
+                chat.top = position.top;
+                chat.elementRef.style.setProperty('--chat-pointer-x', `${position.pointerX}px`);
+            });
+
+            return;
+        }
+
         for (let iteration = 0; iteration < CHAT_COLLISION_ITERATIONS; iteration++) {
             let moved = false;
 
@@ -85,7 +110,31 @@ export const ChatWidgetView: FC<{}> = (props) => {
 
             if (!moved) break;
         }
-    }, [chatMessages, getChatCollisionRect]);
+    }, [chatMessages, chatSettings?.mode, getChatCollisionRect]);
+
+    const syncChatAnchors = useCallback(() => {
+        if (chatSettings?.mode !== RoomChatSettings.CHAT_MODE_FREE_FLOW) return;
+
+        let moved = false;
+
+        chatMessages.forEach((chat) => {
+            if (!chat.elementRef || !chat.location || chat.senderId < 0) return;
+
+            const roomObject = GetRoomEngine().getRoomObject(chat.roomId, chat.senderId, RoomObjectCategory.UNIT);
+
+            if (!roomObject) return;
+
+            const nextLocation = GetRoomObjectScreenLocation(chat.roomId, chat.senderId, RoomObjectCategory.UNIT);
+
+            if (!nextLocation || !Number.isFinite(nextLocation.x) || Math.abs(nextLocation.x - chat.location.x) < 0.5) return;
+
+            chat.left = followFreeFlowAnchor(chat.left, chat.location.x, nextLocation.x);
+            chat.location = { x: nextLocation.x, y: nextLocation.y };
+            moved = true;
+        });
+
+        if (moved) resolveOverlappingChats();
+    }, [chatMessages, chatSettings?.mode, resolveOverlappingChats]);
 
     const makeRoom = useCallback(
         (chat: ChatBubbleMessage) => {
@@ -126,7 +175,8 @@ export const ChatWidgetView: FC<{}> = (props) => {
             if (!elementRef || !elementRef.current) return;
 
             const currentHeight = elementRef.current.offsetHeight;
-            const newHeight = Math.round(document.body.offsetHeight * GetConfigurationValue<number>('chat.viewer.height.percentage'));
+            const configuredHeightPercentage = GetConfigurationValue<number>('chat.viewer.height.percentage', 0.25);
+            const newHeight = getChatViewerHeight(document.body.offsetHeight, configuredHeightPercentage);
 
             elementRef.current.style.height = `${newHeight}px`;
 
@@ -153,6 +203,19 @@ export const ChatWidgetView: FC<{}> = (props) => {
             window.removeEventListener('resize', resize);
         };
     }, [refreshChatMeasurements, removeHiddenChats, resolveOverlappingChats, setChatMessages]);
+
+    useEffect(() => {
+        let animationFrame = 0;
+
+        const updateAnchors = () => {
+            syncChatAnchors();
+            animationFrame = window.requestAnimationFrame(updateAnchors);
+        };
+
+        animationFrame = window.requestAnimationFrame(updateAnchors);
+
+        return () => window.cancelAnimationFrame(animationFrame);
+    }, [syncChatAnchors]);
 
     useEffect(() => {
         const moveAllChatsUp = (amount: number) => {

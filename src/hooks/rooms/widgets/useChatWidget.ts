@@ -350,7 +350,13 @@ const useChatWidgetState = () => {
 
         const offsetX = event.offsetX;
 
-        chatMessages.forEach((chat) => chat.elementRef && (chat.left += offsetX));
+        chatMessages.forEach((chat) => {
+            if (!chat.elementRef) return;
+
+            chat.left += offsetX;
+
+            if (chat.location) chat.location = { ...chat.location, x: chat.location.x + offsetX };
+        });
     });
 
     useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, (event) => {
