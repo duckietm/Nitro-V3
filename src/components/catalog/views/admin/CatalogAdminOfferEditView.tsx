@@ -2,12 +2,12 @@ import { FC, useCallback, useEffect, useRef } from 'react';
 import { FaCubes, FaSave, FaSpinner, FaTrash, FaUndo } from 'react-icons/fa';
 import { CatalogType, GetConfigurationValue, IPurchasableOffer, LocalizeText, localizeWithFallback, ProductTypeEnum } from '../../../../api';
 import { useCatalogData, useCatalogUiState, usePurse } from '../../../../hooks';
+import { CatalogStudioOfferSnapshot } from '../../admin/studio/CatalogStudioTypes';
+import { useCatalogStudio } from '../../admin/studio/useCatalogStudio';
 import { IEditingOfferDetails, IOfferEditData, useCatalogAdmin } from '../../CatalogAdminContext';
+import { claimCatalogAdminHydration } from './CatalogAdminFormHydration';
 import { CatalogAdminModalView } from './CatalogAdminModalView';
 import { CatalogAdminOfferPriceView } from './CatalogAdminOfferPriceView';
-import { useCatalogStudio } from '../../admin/studio/useCatalogStudio';
-import { claimCatalogAdminHydration } from './CatalogAdminFormHydration';
-import { CatalogStudioOfferSnapshot } from '../../admin/studio/CatalogStudioTypes';
 import { useCatalogAdminSmartSave } from './useCatalogAdminSmartSave';
 
 export const isCatalogAdminNewOffer = (offer: IPurchasableOffer | null): boolean =>

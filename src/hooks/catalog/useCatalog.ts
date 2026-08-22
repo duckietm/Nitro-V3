@@ -81,11 +81,11 @@ import {
     getNodesByOfferIdFromMap,
     getOfferProductKeys,
     normalizeCatalogType,
-    restoreCatalogActivePath,
     RoomControllerLevel,
     RoomObjectCategory,
     RoomObjectType,
-    resolveBuilderFurniPlaceableStatus
+    resolveBuilderFurniPlaceableStatus,
+    restoreCatalogActivePath
 } from './useCatalog.helpers';
 import { useCatalogPlaceMultipleItems } from './useCatalogPlaceMultipleItems';
 import { useCatalogSkipPurchaseConfirmation } from './useCatalogSkipPurchaseConfirmation';

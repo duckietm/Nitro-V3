@@ -1,5 +1,5 @@
-import * as Popover from '@radix-ui/react-popover';
 import { HabbiconAssetManager, UseHabbiconComposer } from '@nitrots/nitro-renderer';
+import * as Popover from '@radix-ui/react-popover';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../api';
 import { HabbiconsLogo, UseHabbiconIcon } from '../../../../assets/images/habbicons';

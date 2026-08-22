@@ -2,8 +2,8 @@ import { FC, useEffect } from 'react';
 import { LocalizeText } from '../../../../api';
 import { useGameCenter, useSnowWar } from '../../../../hooks';
 import { SnowWarArenaView } from './SnowWarArenaView';
-import { SnowWarLobbyView } from './SnowWarLobbyView';
 import { SnowWarLeaderboardView } from './SnowWarLeaderboardView';
+import { SnowWarLobbyView } from './SnowWarLobbyView';
 import { SnowWarResultsView } from './SnowWarResultsView';
 import { SnowWarTeamsView } from './SnowWarTeamsView';
 

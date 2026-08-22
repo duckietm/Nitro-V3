@@ -1,7 +1,4 @@
 import { WiredTriggerLayout } from '../../../../api';
-import { WiredTriggerUserGetsHandItemView } from './WiredTriggerUserGetsHandItemView';
-import { WiredTriggerDiceRolledView } from './WiredTriggerDiceRolledView';
-import { WiredTriggerPressKeybindView } from './WiredTriggerPressKeybindView';
 import { WiredTriggerAvatarEnterRoomView } from './WiredTriggerAvatarEnterRoomView';
 import { WiredTriggerAvatarLeaveRoomView } from './WiredTriggerAvatarLeaveRoomView';
 import { WiredTriggerAvatarSaysSomethingView } from './WiredTriggerAvatarSaysSomethingView';
@@ -14,17 +11,20 @@ import { WiredTriggerClickTileView } from './WiredTriggerClickTileView';
 import { WiredTriggerClickUserView } from './WiredTriggerClickUserView';
 import { WiredTriggerClockCounterView } from './WiredTriggerClockCounterView';
 import { WiredTriggerCollisionView } from './WiredTriggerCollisionView';
+import { WiredTriggerDiceRolledView } from './WiredTriggerDiceRolledView';
 import { WiredTriggeExecuteOnceView } from './WiredTriggerExecuteOnceView';
 import { WiredTriggeExecutePeriodicallyLongView } from './WiredTriggerExecutePeriodicallyLongView';
 import { WiredTriggeExecutePeriodicallyShortView } from './WiredTriggerExecutePeriodicallyShortView';
 import { WiredTriggeExecutePeriodicallyView } from './WiredTriggerExecutePeriodicallyView';
 import { WiredTriggerGameEndsView } from './WiredTriggerGameEndsView';
 import { WiredTriggerGameStartsView } from './WiredTriggerGameStartsView';
+import { WiredTriggerPressKeybindView } from './WiredTriggerPressKeybindView';
 import { WiredTriggerReceiveSignalView } from './WiredTriggerReceiveSignalView';
 import { WiredTriggeScoreAchievedView } from './WiredTriggerScoreAchievedView';
 import { WiredTriggerToggleFurniView } from './WiredTriggerToggleFurniView';
 import { WiredTriggerTransactionCompleteView } from './WiredTriggerTransactionCompleteView';
 import { WiredTriggerTransactionFailView } from './WiredTriggerTransactionFailView';
+import { WiredTriggerUserGetsHandItemView } from './WiredTriggerUserGetsHandItemView';
 import { WiredTriggerUserPerformsActionView } from './WiredTriggerUserPerformsActionView';
 import { WiredTriggerVariableChangedView } from './WiredTriggerVariableChangedView';
 

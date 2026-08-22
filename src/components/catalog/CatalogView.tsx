@@ -5,8 +5,8 @@ import { CatalogType, GetConfigurationValue, LocalizeShortNumber, LocalizeText, 
 import { LayoutCurrencyIcon, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useCatalogActions, useCatalogData, useCatalogUiState, useHasPermission, usePurse } from '../../hooks';
 import { CatalogStudioProvider } from './admin/studio/CatalogStudioProvider';
-import { getCatalogHeaderDescription } from './catalogLocalization.helpers';
 import { CatalogAdminProvider, useCatalogAdmin } from './CatalogAdminContext';
+import { getCatalogHeaderDescription } from './catalogLocalization.helpers';
 import { parseCatalogTabLabel, useCatalogWindowWidth } from './useCatalogWindowWidth';
 import { CatalogAdminManagerView } from './views/admin/CatalogAdminManagerView';
 import { CatalogAdminOfferEditView } from './views/admin/CatalogAdminOfferEditView';

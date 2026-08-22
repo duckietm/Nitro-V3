@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { LocalizeText } from '../../../../../api';
 import { useCatalogData } from '../../../../../hooks';
-import { CatalogLayoutProps } from './CatalogLayout.types';
 import { CatalogItemGridWidgetView } from '../widgets/CatalogItemGridWidgetView';
 import { CatalogProductDetailsView } from '../widgets/CatalogProductDetailsView';
+import { CatalogLayoutProps } from './CatalogLayout.types';
 
 export const CatalogLayoutSoldLimitedView: FC<CatalogLayoutProps> = () => {
     const { currentOffer = null, currentPage = null } = useCatalogData();

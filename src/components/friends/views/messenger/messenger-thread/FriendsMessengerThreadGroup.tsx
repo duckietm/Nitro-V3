@@ -1,8 +1,8 @@
 import { GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import {
-    GetConfigurationValue,
     FriendlyTime,
+    GetConfigurationValue,
     GetGroupChatData,
     LocalizeText,
     MessengerGroupType,

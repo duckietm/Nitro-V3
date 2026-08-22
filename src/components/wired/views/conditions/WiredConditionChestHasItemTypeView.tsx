@@ -3,7 +3,7 @@ import { localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { ChestFurniIconPreview } from '../ChestFurniIconPreview';
-import { normalizeWiredComparison, WiredComparisonOperator, WIRED_CMP_DEFAULT } from '../WiredComparisonOperator';
+import { normalizeWiredComparison, WIRED_CMP_DEFAULT, WiredComparisonOperator } from '../WiredComparisonOperator';
 import { WiredConditionBaseView } from './WiredConditionBaseView';
 
 // Server contract (WiredConditionChestHasItemType): intData[0] = baseItemId, intData[1] = amount,

@@ -11,23 +11,23 @@ import {
     FriendRequestsEvent,
     GetFriendRequestsComposer,
     GetSessionDataManager,
+    MessageErrorEvent,
     MessengerInitComposer,
     MessengerInitEvent,
-    MessageErrorEvent,
     MoveFriendToCategoryComposer,
     NewFriendRequestEvent,
     RemoveFriendCategoryComposer,
     RenameFriendCategoryComposer,
-    RequestOfflineMessagesComposer,
     RequestFriendComposer,
+    RequestOfflineMessagesComposer,
     SetRelationshipStatusComposer
 } from '@nitrots/nitro-renderer';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { registerSharedHook, useSharedHook } from '@/state/useSharedHook';
 import {
     CloneObject,
-    localizeWithFallback,
     LocalizeText,
+    localizeWithFallback,
     MessengerFriend,
     MessengerRequest,
     MessengerSettings,

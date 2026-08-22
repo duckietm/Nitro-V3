@@ -17,8 +17,8 @@ import {
     getRecyclerEligibleItemIds,
     getRecyclerInventoryChoices,
     normalizeRecyclerSlotCount,
-    reconcileRecyclerSlots,
-    RecyclerInventoryChoice
+    RecyclerInventoryChoice,
+    reconcileRecyclerSlots
 } from './recycler.helpers';
 
 const OPERATION_TIMEOUT_MS = 12000;

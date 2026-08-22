@@ -9,5 +9,5 @@ export * from './MessengerSettings';
 export * from './MessengerThread';
 export * from './MessengerThreadChat';
 export * from './MessengerThreadChatGroup';
-export * from './OpenMessengerChat';
 export * from './messenger';
+export * from './OpenMessengerChat';

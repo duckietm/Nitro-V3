@@ -1,6 +1,6 @@
+import { CatalogProductMetadataEvent } from '@nitrots/nitro-renderer';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CatalogProductMetadataEvent } from '@nitrots/nitro-renderer';
 import { SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
 import { useCatalogProductMetadata } from './useCatalogProductMetadata';

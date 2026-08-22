@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType, localizeWithFallback } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';

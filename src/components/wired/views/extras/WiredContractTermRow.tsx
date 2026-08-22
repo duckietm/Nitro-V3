@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Text } from '../../../../common';
 import { ChestFurniIconPreview } from '../ChestFurniIconPreview';
-import { CURRENCY_OPTIONS, CONTRACT_KIND_CURRENCY, CONTRACT_KIND_FURNI, ContractTermRow } from './contractTermWire';
+import { CONTRACT_KIND_CURRENCY, CONTRACT_KIND_FURNI, ContractTermRow, CURRENCY_OPTIONS } from './contractTermWire';
 
 interface WiredContractTermRowProps {
     row: ContractTermRow;

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { GetCatalogLayout } from './GetCatalogLayout';
 import { CatalogLayoutPetCustomizationView } from './CatalogLayoutPetCustomizationView';
 import { CatalogLayoutUnavailableView } from './CatalogLayoutUnavailableView';
-import { CatalogLayoutRecyclerView } from './recycler/CatalogLayoutRecyclerView';
 import { CatalogLayoutVipBuyView } from './CatalogLayoutVipBuyView';
+import { GetCatalogLayout } from './GetCatalogLayout';
+import { CatalogLayoutRecyclerView } from './recycler/CatalogLayoutRecyclerView';
 
 const page = (layoutCode: string) =>
     ({

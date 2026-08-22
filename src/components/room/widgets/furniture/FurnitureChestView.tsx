@@ -21,20 +21,20 @@ import {
 } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { LocalizeText, localizeWithFallback, ProductImageUtility, SendMessageComposer } from '../../../../api';
-import { Column, Flex, LayoutCurrencyIcon, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
-import { ChestButton } from './ChestButton';
-import { chestFurniDisplayName, ChestFurniGroup, groupStoredFurni } from './chestFurniGrouping';
-import { FurniChestGridItem } from './FurniChestGridItem';
-import { FurniChestSearchBar } from './FurniChestSearchBar';
-import { useMessageEvent } from '../../../../hooks';
-import { useInventoryFurni } from '../../../../hooks/inventory';
-import sceneZero from '../../../../assets/images/chest/light_coins_chest_balance_zero.png';
+import sceneHigh from '../../../../assets/images/chest/light_coins_chest_balance_high.png';
 import sceneLow from '../../../../assets/images/chest/light_coins_chest_balance_low.png';
 import sceneMedium from '../../../../assets/images/chest/light_coins_chest_balance_medium.png';
-import sceneHigh from '../../../../assets/images/chest/light_coins_chest_balance_high.png';
+import sceneZero from '../../../../assets/images/chest/light_coins_chest_balance_zero.png';
+import furniEmptyScene from '../../../../assets/images/chest/variant_furni_chest_empty.png';
 import bellIcon from '../../../../assets/images/chest/wired_chests_bell_icon.png';
 import gearIcon from '../../../../assets/images/chest/wired_chests_gear_icon.png';
-import furniEmptyScene from '../../../../assets/images/chest/variant_furni_chest_empty.png';
+import { Column, Flex, LayoutCurrencyIcon, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { useMessageEvent } from '../../../../hooks';
+import { useInventoryFurni } from '../../../../hooks/inventory';
+import { ChestButton } from './ChestButton';
+import { ChestFurniGroup, chestFurniDisplayName, groupStoredFurni } from './chestFurniGrouping';
+import { FurniChestGridItem } from './FurniChestGridItem';
+import { FurniChestSearchBar } from './FurniChestSearchBar';
 
 interface ChestEntry {
     currencyType: number;

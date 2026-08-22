@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { WiredActionBaseView } from './WiredActionBaseView';
 import { WiredSourcesSelector } from '../WiredSourcesSelector';
+import { WiredActionBaseView } from './WiredActionBaseView';
 
 const MODE_GIVE = 0;
 const MODE_TAKE = 1;

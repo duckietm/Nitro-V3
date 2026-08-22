@@ -1,14 +1,14 @@
+import type { IHotelViewLandingScene, IHotelViewLandingSlot } from '@nitrots/nitro-renderer';
 import {
     CreateLinkEvent,
     GetSessionDataManager,
     HotelViewLandingEvent,
     HotelViewLandingRequestComposer,
+    HotelViewLandingResetVotesComposer,
     HotelViewLandingSaveComposer,
     HotelViewLandingSaveSceneComposer,
-    HotelViewLandingResetVotesComposer,
     HotelViewLandingVoteComposer
 } from '@nitrots/nitro-renderer';
-import type { IHotelViewLandingScene, IHotelViewLandingSlot } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, FormEvent, PointerEvent, useEffect, useRef, useState } from 'react';
 import { GetConfigurationValue, SendMessageComposer } from '../../api';
 import { LayoutAvatarImageView } from '../../common';

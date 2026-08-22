@@ -1,14 +1,14 @@
 import { FollowFriendMessageComposer, GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, UIEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FaArrowLeft, FaCopy, FaExclamationTriangle, FaSearch, FaTimes, FaUsers } from 'react-icons/fa';
-import { CopyToClipboard, GetUserProfile, LocalizeText, MessengerConversation, MessengerMessage, MessengerThread, ReportType, selectConversations, selectMessages, SendMessageComposer } from '../../../../api';
+import { CopyToClipboard, GetUserProfile, LocalizeText, MessengerConversation, MessengerMessage, MessengerThread, ReportType, SendMessageComposer, selectConversations, selectMessages } from '../../../../api';
 import { DraggableWindowPosition, LayoutAvatarImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFriends, useHelp } from '../../../../hooks';
 import { STAFF_CHAT_FIGURE } from '../../staffChatIdentity';
 import { resolveAvatarFigure } from '../friends-list/resolveAvatarFigure';
+import { MessengerMessageStatusView } from './MessengerMessageStatusView';
 import { FriendsMessengerThreadView } from './messenger-thread/FriendsMessengerThreadView';
 import { canFollowMessengerConversation, filterMessengerConversations, resolveConversationAfterClose, restoreConversationsWithNewMessages } from './persistentMessenger.helpers';
-import { MessengerMessageStatusView } from './MessengerMessageStatusView';
 
 interface PersistentMessengerApi
 {

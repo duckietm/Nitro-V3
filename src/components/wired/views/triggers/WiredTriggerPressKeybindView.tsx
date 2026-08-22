@@ -1,5 +1,5 @@
 import { FC, KeyboardEvent, useEffect, useState } from 'react';
-import { WiredFurniType, localizeWithFallback } from '../../../../api';
+import { localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredTriggerBaseView } from './WiredTriggerBaseView';

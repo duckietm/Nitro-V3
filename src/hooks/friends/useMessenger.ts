@@ -1,8 +1,8 @@
 import {
     ConsoleReadReceiptEvent,
     ConsoleTypingComposer,
-    FriendListUpdateEvent,
     FriendIsTypingEvent,
+    FriendListUpdateEvent,
     GetSessionDataManager,
     MarkConsoleReadComposer,
     NewConsoleMessageEvent,
@@ -20,16 +20,16 @@ import {
     MessengerThreadChat,
     NotificationAlertType,
     PlaySound,
-    selectMessengerIconState,
     SendMessageComposer,
+    SoundNames,
     selectMessages,
-    SoundNames
+    selectMessengerIconState
 } from '../../api';
 import { useMessageEvent } from '../events';
 import { useNotification } from '../notification';
 import { IResolvedTranslation, useTranslation } from '../translation';
-import { useFriends } from './useFriends';
 import { useMessengerHistory, useMessengerRealtime } from './messenger';
+import { useFriends } from './useFriends';
 
 const useMessengerState = () => {
     // Still load-bearing after FriendsPersistentMessengerView was removed: the realtime

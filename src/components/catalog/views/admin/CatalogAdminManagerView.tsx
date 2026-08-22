@@ -3,9 +3,9 @@ import {
     FaArrowDown,
     FaArrowsAlt,
     FaArrowUp,
+    FaCheckCircle,
     FaChevronDown,
     FaChevronRight,
-    FaCheckCircle,
     FaCloudUploadAlt,
     FaEdit,
     FaExclamationTriangle,
@@ -21,11 +21,11 @@ import { GetConfigurationValue, ICatalogNode, IPurchasableOffer, LocalizeText, P
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useCatalogActions, useCatalogData, useCatalogUiState } from '../../../../hooks';
 import { replaceCatalogPageOffers } from '../../../../hooks/catalog/useCatalog.helpers';
-import { CATALOG_ROOT_LOCK_ID, useCatalogAdmin } from '../../CatalogAdminContext';
 import { getCatalogStudioCommandState, getCatalogStudioWorkspaceTabs } from '../../admin/studio/CatalogStudioCommandCenter';
 import { CatalogStudioPublishReview } from '../../admin/studio/CatalogStudioPublishReview';
 import { CatalogStudioTransferPanel } from '../../admin/studio/CatalogStudioTransferPanel';
 import { useCatalogStudio } from '../../admin/studio/useCatalogStudio';
+import { CATALOG_ROOT_LOCK_ID, useCatalogAdmin } from '../../CatalogAdminContext';
 import { parseCatalogTabLabel } from '../../useCatalogWindowWidth';
 import { CatalogIconView } from '../catalog-icon/CatalogIconView';
 import {

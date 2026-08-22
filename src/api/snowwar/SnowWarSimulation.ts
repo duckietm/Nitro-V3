@@ -1,7 +1,4 @@
 import {
-    SUBTURN_MOVEMENT,
-    SUBTURN_MS,
-    SUBTURNS_PER_TICK,
     calculateFlightPathWorld,
     direction360To8,
     getAngleFromComponents,
@@ -12,6 +9,9 @@ import {
     moveTowards,
     SNOWBALL_CREATE_TIME,
     STUN_TIME,
+    SUBTURN_MOVEMENT,
+    SUBTURN_MS,
+    SUBTURNS_PER_TICK,
     TILE_SIZE_WORLD,
     tileToWorld,
     worldToTile,

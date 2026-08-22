@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { initialMessengerState, messengerReducer, MessengerState } from '../../../api';
+import { initialMessengerState, MessengerState, messengerReducer } from '../../../api';
 import { createMessengerActionsController, createMessengerHistoryController } from '.';
 
 describe('messenger controllers', () =>

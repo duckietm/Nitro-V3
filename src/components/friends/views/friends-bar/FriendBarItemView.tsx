@@ -2,12 +2,12 @@ import { FindNewFriendsMessageComposer, MouseEventType } from '@nitrots/nitro-re
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useRef, useState } from 'react';
 import { GetUserProfile, LocalizeText, MessengerFriend, OpenMessengerChat, SendMessageComposer } from '../../../../api';
+import staffChatFrankIcon from '../../../../assets/images/friends/staff-chat-frank.svg';
 import addFriendsIcon from '../../../../assets/images/friends/swf/add_friends_icon.png';
 import chatIcon from '../../../../assets/images/friends/swf/friendlist_chat.png';
 import profileIcon from '../../../../assets/images/friends/swf/friendlist_eye.png';
 import visitIcon from '../../../../assets/images/friends/swf/friendlist_go_room.png';
 import searchFriendsIcon from '../../../../assets/images/friends/swf/search_friends_icon.png';
-import staffChatFrankIcon from '../../../../assets/images/friends/staff-chat-frank.svg';
 import { LayoutAvatarImageView, LayoutBadgeImageView } from '../../../../common';
 import { useFriends } from '../../../../hooks';
 import { isStaffChatIdentity } from '../../staffChatIdentity';

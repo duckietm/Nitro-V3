@@ -1,5 +1,5 @@
-import type { ICatalogNode } from '../../../../api';
 import { describe, expect, it } from 'vitest';
+import type { ICatalogNode } from '../../../../api';
 import type { CatalogStudioPageSnapshot } from '../../admin/studio/CatalogStudioTypes';
 import * as DraftTree from './CatalogAdminDraftTree';
 

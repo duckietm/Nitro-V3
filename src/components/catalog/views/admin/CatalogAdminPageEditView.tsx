@@ -2,15 +2,15 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FaLanguage, FaSave, FaSpinner, FaTrash, FaUndo } from 'react-icons/fa';
 import { CatalogType, LocalizeText, localizeWithFallback } from '../../../../api';
 import { useCatalogData, useCatalogUiState, useTranslationActions, useTranslationState } from '../../../../hooks';
+import { useCatalogStudio } from '../../admin/studio/useCatalogStudio';
 import { CATALOG_ROOT_LOCK_ID, IEditingPageDetails, IPageEditData, useCatalogAdmin } from '../../CatalogAdminContext';
 import { parseCatalogTabLabel } from '../../useCatalogWindowWidth';
 import { CatalogIconView } from '../catalog-icon/CatalogIconView';
-import { CatalogAdminModalView } from './CatalogAdminModalView';
-import { useCatalogStudio } from '../../admin/studio/useCatalogStudio';
+import { CATALOG_STUDIO_LAYOUT_CODES, isCatalogStudioLayoutCode } from '../page/layout/catalogLayoutRegistry';
 import { claimCatalogAdminHydration } from './CatalogAdminFormHydration';
+import { CatalogAdminModalView } from './CatalogAdminModalView';
 import { createCatalogAdminPageDetailsFromSnapshot } from './CatalogAdminPageState';
 import { useCatalogAdminSmartSave } from './useCatalogAdminSmartSave';
-import { CATALOG_STUDIO_LAYOUT_CODES, isCatalogStudioLayoutCode } from '../page/layout/catalogLayoutRegistry';
 
 const MODE_OPTIONS = [
     { value: 'NORMAL', label: 'Normal' },

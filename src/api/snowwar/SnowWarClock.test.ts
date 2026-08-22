@@ -1,5 +1,5 @@
-import { snowWarDeadlineFromSeconds, snowWarSecondsRemaining } from './SnowWarClock';
 import { describe, expect, it } from 'vitest';
+import { snowWarDeadlineFromSeconds, snowWarSecondsRemaining } from './SnowWarClock';
 
 describe('SnowWar wall-clock countdown', () =>
 {

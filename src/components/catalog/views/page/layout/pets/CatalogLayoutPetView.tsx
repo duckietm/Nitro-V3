@@ -12,9 +12,9 @@ import { DispatchUiEvent, GetPetAvailableColors, GetPetIndexFromLocalization, Lo
 import { LayoutPetImageView } from '../../../../../../common';
 import { CatalogPurchasedEvent, CatalogPurchaseFailureEvent } from '../../../../../../events';
 import { useCatalogData, useCatalogUiState, useMessageEvent, useSellablePetPalette, useUiEvent } from '../../../../../../hooks';
+import { CatalogScrollAreaView } from '../../common/CatalogScrollAreaView';
 import { CatalogAddOnBadgeWidgetView } from '../../widgets/CatalogAddOnBadgeWidgetView';
 import { CatalogTotalPriceWidget } from '../../widgets/CatalogTotalPriceWidget';
-import { CatalogScrollAreaView } from '../../common/CatalogScrollAreaView';
 import { CatalogLayoutProps } from '../CatalogLayout.types';
 import {
     buildNewPetPaletteChoices,

@@ -10,9 +10,9 @@ import {
     RoomRotatingEffect,
     RoomSettingsComposer,
     RoomShakingEffect,
-    UseHabbiconComposer,
     RoomZoomEvent,
-    TextureUtils
+    TextureUtils,
+    UseHabbiconComposer
 } from '@nitrots/nitro-renderer';
 import { useCallback } from 'react';
 import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../api';

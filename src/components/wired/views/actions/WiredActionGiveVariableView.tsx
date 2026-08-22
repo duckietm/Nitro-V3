@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { GetWiredTimeLocale, LocalizeText, WiredFurniType, localizeWithFallback } from '../../../../api';
+import { GetWiredTimeLocale, LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import contextVariableIcon from '../../../../assets/images/wired/var/icon_source_context_clean.png';
 import furniVariableIcon from '../../../../assets/images/wired/var/icon_source_furni.png';
 import userVariableIcon from '../../../../assets/images/wired/var/icon_source_user.png';

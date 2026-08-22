@@ -12,7 +12,6 @@ import { DispatchUiEvent, LocalizeText, NotificationAlertType, RoomWidgetUpdateR
 import { WidgetErrorBoundary } from '../../../common';
 import { useNitroEvent, useNotification, usePollSubscriptions, useRoom } from '../../../hooks';
 import { AvatarInfoWidgetView } from './avatar-info/AvatarInfoWidgetView';
-import { RoomKeybindView } from './RoomKeybindView';
 import { BuildHeightWidgetView } from './BuildHeightWidgetView';
 import { ChatWidgetView } from './chat/ChatWidgetView';
 import { ChatInputView } from './chat-input/ChatInputView';
@@ -22,6 +21,7 @@ import { DoorbellWidgetView } from './doorbell/DoorbellWidgetView';
 import { FriendRequestWidgetView } from './friend-request/FriendRequestWidgetView';
 import { FurnitureWidgetsView } from './furniture/FurnitureWidgetsView';
 import { PetPackageWidgetView } from './pet-package/PetPackageWidgetView';
+import { RoomKeybindView } from './RoomKeybindView';
 import { RoomFilterWordsWidgetView } from './room-filter-words/RoomFilterWordsWidgetView';
 import { RoomThumbnailWidgetView } from './room-thumbnail/RoomThumbnailWidgetView';
 import { RoomToolsWidgetView } from './room-tools/RoomToolsWidgetView';

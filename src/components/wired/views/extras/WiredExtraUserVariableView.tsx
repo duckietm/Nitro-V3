@@ -1,5 +1,5 @@
 ﻿import { FC, useEffect, useMemo, useState } from 'react';
-import { LocalizeText, WiredFurniType , localizeWithFallback} from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType  } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { NitroInput } from '../../../../layout';

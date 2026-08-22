@@ -1,5 +1,5 @@
-import { ICatalogPage } from '../../../../../api';
 import { FC } from 'react';
+import { ICatalogPage } from '../../../../../api';
 import { CatalogLayoutProps } from './CatalogLayout.types';
 import { CatalogLayoutBadgeDisplayView } from './CatalogLayoutBadgeDisplayView';
 import { CatalogLayoutBuildersClubBuyView } from './CatalogLayoutBuildersClubBuyView';
@@ -10,18 +10,19 @@ import { CatalogLayouGuildForumView } from './CatalogLayoutGuildForumView';
 import { CatalogLayouGuildFrontpageView } from './CatalogLayoutGuildFrontpageView';
 import { CatalogLayoutInfoLoyaltyView } from './CatalogLayoutInfoLoyaltyView';
 import { CatalogLayoutInformationView } from './CatalogLayoutInformationView';
+import { CatalogLayoutPetCustomizationView } from './CatalogLayoutPetCustomizationView';
 import { CatalogLayoutPets2View } from './CatalogLayoutPets2View';
 import { CatalogLayoutPets3View } from './CatalogLayoutPets3View';
-import { CatalogLayoutPetCustomizationView } from './CatalogLayoutPetCustomizationView';
 import { CatalogLayoutRoomAdsView } from './CatalogLayoutRoomAdsView';
 import { CatalogLayoutRoomBundleView } from './CatalogLayoutRoomBundleView';
-import { CatalogLayoutSoldLimitedView } from './CatalogLayoutSoldLimitedView';
 import { CatalogLayoutSingleBundleView } from './CatalogLayoutSingleBundleView';
+import { CatalogLayoutSoldLimitedView } from './CatalogLayoutSoldLimitedView';
 import { CatalogLayoutSoundMachineView } from './CatalogLayoutSoundMachineView';
 import { CatalogLayoutSpacesView } from './CatalogLayoutSpacesView';
 import { CatalogLayoutTrophiesView } from './CatalogLayoutTrophiesView';
 import { CatalogLayoutUnavailableView } from './CatalogLayoutUnavailableView';
 import { CatalogLayoutVipBuyView } from './CatalogLayoutVipBuyView';
+import { CatalogLayoutRenderer, getCatalogLayoutDefinition } from './catalogLayoutRegistry';
 import { CatalogLayoutFrontpage4View } from './frontpage4/CatalogLayoutFrontpage4View';
 import { CatalogLayoutMarketplaceOwnItemsView } from './marketplace/CatalogLayoutMarketplaceOwnItemsView';
 import { CatalogLayoutMarketplacePublicItemsView } from './marketplace/CatalogLayoutMarketplacePublicItemsView';
@@ -29,7 +30,6 @@ import { CatalogLayoutPetView } from './pets/CatalogLayoutPetView';
 import { CatalogLayoutRecyclerPrizesView } from './recycler/CatalogLayoutRecyclerPrizesView';
 import { CatalogLayoutRecyclerView } from './recycler/CatalogLayoutRecyclerView';
 import { CatalogLayoutVipGiftsView } from './vip-gifts/CatalogLayoutVipGiftsView';
-import { CatalogLayoutRenderer, getCatalogLayoutDefinition } from './catalogLayoutRegistry';
 
 const layoutRenderers: Record<CatalogLayoutRenderer, FC<CatalogLayoutProps>> = {
     badgeDisplay: CatalogLayoutBadgeDisplayView,

@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { localizeWithFallback, WiredFurniType } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
-import { normalizeWiredComparison, WiredComparisonOperator, WIRED_CMP_DEFAULT } from '../WiredComparisonOperator';
+import { normalizeWiredComparison, WIRED_CMP_DEFAULT, WiredComparisonOperator } from '../WiredComparisonOperator';
 import { WiredConditionBaseView } from './WiredConditionBaseView';
 
 // Server contract (WiredConditionChestHasItems): intData[0] = amount, intData[1] = comparison op.

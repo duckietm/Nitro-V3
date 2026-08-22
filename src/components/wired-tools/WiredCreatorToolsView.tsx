@@ -26,10 +26,10 @@ import {
     RoomUnitStatusEvent,
     UpdateFurniturePositionComposer,
     Vector3d,
-    WiredMonitorDataEvent,
-    WiredMonitorRequestComposer,
     WiredFurniRuntimeStateEvent,
     WiredFurniRuntimeStateRequestComposer,
+    WiredMonitorDataEvent,
+    WiredMonitorRequestComposer,
     WiredUserInspectMoveComposer
 } from '@nitrots/nitro-renderer';
 import { FC, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -72,9 +72,9 @@ import {
     VARIABLES_ELEMENTS,
     WEEKDAY_NAMES,
     WIRED_CLOCK_REFRESH_MS,
+    WIRED_FREEZE_EFFECT_IDS,
     WIRED_FURNI_RUNTIME_ACTION_READ,
     WIRED_FURNI_RUNTIME_ACTION_WRITE,
-    WIRED_FREEZE_EFFECT_IDS,
     WIRED_INSPECTION_REFRESH_MS,
     WIRED_MONITOR_ACTION_CLEAR_LOGS,
     WIRED_MONITOR_ACTION_FETCH,

@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { localizeWithFallback, LocalizeText, WiredFurniType } from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType } from '../../../../api';
 import contextVariableIcon from '../../../../assets/images/wired/var/icon_source_context_clean.png';
 import furniVariableIcon from '../../../../assets/images/wired/var/icon_source_furni.png';
 import globalVariableIcon from '../../../../assets/images/wired/var/icon_source_global.png';

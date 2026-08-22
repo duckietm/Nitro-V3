@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { LocalizeText, WiredFurniType, WiredSelectionVisualizer , localizeWithFallback} from '../../../../api';
+import { LocalizeText, localizeWithFallback, WiredFurniType, WiredSelectionVisualizer  } from '../../../../api';
 import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredFurniSelectionSourceRow } from '../WiredFurniSelectionSourceRow';

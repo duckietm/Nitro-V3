@@ -18,9 +18,9 @@ import {
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ICatalogNode, IPurchasableOffer, NotificationAlertType, SendMessageComposer } from '../../api';
 import { useCatalogUiState, useMessageEvent, useNotification } from '../../hooks';
-import { useCatalogStudio } from './admin/studio/useCatalogStudio';
 import { nextCatalogStudioOperationId } from './admin/studio/CatalogStudioOperationId';
 import { CatalogStudioHistoryGroup, CatalogStudioOfferSnapshot, CatalogStudioPageSnapshot } from './admin/studio/CatalogStudioTypes';
+import { useCatalogStudio } from './admin/studio/useCatalogStudio';
 import { createCatalogAdminPageDetailsFromSnapshot } from './views/admin/CatalogAdminPageState';
 
 const toStudioCatalogType = (catalogType: string): 'NORMAL' | 'BUILDER' =>

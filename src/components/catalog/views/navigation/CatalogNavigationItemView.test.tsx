@@ -1,8 +1,8 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { CatalogNavigationItemView } from './CatalogNavigationItemView';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 
 const activateNode = vi.fn();
 

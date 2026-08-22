@@ -1,6 +1,6 @@
+import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import { DispatchUiEvent, SendMessageComposer } from '../../../../../api';
 import { useCatalogData, useCatalogSkipPurchaseConfirmation, useClubOffers, usePurse } from '../../../../../hooks';
 import { CatalogLayoutVipBuyView } from './CatalogLayoutVipBuyView';

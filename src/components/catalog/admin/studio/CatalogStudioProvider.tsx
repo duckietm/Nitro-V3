@@ -23,9 +23,9 @@ import {
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SendMessageComposer } from '../../../../api';
 import { useConnectionState, useMessageEvent } from '../../../../hooks';
-import { CatalogStudioDocumentResult, CatalogStudioHistoryGroup, CatalogStudioLock, CatalogStudioMutationResult, CatalogStudioPublishResult, CatalogStudioSession, CatalogStudioValidationState } from './CatalogStudioTypes';
 import { applyCatalogStudioMutation } from './CatalogStudioMutationState';
 import { nextCatalogStudioOperationId } from './CatalogStudioOperationId';
+import { CatalogStudioDocumentResult, CatalogStudioHistoryGroup, CatalogStudioLock, CatalogStudioMutationResult, CatalogStudioPublishResult, CatalogStudioSession, CatalogStudioValidationState } from './CatalogStudioTypes';
 import { CatalogStudioContext, CatalogStudioContextValue } from './useCatalogStudio';
 
 const lockKey = (entityType: string, entityId: number, catalogType: string = 'NORMAL') =>

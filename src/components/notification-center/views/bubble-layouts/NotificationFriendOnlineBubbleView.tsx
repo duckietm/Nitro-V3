@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import { FC, useEffect } from 'react';
 import { NotificationBubbleItem, OpenMessengerChat } from '../../../../api';
-import { LayoutAvatarImageView } from '../../../../common';
 import friendOnlineCircle from '../../../../assets/images/notifications/friendonline/friendonline_circle.png';
 import friendOnlineCircleInner from '../../../../assets/images/notifications/friendonline/friendonline_circle_inner.png';
 import friendOnlineLeft from '../../../../assets/images/notifications/friendonline/friendonline_left.png';
 import friendOnlineMiddle from '../../../../assets/images/notifications/friendonline/friendonline_middle.png';
 import friendOnlineRight from '../../../../assets/images/notifications/friendonline/friendonline_right.png';
 import friendOnlineSlide from '../../../../assets/images/notifications/friendonline/friendonline_slide.png';
+import { LayoutAvatarImageView } from '../../../../common';
 
 interface NotificationFriendOnlineBubbleViewProps {
     item: NotificationBubbleItem;
