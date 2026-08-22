@@ -9,7 +9,7 @@ own spec when P1 lands.
 
 ## 1. Context
 
-The Nitro-V3 client has established patterns for god-hook
+The Octane-UI client has established patterns for god-hook
 modernization, all visible on the current `origin/Dev` tip:
 
 - **God-hook split into filters over a `useBetween` singleton.** Two

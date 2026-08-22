@@ -1,7 +1,7 @@
 # Sync `public_name` from furnidata (Furni Editor) — design
 
 **Date:** 2026-06-14
-**Repo:** `ui` (Nitro-V3 React client) — client-only
+**Repo:** `ui` (Octane-UI React client) — client-only
 **Status:** approved (brainstorming)
 
 ## Problem

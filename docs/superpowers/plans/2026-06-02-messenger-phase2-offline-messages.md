@@ -6,7 +6,7 @@
 
 **Architecture:** No new packets. The emulator stores send-to-offline in the existing `messenger_offline` table; on login it replays them through the existing `FriendChatMessageComposer` (extended with an optional `extraData` marker) so the client's existing `NewConsoleMessageEvent` path renders them. The client adds an `offlineDelivered` flag (derived from `extraData === "offline"`) and a subtle marker in the thread.
 
-**Tech Stack:** Arcturus (Java 21/Maven/HikariCP), Nitro-V3 (React 19, Vite, Vitest). No renderer change.
+**Tech Stack:** Arcturus (Java 21/Maven/HikariCP), Octane-UI (React 19, Vite, Vitest). No renderer change.
 
 ---
 
@@ -28,7 +28,7 @@ All repos are already on `feat/messenger-groups-receipts` (continuing the messen
 - Modify `messages/incoming/friends/FriendPrivateMessageEvent.java` — branch online vs offline.
 - Modify `messages/incoming/friends/RequestInitFriendsEvent.java` — deliver offline on login.
 
-**Client (`Nitro-V3/src/`):**
+**Client (`Octane-UI/src/`):**
 - Modify `api/friends/MessengerThreadChat.ts` — `offlineDelivered` getter.
 - Create `api/friends/MessengerThreadChat.test.ts` — getter test.
 - Modify `components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx` — render marker.
@@ -268,8 +268,8 @@ Verify `git show --stat HEAD` shows exactly 2 files.
 ## Task 4: Client — `offlineDelivered` getter on `MessengerThreadChat` (TDD)
 
 **Files:**
-- Modify: `Nitro-V3/src/api/friends/MessengerThreadChat.ts`
-- Test: `Nitro-V3/src/api/friends/MessengerThreadChat.test.ts`
+- Modify: `Octane-UI/src/api/friends/MessengerThreadChat.ts`
+- Test: `Octane-UI/src/api/friends/MessengerThreadChat.test.ts`
 
 `MessengerThreadChat` already stores `_extraData` and `_type`, with `CHAT = 0`. The emulator sends `extraData === "offline"` only for replayed 1:1 messages.
 
@@ -310,7 +310,7 @@ describe('MessengerThreadChat.offlineDelivered', () =>
 
 - [ ] **Step 2: Run it, confirm FAIL**
 
-Run: `cd Nitro-V3 && yarn test --run src/api/friends/MessengerThreadChat.test.ts`
+Run: `cd Octane-UI && yarn test --run src/api/friends/MessengerThreadChat.test.ts`
 Expected: FAIL — `offlineDelivered` is not a function/getter.
 
 - [ ] **Step 3: Add the getter**
@@ -327,12 +327,12 @@ In `MessengerThreadChat.ts`, add after the `extraData` getter:
 
 - [ ] **Step 5: Type-check + full suite**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: typecheck shows only the known pre-existing `FloorplanCanvasSVG.tsx(143,20): TS2503`; tests green except the 3 known pre-existing floorplan failures.
 
 - [ ] **Step 6: Commit**
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/api/friends/MessengerThreadChat.ts src/api/friends/MessengerThreadChat.test.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(messenger): offlineDelivered flag on thread chat"
 ```
@@ -342,8 +342,8 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task 5: Client — render the "sent while offline" marker
 
 **Files:**
-- Modify: `Nitro-V3/src/components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx`
-- Modify: `Nitro-V3/public/configuration/UITexts.example`
+- Modify: `Octane-UI/src/components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx`
+- Modify: `Octane-UI/public/configuration/UITexts.example`
 - Modify: a messenger CSS file (see Step 3)
 
 - [ ] **Step 1: Add the localization key**
@@ -381,7 +381,7 @@ with:
 - [ ] **Step 3: Add the marker style**
 
 Find the CSS file that styles the messenger thread (search for an existing class used here, e.g. `messenger-message-bubble` or `messenger-message-time`):
-Run: `grep -rl "messenger-message-bubble" Nitro-V3/src/css`
+Run: `grep -rl "messenger-message-bubble" Octane-UI/src/css`
 Append to that file a subtle style:
 ```css
 .messenger-offline-tag {
@@ -396,12 +396,12 @@ If the grep finds no file (the classes are global/elsewhere), append the same ru
 
 - [ ] **Step 4: Type-check + full suite**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: only the known pre-existing typecheck error; no new test failures.
 
 - [ ] **Step 5: Commit**
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx public/configuration/UITexts.example
 # plus the CSS file you edited:
 git add <the css file from Step 3>
@@ -416,7 +416,7 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 
 - [ ] **Step 1: Automated checks**
 ```
-cd Nitro-V3 && yarn typecheck && yarn test --run
+cd Octane-UI && yarn typecheck && yarn test --run
 cd Arcturus-Morningstar-Extended/Emulator && mvn -q clean package -DskipTests
 ```
 Expected: client typecheck shows only the pre-existing `FloorplanCanvasSVG.tsx(143,20): TS2503`; client tests green except the 3 known floorplan failures (+4 new MessengerThreadChat cases passing); emulator BUILD SUCCESS. (No renderer change this phase.)
@@ -434,7 +434,7 @@ Run the new jar + `yarn start`. With two accounts A and B who are friends:
 
 - [ ] **Step 3: Commit any fix-ups** (only if needed)
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -am "fix(messenger): offline message integration fixes"
 ```
 

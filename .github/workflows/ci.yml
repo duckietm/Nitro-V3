@@ -29,21 +29,21 @@ env:
   # configured. Override per-fork via the RENDERER_REPO / RENDERER_REF
   # repository variables (Settings → Secrets and variables → Actions →
   # Variables) or, for one-off runs, via the workflow_dispatch inputs.
-  UPSTREAM_RENDERER_REPO: 'duckietm/Nitro_Render_V3'
+  UPSTREAM_RENDERER_REPO: 'duckietm/Octane-Renderer'
 
 jobs:
   check:
     name: Type check + tests
     runs-on: ubuntu-latest
     steps:
-      # The build/dev/typecheck setup expects the Nitro renderer SDK to
+      # The build/dev/typecheck setup expects the Octane Renderer SDK to
       # live as a sibling of this repo (see CLAUDE.md → Setup walkthrough).
-      # Mirror that here by checking the client into <workspace>/Nitro-V3
-      # and the renderer into <workspace>/Nitro_Render_V3.
-      - name: Checkout Nitro-V3
+      # Mirror that here by checking the client into <workspace>/Octane-UI
+      # and the renderer into <workspace>/Octane-Renderer.
+      - name: Checkout Octane UI
         uses: actions/checkout@v7
         with:
-          path: Nitro-V3
+          path: Octane-UI
 
       # Resolve the renderer pairing with a clear precedence, from most
       # specific to most generic — no fork names or feature branches are
@@ -56,7 +56,7 @@ jobs:
       #          to push and pull_request runs without editing this file.
       #   3. dynamic, owner-aware default (no hardcoded fork name)
       #        → a fork renderer only when it carries a branch specific to
-      #          the PR, otherwise <github.repository_owner>/Nitro_Render_V3
+      #          the PR, otherwise <github.repository_owner>/Octane-Renderer
       #          or UPSTREAM_RENDERER_REPO. Ref is `main` on a main build,
       #          otherwise `Dev`. A stale generic fork branch must never
       #          shadow the current upstream integration branch.
@@ -77,15 +77,15 @@ jobs:
           PR_HEAD_OWNER: ${{ github.event.pull_request.head.repo.owner.login || '' }}
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
         run: |
-          node --test Nitro-V3/.github/scripts/resolve-renderer.test.mjs
-          node Nitro-V3/.github/scripts/resolve-renderer.mjs
+          node --test Octane-UI/.github/scripts/resolve-renderer.test.mjs
+          node Octane-UI/.github/scripts/resolve-renderer.mjs
 
-      - name: Checkout Nitro_Render_V3 (sibling)
+      - name: Checkout Octane Renderer (sibling)
         uses: actions/checkout@v7
         with:
           repository: ${{ steps.renderer.outputs.repo }}
           ref: ${{ steps.renderer.outputs.ref }}
-          path: Nitro_Render_V3
+          path: Octane-Renderer
 
       - name: Setup Node 22
         uses: actions/setup-node@v6
@@ -98,13 +98,13 @@ jobs:
       - name: Install renderer SDK deps
         env:
           COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
-        working-directory: Nitro_Render_V3
+        working-directory: Octane-Renderer
         run: corepack yarn install --immutable
 
       - name: Install client deps
         env:
           COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: corepack yarn install --immutable
 
       # The renderer SDK is consumed via a filesystem symlink in
@@ -116,18 +116,18 @@ jobs:
       #
       # Use an absolute path so the link target is unambiguous
       # regardless of the cwd that reads it. A relative target like
-      # `../../../Nitro_Render_V3` resolves to
-      # `Nitro-V3/Nitro_Render_V3` (one too few `..`), which doesn't
+      # `../../../Octane-Renderer` resolves to
+      # `Octane-UI/Octane-Renderer` (one too few `..`), which doesn't
       # exist and makes tsgo report TS2307 across the entire src/.
       - name: Symlink renderer into client node_modules
         run: |
-          mkdir -p Nitro-V3/node_modules/@nitrots
-          ln -sfn "${{ github.workspace }}/Nitro_Render_V3" Nitro-V3/node_modules/@nitrots/nitro-renderer
-          ls -la Nitro-V3/node_modules/@nitrots/
-          ls Nitro-V3/node_modules/@nitrots/nitro-renderer/packages/api/src/ | head -5
+          mkdir -p Octane-UI/node_modules/@nitrots
+          ln -sfn "${{ github.workspace }}/Octane-Renderer" Octane-UI/node_modules/@nitrots/nitro-renderer
+          ls -la Octane-UI/node_modules/@nitrots/
+          ls Octane-UI/node_modules/@nitrots/nitro-renderer/packages/api/src/ | head -5
 
       - name: Type check (tsgo)
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: yarn typecheck
 
       # Hook-order lint gate — the full yarn eslint emits ~900 pre-existing
@@ -136,9 +136,9 @@ jobs:
       # "hook below early-return" pattern that produced two production
       # crashes this session (CatalogPurchaseWidgetView, CatalogItemGridWidgetView).
       - name: ESLint (hook-order gate)
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: yarn lint:hooks
 
       - name: Vitest
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: yarn test --run

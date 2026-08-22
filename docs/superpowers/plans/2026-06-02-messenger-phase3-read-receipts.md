@@ -8,7 +8,7 @@
 
 **Design note — no DB, live-relay only (refinement of the spec):** the spec proposed a `messenger_read_state` table + a login-time receipt batch. The Nitro client does NOT persist per-message history across sessions, so a persisted receipt would have no message to update on next login. Persistence is therefore omitted; receipts are a live in-session relay. This keeps Phase 3 simpler with no loss of user-visible behavior. (If cross-session receipts are ever wanted, they'd require persisting client-side message history first — out of scope.)
 
-**Tech Stack:** Arcturus (Java 21/Maven), Nitro_Render_V3 (TypeScript, Vitest), Nitro-V3 (React 19, Vitest).
+**Tech Stack:** Arcturus (Java 21/Maven), Octane-Renderer (TypeScript, Vitest), Octane-UI (React 19, Vitest).
 
 ---
 
@@ -24,7 +24,7 @@ All repos on `feat/messenger-groups-receipts`. Client commits use `git -c user.n
 (Renderer Outgoing N == Emulator Incoming N; Renderer Incoming N == Emulator Outgoing N — the verified convention.)
 
 ## File map
-**Renderer (`Nitro_Render_V3/packages/communication/src/`):**
+**Renderer (`Octane-Renderer/packages/communication/src/`):**
 - Modify `messages/outgoing/OutgoingHeader.ts`, `messages/incoming/IncomingHeader.ts`, `NitroMessages.ts`, the 3 friendlist `index.ts` barrels.
 - Create `messages/outgoing/friendlist/MarkConsoleReadComposer.ts`
 - Create `messages/incoming/friendlist/ConsoleReadReceiptEvent.ts`
@@ -36,7 +36,7 @@ All repos on `feat/messenger-groups-receipts`. Client commits use `git -c user.n
 - Create `messages/incoming/friends/MarkConsoleReadEvent.java`
 - Create `messages/outgoing/friends/ConsoleReadReceiptComposer.java`
 
-**Client (`Nitro-V3/src/`):**
+**Client (`Octane-UI/src/`):**
 - Modify `api/friends/MessengerThreadChat.ts` (+ test) and `api/friends/MessengerThread.ts` (+ test)
 - Modify `hooks/friends/useMessenger.ts`
 - Modify `components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx`
@@ -83,7 +83,7 @@ describe('ConsoleReadReceiptParser', () =>
 
 - [ ] **Step 2: Run it, confirm FAIL**
 
-Run: `cd Nitro_Render_V3 && yarn test --run packages/communication/src/messages/parser/friendlist/__tests__/ConsoleReadReceiptParser.test.ts`
+Run: `cd Octane-Renderer && yarn test --run packages/communication/src/messages/parser/friendlist/__tests__/ConsoleReadReceiptParser.test.ts`
 Expected: FAIL (module not found).
 
 - [ ] **Step 3: Create the parser**
@@ -186,12 +186,12 @@ In `NitroMessages.ts`: add the two classes to the existing friendlist imports, t
 
 - [ ] **Step 9: Compile + test**
 
-Run: `cd Nitro_Render_V3 && yarn compile:fast && yarn test --run`
+Run: `cd Octane-Renderer && yarn compile:fast && yarn test --run`
 Expected: compile clean; all tests pass (142 prior + 1 new = 143).
 
 - [ ] **Step 10: Commit**
 ```bash
-cd Nitro_Render_V3
+cd Octane-Renderer
 git add packages/communication/src/messages/ packages/communication/src/NitroMessages.ts
 git commit -m "feat(messenger): read-receipt packets (MarkConsoleRead + ConsoleReadReceipt)"
 ```
@@ -288,8 +288,8 @@ git commit -m "feat(messenger): relay read receipts between friends"
 ## Task P3-3: Client — message status model (TDD)
 
 **Files:**
-- Modify: `Nitro-V3/src/api/friends/MessengerThreadChat.ts` + Test `MessengerThreadChat.test.ts` (extend the existing test file from Phase 2)
-- Modify: `Nitro-V3/src/api/friends/MessengerThread.ts` + Test `Nitro-V3/src/api/friends/MessengerThread.test.ts`
+- Modify: `Octane-UI/src/api/friends/MessengerThreadChat.ts` + Test `MessengerThreadChat.test.ts` (extend the existing test file from Phase 2)
+- Modify: `Octane-UI/src/api/friends/MessengerThread.ts` + Test `Octane-UI/src/api/friends/MessengerThread.test.ts`
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -344,7 +344,7 @@ describe('MessengerThread.setMessagesReadFromUser', () =>
 
 - [ ] **Step 2: Run, confirm FAIL**
 
-Run: `cd Nitro-V3 && yarn test --run src/api/friends/MessengerThreadChat.test.ts src/api/friends/MessengerThread.test.ts`
+Run: `cd Octane-UI && yarn test --run src/api/friends/MessengerThreadChat.test.ts src/api/friends/MessengerThread.test.ts`
 Expected: FAIL (SENT/READ/status/setStatus/setMessagesReadFromUser missing).
 
 - [ ] **Step 3: Add status to MessengerThreadChat**
@@ -391,12 +391,12 @@ In `MessengerThread.ts`, add (e.g. after `setRead()`):
 
 - [ ] **Step 6: typecheck + full suite**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: only the known pre-existing `FloorplanCanvasSVG.tsx(143,20): TS2503`; no new failures (3 known floorplan failures remain).
 
 - [ ] **Step 7: Commit**
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/api/friends/MessengerThreadChat.ts src/api/friends/MessengerThreadChat.test.ts src/api/friends/MessengerThread.ts src/api/friends/MessengerThread.test.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(messenger): SENT/READ status on thread chats + mark-read helper"
 ```
@@ -406,7 +406,7 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task P3-4: Client — wire receipts into useMessenger
 
 **Files:**
-- Modify: `Nitro-V3/src/hooks/friends/useMessenger.ts`
+- Modify: `Octane-UI/src/hooks/friends/useMessenger.ts`
 
 - [ ] **Step 1: Import the packets**
 
@@ -485,12 +485,12 @@ Add a new event subscription (near the other `useMessageEvent` calls). `parser.r
 
 - [ ] **Step 5: typecheck + full suite**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: only the pre-existing typecheck error; no new test failures.
 
 - [ ] **Step 6: Commit**
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/hooks/friends/useMessenger.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(messenger): send mark-read on focus, mark own messages read on receipt"
 ```
@@ -500,8 +500,8 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task P3-5: Client — render ✓ / ✓✓ + CSS
 
 **Files:**
-- Modify: `Nitro-V3/src/components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx`
-- Modify: `Nitro-V3/src/css/friends/FriendsView.css`
+- Modify: `Octane-UI/src/components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx`
+- Modify: `Octane-UI/src/css/friends/FriendsView.css`
 
 - [ ] **Step 1: Render the status indicator on own private-chat bubbles**
 
@@ -534,12 +534,12 @@ Append to `src/css/friends/FriendsView.css`:
 
 - [ ] **Step 3: typecheck + full suite**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: only the pre-existing typecheck error; no new test failures.
 
 - [ ] **Step 4: Commit**
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/components/friends/views/messenger/messenger-thread/FriendsMessengerThreadGroup.tsx src/css/friends/FriendsView.css
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(messenger): render sent/read checkmarks on own messages"
 ```
@@ -552,8 +552,8 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 
 - [ ] **Step 1: Automated checks**
 ```
-cd Nitro_Render_V3 && yarn compile:fast && yarn test --run
-cd Nitro-V3 && yarn typecheck && yarn test --run
+cd Octane-Renderer && yarn compile:fast && yarn test --run
+cd Octane-UI && yarn typecheck && yarn test --run
 cd Arcturus-Morningstar-Extended/Emulator && mvn -q clean package -DskipTests
 ```
 Expected: renderer tests green (143); client typecheck shows only the pre-existing `FloorplanCanvasSVG.tsx(143,20): TS2503`, tests green except the 3 known floorplan failures (+ the new model cases pass); emulator BUILD SUCCESS.
@@ -571,7 +571,7 @@ Run the new jar + `yarn start`. Accounts A and B (friends), both online:
 
 - [ ] **Step 3: Commit any fix-ups** (only if needed)
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -am "fix(messenger): read-receipt integration fixes"
 ```
 

@@ -8,7 +8,7 @@ const baseInput = {
     baseRef: 'Dev',
     refName: '384/merge',
     repositoryOwner: 'duckietm',
-    upstreamRepository: 'duckietm/Nitro_Render_V3',
+    upstreamRepository: 'duckietm/Octane-Renderer',
     headOwner: 'simoleo89',
     headRef: 'codex/global-classic-scrollbars',
     inputRepository: '',
@@ -22,11 +22,11 @@ const refLookup = (availableRefs) => async (repository, ref) => availableRefs.ha
 describe('renderer resolution', () => {
     it('uses upstream Dev when a fork only has a stale generic Dev branch', async () => {
         const hasRef = refLookup(
-            new Set(['simoleo89/Nitro_Render_V3@Dev', 'duckietm/Nitro_Render_V3@Dev'])
+            new Set(['simoleo89/Octane-Renderer@Dev', 'duckietm/Octane-Renderer@Dev'])
         );
 
         assert.deepEqual(await resolveRenderer(baseInput, hasRef), {
-            repository: 'duckietm/Nitro_Render_V3',
+            repository: 'duckietm/Octane-Renderer',
             ref: 'Dev',
         });
     });
@@ -34,14 +34,14 @@ describe('renderer resolution', () => {
     it('uses the fork when it provides the exact companion branch', async () => {
         const hasRef = refLookup(
             new Set([
-                'simoleo89/Nitro_Render_V3@codex/global-classic-scrollbars',
-                'simoleo89/Nitro_Render_V3@Dev',
-                'duckietm/Nitro_Render_V3@Dev',
+                'simoleo89/Octane-Renderer@codex/global-classic-scrollbars',
+                'simoleo89/Octane-Renderer@Dev',
+                'duckietm/Octane-Renderer@Dev',
             ])
         );
 
         assert.deepEqual(await resolveRenderer(baseInput, hasRef), {
-            repository: 'simoleo89/Nitro_Render_V3',
+            repository: 'simoleo89/Octane-Renderer',
             ref: 'codex/global-classic-scrollbars',
         });
     });

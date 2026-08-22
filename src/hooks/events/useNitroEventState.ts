@@ -3,7 +3,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useNitroEvent } from './useNitroEvent';
 
 /**
- * Subscribe to a Nitro renderer event and expose the latest derived value
+ * Subscribe to an Octane Renderer event and expose the latest derived value
  * as React state. Replaces the boilerplate pattern:
  *
  *   const [foo, setFoo] = useState(initial);

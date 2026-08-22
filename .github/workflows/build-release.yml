@@ -44,14 +44,14 @@ jobs:
       - name: Checkout client
         uses: actions/checkout@v7
         with:
-          path: Nitro-V3
+          path: Octane-UI
 
       - name: Checkout renderer
         uses: actions/checkout@v7
         with:
           repository: duckethotel/ducket-render
           ref: main
-          path: Nitro_Render_V3
+          path: Octane-Renderer
           token: ${{ secrets.DUCKET_REPO_TOKEN }}
 
       - name: Set up Node.js
@@ -63,27 +63,27 @@ jobs:
         run: corepack enable
 
       - name: Install renderer dependencies
-        working-directory: Nitro_Render_V3
+        working-directory: Octane-Renderer
         run: yarn install --frozen-lockfile
 
       - name: Install client dependencies
         env:
           COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: corepack yarn install --immutable
 
       - name: Link renderer into client
         run: |
-          mkdir -p Nitro-V3/node_modules/@nitrots
-          ln -sfn "${{ github.workspace }}/Nitro_Render_V3" Nitro-V3/node_modules/@nitrots/nitro-renderer
+          mkdir -p Octane-UI/node_modules/@nitrots
+          ln -sfn "${{ github.workspace }}/Octane-Renderer" Octane-UI/node_modules/@nitrots/nitro-renderer
 
       - name: Build client
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: yarn build
 
       - name: Read package version
         id: version
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: |
           VERSION=$(node -p "require('./package.json').version")
           SHORT_SHA=${GITHUB_SHA::7}
@@ -91,7 +91,7 @@ jobs:
           echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Package dist
-        working-directory: Nitro-V3
+        working-directory: Octane-UI
         run: |
           zip -r "../ducket-client-dist-${{ steps.version.outputs.short_sha }}.zip" dist
 

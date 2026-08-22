@@ -8,7 +8,7 @@ interface NitroInfoAlertViewProps extends LayoutNotificationAlertViewProps {
     item: NotificationAlertItem;
 }
 
-const REPORT_ISSUES_URL = 'https://github.com/duckietm/Nitro-V3/issues';
+const REPORT_ISSUES_URL = 'https://github.com/duckietm/Octane-UI/issues';
 
 type InfoSection = { title: string; lines: string[]; kind: 'hotel' | 'server' | 'credits' | 'generic' };
 

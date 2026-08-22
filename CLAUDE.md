@@ -1,4 +1,4 @@
-# Claude Code — project memory for Nitro-V3
+# Claude Code — project memory for Octane UI
 
 This file is read automatically by Claude Code at session start. It captures
 the conventions and current state of this branch so a new session can hit
@@ -10,7 +10,7 @@ This client carries a long-running React 19.2 modernization: React 19
 idioms + supporting infrastructure (TanStack Query, Zustand, Vitest,
 React Compiler, error boundaries), god-hook splits, and logic-bug audits.
 
-**Working base is now `main`** (tracking `duckietm/Nitro-V3`). The earlier
+**Working base is now `main`** (tracking `duckietm/Octane-UI`). The earlier
 `feat/react19-modernization` long-running branch was superseded — feature
 work now ships as small focused PRs against `duckietm:Dev`, staged through
 Dev then merged to main. (`feat/react19-modernization` still exists on the
@@ -54,19 +54,19 @@ read that before starting anything non-trivial.
 
 1. **Clone the renderer SDK as a sibling of this repo.**
    `vite.config.mjs` resolves the `@nitrots/*` aliases against
-   `../Nitro_Render_V3` (preferred) or `../renderer` (legacy). If neither
+   `../Octane-Renderer` (preferred) or `../renderer` (legacy). If neither
    exists, the dev server and build now fail fast with a message
    pointing here.
 
    ```sh
-   cd ..                            # parent of Nitro-V3
-   git clone <renderer-repo> Nitro_Render_V3
-   cd Nitro_Render_V3 && yarn install
+   cd ..                            # parent of Octane-UI
+   git clone <renderer-repo> Octane-Renderer
+   cd Octane-Renderer && yarn install
    ```
 
 2. **Install client deps.**
    ```sh
-   cd ../Nitro-V3
+   cd ../Octane-UI
    yarn install
    ```
 
@@ -81,7 +81,7 @@ read that before starting anything non-trivial.
    - Production preview: `yarn build && yarn preview`.
 
 The renderer SDK (`@nitrots/nitro-renderer`) is consumed via a filesystem
-link to a sibling working tree — `../Nitro_Render_V3` (preferred) or
+link to a sibling working tree — `../Octane-Renderer` (preferred) or
 `../renderer` (legacy). Without it, `yarn typecheck` reports TS2307 across
 the codebase — that's expected on a sandbox without the renderer, not a
 regression.

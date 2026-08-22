@@ -22,7 +22,7 @@
 
 ## Where the project stands today
 
-The codebase is a React 19.2 client for the Nitro renderer (Habbo-style hotel
+The codebase is a React 19.2 client for Octane Renderer (Habbo-style hotel
 client). Most of the architectural pressure comes from the renderer's
 **event-bus + composer/parser** model: the UI talks to the server by sending
 composers and listening to incoming message events. Almost every piece of
@@ -365,7 +365,7 @@ The current branch (**`feat/react19-modernization`**, PR #2) has applied:
   `useNitroEventReducer`, `useMessageEventReducer`, plus
   `useExternalSnapshot` (a typed wrapper of `useSyncExternalStore` for the
   renderer's `EventDispatcher.subscribe()` + `getXxxSnapshot()` getters
-  added in `Nitro_Render_V3` 2.1.0).
+  added in `Octane-Renderer` 2.1.0).
   Pilots: `OfferView` (single-event), `useAvatarInfoWidget` (3 listeners
   for figure/badges/group merged via pure reducers — moved out of
   `InfoStandWidgetUserView`, killing 3 `CloneObject` calls), and
@@ -711,7 +711,7 @@ empty-map / partial-bucket branches of the offer lookup).
   recreated as symlinks.
 
 ### Upstream feature catch-up
-- `duckietm/Nitro-V3` PR #126 is cherry-picked: adds
+- `duckietm/Octane-UI` PR #126 is cherry-picked: adds
   `src/components/user-settings/UserAccountSettingsView.tsx`
   (reset password / email / change username flows under the user
   settings overlay) and a wear-badge popup fix in

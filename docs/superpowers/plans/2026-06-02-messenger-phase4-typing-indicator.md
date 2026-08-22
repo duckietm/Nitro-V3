@@ -6,7 +6,7 @@
 
 **Architecture:** Two ephemeral CUSTOM packets (never stored). Client→server `ConsoleTyping(peerId, isTyping)` is sent when the user starts/stops typing in a thread; the emulator relays it (friend + online only) to the peer as server→client `FriendTyping(senderId, isTyping)`. The recipient's client shows a typing indicator for that friend, auto-expiring after a few seconds.
 
-**Tech Stack:** Arcturus (Java 21/Maven), Nitro_Render_V3 (TypeScript, Vitest), Nitro-V3 (React 19, Vitest). No DB.
+**Tech Stack:** Arcturus (Java 21/Maven), Octane-Renderer (TypeScript, Vitest), Octane-UI (React 19, Vitest). No DB.
 
 ---
 
@@ -22,7 +22,7 @@ All repos on `feat/messenger-groups-receipts`. Client commits use `git -c user.n
 Wire: ConsoleTyping = `int peerId`, `boolean isTyping`. FriendTyping = `int senderId`, `boolean isTyping`. (Booleans are supported in composers/parsers — e.g. `DeclineFriendMessageComposer` sends a boolean; `FriendParser` reads booleans.)
 
 ## File map
-**Renderer (`Nitro_Render_V3/packages/communication/src/`):**
+**Renderer (`Octane-Renderer/packages/communication/src/`):**
 - Create `messages/outgoing/friendlist/ConsoleTypingComposer.ts`
 - Create `messages/incoming/friendlist/FriendIsTypingEvent.ts`
 - Create `messages/parser/friendlist/FriendIsTypingParser.ts`
@@ -34,7 +34,7 @@ Wire: ConsoleTyping = `int peerId`, `boolean isTyping`. FriendTyping = `int send
 - Create `messages/outgoing/friends/FriendTypingComposer.java`
 - Modify `messages/incoming/Incoming.java`, `messages/outgoing/Outgoing.java`, `messages/PacketManager.java`
 
-**Client (`Nitro-V3/src/`):**
+**Client (`Octane-UI/src/`):**
 - Modify `hooks/friends/useMessenger.ts` (incoming typing state + outgoing action)
 - Modify `components/friends/views/messenger/FriendsMessengerView.tsx` (send typing + render indicator)
 - Modify `public/configuration/UITexts.example` (`messenger.typing` key)
@@ -90,7 +90,7 @@ describe('FriendIsTypingParser', () =>
     });
 });
 ```
-Run `cd Nitro_Render_V3 && yarn test --run packages/communication/src/messages/parser/friendlist/__tests__/FriendIsTypingParser.test.ts` → FAIL.
+Run `cd Octane-Renderer && yarn test --run packages/communication/src/messages/parser/friendlist/__tests__/FriendIsTypingParser.test.ts` → FAIL.
 
 (Confirm `BinaryWriter` has `writeByte`/`writeInt` — the mentions/category tests use `writeInt`/`writeString`; if `writeByte` is named differently, use the real method that writes a single byte, mirroring how the existing parser tests write a boolean/byte. If unsure, write the boolean as `w.writeInt(1)` and read with `readInt() === 1` in BOTH parser and test — but prefer a real 1-byte boolean to match the emulator's `appendBoolean`/`readBoolean`. Inspect an existing parser test that round-trips a boolean to copy the exact writer call.)
 
@@ -199,12 +199,12 @@ Add the two classes to the friendlist imports, then:
 - composers: `this._composers.set(OutgoingHeader.CONSOLE_TYPING, ConsoleTypingComposer);`
 
 - [ ] **Step 8: Compile + test**
-Run: `cd Nitro_Render_V3 && yarn compile:fast && yarn test --run`
+Run: `cd Octane-Renderer && yarn compile:fast && yarn test --run`
 Expected: compile clean; all tests pass (143 prior + 2 new = 145).
 
 - [ ] **Step 9: Commit**
 ```bash
-cd Nitro_Render_V3
+cd Octane-Renderer
 git add packages/communication/src/messages/ packages/communication/src/NitroMessages.ts
 git commit -m "feat(messenger): typing packets (ConsoleTyping + FriendTyping)"
 ```
@@ -300,7 +300,7 @@ git commit -m "feat(messenger): relay typing status between friends"
 
 ## Task P4-3: Client — typing state + action in useMessenger
 
-**Files:** Modify `Nitro-V3/src/hooks/friends/useMessenger.ts`.
+**Files:** Modify `Octane-UI/src/hooks/friends/useMessenger.ts`.
 
 > No clean unit test here (timer + event-bus via the renderer mock). Verified by typecheck + the live test in P4-5. Keep the implementation tight.
 
@@ -365,12 +365,12 @@ Add a new `useMessageEvent` (near the others). When a friend is typing, add thei
 Add `typingUserIds` and `sendTypingStatus` to the `useMessengerState` return object (the bottom `return { ... }`).
 
 - [ ] **Step 6: typecheck + tests + lint:hooks**
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run && yarn lint:hooks`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run && yarn lint:hooks`
 Expected: typecheck only the pre-existing floorplan error; no new test failures; `lint:hooks` 0 errors.
 
 - [ ] **Step 7: Commit**
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/hooks/friends/useMessenger.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(messenger): incoming typing state + outgoing typing action"
 ```
@@ -380,9 +380,9 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task P4-4: Client — send typing + render indicator
 
 **Files:**
-- Modify `Nitro-V3/src/components/friends/views/messenger/FriendsMessengerView.tsx`
-- Modify `Nitro-V3/public/configuration/UITexts.example`
-- Modify `Nitro-V3/src/css/friends/FriendsView.css`
+- Modify `Octane-UI/src/components/friends/views/messenger/FriendsMessengerView.tsx`
+- Modify `Octane-UI/public/configuration/UITexts.example`
+- Modify `Octane-UI/src/css/friends/FriendsView.css`
 
 - [ ] **Step 1: Pull the new hook members**
 In `FriendsMessengerView.tsx`, the `useMessenger()` destructure currently grabs `visibleThreads, activeThread, getMessageThread, sendMessage, setActiveThreadId, closeThread`. Add `typingUserIds = [], sendTypingStatus = null`.
@@ -485,12 +485,12 @@ Append to `src/css/friends/FriendsView.css`:
 ```
 
 - [ ] **Step 8: typecheck + tests**
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: only the pre-existing floorplan typecheck error; no new test failures.
 
 - [ ] **Step 9: Commit**
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/components/friends/views/messenger/FriendsMessengerView.tsx public/configuration/UITexts.example src/css/friends/FriendsView.css
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(messenger): send typing status + show 'is typing' indicator"
 ```
@@ -503,8 +503,8 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 
 - [ ] **Step 1: Automated checks**
 ```
-cd Nitro_Render_V3 && yarn compile:fast && yarn test --run
-cd Nitro-V3 && yarn typecheck && yarn test --run && yarn lint:hooks
+cd Octane-Renderer && yarn compile:fast && yarn test --run
+cd Octane-UI && yarn typecheck && yarn test --run && yarn lint:hooks
 cd Arcturus-Morningstar-Extended/Emulator && mvn -q clean package -DskipTests
 ```
 Expected: renderer 145 tests green; client typecheck only the pre-existing floorplan error, tests green except the 3 known floorplan failures, `lint:hooks` 0 errors; emulator BUILD SUCCESS.
@@ -520,7 +520,7 @@ Run the new jar + `yarn start`. Accounts A and B (friends), both online, convers
 
 - [ ] **Step 3: Commit any fix-ups** (only if needed)
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -am "fix(messenger): typing indicator integration fixes"
 ```
 

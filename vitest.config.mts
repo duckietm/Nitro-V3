@@ -4,7 +4,7 @@ import { resolve } from 'path';
 /**
  * Test runner config — kept separate from vite.config.mjs because the
  * dev/build config wires up the renderer SDK via filesystem aliases that
- * point at sibling working trees (`../renderer`, `../Nitro_Render_V3`).
+ * point at sibling working trees (`../renderer`, `../Octane-Renderer`).
  *
  * Tests live next to their subject under `src/` (`foo.ts` + `foo.test.ts`).
  * The renderer SDK is aliased to a hand-written stub at

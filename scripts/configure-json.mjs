@@ -33,7 +33,7 @@ const writeChoice = (mode) =>
 const printBanner = () =>
 {
     const line = '═'.repeat(60);
-    process.stdout.write(`\n${ line }\n  Nitro V3 — JSON mode configuration\n${ line }\n\n`);
+    process.stdout.write(`\n${ line }\n  Octane UI — JSON mode configuration\n${ line }\n\n`);
     process.stdout.write('Configuration files (renderer-config, ui-config, gamedata)\ncan be parsed in two ways:\n\n');
     process.stdout.write('  1) JSONC  (recommended — accepts comments and trailing commas)\n');
     process.stdout.write('  2) JSON   (legacy strict — only standard valid JSON)\n');

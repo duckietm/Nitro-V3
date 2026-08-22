@@ -21,7 +21,7 @@ export const resolveRenderer = async (input, hasRef) => {
     let repository = input.inputRepository || input.variableRepository;
 
     if (!repository && input.headOwner && input.headOwner !== input.repositoryOwner) {
-        const headRepository = `${input.headOwner}/Nitro_Render_V3`;
+        const headRepository = `${input.headOwner}/Octane-Renderer`;
         const forkRefs = explicitRef ? [explicitRef] : companionRefsFor(input.headRef);
 
         for (const companionRef of forkRefs) {
@@ -34,7 +34,7 @@ export const resolveRenderer = async (input, hasRef) => {
     }
 
     if (!repository) {
-        const ownerRepository = `${input.repositoryOwner}/Nitro_Render_V3`;
+        const ownerRepository = `${input.repositoryOwner}/Octane-Renderer`;
         repository = (await hasRef(ownerRepository, ref)) ? ownerRepository : input.upstreamRepository;
     }
 
@@ -81,7 +81,7 @@ const run = async () => {
             baseRef: process.env.GITHUB_BASE_REF ?? '',
             refName: process.env.GITHUB_REF_NAME ?? '',
             repositoryOwner: process.env.GITHUB_REPOSITORY_OWNER ?? '',
-            upstreamRepository: process.env.UPSTREAM_RENDERER_REPO ?? 'duckietm/Nitro_Render_V3',
+            upstreamRepository: process.env.UPSTREAM_RENDERER_REPO ?? 'duckietm/Octane-Renderer',
             headOwner: process.env.PR_HEAD_OWNER ?? '',
             headRef: process.env.PR_HEAD_REF ?? '',
             inputRepository: process.env.INPUT_RENDERER_REPO ?? '',

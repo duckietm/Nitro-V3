@@ -1,6 +1,6 @@
-# Nitro V3 — Cold-load performance
+# Octane UI — Cold-load performance
 
-Practical recipe to take a Nitro V3 cold load from the typical
+Practical recipe to take an Octane UI cold load from the typical
 60-90 s (and intermittent "Session expired") baseline down to ~4 s.
 The wins compound: each section below has measurable impact, in
 roughly the order of cost vs benefit.
@@ -55,15 +55,15 @@ manualChunks: id => {
     const norm = id.replace(/\\/g, '/');
 
     // Vendors first — pixi.js / howler / emoji-mart / jodit are aliased
-    // to ../Nitro_Render_V3/node_modules, so they would otherwise be
-    // swallowed by the `Nitro_Render_V3` branch lower down and pulled
+    // to ../Octane-Renderer/node_modules, so they would otherwise be
+    // swallowed by the `Octane-Renderer` branch lower down and pulled
     // into the renderer chunk.
     if(norm.includes('pixi.js') || norm.includes('pixi-filters')) return 'vendor-pixi';
     if(norm.includes('howler'))      return 'vendor-audio';
     if(norm.includes('@emoji-mart')) return 'vendor-emoji';
     if(norm.includes('jodit') || norm.includes('@react-page')) return 'vendor-editor';
 
-    if(id.includes('Nitro_Render_V3') || id.includes(`${ rendererRoot }`)) {
+    if(id.includes('Octane-Renderer') || id.includes(`${ rendererRoot }`)) {
         if(id.includes('/packages/avatar/'))        return 'nitro-renderer-avatar';
         if(id.includes('/packages/communication/')) return 'nitro-renderer-comm';
         if(id.includes('/packages/room/'))          return 'nitro-renderer-room';
@@ -87,8 +87,8 @@ manualChunks: id => {
 Two practical points the comments don't make obvious:
 
 - **Vendor checks come first.** Pixi.js, howler, emoji-mart and jodit
-  are pulled in via an alias to `../Nitro_Render_V3/node_modules`,
-  so their `id` matches `Nitro_Render_V3`. If the renderer branch
+  are pulled in via an alias to `../Octane-Renderer/node_modules`,
+  so their `id` matches `Octane-Renderer`. If the renderer branch
   runs before the vendor one, those modules end up bundled into the
   renderer chunk instead of their own — defeating the whole point.
 
@@ -170,7 +170,7 @@ file for the full list).
 
 Logo and background are also configurable via the same mechanism —
 `loading.logo.url`, `loading.background`, `loading.progress.color`.
-Leaving them empty keeps the shipped dark-blue radial + Nitro V3
+Leaving them empty keeps the shipped dark-blue radial + Octane UI
 logo top-left.
 
 ### 3.1 The pre-React shell (asset-loader.js)

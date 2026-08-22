@@ -13,7 +13,7 @@ Replace the example domains with your real domains:
 
 ## 1. Build Nitro
 
-Inside the `Nitro-V3` repository:
+Inside the `Octane-UI` repository:
 
 ```bash
 yarn build
@@ -40,7 +40,7 @@ src/
 File:
 
 ```txt
-Nitro-V3/dist/configuration/client-mode.json
+Octane-UI/dist/configuration/client-mode.json
 ```
 
 Secure production configuration:
@@ -69,7 +69,7 @@ Meaning:
 File:
 
 ```txt
-Nitro-V3/dist/configuration/renderer-config.json
+Octane-UI/dist/configuration/renderer-config.json
 ```
 
 Important values:
@@ -104,7 +104,7 @@ If you are not using WebSocket crypto yet, use:
 File:
 
 ```txt
-Nitro-V3/dist/configuration/ui-config.json
+Octane-UI/dist/configuration/ui-config.json
 ```
 
 Static image and camera URLs can remain plain:
@@ -223,7 +223,7 @@ Then hard refresh the browser.
 File:
 
 ```txt
-Nitro-V3/dist/configuration/bootstrap.js
+Octane-UI/dist/configuration/bootstrap.js
 ```
 
 This is the first loader when you use the external secure mode.
@@ -269,7 +269,7 @@ So `asset-loader.js` must always exist inside the `configuration` folder.
 File:
 
 ```txt
-Nitro-V3/dist/configuration/asset-loader.js
+Octane-UI/dist/configuration/asset-loader.js
 ```
 
 This loader loads the actual bundle:

@@ -2,21 +2,21 @@
 
 End-to-end documentation of every modification made since the two modernization branches were opened:
 
-- **Nitro-V3** (React client) — branch `feat/react19-modernization`, **114 commits** since baseline `ae17619`
-- **Nitro_Render_V3** (renderer library) — branch `feat/react19-event-bus`, **22 commits** since baseline `98b03aa`
+- **Octane-UI** (React client) — branch `feat/react19-modernization`, **114 commits** since baseline `ae17619`
+- **Octane-Renderer** (renderer library) — branch `feat/react19-event-bus`, **22 commits** since baseline `98b03aa`
 
 Plus the in-session upstream sync of the third codebase touched on 2026-05-18:
 
 - **Arcturus-Morningstar-Extended** (Java emulator) — FF pull `e6093f9` → `efb4997` (v4.1.16)
 
-Working directory: `E:\Users\simol\Desktop\DEV`. *(NitroV3-Housekeeping was not touched during the lifetime of these branches.)*
+Working directory: `E:\Users\simol\Desktop\DEV`. *(OctaneUI-Housekeeping was not touched during the lifetime of these branches.)*
 
 ---
 
 ## Table of contents
 
 1. [Overview](#1-overview)
-2. [Nitro-V3 client — branch story](#2-nitro-v3-client--branch-story)
+2. [Octane-UI client — branch story](#2-octane-ui-client--branch-story)
    - [Phase 1: React 19 baseline adoption](#phase-1-react-19-baseline-adoption)
    - [Phase 2: Infrastructure pillars (Query, Zustand, Vitest, mocks, Form Actions)](#phase-2-infrastructure-pillars-query-zustand-vitest-mocks-form-actions)
    - [Phase 3: Hook taxonomy and god-hook splits](#phase-3-hook-taxonomy-and-god-hook-splits)
@@ -28,7 +28,7 @@ Working directory: `E:\Users\simol\Desktop\DEV`. *(NitroV3-Housekeeping was not 
    - [Phase 9: Upstream cherry-picks (PR #126) and drive-by bugs](#phase-9-upstream-cherry-picks-pr-126-and-drive-by-bugs)
    - [Phase 10: Toolbar spam-toggle fix (PR #130 upstream)](#phase-10-toolbar-spam-toggle-fix-pr-130-upstream)
    - [Phase 11: Full upstream sync (origin/Dev b2318b9)](#phase-11-full-upstream-sync-origindev-b2318b9)
-3. [Nitro_Render_V3 renderer — branch story](#3-nitro_render_v3-renderer--branch-story)
+3. [Octane-Renderer renderer — branch story](#3-octane-renderer-renderer--branch-story)
    - [Phase 1: v2.1.0 React-friendly API additions](#phase-1-v210-react-friendly-api-additions)
    - [Phase 2: TypeScript 6 + tsgo migration](#phase-2-typescript-6--tsgo-migration)
    - [Phase 3: API interface alignments (IRoomSession)](#phase-3-api-interface-alignments-iroomsession)
@@ -49,16 +49,16 @@ Working directory: `E:\Users\simol\Desktop\DEV`. *(NitroV3-Housekeeping was not 
 
 ### Branches and their goals
 
-**`feat/react19-modernization`** (Nitro-V3 client) was opened to bring the React client up to React 19 idioms and the supporting infrastructure that React 19 unlocks: TanStack Query for server state, Zustand for cross-component UI state, Vitest for unit testing, React Compiler for automatic memoization, and `react-error-boundary` for graceful degradation. Along the way it absorbed god-hook decompositions, file extractions on oversized components, Pixi v8 alignment, two upstream cherry-picks (duckietm PR #126), an open-upstream PR (#130 — toolbar spam-toggle fix), and finally a full sync of `origin/Dev` through `b2318b9`.
+**`feat/react19-modernization`** (Octane-UI client) was opened to bring the React client up to React 19 idioms and the supporting infrastructure that React 19 unlocks: TanStack Query for server state, Zustand for cross-component UI state, Vitest for unit testing, React Compiler for automatic memoization, and `react-error-boundary` for graceful degradation. Along the way it absorbed god-hook decompositions, file extractions on oversized components, Pixi v8 alignment, two upstream cherry-picks (duckietm PR #126), an open-upstream PR (#130 — toolbar spam-toggle fix), and finally a full sync of `origin/Dev` through `b2318b9`.
 
-**`feat/react19-event-bus`** (Nitro_Render_V3 renderer) was opened to add React-friendly primitives to the renderer library so the client could consume it through `useSyncExternalStore`, `use()`, and TanStack Query without re-architecting the event bus. It then absorbed TypeScript 6 + tsgo migration, TS 5.7+ ArrayBuffer drift fixes, Pixi v8 type alignment, composer/parser alignment with Arcturus (`RoomEnterComposer`, `RoomSettingsData.allowUnderpass`, etc.), dead-code removal, and finally — in the 2026-05-18 session — four new snapshot-pattern extensions covering ignored users, group badges, the room user list, and sound volumes.
+**`feat/react19-event-bus`** (Octane-Renderer renderer) was opened to add React-friendly primitives to the renderer library so the client could consume it through `useSyncExternalStore`, `use()`, and TanStack Query without re-architecting the event bus. It then absorbed TypeScript 6 + tsgo migration, TS 5.7+ ArrayBuffer drift fixes, Pixi v8 type alignment, composer/parser alignment with Arcturus (`RoomEnterComposer`, `RoomSettingsData.allowUnderpass`, etc.), dead-code removal, and finally — in the 2026-05-18 session — four new snapshot-pattern extensions covering ignored users, group badges, the room user list, and sound volumes.
 
 ### Current state
 
 | Branch | HEAD | Commits since baseline | Typecheck | Vitest |
 |---|---|---|---|---|
-| Nitro-V3 / `feat/react19-modernization` | `02a396d` | 114 (baseline `ae17619`) | clean | **203/203** |
-| Nitro_Render_V3 / `feat/react19-event-bus` | `28c552f` | 22 (baseline `98b03aa`) | clean | **127/127** |
+| Octane-UI / `feat/react19-modernization` | `02a396d` | 114 (baseline `ae17619`) | clean | **203/203** |
+| Octane-Renderer / `feat/react19-event-bus` | `28c552f` | 22 (baseline `98b03aa`) | clean | **127/127** |
 | Arcturus / `main` | `efb4997` (v4.1.16) | tracks `origin/main` with no local divergence | n/a | n/a |
 
 ### Key architectural decisions taken
@@ -77,7 +77,7 @@ All commits authored as `simoleo89 <simoleo89@users.noreply.github.com>` (client
 
 ---
 
-## 2. Nitro-V3 client — branch story
+## 2. Octane-UI client — branch story
 
 ### Phase 1: React 19 baseline adoption
 
@@ -304,7 +304,7 @@ A separate sweep aimed at getting `yarn typecheck` to 0 errors (initial state wa
 
 ### Phase 9: Upstream cherry-picks (PR #126) and drive-by bugs
 
-Mid-modernization, two upstream commits from duckietm/Nitro-V3 PR #126 were cherry-picked into the branch so the modernization branch would carry features still pending upstream merge:
+Mid-modernization, two upstream commits from duckietm/Octane-UI PR #126 were cherry-picked into the branch so the modernization branch would carry features still pending upstream merge:
 
 - `52b0c90` — Merge commit from PR #126 (merge of upstream into the local branch — at this stage upstream had not yet reached `b2318b9`).
 - `53b0c90` `53f41cd` `2053c8e` — Fix wear badge popup + `UserAccountSettingsView` (reset password / email / username under user settings).
@@ -338,7 +338,7 @@ Refactor details:
 - Variant inheritance: outer wrapper drives `'visible'`/`'hidden'`; inner container and items inherit via framer's variant propagation, so stagger runs in both directions without needing `AnimatePresence`.
 - Inner `AnimatePresence` around the Me popover stays (it has a single child, no spam-toggle risk).
 
-The same fix opened upstream as **PR #130** on `duckietm/Nitro-V3` (branch `simoleo89:fix/toolbar-spam-show-hide`).
+The same fix opened upstream as **PR #130** on `duckietm/Octane-UI` (branch `simoleo89:fix/toolbar-spam-show-hide`).
 
 ### Phase 11: Full upstream sync (origin/Dev b2318b9)
 
@@ -392,7 +392,7 @@ Switched the menu items to `useIsUserIgnored(avatarInfo.name)` — the reactive 
 
 #### `02a396d` — docs(CLAUDE.md): refresh stale sections
 
-Aligning `Nitro-V3/CLAUDE.md` with the current branch state:
+Aligning `Octane-UI/CLAUDE.md` with the current branch state:
 - Adopted table: new row for the snapshot consumer hooks (pilots on `useSessionInfo` + `AvatarInfoWidgetAvatarView`); Vitest count bumped 193 → 203; Zustand row expanded to note the WiredCreatorTools panel-lifecycle hoist roadmap is fully closed.
 - Not yet table: dropped the obsolete "hoist Wired Creator Tools derived state" row; added a new row for migrating remaining session-data mirrors.
 - New "Patterns to use" entry at the top documenting the 8-hook `useSessionSnapshots` menu.
@@ -400,7 +400,7 @@ Aligning `Nitro-V3/CLAUDE.md` with the current branch state:
 
 ---
 
-## 3. Nitro_Render_V3 renderer — branch story
+## 3. Octane-Renderer renderer — branch story
 
 ### Phase 1: v2.1.0 React-friendly API additions
 
@@ -550,7 +550,7 @@ An audit across all 29 parsers using `bytesAvailable` found exactly these two fi
 
 #### `28c552f` — docs(CLAUDE.md): document new snapshot getters + flat bytesAvailable pattern
 
-Replaced the two-getter SessionData / RoomSession snapshot description in `Nitro_Render_V3/CLAUDE.md` with a six-row table covering every snapshot currently exposed:
+Replaced the two-getter SessionData / RoomSession snapshot description in `Octane-Renderer/CLAUDE.md` with a six-row table covering every snapshot currently exposed:
 
 | Manager | Getter | Invalidation event |
 |---|---|---|
@@ -586,7 +586,7 @@ Rollback tag: `pre-upstream-pull-20260518` at `e6093f9`.
 
 Both branches maintained substantial in-tree documentation throughout their lifetime.
 
-### Nitro-V3
+### Octane-UI
 
 **`docs/ARCHITECTURE.md`** (introduced in `48d62c5`) — Living long-form document describing where the project stands, the five structural proposals, and the next-PR recommended order. Updated across multiple commits as proposals landed:
 - `0755285` — recorded the feature-folder reversion.
@@ -594,13 +594,13 @@ Both branches maintained substantial in-tree documentation throughout their life
 - `f1af6fb` — pattern #1 companions implemented, pilots adopted.
 - `7cf01b0`, `cc225bd`, `622d73c` — comprehensive refresh sweeps.
 
-**`Nitro-V3/CLAUDE.md`** (added in `f75762a`) — Project context summarized for Claude Code sessions. Refreshed across the modernization:
+**`Octane-UI/CLAUDE.md`** (added in `f75762a`) — Project context summarized for Claude Code sessions. Refreshed across the modernization:
 - `eb8d879`, `7758af7`, `50fd908`, `c1aafff`, `438b47d` — vitest count bumps after each hoist.
 - `3b35fa9` — post-upstream-merge refresh.
 
-### Nitro_Render_V3
+### Octane-Renderer
 
-**`Nitro_Render_V3/CLAUDE.md`** (added in `ddb7222`) — Renderer context for Claude Code sessions. Refreshed:
+**`Octane-Renderer/CLAUDE.md`** (added in `ddb7222`) — Renderer context for Claude Code sessions. Refreshed:
 - `5f5ba2f` — documented feat/react19-event-bus additions.
 - `28c552f` — documented new snapshot getters + flat bytesAvailable pattern.
 
@@ -608,7 +608,7 @@ Both branches maintained substantial in-tree documentation throughout their life
 
 ## 6. Full commit index
 
-### Nitro-V3 — `feat/react19-modernization` (109 commits, baseline `ae17619`)
+### Octane-UI — `feat/react19-modernization` (109 commits, baseline `ae17619`)
 
 #### Phase 1: React 19 baseline
 
@@ -783,7 +783,7 @@ Both branches maintained substantial in-tree documentation throughout their life
 | `36addbe` | fix(avatar-info): reactive Ignore/Unignore menu entry via useIsUserIgnored |
 | `02a396d` | docs(CLAUDE.md): refresh stale sections — snapshot consumer hooks + closed bugs |
 
-### Nitro_Render_V3 — `feat/react19-event-bus` (22 commits, baseline `98b03aa`)
+### Octane-Renderer — `feat/react19-event-bus` (22 commits, baseline `98b03aa`)
 
 | SHA | Subject |
 |---|---|
@@ -820,10 +820,10 @@ Both branches maintained substantial in-tree documentation throughout their life
 
 | Repo | Branch | HEAD | Tracking | Push status |
 |---|---|---|---|---|
-| Nitro-V3 | `feat/react19-modernization` | `02a396d` | `simoleo/feat/react19-modernization` | up-to-date |
-| Nitro_Render_V3 | `feat/react19-event-bus` | `28c552f` | `fork/feat/react19-event-bus` | up-to-date |
+| Octane-UI | `feat/react19-modernization` | `02a396d` | `simoleo/feat/react19-modernization` | up-to-date |
+| Octane-Renderer | `feat/react19-event-bus` | `28c552f` | `fork/feat/react19-event-bus` | up-to-date |
 | Arcturus-Morningstar-Extended | `main` | `efb4997` (v4.1.16) | `origin/main` | up-to-date (no fork divergence) |
-| NitroV3-Housekeeping | *(not touched)* | — | — | — |
+| OctaneUI-Housekeeping | *(not touched)* | — | — | — |
 
 ### Verification gates
 
@@ -890,6 +890,6 @@ The client started with 0 Vitest cases when the branch was opened. The renderer 
 
 | Repo | Tag | Points at |
 |---|---|---|
-| Nitro-V3 | `pre-upstream-merge-20260518` | `4ab38d3` |
-| Nitro_Render_V3 | `pre-upstream-merge-20260518` | `5f5ba2f` |
+| Octane-UI | `pre-upstream-merge-20260518` | `4ab38d3` |
+| Octane-Renderer | `pre-upstream-merge-20260518` | `5f5ba2f` |
 | Arcturus-Morningstar-Extended | `pre-upstream-pull-20260518` | `e6093f9` |

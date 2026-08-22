@@ -13,7 +13,7 @@ Negli esempi usa i tuoi domini reali al posto di:
 
 ## 1. Build Nitro
 
-Nel repo `Nitro-V3`:
+Nel repo `Octane-UI`:
 
 ```bash
 yarn build
@@ -40,7 +40,7 @@ src/
 File:
 
 ```txt
-Nitro-V3/dist/configuration/client-mode.json
+Octane-UI/dist/configuration/client-mode.json
 ```
 
 Configurazione produzione secure:
@@ -69,7 +69,7 @@ Significato:
 File:
 
 ```txt
-Nitro-V3/dist/configuration/renderer-config.json
+Octane-UI/dist/configuration/renderer-config.json
 ```
 
 Valori importanti:
@@ -104,7 +104,7 @@ Se non usi ancora WebSocket crypto, metti:
 File:
 
 ```txt
-Nitro-V3/dist/configuration/ui-config.json
+Octane-UI/dist/configuration/ui-config.json
 ```
 
 Qui puoi lasciare immagini e camera su URL statici normali:
@@ -223,7 +223,7 @@ Poi fai hard refresh.
 File:
 
 ```txt
-Nitro-V3/dist/configuration/bootstrap.js
+Octane-UI/dist/configuration/bootstrap.js
 ```
 
 Questo è il primo loader quando usi la modalità secure esterna.
@@ -269,7 +269,7 @@ Quindi `asset-loader.js` deve esistere sempre nella cartella `configuration`.
 File:
 
 ```txt
-Nitro-V3/dist/configuration/asset-loader.js
+Octane-UI/dist/configuration/asset-loader.js
 ```
 
 Questo loader carica il bundle vero:

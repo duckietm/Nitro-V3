@@ -177,7 +177,7 @@ describe('useNavigatorUiStore', () =>
 - [ ] **Step 2: Run the test to verify it fails**
 
 ```powershell
-cd Nitro-V3 ; yarn test --run src/hooks/navigator/navigatorUiStore.test.ts
+cd Octane-UI ; yarn test --run src/hooks/navigator/navigatorUiStore.test.ts
 ```
 
 Expected: FAIL — `Cannot find module './navigatorUiStore'`.
@@ -253,7 +253,7 @@ export const useNavigatorUiStore = createNitroStore<NavigatorUiState & Navigator
 - [ ] **Step 4: Run the test to verify it passes**
 
 ```powershell
-cd Nitro-V3 ; yarn test --run src/hooks/navigator/navigatorUiStore.test.ts
+cd Octane-UI ; yarn test --run src/hooks/navigator/navigatorUiStore.test.ts
 ```
 
 Expected: PASS (all ~14 cases green).
@@ -261,7 +261,7 @@ Expected: PASS (all ~14 cases green).
 - [ ] **Step 5: Commit**
 
 ```powershell
-cd Nitro-V3
+cd Octane-UI
 git add src/hooks/navigator/navigatorUiStore.ts src/hooks/navigator/navigatorUiStore.test.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(navigator): Zustand UI store for panel-visibility + lifecycle flags
 
@@ -447,7 +447,7 @@ describe('useDoorState', () =>
 - [ ] **Step 2: Run the test to verify it fails**
 
 ```powershell
-cd Nitro-V3 ; yarn test --run src/hooks/rooms/widgets/useDoorState.test.tsx
+cd Octane-UI ; yarn test --run src/hooks/rooms/widgets/useDoorState.test.tsx
 ```
 
 Expected: FAIL — `Cannot find module './useDoorState'`.
@@ -533,7 +533,7 @@ export const useDoorState = () => useBetween(useDoorStateStore);
 - [ ] **Step 4: Verify the renderer mock exposes the events used in tests**
 
 ```powershell
-cd Nitro-V3 ; grep -E "DoorbellMessageEvent|RoomDoorbellAcceptedEvent|FlatAccessDeniedMessageEvent|GenericErrorEvent|GetGuestRoomResultEvent|RoomDataParser" src/nitro-renderer.mock.ts
+cd Octane-UI ; grep -E "DoorbellMessageEvent|RoomDoorbellAcceptedEvent|FlatAccessDeniedMessageEvent|GenericErrorEvent|GetGuestRoomResultEvent|RoomDataParser" src/nitro-renderer.mock.ts
 ```
 
 Expected: all six symbols present. If any are missing, ADD a minimal stub to `src/nitro-renderer.mock.ts` (real class with a no-arg constructor; `getParser` will be overridden in tests). Use the existing pattern — e.g. find `RoomSessionDoorbellEvent` and follow its shape.
@@ -541,7 +541,7 @@ Expected: all six symbols present. If any are missing, ADD a minimal stub to `sr
 - [ ] **Step 5: Run the test to verify it passes**
 
 ```powershell
-cd Nitro-V3 ; yarn test --run src/hooks/rooms/widgets/useDoorState.test.tsx
+cd Octane-UI ; yarn test --run src/hooks/rooms/widgets/useDoorState.test.tsx
 ```
 
 Expected: PASS (11 cases).
@@ -549,7 +549,7 @@ Expected: PASS (11 cases).
 - [ ] **Step 6: Commit**
 
 ```powershell
-cd Nitro-V3
+cd Octane-UI
 git add src/hooks/rooms/widgets/useDoorState.ts src/hooks/rooms/widgets/useDoorState.test.tsx src/nitro-renderer.mock.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(rooms): extract useDoorState from useNavigator god-hook
 
@@ -575,7 +575,7 @@ git push simoleo feat/navigator-modernization
 - [ ] **Step 1: Read current `useNavigator.ts` in full**
 
 ```powershell
-cd Nitro-V3 ; cat src/hooks/navigator/useNavigator.ts | head -100
+cd Octane-UI ; cat src/hooks/navigator/useNavigator.ts | head -100
 ```
 
 You will translate this file's `useNavigatorState` function into the new `useNavigatorStore.ts`, with these surgical changes:
@@ -931,7 +931,7 @@ export const useNavigatorStore = () =>
 - [ ] **Step 3: Run typecheck to verify the file compiles**
 
 ```powershell
-cd Nitro-V3 ; yarn typecheck 2>&1 | tail -10
+cd Octane-UI ; yarn typecheck 2>&1 | tail -10
 ```
 
 Expected: no NEW errors in `src/hooks/navigator/useNavigatorStore.ts`. Pre-existing floorplan-related typecheck errors (`applyFloorModelLocally`, JSX namespace) are environmental, not caused by P1 — see spec §11.
@@ -1066,7 +1066,7 @@ describe('navigator filter shapes (smoke)', () =>
 - [ ] **Step 6: Run typecheck — the project will fail because consumers still import `useNavigator`**
 
 ```powershell
-cd Nitro-V3 ; yarn typecheck 2>&1 | tail -20
+cd Octane-UI ; yarn typecheck 2>&1 | tail -20
 ```
 
 Expected: errors like `Module '"...hooks/navigator"' has no exported member 'useNavigator'` in the 13 consumer files. That's intentional — Tasks 6/7/8 fix them. The hook files themselves must typecheck clean.
@@ -1074,7 +1074,7 @@ Expected: errors like `Module '"...hooks/navigator"' has no exported member 'use
 - [ ] **Step 7: Run the smoke test in isolation**
 
 ```powershell
-cd Nitro-V3 ; yarn test --run src/hooks/navigator/useNavigatorStore.test.tsx
+cd Octane-UI ; yarn test --run src/hooks/navigator/useNavigatorStore.test.tsx
 ```
 
 Expected: PASS (3 cases).
@@ -1082,7 +1082,7 @@ Expected: PASS (3 cases).
 - [ ] **Step 8: Commit all new hook files together**
 
 ```powershell
-cd Nitro-V3
+cd Octane-UI
 git add src/hooks/navigator/useNavigatorStore.ts src/hooks/navigator/useNavigatorData.ts src/hooks/navigator/useNavigatorUiState.ts src/hooks/navigator/useNavigatorActions.ts src/hooks/navigator/index.ts src/hooks/navigator/useNavigatorStore.test.tsx
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(navigator): wired-tools-style hook split (Store + 3 filters)
 
@@ -1221,7 +1221,7 @@ Key changes:
 - [ ] **Step 2: Verify typecheck for this file is clean**
 
 ```powershell
-cd Nitro-V3 ; yarn typecheck 2>&1 | grep NavigatorDoorStateView
+cd Octane-UI ; yarn typecheck 2>&1 | grep NavigatorDoorStateView
 ```
 
 Expected: no output (no errors mentioning this file).
@@ -1238,7 +1238,7 @@ Expected: no output (no errors mentioning this file).
 - [ ] **Step 1: Read the current file in full**
 
 ```powershell
-cd Nitro-V3 ; cat src/components/navigator/NavigatorView.tsx
+cd Octane-UI ; cat src/components/navigator/NavigatorView.tsx
 ```
 
 You will replace 9 local `useState`, the local `sendSearch`/`reloadCurrentSearch` definitions, and most of the `linkTracker` body with calls to `useNavigatorUiStore.getState()`.
@@ -1476,7 +1476,7 @@ Key changes:
 - [ ] **Step 3: Verify typecheck**
 
 ```powershell
-cd Nitro-V3 ; yarn typecheck 2>&1 | grep NavigatorView
+cd Octane-UI ; yarn typecheck 2>&1 | grep NavigatorView
 ```
 
 Expected: no errors in `NavigatorView.tsx`. (Other consumer files still red — fixed in Tasks 7-8.)
@@ -1493,7 +1493,7 @@ Expected: no errors in `NavigatorView.tsx`. (Other consumer files still red — 
 - [ ] **Step 1: Read the current file**
 
 ```powershell
-cd Nitro-V3 ; cat src/components/navigator/views/search/NavigatorSearchView.tsx
+cd Octane-UI ; cat src/components/navigator/views/search/NavigatorSearchView.tsx
 ```
 
 - [ ] **Step 2: Apply the swap**
@@ -1512,7 +1512,7 @@ Find and replace inside the file:
 - [ ] **Step 3: Verify typecheck**
 
 ```powershell
-cd Nitro-V3 ; yarn typecheck 2>&1 | grep NavigatorSearchView
+cd Octane-UI ; yarn typecheck 2>&1 | grep NavigatorSearchView
 ```
 
 Expected: no errors.
@@ -1558,7 +1558,7 @@ Expected: no errors.
 - [ ] **Step 2: Run full typecheck**
 
 ```powershell
-cd Nitro-V3 ; yarn typecheck 2>&1 | tail -15
+cd Octane-UI ; yarn typecheck 2>&1 | tail -15
 ```
 
 Expected: no NEW errors. (Pre-existing floorplan errors `applyFloorModelLocally` / JSX namespace may still appear — they are NOT introduced by P1 and may be present on `origin/Dev` independently of this work.)
@@ -1566,7 +1566,7 @@ Expected: no NEW errors. (Pre-existing floorplan errors `applyFloorModelLocally`
 - [ ] **Step 3: Run full test suite**
 
 ```powershell
-cd Nitro-V3 ; yarn test --run 2>&1 | tail -10
+cd Octane-UI ; yarn test --run 2>&1 | tail -10
 ```
 
 Expected: all suites pass, including the 3 new ones from this PR.
@@ -1574,7 +1574,7 @@ Expected: all suites pass, including the 3 new ones from this PR.
 - [ ] **Step 4: Run lint:hooks**
 
 ```powershell
-cd Nitro-V3 ; yarn lint:hooks 2>&1 | tail -5
+cd Octane-UI ; yarn lint:hooks 2>&1 | tail -5
 ```
 
 Expected: clean.
@@ -1582,7 +1582,7 @@ Expected: clean.
 - [ ] **Step 5: Commit the full consumer-migration sweep (Tasks 5, 6, 7, 8 atomic)**
 
 ```powershell
-cd Nitro-V3
+cd Octane-UI
 git add src/components/navigator/views/NavigatorDoorStateView.tsx src/components/navigator/NavigatorView.tsx src/components/navigator/views/search/NavigatorSearchView.tsx src/components/navigator/views/NavigatorRoomCreatorView.tsx src/components/navigator/views/NavigatorRoomInfoView.tsx src/components/navigator/views/NavigatorRoomLinkView.tsx src/components/navigator/views/room-settings/NavigatorRoomSettingsBasicTabView.tsx src/components/navigator/views/search/NavigatorSearchResultItemView.tsx src/components/navigator/views/search/NavigatorSearchResultItemInfoView.tsx src/components/navigator/views/search/NavigatorSearchResultView.tsx src/components/catalog/views/page/layout/CatalogLayoutRoomAdsView.tsx src/components/room/widgets/room-filter-words/RoomFilterWordsWidgetView.tsx src/components/room/widgets/room-tools/RoomToolsWidgetView.tsx
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "refactor(navigator): migrate all 13 consumers off useNavigator god-hook
 
@@ -1610,8 +1610,8 @@ git push simoleo feat/navigator-modernization
 - [ ] **Step 1: Verify no references remain**
 
 ```powershell
-cd Nitro-V3 ; grep -rn "from.*hooks/navigator/useNavigator" src/ --include="*.ts" --include="*.tsx"
-cd Nitro-V3 ; grep -rn "useNavigator\b" src/ --include="*.ts" --include="*.tsx" | findstr /V /C:"useNavigatorData" /C:"useNavigatorUiState" /C:"useNavigatorActions" /C:"useNavigatorStore" /C:"useNavigatorUiStore"
+cd Octane-UI ; grep -rn "from.*hooks/navigator/useNavigator" src/ --include="*.ts" --include="*.tsx"
+cd Octane-UI ; grep -rn "useNavigator\b" src/ --include="*.ts" --include="*.tsx" | findstr /V /C:"useNavigatorData" /C:"useNavigatorUiState" /C:"useNavigatorActions" /C:"useNavigatorStore" /C:"useNavigatorUiStore"
 ```
 
 Expected: both commands return no results (or only the deletion target itself).
@@ -1619,15 +1619,15 @@ Expected: both commands return no results (or only the deletion target itself).
 - [ ] **Step 2: Delete the file**
 
 ```powershell
-cd Nitro-V3 ; git rm src/hooks/navigator/useNavigator.ts
+cd Octane-UI ; git rm src/hooks/navigator/useNavigator.ts
 ```
 
 - [ ] **Step 3: Run the gate trio**
 
 ```powershell
-cd Nitro-V3 ; yarn typecheck 2>&1 | tail -10
-cd Nitro-V3 ; yarn test --run 2>&1 | tail -10
-cd Nitro-V3 ; yarn lint:hooks 2>&1 | tail -5
+cd Octane-UI ; yarn typecheck 2>&1 | tail -10
+cd Octane-UI ; yarn test --run 2>&1 | tail -10
+cd Octane-UI ; yarn lint:hooks 2>&1 | tail -5
 ```
 
 Expected: all clean.
@@ -1637,7 +1637,7 @@ Expected: all clean.
 Start the dev server. Verify each path renders identically to pre-P1:
 
 ```powershell
-cd Nitro-V3 ; yarn start
+cd Octane-UI ; yarn start
 ```
 
 Then in the browser:
@@ -1659,7 +1659,7 @@ If anything regresses → STOP, do NOT commit, investigate.
 - [ ] **Step 5: Commit + push final**
 
 ```powershell
-cd Nitro-V3
+cd Octane-UI
 git add src/hooks/navigator/useNavigator.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "refactor(navigator): remove deprecated useNavigator god-hook
 
@@ -1678,7 +1678,7 @@ git push simoleo feat/navigator-modernization
 - [ ] **Step 6: Open PR (optional, but recommended)**
 
 ```powershell
-cd Nitro-V3 ; gh pr create --base Dev --head simoleo89:feat/navigator-modernization --title "feat(navigator): wired-tools-style hook split + Zustand UI store (P1)" --body "## Summary
+cd Octane-UI ; gh pr create --base Dev --head simoleo89:feat/navigator-modernization --title "feat(navigator): wired-tools-style hook split + Zustand UI store (P1)" --body "## Summary
 - Splits the 492-line useNavigator god-hook into useNavigatorStore + useNavigatorData / useNavigatorUiState / useNavigatorActions filters (wired-tools layout)
 - Extracts door bell/password lifecycle to src/hooks/rooms/widgets/useDoorState
 - Hoists the 9 useState in NavigatorView into a Zustand navigatorUiStore via createNitroStore

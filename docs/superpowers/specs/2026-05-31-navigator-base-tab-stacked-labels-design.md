@@ -1,7 +1,7 @@
 # Navigator — Room Settings "Base" tab: stacked-label layout
 
 **Date:** 2026-05-31
-**Component:** Nitro-V3 client
+**Component:** Octane-UI client
 **File:** `src/components/navigator/views/room-settings/NavigatorRoomSettingsBasicTabView.tsx`
 **Type:** Layout-only refactor (no logic / data-flow change)
 
