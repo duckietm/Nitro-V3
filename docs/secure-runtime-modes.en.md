@@ -7,7 +7,7 @@ This document summarizes all values you may need to configure for:
 - secure runtime API (`/api/*`)
 - plain fallbacks when you want to disable the secure layer without removing the code
 
-## 1. `Nitro-V3/public/configuration/client-mode.json`
+## 1. `Octane-UI/public/configuration/client-mode.json`
 
 This file controls everything at runtime.
 
@@ -49,7 +49,7 @@ This file controls everything at runtime.
   - base URL for plain gamedata files
   - usually: `https://hotel.example.com/client/nitro/gamedata/`
 
-## 2. `Nitro-V3/src/bootstrap.ts`
+## 2. `Octane-UI/src/bootstrap.ts`
 
 `bootstrap.ts`:
 
@@ -76,7 +76,7 @@ The current fallback is:
 
 So in production it is better to always set `apiBaseUrl` inside `configuration/client-mode.json`.
 
-## 3. `Nitro-V3/src/secure-assets.ts`
+## 3. `Octane-UI/src/secure-assets.ts`
 
 This file contains the runtime logic for:
 
@@ -95,7 +95,7 @@ This file contains the runtime logic for:
 
 Normally you should not need to touch it unless you want to change the secure protocol itself.
 
-## 4. `Nitro-V3/public/configuration/renderer-config.json`
+## 4. `Octane-UI/public/configuration/renderer-config.json`
 
 This file still defines the paths used by the renderer.
 
@@ -129,7 +129,7 @@ You can use plain classic paths, for example:
 
 or you can keep the renderer config as-is and let `secure-assets.ts` handle the fallback conversion.
 
-## 5. `Nitro-V3/public/configuration/ui-config.json`
+## 5. `Octane-UI/public/configuration/ui-config.json`
 
 There is no secure logic here, but it is one of the files loaded through `config.urls`.
 
@@ -138,7 +138,7 @@ If `secureAssetsEnabled=false`, it is loaded from the static file with `?v=...`.
 
 So you only need to maintain the content itself correctly.
 
-## 6. `Nitro-V3/scripts/write-asset-loader.mjs`
+## 6. `Octane-UI/scripts/write-asset-loader.mjs`
 
 This script generates `public/configuration/asset-loader.js`.
 
@@ -164,7 +164,7 @@ because `package.json` already contains:
 "prebuild": "node scripts/write-asset-loader.mjs"
 ```
 
-## 7. `Nitro-V3/scripts/minify-dist.mjs`
+## 7. `Octane-UI/scripts/minify-dist.mjs`
 
 This script now:
 

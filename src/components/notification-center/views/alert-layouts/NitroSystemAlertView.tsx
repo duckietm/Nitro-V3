@@ -7,7 +7,7 @@ interface NotificationDefaultAlertViewProps extends LayoutNotificationAlertViewP
 }
 
 export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = (props) => {
-    const { title = 'Nitro', onClose = null, classNames = [], ...rest } = props;
+    const { title = 'Octane UI', onClose = null, classNames = [], ...rest } = props;
     const adsEnabled = GetConfigurationValue<boolean>('show.google.ads', false);
 
     return (
@@ -16,7 +16,7 @@ export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = (prop
                 <Column size={12}>
                     <Column alignItems="center" gap={0}>
                         <Text bold fontSize={4}>
-                            Nitro React
+                            Octane UI
                         </Text>
                         <Text>v{GetUIVersion()}</Text>
                     </Column>
@@ -35,18 +35,18 @@ export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = (prop
                             )}
                         </Column>
                     </Column>
-                    <div className="alertView_nitro-coolui-logo"></div>
+                    <div className="alertView_octane-ui-logo"></div>
                     <Column size={12}>
                         <Column alignItems="center" gap={0}>
                             <Text center bold fontSize={5}>
-                                Nitro V3
+                                Octane UI
                             </Text>
                             <Text>DuckieTM, simoleo89, Medievalshell, Lorenzo (the wired master), Remco</Text>
                             <Text center bold small>
                                 v3.6.0
                             </Text>
-                            <Button fullWidth onClick={(event) => window.open('https://github.com/duckietm/Nitro-V3')}>
-                                Cool UI Git
+                            <Button fullWidth onClick={(event) => window.open('https://github.com/duckietm/Octane-UI')}>
+                                Octane UI Git
                             </Button>
                         </Column>
                     </Column>

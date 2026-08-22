@@ -32,15 +32,15 @@
             ],
             "pixi.js": [
                 "../renderer/node_modules/pixi.js",
-                "../Nitro_Render_V3/node_modules/pixi.js"
+                "../Octane-Renderer/node_modules/pixi.js"
             ],
             "@nitrots/nitro-renderer": [
                 "../renderer/index.ts",
-                "../Nitro_Render_V3/index.ts"
+                "../Octane-Renderer/index.ts"
             ],
             "@nitrots/*": [
                 "../renderer/packages/*/src/index.ts",
-                "../Nitro_Render_V3/packages/*/src/index.ts"
+                "../Octane-Renderer/packages/*/src/index.ts"
             ]
         }
     },

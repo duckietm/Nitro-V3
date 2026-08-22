@@ -5,7 +5,7 @@
 Long-running work on the `feat/react19-modernization` branch — see
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the design rationale.
 Companion changes shipped on `feat/react19-event-bus` in
-[`Nitro_Render_V3`](../Nitro_Render_V3) — see that repo's CLAUDE.md
+[`Octane-Renderer`](../Octane-Renderer) — see that repo's CLAUDE.md
 for the renderer-side notes.
 
 ### Pattern #1: `useNitroEventState` + companions
@@ -92,7 +92,7 @@ messages.
 - Renderer-side aligned with Pixi v8 (Filter[] narrowing,
   WebGLRenderer narrowing, ImageLike cast) and TS 5.7+ ArrayBuffer
   drift (BinaryReader / BinaryWriter / WsSessionCrypto / NitroBundle).
-- Cross-repo additions on `Nitro_Render_V3`:
+- Cross-repo additions on `Octane-Renderer`:
   `RoomEnterComposer` now accepts optional `spawnX`/`spawnY` matching
   Arcturus' `RequestRoomLoadEvent` optional tail; `RoomSettingsData`
   surfaces the `allowUnderpass` field that Arcturus already emits.

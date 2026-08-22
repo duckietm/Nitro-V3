@@ -39,7 +39,7 @@ This keeps debugging simple and avoids the secure runtime layer.
 File:
 
 ```txt
-Nitro-V3/public/configuration/client-mode.json
+Octane-UI/public/configuration/client-mode.json
 ```
 
 Recommended local config:
@@ -71,7 +71,7 @@ If you want everything local, use:
 but the files must really exist under:
 
 ```txt
-Nitro-V3/public/client/nitro/gamedata/
+Octane-UI/public/client/nitro/gamedata/
 ```
 
 ## 3. `public/configuration/renderer-config.json`
@@ -79,7 +79,7 @@ Nitro-V3/public/client/nitro/gamedata/
 File:
 
 ```txt
-Nitro-V3/public/configuration/renderer-config.json
+Octane-UI/public/configuration/renderer-config.json
 ```
 
 Minimum local values:
@@ -129,7 +129,7 @@ Important:
 File:
 
 ```txt
-Nitro-V3/public/configuration/ui-config.json
+Octane-UI/public/configuration/ui-config.json
 ```
 
 For the login view, you can use remote plain images:
@@ -186,7 +186,7 @@ Main columns:
 
 ## 6. Start Nitro
 
-Inside `Nitro-V3`:
+Inside `Octane-UI`:
 
 ```bash
 yarn start

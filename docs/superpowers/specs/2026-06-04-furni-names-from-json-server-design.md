@@ -2,8 +2,8 @@
 
 - **Date:** 2026-06-04
 - **Status:** Draft for review
-- **Scope:** Cross-repo — Arcturus (emulator), Nitro_Render_V3 (renderer), Nitro-V3 (client)
-- **Out of scope:** furni-editor feature/packets, NitroV3-Housekeeping (CMS), server-side multi-language, description rendering in the infostand.
+- **Scope:** Cross-repo — Arcturus (emulator), Octane-Renderer (renderer), Octane-UI (client)
+- **Out of scope:** furni-editor feature/packets, OctaneUI-Housekeeping (CMS), server-side multi-language, description rendering in the infostand.
 
 ## 1. Problem & motivation
 
@@ -185,7 +185,7 @@ All three furni surfaces already subscribe to `nitro-localization-updated` and r
 - inventory — `useInventoryFurni.ts:137` (→ `refreshGroupItemsLocalization`)
 - infostand — `useAvatarInfoWidget.ts:425` (→ `getFurniInfo`, which reads `furnitureData.name`)
 
-No Nitro-V3 edits are required for Piece 2.
+No Octane-UI edits are required for Piece 2.
 
 ## 6. Admin-facing outcome
 

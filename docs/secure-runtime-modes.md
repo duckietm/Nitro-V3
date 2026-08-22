@@ -7,7 +7,7 @@ Questa doc riassume tutti i dati da impostare per:
 - secure API runtime (`/api/*`)
 - fallback plain quando vuoi spegnere tutto senza togliere il codice
 
-## 1. `Nitro-V3/public/configuration/client-mode.json`
+## 1. `Octane-UI/public/configuration/client-mode.json`
 
 Questo file controlla tutto a runtime.
 
@@ -49,7 +49,7 @@ Questo file controlla tutto a runtime.
   - base URL del gamedata plain
   - normalmente: `https://hotel.example.com/client/nitro/gamedata/`
 
-## 2. `Nitro-V3/src/bootstrap.ts`
+## 2. `Octane-UI/src/bootstrap.ts`
 
 `bootstrap.ts`:
 
@@ -76,7 +76,7 @@ Il fallback attuale è:
 
 Quindi in produzione conviene sempre valorizzare `apiBaseUrl` dentro `configuration/client-mode.json`.
 
-## 3. `Nitro-V3/src/secure-assets.ts`
+## 3. `Octane-UI/src/secure-assets.ts`
 
 Qui vive tutta la logica runtime:
 
@@ -95,7 +95,7 @@ Qui vive tutta la logica runtime:
 
 Normalmente non serve toccarlo, a meno che tu non voglia cambiare il protocollo secure.
 
-## 4. `Nitro-V3/public/configuration/renderer-config.json`
+## 4. `Octane-UI/public/configuration/renderer-config.json`
 
 Questo file continua a definire i path usati dal renderer.
 
@@ -129,7 +129,7 @@ Conviene usare i path plain classici, per esempio:
 
 oppure lasciare il renderer configurato com’è e demandare il fallback a `secure-assets.ts`.
 
-## 5. `Nitro-V3/public/configuration/ui-config.json`
+## 5. `Octane-UI/public/configuration/ui-config.json`
 
 Qui non c’è logica secure, ma è uno dei file caricati da `config.urls`.
 
@@ -138,7 +138,7 @@ Se `secureAssetsEnabled=false`, arriva dal file statico con `?v=...`.
 
 Quindi basta mantenerlo corretto come contenuto, non serve altro.
 
-## 6. `Nitro-V3/scripts/write-asset-loader.mjs`
+## 6. `Octane-UI/scripts/write-asset-loader.mjs`
 
 Questo script genera `public/configuration/asset-loader.js`.
 
@@ -164,7 +164,7 @@ perché in `package.json` c’è:
 "prebuild": "node scripts/write-asset-loader.mjs"
 ```
 
-## 7. `Nitro-V3/scripts/minify-dist.mjs`
+## 7. `Octane-UI/scripts/minify-dist.mjs`
 
 Adesso questo script:
 

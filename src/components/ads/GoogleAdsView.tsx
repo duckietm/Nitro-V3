@@ -41,7 +41,7 @@ export const GoogleAdsView: FC<{}> = () => {
 
     // Auto-open once on initial mount (the login / landing stage).
     // Subsequent toggles are driven by the "ads:toggle" window event
-    // (e.g. the Show Ad button in NitroSystemAlertView).
+    // (e.g. the Show Ad button in the Octane UI system alert).
     useEffect(() => {
         if (!adsEnabled) return;
         if (autoOpenedRef.current) return;

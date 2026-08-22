@@ -6,10 +6,10 @@ import sirv from 'sirv';
 import { isValidJsonMode } from './scripts/json-mode.mjs';
 
 const legacyRendererRoot = resolve(import.meta.dirname, '..', 'renderer');
-const currentRendererRoot = resolve(import.meta.dirname, '..', 'Nitro_Render_V3');
+const currentRendererRoot = resolve(import.meta.dirname, '..', 'Octane-Renderer');
 const rendererRoot = existsSync(currentRendererRoot) ? currentRendererRoot : legacyRendererRoot;
 
-// Game assets live outside the repo, in a sibling directory next to Nitro-V3.
+// Game assets live outside the repo, in a sibling directory next to Octane-UI.
 // They are NOT placed under public/ on purpose: with ~177k files a symlink
 // under public/ makes chokidar try to install a watcher on each one and the
 // dev server takes minutes to start on Windows. Serving them with a
@@ -59,13 +59,13 @@ if(!existsSync(rendererRoot))
     // report "Failed to resolve import @nitrots/nitro-renderer" deep
     // inside the bundle pass.
     throw new Error(
-        '\n  Nitro renderer SDK not found.\n\n' +
+        '\n  Octane Renderer SDK not found.\n\n' +
         '  vite.config.mjs expects one of these directories to exist as a sibling of this repo:\n' +
         `    - ${ currentRendererRoot } (preferred)\n` +
         `    - ${ legacyRendererRoot } (legacy)\n\n` +
-        '  Clone the Nitro_Render_V3 repo next to Nitro-V3 and rerun:\n' +
-        '    git clone <renderer-repo> ../Nitro_Render_V3\n' +
-        '    cd ../Nitro_Render_V3 && yarn install\n\n' +
+        '  Clone the Octane-Renderer repo next to Octane-UI and rerun:\n' +
+        '    git clone <renderer-repo> ../Octane-Renderer\n' +
+        '    cd ../Octane-Renderer && yarn install\n\n' +
         '  (See CLAUDE.md "Commands" section for the full setup walkthrough.)\n'
     );
 }
@@ -134,7 +134,7 @@ export default defineConfig({
             '~': resolve(import.meta.dirname, 'node_modules'),
             // Force the umbrella to the source index.ts. Without this,
             // node-module resolution (via the symlink at
-            // node_modules/@nitrots/nitro-renderer -> ../Nitro_Render_V3)
+            // node_modules/@nitrots/nitro-renderer -> ../Octane-Renderer)
             // can land on the stale `dist/index.js` when one exists in
             // the renderer working tree — leaving the bundle with
             // pre-snapshot-pattern stubs and producing runtime errors
@@ -182,8 +182,8 @@ export default defineConfig({
                 manualChunks: id =>
                 {
                     // Vendor checks first — pixi.js/howler are aliased to
-                    // ../Nitro_Render_V3/node_modules so they match
-                    // `Nitro_Render_V3` too. Without this priority, they end
+                    // ../Octane-Renderer/node_modules so they match
+                    // `Octane-Renderer` too. Without this priority, they end
                     // up bundled into nitro-renderer instead of getting their
                     // own chunks (pixi alone is ~600KB). Use `/pixi.js/` to
                     // avoid matching path fragments like `assets/pixi.js/`.
@@ -193,7 +193,7 @@ export default defineConfig({
                     if(norm.includes('@emoji-mart')) return 'vendor-emoji';
                     if(norm.includes('jodit') || norm.includes('@react-page')) return 'vendor-editor';
 
-                    if(id.includes('Nitro_Render_V3') || id.includes(`${ rendererRoot }`))
+                    if(id.includes('Octane-Renderer') || id.includes(`${ rendererRoot }`))
                     {
                         // Heaviest renderer packages get their own chunks so
                         // pages that don't touch them (login flow, very early

@@ -6,7 +6,7 @@
 
 **Architecture:** Four new client→server packets (renderer composers + Arcturus handlers) drive category CRUD + friend assignment. The server persists to the existing `messenger_categories` table and the `messenger_friendships.category` column, then re-pushes authoritative state through the **existing** `MessengerInitComposer` (category list) and `UpdateFriendComposer` (a friend's new `categoryId`). The client already receives `categories` via `MessengerInitEvent` and `categoryId` per friend — we add CRUD actions + UI and a pure group-filter helper.
 
-**Tech Stack:** Arcturus (Java 21/Maven/HikariCP), Nitro_Render_V3 (TypeScript, yarn workspaces, Vitest), Nitro-V3 (React 19, Vite, Vitest).
+**Tech Stack:** Arcturus (Java 21/Maven/HikariCP), Octane-Renderer (TypeScript, yarn workspaces, Vitest), Octane-UI (React 19, Vite, Vitest).
 
 ---
 
@@ -35,7 +35,7 @@ The concrete numbers are chosen and verified in **Task 1**.
 - Create `messages/incoming/friends/RemoveFriendCategoryEvent.java`
 - Create `messages/incoming/friends/MoveFriendToCategoryEvent.java`
 
-**Renderer (`Nitro_Render_V3/packages/communication/src/`):**
+**Renderer (`Octane-Renderer/packages/communication/src/`):**
 - Modify `messages/outgoing/OutgoingHeader.ts` — 4 constants
 - Modify `NitroMessages.ts` — imports + 4 `_composers.set`
 - Modify `messages/outgoing/friendlist/index.ts` — 4 exports
@@ -45,7 +45,7 @@ The concrete numbers are chosen and verified in **Task 1**.
 - Create `messages/outgoing/friendlist/MoveFriendToCategoryComposer.ts`
 - Create `messages/outgoing/friendlist/__tests__/FriendCategoryComposers.test.ts`
 
-**Client (`Nitro-V3/src/`):**
+**Client (`Octane-UI/src/`):**
 - Create `api/friends/friendCategory.helpers.ts` + `.test.ts`
 - Modify `api/friends/index.ts` — export helper
 - Modify `hooks/friends/useFriends.ts` — 4 actions + composer imports
@@ -65,7 +65,7 @@ The concrete numbers are chosen and verified in **Task 1**.
 
 The user prefers official Habbo revision IDs for category packets. First check whether the connecting revision shipped friend-category management packets:
 
-Run (renderer): `grep -rin "categor" Nitro_Render_V3/packages/communication/src/messages/outgoing/OutgoingHeader.ts`
+Run (renderer): `grep -rin "categor" Octane-Renderer/packages/communication/src/messages/outgoing/OutgoingHeader.ts`
 Expected: only `MESSENGER_*` friend headers, **no** add/rename/remove/move-category constant.
 
 If no official category constants are found (expected — the bundled revision's `OutgoingHeader.ts` has none), use the custom fallback quartet **4081, 4082, 4083, 4084** and verify they are free on BOTH sides.
@@ -74,7 +74,7 @@ If no official category constants are found (expected — the bundled revision's
 
 Run:
 ```
-grep -rnE "= ?408[1-4]\b" Nitro_Render_V3/packages/communication/src/messages/outgoing/OutgoingHeader.ts
+grep -rnE "= ?408[1-4]\b" Octane-Renderer/packages/communication/src/messages/outgoing/OutgoingHeader.ts
 grep -rnE "= ?408[1-4]\b" Arcturus-Morningstar-Extended/Emulator/src/main/java/com/eu/habbo/messages/incoming/Incoming.java
 ```
 Expected: **no output** from either command (the IDs are free).
@@ -97,14 +97,14 @@ All later tasks reference the **constant names**, so only Tasks 2 and 4 (the con
 ## Task 2: Renderer — 4 outgoing composers + registration + test
 
 **Files:**
-- Create: `Nitro_Render_V3/packages/communication/src/messages/outgoing/friendlist/AddFriendCategoryComposer.ts`
-- Create: `Nitro_Render_V3/packages/communication/src/messages/outgoing/friendlist/RenameFriendCategoryComposer.ts`
-- Create: `Nitro_Render_V3/packages/communication/src/messages/outgoing/friendlist/RemoveFriendCategoryComposer.ts`
-- Create: `Nitro_Render_V3/packages/communication/src/messages/outgoing/friendlist/MoveFriendToCategoryComposer.ts`
-- Modify: `Nitro_Render_V3/packages/communication/src/messages/outgoing/OutgoingHeader.ts`
-- Modify: `Nitro_Render_V3/packages/communication/src/messages/outgoing/friendlist/index.ts`
-- Modify: `Nitro_Render_V3/packages/communication/src/NitroMessages.ts`
-- Test: `Nitro_Render_V3/packages/communication/src/messages/outgoing/friendlist/__tests__/FriendCategoryComposers.test.ts`
+- Create: `Octane-Renderer/packages/communication/src/messages/outgoing/friendlist/AddFriendCategoryComposer.ts`
+- Create: `Octane-Renderer/packages/communication/src/messages/outgoing/friendlist/RenameFriendCategoryComposer.ts`
+- Create: `Octane-Renderer/packages/communication/src/messages/outgoing/friendlist/RemoveFriendCategoryComposer.ts`
+- Create: `Octane-Renderer/packages/communication/src/messages/outgoing/friendlist/MoveFriendToCategoryComposer.ts`
+- Modify: `Octane-Renderer/packages/communication/src/messages/outgoing/OutgoingHeader.ts`
+- Modify: `Octane-Renderer/packages/communication/src/messages/outgoing/friendlist/index.ts`
+- Modify: `Octane-Renderer/packages/communication/src/NitroMessages.ts`
+- Test: `Octane-Renderer/packages/communication/src/messages/outgoing/friendlist/__tests__/FriendCategoryComposers.test.ts`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -142,7 +142,7 @@ describe('friend category composers', () =>
 
 - [ ] **Step 2: Run it to confirm it fails**
 
-Run: `cd Nitro_Render_V3 && yarn test --run packages/communication/src/messages/outgoing/friendlist/__tests__/FriendCategoryComposers.test.ts`
+Run: `cd Octane-Renderer && yarn test --run packages/communication/src/messages/outgoing/friendlist/__tests__/FriendCategoryComposers.test.ts`
 Expected: FAIL — cannot find module `../AddFriendCategoryComposer` (files not created yet).
 
 - [ ] **Step 3: Create the four composers**
@@ -249,7 +249,7 @@ export class MoveFriendToCategoryComposer implements IMessageComposer<Constructo
 
 - [ ] **Step 4: Run the test to confirm it passes**
 
-Run: `cd Nitro_Render_V3 && yarn test --run packages/communication/src/messages/outgoing/friendlist/__tests__/FriendCategoryComposers.test.ts`
+Run: `cd Octane-Renderer && yarn test --run packages/communication/src/messages/outgoing/friendlist/__tests__/FriendCategoryComposers.test.ts`
 Expected: PASS (4 tests).
 
 - [ ] **Step 5: Add the four header constants**
@@ -275,7 +275,7 @@ export * from './RenameFriendCategoryComposer';
 - [ ] **Step 7: Register the composers in NitroMessages**
 
 First find how friendlist composers are imported in `NitroMessages.ts`:
-Run: `grep -n "SendMessageComposer" Nitro_Render_V3/packages/communication/src/NitroMessages.ts`
+Run: `grep -n "SendMessageComposer" Octane-Renderer/packages/communication/src/NitroMessages.ts`
 This shows both the import line and the `_composers.set(...)` line.
 
 Add the four classes to that same import statement (the one that imports `SendMessageComposer`, `SetRelationshipStatusComposer`, etc.). Then, next to `this._composers.set(OutgoingHeader.SET_RELATIONSHIP_STATUS, SetRelationshipStatusComposer);`, add:
@@ -288,13 +288,13 @@ this._composers.set(OutgoingHeader.MOVE_FRIEND_TO_CATEGORY, MoveFriendToCategory
 
 - [ ] **Step 8: Type-check + full test run**
 
-Run: `cd Nitro_Render_V3 && yarn compile:fast && yarn test --run`
+Run: `cd Octane-Renderer && yarn compile:fast && yarn test --run`
 Expected: compile clean; all tests pass (138 prior + 4 new = 142).
 
 - [ ] **Step 9: Commit**
 
 ```bash
-cd Nitro_Render_V3
+cd Octane-Renderer
 git add packages/communication/src/messages/outgoing/friendlist/ packages/communication/src/messages/outgoing/OutgoingHeader.ts packages/communication/src/NitroMessages.ts
 git commit -m "feat(messenger): add friend-category client composers (add/rename/remove/move)"
 ```
@@ -584,9 +584,9 @@ git commit -m "feat(messenger): friend-category CRUD + assign packet handlers"
 ## Task 5: Client — pure group-filter helper (TDD)
 
 **Files:**
-- Create: `Nitro-V3/src/api/friends/friendCategory.helpers.ts`
-- Test: `Nitro-V3/src/api/friends/friendCategory.helpers.test.ts`
-- Modify: `Nitro-V3/src/api/friends/index.ts`
+- Create: `Octane-UI/src/api/friends/friendCategory.helpers.ts`
+- Test: `Octane-UI/src/api/friends/friendCategory.helpers.test.ts`
+- Modify: `Octane-UI/src/api/friends/index.ts`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -649,7 +649,7 @@ describe('countFriendsByCategory', () =>
 
 - [ ] **Step 2: Run it to confirm it fails**
 
-Run: `cd Nitro-V3 && yarn test --run src/api/friends/friendCategory.helpers.test.ts`
+Run: `cd Octane-UI && yarn test --run src/api/friends/friendCategory.helpers.test.ts`
 Expected: FAIL — cannot resolve `./friendCategory.helpers`.
 
 - [ ] **Step 3: Implement the helper**
@@ -692,7 +692,7 @@ export const countFriendsByCategory = (friends: MessengerFriend[]): Map<number, 
 
 - [ ] **Step 4: Run the test to confirm it passes**
 
-Run: `cd Nitro-V3 && yarn test --run src/api/friends/friendCategory.helpers.test.ts`
+Run: `cd Octane-UI && yarn test --run src/api/friends/friendCategory.helpers.test.ts`
 Expected: PASS (6 cases).
 
 - [ ] **Step 5: Export from the friends api barrel**
@@ -705,7 +705,7 @@ export * from './friendCategory.helpers';
 - [ ] **Step 6: Commit**
 
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/api/friends/friendCategory.helpers.ts src/api/friends/friendCategory.helpers.test.ts src/api/friends/index.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(friends): pure category filter + count helpers"
 ```
@@ -715,7 +715,7 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task 6: Client — category CRUD + assign actions in the friends store
 
 **Files:**
-- Modify: `Nitro-V3/src/hooks/friends/useFriends.ts`
+- Modify: `Octane-UI/src/hooks/friends/useFriends.ts`
 
 The store re-pushes authoritative state through the server (the existing `MessengerInitEvent` handler updates `settings.categories`; `FriendListUpdateEvent` updates each friend's `categoryId`), so these actions are thin send-wrappers — no optimistic local mutation.
 
@@ -797,13 +797,13 @@ export const useFriendsActions = () =>
 
 - [ ] **Step 5: Type-check + full test run**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: typecheck clean; all tests pass (no regressions).
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/hooks/friends/useFriends.ts
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(friends): category CRUD + assign actions in friends store"
 ```
@@ -813,8 +813,8 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task 7: Client — group chip-filter row
 
 **Files:**
-- Create: `Nitro-V3/src/components/friends/views/friends-list/FriendsListGroupChipsView.tsx`
-- Modify: `Nitro-V3/src/components/friends/views/friends-list/FriendsListView.tsx`
+- Create: `Octane-UI/src/components/friends/views/friends-list/FriendsListGroupChipsView.tsx`
+- Modify: `Octane-UI/src/components/friends/views/friends-list/FriendsListView.tsx`
 
 - [ ] **Step 1: Create the chip row component**
 
@@ -917,13 +917,13 @@ const filteredOfflineFriends = filterFriendsByCategory(offlineFriends, selectedC
 
 - [ ] **Step 3: Type-check**
 
-Run: `cd Nitro-V3 && yarn typecheck`
+Run: `cd Octane-UI && yarn typecheck`
 Expected: clean (a TS2307 for `FriendsCategoryManagerView` is acceptable here only until Task 8 lands; if you implement Task 8 next there should be no errors). If you want a green checkpoint now, temporarily comment the manager import + render block, then restore in Task 8.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/components/friends/views/friends-list/FriendsListGroupChipsView.tsx src/components/friends/views/friends-list/FriendsListView.tsx
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(friends): group chip-filter row over online/offline list"
 ```
@@ -933,7 +933,7 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task 8: Client — category manager (create / rename / delete)
 
 **Files:**
-- Create: `Nitro-V3/src/components/friends/views/friends-list/FriendsCategoryManagerView.tsx`
+- Create: `Octane-UI/src/components/friends/views/friends-list/FriendsCategoryManagerView.tsx`
 
 - [ ] **Step 1: Create the manager modal**
 
@@ -1016,13 +1016,13 @@ export const FriendsCategoryManagerView: FC<FriendsCategoryManagerViewProps> = p
 
 - [ ] **Step 2: Type-check + test**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: clean; tests green. (If you commented the manager wiring in Task 7 Step 3, restore it now.)
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/components/friends/views/friends-list/FriendsCategoryManagerView.tsx src/components/friends/views/friends-list/FriendsListView.tsx
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(friends): create/rename/delete group manager"
 ```
@@ -1032,7 +1032,7 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task 9: Client — per-friend "assign to group" control
 
 **Files:**
-- Modify: `Nitro-V3/src/components/friends/views/friends-list/friends-list-group/FriendsListGroupItemView.tsx`
+- Modify: `Octane-UI/src/components/friends/views/friends-list/friends-list-group/FriendsListGroupItemView.tsx`
 
 - [ ] **Step 1: Add categories + action to the component**
 
@@ -1075,13 +1075,13 @@ In the `friends-list-actions` div (currently the follow / chat / relationship ic
 
 - [ ] **Step 3: Type-check + test**
 
-Run: `cd Nitro-V3 && yarn typecheck && yarn test --run`
+Run: `cd Octane-UI && yarn typecheck && yarn test --run`
 Expected: clean; tests green.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/components/friends/views/friends-list/friends-list-group/FriendsListGroupItemView.tsx
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "feat(friends): per-friend assign-to-group control"
 ```
@@ -1091,7 +1091,7 @@ git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com comm
 ## Task 10: Client — styles for chips, manager, assign menu
 
 **Files:**
-- Modify: `Nitro-V3/src/css/friends/FriendsView.css`
+- Modify: `Octane-UI/src/css/friends/FriendsView.css`
 
 - [ ] **Step 1: Append styles**
 
@@ -1143,13 +1143,13 @@ Match the existing palette in this file (grays `#f3f3ef`/`#e6e6e6`, accent blue 
 
 - [ ] **Step 2: Visual sanity (build only)**
 
-Run: `cd Nitro-V3 && yarn typecheck`
+Run: `cd Octane-UI && yarn typecheck`
 Expected: clean (CSS isn't type-checked, but confirm nothing else broke).
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd Nitro-V3
+cd Octane-UI
 git add src/css/friends/FriendsView.css
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -m "style(friends): group chips, category manager, assign menu"
 ```
@@ -1172,7 +1172,7 @@ SHOW COLUMNS FROM messenger_friendships LIKE 'category';
 - [ ] **Step 2: Run the new emulator jar + client dev server**
 
 - Emulator: run the jar built in Task 4 (`java -jar Arcturus-Morningstar-Extended/Emulator/target/Habbo-*-jar-with-dependencies.jar`).
-- Client: `cd Nitro-V3 && yarn start` (Vite picks up the renderer source live — no renderer build needed).
+- Client: `cd Octane-UI && yarn start` (Vite picks up the renderer source live — no renderer build needed).
 
 - [ ] **Step 3: Manual test matrix (log in, open Friends)**
 
@@ -1190,8 +1190,8 @@ Verify each:
 
 Run:
 ```
-cd Nitro_Render_V3 && yarn compile:fast && yarn test --run
-cd Nitro-V3 && yarn typecheck && yarn test --run && yarn eslint
+cd Octane-Renderer && yarn compile:fast && yarn test --run
+cd Octane-UI && yarn typecheck && yarn test --run && yarn eslint
 cd Arcturus-Morningstar-Extended/Emulator && mvn -q clean package -DskipTests
 ```
 Expected: renderer tests green (142), client tests green (existing + 6 new helper cases), client typecheck + eslint clean, emulator BUILD SUCCESS.
@@ -1200,7 +1200,7 @@ Expected: renderer tests green (142), client tests green (existing + 6 new helpe
 
 ```bash
 # only if Step 3/4 required changes
-cd Nitro-V3
+cd Octane-UI
 git -c user.name=simoleo89 -c user.email=simoleo89@users.noreply.github.com commit -am "fix(friends): integration fixes for friend groups"
 ```
 

@@ -14,7 +14,7 @@ import { useExternalSnapshot } from '../events/useExternalSnapshot';
 
 /**
  * React-side consumers for the referentially-stable snapshot getters
- * the renderer exposes (Nitro_Render_V3 v2.1.0+ pattern).
+ * the renderer exposes (Octane-Renderer v2.1.0+ pattern).
  *
  * Every hook here is a thin `useSyncExternalStore` wrapper: it subscribes
  * to the corresponding `NitroEventType.*_UPDATED` invalidation event and

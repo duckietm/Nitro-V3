@@ -10,10 +10,10 @@ import { stdin as input, stdout as output } from 'node:process';
 import { DEFAULT_JSON_MODE, normalizeJsonModeAnswer, VALID_JSON_MODES } from './scripts/json-mode.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_RENDERER_REPO_URL = 'https://github.com/duckietm/Nitro_Render_V3.git';
+const DEFAULT_RENDERER_REPO_URL = 'https://github.com/duckietm/Octane-Renderer.git';
 // Sibling folder names the client's vite.config / tsconfig already know how to resolve.
 // Auto-detection walks these in order; a fresh clone defaults to the first one.
-const RENDERER_DIR_CANDIDATES = ['Nitro_Render_V3', 'renderer'];
+const RENDERER_DIR_CANDIDATES = ['Octane-Renderer', 'renderer'];
 const DEFAULT_RENDERER_DIR_NAME = RENDERER_DIR_CANDIDATES[0];
 // Resolved in main() from --renderer-repo / --renderer-dir / NITRO_RENDERER_DIR / auto-detection.
 let RENDERER_REPO_URL = DEFAULT_RENDERER_REPO_URL;
@@ -226,7 +226,7 @@ function printUsage() {
         .map(([key, spec]) => '  --' + spec.flag + '=<value>' + ' '.repeat(Math.max(1, 32 - spec.flag.length)) + 'Set ' + key)
         .join('\n');
     console.log([
-        'Nitro-V3 cross-platform installer',
+        'Octane UI cross-platform installer',
         '',
         'Usage: node install.mjs [flags]',
         '',
@@ -235,7 +235,7 @@ function printUsage() {
         '  --json-mode=<jsonc|legacy|auto>     Choose the JSON parsing mode without prompting',
         '  --renderer-dir=<path>               Renderer folder (absolute, or relative to the parent dir).',
         '                                      Default: auto-detect ' + RENDERER_DIR_CANDIDATES.join(' / ') + ', else "' + DEFAULT_RENDERER_DIR_NAME + '". Env: NITRO_RENDERER_DIR',
-        '  --renderer-repo=<url>               Git URL to clone the renderer from (default: duckietm Nitro_Render_V3)',
+        '  --renderer-repo=<url>               Git URL to clone the renderer from (default: duckietm Octane-Renderer)',
         '  --skip-build                        Skip the final yarn build',
         '  --skip-clone                        Skip cloning the renderer',
         '  --skip-link                         Skip yarn link calls (useful when re-running)',
@@ -284,8 +284,8 @@ async function checkPrereqs() {
 
 // Resolve which sibling folder is the renderer SDK, honouring (in priority order):
 //   1. --renderer-dir=<path>      2. NITRO_RENDERER_DIR env   (both skip the prompt)
-//   3. interactive prompt — the operator chooses (default = a detected folder, else ./Nitro_Render_V3)
-//   4. --non-interactive: first existing folder among RENDERER_DIR_CANDIDATES, else ./Nitro_Render_V3
+//   3. interactive prompt — the operator chooses (default = a detected folder, else ./Octane-Renderer)
+//   4. --non-interactive: first existing folder among RENDERER_DIR_CANDIDATES, else ./Octane-Renderer
 // A chosen/explicit path may be absolute or relative to the parent of the client.
 async function resolveRendererDir(opts) {
     const parent = resolve(ROOT, '..');
@@ -589,7 +589,7 @@ async function main() {
 
     RENDERER_REPO_URL = opts.rendererRepo || DEFAULT_RENDERER_REPO_URL;
 
-    console.log(c.bold + 'Nitro-V3 installer' + c.reset + ' (' + (IS_WINDOWS ? 'Windows' : platform()) + ')');
+    console.log(c.bold + 'Octane UI installer' + c.reset + ' (' + (IS_WINDOWS ? 'Windows' : platform()) + ')');
     console.log('Project root: ' + ROOT);
 
     step(STEPS[0]); await checkPrereqs();

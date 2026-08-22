@@ -611,12 +611,14 @@
     border-image-source: var(--habbo-skin-button-hover) !important;
 }
 
-.alertView_nitro-coolui-logo {
+.alertView_octane-ui-logo {
 	width: 150px;
 	height: 73px;
 	position: relative;
-	background-image: url("@/assets/images/notifications/nitro_v3.png");
+	background-image: url("@/assets/images/loading/octane-logo.png");
+	background-position: center;
 	background-repeat: no-repeat;
+	background-size: contain;
 }
 
 .nitro-friendonline-notification {

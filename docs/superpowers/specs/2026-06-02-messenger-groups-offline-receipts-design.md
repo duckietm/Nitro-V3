@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-02
 **Status:** Approved design (brainstorming) — pending implementation plan
-**Scope:** Cross-component (Nitro-V3 client + Nitro_Render_V3 renderer + Arcturus emulator + DB). CMS untouched.
+**Scope:** Cross-component (Octane-UI client + Octane-Renderer renderer + Arcturus emulator + DB). CMS untouched.
 
 ## Goal
 
@@ -26,10 +26,10 @@ Extend the existing (already-React) friends list & instant messenger with four f
 
 ## Current state (verified)
 
-- **Client (Nitro-V3):** friends + messenger are already React/TSX under `src/components/friends/**`, driven by `useFriends` / `useFriendsState` / `useFriendsActions` / `useMessenger`. `MessengerFriend.categoryId` and `MessengerSettings.categories` exist in the data model but there is **no group UI**. No receipts, no typing, no offline UI.
-- **Renderer (Nitro_Render_V3):** `MessengerInitParser` exposes `categories: FriendCategoryData[]`; `FriendParser` carries `categoryId`. `NewConsoleMessageParser` exposes `senderId, messageText, secondsSinceSent, extraData`. **No** category-management composers, **no** receipt/typing/messageId for the messenger. Typing exists only for *room* chat.
+- **Client (Octane-UI):** friends + messenger are already React/TSX under `src/components/friends/**`, driven by `useFriends` / `useFriendsState` / `useFriendsActions` / `useMessenger`. `MessengerFriend.categoryId` and `MessengerSettings.categories` exist in the data model but there is **no group UI**. No receipts, no typing, no offline UI.
+- **Renderer (Octane-Renderer):** `MessengerInitParser` exposes `categories: FriendCategoryData[]`; `FriendParser` carries `categoryId`. `NewConsoleMessageParser` exposes `senderId, messageText, secondsSinceSent, extraData`. **No** category-management composers, **no** receipt/typing/messageId for the messenger. Typing exists only for *room* chat.
 - **Emulator (Arcturus):** `Messenger`, `MessengerBuddy`, `Message`, `MessengerCategory` exist. `MessengerInitComposer` sends categories; `FriendsComposer` serializes `categoryId`. **No** category create/rename/delete/assign handlers and **no DB setter** for category. Instant messages are fire-and-forget (delivered only if recipient online, else dropped). `messenger_offline` table exists but is **never read/written**. No receipts, no messenger typing.
-- **Build integration:** `Nitro-V3/vite.config.mjs` aliases `@nitrots/nitro-renderer` directly to local `../Nitro_Render_V3/index.ts` **source**. New renderer code is picked up live by the client dev server — no separate renderer build/publish step required.
+- **Build integration:** `Octane-UI/vite.config.mjs` aliases `@nitrots/nitro-renderer` directly to local `../Octane-Renderer/index.ts` **source**. New renderer code is picked up live by the client dev server — no separate renderer build/publish step required.
 
 ## Protocol strategy
 
@@ -58,9 +58,9 @@ Extend the existing (already-React) friends list & instant messenger with four f
 - Responses reuse existing composers: `MessengerInitComposer` (refreshed categories list) and `UpdateFriendComposer` (moved friend's new `categoryId`).
 - Limits enforced server-side (≤20 groups, name length, dedupe). Delete → members → category `0`.
 
-**Renderer (Nitro_Render_V3):** new outgoing composers `AddFriendCategoryComposer`, `RenameFriendCategoryComposer`, `RemoveFriendCategoryComposer`, `MoveFriendToCategoryComposer` with the official/fallback header IDs. (Categories arrive via existing `MessengerInitParser`; add a small `FriendCategoriesEvent` only if a standalone refresh is needed.)
+**Renderer (Octane-Renderer):** new outgoing composers `AddFriendCategoryComposer`, `RenameFriendCategoryComposer`, `RemoveFriendCategoryComposer`, `MoveFriendToCategoryComposer` with the official/fallback header IDs. (Categories arrive via existing `MessengerInitParser`; add a small `FriendCategoriesEvent` only if a standalone refresh is needed.)
 
-**Client (Nitro-V3):**
+**Client (Octane-UI):**
 - `useFriendsState` exposes `categories`; `useFriendsActions` adds `addCategory / renameCategory / removeCategory / moveFriendToCategory` wired to the composers.
 - **Layout decision:** Online/Offline remains the **primary** view. A **chip-filter row** at the top of `FriendsListView` (one chip per group, like the navigator filter chips) filters the list to a single group. Groups *filter*, they do not restructure the Online/Offline sections.
 - **Group management UI:** an "manage groups" affordance in `FriendsListView` (add / rename / delete) and a per-friend assignment control (dropdown / context action) in `FriendsListGroupItemView`.

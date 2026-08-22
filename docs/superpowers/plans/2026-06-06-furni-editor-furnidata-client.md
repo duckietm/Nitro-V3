@@ -4,7 +4,7 @@
 
 **Goal:** Expose the server-side furnidata name/description editing (Plan A, already on Arcturus `main`) in the React furni editor: make Classname/Public Name read-only, add an editable **Furnidata** section (Display Name + Description) with diff-confirm + revert, search by furnidata name, and refresh the editor's typography/colors to the theme tokens.
 
-**Architecture:** Renderer (`Nitro_Render_V3`) gains 2 outgoing composers matching the server's incoming headers (update **10046**, revert **10048**); the success result reuses the existing `FurniEditorResult` (10044) and live propagation reuses the merged `FurnitureDataReload` (10047). Client (`Nitro-V3`) adds hook actions + UI. A small server tweak lets search match furnidata display names.
+**Architecture:** Renderer (`Octane-Renderer`) gains 2 outgoing composers matching the server's incoming headers (update **10046**, revert **10048**); the success result reuses the existing `FurniEditorResult` (10044) and live propagation reuses the merged `FurnitureDataReload` (10047). Client (`Octane-UI`) adds hook actions + UI. A small server tweak lets search match furnidata display names.
 
 **Tech Stack:** React 19 + Vite + TailwindCSS 4 (theme tokens in `tailwind.config.js`), TS, Vitest (client); TS/PixiJS (renderer); Java/Maven (server tweak). Server feature already built (Plan A).
 
@@ -16,7 +16,7 @@
 
 ## Task 1 (renderer): outgoing composers + headers
 
-**Files (in `E:\Users\simol\Desktop\DEV\Nitro_Render_V3\packages\communication\src\messages`):**
+**Files (in `E:\Users\simol\Desktop\DEV\Octane-Renderer\packages\communication\src\messages`):**
 - Modify: `outgoing/OutgoingHeader.ts` (after `FURNI_EDITOR_DELETE = 10045`, ~line 505)
 - Create: `outgoing/furnieditor/FurniEditorUpdateFurnidataComposer.ts`
 - Create: `outgoing/furnieditor/FurniEditorRevertFurnidataComposer.ts`
@@ -54,12 +54,12 @@ export class FurniEditorUpdateFurnidataComposer implements IMessageComposer<Cons
 
 - [ ] **Step 4: Export both** from the furnieditor composers `index.ts` barrel (add the two `export * from './FurniEditor...Composer';` lines next to the existing furni-editor composer exports).
 
-- [ ] **Step 5: Build** — `cd E:\Users\simol\Desktop\DEV\Nitro_Render_V3 && yarn compile:fast` (or the real compile script in package.json). Expected: clean, no TS errors.
+- [ ] **Step 5: Build** — `cd E:\Users\simol\Desktop\DEV\Octane-Renderer && yarn compile:fast` (or the real compile script in package.json). Expected: clean, no TS errors.
 
 - [ ] **Step 6: Commit** (renderer repo):
 ```
-git -C "E:/Users/simol/Desktop/DEV/Nitro_Render_V3" add packages/communication/src/messages/outgoing/OutgoingHeader.ts packages/communication/src/messages/outgoing/furnieditor/
-git -C "E:/Users/simol/Desktop/DEV/Nitro_Render_V3" commit -m "feat(furnieditor): outgoing composers for furnidata update (10046) + revert (10048)"
+git -C "E:/Users/simol/Desktop/DEV/Octane-Renderer" add packages/communication/src/messages/outgoing/OutgoingHeader.ts packages/communication/src/messages/outgoing/furnieditor/
+git -C "E:/Users/simol/Desktop/DEV/Octane-Renderer" commit -m "feat(furnieditor): outgoing composers for furnidata update (10046) + revert (10048)"
 ```
 NO `Co-Authored-By` trailer.
 
@@ -67,7 +67,7 @@ NO `Co-Authored-By` trailer.
 
 ## Task 2 (client): hook actions
 
-**Files:** Modify `E:\Users\simol\Desktop\DEV\Nitro-V3\src\hooks\furni-editor\useFurniEditor.ts`
+**Files:** Modify `E:\Users\simol\Desktop\DEV\Octane-UI\src\hooks\furni-editor\useFurniEditor.ts`
 
 - [ ] **Step 1: Parse furnidata name/desc into state.** Where the detail handler parses `furniDataJson` into `furniDataEntry` (lines ~140–152), also derive convenience strings. The `furniDataEntry` is `Record<string,unknown>` with `name`/`description` keys. No new state needed — the EditView will read `furniDataEntry?.name`/`furniDataEntry?.description`. (No change required here if the EditView reads `furniDataEntry`; otherwise expose `furniDataName`/`furniDataDescription` strings. Choose the minimal path — prefer reading `furniDataEntry` directly in the view.)
 
@@ -91,12 +91,12 @@ Use the REAL send-composer helper this hook already uses (the exploration shows 
 
 - [ ] **Step 3: Export** `updateFurnidata`, `revertFurnidata` in the hook's return object.
 
-- [ ] **Step 4: Typecheck** — `cd E:\Users\simol\Desktop\DEV\Nitro-V3 && yarn typecheck`. Expected: no new errors (pre-existing renderer-SDK TS2307 in a sandbox without the renderer are acceptable, but here the renderer IS present so it should be clean for these files).
+- [ ] **Step 4: Typecheck** — `cd E:\Users\simol\Desktop\DEV\Octane-UI && yarn typecheck`. Expected: no new errors (pre-existing renderer-SDK TS2307 in a sandbox without the renderer are acceptable, but here the renderer IS present so it should be clean for these files).
 
 - [ ] **Step 5: Commit:**
 ```
-git -C "E:/Users/simol/Desktop/DEV/Nitro-V3" add src/hooks/furni-editor/useFurniEditor.ts
-git -C "E:/Users/simol/Desktop/DEV/Nitro-V3" commit -m "feat(furni-editor): updateFurnidata/revertFurnidata hook actions"
+git -C "E:/Users/simol/Desktop/DEV/Octane-UI" add src/hooks/furni-editor/useFurniEditor.ts
+git -C "E:/Users/simol/Desktop/DEV/Octane-UI" commit -m "feat(furni-editor): updateFurnidata/revertFurnidata hook actions"
 ```
 NO `Co-Authored-By`.
 
@@ -160,12 +160,12 @@ Add local state near the other state (lines ~71–91): `const [furniName, setFur
 ```
 Copy the exact overlay/panel Tailwind classes from the existing delete-confirmation modal so it looks identical.
 
-- [ ] **Step 5: Typecheck + manual render.** `cd Nitro-V3 && yarn typecheck` (clean). With `yarn start` running, open the editor on a furni: Classname/Public Name show read-only (monospace, muted), the Furnidata section shows the real display name from furnidata, editing + Save shows the confirm modal, Confirm sends the composer.
+- [ ] **Step 5: Typecheck + manual render.** `cd Octane-UI && yarn typecheck` (clean). With `yarn start` running, open the editor on a furni: Classname/Public Name show read-only (monospace, muted), the Furnidata section shows the real display name from furnidata, editing + Save shows the confirm modal, Confirm sends the composer.
 
 - [ ] **Step 6: Commit:**
 ```
-git -C "E:/Users/simol/Desktop/DEV/Nitro-V3" add src/components/furni-editor/views/FurniEditorEditView.tsx src/components/furni-editor/FurniEditorView.tsx
-git -C "E:/Users/simol/Desktop/DEV/Nitro-V3" commit -m "feat(furni-editor): editable furnidata name/desc section + read-only classname/public_name + diff-confirm + revert"
+git -C "E:/Users/simol/Desktop/DEV/Octane-UI" add src/components/furni-editor/views/FurniEditorEditView.tsx src/components/furni-editor/FurniEditorView.tsx
+git -C "E:/Users/simol/Desktop/DEV/Octane-UI" commit -m "feat(furni-editor): editable furnidata name/desc section + read-only classname/public_name + diff-confirm + revert"
 ```
 NO `Co-Authored-By`.
 
@@ -197,8 +197,8 @@ const readonlyClass = 'w-full px-2 py-1 text-sm font-mono rounded-sm border bord
 
 - [ ] **Step 5: Commit:**
 ```
-git -C "E:/Users/simol/Desktop/DEV/Nitro-V3" add src/components/furni-editor/views/FurniEditorEditView.tsx
-git -C "E:/Users/simol/Desktop/DEV/Nitro-V3" commit -m "style(furni-editor): theme-token typography refresh (labels, inputs focus ring, mono read-only)"
+git -C "E:/Users/simol/Desktop/DEV/Octane-UI" add src/components/furni-editor/views/FurniEditorEditView.tsx
+git -C "E:/Users/simol/Desktop/DEV/Octane-UI" commit -m "style(furni-editor): theme-token typography refresh (labels, inputs focus ring, mono read-only)"
 ```
 NO `Co-Authored-By`.
 
@@ -228,8 +228,8 @@ NO `Co-Authored-By`. (This task is optional/last — if it balloons, ship Tasks 
 
 ## Task 6: final build/verify
 
-- [ ] Renderer: `cd Nitro_Render_V3 && yarn compile:fast` clean.
-- [ ] Client: `cd Nitro-V3 && yarn typecheck && yarn test --run` green (pre-existing unrelated failures noted, not introduced).
+- [ ] Renderer: `cd Octane-Renderer && yarn compile:fast` clean.
+- [ ] Client: `cd Octane-UI && yarn typecheck && yarn test --run` green (pre-existing unrelated failures noted, not introduced).
 - [ ] Server (if Task 5 done): `cd Emulator && mvn -q package -DskipTests=false` SUCCESS; deploy jar to `Latest_Compiled_Version` + restart for manual end-to-end.
 - [ ] Manual acceptance: edit a furni's display name in the editor → confirm modal → live update in catalog/inventory/infostand without refresh; Revert restores; Classname/Public Name read-only; search by display name finds it; audit row written.
 
