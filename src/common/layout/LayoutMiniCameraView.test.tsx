@@ -19,7 +19,9 @@ vi.mock('@nitrots/nitro-renderer', async () => {
 vi.mock('../../api', () => ({
     LocalizeText: (key: string) => key,
     PlaySound: vi.fn(),
-    SoundNames: { CAMERA_SHUTTER: 'camera-shutter' }
+    SoundNames: { CAMERA_SHUTTER: 'camera-shutter' },
+    blitRoomCanvasToViewfinder: vi.fn(),
+    getViewfinderRoomFrame: vi.fn(() => ({ x: 3, y: 30, width: 110, height: 110 }))
 }));
 
 describe('AIR room thumbnail viewfinder', () => {

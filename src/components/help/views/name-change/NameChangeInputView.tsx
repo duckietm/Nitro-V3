@@ -96,7 +96,7 @@ export const NameChangeInputView: FC<NameChangeLayoutViewProps> = (props) => {
                 <button className="w-full btn btn-success" disabled={!canProceed} onClick={() => onAction('confirmation', newUsername)}>
                     {LocalizeText('tutorial.name_change.pick')}
                 </button>
-                <button className="w-full btn btn-primary" onClick={() => onAction('close')}>
+                <button className="w-full btn btn-danger" onClick={() => onAction('close')}>
                     {LocalizeText('cancel')}
                 </button>
             </div>

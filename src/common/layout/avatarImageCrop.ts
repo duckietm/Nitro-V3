@@ -116,3 +116,37 @@ export const cropTransparentImageUrl = (imageUrl: string, targetSize: number = 2
     image.onerror = () => resolve(imageUrl);
     image.src = imageUrl;
 });
+
+/** AIR MeMenuNewIconLoader: HabboFaceFocuser.focusUserFace full dir 3 then cutCircle r=20. */
+export const cropAirMeMenuFaceImageUrl = (imageUrl: string): Promise<string> => new Promise(resolve =>
+{
+    const image = new Image();
+    image.onload = () =>
+    {
+        try
+        {
+            const canvas = document.createElement('canvas');
+            canvas.width = 50;
+            canvas.height = 50;
+            const context = canvas.getContext('2d');
+            if(!context) return resolve(imageUrl);
+            context.imageSmoothingEnabled = false;
+            const sx = Math.min(21, Math.max(0, image.naturalWidth - 50));
+            const sy = Math.min(30, Math.max(0, image.naturalHeight - 50));
+            const sw = Math.min(50, image.naturalWidth - sx);
+            const sh = Math.min(50, image.naturalHeight - sy);
+            context.drawImage(image, sx, sy, sw, sh, 0, 0, sw, sh);
+            context.globalCompositeOperation = 'destination-in';
+            context.beginPath();
+            context.arc(25, 25, 20, 0, Math.PI * 2);
+            context.fill();
+            resolve(canvas.toDataURL('image/png'));
+        }
+        catch
+        {
+            resolve(imageUrl);
+        }
+    };
+    image.onerror = () => resolve(imageUrl);
+    image.src = imageUrl;
+});

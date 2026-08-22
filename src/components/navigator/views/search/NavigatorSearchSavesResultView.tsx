@@ -1,7 +1,7 @@
 import { NavigatorSavedSearch } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { FaBolt } from 'react-icons/fa';
 import { LocalizeText } from '../../../../api';
+import quicklinkAdd from '../../../../assets/images/navigator/air/quicklink-add.png';
 import { Column, Flex, Text } from '../../../../common';
 import { NavigatorSearchSavesResultItemView } from './NavigatorSearchSavesResultItemView';
 
@@ -15,7 +15,7 @@ export const NavigatorSearchSavesResultView: FC<NavigatorSearchSavesResultViewPr
     return (
         <Column className="nitro-navigator-search-saves-result h-full" gap={0}>
             <Flex className="nitro-navigator-search-saves-result__header shrink-0" gap={1} alignItems="center">
-                <FaBolt color="white" />
+                <img src={quicklinkAdd} alt="" />
                 <Text variant="white" truncate>
                     {LocalizeText('navigator.quick.links.title')}
                 </Text>
@@ -25,7 +25,7 @@ export const NavigatorSearchSavesResultView: FC<NavigatorSearchSavesResultViewPr
                     searches.map((search: NavigatorSavedSearch) => <NavigatorSearchSavesResultItemView key={search.id} search={search} />)
                 ) : (
                     <Flex center className="py-4 opacity-30">
-                        <FaBolt className="text-orange-500" size={22} />
+                        <img src={quicklinkAdd} alt="" />
                     </Flex>
                 )}
             </Column>

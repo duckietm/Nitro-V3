@@ -217,7 +217,7 @@ export const NavigatorRoomSettingsView: FC<{}> = (props) => {
 
     return (
         <NitroCardView
-            className="nitro-room-settings min-w-0 w-[min(420px,calc(100vw-16px))] h-[min(620px,calc(100vh-16px))] max-w-[calc(100vw-16px)]"
+            className="nitro-room-settings min-w-0 w-[min(341px,calc(100vw-16px))] h-[min(520px,calc(100vh-16px))] max-w-[calc(100vw-16px)]"
             isResizable={false}
             uniqueKey="nitro-room-settings"
         >
@@ -238,7 +238,7 @@ export const NavigatorRoomSettingsView: FC<{}> = (props) => {
                     );
                 })}
             </NitroCardTabsView>
-            <NitroCardContentView overflow="hidden">
+            <NitroCardContentView overflow="auto">
                 {currentTab === TABS[0] && <NavigatorRoomSettingsBasicTabView handleChange={handleChange} roomData={roomData} onClose={onClose} />}
                 {currentTab === TABS[1] && <NavigatorRoomSettingsAccessTabView handleChange={handleChange} roomData={roomData} />}
                 {currentTab === TABS[2] && <NavigatorRoomSettingsRightsTabView handleChange={handleChange} roomData={roomData} />}

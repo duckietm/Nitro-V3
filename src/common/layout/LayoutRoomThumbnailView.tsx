@@ -14,9 +14,8 @@ export const LayoutRoomThumbnailView: FC<LayoutRoomThumbnailViewProps> = (props)
 
     const getClassNames = useMemo(() => {
         const newClassNames: string[] = [
-            'relative w-[110px] h-[110px] bg-[url("@/assets/images/navigator/thumbnail_placeholder.png")] bg-no-repeat bg-center',
-            'rounded-[6px]',
-            'border! border-[solid]! border-[#c4cabf]!'
+            'relative w-[110px] h-[110px] bg-[url("@/assets/images/navigator/air/default-room.png")] bg-no-repeat bg-center',
+            'border! border-[solid]! border-[#111]!'
         ];
 
         if (classNames.length) newClassNames.push(...classNames);

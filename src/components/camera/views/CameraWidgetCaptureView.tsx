@@ -1,7 +1,7 @@
-import { GetRoomEngine, NitroRectangle, TextureUtils } from '@nitrots/nitro-renderer';
-import { FC, useRef } from 'react';
+import { GetRoomEngine, TextureUtils } from '@nitrots/nitro-renderer';
+import { FC, useEffect, useRef } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import { CameraPicture, GetRoomSession, LocalizeText, PlaySound, SoundNames } from '../../../api';
+import { blitRoomCanvasToViewfinder, CameraPicture, GetRoomSession, getViewfinderRoomFrame, LocalizeText, PlaySound, SoundNames } from '../../../api';
 import { Button, Column, DraggableWindow } from '../../../common';
 import { useCamera, useNotification } from '../../../hooks';
 
@@ -17,20 +17,27 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = (props)
     const { onClose = null, onEdit = null, onDelete = null } = props;
     const { cameraRoll = null, setCameraRoll = null, selectedPictureIndex = -1, setSelectedPictureIndex = null } = useCamera();
     const { simpleAlert = null } = useNotification();
-    const elementRef = useRef<HTMLDivElement>(null);
+    const elementRef = useRef<HTMLCanvasElement>(null);
 
     const selectedPicture = selectedPictureIndex > -1 ? cameraRoll[selectedPictureIndex] : null;
 
-const getCameraBounds = () => {
-         if (!elementRef || !elementRef.current) return null;
+    useEffect(() => {
+        if (selectedPicture) return;
 
-         const frameBounds = elementRef.current.getBoundingClientRect();
-         const scaleFactor = 1.001;
-         const scaledX = Math.floor(frameBounds.x * scaleFactor);
-         const scaledY = Math.floor(frameBounds.y * scaleFactor);
-         console.log("CameraCapture bounds:", scaledX, scaledY);
-         return new NitroRectangle(scaledX, scaledY, Math.floor(frameBounds.width), Math.floor(frameBounds.height));
-     };
+        let frame = 0;
+        let last = 0;
+        const tick = (now: number) => {
+            if (now - last >= 1000 / 24) {
+                last = now;
+                blitRoomCanvasToViewfinder(elementRef.current, 320, 320);
+            }
+            frame = window.requestAnimationFrame(tick);
+        };
+
+        frame = window.requestAnimationFrame(tick);
+
+        return () => window.cancelAnimationFrame(frame);
+    }, [selectedPicture]);
 
     const takePicture = async () => {
         if (selectedPictureIndex > -1) {
@@ -38,17 +45,18 @@ const getCameraBounds = () => {
             return;
         }
 
-        const texture = GetRoomEngine().createTextureFromRoom(GetRoomSession().roomId, 1, getCameraBounds());
-
-        const clone = [...cameraRoll];
-
-        if (clone.length >= CAMERA_ROLL_LIMIT) {
-            // Roll is full — block the shot (the old code did clone.pop(), which
-            // discarded the NEWEST photo and pinned the roll at the limit forever).
+        if (cameraRoll.length >= CAMERA_ROLL_LIMIT) {
             simpleAlert(LocalizeText('camera.full.body'));
-
             return;
         }
+
+        const frame = getViewfinderRoomFrame(elementRef.current, 320, 320);
+
+        if (!frame) return;
+
+        const texture = GetRoomEngine().createTextureFromRoom(GetRoomSession().roomId, 1, frame);
+
+        const clone = [...cameraRoll];
 
         PlaySound(SoundNames.CAMERA_SHUTTER);
         clone.push(new CameraPicture(texture, await TextureUtils.generateImageUrl(texture)));
@@ -59,7 +67,7 @@ const getCameraBounds = () => {
     return (
         <DraggableWindow uniqueKey="nitro-camera-capture">
             <Column center className="relative" gap={0}>
-                {selectedPicture && <img alt="" className="absolute top-[37px] left-[10px] w-[325px] h-[325px]" src={selectedPicture.imageUrl} />}
+                {selectedPicture && <img alt="" className="absolute top-[36px] left-[9px] w-[320px] h-[320px]" src={selectedPicture.imageUrl} />}
                 <div className="relative w-[340px] h-[462px] bg-[url('@/assets/images/room-widgets/camera-widget/camera-spritesheet.png')] bg-position-[-1px_-1px] drag-handler">
                     <div
                         className="absolute top-[8px] right-[8px] rounded-[.25rem] [box-shadow:0_0_0_1.5px_#fff] border-2 border-[solid] border-[#921911] bg-[repeating-linear-gradient(rgb(245,80,65),rgb(245,80,65)_50%,rgb(194,48,39)_50%,rgb(194,48,39)_100%)] cursor-pointer leading-none px-[3px] py-px"
@@ -68,13 +76,15 @@ const getCameraBounds = () => {
                         <FaTimes className="fa-icon" />
                     </div>
                     {!selectedPicture && (
-                        <div
+                        <canvas
                             ref={elementRef}
-                            className="absolute top-[37px] left-[10px] w-[320px] h-[320px] bg-[url('@/assets/images/room-widgets/camera-widget/camera-spritesheet.png')] bg-position-[-343px_-1px]"
+                            className="nitro-camera-viewfinder absolute top-[36px] left-[9px] w-[320px] h-[320px] pointer-events-none"
+                            width={320}
+                            height={320}
                         />
                     )}
                     {selectedPicture && (
-                        <div className="absolute top-[37px] left-[10px] w-[320px] h-[320px] ">
+                        <div className="absolute top-[36px] left-[9px] w-[320px] h-[320px] ">
                             <div className="bg-[rgba(0,0,0,0.5)] w-full absolute bottom-0 py-2 text-center inline-flex justify-center">
                                 <Button className="me-3" title={LocalizeText('camera.editor.button.tooltip')} variant="success" onClick={onEdit}>
                                     {LocalizeText('camera.editor.button.text')}

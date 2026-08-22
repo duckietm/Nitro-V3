@@ -1,4 +1,5 @@
 export * from './DoorStateType';
+export * from './NavigatorUserCountColor';
 export * from './INavigatorData';
 export * from './INavigatorSearchFilter';
 export * from './IRoomChatSettings';

@@ -11,6 +11,6 @@ describe('LayoutAvatarImageView compact heads', () =>
         expect(source).toMatch(/compactHeadSize\?:\s*number/);
         expect(source).toMatch(/compactHeadPadding\?:\s*number/);
         expect(source).toMatch(/cropTransparentImageUrl\(imageUrl,\s*compactHeadSize,\s*compactHeadPadding\)/);
-        expect(source).toMatch(/figureKey\s*=\s*\[figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding, fit\]/);
+        expect(source).toMatch(/figureKey\s*=\s*\[figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding, fit, airMeMenu\]/);
     });
 });

@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { FaMinus, FaPlus } from 'react-icons/fa';
+import spinnerArrowDown from '../../../../../assets/images/catalog/buttons/spinner-arrow-down.png';
+import spinnerArrowUp from '../../../../../assets/images/catalog/buttons/spinner-arrow-up.png';
 import { LocalizeText } from '../../../../../api';
 import { useCatalogData, useCatalogUiState } from '../../../../../hooks';
 
@@ -31,31 +32,30 @@ export const CatalogSpinnerWidgetView: FC<{}> = (props) => {
         });
     };
 
-    if (!currentOffer || !currentOffer.bundlePurchaseAllowed) return null;
+    if (!currentOffer) return null;
 
     return (
         <div className="nitro-catalog-standard-spinner">
-            <span className="nitro-catalog-standard-spinner-label">{LocalizeText('catalog.bundlewidget.quantity')}</span>
-            <div className="nitro-catalog-standard-spinner-control">
-                <button
-                    className="nitro-catalog-standard-spinner-button nitro-catalog-standard-spinner-button-less"
-                    onClick={(event) => updateQuantity(quantity - 1)}
-                >
-                    <FaMinus />
-                </button>
-                <input
-                    className="nitro-catalog-standard-spinner-input"
-                    type="number"
-                    value={quantity}
-                    onChange={(event) => updateQuantity(event.target.valueAsNumber)}
-                />
-                <button
-                    className="nitro-catalog-standard-spinner-button nitro-catalog-standard-spinner-button-more"
-                    onClick={(event) => updateQuantity(quantity + 1)}
-                >
-                    <FaPlus />
-                </button>
-            </div>
+            <span className="nitro-catalog-standard-spinner-label">{LocalizeText('catalog.bundlewidget.spinner.select.amount')}</span>
+            <button
+                type="button"
+                className="nitro-catalog-standard-spinner-button nitro-catalog-standard-spinner-button-more"
+                aria-label="+"
+                disabled={quantity >= MAX_VALUE}
+                onClick={() => updateQuantity(quantity + 1)}
+            >
+                <img src={spinnerArrowUp} alt="" />
+            </button>
+            <button
+                type="button"
+                className="nitro-catalog-standard-spinner-button nitro-catalog-standard-spinner-button-less"
+                aria-label="-"
+                disabled={quantity <= MIN_VALUE}
+                onClick={() => updateQuantity(quantity - 1)}
+            >
+                <img src={spinnerArrowDown} alt="" />
+            </button>
+            <span className="nitro-catalog-standard-spinner-value">{quantity}</span>
         </div>
     );
 };

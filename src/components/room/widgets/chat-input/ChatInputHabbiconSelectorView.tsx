@@ -1,302 +1,197 @@
-import * as Popover from '@radix-ui/react-popover';
 import { HabbiconAssetManager, UseHabbiconComposer } from '@nitrots/nitro-renderer';
+import * as Popover from '@radix-ui/react-popover';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../api';
-import { HabbiconsLogo, UseHabbiconIcon } from '../../../../assets/images/habbicons';
-import { DraggableWindow, DraggableWindowPosition } from '../../../../common';
+import {
+    HABBICON_CELL_SIZE,
+    HABBICON_GRID_COLUMNS,
+    HabbiconEntry,
+    localizeHabbiconName,
+    localizeWithFallback,
+    padHabbiconRow,
+    SendMessageComposer,
+    useHabbiconCatalog
+} from '../../../../api';
+import { UseHabbiconIcon } from '../../../../assets/images/habbicons';
+import { HabbiconHubView } from './HabbiconHubView';
 
-type HabbiconEntry = {
-    id: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    name: string;
-    category: string;
-};
-
-type HabbiconSection = {
+type SelectorSection = {
     id: string;
     title: string;
     entries: HabbiconEntry[];
 };
 
-const RECENT_HABBICONS_STORAGE_KEY = 'nitro.habbicons.recent';
-const RECENT_HABBICONS_LIMIT = 10;
-const HABBICON_CELL_SIZE = 42;
+const TOP_BAR_HEIGHT = 42;
+const BOTTOM_PADDING = 6;
+const MENU_MIN_HEIGHT = 91;
+const LIST_MIN_HEIGHT = 46;
+const LIST_MAX_HEIGHT = 244;
+const SECTION_TITLE_HEIGHT = 20;
+const SECTION_SPACING = 4;
 
-const getRecentHabbicons = (): number[] => {
-    if(typeof window === 'undefined') return [];
+const measureSelectorHeight = (sections: SelectorSection[]) => {
+    if (!sections.length) return { windowHeight: 138, listHeight: 88 };
 
-    try {
-        const parsed = JSON.parse(window.localStorage.getItem(RECENT_HABBICONS_STORAGE_KEY) || '[]');
+    let contentHeight = 0;
 
-        return Array.isArray(parsed) ? parsed.map(Number).filter(Boolean).slice(0, RECENT_HABBICONS_LIMIT) : [];
-    } catch {
-        return [];
-    }
-};
+    for (const [index, section] of sections.entries()) {
+        const rows = Math.max(1, Math.ceil(section.entries.length / HABBICON_GRID_COLUMNS));
+        const gridHeight = rows * HABBICON_CELL_SIZE + (rows - 1) * 2;
 
-const getHabbiconsBaseUrl = () => {
-    const root = GetConfigurationValue<string>('habbicons.asset.root', '');
-    const hash = GetConfigurationValue<string>('habbicons.asset.hash', '');
+        contentHeight += SECTION_TITLE_HEIGHT + gridHeight + 2;
 
-    if(!root) return '';
-
-    const cleanRoot = root.endsWith('/') ? root : `${ root }/`;
-
-    if(hash && hash.length) return `${ cleanRoot }${ hash }/`;
-
-    return cleanRoot;
-};
-
-const formatHabbiconTitle = (name: string, id: number) => {
-    if(!name) return `Habbicon ${ id }`;
-
-    return name
-        .split('_')
-        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ');
-};
-
-const getCategory = (name: string) => {
-    const prefix = (name || '').split('_')[0];
-
-    if(!prefix) return 'habbicons';
-
-    return prefix;
-};
-
-const getCategoryTitle = (category: string) => {
-    const key = `habbicon_book.category.${ category }`;
-    const localized = LocalizeText(key);
-
-    if(localized && localized !== key) return localized;
-
-    return category.charAt(0).toUpperCase() + category.slice(1);
-};
-
-const createSections = (entries: HabbiconEntry[], search: string): HabbiconSection[] => {
-    const normalizedSearch = search.trim().toLowerCase();
-    const filtered = normalizedSearch
-        ? entries.filter(entry => entry.name.toLowerCase().includes(normalizedSearch) || entry.id.toString().includes(normalizedSearch))
-        : entries;
-    const sections = new Map<string, HabbiconEntry[]>();
-
-    for(const entry of filtered)
-    {
-        const list = sections.get(entry.category) || [];
-
-        list.push(entry);
-        sections.set(entry.category, list);
+        if (index < sections.length - 1) contentHeight += SECTION_SPACING;
     }
 
-    return Array.from(sections.entries()).map(([id, sectionEntries]) => ({
-        id,
-        title: getCategoryTitle(id),
-        entries: sectionEntries
-    }));
+    const listHeight = Math.min(LIST_MAX_HEIGHT, Math.max(LIST_MIN_HEIGHT, contentHeight + 2));
+
+    return {
+        listHeight,
+        windowHeight: Math.max(MENU_MIN_HEIGHT, TOP_BAR_HEIGHT + listHeight + BOTTOM_PADDING)
+    };
 };
 
 export const ChatInputHabbiconSelectorView: FC = () => {
+    const catalog = useHabbiconCatalog();
     const [selectorVisible, setSelectorVisible] = useState(false);
     const [bookVisible, setBookVisible] = useState(false);
     const [search, setSearch] = useState('');
-    const [habbicons, setHabbicons] = useState<HabbiconEntry[]>([]);
-    const [recentHabbiconIds, setRecentHabbiconIds] = useState<number[]>(() => getRecentHabbicons());
-    const enabled = GetConfigurationValue<boolean>('habbicons.enabled', false);
-    const baseUrl = useMemo(() => getHabbiconsBaseUrl(), []);
-    const sections = useMemo(() => createSections(habbicons, search), [habbicons, search]);
-    const displaySections = useMemo(() => {
-        if(search.trim().length) return sections;
 
-        const recentEntries = recentHabbiconIds
-            .map(id => habbicons.find(entry => entry.id === id))
-            .filter(Boolean) as HabbiconEntry[];
+    const sections = useMemo<SelectorSection[]>(() => {
+        const query = search.trim().toLowerCase();
 
-        if(!recentEntries.length) return sections;
+        if (query) {
+            const matches = catalog.entries.filter(
+                (entry) =>
+                    localizeHabbiconName(entry).toLowerCase().includes(query) ||
+                    entry.nameKey.toLowerCase().includes(query) ||
+                    entry.id.toString().includes(query)
+            );
 
-        return [
-            {
-                id: 'recent',
-                title: 'Usato di recente',
-                entries: recentEntries
-            },
-            ...sections
-        ];
-    }, [habbicons, recentHabbiconIds, search, sections]);
+            return matches.length ? [{ id: 'search', title: localizeWithFallback('habbicon.search.results', 'Search results'), entries: matches }] : [];
+        }
+
+        const next: SelectorSection[] = [];
+        const byId = new Map(catalog.entries.map((entry) => [entry.id, entry]));
+        const favorites = catalog.favoriteIds.map((id) => byId.get(id)).filter(Boolean) as HabbiconEntry[];
+        const recent = catalog.recentIds.map((id) => byId.get(id)).filter(Boolean) as HabbiconEntry[];
+
+        if (favorites.length) next.push({ id: 'favorites', title: localizeWithFallback('habbicons.favourites.title', 'Favorites'), entries: favorites });
+        if (recent.length) next.push({ id: 'recent', title: localizeWithFallback('habbicon.recently.used', 'Recently used'), entries: recent });
+
+        for (const set of catalog.sets) {
+            if (set.entries.length) next.push({ id: set.id, title: set.title, entries: set.entries });
+        }
+
+        return next;
+    }, [catalog.entries, catalog.favoriteIds, catalog.recentIds, catalog.sets, search]);
+
+    const { listHeight, windowHeight } = useMemo(() => measureSelectorHeight(sections), [sections]);
+    const sheetSize = useMemo(() => {
+        let width = 0;
+        let height = 0;
+
+        for (const entry of catalog.entries) {
+            width = Math.max(width, entry.x + entry.width);
+            height = Math.max(height, entry.y + entry.height);
+        }
+
+        return { width, height };
+    }, [catalog.entries]);
 
     useEffect(() => {
-        if(!enabled || !baseUrl) return;
+        if (!catalog.enabled || !catalog.baseUrl) return;
 
         void HabbiconAssetManager.getInstance().preload();
+    }, [catalog.baseUrl, catalog.enabled]);
 
-        let disposed = false;
+    if (!catalog.enabled || !catalog.baseUrl) return null;
 
-        void (async () => {
-            try {
-                const response = await fetch(`${ baseUrl }habbicons.json`);
-
-                if(!response.ok) return;
-
-                const data = await response.json();
-                const entries = (Array.isArray(data?.habbicons) ? data.habbicons : [])
-                    .map((entry: any) => {
-                        const id = Number(entry?.id);
-                        const name = String(entry?.name || '');
-                        const x = Number(entry?.x) || 0;
-                        const y = Number(entry?.y) || 0;
-                        const width = Number(entry?.width) || HABBICON_CELL_SIZE;
-                        const height = Number(entry?.height) || HABBICON_CELL_SIZE;
-
-                        return {
-                            id,
-                            x,
-                            y,
-                            width,
-                            height,
-                            name,
-                            category: getCategory(name)
-                        };
-                    })
-                    .filter((entry: HabbiconEntry) => entry.id > 0);
-
-                if(!disposed) {
-                    setHabbicons(entries);
-                }
-            } catch {
-                if(!disposed) setHabbicons([]);
-            }
-        })();
-
-        return () => {
-            disposed = true;
-        };
-    }, [enabled, baseUrl]);
-
-    if(!enabled || !baseUrl) return null;
-
-    const applyHabbicon = async (habbiconId: number) => {
+    const applyHabbicon = async (habbiconId: number, keepOpen = false) => {
         await HabbiconAssetManager.getInstance().preload();
         SendMessageComposer(new UseHabbiconComposer(habbiconId));
-        const nextRecent = [habbiconId, ...recentHabbiconIds.filter(id => id !== habbiconId)].slice(0, RECENT_HABBICONS_LIMIT);
+        catalog.noteUsed(habbiconId);
 
-        setRecentHabbiconIds(nextRecent);
-        window.localStorage.setItem(RECENT_HABBICONS_STORAGE_KEY, JSON.stringify(nextRecent));
-        setSelectorVisible(false);
+        if (!keepOpen) setSelectorVisible(false);
     };
 
     return (
-        <Popover.Root open={selectorVisible} onOpenChange={setSelectorVisible}>
+        <Popover.Root
+            open={selectorVisible}
+            onOpenChange={(open) => {
+                setSelectorVisible(open);
+                if (!open) setSearch('');
+            }}
+        >
             <Popover.Trigger asChild>
-                <button className="habbicon-chat-trigger" title={LocalizeText('habbicons.hud.title')} type="button">
+                <button className="habbicon-chat-trigger" title={localizeWithFallback('habbicons.hud.title', 'Habicons')} type="button">
                     <img alt="" src={UseHabbiconIcon} />
                 </button>
             </Popover.Trigger>
             <Popover.Portal>
-                <Popover.Content className="habbicon-selector-popover" side="top" sideOffset={8}>
-                    <div className="habbicon-selector-window">
+                <Popover.Content align="start" avoidCollisions={false} className="habbicon-selector-popover" side="top" sideOffset={17}>
+                    <div className="habbicon-selector-window" style={{ height: windowHeight }}>
                         <div className="habbicon-selector-controls">
                             <div className="habbicon-selector-search">
-                                <input
-                                    maxLength={24}
-                                    value={search}
-                                    onChange={event => setSearch(event.target.value)}
-                                />
-                                {!search && <span>Cerca</span>}
-                                {search && (
-                                    <button type="button" onClick={() => setSearch('')}>
-                                        ×
-                                    </button>
-                                )}
+                                <input maxLength={24} value={search} onChange={(event) => setSearch(event.target.value)} />
+                                {!search && <span>{localizeWithFallback('generic.search', 'Search')}</span>}
+                                {search && <button aria-label="Clear" type="button" onClick={() => setSearch('')} />}
                             </div>
-                            <button className="habbicon-selector-book-button" type="button" onClick={() => setBookVisible(true)}>
-                                <span>Apri menu</span>
+                            <button
+                                className="habbicon-selector-book-button"
+                                type="button"
+                                onClick={() => {
+                                    setBookVisible(true);
+                                    setSelectorVisible(false);
+                                }}
+                            >
+                                {localizeWithFallback('habbicons.hud.get_more', 'Get more')}
                             </button>
                         </div>
-                        {displaySections.length > 0 ? (
-                            <div className="habbicon-selector-sections has-classic-scrollbar">
-                                {displaySections.map(section => (
-                                    <section key={section.id} className="habbicon-selector-section">
+                        {sections.length > 0 ? (
+                            <div className="habbicon-selector-sections has-classic-scrollbar" style={{ height: listHeight }}>
+                                {sections.map((section) => (
+                                    <section className="habbicon-selector-section" key={section.id}>
                                         <div className="habbicon-selector-section-title">{section.title}</div>
                                         <div className="habbicon-selector-grid">
-                                            {section.entries.map(entry => (
-                                                <button
-                                                    key={entry.id}
-                                                    className="habbicon-selector-item"
-                                                    title={formatHabbiconTitle(entry.name, entry.id)}
-                                                    type="button"
-                                                    onClick={() => void applyHabbicon(entry.id)}
-                                                >
-                                                    <span
-                                                        style={{
-                                                            width: entry.width,
-                                                            height: entry.height,
-                                                            backgroundImage: `url(${ baseUrl }habbicons_spritesheet.png)`,
-                                                            backgroundPosition: `-${ entry.x }px -${ entry.y }px`
-                                                        }}
-                                                    />
-                                                </button>
-                                            ))}
+                                            {padHabbiconRow(section.entries).map((entry, index) =>
+                                                entry ? (
+                                                    <button
+                                                        className="habbicon-selector-item filled"
+                                                        key={entry.id}
+                                                        title={localizeHabbiconName(entry)}
+                                                        type="button"
+                                                        onClick={(event) => void applyHabbicon(entry.id, event.shiftKey)}
+                                                    >
+                                                        <span
+                                                            style={{
+                                                                backgroundImage: `url(${catalog.baseUrl}habbicons_spritesheet.png)`,
+                                                                backgroundSize: `${(sheetSize.width * 30) / Math.max(entry.width, 1)}px ${(sheetSize.height * 30) / Math.max(entry.height, 1)}px`,
+                                                                backgroundPosition: `-${(entry.x * 30) / Math.max(entry.width, 1)}px -${(entry.y * 30) / Math.max(entry.height, 1)}px`
+                                                            }}
+                                                        />
+                                                    </button>
+                                                ) : (
+                                                    <div className="habbicon-selector-item empty" key={`empty-${section.id}-${index}`} />
+                                                )
+                                            )}
                                         </div>
                                     </section>
                                 ))}
                             </div>
                         ) : (
-                            <div className="habbicon-selector-empty">{LocalizeText('habbicons.no_habbicons')}</div>
+                            <div className="habbicon-selector-empty">{localizeWithFallback('habbicons.no_habbicons', 'No Habicons')}</div>
                         )}
                     </div>
                 </Popover.Content>
             </Popover.Portal>
             {bookVisible && (
-                <DraggableWindow uniqueKey="habbicon-book" windowPosition={DraggableWindowPosition.CENTER}>
-                <div className="habbicon-book-window">
-                    <div className="habbicon-book-header drag-handler">
-                        <img alt="" src={HabbiconsLogo} />
-                        <div>
-                            <strong>{LocalizeText('habbicon_book.title')}</strong>
-                            <span>{LocalizeText('habbicon_book.subtitle')}</span>
-                        </div>
-                        <button type="button" onClick={() => setBookVisible(false)}>×</button>
-                    </div>
-                    <div className="habbicon-book-tabs">
-                        <button type="button">{LocalizeText('habbicon_book.tab.all_sets')}</button>
-                        <button type="button">{LocalizeText('habbicon_book.tab.owned')}</button>
-                        <button type="button">{LocalizeText('habbicon_book.tab.favourited')}</button>
-                    </div>
-                    <div className="habbicon-book-body">
-                        <div className="habbicon-book-rail has-classic-scrollbar">
-                            {sections.map(section => (
-                                <button key={section.id} type="button">
-                                    <span>{section.title}</span>
-                                    <small>{section.entries.length}/{section.entries.length}</small>
-                                </button>
-                            ))}
-                        </div>
-                        <div className="habbicon-book-page has-classic-scrollbar">
-                            {sections.map(section => (
-                                <section key={section.id}>
-                                    <h3>{section.title}</h3>
-                                    <div className="habbicon-book-grid">
-                                        {section.entries.map(entry => (
-                                            <button key={entry.id} type="button" onClick={() => void applyHabbicon(entry.id)}>
-                                                <span
-                                                    style={{
-                                                        width: entry.width,
-                                                        height: entry.height,
-                                                        backgroundImage: `url(${ baseUrl }habbicons_spritesheet.png)`,
-                                                        backgroundPosition: `-${ entry.x }px -${ entry.y }px`
-                                                    }}
-                                                />
-                                            </button>
-                                        ))}
-                                    </div>
-                                </section>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-                </DraggableWindow>
+                <HabbiconHubView
+                    baseUrl={catalog.baseUrl}
+                    favoriteIds={catalog.favoriteIds}
+                    sets={catalog.sets}
+                    onClose={() => setBookVisible(false)}
+                    onToggleFavorite={catalog.toggleFavorite}
+                />
             )}
         </Popover.Root>
     );

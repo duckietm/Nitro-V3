@@ -37,7 +37,8 @@ describe('AIR bottom dock integration', () => {
         const toolbarIconCss = toolbarCss.slice(toolbarCss.indexOf('.tb-icon'), toolbarCss.indexOf('.tb-avatar-head'));
 
         expect(toolbarSource).not.toContain('whileHover={ { scale: 1.08 } }');
-        expect(toolbarIconCss).not.toContain('transform:');
+        expect(toolbarIconCss).not.toContain('scale(');
+        expect(toolbarCss).toContain('translate(-1px, -1px)');
         expect(friendsCss).toContain('.friend-bar .friend-bar-button.left:disabled{opacity:.2}');
         expect(friendsCss).toContain('.friend-bar .friend-bar-button.right:disabled{opacity:.2}');
     });

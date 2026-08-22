@@ -1,22 +1,22 @@
 .nitro-navigator-air {
-    --navigator-air-orange: #f5a400;
-    --navigator-air-blue: #5bc6e9;
-    --navigator-air-row: #c9e9fa;
-    --navigator-air-surface: #e9e8df;
-    --navigator-air-line: #ffffff;
+    --navigator-air-orange: #fba800;
+    --navigator-air-row: #d6eeff;
+    --navigator-air-row-alt: #ebe9df;
+    --navigator-air-surface: #eceae0;
+    --navigator-air-name: #0f557b;
     min-width: 360px;
     background: var(--navigator-air-surface);
 }
 
 .nitro-navigator-air .nitro-card-content-shell,
 .nitro-navigator-air .content-area {
-    padding: 7px;
+    padding: 6px 7px 8px;
     background: var(--navigator-air-surface);
 }
 
 .nitro-navigator-air .nitro-card-tabs,
 .nitro-navigator-air .nitro-card-tabs-shell {
-    padding-inline: 14px 5px !important;
+    padding-inline: 6px 5px !important;
 }
 
 .nitro-navigator-air .nitro-card-tab-item,
@@ -33,15 +33,13 @@
     flex: 0 0 34px;
     min-width: 34px;
     padding: 0 !important;
-    border: 0;
-    background: transparent;
-    box-shadow: none;
 }
 
 .nitro-navigator-air__quick-toggle,
 .nitro-navigator-air__icon-button,
 .nitro-navigator-air__room-info,
-.nitro-navigator-air__search-submit {
+.nitro-navigator-air__search-submit,
+.nitro-navigator-air__create-tab {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -49,11 +47,27 @@
     border: 0;
     background: transparent;
     cursor: pointer;
+    padding: 0;
 }
 
 .nitro-navigator-air__quick-toggle {
     width: 100%;
     height: 28px;
+}
+
+.nitro-navigator-air__quick-toggle img,
+.nitro-navigator-air__icon-button img,
+.nitro-navigator-air__create-tab {
+    image-rendering: pixelated;
+}
+
+.nitro-navigator-air__create-tab {
+    width: 100%;
+    height: 28px;
+    color: #111;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .nitro-navigator-air__workspace {
@@ -63,23 +77,26 @@
 .nitro-navigator-air__quick-links {
     width: 141px;
     min-width: 141px;
-    border-radius: 7px;
     background: #fff;
 }
 
 .nitro-navigator-search-saves-result {
     width: 141px;
-    background: #fff;
-    border-radius: 7px;
     overflow: hidden;
+    background: #fff;
 }
 
 .nitro-navigator-search-saves-result__header {
-    min-height: 23px;
-    padding: 3px 7px;
-    border-radius: 7px 7px 0 0;
+    min-height: 21px;
+    padding: 2px 6px;
     background: var(--navigator-air-orange);
     font-weight: 700;
+}
+
+.nitro-navigator-search-saves-result__header img {
+    width: 18px;
+    height: 18px;
+    image-rendering: pixelated;
 }
 
 .nitro-navigator-search-saves-result__list {
@@ -89,7 +106,7 @@
 
 .saved-search-row {
     width: 100%;
-    min-height: 20px;
+    min-height: 17px;
     gap: 2px;
 }
 
@@ -103,6 +120,12 @@
     border: 0;
     background: transparent;
     cursor: pointer;
+}
+
+.saved-search-row__open img {
+    width: 14px;
+    height: 14px;
+    image-rendering: pixelated;
 }
 
 .saved-search-row__delete {
@@ -119,55 +142,63 @@
 }
 
 .nitro-navigator-air__main {
-    gap: 7px;
+    gap: 4px;
 }
 
 .nitro-navigator-air__search {
     align-items: center;
-    min-height: 25px;
+    min-height: 24px;
+    gap: 13px;
 }
 
 .nitro-navigator-air__filter {
-    flex: 0 0 117px;
-    width: 117px;
-    height: 25px;
-    min-height: 25px;
-    padding-block: 1px;
-    border: 1px solid #000;
+    flex: 0 0 116px;
+    width: 116px;
+    height: 24px;
+    min-height: 24px;
+    padding: 0 6px;
+    border: 1px solid #7a7a74;
     border-radius: 5px;
     background-color: #fff;
     color: #111;
-    font-size: 12px;
+    font-family: UbuntuRegular, Ubuntu, sans-serif;
+    font-size: 11px;
 }
 
 .nitro-navigator-air__search-field {
     position: relative;
     flex: 1;
     min-width: 0;
+    height: 24px;
+    overflow: hidden;
+    border: 1px solid #7a7a74;
+    border-radius: 12px;
+    background: #fff;
 }
 
 .nitro-navigator-air__search-input {
-    height: 25px;
-    min-height: 25px;
-    padding: 2px 30px 2px 8px;
-    border: 1px solid #b7b7b0;
-    border-radius: 12px;
-    background: #fff;
-    font-size: 12px;
+    height: 24px;
+    min-height: 24px;
+    padding: 2px 26px 2px 6px;
+    border: 0;
+    background: transparent;
+    font-family: UbuntuRegular, Ubuntu, sans-serif;
+    font-size: 11px;
     font-style: italic;
 }
 
 .nitro-navigator-air__search-submit {
     position: absolute;
     top: 1px;
-    right: 3px;
-    width: 24px;
-    height: 23px;
-    color: #202020;
+    right: 2px;
+    width: 20px;
+    height: 20px;
 }
 
-.nitro-navigator-air__main > div:nth-child(2) {
-    padding-right: 2px;
+.nitro-navigator-air__search-submit img {
+    width: 13px;
+    height: 13px;
+    image-rendering: pixelated;
 }
 
 .nitro-navigator-air__main .nitro-card-panel {
@@ -176,75 +207,163 @@
     background: transparent !important;
 }
 
-.nitro-navigator-air__main .nitro-card-panel > :first-child {
-    min-height: 24px;
+.nitro-navigator-air__category-header {
+    min-height: 26px;
     margin-bottom: 3px;
-    padding: 2px 5px !important;
+    padding: 2px 5px;
     background: #fff;
-    color: #126d9b;
 }
 
 .nitro-navigator-air__category-toggle {
     min-width: 0;
     border: 0;
     background: transparent;
-    color: #126d9b;
+    color: var(--navigator-air-name);
     cursor: pointer;
+    font-size: 14px;
     text-align: left;
 }
 
-.nitro-navigator-air__category-toggle .fa-icon {
-    color: var(--navigator-air-blue) !important;
+.nitro-navigator-air__category-toggle img {
+    width: 11px;
+    height: 11px;
+    image-rendering: pixelated;
 }
 
 .nitro-navigator-air__icon-button {
     width: 18px;
     height: 18px;
-    padding: 0;
-    color: var(--navigator-air-blue);
+}
+
+.nitro-navigator-air__icon-button img {
+    display: block;
+    image-rendering: pixelated;
 }
 
 .nitro-navigator-air .navigator-grid {
-    gap: 2px !important;
+    gap: 5px !important;
     padding: 0 4px 3px;
 }
 
+.nitro-navigator-air__usercount {
+    display: inline-flex;
+    box-sizing: border-box;
+    min-width: 40px;
+    height: 18px;
+    align-items: center;
+    padding: 0 4px 0 3px;
+    gap: 1px;
+    color: #fff;
+    font-family: UbuntuRegular, Ubuntu, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 17px;
+    image-rendering: pixelated;
+}
+
+.nitro-navigator-air__usercount img {
+    width: 13px;
+    height: 14px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
 .nitro-navigator-air .navigator-item:not(.nitro-card-row) {
+    box-sizing: border-box;
     min-height: 20px;
-    padding: 1px 5px !important;
+    height: 20px;
+    padding: 1px 2px 1px 0 !important;
     border: 0;
-    border-radius: 2px;
+    border-radius: 0;
     background: var(--navigator-air-row);
     color: #1a1a1a;
 }
 
 .nitro-navigator-air .navigator-item:not(.nitro-card-row):hover,
 .nitro-navigator-air .navigator-item:not(.nitro-card-row):focus-visible {
-    background: #a9ddf7;
-    outline: 1px solid #5bb8dd;
+    background: #b7e2f7;
+    outline: 0;
 }
 
-.nitro-navigator-air .navigator-item .bg-primary,
-.nitro-navigator-air .navigator-item .bg-success,
-.nitro-navigator-air .navigator-item .bg-warning,
-.nitro-navigator-air .navigator-item .bg-danger {
-    min-width: 36px;
-    padding: 3px 5px !important;
-    border-radius: 4px;
-    background: #c8c8c1 !important;
+.nitro-navigator-air__tile {
+    box-sizing: border-box;
+    width: 122px;
+    min-height: 146px;
+    padding: 6px 7px 0 !important;
+    border: 0;
+    background: transparent;
+    color: #1a1a1a;
+}
+
+.nitro-navigator-air__tile-thumb {
+    position: relative;
+    width: 106px !important;
+    height: 106px !important;
+    border: 1px solid #111 !important;
+    border-radius: 0 !important;
+    background-color: #c4c4bc;
+    background-image: url("@/assets/images/navigator/air/default-room.png");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.nitro-navigator-air__tile-thumb .nitro-navigator-air__usercount {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+}
+
+.nitro-navigator-air__tile-name {
+    display: flex;
+    width: 100%;
+    min-height: 30px;
+    align-items: flex-start;
+    padding: 2px 0 0;
+    font-size: 10px;
+    font-weight: 700;
 }
 
 .nitro-navigator-air__room-info {
     width: 18px;
     height: 18px;
-    padding: 0;
+    background-image: url("@/assets/images/navigator/air/show-room-info.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: pixelated;
+}
+
+.nitro-navigator-air__door {
+    width: 13px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: pixelated;
+}
+
+.nitro-navigator-air__door--doorbell {
+    background-image: url("@/assets/images/navigator/air/doormode-doorbell.png");
+}
+
+.nitro-navigator-air__door--password {
+    background-image: url("@/assets/images/navigator/air/doormode-password.png");
+}
+
+.nitro-navigator-air__door--invisible {
+    background-image: url("@/assets/images/navigator/air/doormode-invisible.png");
+}
+
+.nitro-navigator-air__group {
+    width: 13px;
+    height: 11px;
+    background: url("@/assets/images/navigator/air/icon-group.png") center / contain no-repeat;
+    image-rendering: pixelated;
 }
 
 .nitro-navigator-air__room-popover {
     box-sizing: border-box;
     overflow: hidden;
     border-color: #1f1f1b !important;
-    border-radius: 8px !important;
+    border-radius: 0 !important;
     background: #e8e8df !important;
     color: #111;
 }
@@ -263,18 +382,17 @@
     margin: 6px 7px 3px;
     padding: 6px 7px 7px;
     gap: 0;
-    border-radius: 7px;
     background: #fff;
 }
 
 .nitro-navigator-air__room-popover-thumbnail {
-    width: 112px !important;
-    height: 112px !important;
+    width: 110px !important;
+    height: 110px !important;
     align-self: start;
-    border-color: #1f1f1b !important;
+    border: 1px solid #111 !important;
     border-radius: 0 !important;
-    background-color: #b9b9b1;
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG4AAABuCAIAAABJObGsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCNkVFQkNGRTZDOUIxMUU0QUFDNEQ0QzdCMTI0MzA5RiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCNkVFQkNGRjZDOUIxMUU0QUFDNEQ0QzdCMTI0MzA5RiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkI2RUVCQ0ZDNkM5QjExRTRBQUM0RDRDN0IxMjQzMDlGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkI2RUVCQ0ZENkM5QjExRTRBQUM0RDRDN0IxMjQzMDlGIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+7dqZZwAAAgVJREFUeNrs3E1KA0EQxfEodSsXOYLoMV0ooheYRe5loGEI0aiZdFW96v6/RcgEAj0/aj7yBnL3+fGyIz1yDwGUUEJJoIQSSigJlFBCSaCEEkooCZRQQkmghBJKKAmUUEJJoISyQqziot9e39ubp+dHKG9C3O8fluVwfG2bIqBWDvH0w7YpAmpFEQVBrTSiFKgNgCgCasMgpoPaYIiJoDYkYgqoDYwYDGrDI4aB2iSIAaA2FaIrqE2I6ARq0yJ2B7XJEc9Al+WgNZXlEBUvOxsQ2yAM4G7piMdz09qKX/XF1v4ORbntcD5CbDjBn42w1ERbPOK2/KjWNkVAb53KgB34U0oEVLpFv0onHdQGQBQBtWEQ00FtMMREUNNxdG3RA0DnatFdQS3XMaVFdwK1lGN5J9Cid1+GTYXoCmoTIjqB2rSIl0AVKQsVketS5Vr0iohyU1kaUeWJ48yI3ShB7EOp9oAlBbEP5XrVkwUNQOw8lYKgYYgdKNvKTtsdEdBgxG6XHSnQFMTON0PpoImILrfoKaDpiI4/HMNARRDd6wxXUClEd0onUEHEIMqOoLKIoZQ3goojJlBuAC2BmEb5T9BCiMmUv4PWQpSgvARaC1GI8jtoLUQ5yqKCa/jLJiihhJJACSWUUBIooYSSQAkllFASKKGEkkAJJZRQEiihhJJA6ZkvAQYAmSLU4gMTN8cAAAAASUVORK5CYII=") !important;
+    background-color: #c4c4bc;
+    background-image: url("@/assets/images/navigator/air/default-room.png") !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
 }
@@ -361,31 +479,31 @@
     flex: 0 0 20px;
     background-position: center;
     background-repeat: no-repeat;
+    image-rendering: pixelated;
 }
 
 .nitro-navigator-air__room-popover-actions .icon-navigator-favorite-room {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAMCAYAAAC5tzfZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAGZJREFUeNqcjwEKgDAIRf1dKe9/AjuT4ZjlVtrowWD6fYigGw1/VH0PVUSuhJk9y/ot0IjVVb9Jb8yCY/PoEq0CgDb6gUls9uoWm/d6z26Lt/S5gVTMhFT8EgYxvIeAQnSOOTwFGABauKtzQq3e1AAAAABJRU5ErkJggg==");
+    background-image: url("@/assets/images/navigator/air/icon-fav-no.png");
 }
 
 .nitro-navigator-air__room-popover-actions .icon-navigator-favorite-room.active {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAMCAYAAAC5tzfZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHtJREFUeNpiZECA/0hsRnziMMn/j+xNGWRtfCEyrXUwOaziTOgSIADi4xNnYkADj49sRlaAIY7iBGKB3MHTDEwMZACQJhOQbmJtAamHhZ4xEJ/B50yYBiA+ixwfODUia0CPRKwa0TXgAsbQVADDxugKGPFohAEMGwACDAAhTzTZ2PdK1gAAAABJRU5ErkJggg==");
+    background-image: url("@/assets/images/navigator/air/icon-fav-yes.png");
 }
 
 .nitro-navigator-air__room-popover-actions .icon-navigator-my-room {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAMCAYAAAC5tzfZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAGBJREFUeNqckAEKwCAMA5t9yf//oHtTR8cCZZpOdiBWzVHVTBPq4BDBcPdWtBIMzgnXrcRg5UsMhRKnDjvi6Dolj5A5w+t6dwGgbtY9rL58i1/S9K5mDAaxEBUni0uAAQDznJ/XPG0uPwAAAABJRU5ErkJggg==");
+    background-image: url("@/assets/images/navigator/air/icon-home-no.png");
 }
 
 .nitro-navigator-air__room-popover-actions .icon-navigator-my-room.active {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAMCAYAAAC5tzfZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJpJREFUeNpiYMAN/uOSYMKh8P//8/54NTIgKfwPoxscBeF8vJoul9nDNYDYxGhE0QBi49LIguyHxqJDDMGmegw6kQJgQQitBxYHyTMabgRpZGSEajIG4jNAk+EakMGV5R8YdLsOgpgmQHyWEc15YAbIZBio77MD00BbwBS2IIcDkDOJjSeSgTE0hHBhY5hCRiwacYGzMAZAgAEAx7Zd2qIkH5wAAAAASUVORK5CYII=");
+    background-image: url("@/assets/images/navigator/air/icon-home-yes.png");
 }
 
 .nitro-navigator-air__room-popover-actions .icon-navigator-room-settings {
-    background-image: url("@/assets/images/purse-swf/icons/2133_room_settings_icon_png$6c0c9a02a551e7f3f6d546d380b06476-787053618.png");
-    background-size: 16px 16px;
+    background-image: url("@/assets/images/navigator/air/room-settings.png");
 }
 
 .nitro-navigator-air__room-popover-actions .icon-navigator-room-report {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAQCAYAAADwMZRfAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAACQSURBVHja1JNdDsMgDIM/T7sRvf8J4EzuQ0lFWdR221MtRRAs8oODbPMv3qMjCSCLqsk3gG0BvCayANRaibXvPVrwe4axHUkFqLaRRHCttWOmUoLfKrS9W6/E3hyfofPY/mjnJzwkiKSQnWQUlM5JgqVfqmdzcxWkdcWW6YxvgqSXHqZOpsjtXzwqcuctAusA5ShcwSgqDcoAAAAASUVORK5CYII=");
+    background-image: url("@/assets/images/navigator/air/report-room.png");
 }
 
 .nitro-navigator-air__room-popover-actions button:hover span,
@@ -406,7 +524,6 @@
     margin: 3px 7px 0;
     overflow: hidden;
     border: 1px solid #123f53;
-    border-radius: 3px;
     background: rgba(15, 26, 112, .7);
     color: #fff;
 }
@@ -416,8 +533,8 @@
     height: 38px;
     align-self: center;
     justify-self: center;
-    color: transparent;
-    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAmCAYAAACoPemuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2QUNCQ0NCQjZDRkIxMUU0QUFDNEQ0QzdCMTI0MzA5RiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo2QUNCQ0NCQzZDRkIxMUU0QUFDNEQ0QzdCMTI0MzA5RiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjZBQ0JDQ0I5NkNGQjExRTRBQUM0RDRDN0IxMjQzMDlGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjZBQ0JDQ0JBNkNGQjExRTRBQUM0RDRDN0IxMjQzMDlGIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+7KB5nAAAARtJREFUeNrsmM0NwjAMhZOqCzAMEmIijmzQZAOOXDhxYRKExDCMYAQ0JaVx+pO0fceeFKmNpfaTY1uOFRGpictQv8zU788BkwVyCaBJgEsCjQKUguqFk4SKwklDsXAIUEE4/ab7qvUiIO0eCm/TKHk1DL7HSGFI+x5jvaW1ZlcOO+c15zGKgR0f+87+bnX4BGminfttOdS/19u9ed5u1tntvypAgr5znC+wChCsKhSo/mBjNTgr+zIp1d6pFxQpJq6OcXJ1KsWe5DGuQOayJx2lRIG1gLFvy7ryV2DBbwYd5elyntXOZkaspa47j+DKYedabPhGUYEkgQ211rCXEWmv2VDww194oUcE0EMV6DEU9OAOftS5+HD4KcAAWjWhw4sGCFEAAAAASUVORK5CYII=") center / contain no-repeat;
+    background: url("@/assets/images/navigator/air/event-icon.png") center / contain no-repeat;
+    image-rendering: pixelated;
 }
 
 .nitro-navigator-air__room-popover-event-copy {
@@ -445,35 +562,53 @@
 }
 
 .nitro-navigator-air__actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    justify-content: space-between;
     gap: 16px;
-    padding: 7px 4px 0;
-    border-top: 0;
+    padding: 8px 0 0;
 }
 
 .nitro-navigator-air__action {
     position: relative;
-    min-height: 60px;
-    overflow: hidden;
-    padding: 0 12px 0 78px;
-    border: 1px solid #111;
-    border-radius: 7px;
-    background-position: left center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    color: #fff;
+    box-sizing: border-box;
+    flex: 0 0 187px;
+    width: 187px;
+    min-width: 187px;
+    height: 59px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #0e3f52;
     cursor: pointer;
+    font-family: UbuntuRegular, Ubuntu, sans-serif;
+    font-size: 12px;
     font-weight: 700;
-    text-shadow: 1px 1px rgba(0, 0, 0, .55);
+    text-align: center;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.35);
+    image-rendering: pixelated;
+}
+
+.nitro-navigator-air__action img {
+    display: block;
+    width: 187px;
+    height: 59px;
+    image-rendering: pixelated;
+}
+
+.nitro-navigator-air__action span {
+    position: absolute;
+    top: 22px;
+    left: 60px;
+    width: 125px;
+    pointer-events: none;
 }
 
 .nitro-navigator-air__action:hover {
-    filter: brightness(1.07);
+    filter: brightness(1.06);
 }
 
 .nitro-navigator-air__action:active {
-    filter: brightness(.92);
+    filter: brightness(.94);
 }
 
 .nitro-navigator-air__action:focus-visible,
@@ -498,7 +633,6 @@
 .nitro-navigator-air__models {
     padding: 7px;
     border: 1px solid #b7b7af;
-    border-radius: 5px;
     background: #f4f3ed;
 }
 
@@ -518,6 +652,21 @@
 
 .nitro-navigator-air__door-state {
     gap: 10px;
+}
+
+.nitro-navigator-search-save {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.nitro-navigator-search-save img {
+    width: 18px;
+    height: 18px;
+    image-rendering: pixelated;
 }
 
 @media (max-width: 520px) {
@@ -551,9 +700,22 @@
     }
 
     .nitro-navigator-air__action {
-        min-height: 54px;
-        padding-left: 60px;
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
         font-size: 11px;
+    }
+
+    .nitro-navigator-air__action img {
+        width: 100%;
+        height: 59px;
+        object-fit: fill;
+    }
+
+    .nitro-navigator-air__action span {
+        left: 32%;
+        width: auto;
+        right: 8px;
     }
 
     .nitro-navigator-air__creator-grid {

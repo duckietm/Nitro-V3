@@ -16,7 +16,7 @@ export const NameChangeInitView: FC<NameChangeLayoutViewProps> = (props) => {
                 <button className="btn btn-success w-full" onClick={() => onAction('start')}>
                     {LocalizeText('tutorial.name_change.change')}
                 </button>
-                <button className="btn btn-primary w-full" onClick={() => onAction('confirmation', GetSessionDataManager().userName)}>
+                <button className="habbo-btn-secondary w-full" onClick={() => onAction('confirmation', GetSessionDataManager().userName)}>
                     {LocalizeText('tutorial.name_change.keep')}
                 </button>
             </div>

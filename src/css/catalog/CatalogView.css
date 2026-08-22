@@ -79,8 +79,8 @@
 }
 
 @keyframes nitroPublishPulse {
-    0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(140, 75, 0, 0.35), 0 0 0 rgba(255, 200, 0, 0); }
-    50%      { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(140, 75, 0, 0.35), 0 0 8px rgba(255, 200, 0, 0.75); }
+    0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 0 0 rgba(61, 204, 69, 0); }
+    50%      { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 0 8px rgba(61, 204, 69, 0.75); }
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin {
@@ -99,47 +99,54 @@
     height: 22px !important;
     min-height: 22px !important;
     padding: 0 10px !important;
-    border: 2px solid var(--catalog-standard-blue-border) !important;
-    border-image: none !important;
-    border-radius: 4px !important;
-    background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
-    color: var(--catalog-standard-text) !important;
+    border: 3px solid transparent !important;
+    border-image-source: var(--habbo-skin-button) !important;
+    border-image-slice: 3 fill !important;
+    border-image-width: 3px !important;
+    border-image-repeat: stretch !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #111111 !important;
     font-size: 10px !important;
     font-weight: 700 !important;
     line-height: 1 !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 0 rgba(0, 0, 0, 0.12) !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
     cursor: pointer !important;
     white-space: nowrap !important;
+    image-rendering: pixelated !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button:hover {
-    filter: brightness(1.04);
-    background: linear-gradient(180deg, #ffffff 0%, #e0eff6 44%, #b8d5e4 45%, #e8f3f8 100%) !important;
-    color: var(--catalog-standard-text) !important;
-    border-color: var(--catalog-standard-blue) !important;
+    filter: none;
+    border-image-source: var(--habbo-skin-button-hover) !important;
+    color: #111111 !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button:active {
-    filter: brightness(0.96);
-    background: linear-gradient(180deg, #a8c9d8 0%, #d4e6ef 55%, #f2f8fb 100%) !important;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    filter: none;
+    border-image-source: var(--habbo-skin-button-pressed) !important;
+    box-shadow: none !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button.text-success,
 .nitro-catalog-window .nitro-catalog-default-admin button[class*="success"] {
-    border-color: #8a5b00 !important;
-    background: linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%) !important;
-    background-image: linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%) !important;
-    color: #4a2b00 !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button.text-success:hover,
 .nitro-catalog-window .nitro-catalog-default-admin button[class*="success"]:hover {
-    background: linear-gradient(180deg, #fff080 0%, #ffd54d 45%, #f5ab1c 100%) !important;
-    background-image: linear-gradient(180deg, #fff080 0%, #ffd54d 45%, #f5ab1c 100%) !important;
-    color: #4a2b00 !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green-hover) !important;
+    color: #ffffff !important;
 }
 
 .nitro-catalog-window .nitro-catalog-default-admin button svg {
@@ -175,8 +182,6 @@
     --catalog-admin-muted: #60605a;
     --catalog-admin-blue: #418db0;
     --catalog-admin-blue-dark: #0e3f52;
-    --catalog-admin-gold: #ffc828;
-    --catalog-admin-gold-dark: #8a5b00;
     --catalog-admin-danger: #b83b32;
 
     color: var(--catalog-admin-text) !important;
@@ -651,10 +656,7 @@
 }
 
 .nitro-catalog-admin-modal button {
-    border-image: none !important;
-    border-radius: 4px !important;
     text-shadow: none !important;
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.58), 0 1px 0 rgba(0, 0, 0, 0.16) !important;
 }
 
 .nitro-catalog-admin-button {
@@ -664,13 +666,20 @@
     gap: 4px;
     min-height: 24px;
     padding: 4px 12px;
-    border: 1px solid var(--catalog-admin-border-dark);
-    border-radius: 4px;
+    border: 3px solid transparent;
+    border-image-source: var(--habbo-skin-button);
+    border-image-slice: 3 fill;
+    border-image-width: 3px;
+    border-image-repeat: stretch;
+    border-radius: 0;
+    background: transparent;
+    color: #111111;
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
     cursor: pointer;
-    transition: filter 0.15s ease, opacity 0.15s ease;
+    box-shadow: none;
+    image-rendering: pixelated;
 }
 
 .nitro-catalog-admin-button:disabled {
@@ -689,56 +698,79 @@
 }
 
 .nitro-catalog-admin-button.is-primary {
-    border-color: #376275;
-    background: linear-gradient(180deg, #63c5e9 0%, var(--catalog-admin-blue) 52%, var(--catalog-admin-blue-dark) 100%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent;
+    border-image-source: var(--habbo-skin-shiny-thick-green);
+    border-image-slice: 5 fill;
+    border-image-width: 5px;
+    border-image-repeat: stretch;
+    background: transparent;
     color: #ffffff;
 }
 
 .nitro-catalog-admin-button.is-danger {
-    border-color: #7f261f;
-    background: linear-gradient(180deg, #e4665c 0%, var(--catalog-admin-danger) 100%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent;
+    border-image-source: var(--habbo-skin-shiny-red);
+    border-image-slice: 5 fill;
+    border-image-width: 5px;
+    border-image-repeat: stretch;
+    background: transparent;
     color: #ffffff;
 }
 
 .nitro-catalog-admin-button.is-muted,
 .nitro-catalog-admin-button.is-ghost {
-    border-color: var(--catalog-admin-border);
-    background: linear-gradient(180deg, #ffffff 0%, var(--catalog-admin-panel-alt) 100%);
-    color: var(--catalog-admin-blue-dark);
+    border-image-source: var(--habbo-skin-button);
+    background: transparent;
+    color: #111111;
 }
 
 .nitro-catalog-admin-modal button.bg-primary,
-.nitro-catalog-admin-modal button.text-primary {
-    border: 1px solid #376275 !important;
-    background: linear-gradient(180deg, #63c5e9 0%, var(--catalog-admin-blue) 52%, var(--catalog-admin-blue-dark) 100%) !important;
+.nitro-catalog-admin-modal button.text-primary,
+.nitro-catalog-admin-modal button.text-success {
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
     color: #ffffff !important;
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.55), 0 1px 0 rgba(0, 0, 0, 0.18) !important;
+    box-shadow: none !important;
 }
 
 .nitro-catalog-admin-modal button.bg-primary:hover,
-.nitro-catalog-admin-modal button.text-primary:hover {
-    background: linear-gradient(180deg, #7fd3f0 0%, #3891aa 52%, #22677c 100%) !important;
-}
-
-.nitro-catalog-admin-modal button.text-success {
-    border: 1px solid var(--catalog-admin-gold-dark) !important;
-    background: linear-gradient(180deg, #ffe66b 0%, var(--catalog-admin-gold) 50%, #f0a318 100%) !important;
-    color: #4a2b00 !important;
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.65), 0 1px 0 rgba(0, 0, 0, 0.18) !important;
+.nitro-catalog-admin-modal button.text-primary:hover,
+.nitro-catalog-admin-modal button.text-success:hover {
+    border-image-source: var(--habbo-skin-shiny-thick-green-hover) !important;
 }
 
 .nitro-catalog-admin-modal button.text-danger,
 .nitro-catalog-admin-modal button[class*="danger"] {
-    border: 1px solid #7f261f !important;
-    background: linear-gradient(180deg, #e4665c 0%, var(--catalog-admin-danger) 100%) !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-image-source: var(--habbo-skin-shiny-red) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
     color: #ffffff !important;
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.42), 0 1px 0 rgba(0, 0, 0, 0.18) !important;
+    box-shadow: none !important;
 }
 
 .nitro-catalog-admin-modal button.text-muted {
-    border: 1px solid var(--catalog-admin-border-dark) !important;
-    background: linear-gradient(180deg, #ffffff 0%, var(--catalog-admin-panel-alt) 100%) !important;
-    color: var(--catalog-admin-text) !important;
+    border: 3px solid transparent !important;
+    border-image-source: var(--habbo-skin-button) !important;
+    border-image-slice: 3 fill !important;
+    border-image-width: 3px !important;
+    background: transparent !important;
+    color: #111111 !important;
+    box-shadow: none !important;
 }
 
 .nitro-catalog-admin-body :where(.uppercase.font-bold) {
@@ -2251,177 +2283,95 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px !important;
-    width: auto;
+    width: 350px;
     height: 24px;
-    margin-left: 15px;
-    margin-right: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding: 0;
 }
 
 .nitro-catalog-window .nitro-catalog-standard-button,
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button,
 .nitro-catalog-window button.nitro-catalog-preview-btn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    min-height: 22px;
-    padding: 2px 12px !important;
-    border: 2px solid var(--catalog-standard-blue-border) !important;
-    border-radius: 4px !important;
-    border-image: none !important;
-    background: linear-gradient(180deg, #f2f8fb 0%, #d4e6ef 44%, #a8c9d8 45%, #d9e9f0 100%) !important;
-    color: var(--catalog-standard-text) !important;
+    min-height: 24px;
+    height: 24px;
+    padding: 0 8px !important;
+    border: 3px solid transparent !important;
+    border-radius: 0 !important;
+    border-image-source: var(--habbo-skin-button) !important;
+    border-image-slice: 3 fill !important;
+    border-image-width: 3px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
+    color: #111111 !important;
     font-size: 11px !important;
     font-weight: 700 !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 0 rgba(0, 0, 0, 0.1) !important;
-    transition: filter 0.1s ease !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    image-rendering: pixelated !important;
 }
 
 .nitro-catalog-window button.nitro-catalog-preview-btn,
 .nitro-catalog-window button.nitro-catalog-preview-btn *,
 .nitro-catalog-window button.nitro-catalog-preview-btn svg {
-    border-radius: 4px !important;
+    border-radius: 0 !important;
 }
 
 .nitro-catalog-window .nitro-catalog-standard-button:hover,
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button:hover,
 .nitro-catalog-window button.nitro-catalog-preview-btn:hover {
-    filter: brightness(1.04);
-    background: linear-gradient(180deg, #ffffff 0%, #e0eff6 44%, #b8d5e4 45%, #e8f3f8 100%) !important;
+    border-image-source: var(--habbo-skin-button-hover) !important;
+    filter: none !important;
 }
 
 .nitro-catalog-window .nitro-catalog-standard-button:active,
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button:active,
 .nitro-catalog-window button.nitro-catalog-preview-btn:active {
-    filter: brightness(0.96);
-    background: linear-gradient(180deg, #a8c9d8 0%, #d4e6ef 55%, #f2f8fb 100%) !important;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    border-image-source: var(--habbo-skin-button-pressed) !important;
+    filter: none !important;
+    box-shadow: none !important;
 }
 
 .nitro-catalog-window .nitro-catalog-standard-button.pointer-events-none,
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button:disabled,
+.nitro-catalog-window .nitro-catalog-standard-button:disabled,
 .nitro-catalog-window button.nitro-catalog-preview-btn:disabled {
-    opacity: 0.55 !important;
-    color: #888 !important;
+    border-image-source: var(--habbo-skin-button-disabled) !important;
+    color: #777777 !important;
+    opacity: 1 !important;
     cursor: not-allowed !important;
 }
 
 .nitro-catalog-window .nitro-catalog-standard-buy-button {
-    width: 160px !important;
-    min-width: 160px !important;
+    width: 170px !important;
+    min-width: 170px !important;
     height: 24px !important;
     padding: 0 8px !important;
-    border: 1px solid #000 !important;
-    border-radius: 4px !important;
-    border-image: none !important;
-    border-image-source: none !important;
-    background:
-        linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.65),
-        inset 0 -2px 0 rgba(140, 75, 0, 0.35) !important;
-    color: #4a2b00 !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) !important;
     font-weight: 700 !important;
-}
-
-.nitro-catalog-window .nitro-catalog-standard-buy-button:hover {
-    background:
-        linear-gradient(180deg, #fff080 0%, #ffd54d 45%, #f5ab1c 100%) !important;
-    filter: brightness(1.04);
-}
-
-.nitro-catalog-window .nitro-catalog-standard-buy-button:active {
-    background:
-        linear-gradient(180deg, #f0a318 0%, #d98c0a 100%) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.25),
-        inset 0 2px 0 rgba(140, 75, 0, 0.45) !important;
-}
-
-.nitro-catalog-window .nitro-catalog-standard-buy-button.pointer-events-none,
-.nitro-catalog-window .nitro-catalog-standard-buy-button:disabled {
-    background:
-        linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%) !important;
-    color: #4a2b00 !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) !important;
-    opacity: 0.55 !important;
-    cursor: not-allowed !important;
-}
-
-.nitro-catalog-window .nitro-catalog-standard-confirm-button {
-    width: 160px !important;
-    min-width: 160px !important;
-    height: 24px !important;
-    padding: 0 8px !important;
-    border: 1px solid #000 !important;
-    border-radius: 4px !important;
-    border-image: none !important;
-    border-image-source: none !important;
-    background:
-        linear-gradient(180deg, #b6e86b 0%, #7fc828 45%, #4f9a18 100%) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        inset 0 -2px 0 rgba(40, 80, 0, 0.35) !important;
-    color: #1f3d00 !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) !important;
-    font-weight: 700 !important;
-}
-
-.nitro-catalog-window .nitro-catalog-standard-confirm-button:hover {
-    background:
-        linear-gradient(180deg, #c6f580 0%, #8fd836 45%, #57a81c 100%) !important;
-    filter: brightness(1.04);
-}
-
-.nitro-catalog-window .nitro-catalog-standard-confirm-button:active {
-    background:
-        linear-gradient(180deg, #4f9a18 0%, #3d7a0a 100%) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.25),
-        inset 0 2px 0 rgba(40, 80, 0, 0.45) !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
+    color: #ffffff !important;
 }
 
 .nitro-catalog-window .nitro-catalog-standard-gift-button {
-    width: 160px !important;
-    min-width: 160px !important;
-    height: 22px !important;
+    width: 170px !important;
+    min-width: 170px !important;
+    height: 24px !important;
     padding: 0 8px !important;
-    border: 1px solid #000 !important;
-    border-radius: 4px !important;
-    border-image: none !important;
-    border-image-source: none !important;
-    background:
-        linear-gradient(180deg, #ececec 0%, #cfcfc4 100%) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.18) !important;
-    color: #2a2a2a !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) !important;
     font-weight: 700 !important;
-}
-
-.nitro-catalog-window .nitro-catalog-standard-gift-button:hover {
-    background:
-        linear-gradient(180deg, #f4f4ed 0%, #dcdcd0 100%) !important;
-    filter: brightness(1.02);
-}
-
-.nitro-catalog-window .nitro-catalog-standard-gift-button:active {
-    background:
-        linear-gradient(180deg, #c0c0b6 0%, #aaaaa0 100%) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 2px 0 rgba(0, 0, 0, 0.25) !important;
-}
-
-.nitro-catalog-window .nitro-catalog-standard-gift-button.pointer-events-none,
-.nitro-catalog-window .nitro-catalog-standard-gift-button:disabled {
-    background:
-        linear-gradient(180deg, #e3e3dc 0%, #c5c5bb 100%) !important;
-    color: #6a6a64 !important;
-    text-shadow: none !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-image-source: var(--habbo-skin-shiny) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
 }
 
 .nitro-catalog-pet-card .nitro-catalog-standard-buy-button {
@@ -2436,96 +2386,91 @@
 }
 
 .nitro-catalog-standard-spinner {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    position: relative;
+    width: 182px;
     height: 25px;
-    color: #666;
+    color: #000;
     font-size: 11px;
+    font-weight: 700;
 }
 
 .nitro-catalog-standard-spinner-label {
-    max-width: 62px;
+    position: absolute;
+    left: 7px;
+    top: 5px;
+    width: 126px;
+    height: 15px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-
-.nitro-catalog-standard-spinner-control {
-    display: grid;
-    grid-template-columns: 22px 34px 22px;
-    align-items: center;
-    height: 25px;
-    gap: 2px;
+    line-height: 15px;
 }
 
 .nitro-catalog-window button.nitro-catalog-standard-spinner-button {
-    width: 22px !important;
-    min-width: 22px !important;
-    height: 22px !important;
-    min-height: 22px !important;
+    position: absolute;
+    left: 139px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 14px !important;
+    min-width: 14px !important;
     padding: 0 !important;
-    border: 0 !important;
+    border-width: 3px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
     border-radius: 0 !important;
-    border-image: none !important;
-    background-color: transparent !important;
-    background-repeat: no-repeat !important;
-    background-position: center center !important;
-    background-size: auto !important;
+    border-image-source: var(--habbo-skin-button) !important;
+    border-image-slice: 3 !important;
+    border-image-width: 3px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
     box-shadow: none !important;
     image-rendering: pixelated !important;
 }
 
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button svg {
-    display: none !important;
+.nitro-catalog-window button.nitro-catalog-standard-spinner-button:hover {
+    border-image-source: var(--habbo-skin-button-hover) !important;
 }
 
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button-less {
-    background-image: var(--habbo-stepper-minus) !important;
+.nitro-catalog-window button.nitro-catalog-standard-spinner-button:active {
+    border-image-source: var(--habbo-skin-button-pressed) !important;
 }
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button-less:hover {
-    background-image: var(--habbo-stepper-minus-hover) !important;
+
+.nitro-catalog-window button.nitro-catalog-standard-spinner-button:disabled {
+    border-image-source: var(--habbo-skin-button-disabled) !important;
 }
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button-less:active {
-    background-image: var(--habbo-stepper-minus-pressed) !important;
-}
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button-less:disabled {
-    background-image: var(--habbo-stepper-minus-disabled) !important;
+
+.nitro-catalog-window button.nitro-catalog-standard-spinner-button img {
+    display: block;
+    width: 10px;
+    height: 5px;
+    pointer-events: none;
+    image-rendering: pixelated;
 }
 
 .nitro-catalog-window button.nitro-catalog-standard-spinner-button-more {
-    background-image: var(--habbo-stepper-plus) !important;
-}
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button-more:hover {
-    background-image: var(--habbo-stepper-plus-hover) !important;
-}
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button-more:active {
-    background-image: var(--habbo-stepper-plus-pressed) !important;
-}
-.nitro-catalog-window button.nitro-catalog-standard-spinner-button-more:disabled {
-    background-image: var(--habbo-stepper-plus-disabled) !important;
+    top: -1px;
+    height: 15px !important;
+    min-height: 15px !important;
 }
 
-.nitro-catalog-standard-spinner-input {
-    width: 30px !important;
-    height: 25px !important;
-    padding: 4px 2px !important;
-    border: 1px solid #9d9d96 !important;
-    border-radius: 0 !important;
-    background: #fff !important;
-    color: #222 !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    line-height: 15px !important;
-    text-align: center !important;
-    outline: none !important;
-    appearance: textfield;
+.nitro-catalog-window button.nitro-catalog-standard-spinner-button-less {
+    top: 13px;
+    height: 14px !important;
+    min-height: 14px !important;
 }
 
-.nitro-catalog-standard-spinner-input::-webkit-outer-spin-button,
-.nitro-catalog-standard-spinner-input::-webkit-inner-spin-button {
-    appearance: none;
-    margin: 0;
+.nitro-catalog-standard-spinner-value {
+    position: absolute;
+    left: 154px;
+    top: 5px;
+    width: 24px;
+    height: 15px;
+    color: #000;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 15px;
+    text-align: center;
 }
 
 .nitro-catalog-standard-price-display {
@@ -3200,7 +3145,7 @@
 }
 
 .nitro-catalog-admin-tab.has-pending:not(.is-active) {
-    box-shadow: inset 0 -2px 0 #f0a318;
+    box-shadow: inset 0 -2px 0 #1aa022;
 }
 
 .nitro-catalog-admin-tab-count {
@@ -3233,13 +3178,19 @@
     gap: 6px;
     height: 28px;
     padding: 0 12px;
-    border: 1px solid #7f7f78;
-    border-radius: 5px;
-    background: linear-gradient(180deg, #ffffff 0%, #eef2f5 45%, #dbe6ee 100%);
-    color: #20201d;
+    border: 3px solid transparent;
+    border-image-source: var(--habbo-skin-button);
+    border-image-slice: 3 fill;
+    border-image-width: 3px;
+    border-image-repeat: stretch;
+    border-radius: 0;
+    background: transparent;
+    color: #111111;
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
+    box-shadow: none;
+    image-rendering: pixelated;
 }
 
 .nitro-catalog-admin-btn:hover {
@@ -3258,33 +3209,44 @@
     fill: currentColor;
 }
 
-.nitro-catalog-admin-btn.is-primary {
-    border-color: #35618f;
-    background: linear-gradient(180deg, #6aa4d8 0%, #4d8bc9 100%);
+.nitro-catalog-admin-btn.is-primary,
+.nitro-catalog-admin-btn.is-publish {
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent;
+    border-image-source: var(--habbo-skin-shiny-thick-green);
+    border-image-slice: 5 fill;
+    border-image-width: 5px;
+    border-image-repeat: stretch;
+    background: transparent;
     color: #ffffff;
 }
 
 .nitro-catalog-admin-btn.is-danger {
-    border-color: #a2372f;
-    color: #b83b32;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent;
+    border-image-source: var(--habbo-skin-shiny-red);
+    border-image-slice: 5 fill;
+    border-image-width: 5px;
+    border-image-repeat: stretch;
+    background: transparent;
+    color: #ffffff;
 }
 
 .nitro-catalog-admin-btn.is-danger:hover {
-    background: linear-gradient(180deg, #ffffff 0%, #f6dcd9 100%);
+    border-image-source: var(--habbo-skin-shiny-red-hover);
 }
 
 .nitro-catalog-admin-btn.is-publish {
     height: 34px;
     padding: 0 22px;
-    border-color: #8a5b00;
-    background: linear-gradient(180deg, #ffe66b 0%, #ffc828 45%, #f0a318 100%);
-    color: #4a2b00;
     font-size: 12px;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
 }
 
 .nitro-catalog-admin-btn.is-publish.has-pending {
-    box-shadow: 0 0 0 2px rgba(240, 163, 24, 0.5);
+    box-shadow: 0 0 0 2px rgba(61, 204, 69, 0.5);
 }
 
 .nitro-catalog-admin-btn.is-small {

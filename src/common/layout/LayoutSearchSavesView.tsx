@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { FaBolt } from 'react-icons/fa';
+import quicklinkAdd from '../../assets/images/navigator/air/quicklink-add.png';
 
 export interface LayoutSearchSavesViewProps {
     title: string;
@@ -10,22 +10,8 @@ export const LayoutSearchSavesView: FC<LayoutSearchSavesViewProps> = (props) => 
     const { title = null, onClick = null } = props;
 
     return (
-        <div
-            title={title}
-            onClick={onClick}
-            style={{
-                backgroundColor: '#FAA700',
-                borderRadius: 4,
-                padding: '2px 4px',
-                fontSize: 10,
-                height: 17,
-                display: 'flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-                color: 'white'
-            }}
-        >
-            <FaBolt />
-        </div>
+        <button type="button" className="nitro-navigator-search-save" title={title} onClick={onClick}>
+            <img src={quicklinkAdd} alt="" />
+        </button>
     );
 };

@@ -1,6 +1,8 @@
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { FC, useLayoutEffect, useRef, useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import friendsBrowseArrowLeft from '../../../../assets/images/toolbar/air/friend-browse-arrow-left.png';
+import friendsBrowseArrowRight from '../../../../assets/images/toolbar/air/friend-browse-arrow-right.png';
+import friendsBrowseBg from '../../../../assets/images/toolbar/air/friends-browse-bg.png';
 import { LocalizeText, localizeWithFallback, MessengerFriend } from '../../../../api';
 import { AIR_RAIL_CHAT_RESERVED_HALF, AIR_RAIL_EDGE_GAP, resolveAirFriendTabCapacity } from '../../../toolbar/bottomDockLayout';
 import { FriendBarItemView } from './FriendBarItemView';
@@ -8,8 +10,8 @@ import { FriendBarItemView } from './FriendBarItemView';
 const AIR_TAB_WIDTH = 127;
 const AIR_TAB_SPACING = 3;
 const AIR_MIN_VISIBLE_SLOTS = 3;
-const BASE_PAD = 8; // container px-[2px] + a little slack
-const RIGHT_SAFE = 24; // right inset (right-0/right-3) + pr-3 safety margin
+const BASE_PAD = 8;
+const RIGHT_SAFE = 24;
 
 const containerVariants: Variants = {
     hidden: {},
@@ -105,10 +107,11 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
                         type="button"
                         disabled={!canScrollLeft}
                         aria-label={localizeWithFallback('friendbar.scroll.left', 'Previous friends')}
-                        className={`friend-bar-button left flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-opacity ${!canScrollLeft ? 'is-disabled opacity-20 cursor-not-allowed' : 'cursor-pointer hover:text-white'}`}
+                        className={`friend-bar-button left ${!canScrollLeft ? 'is-disabled' : ''}`}
                         onClick={() => setIndexOffset(safeOffset - 1)}
                     >
-                        <FaChevronLeft className="friend-bar-chevron text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
+                        <img src={friendsBrowseBg} alt="" className="friend-bar-browse-bg" />
+                        <img src={friendsBrowseArrowLeft} alt="" className="friend-bar-browse-arrow" />
                     </button>
                 </motion.div>
             )}
@@ -132,10 +135,11 @@ export const FriendBarView: FC<{ onlineFriends: MessengerFriend[]; requestsCount
                         type="button"
                         disabled={!canScrollRight}
                         aria-label={localizeWithFallback('friendbar.scroll.right', 'Next friends')}
-                        className={`friend-bar-button right flex h-[34px] w-[20px] items-center justify-center text-white/80 transition-opacity ${!canScrollRight ? 'is-disabled opacity-20 cursor-not-allowed' : 'cursor-pointer hover:text-white'}`}
+                        className={`friend-bar-button right ${!canScrollRight ? 'is-disabled' : ''}`}
                         onClick={() => setIndexOffset(safeOffset + 1)}
                     >
-                        <FaChevronRight className="friend-bar-chevron text-white/70 text-sm drop-shadow-[1px_1px_0_#000]" />
+                        <img src={friendsBrowseBg} alt="" className="friend-bar-browse-bg" />
+                        <img src={friendsBrowseArrowRight} alt="" className="friend-bar-browse-arrow" />
                     </button>
                 </motion.div>
             )}

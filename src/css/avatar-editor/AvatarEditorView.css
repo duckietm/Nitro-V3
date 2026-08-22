@@ -1,0 +1,234 @@
+/* Habbo AIR avatareditor_wardrobe_base (3121_class_193.bin) + AvatarEditorContent hanger. */
+
+.nitro-avatar-editor {
+    width: 600px;
+    height: 520px;
+}
+
+.nitro-avatar-editor.is-wardrobe-open {
+    width: 782px;
+}
+
+.nitro-avatar-editor-tab-row {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 32px;
+}
+
+.nitro-avatar-editor-tab-row .avatar-editor-tabs {
+    flex: 1;
+    min-width: 0;
+}
+
+.nitro-avatar-editor-wardrobe-toggle {
+    appearance: none;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 55px;
+    height: 30px;
+    margin: 0 10px 1px 0;
+    padding: 0;
+    cursor: pointer;
+    border: 3px solid transparent;
+    border-image-source: var(--habbo-skin-button);
+    border-image-slice: 3 fill;
+    border-image-width: 3px;
+    border-image-repeat: stretch;
+    background: url('@/assets/images/avatareditor/wardrobe-hanger.png') center no-repeat;
+    image-rendering: pixelated;
+}
+
+.nitro-avatar-editor-wardrobe-toggle:hover {
+    border-image-source: var(--habbo-skin-button-hover);
+}
+
+.nitro-avatar-editor-wardrobe-toggle:active,
+.nitro-avatar-editor-wardrobe-toggle.is-open {
+    border-image-source: var(--habbo-skin-button-pressed);
+}
+
+.nitro-avatar-editor-wardrobe-toggle:focus-visible {
+    outline: 2px solid var(--nitro-card-focus, #ffd95a);
+    outline-offset: 1px;
+}
+
+.nitro-avatar-editor .nitro-avatar-editor-content.nitro-card-content-shell {
+    display: flex;
+    flex-direction: row;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.nitro-avatar-editor-main {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.nitro-avatar-editor-wardrobe {
+    box-sizing: border-box;
+    width: 182px;
+    height: 100%;
+    flex-shrink: 0;
+    padding: 0 8px 0 6px;
+    border-left: 1px solid #000;
+    background: #e9e9e1;
+    overflow: hidden;
+}
+
+.nitro-avatar-editor-wardrobe-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    width: 168px;
+    height: 23px;
+    margin-top: 19px;
+}
+
+.nitro-avatar-editor-wardrobe-title {
+    overflow: hidden;
+    color: #83827e;
+    font-family: UbuntuRegular, Ubuntu, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 17px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nitro-avatar-editor-wardrobe-hc {
+    width: 18px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+.nitro-avatar-editor-wardrobe-slots {
+    display: flex;
+    gap: 4px;
+    box-sizing: border-box;
+    width: 139px;
+    height: 418px;
+    margin: 11px 0 0 9px;
+    padding: 3px 4px 0;
+    border: 6px solid transparent;
+    border-image-source: url('@/assets/images/avatareditor/wardrobe-slots-border.png');
+    border-image-slice: 6 fill;
+    border-image-width: 6px;
+    border-image-repeat: stretch;
+    background: #cbcbcb;
+    overflow: hidden;
+    image-rendering: pixelated;
+}
+
+.nitro-avatar-editor-wardrobe-column {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 64px;
+}
+
+.nitro-avatar-editor-wardrobe-slot {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+}
+
+.nitro-avatar-editor-wardrobe-slot-shade {
+    position: absolute;
+    left: 29px;
+    top: 3px;
+    width: 24px;
+    height: 50px;
+    background: rgb(102 102 102 / 0.3);
+    pointer-events: none;
+}
+
+.nitro-avatar-editor-wardrobe-slot-set,
+.nitro-avatar-editor-wardrobe-slot-get {
+    appearance: none;
+    position: absolute;
+    width: 22px;
+    height: 26px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: pixelated;
+    cursor: pointer;
+}
+
+.nitro-avatar-editor-wardrobe-slot-set {
+    left: 3px;
+    top: 3px;
+    background-image: url('@/assets/images/avatareditor/wardrobe-arrow-save.png');
+    background-position: center 9px;
+}
+
+.nitro-avatar-editor-wardrobe-slot-get {
+    left: 2px;
+    top: 28px;
+    background-image: url('@/assets/images/avatareditor/wardrobe-arrow-wear.png');
+    background-position: center 0;
+}
+
+.nitro-avatar-editor-wardrobe-slot-set:focus-visible,
+.nitro-avatar-editor-wardrobe-slot-get:focus-visible,
+.nitro-avatar-editor-wardrobe-slot-figure:focus-visible {
+    outline: 2px solid var(--nitro-card-focus, #ffd95a);
+    outline-offset: 1px;
+}
+
+.nitro-avatar-editor-wardrobe-slot-figure {
+    appearance: none;
+    position: absolute;
+    left: 30px;
+    top: 4px;
+    width: 22px;
+    height: 48px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.nitro-avatar-editor-wardrobe-slot-figure:disabled {
+    cursor: default;
+}
+
+.nitro-avatar-editor-wardrobe-slot-figure .avatar-image,
+.nitro-avatar-editor-wardrobe-slot-figure .avatar-image-fit {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 22px !important;
+    height: 48px !important;
+}
+
+.nitro-avatar-editor-wardrobe-empty {
+    display: block;
+    width: 17px;
+    height: 43px;
+    margin: 2px auto 0;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.nitro-avatar-editor-wardrobe-slot.is-locked {
+    opacity: 0.85;
+}
+
+@media (max-width: 991.98px) {
+    .nitro-avatar-editor,
+    .nitro-avatar-editor.is-wardrobe-open {
+        width: min(782px, calc(100vw - 16px));
+        height: min(520px, calc(100vh - 16px));
+    }
+}

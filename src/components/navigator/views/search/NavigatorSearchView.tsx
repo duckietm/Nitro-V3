@@ -1,7 +1,7 @@
 import { NavigatorSearchResultSet } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
 import { INavigatorSearchFilter, LocalizeText, SearchFilterOptions } from '../../../../api';
+import magnifierIcon from '../../../../assets/images/navigator/air/magnifier.png';
 import { useNavigatorData, useNavigatorUiStore } from '../../../../hooks';
 import { NavigatorFilterChipsView } from './NavigatorFilterChipsView';
 
@@ -81,7 +81,7 @@ export const NavigatorSearchView: FC<NavigatorSearchViewProps> = (props) => {
                     aria-label={LocalizeText('navigator.filter.input.placeholder')}
                     title={LocalizeText('navigator.filter.input.placeholder')}
                 >
-                    <FaSearch className="fa-icon" />
+                    <img src={magnifierIcon} alt="" />
                 </button>
             </div>
         </form>

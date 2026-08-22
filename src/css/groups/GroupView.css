@@ -103,17 +103,24 @@
 }
 
 .nitro-groups-button--primary {
-    border-image-source: var(--habbo-skin-shiny) !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
     color: #ffffff !important;
-    text-shadow: 1px 1px 0 #003a00 !important;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35) !important;
 }
 
 .nitro-groups-button--primary:hover {
-    border-image-source: var(--habbo-skin-shiny-hover) !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green-hover) !important;
 }
 
 .nitro-groups-button--primary:active {
-    border-image-source: var(--habbo-skin-shiny-pressed) !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green-pressed) !important;
 }
 
 .nitro-group-information-standalone {

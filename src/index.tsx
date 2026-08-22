@@ -18,6 +18,7 @@ const queryClient = new QueryClient({
 import './css/habbo/HabboTheme.css';
 import './css/index.css';
 
+import './css/avatar-editor/AvatarEditorView.css';
 import './css/backgrounds/BackgroundsView.css';
 import './css/badges/BadgeLeaderboardView.css';
 import './css/catalog/CatalogView.css';

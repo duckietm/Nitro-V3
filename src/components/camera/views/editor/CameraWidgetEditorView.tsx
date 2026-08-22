@@ -266,18 +266,18 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = (props) =
                         </Column>
                         <div className="flex justify-between">
                             <div className="relative inline-flex align-middle">
-                                <Button onClick={(event) => processAction('clear_effects')}>
+                                <Button variant="secondary" onClick={(event) => processAction('clear_effects')}>
                                     <FaTrash className="fa-icon" />
                                 </Button>
-                                <Button onClick={(event) => processAction('download')}>
+                                <Button variant="secondary" onClick={(event) => processAction('download')}>
                                     <FaSave className="fa-icon" />
                                 </Button>
-                                <Button onClick={(event) => processAction('zoom')}>
+                                <Button variant="secondary" onClick={(event) => processAction('zoom')}>
                                     {isZoomed ? <FaSearchMinus className="fa-icon" /> : <FaSearchPlus className="fa-icon" />}
                                 </Button>
                             </div>
                             <div className="flex gap-1">
-                                <Button onClick={(event) => processAction('cancel')}>{LocalizeText('generic.cancel')}</Button>
+                                <Button variant="danger" onClick={(event) => processAction('cancel')}>{LocalizeText('generic.cancel')}</Button>
                                 <Button onClick={(event) => processAction('checkout')}>{LocalizeText('camera.preview.button.text')}</Button>
                             </div>
                         </div>

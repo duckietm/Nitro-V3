@@ -88,7 +88,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
     };
 
     const getDoorIcon = () => {
-        if (roomData.doorMode === RoomDataParser.DOORBELL_STATE) return 'locked';
+        if (roomData.doorMode === RoomDataParser.DOORBELL_STATE) return 'doorbell';
         if (roomData.doorMode === RoomDataParser.PASSWORD_STATE) return 'password';
         if (roomData.doorMode === RoomDataParser.INVISIBLE_STATE) return 'invisible';
 
@@ -107,7 +107,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
                 <button
                     type="button"
                     ref={elementRef}
-                    className="nitro-navigator-air__room-info nitro-icon icon-navigator-info"
+                    className="nitro-navigator-air__room-info"
                     aria-label={LocalizeText('navigator.room.popup.room.info')}
                     onClick={handleIconClick}
                     onMouseOver={() => {
@@ -147,7 +147,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
                                     />
                                 )}
                                 {roomData.doorMode !== RoomDataParser.OPEN_STATE && (
-                                    <i className={`absolute inset-e-0 mb-1 me-1 icon icon-navigator-room-${getDoorIcon()}`} />
+                                    <i className={`absolute inset-e-0 mb-1 me-1 nitro-navigator-air__door nitro-navigator-air__door--${getDoorIcon()}`} />
                                 )}
                             </LayoutRoomThumbnailView>
                             <Column gap={1} className="nitro-navigator-air__room-popover-copy">
@@ -170,7 +170,7 @@ export const NavigatorSearchResultItemInfoView: FC<NavigatorSearchResultItemInfo
                                     )}
                                     {hasGroup && (
                                         <Flex onClick={handleGroupClick} gap={1} className="items-center cursor-pointer ms-auto">
-                                            <i className="icon icon-navigator-room-group" />
+                                            <i className="nitro-navigator-air__group" />
                                             <Text bold underline className="truncate" style={{ maxWidth: 130 }}>
                                                 {roomData.groupName}
                                             </Text>

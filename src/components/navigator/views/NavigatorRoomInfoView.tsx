@@ -12,11 +12,10 @@ import {
     UpdateHomeRoomMessageComposer
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { FaSignOutAlt } from 'react-icons/fa';
 import { DispatchUiEvent, GetGroupInformation, LocalizeText, ReportType, SendMessageComposer } from '../../../api';
+import weblinkIcon from '../../../assets/images/navigator/air/icon-weblink.png';
+import removeRightsIcon from '../../../assets/images/navigator/air/remove-rights.png';
 import {
-    Button,
-    Column,
     Flex,
     LayoutBadgeImageView,
     LayoutRoomThumbnailView,
@@ -140,18 +139,18 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = (props) => 
 
     return (
         <NitroCardView
-            className="nitro-room-info min-w-0 w-[min(230px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
+            className="nitro-room-info min-w-0 w-[min(236px,calc(100vw-16px))] max-w-[calc(100vw-16px)] max-h-[calc(100vh-16px)]"
             isResizable={false}
-            theme="primary-slim"
         >
             <NitroCardHeaderView headerText={LocalizeText('navigator.roomsettings.roominfo')} onCloseClick={() => processAction('close')} />
             <NitroCardContentView className="nitro-room-info__content text-black max-h-[calc(100vh-72px)]" overflow="auto">
                 <div className="nitro-room-info__heading">
                     <Text bold>{navigatorData.enteredGuestRoom.roomName}</Text>
-                    <i
+                    <button
+                        type="button"
                         className={classNames(
-                            'shrink-0 nitro-icon icon-house-small cursor-pointer',
-                            navigatorData.homeRoomId !== navigatorData.enteredGuestRoom.roomId && 'gray'
+                            'nitro-room-info__home shrink-0',
+                            navigatorData.homeRoomId === navigatorData.enteredGuestRoom.roomId && 'is-home'
                         )}
                         title={LocalizeText('navigator.room.popup.room.info.home')}
                         onClick={() => processAction('set_home_room')}
@@ -177,7 +176,7 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = (props) => 
                     {hasPermission('settings') && canUseRoomThumbnailCamera && (
                         <button
                             type="button"
-                            className="m-1 cursor-pointer nitro-icon icon-camera-small absolute bottom-0 right-0 border-0 bg-transparent p-0"
+                            className="nitro-room-info__camera nitro-icon icon-camera-small absolute bottom-0 right-0 m-1"
                             aria-label={LocalizeText('navigator.thumbnail.camera.title')}
                             title={LocalizeText('navigator.thumbnail.camera.title')}
                             onClick={() => processAction('open_room_thumbnail_camera')}
@@ -192,10 +191,19 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = (props) => 
                             onClick={() => processAction('room_favourite')}
                         />
                     )}
-                    {hasPermission('guest') && <FaSignOutAlt className="cursor-pointer fa-icon" title={LocalizeText('navigator.roominfo.removerights.tooltip')} onClick={() => processAction('remove_rights')} />}
+                    {hasPermission('guest') && (
+                        <button
+                            type="button"
+                            className="border-0 bg-transparent p-0 cursor-pointer"
+                            title={LocalizeText('navigator.roominfo.removerights.tooltip')}
+                            onClick={() => processAction('remove_rights')}
+                        >
+                            <img src={removeRightsIcon} alt="" width={17} height={22} />
+                        </button>
+                    )}
                 </Flex>
                 <Flex pointer alignItems="center" gap={1} className="nitro-room-info__room-link" onClick={() => processAction('toggle_room_link')}>
-                    <Text bold>»</Text>
+                    <img src={weblinkIcon} alt="" />
                     <Text small underline>{LocalizeText('navigator.embed.caption')}</Text>
                 </Flex>
                 {navigatorData.enteredGuestRoom.habboGroupId > 0 && (
@@ -205,18 +213,34 @@ export const NavigatorRoomInfoView: FC<NavigatorRoomInfoViewProps> = (props) => 
                     </Flex>
                 )}
                 <div className="nitro-room-info__actions">
-                    {hasPermission('settings') && <Button onClick={() => processAction('open_room_settings')}>{LocalizeText('navigator.roomsettings')}</Button>}
-                    {hasPermission('settings') && <Button onClick={() => processAction('room_filter')}>{LocalizeText('navigator.roomsettings.roomfilter')}</Button>}
-                    {(hasPermission('settings') || hasPermission('floor')) && <Button onClick={() => processAction('open_floorplan_editor')}>{LocalizeText('open.floor.plan.editor')}</Button>}
-                    {hasPermission('staff_pick') && (
-                        <Button onClick={() => processAction('toggle_pick')}>
-                            {LocalizeText(isRoomPicked ? 'navigator.staffpicks.unpick' : 'navigator.staffpicks.pick')}
-                        </Button>
+                    {hasPermission('settings') && (
+                        <button type="button" className="nitro-room-info__action habbo-btn-primary" onClick={() => processAction('open_room_settings')}>
+                            {LocalizeText('navigator.roomsettings')}
+                        </button>
                     )}
-                    <Button variant="danger" onClick={() => processAction('report_room')}>
+                    {hasPermission('settings') && (
+                        <button type="button" className="nitro-room-info__action habbo-btn-primary" onClick={() => processAction('room_filter')}>
+                            {LocalizeText('navigator.roomsettings.roomfilter')}
+                        </button>
+                    )}
+                    {(hasPermission('settings') || hasPermission('floor')) && (
+                        <button type="button" className="nitro-room-info__action habbo-btn-primary" onClick={() => processAction('open_floorplan_editor')}>
+                            {LocalizeText('open.floor.plan.editor')}
+                        </button>
+                    )}
+                    {hasPermission('staff_pick') && (
+                        <button type="button" className="nitro-room-info__action habbo-btn-primary" onClick={() => processAction('toggle_pick')}>
+                            {LocalizeText(isRoomPicked ? 'navigator.staffpicks.unpick' : 'navigator.staffpicks.pick')}
+                        </button>
+                    )}
+                    <button type="button" className="nitro-room-info__action habbo-btn-danger" onClick={() => processAction('report_room')}>
                         {LocalizeText('help.emergency.main.report.room')}
-                    </Button>
-                    {hasPermission('settings') && <Button onClick={() => processAction('toggle_mute')}>{LocalizeText(isRoomMuted ? 'navigator.muteall_on' : 'navigator.muteall_off')}</Button>}
+                    </button>
+                    {hasPermission('settings') && (
+                        <button type="button" className="nitro-room-info__action habbo-btn-primary" onClick={() => processAction('toggle_mute')}>
+                            {LocalizeText(isRoomMuted ? 'navigator.muteall_on' : 'navigator.muteall_off')}
+                        </button>
+                    )}
                 </div>
             </NitroCardContentView>
         </NitroCardView>

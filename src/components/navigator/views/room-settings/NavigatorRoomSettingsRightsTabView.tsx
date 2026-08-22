@@ -18,6 +18,7 @@ interface NavigatorRoomSettingsTabViewProps {
     handleChange: (field: string, value: string | number | boolean) => void;
 }
 
+// Polaris Staff Chat is not a real friend; keep it out of the rights picker.
 const STAFF_CHAT_ID = -1;
 const STAFF_CHAT_NAME = 'Staff Chat';
 

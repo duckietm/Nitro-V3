@@ -1,6 +1,6 @@
-import { GetRoomEngine, NitroRectangle, NitroTexture } from '@nitrots/nitro-renderer';
-import { FC, useRef, useState } from 'react';
-import { LocalizeText, PlaySound, SoundNames } from '../../api';
+import { GetRoomEngine, NitroTexture } from '@nitrots/nitro-renderer';
+import { FC, useEffect, useRef, useState } from 'react';
+import { blitRoomCanvasToViewfinder, getViewfinderRoomFrame, LocalizeText, PlaySound, SoundNames } from '../../api';
 import { DraggableWindow } from '../draggable-window';
 
 interface LayoutMiniCameraViewProps {
@@ -12,25 +12,37 @@ interface LayoutMiniCameraViewProps {
 
 export const LayoutMiniCameraView: FC<LayoutMiniCameraViewProps> = (props) => {
     const { roomId = -1, textureReceiver = null, onClose = null, isSaving = false } = props;
-    const elementRef = useRef<HTMLDivElement>(null);
+    const elementRef = useRef<HTMLCanvasElement>(null);
     const [isCapturing, setIsCapturing] = useState(false);
 
-    const getCameraBounds = () => {
-        if (!elementRef || !elementRef.current) return null;
+    useEffect(() => {
+        let frame = 0;
+        let last = 0;
+        const tick = (now: number) => {
+            if (now - last >= 1000 / 24) {
+                last = now;
+                blitRoomCanvasToViewfinder(elementRef.current, 110, 110);
+            }
+            frame = window.requestAnimationFrame(tick);
+        };
 
-        const frameBounds = elementRef.current.getBoundingClientRect();
+        frame = window.requestAnimationFrame(tick);
 
-        return new NitroRectangle(Math.floor(frameBounds.x), Math.floor(frameBounds.y), Math.floor(frameBounds.width), Math.floor(frameBounds.height));
-    };
+        return () => window.cancelAnimationFrame(frame);
+    }, []);
 
     const takePicture = async () => {
         if (isCapturing || isSaving) return;
+
+        const frame = getViewfinderRoomFrame(elementRef.current, 110, 110);
+
+        if (!frame) return;
 
         setIsCapturing(true);
         PlaySound(SoundNames.CAMERA_SHUTTER);
 
         try {
-            await textureReceiver(GetRoomEngine().createTextureFromRoom(roomId, 1, getCameraBounds()));
+            await textureReceiver(GetRoomEngine().createTextureFromRoom(roomId, 1, frame));
         } finally {
             setIsCapturing(false);
         }
@@ -52,7 +64,12 @@ export const LayoutMiniCameraView: FC<LayoutMiniCameraViewProps> = (props) => {
                         paddingBottom: '192px' // Matches the space needed to position buttons as per the design
                     }}
                 >
-                    <div ref={elementRef} className="absolute mt-[30px] ml-[3px] w-[110px] h-[110px]" />
+                    <canvas
+                        ref={elementRef}
+                        className="nitro-camera-viewfinder absolute mt-[30px] ml-[3px] w-[110px] h-[110px] pointer-events-none"
+                        width={110}
+                        height={110}
+                    />
                     <div
                         style={{
                             position: 'absolute',

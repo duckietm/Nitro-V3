@@ -1,7 +1,12 @@
 import { NavigatorSearchComposer, NavigatorSearchResultList, NavigatorSearchSaveComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { FaBars, FaMinus, FaPlus, FaTh, FaWindowMaximize, FaWindowRestore } from 'react-icons/fa';
 import { LocalizeText, localizeWithFallback, NavigatorSearchResultViewDisplayMode, SendMessageComposer } from '../../../../api';
+import categoryCollapse from '../../../../assets/images/navigator/air/category-collapse.png';
+import categoryExpand from '../../../../assets/images/navigator/air/category-expand.png';
+import categoryShowMore from '../../../../assets/images/navigator/air/category-show-more.png';
+import navViewMini from '../../../../assets/images/navigator/air/nav-view-mini.png';
+import navViewRow from '../../../../assets/images/navigator/air/nav-view-row.png';
+import navViewThumbs from '../../../../assets/images/navigator/air/nav-view-thumbs.png';
 import { AutoGrid, AutoGridProps, Column, Flex, Grid, LayoutSearchSavesView, Text } from '../../../../common';
 import { useNavigatorData, useNavigatorUiStore } from '../../../../hooks';
 import { NavigatorSearchResultItemView } from './NavigatorSearchResultItemView';
@@ -51,7 +56,7 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = (pr
 
     return (
         <Column className="nitro-card-panel" gap={0}>
-            <Flex fullWidth alignItems="center" className="px-2 py-1" justifyContent="between">
+            <Flex fullWidth alignItems="center" className="nitro-navigator-air__category-header" justifyContent="between">
                 <button
                     type="button"
                     className="nitro-navigator-air__category-toggle flex grow items-center gap-1"
@@ -59,11 +64,10 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = (pr
                     aria-expanded={isExtended}
                     onClick={() => useNavigatorUiStore.getState().setResultCollapsed(searchResult.code, isExtended)}
                 >
-                    {isExtended && <FaMinus className="text-secondary fa-icon" />}
-                    {!isExtended && <FaPlus className="text-secondary fa-icon" />}
+                    <img src={isExtended ? categoryCollapse : categoryExpand} alt="" />
                     <Text>{resultTitle}</Text>
                 </button>
-                <div className="flex gap-2 items-center">
+                <div className="flex gap-[5px] items-center">
                     {displayMode === NavigatorSearchResultViewDisplayMode.LIST && (
                         <button
                             type="button"
@@ -72,7 +76,7 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = (pr
                             title={tileViewLabel}
                             onClick={toggleDisplayMode}
                         >
-                            <FaTh className="text-secondary fa-icon" />
+                            <img src={navViewThumbs} alt="" />
                         </button>
                     )}
                     {displayMode >= NavigatorSearchResultViewDisplayMode.THUMBNAILS && (
@@ -83,14 +87,23 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = (pr
                             title={listViewLabel}
                             onClick={toggleDisplayMode}
                         >
-                            <FaBars className="text-secondary fa-icon" />
+                            <img src={navViewRow} alt="" />
                         </button>
                     )}
                     {searchResult.action > 0 && searchResult.action === 1 && (
-                        <FaWindowMaximize className="text-secondary fa-icon cursor-pointer" title={LocalizeText('navigator.more.rooms')} onClick={showMore} />
+                        <button
+                            type="button"
+                            className="nitro-navigator-air__icon-button"
+                            title={LocalizeText('navigator.more.rooms')}
+                            onClick={showMore}
+                        >
+                            <img src={categoryShowMore} alt="" />
+                        </button>
                     )}
                     {searchResult.action > 0 && searchResult.action !== 1 && (
-                        <FaWindowRestore className="text-secondary fa-icon cursor-pointer" title={LocalizeText('navigator.back')} onClick={showMore} />
+                        <button type="button" className="nitro-navigator-air__icon-button" title={LocalizeText('navigator.back')} onClick={showMore}>
+                            <img src={navViewMini} alt="" />
+                        </button>
                     )}
                     <LayoutSearchSavesView
                         title={LocalizeText('navigator.tooltip.add.saved.search')}
@@ -101,7 +114,7 @@ export const NavigatorSearchResultView: FC<NavigatorSearchResultViewProps> = (pr
             {isExtended && (
                 <>
                     {gridHasTwoColumns ? (
-                        <AutoGrid columnCount={3} {...rest} className="mx-2" columnMinHeight={130} columnMinWidth={110}>
+                        <AutoGrid columnCount={3} {...rest} className="mx-1" columnMinHeight={146} columnMinWidth={122}>
                             {searchResult.rooms.length > 0 &&
                                 searchResult.rooms.map((room, index) => (
                                     <NavigatorSearchResultItemView

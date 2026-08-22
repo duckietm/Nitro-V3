@@ -1,7 +1,7 @@
 import { AvatarScaleType, AvatarSetType, GetAvatarRenderManager } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react';
 import { Base, BaseProps } from '../Base';
-import { cropOpaqueBoundsImageUrl, cropTransparentImageUrl } from './avatarImageCrop';
+import { cropAirMeMenuFaceImageUrl, cropOpaqueBoundsImageUrl, cropTransparentImageUrl } from './avatarImageCrop';
 
 const AVATAR_CACHE_MAX_SIZE = 200;
 const AVATAR_IMAGE_CACHE: Map<string, string> = new Map();
@@ -16,10 +16,11 @@ export interface LayoutAvatarImageViewProps extends BaseProps<HTMLDivElement> {
     compactHead?: boolean;
     compactHeadSize?: number;
     compactHeadPadding?: number;
+    airMeMenu?: boolean;
 }
 
 export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => {
-    const { figure = '', gender = '', headOnly = false, direction = 0, scale = 1, fit = false, compactHead = false, compactHeadSize = 22, compactHeadPadding = 1, classNames = [], style = {}, ...rest } = props;
+    const { figure = '', gender = '', headOnly = false, direction = 0, scale = 1, fit = false, compactHead = false, compactHeadSize = 22, compactHeadPadding = 1, airMeMenu = false, classNames = [], style = {}, ...rest } = props;
     const [avatarUrl, setAvatarUrl] = useState<string>(null);
     const [isReady, setIsReady] = useState<boolean>(false);
     const isDisposed = useRef(false);
@@ -30,7 +31,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
 
         if (fit) {
             newClassNames = ['avatar-image avatar-image-fit absolute inset-0 pointer-events-none'];
-        } else if (headOnly) {
+        } else if (headOnly || airMeMenu) {
             newClassNames = ['avatar-image absolute inset-0 bg-no-repeat pointer-events-none'];
         } else {
             newClassNames = ['avatar-image relative w-[90px] h-[130px] bg-no-repeat left-[-2px] pointer-events-none'];
@@ -40,14 +41,18 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
         if (compactHead) newClassNames.push('compact-head');
 
         return newClassNames;
-    }, [classNames, headOnly, fit, compactHead]);
+    }, [classNames, headOnly, fit, compactHead, airMeMenu]);
 
     const getStyle = useMemo(() => {
         let newStyle: CSSProperties = {};
 
         if (!fit && avatarUrl && avatarUrl.length) newStyle.backgroundImage = `url('${avatarUrl}')`;
 
-        if (headOnly && !fit) {
+        if (airMeMenu && !fit) {
+            newStyle.backgroundSize = '50px 50px';
+            newStyle.backgroundPosition = '0 0';
+            newStyle.imageRendering = 'pixelated';
+        } else if (headOnly && !fit) {
             newStyle.backgroundSize = compactHead ? `${ compactHeadSize }px ${ compactHeadSize }px` : '130px auto';
             newStyle.backgroundPosition = compactHead ? 'center' : '51% 40%';
             newStyle.imageRendering = compactHead ? 'auto' : 'pixelated';
@@ -62,13 +67,13 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
         if (Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [avatarUrl, scale, style, headOnly, fit, compactHead, compactHeadSize]);
+    }, [avatarUrl, scale, style, headOnly, fit, compactHead, compactHeadSize, airMeMenu]);
 
     useEffect(() => {
         if (!isReady) return;
 
         const requestId = ++requestIdRef.current;
-        const figureKey = [figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding, fit].join('-');
+        const figureKey = [figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding, fit, airMeMenu].join('-');
 
         if (AVATAR_IMAGE_CACHE.has(figureKey)) {
             setAvatarUrl(AVATAR_IMAGE_CACHE.get(figureKey));
@@ -84,13 +89,15 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
 
                 let setType = AvatarSetType.FULL;
 
-                if (headOnly) setType = AvatarSetType.HEAD;
+                if (headOnly && !airMeMenu) setType = AvatarSetType.HEAD;
 
                 avatarImage.setDirection(setType, direction);
 
                 let imageUrl = avatarImage.processAsImageUrl(setType);
 
-                if(imageUrl && headOnly && compactHead) imageUrl = await cropTransparentImageUrl(imageUrl, compactHeadSize, compactHeadPadding);
+                if(imageUrl && airMeMenu) imageUrl = await cropAirMeMenuFaceImageUrl(imageUrl);
+
+                if(imageUrl && headOnly && compactHead && !airMeMenu) imageUrl = await cropTransparentImageUrl(imageUrl, compactHeadSize, compactHeadPadding);
 
                 // The full-body canvas is 90x130 with the figure occupying
                 // only part of it, off-center for some figures. Fit consumers
@@ -117,7 +124,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = (props) => 
 
             resetFigure(figure);
         }
-    }, [figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding, fit, isReady]);
+    }, [figure, gender, direction, headOnly, compactHead, compactHeadSize, compactHeadPadding, fit, airMeMenu, isReady]);
 
     useEffect(() => {
         isDisposed.current = false;

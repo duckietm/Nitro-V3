@@ -223,6 +223,7 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                 />
                 <Text>{LocalizeText('navigator.roomsettings.allow_walk_through')}</Text>
             </Flex>
+            {/* Polaris-only. Keep when matching Habbo AIR chrome. */}
             <Flex alignItems="center" gap={1}>
                 <input
                     className="form-check-input"

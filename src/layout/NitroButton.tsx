@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, DetailedHTMLProps, PropsWithChildren, Ref } from 
 import { classNames } from './classNames';
 
 const classes = {
-    base: 'inline-flex justify-center items-center gap-2 rounded-[4px] font-bold text-[11px] leading-tight cursor-pointer select-none transition-[filter] duration-100',
+    base: 'inline-flex justify-center items-center gap-2 rounded-none font-bold text-[11px] leading-tight cursor-pointer select-none',
     disabled: 'opacity-55 pointer-events-none',
     size: {
         default: 'px-3 py-0.5 min-h-[22px]',

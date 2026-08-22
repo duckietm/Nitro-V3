@@ -31,9 +31,9 @@
 }
 
 .nitro-icon.icon-catalog {
-    background-image: url("@/assets/images/toolbar/icons/catalog.png");
+    background-image: url("@/assets/images/toolbar/air/shop.png");
     width: 37px;
-    height: 36px;
+    height: 37px;
 }
 
 .nitro-icon.icon-mentions {
@@ -44,26 +44,37 @@
 }
 
 .nitro-icon.icon-buildersclub {
-    background-image: url("@/assets/images/toolbar/icons/buildersclub.png");
-    background-size: contain;
-    width: 38px;
-    height: 36px;
+    background-image: url("@/assets/images/toolbar/air/buildersclub.png");
+    width: 32px;
+    height: 33px;
+}
+
+.nitro-icon.icon-progression {
+    background-image: url("@/assets/images/toolbar/air/progression.png");
+    width: 32px;
+    height: 35px;
 }
 
 .nitro-icon.icon-game {
-    background-image: url("@/assets/images/toolbar/icons/game.png");
-    width: 44px;
-    height: 25px;
+    background-image: url("@/assets/images/toolbar/air/games.png");
+    width: 25px;
+    height: 37px;
+}
+
+.nitro-icon.icon-stories {
+    background-image: url("@/assets/images/toolbar/air/stories.png");
+    width: 35px;
+    height: 39px;
 }
 
 .nitro-icon.icon-rooms {
-    background-image: url("@/assets/images/toolbar/icons/rooms.png");
+    background-image: url("@/assets/images/toolbar/air/navigator.png");
     width: 44px;
     height: 30px;
 }
 
 .nitro-icon.icon-house {
-    background-image: url("@/assets/images/toolbar/icons/house.png");
+    background-image: url("@/assets/images/toolbar/air/home.png");
     width: 32px;
     height: 30px;
 }
@@ -73,7 +84,7 @@
 }
 
 .nitro-icon.icon-inventory {
-    background-image: url("@/assets/images/toolbar/icons/inventory.png");
+    background-image: url("@/assets/images/toolbar/air/inventory.png");
     width: 44px;
     height: 41px;
 }
@@ -116,13 +127,13 @@
 }
 
 .nitro-icon.icon-friendall {
-    background-image: url("@/assets/images/toolbar/icons/friend_all.png");
+    background-image: url("@/assets/images/toolbar/air/all-friends.png");
     width: 32px;
     height: 33px;
 }
 
 .nitro-icon.icon-friendsearch {
-    background-image: url("@/assets/images/toolbar/icons/friend_search.png");
+    background-image: url("@/assets/images/toolbar/air/search-habbos.png");
     width: 29px;
     height: 33px;
 }
@@ -209,13 +220,13 @@
 }
 
 .nitro-icon.icon-habbo {
-    background-image: url("@/assets/images/toolbar/icons/habbo.png");
+    background-image: url("@/assets/images/toolbar/air/logo.png");
     width: 28px;
     height: 28px;
 }
 
 .nitro-icon.icon-camera {
-    background-image: url("@/assets/images/toolbar/icons/camera.png");
+    background-image: url("@/assets/images/toolbar/air/camera.png");
     width: 38px;
     height: 45px;
 }
@@ -234,20 +245,24 @@
 }
 
 .nitro-icon.icon-message {
-    background-image: url("@/assets/images/toolbar/icons/message.png");
-    width: 36px;
+    background-image: url("@/assets/images/toolbar/air/messenger.png");
+    width: 26px;
     height: 32px;
 }
 
 .nitro-icon.icon-wired-tools {
-    background-image: url("@/assets/images/wiredtools/wired_menu.png");
-    background-size: contain;
+    background-image: url("@/assets/images/toolbar/air/wired.png");
     width: 40px;
     height: 40px;
 }
 
+.nitro-icon.icon-message.is-notify-0 {
+    background-image: url("@/assets/images/toolbar/air/messenger-notify-0.png");
+}
+
+.nitro-icon.icon-message.is-notify-1,
 .nitro-icon.icon-message.is-unseen {
-    background-image: url("@/assets/images/toolbar/icons/message_unsee.gif");
+    background-image: url("@/assets/images/toolbar/air/messenger-notify-1.png");
 }
 
 .nitro-icon.icon-wired-trigger {
@@ -619,31 +634,31 @@
 }
 
 .nitro-icon.icon-navigator-info {
-    background: url("@/assets/images/navigator/icons/info.png");
+    background: url("@/assets/images/navigator/air/show-room-info.png");
     width: 18px;
     height: 18px;
 }
 
 .nitro-icon.icon-navigator-room-locked {
-    background: url("@/assets/images/navigator/icons/room_locked.png");
+    background: url("@/assets/images/navigator/air/doormode-doorbell.png");
     width: 13px;
     height: 16px;
 }
 
 .nitro-icon.icon-navigator-room-password {
-    background: url("@/assets/images/navigator/icons/room_password.png");
+    background: url("@/assets/images/navigator/air/doormode-password.png");
     width: 13px;
     height: 16px;
 }
 
 .nitro-icon.icon-navigator-room-invisible {
-    background: url("@/assets/images/navigator/icons/room_invisible.png");
+    background: url("@/assets/images/navigator/air/doormode-invisible.png");
     width: 13px;
     height: 16px;
 }
 
 .nitro-icon.icon-navigator-room-group {
-    background: url("@/assets/images/navigator/icons/room_group.png");
+    background: url("@/assets/images/navigator/air/icon-group.png");
     width: 13px;
     height: 11px;
 }

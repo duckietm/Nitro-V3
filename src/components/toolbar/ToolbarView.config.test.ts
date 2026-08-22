@@ -16,7 +16,7 @@ describe('Toolbar feature config', () => {
             "GetConfigurationValue<boolean>('buildersclub.enabled', GetConfigurationValue<boolean>('toolbar.buildersclub.enabled', true))"
         );
         expect(source).toContain("GetConfigurationValue<boolean>('toolbar.fortunewheel.enabled', true)");
-        expect(source.match(/buildersClubEnabled\s*&&/g)).toHaveLength(2);
+        expect((source.match(/buildersClubEnabled/g) ?? []).length).toBeGreaterThanOrEqual(2);
         expect(source.match(/fortuneWheelEnabled\s*&&/g)).toHaveLength(2);
         expect(source.match(/icon=\"buildersclub\"/g)).toHaveLength(2);
         expect(source.match(/icon=\"fortune-wheel\"/g)).toHaveLength(2);

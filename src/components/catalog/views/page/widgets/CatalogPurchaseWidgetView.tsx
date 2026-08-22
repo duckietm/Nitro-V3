@@ -284,7 +284,7 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = (pr
         switch (purchaseState) {
             case CatalogPurchaseState.CONFIRM:
                 return (
-                    <Button classNames={[...standardButtonClassNames, 'pointer-events-none']} variant="success">
+                    <Button classNames={[...standardButtonClassNames, 'nitro-catalog-standard-buy-button', 'pointer-events-none']} variant="success">
                         {LocalizeText('catalog.purchase_confirmation.' + (currentOffer.isRentOffer ? 'rent' : 'buy'))}
                     </Button>
                 );
@@ -327,6 +327,7 @@ export const CatalogPurchaseWidgetView: FC<CatalogPurchaseWidgetViewProps> = (pr
         <>
             {!isBuildersClubOffer && !noGiftOption && !currentOffer.isRentOffer && (
                 <Button
+                    variant="secondary"
                     classNames={['nitro-catalog-standard-button', 'nitro-catalog-standard-gift-button']}
                     disabled={
                         purchaseOptions.quantity > 1 ||

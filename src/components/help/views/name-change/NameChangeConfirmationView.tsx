@@ -36,7 +36,7 @@ export const NameChangeConfirmationView: FC<NameChangeLayoutViewProps> = (props)
                 <button className="btn btn-success w-full" disabled={isConfirming} onClick={confirm}>
                     {LocalizeText('generic.ok')}
                 </button>
-                <button className="btn btn-primary w-full" onClick={() => onAction('close')}>
+                <button className="btn btn-danger w-full" onClick={() => onAction('close')}>
                     {LocalizeText('cancel')}
                 </button>
             </div>

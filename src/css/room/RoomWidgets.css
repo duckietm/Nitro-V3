@@ -1002,3 +1002,9 @@
     filter: drop-shadow(0 1px 0 #050505);
     pointer-events: none;
 }
+
+.nitro-camera-viewfinder {
+    display: block;
+    background: #000;
+    image-rendering: pixelated;
+}

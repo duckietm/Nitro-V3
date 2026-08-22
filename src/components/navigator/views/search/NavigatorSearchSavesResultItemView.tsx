@@ -1,7 +1,7 @@
 import { NavigatorDeleteSavedSearchComposer, NavigatorSavedSearch } from '@nitrots/nitro-renderer';
 import { FC, MouseEvent } from 'react';
-import { FaBolt } from 'react-icons/fa';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
+import quicklinkPlain from '../../../../assets/images/navigator/air/icon-ql-plain.png';
 import { Flex, Text } from '../../../../common';
 import { useNavigatorUiStore } from '../../../../hooks';
 
@@ -46,7 +46,7 @@ export const NavigatorSearchSavesResultItemView: FC<NavigatorSearchSavesResultIt
     return (
         <Flex alignItems="center" className="saved-search-row group shrink-0">
             <button type="button" className="saved-search-row__open" title={LocalizeText('navigator.tooltip.open.saved.search')} onClick={openSearch}>
-                <FaBolt className="text-orange-500 shrink-0 text-[10px]" />
+                <img src={quicklinkPlain} alt="" />
                 <Text small truncate variant="black" className="grow! min-w-0 text-left">
                     {title}
                 </Text>

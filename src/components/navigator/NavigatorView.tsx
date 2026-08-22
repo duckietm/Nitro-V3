@@ -11,12 +11,11 @@ import {
     RoomSessionEvent
 } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef } from 'react';
-import { FaPlus } from 'react-icons/fa';
 import { CreateLinkEvent, LocalizeText, localizeWithFallback, SendMessageComposer, TryVisitRoom } from '../../api';
-import createRoomImg from '../../assets/images/navigator/create_room.png';
-import promoteRoomImg from '../../assets/images/navigator/promote_room.png';
-import randomRoomImg from '../../assets/images/navigator/random_room.png';
-import savesSearchIcon from '../../assets/images/navigator/saves-search/search_save.png';
+import createRoomImg from '../../assets/images/navigator/air/create-room.png';
+import promoteRoomImg from '../../assets/images/navigator/air/promote-room.png';
+import quicklinkAdd from '../../assets/images/navigator/air/quicklink-add.png';
+import randomRoomImg from '../../assets/images/navigator/air/random-room.png';
 import { WidgetErrorBoundary } from '../../common';
 import { useNavigatorData, useNavigatorSearch, useNavigatorUiState, useNavigatorUiStore, useNitroEvent } from '../../hooks';
 import { NitroCard } from '../../layout/NitroCard';
@@ -120,7 +119,7 @@ export const NavigatorView: FC<{}> = (props) => {
         <>
             {isVisible && (
                 <NitroCard
-                    className={`${isOpenSavesSearches ? 'w-[min(590px,calc(100vw-16px))]' : 'w-[min(var(--navigator-width,445px),calc(100vw-16px))]'} nitro-navigator-air min-w-0 max-w-[calc(100vw-16px)] h-[min(var(--navigator-height,650px),calc(100vh-16px))] min-h-0 max-h-[calc(100vh-16px)] has-classic-scrollbar`}
+                    className={`${isOpenSavesSearches ? 'w-[min(578px,calc(100vw-16px))]' : 'w-[min(var(--navigator-width,425px),calc(100vw-16px))]'} nitro-navigator-air min-w-0 max-w-[calc(100vw-16px)] h-[min(var(--navigator-height,628px),calc(100vh-16px))] min-h-0 max-h-[calc(100vh-16px)] has-classic-scrollbar`}
                     uniqueKey="navigator"
                 >
                     <NitroCard.Header
@@ -136,7 +135,7 @@ export const NavigatorView: FC<{}> = (props) => {
                                 aria-expanded={isOpenSavesSearches}
                                 onClick={() => useNavigatorUiStore.getState().toggleSavesSearches()}
                             >
-                                <img src={savesSearchIcon} alt="" style={{ width: 18, height: 18 }} />
+                                <img src={quicklinkAdd} alt="" width={18} height={18} />
                             </button>
                         </NitroCard.TabItem>
                         {topLevelContexts &&
@@ -151,7 +150,9 @@ export const NavigatorView: FC<{}> = (props) => {
                                 </NitroCard.TabItem>
                             ))}
                         <NitroCard.TabItem isActive={isCreatorOpen} onClick={() => useNavigatorUiStore.getState().openCreator()}>
-                            <FaPlus className="fa-icon" />
+                            <span className="nitro-navigator-air__create-tab" aria-hidden="true">
+                                +
+                            </span>
                         </NitroCard.TabItem>
                     </NitroCard.Tabs>
                     <NitroCard.Content>
@@ -175,32 +176,32 @@ export const NavigatorView: FC<{}> = (props) => {
                                             />
                                         )}
                                     </div>
-                                    <div className="nitro-navigator-air__actions">
+                                    <div className="nitro-navigator-air__actions shrink-0">
                                         <button
                                             type="button"
-                                            className="nitro-navigator-air__action nitro-navigator-air__action--create"
-                                            style={{ backgroundImage: `url(${createRoomImg})` }}
+                                            className="nitro-navigator-air__action"
                                             onClick={() => useNavigatorUiStore.getState().openCreator()}
                                         >
+                                            <img src={createRoomImg} alt="" />
                                             <span>{LocalizeText('navigator.createroom.create')}</span>
                                         </button>
                                         {searchResult?.code !== 'myworld_view' && searchResult?.code !== 'roomads_view' && (
                                             <button
                                                 type="button"
-                                                className="nitro-navigator-air__action nitro-navigator-air__action--random"
-                                                style={{ backgroundImage: `url(${randomRoomImg})` }}
+                                                className="nitro-navigator-air__action"
                                                 onClick={() => SendMessageComposer(new FindNewFriendsMessageComposer())}
                                             >
+                                                <img src={randomRoomImg} alt="" />
                                                 <span>{LocalizeText('navigator.random.room')}</span>
                                             </button>
                                         )}
                                         {(searchResult?.code === 'myworld_view' || searchResult?.code === 'roomads_view') && (
                                             <button
                                                 type="button"
-                                                className="nitro-navigator-air__action nitro-navigator-air__action--event"
-                                                style={{ backgroundImage: `url(${promoteRoomImg})` }}
+                                                className="nitro-navigator-air__action"
                                                 onClick={() => CreateLinkEvent('catalog/open/room_event')}
                                             >
+                                                <img src={promoteRoomImg} alt="" />
                                                 <span>{LocalizeText('navigator.promote.room')}</span>
                                             </button>
                                         )}

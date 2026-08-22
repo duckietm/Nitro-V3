@@ -196,7 +196,9 @@ class StubClass {
 
 export class NitroAlphaFilter extends StubClass {}
 export class NitroContainer extends StubClass {}
-export class NitroRectangle extends StubClass {}
+export class NitroRectangle {
+    constructor(public x = 0, public y = 0, public width = 0, public height = 0) {}
+}
 export class NitroSprite extends StubClass {}
 export class NitroRenderTexture extends StubClass {}
 export class NitroTexture extends StubClass {}
@@ -673,7 +675,12 @@ export const TextureUtils = {
     createRenderTexture: (_w: number, _h: number) => ({
         destroy: (_options?: unknown) => undefined
     }),
-    generateImage: () => null
+    generateImage: () => null,
+    generateTexture: () => ({
+        destroy: (_options?: unknown) => undefined
+    }),
+    generateCanvas: () => null,
+    writeToTexture: (container: unknown, target: unknown) => target
 };
 export const NitroVersion = stubManager();
 

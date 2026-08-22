@@ -2,6 +2,11 @@ import { CreateLinkEvent, Dispose, DropBounce, EaseOut, FindNewFriendsMessageCom
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { CSSProperties, FC, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { GetConfigurationValue, isHousekeepingEnabled, localizeWithFallback, MessengerIconState, OpenMessengerChat, SendMessageComposer, setYoutubeRoomEnabled, VisitDesktop } from '../../api';
+import collapseLeftImg from '../../assets/images/toolbar/air/collapse-left.png';
+import collapseRightImg from '../../assets/images/toolbar/air/collapse-right.png';
+import dividerImg from '../../assets/images/toolbar/air/divider.png';
+import memenuBgImg from '../../assets/images/toolbar/air/memenu-bg.png';
+import memenuCircleImg from '../../assets/images/toolbar/air/memenu-circle.png';
 import { Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
 import { SoundboardRoomMessageEvent } from '../../events';
 import { useAchievements, useBuildHeight, useFriends, useHasPermission, useInventoryUnseenTracker, useMentionsSnapshot, useMessageEvent, useMessenger, useModTools, useNitroEvent, useSessionInfo, useSoundboard, useUiEvent, useWiredTools } from '../../hooks';
@@ -29,8 +34,7 @@ const NAV_TRANSITION = { type: 'spring' as const, stiffness: 300, damping: 28 };
 const ME_POPOVER_TRANSITION = { type: 'spring' as const, stiffness: 420, damping: 28 };
 const LEFT_COLLAPSED_STORAGE_KEY = 'nitro.toolbar.leftCollapsed';
 const RIGHT_COLLAPSED_STORAGE_KEY = 'nitro.toolbar.rightCollapsed';
-const COMPACT_DESKTOP_QUERY = '(max-width: 869.98px)';
-const NARROW_DESKTOP_QUERY = '(max-width: 654.98px)';
+
 
 const readCollapsedPreference = (key: string): boolean =>
 {
@@ -51,8 +55,6 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { isInRoom } = props;
     const [ isMeExpanded, setMeExpanded ] = useState(false);
     const [ isTouchLayout, setIsTouchLayout ] = useState(false);
-    const [ isCompactDesktop, setIsCompactDesktop ] = useState(() => ((typeof window !== 'undefined') && window.matchMedia(COMPACT_DESKTOP_QUERY).matches));
-    const [ isNarrowDesktop, setIsNarrowDesktop ] = useState(() => ((typeof window !== 'undefined') && window.matchMedia(NARROW_DESKTOP_QUERY).matches));
     const [ leftCollapsed, setLeftCollapsed ] = useState(() => readCollapsedPreference(LEFT_COLLAPSED_STORAGE_KEY));
     const [ rightCollapsed, setRightCollapsed ] = useState(() => readCollapsedPreference(RIGHT_COLLAPSED_STORAGE_KEY));
     const [ dockLayout, setDockLayout ] = useState<BottomDockLayout>({ chatRaised: false, chatBottom: 7 });
@@ -84,13 +86,14 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         [ isMod, tickets ]
     );
     const visibilityVariant = 'visible';
-    const touchLayout = isTouchLayout || isNarrowDesktop;
+    const touchLayout = isTouchLayout;
     const mobileOnlyClasses = touchLayout ? '' : 'hidden';
     const desktopBlockClasses = touchLayout ? 'hidden' : 'block';
     const desktopFlexClasses = touchLayout ? 'hidden' : 'flex';
-    const compactDesktop = isCompactDesktop && !touchLayout;
-    const socialInSideStack = isCompactDesktop && !isTouchLayout;
-    const sideStackClasses = (touchLayout || compactDesktop) ? '' : 'hidden';
+    const socialInSideStack = touchLayout;
+    const sideStackClasses = touchLayout ? '' : 'hidden';
+    const storiesEnabled = useMemo(() => GetConfigurationValue<boolean>('toolbar.stories.enabled', false), []);
+    const [ messengerNotifyFrame, setMessengerNotifyFrame ] = useState(0);
     const chatFrameStyle = useMemo<CSSProperties | undefined>(() =>
     {
         if(touchLayout) return undefined;
@@ -159,23 +162,16 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 
     useEffect(() =>
     {
-        const query = window.matchMedia(COMPACT_DESKTOP_QUERY);
-        const updateCompactDesktop = () => setIsCompactDesktop(query.matches);
+        if(iconState !== MessengerIconState.UNREAD)
+        {
+            setMessengerNotifyFrame(0);
+            return;
+        }
 
-        query.addEventListener('change', updateCompactDesktop);
+        const interval = window.setInterval(() => setMessengerNotifyFrame(value => (value === 0 ? 1 : 0)), 500);
 
-        return () => query.removeEventListener('change', updateCompactDesktop);
-    }, []);
-
-    useEffect(() =>
-    {
-        const query = window.matchMedia(NARROW_DESKTOP_QUERY);
-        const updateNarrowDesktop = () => setIsNarrowDesktop(query.matches);
-
-        query.addEventListener('change', updateNarrowDesktop);
-
-        return () => query.removeEventListener('change', updateNarrowDesktop);
-    }, []);
+        return () => window.clearInterval(interval);
+    }, [ iconState ]);
 
     useEffect(() =>
     {
@@ -253,7 +249,6 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     }, [
         buildHeightAvailable,
         buildersClubEnabled,
-        compactDesktop,
         fortuneWheelEnabled,
         hkEnabled,
         iconState,
@@ -358,7 +353,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 animate={ visibilityVariant }
                 variants={ shellVariants }
                 transition={ SHELL_TRANSITION }
-                className={ `nitro-toolbar nitro-toolbar-hobba absolute bottom-0 left-0 right-0 z-[70] h-[55px] ${ desktopBlockClasses }` } />
+                className={ `nitro-toolbar nitro-toolbar-hobba absolute bottom-0 left-0 right-0 z-[70] h-[46px] ${ desktopBlockClasses }` } />
 
             <motion.div
                 ref={ leftDockRef }
@@ -366,37 +361,55 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 animate={ visibilityVariant }
                 variants={ leftNavVariants }
                 transition={ NAV_TRANSITION }
-                className={ `tb-nav-clip absolute bottom-0 left-0 z-[71] h-[55px] ${ railMaxWidthClass } items-center pl-3 ${ desktopFlexClasses }` }>
+                className={ `tb-nav-clip absolute bottom-0 left-0 z-[71] h-[46px] ${ railMaxWidthClass } items-center ${ desktopFlexClasses }` }>
                 <button
                     type="button"
                     onClick={ () => setLeftCollapsed(value => !value) }
                     aria-label={ localizeWithFallback('toolbar.icons.toggle', 'Show/hide icons') }
-                    className="tb-collapse pointer-events-auto mt-[6px] mr-[3px]">
-                    <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 3 } d={ leftCollapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7' } />
-                    </svg>
+                    className="tb-collapse pointer-events-auto">
+                    <img src={ leftCollapsed ? collapseRightImg : collapseLeftImg } alt="" />
                 </button>
                 <motion.div
                     variants={ containerVariants }
-                    className="tb-open-shell flex h-[55px] max-w-full items-center gap-2 overflow-visible bg-transparent px-[8px] pt-[10px] pb-[2px]">
+                    className="tb-open-shell flex h-[46px] max-w-full items-start overflow-visible bg-transparent">
                     { !leftCollapsed && (<>
-                    <motion.div variants={ itemVariants }>
+                    <motion.div variants={ itemVariants } className="tb-slot">
                         { isInRoom
                             ? <ToolbarItemView icon="habbo" onClick={ () => VisitDesktop() } className="tb-icon" />
                             : <ToolbarItemView icon="house" onClick={ () => CreateLinkEvent('navigator/goto/home') } className="tb-icon" /> }
                     </motion.div>
-                    <motion.div variants={ itemVariants }>
+                    <motion.div variants={ itemVariants } className="tb-slot">
                         <ToolbarItemView icon="rooms" onClick={ () => CreateLinkEvent('navigator/toggle') } className="tb-icon" />
                     </motion.div>
+                    { isInRoom &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
+                            <ToolbarItemView icon="progression" onClick={ () => CreateLinkEvent('achievements/toggle') } className="tb-icon" />
+                        </motion.div> }
                     { GetConfigurationValue('game.center.enabled') &&
-                        <motion.div variants={ itemVariants }>
+                        <motion.div variants={ itemVariants } className="tb-slot">
                             <ToolbarItemView icon="game" onClick={ () => CreateLinkEvent('games/toggle') } className="tb-icon" />
                         </motion.div> }
+                    { (!isInRoom && storiesEnabled) &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
+                            <ToolbarItemView icon="stories" onClick={ () => CreateLinkEvent('stories/toggle') } className="tb-icon" />
+                        </motion.div> }
                     </>) }
-                    <motion.div variants={ itemVariants }>
+                    <motion.div variants={ itemVariants } className="tb-slot">
                         <ToolbarItemView icon="catalog" onClick={ () => CreateLinkEvent('catalog/toggle/normal') } className="tb-icon" />
                     </motion.div>
-                    <motion.div variants={ itemVariants } className="relative">
+                    { (!leftCollapsed && buildersClubEnabled) &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
+                            <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
+                        </motion.div> }
+                    { (!leftCollapsed && isInRoom) &&
+                        <motion.div variants={ itemVariants } className="relative tb-slot tb-slot-inventory">
+                            <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
+                            { (getFullCount > 0) &&
+                                <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
+                        </motion.div> }
+                    { !leftCollapsed &&
+                    <motion.div variants={ itemVariants } className="relative tb-slot tb-slot-tall tb-slot-memenu">
+                        <img src={ memenuBgImg } alt="" className="tb-memenu-bg" />
                         <AnimatePresence>
                             { isMeExpanded &&
                                 <motion.div
@@ -409,64 +422,55 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                                 </motion.div> }
                         </AnimatePresence>
                         <motion.div
-                            className="cursor-pointer relative h-[40px] w-[40px] overflow-hidden"
+                            className="tb-memenu-avatar"
                             onClick={ event =>
                             {
                                 setMeExpanded(value => !value);
                                 event.stopPropagation();
                             } }>
-                            <LayoutAvatarImageView headOnly={ true } direction={ 2 } figure={ userFigure } className="tb-icon tb-avatar-head" />
+                            <LayoutAvatarImageView airMeMenu={ true } direction={ 3 } figure={ userFigure } className="tb-icon tb-avatar-head" />
                         </motion.div>
+                        <img src={ memenuCircleImg } alt="" className="tb-memenu-circle" />
                         { (getTotalUnseen > 0) &&
                             <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
-                    </motion.div>
-                    { buildersClubEnabled &&
-                        <motion.div variants={ itemVariants }>
-                            <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
-                        </motion.div> }
-                    <motion.div variants={ itemVariants } className="relative">
-                        <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
-                        { (getFullCount > 0) &&
-                            <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
-                    </motion.div>
-                    { !leftCollapsed && (<>
-                    { fortuneWheelEnabled &&
-                        <motion.div variants={ itemVariants }>
-                            <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
-                        </motion.div> }
-                    { (!compactDesktop && isInRoom && showToolbarButton) &&
-                        <motion.div variants={ itemVariants }>
+                    </motion.div> }
+                    { (!leftCollapsed && isInRoom && showToolbarButton) &&
+                        <motion.div variants={ itemVariants } className="tb-slot tb-slot-tall">
                             <ToolbarItemView icon="wired-tools" onClick={ openMonitor } className="tb-icon" />
                         </motion.div> }
-                    </>) }
-                    { (!compactDesktop && isInRoom) &&
-                        <motion.div variants={ itemVariants }>
+                    { isInRoom &&
+                        <motion.div variants={ itemVariants } className="tb-slot tb-slot-tall">
                             <ToolbarItemView icon="camera" onClick={ () => CreateLinkEvent('camera/toggle') } className="tb-icon" />
                         </motion.div> }
+                    <img src={ dividerImg } alt="" className="tb-divider" />
                     { !leftCollapsed && (<>
-                    { (!compactDesktop && isInRoom && youtubeEnabled) &&
-                        <motion.div variants={ itemVariants }>
+                    { fortuneWheelEnabled &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
+                            <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
+                        </motion.div> }
+                    { (isInRoom && youtubeEnabled) &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
                             <ToolbarItemView icon="youtube" onClick={ openYouTubePlayer } className="tb-icon" />
                         </motion.div> }
-                    { (!compactDesktop && isInRoom && soundboardEnabled) &&
-                        <motion.div variants={ itemVariants }>
+                    { (isInRoom && soundboardEnabled) &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
                             <ToolbarItemView icon="soundboard" onClick={ () => CreateLinkEvent('soundboard/toggle') } className={ `tb-icon ${ soundboardPulse ? 'animate-pulse' : '' }` } />
                         </motion.div> }
-                    { (!compactDesktop && isInRoom && buildHeightAvailable) &&
-                        <motion.div variants={ itemVariants }>
+                    { (isInRoom && buildHeightAvailable) &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
                             <ToolbarItemView icon="buildheight" onClick={ toggleBuildHeight } className="tb-icon" />
                         </motion.div> }
-                    </>) }
-                    { (!compactDesktop && isMod) &&
-                        <motion.div variants={ itemVariants } className="relative">
+                    { isMod &&
+                        <motion.div variants={ itemVariants } className="relative tb-slot">
                             <ToolbarItemView icon="modtools" onClick={ () => CreateLinkEvent('mod-tools/toggle') } className="tb-icon" />
                             { (openTicketsCount > 0) &&
                                 <LayoutItemCountView count={ openTicketsCount } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
                         </motion.div> }
-                    { (!compactDesktop && isHk && hkEnabled) &&
-                        <motion.div variants={ itemVariants }>
+                    { (isHk && hkEnabled) &&
+                        <motion.div variants={ itemVariants } className="tb-slot">
                             <ToolbarItemView icon="housekeeping" onClick={ () => CreateLinkEvent('housekeeping/toggle') } className="tb-icon" />
                         </motion.div> }
+                    </>) }
                 </motion.div>
             </motion.div>
             <motion.div
@@ -475,33 +479,29 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 animate={ visibilityVariant }
                 variants={ rightNavVariants }
                 transition={ NAV_TRANSITION }
-                className={ `tb-nav-clip absolute bottom-0 z-[71] h-[55px] ${ railMaxWidthClass } items-center pr-3 ${ desktopFlexClasses } ${ isInRoom ? 'right-0' : 'right-3' }` }>
+                className={ `tb-nav-clip absolute bottom-0 z-[71] h-[46px] ${ railMaxWidthClass } items-center ${ desktopFlexClasses } ${ isInRoom ? 'right-0' : 'right-3' }` }>
                 <motion.div
                     variants={ containerVariants }
-                    className="tb-open-shell flex h-[55px] max-w-full items-center gap-3 overflow-visible bg-transparent px-[8px] pt-[10px] pb-[2px]">
-                    { !compactDesktop &&
-                        <motion.div variants={ itemVariants } className="relative">
-                            <ToolbarItemView icon="friendall" onClick={ () => CreateLinkEvent('friends/toggle') } className="tb-icon" />
-                            { (requests.length > 0) &&
-                                <LayoutItemCountView count={ requests.length } className="absolute -right-2 -top-1" /> }
-                        </motion.div> }
-                    { !compactDesktop &&
-                        <motion.div variants={ itemVariants }>
-                            <ToolbarItemView icon="friendsearch" onClick={ () => SendMessageComposer(new FindNewFriendsMessageComposer()) } className="tb-icon" />
-                        </motion.div> }
+                    className="tb-open-shell tb-open-shell-right flex h-[46px] max-w-full items-start overflow-visible bg-transparent">
+                    <img src={ dividerImg } alt="" className="tb-divider" />
+                    <motion.div variants={ itemVariants } className="relative tb-slot">
+                        <ToolbarItemView icon="friendall" onClick={ () => CreateLinkEvent('friends/toggle') } className="tb-icon" />
+                        { (requests.length > 0) &&
+                            <LayoutItemCountView count={ requests.length } className="absolute -right-2 -top-1" /> }
+                    </motion.div>
+                    <motion.div variants={ itemVariants } className="tb-slot">
+                        <ToolbarItemView icon="friendsearch" onClick={ () => SendMessageComposer(new FindNewFriendsMessageComposer()) } className="tb-icon" />
+                    </motion.div>
+                    <motion.div variants={ itemVariants } className="tb-slot tb-slot-messenger">
+                        <ToolbarItemView className={ `tb-icon ${ iconState === MessengerIconState.UNREAD ? (messengerNotifyFrame === 1 ? 'is-notify-1' : 'is-notify-0') : '' }` } icon="message" onClick={ () => OpenMessengerChat() } />
+                    </motion.div>
                     { !rightCollapsed && (<>
-                    { (!compactDesktop && mentionsEnabled) &&
-                        <motion.div variants={ itemVariants } className="relative">
+                    { mentionsEnabled &&
+                        <motion.div variants={ itemVariants } className="relative tb-slot">
                             <ToolbarItemView icon="mentions" onClick={ () => CreateLinkEvent('mentions/toggle') } className="tb-icon" />
                             { (mentionsUnread > 0) &&
                                 <LayoutItemCountView count={ mentionsUnread } className="absolute -right-2 -top-1" /> }
                         </motion.div> }
-                    { (!compactDesktop && ((iconState === MessengerIconState.SHOW) || (iconState === MessengerIconState.UNREAD))) &&
-                        <motion.div variants={ itemVariants }>
-                            <ToolbarItemView className={ `tb-icon ${ iconState === MessengerIconState.UNREAD ? 'is-unseen animate-pulse' : '' }` } icon="message" onClick={ () => OpenMessengerChat() } />
-                        </motion.div> }
-                    { !compactDesktop &&
-                        <div className={ `mx-1 h-5 w-[1px] bg-white/20 ${ desktopBlockClasses }` } /> }
                     <div className={ `h-full shrink-0 ${ desktopBlockClasses }` } id="toolbar-friend-bar-container-desktop" />
                     </>) }
                 </motion.div>
@@ -509,10 +509,8 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     type="button"
                     onClick={ () => setRightCollapsed(value => !value) }
                     aria-label={ localizeWithFallback('toolbar.icons.toggle', 'Show/hide icons') }
-                    className="tb-collapse pointer-events-auto mt-[6px] ml-[3px]">
-                    <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 3 } d={ rightCollapsed ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7' } />
-                    </svg>
+                    className="tb-collapse pointer-events-auto">
+                    <img src={ rightCollapsed ? collapseLeftImg : collapseRightImg } alt="" />
                 </button>
             </motion.div>
             <motion.div
@@ -563,11 +561,12 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         { (getTotalUnseen > 0) &&
                             <LayoutItemCountView count={ getTotalUnseen } className="pointer-events-none absolute -right-1 -top-1 z-10" /> }
                     </motion.div>
-                    <motion.div variants={ itemVariants } className="relative">
-                        <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
-                        { (getFullCount > 0) &&
-                            <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
-                    </motion.div>
+                    { isInRoom &&
+                        <motion.div variants={ itemVariants } className="relative">
+                            <ToolbarItemView icon="inventory" onClick={ () => CreateLinkEvent('inventory/toggle') } className="tb-icon" />
+                            { (getFullCount > 0) &&
+                                <LayoutItemCountView count={ getFullCount } className="absolute -right-1 top-0" /> }
+                        </motion.div> }
                     { fortuneWheelEnabled &&
                         <motion.div variants={ itemVariants }>
                             <ToolbarItemView icon="fortune-wheel" onClick={ () => CreateLinkEvent('fortune-wheel/toggle') } className="tb-icon" />
@@ -618,30 +617,14 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                 variants={ mobileNavVariants }
                 transition={ NAV_TRANSITION }
                 style={ staffStackBottom != null ? { top: 'auto', bottom: `${ staffStackBottom }px` } : undefined }
-                className={ `absolute left-1 z-[71] flex flex-col items-center gap-2 rounded-[12px] border border-[#3d3d3d]/80 bg-[rgba(85,85,85,0.92)] px-[4px] py-[6px] shadow-[0_6px_18px_rgba(0,0,0,0.18)] ${ staffStackBottom == null ? 'top-1/2 -translate-y-1/2' : '' } ${ sideStackClasses }` }>
+                className={ `absolute left-1 z-[71] flex flex-col items-center gap-[2px] bg-[#55534e] px-[2px] py-[4px] ${ staffStackBottom == null ? 'top-1/2 -translate-y-1/2' : '' } ${ sideStackClasses }` }>
                 { touchLayout && buildersClubEnabled &&
                     <motion.div variants={ itemVariants }>
                         <ToolbarItemView icon="buildersclub" onClick={ () => CreateLinkEvent('catalog/toggle/builder') } className="tb-icon" />
                     </motion.div> }
-                { (compactDesktop && isInRoom && showToolbarButton) &&
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="wired-tools" onClick={ openMonitor } className="tb-icon" />
-                    </motion.div> }
                 { isInRoom &&
                     <motion.div variants={ itemVariants }>
                         <ToolbarItemView icon="camera" onClick={ () => CreateLinkEvent('camera/toggle') } className="tb-icon" />
-                    </motion.div> }
-                { (compactDesktop && isInRoom && youtubeEnabled) &&
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="youtube" onClick={ openYouTubePlayer } className="tb-icon" />
-                    </motion.div> }
-                { (compactDesktop && isInRoom && soundboardEnabled) &&
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="soundboard" onClick={ () => CreateLinkEvent('soundboard/toggle') } className={ `tb-icon ${ soundboardPulse ? 'animate-pulse' : '' }` } />
-                    </motion.div> }
-                { (compactDesktop && isInRoom && buildHeightAvailable) &&
-                    <motion.div variants={ itemVariants }>
-                        <ToolbarItemView icon="buildheight" onClick={ toggleBuildHeight } className="tb-icon" />
                     </motion.div> }
                 { isMod &&
                     <motion.div variants={ itemVariants } className="relative">
@@ -675,7 +658,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     </motion.div> }
                 { (socialInSideStack && ((iconState === MessengerIconState.SHOW) || (iconState === MessengerIconState.UNREAD))) &&
                     <motion.div variants={ itemVariants }>
-                        <ToolbarItemView className={ `tb-icon ${ iconState === MessengerIconState.UNREAD ? 'is-unseen animate-pulse' : '' }` } icon="message" onClick={ () => OpenMessengerChat() } />
+                        <ToolbarItemView className={ `tb-icon ${ iconState === MessengerIconState.UNREAD ? (messengerNotifyFrame === 1 ? 'is-notify-1' : 'is-notify-0') : '' }` } icon="message" onClick={ () => OpenMessengerChat() } />
                     </motion.div> }
             </motion.div>
         </>

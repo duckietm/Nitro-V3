@@ -166,7 +166,7 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = (prop
                 )}
                 <Text center>{LocalizeText('camera.warning.disclaimer')}</Text>
                 <div className="flex justify-end">
-                    <Button onClick={(event) => processAction('cancel')}>{LocalizeText('generic.cancel')}</Button>
+                    <Button variant="danger" onClick={(event) => processAction('cancel')}>{LocalizeText('generic.cancel')}</Button>
                 </div>
             </NitroCardContentView>
         </NitroCardView>

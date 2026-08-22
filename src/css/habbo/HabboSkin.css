@@ -7,6 +7,31 @@
     --habbo-skin-shiny-hover: url("../../assets/images/habbo-skin/slices/button-shiny-hover.png");
     --habbo-skin-shiny-pressed: url("../../assets/images/habbo-skin/slices/button-shiny-pressed.png");
     --habbo-skin-shiny-disabled: url("../../assets/images/habbo-skin/slices/button-shiny-disabled.png");
+    --habbo-skin-shiny-green: url("../../assets/images/habbo-skin/slices/button-shiny-green-default.png");
+    --habbo-skin-shiny-green-hover: url("../../assets/images/habbo-skin/slices/button-shiny-green-hover.png");
+    --habbo-skin-shiny-green-pressed: url("../../assets/images/habbo-skin/slices/button-shiny-green-pressed.png");
+    --habbo-skin-shiny-green-disabled: url("../../assets/images/habbo-skin/slices/button-shiny-green-disabled.png");
+    --habbo-skin-shiny-thick: url("../../assets/images/habbo-skin/slices/button-shiny-thick-default.png");
+    --habbo-skin-shiny-thick-hover: url("../../assets/images/habbo-skin/slices/button-shiny-thick-hover.png");
+    --habbo-skin-shiny-thick-pressed: url("../../assets/images/habbo-skin/slices/button-shiny-thick-pressed.png");
+    --habbo-skin-shiny-thick-disabled: url("../../assets/images/habbo-skin/slices/button-shiny-thick-disabled.png");
+    --habbo-skin-shiny-thick-green: url("../../assets/images/habbo-skin/slices/button-shiny-thick-green-default.png");
+    --habbo-skin-shiny-thick-green-hover: url("../../assets/images/habbo-skin/slices/button-shiny-thick-green-hover.png");
+    --habbo-skin-shiny-thick-green-pressed: url("../../assets/images/habbo-skin/slices/button-shiny-thick-green-pressed.png");
+    --habbo-skin-shiny-thick-green-disabled: url("../../assets/images/habbo-skin/slices/button-shiny-thick-green-disabled.png");
+    --habbo-skin-shiny-red: url("../../assets/images/habbo-skin/slices/button-shiny-red-default.png");
+    --habbo-skin-shiny-red-hover: url("../../assets/images/habbo-skin/slices/button-shiny-red-hover.png");
+    --habbo-skin-shiny-red-pressed: url("../../assets/images/habbo-skin/slices/button-shiny-red-pressed.png");
+    --habbo-skin-shiny-red-disabled: url("../../assets/images/habbo-skin/slices/button-shiny-red-disabled.png");
+    --habbo-skin-button-help: url("../../assets/images/habbo-skin/slices/button-help-default.png");
+    --habbo-skin-button-help-hover: url("../../assets/images/habbo-skin/slices/button-help-hover.png");
+    --habbo-skin-button-help-pressed: url("../../assets/images/habbo-skin/slices/button-help-pressed.png");
+    --habbo-skin-button-logout: url("../../assets/images/habbo-skin/slices/button-logout-default.png");
+    --habbo-skin-button-logout-hover: url("../../assets/images/habbo-skin/slices/button-logout-hover.png");
+    --habbo-skin-button-logout-pressed: url("../../assets/images/habbo-skin/slices/button-logout-pressed.png");
+    --habbo-skin-button-settings: url("../../assets/images/habbo-skin/slices/button-settings-default.png");
+    --habbo-skin-button-settings-hover: url("../../assets/images/habbo-skin/slices/button-settings-hover.png");
+    --habbo-skin-button-settings-pressed: url("../../assets/images/habbo-skin/slices/button-settings-pressed.png");
 }
 
 .nitro-catalog-window .nitro-catalog-swf-button,
@@ -48,8 +73,7 @@
     opacity: 1 !important;
 }
 
-.nitro-catalog-window .nitro-catalog-swf-buy-button,
-.nitro-catalog-window .nitro-catalog-swf-confirm-button {
+.nitro-catalog-window .nitro-catalog-standard-gift-button {
     border: 5px solid transparent !important;
     border-image-source: var(--habbo-skin-shiny) !important;
     border-image-slice: 5 fill !important;
@@ -58,27 +82,62 @@
     background: transparent !important;
     box-shadow: none !important;
     border-radius: 0 !important;
-    color: #000000 !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    color: #111111 !important;
+    text-shadow: none !important;
+}
+
+.nitro-catalog-window .nitro-catalog-standard-gift-button:hover {
+    border-image-source: var(--habbo-skin-shiny-hover) !important;
+}
+
+.nitro-catalog-window .nitro-catalog-standard-gift-button:active {
+    border-image-source: var(--habbo-skin-shiny-pressed) !important;
+}
+
+.nitro-catalog-window .nitro-catalog-standard-gift-button:disabled,
+.nitro-catalog-window .nitro-catalog-standard-gift-button.pointer-events-none {
+    border-image-source: var(--habbo-skin-shiny-disabled) !important;
+    color: #777777 !important;
+}
+
+.nitro-catalog-window .nitro-catalog-swf-buy-button,
+.nitro-catalog-window .nitro-catalog-swf-confirm-button,
+.nitro-catalog-window .nitro-catalog-standard-buy-button {
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-image-source: var(--habbo-skin-shiny-thick-green) !important;
+    border-image-slice: 5 fill !important;
+    border-image-width: 5px !important;
+    border-image-repeat: stretch !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35) !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-buy-button:hover,
-.nitro-catalog-window .nitro-catalog-swf-confirm-button:hover {
-    border-image-source: var(--habbo-skin-shiny-hover) !important;
+.nitro-catalog-window .nitro-catalog-swf-confirm-button:hover,
+.nitro-catalog-window .nitro-catalog-standard-buy-button:hover {
+    border-image-source: var(--habbo-skin-shiny-thick-green-hover) !important;
     filter: none !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-buy-button:active,
-.nitro-catalog-window .nitro-catalog-swf-confirm-button:active {
-    border-image-source: var(--habbo-skin-shiny-pressed) !important;
+.nitro-catalog-window .nitro-catalog-swf-confirm-button:active,
+.nitro-catalog-window .nitro-catalog-standard-buy-button:active {
+    border-image-source: var(--habbo-skin-shiny-thick-green-pressed) !important;
     filter: none !important;
 }
 
 .nitro-catalog-window .nitro-catalog-swf-buy-button:disabled,
 .nitro-catalog-window .nitro-catalog-swf-buy-button.pointer-events-none,
 .nitro-catalog-window .nitro-catalog-swf-confirm-button:disabled,
-.nitro-catalog-window .nitro-catalog-swf-confirm-button.pointer-events-none {
-    border-image-source: var(--habbo-skin-shiny-disabled) !important;
-    color: #555555 !important;
+.nitro-catalog-window .nitro-catalog-swf-confirm-button.pointer-events-none,
+.nitro-catalog-window .nitro-catalog-standard-buy-button:disabled,
+.nitro-catalog-window .nitro-catalog-standard-buy-button.pointer-events-none {
+    border-image-source: var(--habbo-skin-shiny-thick-green-disabled) !important;
+    color: #e8f8e8 !important;
     opacity: 1 !important;
 }

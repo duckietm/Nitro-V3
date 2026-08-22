@@ -25,8 +25,9 @@ describe('PurseView.css', () => {
         // which CurrencyView must keep emitting alongside .currency-text.
         expect(css).toContain('.nitro-purse .nitro-purse-button.currency--1 .nitro-purse-button__amount');
 
-        // Regression guards from the AIR6 cleanup — these must not come back.
+        expect(css).toContain('border-ubuntu-9.png');
+        expect(css).toContain('width: 230px');
+        expect(css).toContain('height: 77px');
         expect(css).not.toContain('.nitro-purse::before');
-        expect(css).not.toContain('ubuntu_bg_9.png');
     });
 });

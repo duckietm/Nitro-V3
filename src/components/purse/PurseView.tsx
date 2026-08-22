@@ -155,14 +155,6 @@ export const PurseView: FC<{}> = (props) => {
                     <div className="nitro-purse__col nitro-purse__col--actions">
                         <button
                             type="button"
-                            className="nitro-purse__btn nitro-purse__btn--icon nitro-purse__btn--translate nitro-purse-right-button"
-                            onClick={openTranslate}
-                            title={translateLabel}
-                        >
-                            <span>{translateLabel}</span>
-                        </button>
-                        <button
-                            type="button"
                             className="nitro-purse__btn nitro-purse__btn--help nitro-purse-right-button help"
                             onClick={(event) => {
                                 event.stopPropagation();
@@ -190,6 +182,14 @@ export const PurseView: FC<{}> = (props) => {
                             title={LocalizeText('widget.memenu.settings.title')}
                         >
                             <img src={settingsIcon} alt="" className="nitro-purse__btn-img" />
+                        </button>
+                        <button
+                            type="button"
+                            className="nitro-purse__btn nitro-purse__btn--icon nitro-purse__btn--translate nitro-purse-right-button"
+                            onClick={openTranslate}
+                            title={translateLabel}
+                        >
+                            <span>{translateLabel}</span>
                         </button>
                     </div>
                 </div>

@@ -17,8 +17,11 @@ import { resolveAvatarFigure } from '../../friends-list/resolveAvatarFigure';
 import { MessengerMessageStatusView } from '../MessengerMessageStatusView';
 import { getMessageStatusPresentation } from './messageStatus.helpers';
 
-type HabbiconFrame = { x: number; y: number; width: number; height: number };
-const habbiconFrameCache = new Map<string, Map<number, HabbiconFrame>>();
+type HabbiconFrame = { x: number; y: number; width: number; height: number; dir: number };
+type HabbiconSheet = { frames: Map<number, HabbiconFrame>; width: number; height: number };
+const habbiconFrameCache = new Map<string, HabbiconSheet>();
+const HABBICON_MESSAGE_SIZE = 80;
+const HABBICON_MESSAGE_SCALE = 2;
 
 const MessengerMessageTime: FC<{ date: Date }> = ({ date }) => {
     const [now, setNow] = useState(() => Date.now());
@@ -34,8 +37,8 @@ const MessengerMessageTime: FC<{ date: Date }> = ({ date }) => {
     return <div className="messenger-message-time">{FriendlyTime.format(elapsedSeconds, '.ago', 1)}</div>;
 };
 
-const MessengerHabbiconMessage: FC<{ id: number; assetRoot: string }> = ({ id, assetRoot }) => {
-    const [frame, setFrame] = useState<HabbiconFrame>(null);
+const MessengerHabbiconMessage: FC<{ id: number; assetRoot: string; own: boolean }> = ({ id, assetRoot, own }) => {
+    const [sheet, setSheet] = useState<HabbiconSheet>(null);
 
     useEffect(() => {
         if (!assetRoot) return;
@@ -43,7 +46,7 @@ const MessengerHabbiconMessage: FC<{ id: number; assetRoot: string }> = ({ id, a
         const cached = habbiconFrameCache.get(assetRoot);
 
         if (cached) {
-            setFrame(cached.get(id) || null);
+            setSheet(cached);
             return;
         }
 
@@ -54,20 +57,28 @@ const MessengerHabbiconMessage: FC<{ id: number; assetRoot: string }> = ({ id, a
             .then((data) => {
                 if (disposed || !Array.isArray(data?.habbicons)) return;
 
-                const frames = new Map<number, HabbiconFrame>(
-                    data.habbicons.map((entry: any) => [
-                        Number(entry.id),
-                        {
-                            x: Number(entry.x) || 0,
-                            y: Number(entry.y) || 0,
-                            width: Number(entry.width) || 42,
-                            height: Number(entry.height) || 42
-                        }
-                    ])
-                );
+                const frames = new Map<number, HabbiconFrame>();
+                let width = 1;
+                let height = 1;
 
-                habbiconFrameCache.set(assetRoot, frames);
-                setFrame(frames.get(id) || null);
+                for (const entry of data.habbicons) {
+                    const frame: HabbiconFrame = {
+                        x: Number(entry.x) || 0,
+                        y: Number(entry.y) || 0,
+                        width: Number(entry.width) || 42,
+                        height: Number(entry.height) || 42,
+                        dir: Number(entry.dir) || 0
+                    };
+
+                    frames.set(Number(entry.id), frame);
+                    width = Math.max(width, frame.x + frame.width);
+                    height = Math.max(height, frame.y + frame.height);
+                }
+
+                const nextSheet = { frames, width, height };
+
+                habbiconFrameCache.set(assetRoot, nextSheet);
+                setSheet(nextSheet);
             });
 
         return () => {
@@ -75,16 +86,22 @@ const MessengerHabbiconMessage: FC<{ id: number; assetRoot: string }> = ({ id, a
         };
     }, [assetRoot, id]);
 
-    if (!frame) return null;
+    const frame = sheet?.frames.get(id);
+
+    if (!frame || !sheet) return null;
+
+    const facing: number = own ? 1 : -1;
+    const mirror = facing !== 0 && frame.dir !== 0 && facing !== frame.dir;
 
     return (
         <span
-            className="messenger-habbicon-message"
+            className={`messenger-habbicon-message${mirror ? ' mirrored' : ''}`}
             style={{
-                width: frame.width,
-                height: frame.height,
+                width: HABBICON_MESSAGE_SIZE,
+                height: HABBICON_MESSAGE_SIZE,
                 backgroundImage: `url(${assetRoot}habbicons_spritesheet.png)`,
-                backgroundPosition: `-${frame.x}px -${frame.y}px`
+                backgroundSize: `${sheet.width * HABBICON_MESSAGE_SCALE}px ${sheet.height * HABBICON_MESSAGE_SCALE}px`,
+                backgroundPosition: `-${frame.x * HABBICON_MESSAGE_SCALE}px -${frame.y * HABBICON_MESSAGE_SCALE}px`
             }}
         />
     );
@@ -137,7 +154,7 @@ export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread; group: M
 
         if (!match || !assetRoot) return message;
 
-        return <MessengerHabbiconMessage id={Number(match[1])} assetRoot={assetRoot} />;
+        return <MessengerHabbiconMessage id={Number(match[1])} assetRoot={assetRoot} own={own} />;
     };
 
     return (
